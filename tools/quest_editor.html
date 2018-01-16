@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Monumenta Quest Editor</title>
+
+    <!-- Foundation CSS framework (Bootstrap and jQueryUI also supported) -->
+    <link rel='stylesheet' href='//cdn.jsdelivr.net/bootstrap/3.2.0/css/bootstrap.css'>
+    <!-- Font Awesome icons (Bootstrap, Foundation, and jQueryUI also supported) -->
+    <link rel='stylesheet' href='//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.3/css/font-awesome.css'>
+
+    <link rel='stylesheet' href='//cdn.jsdelivr.net/sceditor/1.4.3/jquery.sceditor.default.min.css'>
+    <link rel='stylesheet' href='//cdn.jsdelivr.net/sceditor/1.4.3/themes/modern.min.css'>
+    <script src='//cdn.jsdelivr.net/jquery/2.1.1/jquery.min.js'></script>
+    <script src='//cdn.jsdelivr.net/sceditor/1.4.3/jquery.sceditor.min.js'></script>
+    <script src='//cdn.jsdelivr.net/sceditor/1.4.3/plugins/xhtml.js'></script>
+
+    <script src="../dist/jsoneditor.js"></script>
+</head>
+<body>
+<div class='container'>
+    <div class='row' style='padding-bottom: 15px;'>
+        <div class='col-md-12'>
+            <h1>Monumenta Quest Editor</h1>
+        </div>
+    </div>
+    <div class='row' style='padding-bottom: 15px;'>
+        <div class='col-md-12'>
+            <button id='restore' class='btn btn-info'>Restore to Default</button>
+            <span id='valid_indicator' class='label label-success'></span>
+        </div>
+    </div>
+    <div class='row'>
+        <div class='col-md-12'>
+            <div id='editor_holder'></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    JSONEditor.defaults.theme = 'bootstrap3';
+    JSONEditor.defaults.iconlib = 'fontawesome4';
+    JSONEditor.plugins.sceditor.style = "//cdn.jsdelivr.net/sceditor/1.4.3/jquery.sceditor.default.min.css";
+
+    // Initialize the editor
+    var editor = new JSONEditor(document.getElementById('editor_holder'),{
+        // The schema for the editor
+        schema: {
+            title: "Quest file",
+            defaultProperties: [
+              "npc",
+              "quest_components"
+            ],
+            properties: {
+                npc: {
+                  title: "NPC Name",
+                  type: "string"
+                },
+                quest_components: {
+                    title: "Quest components",
+                    type: "array",
+                    items: {
+                      title: "Quest component",
+                      $ref: "#/definitions/quest_component"
+                    }
+                }
+            },
+            definitions: {
+                quest_component: {
+                    type: "object",
+                    // The object will start with only these properties
+                    defaultProperties: [
+                        "prerequisites",
+                        "actions",
+                    ],
+                    properties: {
+                        prerequisites: {
+                            $ref: "#/definitions/prerequisites"
+                        },
+                        delay_actions_by_ticks: {
+                            $ref: "#/definitions/delay_actions_by_ticks"
+                        },
+                        actions: {
+                            $ref: "#/definitions/actions"
+                        }
+                    }
+                },
+                prerequisites: {
+                    title: "Prerequisites",
+                    type: "object",
+                    defaultProperties: [
+                      "check_scores"
+                    ],
+                    properties: {
+                        check_scores: {
+                            title: "Check scores",
+                            type: "array",
+                            items: {
+                                title: "Scores - add property Objective",
+                                type: "object"
+                            }
+                        },
+                        items_in_inventory: {
+                            title: "Check items",
+                            type: "array",
+                            items: {
+                                title: "Item",
+                                type: "object",
+                                properties: {
+                                    lore: {
+                                      title: "Lore",
+                                      type: "string"
+                                    },
+                                    name: {
+                                      title: "Name",
+                                      type: "string"
+                                    },
+                                    count: {
+                                      title: "Count",
+                                      type: "integer",
+                                      minimum: 1,
+                                      maximum: 64
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                actions: {
+                    title: "Actions",
+                    type: "array",
+                    items: {
+                        title: "Action",
+                        type: "object",
+                        defaultProperties: [
+                          "dialog"
+                        ],
+                        properties: {
+                            dialog: {
+                                title: "Dialog",
+                                type: "object",
+                                defaultProperties: [
+                                  "text"
+                                ],
+                                properties: {
+                                    text: {
+                                        title: "Text spoken by NPC",
+                                        oneOf: [
+                                            {
+                                                title: "One line",
+                                                type: "string"
+                                            },
+                                            {
+                                                title: "Multiple lines",
+                                                type: "array",
+                                                items: {
+                                                    title: "A line",
+                                                    type: "string"
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    raw_text: {
+                                        title: "Raw text",
+                                        oneOf: [
+                                            {
+                                                title: "One line",
+                                                type: "string"
+                                            },
+                                            {
+                                                title: "Multiple lines",
+                                                type: "array",
+                                                items: {
+                                                    title: "A line",
+                                                    type: "string"
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    clickable_text: {
+                                        title: "Clickable text",
+                                        type: "array",
+                                        items: {
+                                            title: "Choice",
+                                            type: "object",
+                                            defaultProperties: [
+                                              "player_text",
+                                              "actions"
+                                            ],
+                                            properties: {
+                                                player_text: {
+                                                    title: "Player's response",
+                                                    type: "string"
+                                                },
+                                                delay_actions_by_ticks: {
+                                                    $ref: "#/definitions/delay_actions_by_ticks"
+                                                },
+                                                actions: {
+                                                    $ref: "#/definitions/actions"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            set_scores: {
+                                title: "Set scores",
+                                type: "array",
+                                items: {
+                                    title: "Score - add property Objective",
+                                    type: "object"
+                                }
+                            },
+                            function: {
+                                title: "Function",
+                                type: "string"
+                            }
+                        }
+                    }
+                },
+                delay_actions_by_ticks: {
+                    title: "Delay actions by ticks",
+                    type: "integer",
+                    minimum: 1
+                }
+            }
+        }
+    });
+
+    // Hook up the Restore to Default button
+    document.getElementById('restore').addEventListener('click',function() {
+        editor.setValue(starting_value);
+    });
+
+    // Hook up the validation indicator to update its
+    // status whenever the editor changes
+    editor.on('change',function() {
+        // Get an array of errors from the validator
+        var errors = editor.validate();
+
+        var indicator = document.getElementById('valid_indicator');
+
+        // Not valid
+        if(errors.length) {
+            indicator.className = 'label label-danger'
+            indicator.textContent = "not valid";
+        }
+        // Valid
+        else {
+            indicator.className = 'label label-success'
+            indicator.textContent = "valid";
+        }
+    });
+</script>
+</body>
+</html>
