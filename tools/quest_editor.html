@@ -200,6 +200,14 @@
                                                 }
                                             }
                                         }
+                                    },
+                                    random_text: {
+                                        title: "Random text",
+                                        type: "array",
+                                        items: {
+                                            title: "A random line",
+                                            type: "string"
+                                        }
                                     }
                                 }
                             },
@@ -213,6 +221,10 @@
                             },
                             function: {
                                 title: "Function",
+                                type: "string"
+                            },
+                            command: {
+                                title: "Command (capital @S is player)",
                                 type: "string"
                             }
                         }
