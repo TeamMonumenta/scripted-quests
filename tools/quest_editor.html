@@ -22,6 +22,7 @@
     <div class='row' style='padding-bottom: 15px;'>
         <div class='col-md-12'>
             <h1>Monumenta Quest Editor</h1>
+            <a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html">Entity Types</a>
         </div>
     </div>
     <div class='row' style='padding-bottom: 15px;'>
@@ -53,14 +54,22 @@
             ],
             properties: {
                 npc: {
+                  propertyOrder: 1,
                   title: "NPC Name (for spaces, see display_name)",
                   type: "string"
                 },
                 display_name: {
+                  propertyOrder: 2,
                   title: "NPC Name in dialog (supports spaces)",
                   type: "string"
                 },
+                entity_type: {
+                  propertyOrder: 3,
+                  title: "NPC Type",
+                  type: "string"
+                },
                 quest_components: {
+                    propertyOrder: 4,
                     title: "Quest components",
                     type: "array",
                     items: {
@@ -75,16 +84,19 @@
                     // The object will start with only these properties
                     defaultProperties: [
                         "prerequisites",
-                        "actions",
+                        "actions"
                     ],
                     properties: {
                         prerequisites: {
+                            propertyOrder: 1,
                             $ref: "#/definitions/prerequisites"
                         },
                         delay_actions_by_ticks: {
+                            propertyOrder: 2,
                             $ref: "#/definitions/delay_actions_by_ticks"
                         },
                         actions: {
+                            propertyOrder: 3,
                             $ref: "#/definitions/actions"
                         }
                     }
@@ -97,6 +109,7 @@
                     ],
                     properties: {
                         check_scores: {
+                            propertyOrder: 1,
                             title: "Check scores",
                             type: "array",
                             items: {
@@ -105,6 +118,7 @@
                             }
                         },
                         items_in_inventory: {
+                            propertyOrder: 2,
                             title: "Check items",
                             type: "array",
                             items: {
@@ -112,14 +126,17 @@
                                 type: "object",
                                 properties: {
                                     lore: {
+                                      propertyOrder: 1,
                                       title: "Lore",
                                       type: "string"
                                     },
                                     name: {
+                                      propertyOrder: 2,
                                       title: "Name",
                                       type: "string"
                                     },
                                     count: {
+                                      propertyOrder: 3,
                                       title: "Count",
                                       type: "integer",
                                       minimum: 1,
@@ -193,13 +210,16 @@
                                             ],
                                             properties: {
                                                 player_text: {
+                                                    propertyOrder: 1,
                                                     title: "Player's response",
                                                     type: "string"
                                                 },
                                                 delay_actions_by_ticks: {
+                                                    propertyOrder: 2,
                                                     $ref: "#/definitions/delay_actions_by_ticks"
                                                 },
                                                 actions: {
+                                                    propertyOrder: 3,
                                                     $ref: "#/definitions/actions"
                                                 }
                                             }
