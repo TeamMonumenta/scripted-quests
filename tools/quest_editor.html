@@ -114,7 +114,12 @@
                             type: "array",
                             items: {
                                 title: "Scores - add property Objective",
-                                type: "object"
+                                type: "object",
+                                patternProperties:{
+                                  ".*":{
+                                    $ref: "#/definitions/check_score"
+                                  }
+                                }
                             }
                         },
                         items_in_inventory: {
@@ -240,7 +245,13 @@
                                 type: "array",
                                 items: {
                                     title: "Score - add property Objective",
-                                    type: "object"
+                                    type: "object",
+                                    patternProperties:{
+                                      ".*":{
+                                        title: "Exactly",
+                                        $ref: "#/definitions/score"
+                                      }
+                                    }
                                 }
                             },
                             function: {
@@ -262,6 +273,33 @@
                     title: "Delay actions by ticks",
                     type: "integer",
                     minimum: 1
+                },
+                check_score: {
+                    oneOf: [
+                      {
+                        title: "Exactly",
+                        $ref: "#/definitions/score"
+                      },
+                      {
+                        title: "Range",
+                        type:"object",
+                        properties: {
+                          min: {
+                            title: "Minimum",
+                            $ref: "#/definitions/score"
+                          },
+                          max: {
+                            title: "Maximum",
+                            $ref: "#/definitions/score"
+                          }
+                        }
+                      }
+                    ]
+                },
+                score: {
+                    type: "integer",
+                    minimum: -2147483648,
+                    maximum: 2147483647
                 }
             }
         }
