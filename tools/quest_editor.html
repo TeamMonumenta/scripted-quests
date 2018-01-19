@@ -47,34 +47,41 @@
     var editor = new JSONEditor(document.getElementById('editor_holder'),{
         // The schema for the editor
         schema: {
-            title: "Quest file",
+            title: "Quest",
             defaultProperties: [
-              "npc",
-              "quest_components"
+                "npc",
+                "quest_components"
             ],
+            additionalProperties:false,
             properties: {
                 npc: {
-                  propertyOrder: 1,
-                  title: "NPC Name (for spaces, see display_name)",
-                  type: "string"
+                    propertyOrder: 1,
+                    title: "npc",
+                    required: true,
+                    type: "string",
+                    description: "NPC's name without spaces or color codes. For example: CaptainMurano"
                 },
                 display_name: {
-                  propertyOrder: 2,
-                  title: "NPC Name in dialog (supports spaces)",
-                  type: "string"
+                    propertyOrder: 2,
+                    title: "display_name",
+                    description: "NPC's name as displayed in chat messages sent from the NPC. Can contain spaces and technically colors, though use of colors is generally discouraged here.",
+                    type: "string"
                 },
                 entity_type: {
-                  propertyOrder: 3,
-                  title: "NPC Type",
-                  type: "string"
+                    propertyOrder: 3,
+                    title: "npc_type",
+                    description: "Bukkit/Spigot EntityType. Can be any of these choices: VILLAGER (default), ARMOR_STAND, BAT, BLAZE, CAVE_SPIDER, CHICKEN, COW, CREEPER, DONKEY, ELDER_GUARDIAN, ENDER_DRAGON, ENDERMAN, ENDERMITE, EVOKER, GHAST, GIANT, GUARDIAN, HORSE, HUSK, ILLUSIONER, IRON_GOLEM, LLAMA, MAGMA_CUBE, MULE, MUSHROOM_COW, OCELOT, PARROT, PIG, PIG_ZOMBIE, POLAR_BEAR, RABBIT, SHEEP, SHULKER, SILVERFISH, SKELETON, SKELETON_HORSE, SLIME, SNOWMAN, SPIDER, SQUID, STRAY, VEX, VINDICATOR, WITCH, WITHER, WITHER_SKELETON, WOLF, ZOMBIE, ZOMBIE_HORSE, ZOMBIE_VILLAGER",
+                    type: "string"
                 },
                 quest_components: {
                     propertyOrder: 4,
                     title: "Quest components",
+                    required: true,
                     type: "array",
+                    format: "tabs",
                     items: {
-                      title: "Quest component",
-                      $ref: "#/definitions/quest_component"
+                        title: "Quest component",
+                        $ref: "#/definitions/quest_component"
                     }
                 }
             },
@@ -86,6 +93,7 @@
                         "prerequisites",
                         "actions"
                     ],
+                    additionalProperties:false,
                     properties: {
                         prerequisites: {
                             propertyOrder: 1,
@@ -97,6 +105,7 @@
                         },
                         actions: {
                             propertyOrder: 3,
+                            required: true,
                             $ref: "#/definitions/actions"
                         }
                     }
@@ -104,48 +113,57 @@
                 prerequisites: {
                     title: "Prerequisites",
                     type: "object",
-                    defaultProperties: [
-                      "check_scores"
-                    ],
+                    defaultProperties: [],
+                    additionalProperties:false,
                     properties: {
                         check_scores: {
                             propertyOrder: 1,
-                            title: "Check scores",
-                            type: "array",
-                            items: {
-                                title: "Scores - add property Objective",
-                                type: "object",
-                                patternProperties:{
-                                  ".*":{
+                            title: "check_scores",
+                            type: "object",
+                            description: "Checks that the player has the specified scoreboard value(s). Click Properties, then type in the scoreboard name in the input box and click the 'add' button. Scoreboards are case-sensitive",
+                            patternProperties:{
+                                ".*":{
                                     $ref: "#/definitions/check_score"
-                                  }
                                 }
                             }
                         },
                         items_in_inventory: {
                             propertyOrder: 2,
-                            title: "Check items",
+                            title: "items_in_inventory",
                             type: "array",
+                            description: "Checks that all of the specified items are present in the player's inventory",
                             items: {
                                 title: "Item",
                                 type: "object",
+                                defaultProperties: [],
+                                additionalProperties:false,
+                                description: "Checks that a specific item stack exists in the player's inventory. All conditions given here must match to succeed. All fields are optional, but at least one of (lore|name|type) must be specified.",
                                 properties: {
                                     lore: {
-                                      propertyOrder: 1,
-                                      title: "Lore",
-                                      type: "string"
+                                        propertyOrder: 1,
+                                        title: "lore",
+                                        type: "string",
+                                        description: "Matches if any line of lore text *contains* this string."
                                     },
                                     name: {
-                                      propertyOrder: 2,
-                                      title: "Name",
-                                      type: "string"
+                                        propertyOrder: 2,
+                                        title: "name",
+                                        type: "string",
+                                        description: "Matches if the item name *contains* this string."
+                                    },
+                                    type: {
+                                        propertyOrder: 3,
+                                        title: "type",
+                                        type: "string",
+                                        description: "Matches if the item type is exactly this Material. List of available materials can be found here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html"
                                     },
                                     count: {
-                                      propertyOrder: 3,
-                                      title: "Count",
-                                      type: "integer",
-                                      minimum: 1,
-                                      maximum: 64
+                                        propertyOrder: 4,
+                                        title: "count",
+                                        type: "integer",
+                                        minimum: 0,
+                                        default: 1,
+                                        description: "The minimum number of items matching the specified lore/name/type that must be present to succeed. If 0, will succeed only if no matched items are present. This will match items in multiple stacks, for example a stack of 5 and a stack of 8 will match a count of 10."
                                     }
                                 }
                             }
@@ -161,9 +179,10 @@
                         defaultProperties: [
                           "dialog"
                         ],
+                        additionalProperties:false,
                         properties: {
                             dialog: {
-                                title: "Dialog",
+                                title: "dialog",
                                 type: "object",
                                 defaultProperties: [
                                   "text"
@@ -255,16 +274,19 @@
                                 }
                             },
                             function: {
-                                title: "Function",
-                                type: "string"
+                                title: "function",
+                                type: "string",
+                                description: "Runs a function via the console as the player (/execute <playername> ~ ~ ~ function <function>)"
                             },
                             command: {
-                                title: "Command (capital @S is player)",
-                                type: "string"
+                                title: "command",
+                                type: "string",
+                                description: "Runs a command via the console. Any instance of '@S' (uppercase!) will be replaced with the player's name."
                             },
                             rerun_components: {
-                                title: "Rerun Components",
-                                type: "null"
+                                title: "rerun_components",
+                                type: "null",
+                                description: "Re-runs all quest components tied to this specific NPC (including those specified in other files). To prevent infinite loops, this action will run itself, even if conditions indicate it should."
                             }
                         }
                     }
