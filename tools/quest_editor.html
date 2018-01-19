@@ -23,6 +23,8 @@
         <div class='col-md-12'>
             <h1>Monumenta Quest Editor</h1>
             <a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html">Entity Types</a>
+            <br>
+            <a href="https://minecraft.gamepedia.com/Formatting_codes">Minecraft Formatting Codes</a>
         </div>
     </div>
     <div class='row' style='padding-bottom: 15px;'>
@@ -55,11 +57,11 @@
             additionalProperties:false,
             properties: {
                 npc: {
+                    required: true,
                     propertyOrder: 1,
                     title: "npc",
-                    required: true,
-                    type: "string",
-                    description: "NPC's name without spaces or color codes. For example: CaptainMurano"
+                    description: "NPC's name without spaces or color codes. For example: CaptainMurano",
+                    type: "string"
                 },
                 display_name: {
                     propertyOrder: 2,
@@ -74,11 +76,14 @@
                     type: "string"
                 },
                 quest_components: {
-                    propertyOrder: 4,
-                    title: "Quest components",
                     required: true,
+                    propertyOrder: 4,
+                    title: "quest_components",
+                    description: "A list of dialog/requirement pairs",
                     type: "array",
+                    minItems: 1,
                     format: "tabs",
+                    minItems: 1,
                     items: {
                         title: "Quest component",
                         $ref: "#/definitions/quest_component"
@@ -111,7 +116,7 @@
                     }
                 },
                 prerequisites: {
-                    title: "Prerequisites",
+                    title: "prerequisites",
                     type: "object",
                     defaultProperties: [],
                     additionalProperties:false,
@@ -119,8 +124,8 @@
                         check_scores: {
                             propertyOrder: 1,
                             title: "check_scores",
-                            type: "object",
                             description: "Checks that the player has the specified scoreboard value(s). Click Properties, then type in the scoreboard name in the input box and click the 'add' button. Scoreboards are case-sensitive",
+                            type: "object",
                             patternProperties:{
                                 ".*":{
                                     $ref: "#/definitions/check_score"
@@ -130,40 +135,41 @@
                         items_in_inventory: {
                             propertyOrder: 2,
                             title: "items_in_inventory",
-                            type: "array",
                             description: "Checks that all of the specified items are present in the player's inventory",
+                            type: "array",
+                            minItems: 1,
                             items: {
                                 title: "Item",
+                                description: "Checks that a specific item stack exists in the player's inventory. All conditions given here must match to succeed. All fields are optional, but at least one of (lore|name|type) must be specified. Items found are not removed.",
                                 type: "object",
                                 defaultProperties: [],
                                 additionalProperties:false,
-                                description: "Checks that a specific item stack exists in the player's inventory. All conditions given here must match to succeed. All fields are optional, but at least one of (lore|name|type) must be specified.",
                                 properties: {
                                     lore: {
                                         propertyOrder: 1,
                                         title: "lore",
-                                        type: "string",
-                                        description: "Matches if any line of lore text *contains* this string."
+                                        description: "Matches if any line of lore text *contains* this string.",
+                                        type: "string"
                                     },
                                     name: {
                                         propertyOrder: 2,
                                         title: "name",
-                                        type: "string",
-                                        description: "Matches if the item name *contains* this string."
+                                        description: "Matches if the item name *contains* this string.",
+                                        type: "string"
                                     },
                                     type: {
                                         propertyOrder: 3,
                                         title: "type",
-                                        type: "string",
-                                        description: "Matches if the item type is exactly this Material. List of available materials can be found here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html"
+                                        description: "Matches if the item type is exactly this Material. List of available materials can be found here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html",
+                                        type: "string"
                                     },
                                     count: {
                                         propertyOrder: 4,
                                         title: "count",
+                                        description: "The minimum number of items matching the specified lore/name/type that must be present to succeed. If 0, will succeed only if no matched items are present. This will match items in multiple stacks, for example a stack of 5 and a stack of 8 will match a count of 10.",
                                         type: "integer",
-                                        minimum: 0,
-                                        default: 1,
-                                        description: "The minimum number of items matching the specified lore/name/type that must be present to succeed. If 0, will succeed only if no matched items are present. This will match items in multiple stacks, for example a stack of 5 and a stack of 8 will match a count of 10."
+                                        minimum: 1,
+                                        default: 1
                                     }
                                 }
                             }
@@ -171,8 +177,9 @@
                     }
                 },
                 actions: {
-                    title: "Actions",
+                    title: "actions",
                     type: "array",
+                    minItems: 1,
                     items: {
                         title: "Action",
                         type: "object",
@@ -183,13 +190,15 @@
                         properties: {
                             dialog: {
                                 title: "dialog",
+                                description: "formatting supported with &amp; and §",
                                 type: "object",
                                 defaultProperties: [
                                   "text"
                                 ],
                                 properties: {
                                     text: {
-                                        title: "Text spoken by NPC",
+                                        title: "text",
+                                        description: "Text spoken by NPC. '[Name] ' part is handled by the plugin",
                                         oneOf: [
                                             {
                                                 title: "One line",
@@ -198,6 +207,7 @@
                                             {
                                                 title: "Multiple lines",
                                                 type: "array",
+                                                minItems: 2,
                                                 items: {
                                                     title: "A line",
                                                     type: "string"
@@ -206,7 +216,8 @@
                                         ]
                                     },
                                     raw_text: {
-                                        title: "Raw text",
+                                        title: "raw_text",
+                                        description: "No name or formatting included by default",
                                         oneOf: [
                                             {
                                                 title: "One line",
@@ -215,6 +226,7 @@
                                             {
                                                 title: "Multiple lines",
                                                 type: "array",
+                                                minItems: 2,
                                                 items: {
                                                     title: "A line",
                                                     type: "string"
@@ -224,7 +236,9 @@
                                     },
                                     clickable_text: {
                                         title: "Clickable text",
+                                        description: "Colored, formatted, and put in [] for you.",
                                         type: "array",
+                                        minItems: 1,
                                         items: {
                                             title: "Choice",
                                             type: "object",
@@ -235,7 +249,8 @@
                                             properties: {
                                                 player_text: {
                                                     propertyOrder: 1,
-                                                    title: "Player's response",
+                                                    title: "player_text",
+                                                    description: "Player's response",
                                                     type: "string"
                                                 },
                                                 delay_actions_by_ticks: {
@@ -252,6 +267,7 @@
                                     random_text: {
                                         title: "Random text",
                                         type: "array",
+                                        minItems: 2,
                                         items: {
                                             title: "A random line",
                                             type: "string"
@@ -262,6 +278,7 @@
                             set_scores: {
                                 title: "Set scores",
                                 type: "array",
+                                minItems: 1,
                                 items: {
                                     title: "Score - add property Objective",
                                     type: "object",
@@ -275,24 +292,24 @@
                             },
                             function: {
                                 title: "function",
-                                type: "string",
-                                description: "Runs a function via the console as the player (/execute <playername> ~ ~ ~ function <function>)"
+                                description: "Runs a function via the console as the player (/execute <playername> ~ ~ ~ function <function>)",
+                                type: "string"
                             },
                             command: {
                                 title: "command",
-                                type: "string",
-                                description: "Runs a command via the console. Any instance of '@S' (uppercase!) will be replaced with the player's name."
+                                description: "Runs a command via the console. Any instance of '@S' (uppercase!) will be replaced with the player's name.",
+                                type: "string"
                             },
                             rerun_components: {
                                 title: "rerun_components",
-                                type: "null",
-                                description: "Re-runs all quest components tied to this specific NPC (including those specified in other files). To prevent infinite loops, this action will run itself, even if conditions indicate it should."
+                                description: "Re-runs all quest components tied to this specific NPC (including those specified in other files). To prevent infinite loops, this action will run itself, even if conditions indicate it should.",
+                                type: "null"
                             }
                         }
                     }
                 },
                 delay_actions_by_ticks: {
-                    title: "Delay actions by ticks",
+                    title: "delay_actions_by_ticks",
                     type: "integer",
                     minimum: 1
                 },
