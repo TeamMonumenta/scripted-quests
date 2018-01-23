@@ -282,17 +282,12 @@
                             },
                             set_scores: {
                                 title: "Set scores",
-                                type: "array",
-                                minItems: 1,
-                                items: {
-                                    title: "Score - add property Objective",
-                                    type: "object",
-                                    patternProperties:{
-                                      ".*":{
-                                        title: "Exactly",
-                                        $ref: "#/definitions/set_score"
-                                      }
-                                    }
+                                description: "Set the player's specified scoreboard value(s). Click Properties, then type in the scoreboard name in the input box and click the 'add' button. Scoreboards are case-sensitive",
+                                type: "object",
+                                patternProperties:{
+                                  ".*":{
+                                    $ref: "#/definitions/set_score"
+                                  }
                                 }
                             },
                             function: {
