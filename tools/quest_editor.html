@@ -240,12 +240,13 @@
                                         ]
                                     },
                                     clickable_text: {
-                                        title: "Clickable text",
+                                        title: "clickable_text",
                                         description: "Colored, formatted, and put in [] for you.",
                                         type: "array",
+                                        format: "tabs",
                                         minItems: 1,
                                         items: {
-                                            title: "Choice",
+                                            headerTemplate: "{{self.player_text}}",
                                             type: "object",
                                             defaultProperties: [
                                               "player_text",
@@ -253,6 +254,7 @@
                                             ],
                                             properties: {
                                                 player_text: {
+                                                    required: true,
                                                     propertyOrder: 1,
                                                     title: "player_text",
                                                     description: "Player's response",
@@ -263,6 +265,7 @@
                                                     $ref: "#/definitions/delay_actions_by_ticks"
                                                 },
                                                 actions: {
+                                                    required: true,
                                                     propertyOrder: 3,
                                                     $ref: "#/definitions/actions"
                                                 }
@@ -270,7 +273,7 @@
                                         }
                                     },
                                     random_text: {
-                                        title: "Random text",
+                                        title: "random_text",
                                         type: "array",
                                         minItems: 2,
                                         items: {
@@ -281,7 +284,7 @@
                                 }
                             },
                             set_scores: {
-                                title: "Set scores",
+                                title: "set_scores",
                                 description: "Set the player's specified scoreboard value(s). Click Properties, then type in the scoreboard name in the input box and click the 'add' button. Scoreboards are case-sensitive",
                                 type: "object",
                                 patternProperties:{
