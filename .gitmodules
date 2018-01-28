@@ -1,3 +1,0 @@
-[submodule "tools/json-editor"]
-	path = tools/json-editor
-	url = https://github.com/jdorn/json-editor
