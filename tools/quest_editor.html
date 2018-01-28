@@ -172,6 +172,45 @@
                                     }
                                 }
                             }
+                        },
+                        location: {
+                            propertyOrder: 3,
+                            title: "location",
+                            description: "Checks that the player is inside the specified location.",
+                            type: "object",
+                            additionalProperties:false,
+                            properties: {
+                                x1: {
+                                    required: true,
+                                    $ref: "#/definitions/coordinate",
+                                    propertyOrder: 1,
+                                },
+                                y1: {
+                                    required: true,
+                                    $ref: "#/definitions/coordinate",
+                                    propertyOrder: 1,
+                                },
+                                z1: {
+                                    required: true,
+                                    $ref: "#/definitions/coordinate",
+                                    propertyOrder: 1,
+                                },
+                                x2: {
+                                    required: true,
+                                    $ref: "#/definitions/coordinate",
+                                    propertyOrder: 1,
+                                },
+                                y2: {
+                                    required: true,
+                                    $ref: "#/definitions/coordinate",
+                                    propertyOrder: 1,
+                                },
+                                z2: {
+                                    required: true,
+                                    $ref: "#/definitions/coordinate",
+                                    propertyOrder: 1,
+                                }
+                            }
                         }
                     }
                 },
@@ -315,6 +354,11 @@
                     title: "delay_actions_by_ticks",
                     type: "integer",
                     minimum: 1
+                },
+                coordinate: {
+                    type: "integer",
+                    minimum: -100000,
+                    maximum: 100000
                 },
                 check_score: {
                     headerTemplate: "{{i}}",
