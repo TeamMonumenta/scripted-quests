@@ -77,7 +77,7 @@
 			</and>
 		</condition>
 		<mkdir dir="bin"/>
-		<jar destfile="out/Scripted-Quests_${repository.version}_${TODAY}.jar" basedir="bin/">
+		<jar destfile="out/Scripted-Quests_1.12.2_${repository.version}_${TODAY}.jar" basedir="bin/">
 			<manifest>
 				<attribute name="Main-Class" value="pe.project.Plugin"/>
 			</manifest>
