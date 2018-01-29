@@ -128,8 +128,17 @@
                                 }
                             }
                         },
-                        items_in_inventory: {
+                        check_tags: {
                             propertyOrder: 2,
+                            title: "check_tags",
+                            description: "Check if all listed tags are on the player",
+                            type: "array",
+                            items: {
+                              type: "string"
+                            }
+                        },
+                        items_in_inventory: {
+                            propertyOrder: 3,
                             title: "items_in_inventory",
                             description: "Checks that all of the specified items are present in the player's inventory",
                             type: "array",
@@ -171,7 +180,7 @@
                             }
                         },
                         location: {
-                            propertyOrder: 3,
+                            propertyOrder: 4,
                             title: "location",
                             description: "Checks that the player is inside the specified location.",
                             type: "object",
@@ -250,6 +259,14 @@
                     type: "integer",
                     minimum: -2147483648,
                     maximum: 2147483647
+                },
+                check_tags: {
+                    title: "check_tags",
+                    description: "Check if all listed tags are on the player",
+                    type: "array",
+                    items: {
+                      type: "string"
+                    }
                 }
             }
         }
