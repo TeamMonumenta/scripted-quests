@@ -1,0 +1,121 @@
+{
+  "npc": "Aimee",
+  "quest_components": [
+    {
+      "prerequisites": {
+        "check_scores": {
+          "Quest01": 0
+        }
+      },
+      "actions": [
+        {
+          "dialog": {
+            "text": "Hi there! Did someone from the crafter's guild send you to help me?",
+            "clickable_text": [
+              {
+                "player_text": "Help with what?",
+                "actions": [
+                  {
+                    "dialog": {
+                      "text": "A duchess just comissioned a tiara but I'm all out of gems for it! I've heard that they once found topaz in a mine North of here, would you mind checking?",
+                      "clickable_text": [
+                        {
+                          "player_text": "I can get you some topaz",
+                          "actions": [
+                            {
+                              "dialog": {
+                                "text": "Yay, thank you so much! I'd go myself but I don't know how to fight. The mine's supposed to be North of here and a little bit West - just don't go too far or you'll run into bandits!",
+                                "raw_text": [
+                                  "&b&lQUEST : A CROWN OF TOPAZ",
+                                  "&b Length : Short",
+                                  "&b Difficulty : Very Easy",
+                                  "&b&oHead to the northern mine and find some topaz."
+                                ]
+                              },
+                              "set_scores": {
+                                "Quest01": 4
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "player_text": "Sorry, but I'm busy.",
+                          "actions": [
+                            {
+                              "dialog": {
+                                "text": "[\"Oh. That's alright, I'm sure I'll figure something out.\"]"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            ],
+            "raw_text": "&7&oTo talk to NPCs, press 'T' to chat, and click the purple options in []"
+          }
+        }
+      ]
+    },
+    {
+      "prerequisites": {
+        "check_scores": {
+          "Quest01": 4
+        },
+        "items_in_inventory": [
+          {
+            "lore": "QuestItem"
+          }
+        ]
+      },
+      "actions": [
+        {
+          "set_scores": {
+            "Quest01": 5
+          }
+        }
+      ]
+    },
+    {
+      "prerequisites": {
+        "check_scores": {
+          "Quest01": 4
+        }
+      },
+      "actions": [
+        {
+          "dialog": {
+            "text": "I've heard the mine to the North has topaz, maybe you should look there for some."
+          }
+        }
+      ]
+    },
+    {
+      "prerequisites": {
+        "check_scores": {
+          "Quest01": 5
+        }
+      },
+      "actions": [
+        {
+          "dialog": {
+            "text": "Wow! Thank you so much, this should come out great! Here, take this cap as thanks. It may look pretty, but should really help keep you alive in a fight! I might have another job for you as well if you come back later.",
+            "raw_text": [
+              "&b&lA CROWN OF TOPAZ COMPLETE !",
+              "&bAwarded Topaz Cap and 32 Enchanting Bottles!"
+            ]
+          },
+          "set_scores": {
+            "Quest01": 6
+          },
+          "command": "give @S golden_helmet"
+        },
+        {
+          "command": "give @S minecraft:experience_bottle 32"
+        }
+      ]
+    }
+  ]
+}

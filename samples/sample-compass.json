@@ -1,0 +1,6 @@
+{
+	"quest_name": "A Crown of Topaz",
+	"locations": [
+		{"prerequisites":{"check_scores":{"Quest01": 4}}, "x":-807, "z":-372, "message":"Search the northern mine for topaz to help Aimee."}
+	]
+}
