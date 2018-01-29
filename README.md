@@ -36,23 +36,22 @@ Install it like all spigot plugins by placing it in your plugins folder.
 Start your spigot server. This should create some folders under
 `plugins/Scripted-Quests/`
 
-Summon a test villager:
-`/summon minecraft:villager ~ ~ ~ {CustomName:"Aimee"}`
+Summon a test villager: `/summon minecraft:villager ~ ~ ~ {CustomName:"Aimee"}`
 
-Create the needed scoreboard:
-`/scoreboard objectives add Quest01 dummy`
+Create the needed scoreboard: `/scoreboard objectives add Quest01 dummy`
 
-Put the demo NPC file (`samples/sample-quest.json`) in (`plugins/Scripted-Quests/quests/sample-quest.json`)
-Put the demo quest compass file (`samples/sample-compass.json`) in (`plugins/Scripted-Quests/quest-compass/sample-compass.json`)
+Install the quest & compass config files:
+- `samples/sample-quest.json -> plugins/Scripted-Quests/quests/sample-quest.json`
+- `samples/sample-compass.json` -> `plugins/Scripted-Quests/quest-compass/sample-compass.json`
 
-Reload the quest configuration:
-`/reloadconfig`
+Reload the quest configuration: `/reloadconfig`
 
 Left-click Aimee to talk to her and start the quest.
 
 Give yourself a compass and right-click it to cycle available quests
 
-Give yourself the quest item `/give @s minecraft:dye 1 11 {display:{Lore:["QuestItem"]}}`
+Give yourself the quest item:
+`/give @s minecraft:dye 1 11 {display:{Lore:["QuestItem"]}}`
 
 Talk to Aimee again to complete the quest
 
@@ -61,8 +60,8 @@ Creating these by hand is a pain - use the web editor! The web editor not only
 helps you structure things correctly but is also the primary documentation for
 the various quest options
 
-Quest Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/quest\_editor.html
-Compass Editor - Coming soon!
+- Quest Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/quest_editor.html
+- Compass Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/quest_compass_editor.html
 
 ## Structure of a quests file:
 Each quest file has the following info:
