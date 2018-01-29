@@ -1,12 +1,12 @@
-name: Scripted-Quests
+name: ScriptedQuests
 main: pe.scriptedquests.Plugin
 version: 1.0
 commands:
   questtrigger:
-    permission: scriptedquests.rigger
+    permission: scriptedquests.questtrigger
     description: Invoked when a player clicks a chat message
     usage: What are you doing? You shouldn't be using this!
-  reloadconfig:
-    permission: scriptedquests.reloadconfig
+  reloadquests:
+    permission: scriptedquests.reloadquests
     description: Reloads quest config files
-    usage: /reloadconfig
+    usage: /reloadquests

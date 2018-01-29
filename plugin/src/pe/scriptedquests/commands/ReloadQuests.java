@@ -7,10 +7,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.ChatColor;
 import pe.scriptedquests.Plugin;
 
-public class ReloadConfig implements CommandExecutor {
+public class ReloadQuests implements CommandExecutor {
 	Plugin mPlugin;
 
-	public ReloadConfig(Plugin plugin) {
+	public ReloadQuests(Plugin plugin) {
 		mPlugin = plugin;
 	}
 

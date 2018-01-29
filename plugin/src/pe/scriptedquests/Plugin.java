@@ -6,7 +6,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import pe.scriptedquests.commands.QuestTrigger;
-import pe.scriptedquests.commands.ReloadConfig;
+import pe.scriptedquests.commands.ReloadQuests;
 import pe.scriptedquests.listeners.EntityListener;
 import pe.scriptedquests.listeners.PlayerListener;
 import pe.scriptedquests.managers.NpcManager;
@@ -28,7 +28,7 @@ public class Plugin extends JavaPlugin {
 		manager.registerEvents(new EntityListener(this), this);
 		manager.registerEvents(new PlayerListener(this), this);
 
-		getCommand("reloadConfig").setExecutor(new ReloadConfig(this));
+		getCommand("reloadQuests").setExecutor(new ReloadQuests(this));
 		getCommand("questTrigger").setExecutor(new QuestTrigger(this));
 
 		mQuestCompassManager = new QuestCompassManager(this);

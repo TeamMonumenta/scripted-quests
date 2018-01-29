@@ -51,7 +51,7 @@ Install the quest & compass config files:
 - `samples/sample-quest.json` -> `plugins/Scripted-Quests/npc/sample-quest.json`
 - `samples/sample-compass.json` -> `plugins/Scripted-Quests/compass/sample-compass.json`
 
-Reload the quest configuration: `/reloadconfig`
+Reload the quest configuration: `/reloadquests`
 
 Left-click Aimee to talk to her and start the quest.
 
