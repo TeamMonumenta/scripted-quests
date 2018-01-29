@@ -48,8 +48,8 @@ Summon a test villager: `/summon minecraft:villager ~ ~ ~ {CustomName:"Aimee"}`
 Create the needed scoreboard: `/scoreboard objectives add Quest01 dummy`
 
 Install the quest & compass config files:
-- `samples/sample-quest.json -> plugins/Scripted-Quests/quests/sample-quest.json`
-- `samples/sample-compass.json` -> `plugins/Scripted-Quests/quest-compass/sample-compass.json`
+- `samples/sample-quest.json` -> `plugins/Scripted-Quests/npc/sample-quest.json`
+- `samples/sample-compass.json` -> `plugins/Scripted-Quests/compass/sample-compass.json`
 
 Reload the quest configuration: `/reloadconfig`
 

@@ -31,17 +31,21 @@ public class QuestCompassManager {
 	 * If sender is non-null, it will be sent debugging information
 	 */
 	public void reload(Plugin plugin, CommandSender sender) {
+		String compassLocation = plugin.getDataFolder() + File.separator +  "compass";
 		mQuests = new ArrayList<QuestCompass>();
-
 		ArrayList<File> listOfFiles;
 		ArrayList<String> listOfQuests = new ArrayList<String>();
 		int numQuestLocations = 0;
 		int numFiles = 0;
 
-		// Attempt to load all JSON files in subdirectories of "quest_compass"
+		// Attempt to load all JSON files in subdirectories of "compass"
 		try {
-			String questCompassLocation = plugin.getDataFolder() + File.separator +  "quest_compass";
-			listOfFiles = FileUtils.getFilesInDirectory(questCompassLocation, ".json");
+			File directory = new File(compassLocation);
+			if (!directory.exists()) {
+				directory.mkdirs();
+			}
+
+			listOfFiles = FileUtils.getFilesInDirectory(compassLocation, ".json");
 		} catch (IOException e) {
 			plugin.getLogger().severe("Caught exception trying to reload quest compass: " + e);
 			if (sender != null) {

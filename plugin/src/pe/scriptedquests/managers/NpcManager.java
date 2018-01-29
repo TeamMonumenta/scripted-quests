@@ -26,16 +26,21 @@ public class NpcManager {
 	 * If sender is non-null, it will be sent debugging information
 	 */
 	public void reload(Plugin plugin, CommandSender sender) {
+		String npcsLocation = plugin.getDataFolder() + File.separator +  "npcs";
 		mNpcs = new HashMap<String, NpcQuest>();
 		ArrayList<File> listOfFiles;
 		ArrayList<String> listOfNpcs = new ArrayList<String>();
 		int numComponents = 0;
 		int numFiles = 0;
 
-		// Attempt to load all JSON files in subdirectories of "quests"
+		// Attempt to load all JSON files in subdirectories of "npcs"
 		try {
-			String questLocation = plugin.getDataFolder() + File.separator +  "quests";
-			listOfFiles = FileUtils.getFilesInDirectory(questLocation, ".json");
+			File directory = new File(npcsLocation);
+			if (!directory.exists()) {
+				directory.mkdirs();
+			}
+
+			listOfFiles = FileUtils.getFilesInDirectory(npcsLocation, ".json");
 		} catch (IOException e) {
 			plugin.getLogger().severe("Caught exception trying to reload NPCs: " + e);
 			if (sender != null) {
