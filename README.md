@@ -1,4 +1,4 @@
-# Scripted-Quests
+# Scripted Quests
 JSON-driven Minecraft Spigot plugin for creating quests
 
 ## Description
@@ -31,7 +31,7 @@ ordinary compass will make it point to some coordinates. For example:
 ## Download
 Grab one of the plugin jar files from the [release](release) folder. Naming scheme:
 
-`Scripted-Quests_<Target.Minecraft.Version>_<Plugin.Version>-<CompileDate>-<CompileTime>`
+`ScriptedQuests_<Target.Minecraft.Version>_<Plugin.Version>-<CompileDate>-<CompileTime>`
 
 Or compile it yourself using the included Ant build script.
 
@@ -41,15 +41,15 @@ This plugin will likely only work with Spigot 1.12.2.
 Install it like all spigot plugins by placing it in your plugins folder.
 
 Start your spigot server. This should create some folders under
-`plugins/Scripted-Quests/`
+`plugins/ScriptedQuests/`
 
 Summon a test villager: `/summon minecraft:villager ~ ~ ~ {CustomName:"Aimee"}`
 
 Create the needed scoreboard: `/scoreboard objectives add Quest01 dummy`
 
 Install the quest & compass config files:
-- `samples/sample-quest.json` -> `plugins/Scripted-Quests/npc/sample-quest.json`
-- `samples/sample-compass.json` -> `plugins/Scripted-Quests/compass/sample-compass.json`
+- `samples/sample-quest.json` -> `plugins/ScriptedQuests/npc/sample-quest.json`
+- `samples/sample-compass.json` -> `plugins/ScriptedQuests/compass/sample-compass.json`
 
 Reload the quest configuration: `/reloadquests`
 
