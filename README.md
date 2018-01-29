@@ -28,6 +28,13 @@ ordinary compass will make it point to some coordinates. For example:
 
 ![Example quest compass](./samples/compass.png)
 
+## Download
+Grab one of the plugin jar files from the [release](release) folder. Naming scheme:
+
+`Scripted-Quests_<Target.Minecraft.Version>_<Plugin.Version>-<CompileDate>-<CompileTime>`
+
+Or compile it yourself using the included Ant build script.
+
 ## Getting Started / Tutorial
 This plugin will likely only work with Spigot 1.12.2.
 
