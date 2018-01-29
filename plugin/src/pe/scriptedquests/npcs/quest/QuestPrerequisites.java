@@ -13,6 +13,7 @@ import com.google.gson.JsonObject;
 
 import pe.scriptedquests.npcs.quest.prerequisites.PrerequisiteBase;
 import pe.scriptedquests.npcs.quest.prerequisites.PrerequisiteCheckScores;
+import pe.scriptedquests.npcs.quest.prerequisites.PrerequisiteCheckTags;
 import pe.scriptedquests.npcs.quest.prerequisites.PrerequisiteItemsInInventory;
 import pe.scriptedquests.npcs.quest.prerequisites.PrerequisiteLocation;
 
@@ -41,6 +42,9 @@ public class QuestPrerequisites {
 				for (Entry<String, JsonElement> scoreEnt : scoreEntries) {
 					mPrerequisites.add(new PrerequisiteCheckScores(scoreEnt.getKey(), scoreEnt.getValue()));
 				}
+				break;
+			case "check_tags":
+				mPrerequisites.add(new PrerequisiteCheckTags(value));
 				break;
 			case "items_in_inventory":
 				JsonArray array = value.getAsJsonArray();
