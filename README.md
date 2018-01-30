@@ -83,6 +83,7 @@ an NPC, quest components are run in-order (more than one may be executed).
 
 prerequisites:
 - check\_scores - Checks one or more scoreboard values for the player
+- check\_tags - Checks if the player has (or must not have) specific scoreboard tags
 - items\_in\_inventory - Checks that the player is carrying the specified items
 - location - Checks that the player is within an area
 
