@@ -1,4 +1,4 @@
-package pe.scriptedquests.npcs.quest.prerequisites;
+package pe.scriptedquests.quests;
 
 import java.util.Map.Entry;
 import java.util.Set;
@@ -11,10 +11,10 @@ import com.google.gson.JsonElement;
 import pe.scriptedquests.point.AreaBounds;
 import pe.scriptedquests.point.Point;
 
-public class PrerequisiteLocation implements PrerequisiteBase {
-	AreaBounds mAreaBounds;
+class PrerequisiteLocation implements PrerequisiteBase {
+	private AreaBounds mAreaBounds;
 
-	public PrerequisiteLocation(JsonElement element) throws Exception {
+	PrerequisiteLocation(JsonElement element) throws Exception {
 		JsonObject object = element.getAsJsonObject();
 		if (object == null) {
 			throw new Exception("location value is not an object!");

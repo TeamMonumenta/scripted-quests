@@ -1,4 +1,4 @@
-package pe.scriptedquests.locations.quest;
+package pe.scriptedquests.quests;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -11,12 +11,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import pe.scriptedquests.locations.LocationMarker;
 import pe.scriptedquests.utils.FileUtils;
 
 public class QuestCompass {
-	protected String mQuestName;
-	ArrayList<LocationMarker> mMarkers = new ArrayList<LocationMarker>();
+	private String mQuestName;
+	private ArrayList<QuestLocation> mMarkers = new ArrayList<QuestLocation>();
 
 	public QuestCompass(World world, String fileLocation) throws Exception {
 		String content = FileUtils.readFile(fileLocation);
@@ -52,15 +51,15 @@ public class QuestCompass {
 			while (iter.hasNext()) {
 				JsonElement entry = iter.next();
 
-				mMarkers.add(new LocationMarker(world, entry));
+				mMarkers.add(new QuestLocation(world, entry));
 			}
 		}
 	}
 
-	public ArrayList<LocationMarker> getMarkers(Player player) {
-		ArrayList<LocationMarker> availableMarkers = new ArrayList<LocationMarker>();
+	public ArrayList<QuestLocation> getMarkers(Player player) {
+		ArrayList<QuestLocation> availableMarkers = new ArrayList<QuestLocation>();
 
-		for (LocationMarker marker : mMarkers) {
+		for (QuestLocation marker : mMarkers) {
 			if (marker.prerequisitesMet(player)) {
 				availableMarkers.add(marker);
 			}
@@ -69,15 +68,11 @@ public class QuestCompass {
 		return availableMarkers;
 	}
 
-	public ArrayList<LocationMarker> getMarkers() {
+	public ArrayList<QuestLocation> getMarkers() {
 		return mMarkers;
 	}
 
 	public String getQuestName() {
 		return mQuestName;
-	}
-
-	protected void addMarker(LocationMarker marker) {
-		mMarkers.add(marker);
 	}
 }

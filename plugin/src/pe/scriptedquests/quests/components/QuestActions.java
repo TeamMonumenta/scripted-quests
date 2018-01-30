@@ -1,4 +1,4 @@
-package pe.scriptedquests.npcs.quest;
+package pe.scriptedquests.quests;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -15,19 +15,13 @@ import com.google.gson.JsonObject;
 
 import pe.scriptedquests.Constants;
 import pe.scriptedquests.Plugin;
-import pe.scriptedquests.npcs.quest.actions.ActionBase;
-import pe.scriptedquests.npcs.quest.actions.ActionCommand;
-import pe.scriptedquests.npcs.quest.actions.ActionDialog;
-import pe.scriptedquests.npcs.quest.actions.ActionFunction;
-import pe.scriptedquests.npcs.quest.actions.ActionRerunComponents;
-import pe.scriptedquests.npcs.quest.actions.ActionSetScore;
 
-public class QuestActions {
-	ArrayList<ActionBase> mActions = new ArrayList<ActionBase>();
-	int mDelayTicks = 0;
+class QuestActions {
+	private ArrayList<ActionBase> mActions = new ArrayList<ActionBase>();
+	private int mDelayTicks = 0;
 
-	public QuestActions(String npcName, String displayName, EntityType entityType,
-	                    int delayTicks, JsonElement element) throws Exception {
+	QuestActions(String npcName, String displayName, EntityType entityType,
+	             int delayTicks, JsonElement element) throws Exception {
 		mDelayTicks = delayTicks;
 
 		JsonArray array = element.getAsJsonArray();
@@ -86,7 +80,7 @@ public class QuestActions {
 		}
 	}
 
-	public void doActions(Plugin plugin, Player player) {
+	void doActions(Plugin plugin, Player player) {
 		if (mDelayTicks <= 0) {
 			// If not delayed, actions can run without restrictions
 			for (ActionBase action : mActions) {

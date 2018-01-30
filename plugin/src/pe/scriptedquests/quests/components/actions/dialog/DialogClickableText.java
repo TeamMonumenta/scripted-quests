@@ -1,4 +1,4 @@
-package pe.scriptedquests.npcs.quest.actions.dialog;
+package pe.scriptedquests.quests;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -15,11 +15,11 @@ import pe.scriptedquests.Plugin;
 import pe.scriptedquests.point.AreaBounds;
 import pe.scriptedquests.point.Point;
 
-public class DialogClickableText implements DialogBase {
+class DialogClickableText implements DialogBase {
 	private ArrayList<DialogClickableTextEntry> mEntries = new ArrayList<DialogClickableTextEntry>();
 
-	public DialogClickableText(String npcName, String displayName,
-	                           EntityType entityType, JsonElement element) throws Exception {
+	DialogClickableText(String npcName, String displayName,
+	                    EntityType entityType, JsonElement element) throws Exception {
 		/*
 		 * Integer used to determine which of the available clickable entries was
 		 * clicked when a player clicks a chat message

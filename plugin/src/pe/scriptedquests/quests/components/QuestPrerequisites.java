@@ -1,4 +1,4 @@
-package pe.scriptedquests.npcs.quest;
+package pe.scriptedquests.quests;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -11,16 +11,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import pe.scriptedquests.npcs.quest.prerequisites.PrerequisiteBase;
-import pe.scriptedquests.npcs.quest.prerequisites.PrerequisiteCheckScores;
-import pe.scriptedquests.npcs.quest.prerequisites.PrerequisiteCheckTags;
-import pe.scriptedquests.npcs.quest.prerequisites.PrerequisiteItemsInInventory;
-import pe.scriptedquests.npcs.quest.prerequisites.PrerequisiteLocation;
+class QuestPrerequisites {
+	private ArrayList<PrerequisiteBase> mPrerequisites = new ArrayList<PrerequisiteBase>();
 
-public class QuestPrerequisites {
-	ArrayList<PrerequisiteBase> mPrerequisites = new ArrayList<PrerequisiteBase>();
-
-	public QuestPrerequisites(JsonElement element) throws Exception {
+	QuestPrerequisites(JsonElement element) throws Exception {
 		JsonObject object = element.getAsJsonObject();
 		if (object == null) {
 			throw new Exception("prerequisites value is not an object!");
@@ -31,7 +25,7 @@ public class QuestPrerequisites {
 			String key = ent.getKey();
 			JsonElement value = ent.getValue();
 
-			switch(key) {
+			switch (key) {
 			case "check_scores":
 				JsonObject scoreObject = value.getAsJsonObject();
 				if (scoreObject == null) {
@@ -66,7 +60,7 @@ public class QuestPrerequisites {
 		}
 	}
 
-	public boolean prerequisitesMet(Player player) {
+	boolean prerequisitesMet(Player player) {
 		for (PrerequisiteBase prerequisite : mPrerequisites) {
 			if (!prerequisite.prerequisiteMet(player)) {
 				return false;

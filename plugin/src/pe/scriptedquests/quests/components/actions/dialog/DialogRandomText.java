@@ -1,7 +1,8 @@
-package pe.scriptedquests.npcs.quest.actions.dialog;
+package pe.scriptedquests.quests;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Random;
 
 import org.bukkit.entity.Player;
 
@@ -10,10 +11,14 @@ import com.google.gson.JsonElement;
 import pe.scriptedquests.Plugin;
 import pe.scriptedquests.utils.MessagingUtils;
 
-public class DialogRawText implements DialogBase {
+class DialogRandomText implements DialogBase {
+	private String mDisplayName;
 	private ArrayList<String> mText = new ArrayList<String>();
+	private Random mRandom = new Random();
 
-	public DialogRawText(JsonElement element) throws Exception {
+	DialogRandomText(String displayName, JsonElement element) throws Exception {
+		mDisplayName = displayName;
+
 		if (element.isJsonPrimitive()) {
 			mText.add(element.getAsString());
 		} else if (element.isJsonArray()) {
@@ -22,14 +27,14 @@ public class DialogRawText implements DialogBase {
 				mText.add(iter.next().getAsString());
 			}
 		} else {
-			throw new Exception("raw_text value is neither an array nor a string!");
+			throw new Exception("random_text value is neither an array nor a string!");
 		}
 	}
 
 	@Override
 	public void sendDialog(Plugin plugin, Player player) {
-		for (String text : mText) {
-			MessagingUtils.sendRawMessage(player, text);
-		}
+		int idx = mRandom.nextInt(mText.size());
+		MessagingUtils.sendNPCMessage(player, mDisplayName, mText.get(idx));
 	}
 }
+

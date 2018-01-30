@@ -1,4 +1,4 @@
-package pe.scriptedquests.npcs.quest.actions;
+package pe.scriptedquests.quests;
 
 import org.bukkit.entity.Player;
 
@@ -6,10 +6,10 @@ import com.google.gson.JsonElement;
 
 import pe.scriptedquests.Plugin;
 
-public class ActionCommand implements ActionBase {
+class ActionCommand implements ActionBase {
 	private String mCommand;
 
-	public ActionCommand(JsonElement element) throws Exception {
+	ActionCommand(JsonElement element) throws Exception {
 		mCommand = element.getAsString();
 		if (mCommand == null) {
 			throw new Exception("Command value is not a string!");

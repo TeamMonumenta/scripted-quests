@@ -1,4 +1,4 @@
-package pe.scriptedquests.npcs.quest.actions.dialog;
+package pe.scriptedquests.quests;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -10,13 +10,10 @@ import com.google.gson.JsonElement;
 import pe.scriptedquests.Plugin;
 import pe.scriptedquests.utils.MessagingUtils;
 
-public class DialogText implements DialogBase {
-	private String mDisplayName;
+class DialogRawText implements DialogBase {
 	private ArrayList<String> mText = new ArrayList<String>();
 
-	public DialogText(String displayName, JsonElement element) throws Exception {
-		mDisplayName = displayName;
-
+	DialogRawText(JsonElement element) throws Exception {
 		if (element.isJsonPrimitive()) {
 			mText.add(element.getAsString());
 		} else if (element.isJsonArray()) {
@@ -25,14 +22,14 @@ public class DialogText implements DialogBase {
 				mText.add(iter.next().getAsString());
 			}
 		} else {
-			throw new Exception("text value is neither an array nor a string!");
+			throw new Exception("raw_text value is neither an array nor a string!");
 		}
 	}
 
 	@Override
 	public void sendDialog(Plugin plugin, Player player) {
 		for (String text : mText) {
-			MessagingUtils.sendNPCMessage(player, mDisplayName, text);
+			MessagingUtils.sendRawMessage(player, text);
 		}
 	}
 }

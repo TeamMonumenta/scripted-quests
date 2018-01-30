@@ -1,4 +1,4 @@
-package pe.scriptedquests.npcs;
+package pe.scriptedquests.quests;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -14,22 +14,21 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import pe.scriptedquests.Plugin;
-import pe.scriptedquests.npcs.quest.QuestComponent;
 import pe.scriptedquests.utils.FileUtils;
 
 /*
- * A NpcQuest object holds all the quest components belonging to an NPC with a specific name
- * Only one NpcQuest object exists for each NPC with quest interactions
+ * A QuestNpc object holds all the quest components belonging to an NPC with a specific name
+ * Only one QuestNpc object exists for each NPC with quest interactions
  * If multiple files/quests exist that use the same NPC, their QuestComponent's are
- * combined into a single NpcQuest
+ * combined into a single QuestNpc
  */
-public class NpcQuest {
+public class QuestNpc {
 	private ArrayList<QuestComponent> mComponents = new ArrayList<QuestComponent>();
 	private String mNpcName;
 	private String mDisplayName;
 	private EntityType mEntityType;
 
-	public NpcQuest(String fileLocation) throws Exception {
+	public QuestNpc(String fileLocation) throws Exception {
 		String content = FileUtils.readFile(fileLocation);
 		if (content != null && !content.isEmpty()) {
 			Gson gson = new Gson();
@@ -117,7 +116,7 @@ public class NpcQuest {
 	}
 
 	// Combines another quest using the same NPC into this one
-	public void addFromQuest(Plugin plugin, NpcQuest quest) {
+	public void addFromQuest(Plugin plugin, QuestNpc quest) {
 		if (quest.getNpcName().equals(mNpcName)) {
 			for (QuestComponent component : quest.getComponents()) {
 				mComponents.add(component);

@@ -12,7 +12,7 @@ import org.bukkit.Sound;
 import pe.scriptedquests.Constants;
 import pe.scriptedquests.Plugin;
 import pe.scriptedquests.point.AreaBounds;
-import pe.scriptedquests.npcs.quest.actions.dialog.DialogClickableTextEntry;
+import pe.scriptedquests.quests.DialogClickableTextEntry;
 
 public class QuestTrigger implements CommandExecutor {
 	private Plugin mPlugin;

@@ -13,12 +13,12 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import pe.scriptedquests.Plugin;
-import pe.scriptedquests.npcs.NpcQuest;
+import pe.scriptedquests.quests.QuestNpc;
 import pe.scriptedquests.utils.FileUtils;
 import pe.scriptedquests.utils.MessagingUtils;
 
-public class NpcManager {
-	HashMap<String, NpcQuest> mNpcs = new HashMap<String, NpcQuest>();
+public class QuestNpcManager {
+	HashMap<String, QuestNpc> mNpcs = new HashMap<String, QuestNpc>();
 
 	EnumSet<EntityType> mEntityTypes = EnumSet.noneOf(EntityType.class);
 
@@ -27,7 +27,7 @@ public class NpcManager {
 	 */
 	public void reload(Plugin plugin, CommandSender sender) {
 		String npcsLocation = plugin.getDataFolder() + File.separator +  "npcs";
-		mNpcs = new HashMap<String, NpcQuest>();
+		mNpcs = new HashMap<String, QuestNpc>();
 		ArrayList<File> listOfFiles;
 		ArrayList<String> listOfNpcs = new ArrayList<String>();
 		int numComponents = 0;
@@ -51,8 +51,8 @@ public class NpcManager {
 
 		for (File file : listOfFiles) {
 			try {
-				// Load this file into an NpcQuest object
-				NpcQuest npc = new NpcQuest(file.getPath());
+				// Load this file into a QuestNpc object
+				QuestNpc npc = new QuestNpc(file.getPath());
 
 				// Keep track of statistics for pretty printing later
 				int newComponents = npc.getComponents().size();
@@ -64,7 +64,7 @@ public class NpcManager {
 				mEntityTypes.add(npc.getEntityType());
 
 				// Check if an existing NPC already exists with quest components
-				NpcQuest existingNpc = mNpcs.get(_squashNpcName(npc.getNpcName()));
+				QuestNpc existingNpc = mNpcs.get(_squashNpcName(npc.getNpcName()));
 				if (existingNpc != null) {
 					// Existing NPC - add the new quest components to it
 					existingNpc.addFromQuest(plugin, npc);
@@ -108,7 +108,7 @@ public class NpcManager {
 		}
 	}
 
-	public NpcManager(Plugin plugin) {
+	public QuestNpcManager(Plugin plugin) {
 		reload(plugin, null);
 	}
 
@@ -124,7 +124,7 @@ public class NpcManager {
 		}
 
 		// Run the interaction if we have an NPC with that name
-		NpcQuest npc = mNpcs.get(_squashNpcName(npcName));
+		QuestNpc npc = mNpcs.get(_squashNpcName(npcName));
 		if (npc != null) {
 			return npc.interactEvent(plugin, player, _squashNpcName(npcName), entityType);
 		}

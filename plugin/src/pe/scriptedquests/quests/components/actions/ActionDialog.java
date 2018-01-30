@@ -1,4 +1,4 @@
-package pe.scriptedquests.npcs.quest.actions;
+package pe.scriptedquests.quests;
 
 import java.util.ArrayList;
 import java.util.Map.Entry;
@@ -11,17 +11,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import pe.scriptedquests.Plugin;
-import pe.scriptedquests.npcs.quest.actions.dialog.DialogBase;
-import pe.scriptedquests.npcs.quest.actions.dialog.DialogClickableText;
-import pe.scriptedquests.npcs.quest.actions.dialog.DialogRawText;
-import pe.scriptedquests.npcs.quest.actions.dialog.DialogRandomText;
-import pe.scriptedquests.npcs.quest.actions.dialog.DialogText;
 
-public class ActionDialog implements ActionBase {
-	ArrayList<DialogBase> mDialogs = new ArrayList<DialogBase>();
+class ActionDialog implements ActionBase {
+	private ArrayList<DialogBase> mDialogs = new ArrayList<DialogBase>();
 
-	public ActionDialog(String npcName, String displayName,
-	                    EntityType entityType, JsonElement element) throws Exception {
+	ActionDialog(String npcName, String displayName,
+	             EntityType entityType, JsonElement element) throws Exception {
 		JsonObject object = element.getAsJsonObject();
 		if (object == null) {
 			throw new Exception("dialog value is not an object!");

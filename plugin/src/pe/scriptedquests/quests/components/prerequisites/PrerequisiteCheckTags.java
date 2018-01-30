@@ -1,4 +1,4 @@
-package pe.scriptedquests.npcs.quest.prerequisites;
+package pe.scriptedquests.quests;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -10,11 +10,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-public class PrerequisiteCheckTags implements PrerequisiteBase {
-	Set<String> mTags;
-	Set<String> mNotTags;
+class PrerequisiteCheckTags implements PrerequisiteBase {
+	private Set<String> mTags;
+	private Set<String> mNotTags;
 
-	public PrerequisiteCheckTags(JsonElement element) throws Exception {
+	PrerequisiteCheckTags(JsonElement element) throws Exception {
 		JsonArray array = element.getAsJsonArray();
 		if (array == null) {
 			throw new Exception("tags value is not an array!");

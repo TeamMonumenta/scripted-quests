@@ -1,4 +1,4 @@
-package pe.scriptedquests.npcs.quest.prerequisites;
+package pe.scriptedquests.quests;
 
 import java.util.Map.Entry;
 import java.util.Set;
@@ -9,10 +9,10 @@ import com.google.gson.JsonElement;
 
 import pe.scriptedquests.utils.ScoreboardUtils;
 
-public class PrerequisiteCheckScores implements PrerequisiteBase {
-	protected class CheckScore {
+class PrerequisiteCheckScores implements PrerequisiteBase {
+	private class CheckScore {
 		// This should be an enum, but idk how to set those up. -Nick
-		int mOperation;
+		private int mOperation;
 		private static final int CHECK_EXACT = 1;
 		private static final int CHECK_OTHER = 2;
 		private static final int CHECK_RANGE = 3;
@@ -53,14 +53,14 @@ public class PrerequisiteCheckScores implements PrerequisiteBase {
 		}
 	}
 
-	String mScoreName;
-	CheckScore mCheckScore;
+	private String mScoreName;
+	private CheckScore mCheckScore;
 
-	public PrerequisiteCheckScores(String scoreName, JsonElement value) throws Exception {
+	PrerequisiteCheckScores(String scoreName, JsonElement value) throws Exception {
 		mScoreName = scoreName;
 
 		if (value.isJsonPrimitive()) {
-			//	Single value
+			//  Single value
 
 			// First try to parse the item as an integer
 			try {
@@ -72,7 +72,8 @@ public class PrerequisiteCheckScores implements PrerequisiteBase {
 				if (valueAsString != null) {
 					mCheckScore = new CheckScore(valueAsString);
 				} else {
-					throw new Exception("check_score value for scoreboard '" + mScoreName + "' is neither an integer nor a string!");
+					throw new Exception("check_score value for scoreboard '" + mScoreName +
+					                    "' is neither an integer nor a string!");
 				}
 			}
 		} else {

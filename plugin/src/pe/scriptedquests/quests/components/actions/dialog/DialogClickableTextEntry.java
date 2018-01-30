@@ -1,4 +1,4 @@
-package pe.scriptedquests.npcs.quest.actions.dialog;
+package pe.scriptedquests.quests;
 
 import java.util.Map.Entry;
 import java.util.Set;
@@ -10,7 +10,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import pe.scriptedquests.Plugin;
-import pe.scriptedquests.npcs.quest.QuestActions;
 import pe.scriptedquests.utils.MessagingUtils;
 
 public class DialogClickableTextEntry implements DialogBase {

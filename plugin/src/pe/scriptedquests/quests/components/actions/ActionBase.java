@@ -1,9 +1,9 @@
-package pe.scriptedquests.npcs.quest.actions;
+package pe.scriptedquests.quests;
 
 import org.bukkit.entity.Player;
 
 import pe.scriptedquests.Plugin;
 
-public interface ActionBase {
+interface ActionBase {
 	public void doAction(Plugin plugin, Player player);
 }

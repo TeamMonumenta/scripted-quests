@@ -11,8 +11,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import pe.scriptedquests.Plugin;
-import pe.scriptedquests.locations.LocationMarker;
-import pe.scriptedquests.locations.quest.*;
+import pe.scriptedquests.quests.QuestLocation;
+import pe.scriptedquests.quests.QuestCompass;
 import pe.scriptedquests.utils.FileUtils;
 import pe.scriptedquests.utils.MessagingUtils;
 import pe.scriptedquests.utils.ScoreboardUtils;
@@ -56,7 +56,7 @@ public class QuestCompassManager {
 
 		for (File file : listOfFiles) {
 			try {
-				// Load this file into an NpcQuest object
+				// Load this file into a QuestNpc object
 				QuestCompass quest = new QuestCompass(plugin.mWorld, file.getPath());
 
 				// Keep track of statistics for pretty printing later
@@ -103,10 +103,10 @@ public class QuestCompassManager {
 	}
 
 	private int _showCurrentQuest(Player player, int index) {
-		List<LocationMarker> markers = new ArrayList<LocationMarker>();
+		List<QuestLocation> markers = new ArrayList<QuestLocation>();
 		List<String> markerTitles = new ArrayList<String>();
 		for (QuestCompass quest : mQuests) {
-			List <LocationMarker> questMarkers = quest.getMarkers(player);
+			List <QuestLocation> questMarkers = quest.getMarkers(player);
 
 			// Add all the valid markers to a list, and add their titles to another list
 			markers.addAll(quest.getMarkers(player));
@@ -129,7 +129,7 @@ public class QuestCompassManager {
 		if (markers.size() == 0) {
 			MessagingUtils.sendActionBarMessage(mPlugin, player, "You have no active quest.");
 		} else {
-			LocationMarker currentMarker = markers.get(index);
+			QuestLocation currentMarker = markers.get(index);
 
 			MessagingUtils.sendRawMessage(player, markerTitles.get(index) + ": " + currentMarker.getMessage());
 

@@ -1,4 +1,4 @@
-package pe.scriptedquests.npcs.quest.prerequisites;
+package pe.scriptedquests.quests;
 
 import java.util.Map.Entry;
 import java.util.Set;
@@ -12,13 +12,13 @@ import com.google.gson.JsonObject;
 
 import pe.scriptedquests.utils.InventoryUtils;
 
-public class PrerequisiteItemsInInventory implements PrerequisiteBase {
-	String mName = "";
-	String mLore = "";
-	Material mType = Material.AIR;
-	int mCount = 1;
+class PrerequisiteItemsInInventory implements PrerequisiteBase {
+	private String mName = "";
+	private String mLore = "";
+	private Material mType = Material.AIR;
+	private int mCount = 1;
 
-	public PrerequisiteItemsInInventory(JsonElement element) throws Exception {
+	PrerequisiteItemsInInventory(JsonElement element) throws Exception {
 		JsonObject object = element.getAsJsonObject();
 		if (object == null) {
 			throw new Exception("items_in_inventory value is not an object!");

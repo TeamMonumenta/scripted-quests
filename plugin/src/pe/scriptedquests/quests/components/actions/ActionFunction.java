@@ -1,4 +1,4 @@
-package pe.scriptedquests.npcs.quest.actions;
+package pe.scriptedquests.quests;
 
 import org.bukkit.entity.Player;
 
@@ -6,10 +6,10 @@ import com.google.gson.JsonElement;
 
 import pe.scriptedquests.Plugin;
 
-public class ActionFunction implements ActionBase {
+class ActionFunction implements ActionBase {
 	private String mFunctionFileName;
 
-	public ActionFunction(JsonElement element) throws Exception {
+	ActionFunction(JsonElement element) throws Exception {
 		mFunctionFileName = element.getAsString();
 		if (mFunctionFileName == null) {
 			throw new Exception("function value is not a string!");

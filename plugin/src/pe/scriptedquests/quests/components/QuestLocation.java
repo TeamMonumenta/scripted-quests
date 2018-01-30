@@ -1,4 +1,4 @@
-package pe.scriptedquests.locations;
+package pe.scriptedquests.quests;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -7,14 +7,12 @@ import org.bukkit.World;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import pe.scriptedquests.npcs.quest.QuestPrerequisites;
-
-public class LocationMarker {
+public class QuestLocation {
 	private QuestPrerequisites mPrerequisites;
 	private Location mLoc;
 	private String mMessage;
 
-	public LocationMarker(World world, JsonElement element) throws Exception {
+	public QuestLocation(World world, JsonElement element) throws Exception {
 		JsonObject object = element.getAsJsonObject();
 		if (object == null) {
 			throw new Exception("locations value is not an object!");
@@ -65,7 +63,7 @@ public class LocationMarker {
 		return mMessage;
 	}
 
-	public boolean prerequisitesMet(Player player) {
+	boolean prerequisitesMet(Player player) {
 		return mPrerequisites.prerequisitesMet(player);
 	}
 }

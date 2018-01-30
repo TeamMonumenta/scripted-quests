@@ -1,4 +1,4 @@
-package pe.scriptedquests.npcs.quest;
+package pe.scriptedquests.quests;
 
 import java.util.Map.Entry;
 import java.util.Set;
@@ -11,11 +11,11 @@ import com.google.gson.JsonObject;
 
 import pe.scriptedquests.Plugin;
 
-public class QuestComponent {
+class QuestComponent {
 	private QuestPrerequisites mPrerequisites = null;
 	private QuestActions mActions = null;
 
-	public QuestComponent(String npcName, String displayName,
+	QuestComponent(String npcName, String displayName,
 	                      EntityType entityType, JsonElement element) throws Exception {
 		JsonObject object = element.getAsJsonObject();
 		if (object == null) {
@@ -34,7 +34,7 @@ public class QuestComponent {
 			String key = ent.getKey();
 
 			if (!key.equals("prerequisites") && !key.equals("actions")
-				&& !key.equals("delay_actions_by_ticks")) {
+			&& !key.equals("delay_actions_by_ticks")) {
 				throw new Exception("Unknown quest_components key: " + key);
 			}
 
@@ -57,17 +57,8 @@ public class QuestComponent {
 		}
 	}
 
-	private boolean prerequisitesMet(Player player) {
-		if (mPrerequisites != null) {
-			return mPrerequisites.prerequisitesMet(player);
-		}
-
-		// Default is no pre-requisites
-		return true;
-	}
-
-	public void doActionsIfPrereqsMet(Plugin plugin, Player player) {
-		if (prerequisitesMet(player)) {
+	void doActionsIfPrereqsMet(Plugin plugin, Player player) {
+		if (mPrerequisites == null || mPrerequisites.prerequisitesMet(player)) {
 			mActions.doActions(plugin, player);
 		}
 	}

@@ -1,16 +1,16 @@
-package pe.scriptedquests.npcs.quest.actions;
+package pe.scriptedquests.quests;
 
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import pe.scriptedquests.Plugin;
 
-public class ActionRerunComponents implements ActionBase {
-	String mNpcName;
-	EntityType mEntityType;
-	boolean mLocked = false;
+class ActionRerunComponents implements ActionBase {
+	private String mNpcName;
+	private EntityType mEntityType;
+	private boolean mLocked = false;
 
-	public ActionRerunComponents(String npcName, EntityType entityType) {
+	ActionRerunComponents(String npcName, EntityType entityType) {
 		mNpcName = npcName;
 		mEntityType = entityType;
 	}

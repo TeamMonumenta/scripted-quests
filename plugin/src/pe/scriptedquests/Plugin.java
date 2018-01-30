@@ -9,12 +9,12 @@ import pe.scriptedquests.commands.QuestTrigger;
 import pe.scriptedquests.commands.ReloadQuests;
 import pe.scriptedquests.listeners.EntityListener;
 import pe.scriptedquests.listeners.PlayerListener;
-import pe.scriptedquests.managers.NpcManager;
+import pe.scriptedquests.managers.QuestNpcManager;
 import pe.scriptedquests.managers.QuestCompassManager;
 
 public class Plugin extends JavaPlugin {
 	public QuestCompassManager mQuestCompassManager;
-	public NpcManager mNpcManager;
+	public QuestNpcManager mNpcManager;
 
 	public World mWorld;
 
@@ -32,7 +32,7 @@ public class Plugin extends JavaPlugin {
 		getCommand("questTrigger").setExecutor(new QuestTrigger(this));
 
 		mQuestCompassManager = new QuestCompassManager(this);
-		mNpcManager = new NpcManager(this);
+		mNpcManager = new QuestNpcManager(this);
 	}
 
 	//	Logic that is performed upon disabling the plugin.
