@@ -12,14 +12,16 @@ import com.google.gson.JsonObject;
 
 public class PrerequisiteCheckTags implements PrerequisiteBase {
 	Set<String> mTags;
+	Set<String> mNotTags;
 
 	public PrerequisiteCheckTags(JsonElement element) throws Exception {
 		JsonArray array = element.getAsJsonArray();
 		if (array == null) {
-			throw new Exception("actions value is not an array!");
+			throw new Exception("tags value is not an array!");
 		}
 
 		mTags = new HashSet<>();
+		mNotTags = new HashSet<>();
 
 		// Add all array entries
 		Iterator<JsonElement> iter = array.iterator();
@@ -29,13 +31,28 @@ public class PrerequisiteCheckTags implements PrerequisiteBase {
 				throw new Exception("tag value is not a string!");
 			}
 
-			mTags.add(tag);
+			if (tag.charAt(0) == '!') {
+				mNotTags.add(tag.substring(1));
+			} else {
+				mTags.add(tag);
+			}
 		}
 	}
 
 	@Override
 	public boolean prerequisiteMet(Player player) {
 		Set<String> playerTags = player.getScoreboardTags();
-		return playerTags.containsAll(mTags);
+		if (playerTags.containsAll(mTags)) {
+			Iterator<String> notTheseIterator = mNotTags.iterator();
+			while (notTheseIterator.hasNext()) {
+				String notThis = notTheseIterator.next();
+				if (playerTags.contains(notThis)) {
+					return false;
+				}
+			}
+			return true;
+		} else {
+			return false;
+		}
 	}
 }

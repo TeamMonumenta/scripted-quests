@@ -22,11 +22,11 @@
     <div class='row' style='padding-bottom: 15px;'>
         <div class='col-md-12'>
             <h1>Monumenta Quest Editor</h1>
+            <p>Quest Compass data is stored as a separate file, as quests data is npc specific, and compass data is quest specific.</p>
+            <br>
             <a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html">Entity Types</a>
             <br>
             <a href="https://minecraft.gamepedia.com/Formatting_codes">Minecraft Formatting Codes</a>
-            <br>
-            <p>Quest Compass data is stored as a separate file, as quests data is npc specific, and compass data is quest specific.</p>
         </div>
     </div>
     <div class='row' style='padding-bottom: 15px;'>
@@ -136,7 +136,7 @@
                         check_tags: {
                             propertyOrder: 2,
                             title: "check_tags",
-                            description: "Check if all listed tags are on the player",
+                            description: "Check if all listed tags are on the player; if a listed tag starts with !, check if that tag is not on the player instead",
                             type: "array",
                             items: {
                               type: "string"
