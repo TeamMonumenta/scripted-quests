@@ -47,31 +47,21 @@ Grab one of the plugin jar files from the [release](release) folder. Naming sche
 Or compile it yourself using the included Ant build script.
 
 ## <a name="get-started"></a>Getting Started / Tutorial
-This plugin will likely only work with Spigot 1.12.2.
+This plugin only currently has compiled versions for Spigot 1.12.2. It will probably work with older versions but you must compile it yourself.
 
-Install it like all spigot plugins by placing it in your plugins folder.
-
-Start your spigot server. This should create some folders under
-`plugins/ScriptedQuests/`
-
-Summon a test villager: `/summon minecraft:villager ~ ~ ~ {CustomName:"Aimee"}`
-
-Create the needed scoreboard: `/scoreboard objectives add Quest01 dummy`
-
-Install the quest & compass config files:
-- `samples/sample-quest.json` -> `plugins/ScriptedQuests/npc/sample-quest.json`
-- `samples/sample-compass.json` -> `plugins/ScriptedQuests/compass/sample-compass.json`
-
-Reload the quest configuration: `/reloadquests`
-
-Left-click Aimee to talk to her and start the quest.
-
-Give yourself a compass and right-click it to cycle available quests
-
-Give yourself the quest item:
-`/give @s minecraft:dye 1 11 {display:{Lore:["QuestItem"]}}`
-
-Talk to Aimee again to complete the quest
+- Install it like all spigot plugins by placing it in your plugins folder.
+- Start your spigot server. This should create some folders under
+  `plugins/ScriptedQuests/`
+- Summon a test villager: `/summon minecraft:villager ~ ~ ~ {CustomName:"Aimee"}`
+- Create the needed scoreboard: `/scoreboard objectives add Quest01 dummy`
+- Install the quest & compass config files:
+	- `samples/sample-quest.json` -> `plugins/ScriptedQuests/npc/sample-quest.json`
+	- `samples/sample-compass.json` -> `plugins/ScriptedQuests/compass/sample-compass.json`
+- Reload the quest configuration: `/reloadquests`
+- Left-click Aimee to talk to her and start the quest.
+- Give yourself a compass and right-click it to cycle available quests
+- Give yourself the quest item: `/give @s minecraft:dye 1 11 {display:{Lore:["QuestItem"]}}`
+- Talk to Aimee again to complete the quest
 
 ## <a name="web-editor"></a>Creating Quests with the Online Editor
 Creating these by hand is a pain - use the web editor! The web editor not only
