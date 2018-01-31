@@ -1,7 +1,18 @@
 # Scripted Quests
 JSON-driven Minecraft Spigot plugin for creating quests
 
-## Description
+# Table of Contents
+
+- [Description](#description)
+- [Sample](#sample)
+- [Download](#download)
+- [Getting Started / Tutorial](#get-started)
+- [Creating Quests with the Online Editor](#web-editor)
+- [Structure of a Quests File](#structure)
+- [List of Commands / Permissions](#commands)
+- [Current Capabilities](#capabilities)
+
+## <a name="description"></a>Description
 This plugin was developed for use with Monumenta, a Minecraft
 Complete-The-Monument Massively-Multiplayer-Online (CTM MMO) server.
 
@@ -13,7 +24,7 @@ damage and displaying dialog, if any).
 This plugin has two components - the quest interaction system, and a quest
 compass which helps players navigate to the locations that the NPC's send them to.
 
-## Sample
+## <a name="sample"></a>Sample
 Here is an example of interacting with a villager named Aimee:
 ![Example quest interaction](./samples/quest.png)
 
@@ -28,14 +39,14 @@ ordinary compass will make it point to some coordinates. For example:
 
 ![Example quest compass](./samples/compass.png)
 
-## Download
+## <a name="download"></a>Download
 Grab one of the plugin jar files from the [release](release) folder. Naming scheme:
 
 `ScriptedQuests_<Target.Minecraft.Version>_<Plugin.Version>-<CompileDate>-<CompileTime>`
 
 Or compile it yourself using the included Ant build script.
 
-## Getting Started / Tutorial
+## <a name="get-started"></a>Getting Started / Tutorial
 This plugin will likely only work with Spigot 1.12.2.
 
 Install it like all spigot plugins by placing it in your plugins folder.
@@ -62,7 +73,7 @@ Give yourself the quest item:
 
 Talk to Aimee again to complete the quest
 
-## Creating quests files with the web editor
+## <a name="web-editor"></a>Creating Quests with the Online Editor
 Creating these by hand is a pain - use the web editor! The web editor not only
 helps you structure things correctly but is also the primary documentation for
 the various quest options
@@ -70,7 +81,7 @@ the various quest options
 - Quest Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/quest_editor.html
 - Compass Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/quest_compass_editor.html
 
-## Structure of a quests file:
+## <a name="structure"></a>Structure of a Quests File:
 Each quest file has the following info:
 - What NPC this quest is for (name, entity type)
 - A list of quest components
@@ -79,7 +90,7 @@ Quest components contain optional pre-requisites and actions. If the
 pre-requisites are met, the actions are run. Every time a player interacts with
 an NPC, quest components are run in-order (more than one may be executed).
 
-## List of commands:
+## <a name="commands"></a>List of Commands / Permissions
 `/interactNpc <npcName> [EntityType]`
 - permission: `scriptedquests.interactnpc`
 - EntityType is optional (default = VILLAGER) and can be chosen from this
@@ -108,7 +119,7 @@ an NPC, quest components are run in-order (more than one may be executed).
 - Provides helpful debugging to resolve problems with any files that fail to load.
 - Hover over the error messages in chat for more information.
 
-## Current Capabilities:
+## <a name="capabilities"></a>Current Capabilities:
 prerequisites:
 - check\_scores - Checks one or more scoreboard values for the player
 - check\_tags - Checks if the player has (or must not have) specific scoreboard tags
@@ -124,6 +135,4 @@ actions:
 - function - Runs a function using the console "as" the player (@s = player)
 - command - Runs a command using the console
 - rerun-components - Re-runs all components for this NPC from the beginning
-
-
 
