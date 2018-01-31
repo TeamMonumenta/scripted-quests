@@ -5,6 +5,7 @@ import org.bukkit.World;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import pe.scriptedquests.commands.InteractNpc;
 import pe.scriptedquests.commands.QuestTrigger;
 import pe.scriptedquests.commands.ReloadQuests;
 import pe.scriptedquests.listeners.EntityListener;
@@ -30,6 +31,7 @@ public class Plugin extends JavaPlugin {
 
 		getCommand("reloadQuests").setExecutor(new ReloadQuests(this));
 		getCommand("questTrigger").setExecutor(new QuestTrigger(this));
+		getCommand("interactNpc").setExecutor(new InteractNpc(this));
 
 		mQuestCompassManager = new QuestCompassManager(this);
 		mNpcManager = new QuestNpcManager(this);

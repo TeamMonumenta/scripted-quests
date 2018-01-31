@@ -79,8 +79,36 @@ Quest components contain optional pre-requisites and actions. If the
 pre-requisites are met, the actions are run. Every time a player interacts with
 an NPC, quest components are run in-order (more than one may be executed).
 
-## Current Capabilities:
+## List of commands:
+`/interactNpc <npcName> [EntityType]`
+- permission: `scriptedquests.interactnpc`
+- EntityType is optional (default = VILLAGER) and can be chosen from this
+  list: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html
+- This command can be used to build location-based quests that don't
+  involve clicking on an NPC. To do this, use a repeating command block.
+  with a command of this form: `execute @p[r=5] ~ ~ ~ interactnpc Aimee VILLAGER`
+- You will need to structure your QuestComponent so that the pre-requisites
+  are only met once if the player will stay in that location for more than
+  one invokation of interactnpc.
+- Note that running this command every tick is likely unnecessary for most
+  use cases - instead, attach it the command to a slow clock instead.
 
+`/questTrigger`
+- permission: `scriptedquests.questtrigger`
+- **Players that interact with clickable text need to have this permission node.**
+- This command is executed by players when they click on chat options.
+- This command was designed for security. Players will not be able to use it to
+  trigger dialog options except those presented by the NPC they are currently
+  interacting with. They also will not be able to click on the same message
+  twice.
+
+`/reloadQuests`
+- permission: `scriptedquests.reloadquests`
+- Reloads Quest NPCs and Quest Compass.
+- Provides helpful debugging to resolve problems with any files that fail to load.
+- Hover over the error messages in chat for more information.
+
+## Current Capabilities:
 prerequisites:
 - check\_scores - Checks one or more scoreboard values for the player
 - check\_tags - Checks if the player has (or must not have) specific scoreboard tags
