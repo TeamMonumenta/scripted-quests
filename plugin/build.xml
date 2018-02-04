@@ -4,7 +4,7 @@
 		<format property="TODAY" pattern="yyyyMMdd-HHmmss"  locale="en,US" />
 	</tstamp>
 
-	<available file="../utils" property="pmd.exists" value="anything"/>
+	<available file="utils" property="pmd.exists" value="anything"/>
     <property environment="env"/>
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.8"/>
@@ -36,7 +36,7 @@
 	<target name="pmd" if="pmd.exists">
 		<path id="pmd.classpath">
 			<pathelement location="${basedir}"/>
-			<fileset dir="../utils/pmd-bin-5.8.1/lib/">
+			<fileset dir="utils/pmd-bin-5.8.1/lib/">
 				<include name="*.jar"/>
 			</fileset>
 		</path>
