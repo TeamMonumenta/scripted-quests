@@ -39,6 +39,11 @@ ordinary compass will make it point to some coordinates. For example:
 
 ![Example quest compass](./samples/compass.png)
 
+You can also create quests that involve the player dying in-game. These "death"
+quest elements can trigger actions when the player dies if they meet specific
+pre-requisites. This can involve keeping the player's inventory, respawning at
+a different location than normal, etc.
+
 ## <a name="download"></a>Download
 Grab one of the plugin jar files from the [release](release) folder. Naming scheme:
 
@@ -69,7 +74,8 @@ helps you structure things correctly but is also the primary documentation for
 the various quest options
 
 - Quest Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/quest_editor.html
-- Compass Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/quest_compass_editor.html
+- Quest Compass Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/quest_compass_editor.html
+- Quest Death Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/quest_death_editor.html
 
 ## <a name="structure"></a>Structure of a Quests File:
 Each quest file has the following info:
@@ -125,4 +131,3 @@ actions:
 - function - Runs a function using the console "as" the player (@s = player)
 - command - Runs a command using the console
 - rerun-components - Re-runs all components for this NPC from the beginning
-
