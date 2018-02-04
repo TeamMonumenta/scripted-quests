@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>Monumenta Quest Editor</title>
+    <title>ScriptedQuests Compass Editor</title>
 
     <!-- Foundation CSS framework (Bootstrap and jQueryUI also supported) -->
     <link rel='stylesheet' href='//cdn.jsdelivr.net/bootstrap/3.2.0/css/bootstrap.css'>
@@ -21,7 +21,7 @@
 <div class='container'>
     <div class='row' style='padding-bottom: 15px;'>
         <div class='col-md-12'>
-            <h1>Monumenta Quest Editor</h1>
+            <h1>ScriptedQuests Compass Editor</h1>
             <p>Quest Compass data is stored as a separate file, as quests data is npc specific, and compass data is quest specific.</p>
         </div>
     </div>
@@ -45,6 +45,9 @@
 
     // Initialize the editor
     var editor = new JSONEditor(document.getElementById('editor_holder'),{
+		// Enable fetching schemas via ajax
+		ajax: true,
+
         // The schema for the editor
         schema: {
             title: "Quest Compass",
@@ -90,17 +93,17 @@
                         prerequisites: {
                             required: true,
                             propertyOrder: 1,
-                            $ref: "#/definitions/prerequisites"
+                            $ref: "schema/prerequisites.json"
                         },
                         x: {
                             required: true,
                             propertyOrder: 2,
-                            $ref: "#/definitions/coordinate"
+							$ref: "schema/coordinate.json",
                         },
                         z: {
                             required: true,
                             propertyOrder: 3,
-                            $ref: "#/definitions/coordinate"
+							$ref: "schema/coordinate.json",
                         },
                         message: {
                             required: true,
@@ -109,163 +112,6 @@
                             description: "Text to display in chat when checking a quest",
                             type: "string"
                         }
-                    }
-                },
-                prerequisites: {
-                    title: "prerequisites",
-                    type: "object",
-                    defaultProperties: [],
-                    additionalProperties:false,
-                    properties: {
-                        check_scores: {
-                            propertyOrder: 1,
-                            title: "check_scores",
-                            description: "Checks that the player has the specified scoreboard value(s). Click Properties, then type in the scoreboard name in the input box and click the 'add' button. Scoreboards are case-sensitive",
-                            type: "object",
-                            patternProperties:{
-                                ".*":{
-                                    $ref: "#/definitions/check_score"
-                                }
-                            }
-                        },
-                        check_tags: {
-                            propertyOrder: 2,
-                            title: "check_tags",
-                            description: "Check if all listed tags are on the player; if a listed tag starts with !, check if that tag is not on the player instead",
-                            type: "array",
-                            items: {
-                              type: "string"
-                            }
-                        },
-                        items_in_inventory: {
-                            propertyOrder: 3,
-                            title: "items_in_inventory",
-                            description: "Checks that all of the specified items are present in the player's inventory",
-                            type: "array",
-                            minItems: 1,
-                            items: {
-                                title: "Item",
-                                description: "Checks that a specific item stack exists in the player's inventory. All conditions given here must match to succeed. All fields are optional, but at least one of (lore|name|type) must be specified. Items found are not removed.",
-                                type: "object",
-                                defaultProperties: [],
-                                additionalProperties:false,
-                                properties: {
-                                    lore: {
-                                        propertyOrder: 1,
-                                        title: "lore",
-                                        description: "Matches if any line of lore text *contains* this string.",
-                                        type: "string"
-                                    },
-                                    name: {
-                                        propertyOrder: 2,
-                                        title: "name",
-                                        description: "Matches if the item name *contains* this string.",
-                                        type: "string"
-                                    },
-                                    type: {
-                                        propertyOrder: 3,
-                                        title: "type",
-                                        description: "Matches if the item type is exactly this Material. List of available materials can be found here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html",
-                                        type: "string"
-                                    },
-                                    count: {
-                                        propertyOrder: 4,
-                                        title: "count",
-                                        description: "The minimum number of items matching the specified lore/name/type that must be present to succeed. If 0, will succeed only if no matched items are present. This will match items in multiple stacks, for example a stack of 5 and a stack of 8 will match a count of 10.",
-                                        type: "integer",
-                                        minimum: 1,
-                                        default: 1
-                                    }
-                                }
-                            }
-                        },
-                        location: {
-                            propertyOrder: 4,
-                            title: "location",
-                            description: "Checks that the player is inside the specified location.",
-                            type: "object",
-                            additionalProperties:false,
-                            properties: {
-                                x1: {
-                                    required: true,
-                                    $ref: "#/definitions/coordinate",
-                                    propertyOrder: 1,
-                                },
-                                y1: {
-                                    required: true,
-                                    $ref: "#/definitions/coordinate",
-                                    propertyOrder: 1,
-                                },
-                                z1: {
-                                    required: true,
-                                    $ref: "#/definitions/coordinate",
-                                    propertyOrder: 1,
-                                },
-                                x2: {
-                                    required: true,
-                                    $ref: "#/definitions/coordinate",
-                                    propertyOrder: 1,
-                                },
-                                y2: {
-                                    required: true,
-                                    $ref: "#/definitions/coordinate",
-                                    propertyOrder: 1,
-                                },
-                                z2: {
-                                    required: true,
-                                    $ref: "#/definitions/coordinate",
-                                    propertyOrder: 1,
-                                }
-                            }
-                        }
-                    }
-                },
-                coordinate: {
-                    type: "integer",
-                    minimum: -29999984,
-                    maximum: 29999984
-                },
-                check_score: {
-                    headerTemplate: "{{i}}",
-                    options: {
-                        "keep_oneof_values":false
-                    },
-                    oneOf: [
-                      {
-                        title: "Exactly",
-                        $ref: "#/definitions/score"
-                      },
-                      {
-                        title: "Range",
-                        type:"object",
-                        properties: {
-                          min: {
-                            title: "Minimum",
-                            $ref: "#/definitions/score"
-                          },
-                          max: {
-                            title: "Maximum",
-                            $ref: "#/definitions/score"
-                          }
-                        }
-                      },
-                      {
-                        title: "Matches score",
-                        type:"string"
-                      }
-                    ]
-                },
-                score: {
-                    type: "integer",
-                    minimum: -2147483648,
-                    maximum: 2147483647
-                },
-                check_tags: {
-                    title: "check_tags",
-                    description: "Check if all listed tags are on the player",
-                    type: "array",
-                    items: {
-                      type: "string"
                     }
                 }
             }

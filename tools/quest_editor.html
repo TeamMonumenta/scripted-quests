@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>Monumenta Quest Editor</title>
+    <title>ScriptedQuests Quest Editor</title>
 
     <!-- Foundation CSS framework (Bootstrap and jQueryUI also supported) -->
     <link rel='stylesheet' href='//cdn.jsdelivr.net/bootstrap/3.2.0/css/bootstrap.css'>
@@ -21,7 +21,7 @@
 <div class='container'>
     <div class='row' style='padding-bottom: 15px;'>
         <div class='col-md-12'>
-            <h1>Monumenta Quest Editor</h1>
+            <h1>ScriptedQuests Quest Editor</h1>
             <p>Quest Compass data is stored as a separate file, as quests data is npc specific, and compass data is quest specific.</p>
             <br>
             <a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html">Entity Types</a>
@@ -49,9 +49,12 @@
 
     // Initialize the editor
     var editor = new JSONEditor(document.getElementById('editor_holder'),{
+		// Enable fetching schemas via ajax
+		ajax: true,
+
         // The schema for the editor
         schema: {
-            title: "Quest",
+            title: "Quest NPC",
             defaultProperties: [
                 "npc",
                 "quest_components"
@@ -103,338 +106,20 @@
                     properties: {
                         prerequisites: {
                             propertyOrder: 1,
-                            $ref: "#/definitions/prerequisites"
+                            required: false,
+                            $ref: "schema/prerequisites.json",
                         },
                         delay_actions_by_ticks: {
-                            propertyOrder: 2,
-                            $ref: "#/definitions/delay_actions_by_ticks"
+                            "propertyOrder": 2,
+                            required: false,
+                            "$ref": "schema/delay_actions_by_ticks.json"
                         },
                         actions: {
                             propertyOrder: 3,
                             required: true,
-                            $ref: "#/definitions/actions"
+                            $ref: "schema/actions.json"
                         }
                     }
-                },
-                prerequisites: {
-                    title: "prerequisites",
-                    type: "object",
-                    defaultProperties: [],
-                    additionalProperties:false,
-                    properties: {
-                        check_scores: {
-                            propertyOrder: 1,
-                            title: "check_scores",
-                            description: "Checks that the player has the specified scoreboard value(s). Click Properties, then type in the scoreboard name in the input box and click the 'add' button. Scoreboards are case-sensitive",
-                            type: "object",
-                            patternProperties:{
-                                ".*":{
-                                    $ref: "#/definitions/check_score"
-                                }
-                            }
-                        },
-                        check_tags: {
-                            propertyOrder: 2,
-                            title: "check_tags",
-                            description: "Check if all listed tags are on the player; if a listed tag starts with !, check if that tag is not on the player instead",
-                            type: "array",
-                            items: {
-                              type: "string"
-                            }
-                        },
-                        items_in_inventory: {
-                            propertyOrder: 3,
-                            title: "items_in_inventory",
-                            description: "Checks that all of the specified items are present in the player's inventory",
-                            type: "array",
-                            minItems: 1,
-                            items: {
-                                title: "Item",
-                                description: "Checks that a specific item stack exists in the player's inventory. All conditions given here must match to succeed. All fields are optional, but at least one of (lore|name|type) must be specified. Items found are not removed.",
-                                type: "object",
-                                defaultProperties: [],
-                                additionalProperties:false,
-                                properties: {
-                                    lore: {
-                                        propertyOrder: 1,
-                                        title: "lore",
-                                        description: "Matches if any line of lore text *contains* this string.",
-                                        type: "string"
-                                    },
-                                    name: {
-                                        propertyOrder: 2,
-                                        title: "name",
-                                        description: "Matches if the item name *contains* this string.",
-                                        type: "string"
-                                    },
-                                    type: {
-                                        propertyOrder: 3,
-                                        title: "type",
-                                        description: "Matches if the item type is exactly this Material. List of available materials can be found here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html",
-                                        type: "string"
-                                    },
-                                    count: {
-                                        propertyOrder: 4,
-                                        title: "count",
-                                        description: "The minimum number of items matching the specified lore/name/type that must be present to succeed. If 0, will succeed only if no matched items are present. This will match items in multiple stacks, for example a stack of 5 and a stack of 8 will match a count of 10.",
-                                        type: "integer",
-                                        minimum: 1,
-                                        default: 1
-                                    }
-                                }
-                            }
-                        },
-                        location: {
-                            propertyOrder: 4,
-                            title: "location",
-                            description: "Checks that the player is inside the specified location.",
-                            type: "object",
-                            additionalProperties:false,
-                            properties: {
-                                x1: {
-                                    required: true,
-                                    $ref: "#/definitions/coordinate",
-                                    propertyOrder: 1,
-                                },
-                                y1: {
-                                    required: true,
-                                    $ref: "#/definitions/coordinate",
-                                    propertyOrder: 1,
-                                },
-                                z1: {
-                                    required: true,
-                                    $ref: "#/definitions/coordinate",
-                                    propertyOrder: 1,
-                                },
-                                x2: {
-                                    required: true,
-                                    $ref: "#/definitions/coordinate",
-                                    propertyOrder: 1,
-                                },
-                                y2: {
-                                    required: true,
-                                    $ref: "#/definitions/coordinate",
-                                    propertyOrder: 1,
-                                },
-                                z2: {
-                                    required: true,
-                                    $ref: "#/definitions/coordinate",
-                                    propertyOrder: 1,
-                                }
-                            }
-                        }
-                    }
-                },
-                actions: {
-                    title: "actions",
-                    type: "array",
-                    minItems: 1,
-                    items: {
-                        title: "Action",
-                        type: "object",
-                        defaultProperties: [
-                          "dialog"
-                        ],
-                        additionalProperties:false,
-                        properties: {
-                            dialog: {
-                                title: "dialog",
-                                description: "formatting supported with &amp; and §, and @S becomes the player's name",
-                                type: "object",
-                                defaultProperties: [
-                                  "text"
-                                ],
-                                properties: {
-                                    text: {
-                                        title: "text",
-                                        description: "Text spoken by NPC. '[Name] ' part is handled by the plugin",
-                                        options: {
-                                            "keep_oneof_values":false
-                                        },
-                                        oneOf: [
-                                            {
-                                                title: "One line",
-                                                type: "string"
-                                            },
-                                            {
-                                                title: "Multiple lines",
-                                                type: "array",
-                                                minItems: 2,
-                                                items: {
-                                                    title: "A line",
-                                                    type: "string"
-                                                }
-                                            }
-                                        ]
-                                    },
-                                    raw_text: {
-                                        title: "raw_text",
-                                        description: "No name or formatting included by default",
-                                        options: {
-                                            "keep_oneof_values":false
-                                        },
-                                        oneOf: [
-                                            {
-                                                title: "One line",
-                                                type: "string"
-                                            },
-                                            {
-                                                title: "Multiple lines",
-                                                type: "array",
-                                                minItems: 2,
-                                                items: {
-                                                    title: "A line",
-                                                    type: "string"
-                                                }
-                                            }
-                                        ]
-                                    },
-                                    clickable_text: {
-                                        title: "clickable_text",
-                                        description: "Colored, formatted, and put in [] for you.",
-                                        type: "array",
-                                        format: "tabs",
-                                        minItems: 1,
-                                        items: {
-                                            headerTemplate: "{{self.player_text}}",
-                                            type: "object",
-                                            defaultProperties: [
-                                              "player_text",
-                                              "actions"
-                                            ],
-                                            properties: {
-                                                player_text: {
-                                                    required: true,
-                                                    propertyOrder: 1,
-                                                    title: "player_text",
-                                                    description: "Player's response",
-                                                    type: "string"
-                                                },
-                                                delay_actions_by_ticks: {
-                                                    propertyOrder: 2,
-                                                    $ref: "#/definitions/delay_actions_by_ticks"
-                                                },
-                                                actions: {
-                                                    required: true,
-                                                    propertyOrder: 3,
-                                                    $ref: "#/definitions/actions"
-                                                }
-                                            }
-                                        }
-                                    },
-                                    random_text: {
-                                        title: "random_text",
-                                        type: "array",
-                                        minItems: 2,
-                                        items: {
-                                            title: "A random line",
-                                            type: "string"
-                                        }
-                                    }
-                                }
-                            },
-                            set_scores: {
-                                title: "set_scores",
-                                description: "Set the player's specified scoreboard value(s). Click Properties, then type in the scoreboard name in the input box and click the 'add' button. Scoreboards are case-sensitive",
-                                type: "object",
-                                patternProperties:{
-                                  ".*":{
-                                    $ref: "#/definitions/set_score"
-                                  }
-                                }
-                            },
-                            function: {
-                                title: "function",
-                                description: "Runs a function via the console as the player (/execute <playername> ~ ~ ~ function <function>)",
-                                type: "string"
-                            },
-                            command: {
-                                title: "command",
-                                description: "Runs a command via the console. Any instance of '@S' (uppercase!) will be replaced with the player's name.",
-                                type: "string"
-                            },
-                            rerun_components: {
-                                title: "rerun_components",
-                                description: "Re-runs all quest components tied to this specific NPC (including those specified in other files). To prevent infinite loops, this action will run itself, even if conditions indicate it should.",
-                                type: "null"
-                            }
-                        }
-                    }
-                },
-                delay_actions_by_ticks: {
-                    title: "delay_actions_by_ticks",
-                    type: "integer",
-                    minimum: 1
-                },
-                coordinate: {
-                    type: "integer",
-                    minimum: -29999984,
-                    maximum: 29999984
-                },
-                check_score: {
-                    headerTemplate: "{{i}}",
-                    options: {
-                        "keep_oneof_values":false
-                    },
-                    oneOf: [
-                      {
-                        title: "Exactly",
-                        $ref: "#/definitions/score"
-                      },
-                      {
-                        title: "Range",
-                        type:"object",
-                        properties: {
-                          min: {
-                            title: "Minimum",
-                            $ref: "#/definitions/score"
-                          },
-                          max: {
-                            title: "Maximum",
-                            $ref: "#/definitions/score"
-                          }
-                        }
-                      },
-                      {
-                        title: "Matches score",
-                        type:"string"
-                      }
-                    ]
-                },
-                set_score: {
-                    headerTemplate: "{{i}}",
-                    options: {
-                        "keep_oneof_values":false
-                    },
-                    oneOf: [
-                      {
-                        title: "Exactly",
-                        $ref: "#/definitions/score"
-                      },
-                      {
-                        title: "Random",
-                        type:"object",
-                        properties: {
-                          min: {
-                            title: "Minimum",
-                            $ref: "#/definitions/score"
-                          },
-                          max: {
-                            title: "Maximum",
-                            $ref: "#/definitions/score"
-                          }
-                        }
-                      },
-                      {
-                        title: "Copy from",
-                        type:"string"
-                      }
-                    ]
-                },
-                score: {
-                    type: "integer",
-                    minimum: -2147483648,
-                    maximum: 2147483647
                 }
             }
         }

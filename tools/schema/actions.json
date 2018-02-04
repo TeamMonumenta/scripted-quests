@@ -1,0 +1,163 @@
+{
+    "title": "actions",
+    "type": "array",
+    "minItems": 1,
+    "items": {
+        "title": "Action",
+        "type": "object",
+        "defaultProperties": [
+            "dialog"
+        ],
+        "additionalProperties": false,
+        "properties": {
+            "dialog": {
+                "title": "dialog",
+                "description": "formatting supported with &amp; and §, and @S becomes the player's name",
+                "type": "object",
+                "defaultProperties": [
+                    "text"
+                ],
+                "properties": {
+                    "text": {
+                        "title": "text",
+                        "description": "Text spoken by NPC. '[Name] ' part is handled by the plugin",
+                        "options": {
+                            "keep_oneof_values": false
+                        },
+                        "oneOf": [
+                            {
+                                "title": "One line",
+                                "type": "string"
+                            },
+                            {
+                                "title": "Multiple lines",
+                                "type": "array",
+                                "minItems": 2,
+                                "items": {
+                                    "title": "A line",
+                                    "type": "string"
+                                }
+                            }
+                        ]
+                    },
+                    "raw_text": {
+                        "title": "raw_text",
+                        "description": "No name or formatting included by default",
+                        "options": {
+                            "keep_oneof_values": false
+                        },
+                        "oneOf": [
+                            {
+                                "title": "One line",
+                                "type": "string"
+                            },
+                            {
+                                "title": "Multiple lines",
+                                "type": "array",
+                                "minItems": 2,
+                                "items": {
+                                    "title": "A line",
+                                    "type": "string"
+                                }
+                            }
+                        ]
+                    },
+                    "clickable_text": {
+                        "title": "clickable_text",
+                        "description": "Colored, formatted, and put in [] for you.",
+                        "type": "array",
+                        "format": "tabs",
+                        "minItems": 1,
+                        "items": {
+                            "headerTemplate": "{{self.player_text}}",
+                            "type": "object",
+                            "defaultProperties": [
+                                "player_text",
+                                "actions"
+                            ],
+                            "properties": {
+                                "player_text": {
+                                    "required": true,
+                                    "propertyOrder": 1,
+                                    "title": "player_text",
+                                    "description": "Player's response",
+                                    "type": "string"
+                                },
+                                "delay_actions_by_ticks": {
+                                    "propertyOrder": 2,
+                                    "$ref": "schema/delay_actions_by_ticks.json"
+                                },
+                                "actions": {
+                                    "required": true,
+                                    "propertyOrder": 3,
+                                    "$ref": "schema/actions.json"
+                                }
+                            }
+                        }
+                    },
+                    "random_text": {
+                        "title": "random_text",
+                        "type": "array",
+                        "minItems": 2,
+                        "items": {
+                            "title": "A random line",
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "set_scores": {
+                "title": "set_scores",
+                "description": "Set the player's specified scoreboard value(s). Click Properties, then type in the scoreboard name in the input box and click the 'add' button. Scoreboards are case-sensitive",
+                "type": "object",
+                "patternProperties": {
+                    ".*": {
+                        "headerTemplate": "{{i}}",
+                        "options": {
+                            "keep_oneof_values": false
+                        },
+                        "oneOf": [
+                            {
+                                "title": "Exactly",
+                                "$ref": "schema/score.json"
+                            },
+                            {
+                                "title": "Random",
+                                "type": "object",
+                                "properties": {
+                                    "min": {
+                                        "title": "Minimum",
+                                        "$ref": "schema/score.json"
+                                    },
+                                    "max": {
+                                        "title": "Maximum",
+                                        "$ref": "schema/score.json"
+                                    }
+                                }
+                            },
+                            {
+                                "title": "Copy from",
+                                "type": "string"
+                            }
+                        ]
+                    }
+                }
+            },
+            "function": {
+                "title": "function",
+                "description": "Runs a function via the console as the player (/execute <playername> ~ ~ ~ function <function>)",
+                "type": "string"
+            },
+            "command": {
+                "title": "command",
+                "description": "Runs a command via the console. Any instance of '@S' (uppercase!) will be replaced with the player's name.",
+                "type": "string"
+            },
+            "rerun_components": {
+                "title": "rerun_components",
+                "description": "Re-runs all quest components tied to this specific NPC (including those specified in other files). To prevent infinite loops, this action will run itself, even if conditions indicate it should.",
+                "type": "null"
+            }
+        }
+    }
+}
