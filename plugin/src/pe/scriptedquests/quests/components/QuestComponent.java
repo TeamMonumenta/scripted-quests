@@ -16,7 +16,7 @@ class QuestComponent {
 	private QuestActions mActions = null;
 
 	QuestComponent(String npcName, String displayName,
-	                      EntityType entityType, JsonElement element) throws Exception {
+	               EntityType entityType, JsonElement element) throws Exception {
 		JsonObject object = element.getAsJsonObject();
 		if (object == null) {
 			throw new Exception("quest_components value is not an object!");

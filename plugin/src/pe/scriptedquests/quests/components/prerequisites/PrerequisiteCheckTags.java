@@ -8,7 +8,6 @@ import org.bukkit.entity.Player;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
 class PrerequisiteCheckTags implements PrerequisiteBase {
 	private Set<String> mTags;

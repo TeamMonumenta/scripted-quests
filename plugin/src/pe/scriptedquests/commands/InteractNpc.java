@@ -50,7 +50,6 @@ public class InteractNpc implements CommandExecutor {
 			player = (Player)sender;
 		} else if (sender instanceof ProxiedCommandSender) {
 			CommandSender callee = ((ProxiedCommandSender)sender).getCallee();
-			CommandSender caller = ((ProxiedCommandSender)sender).getCaller();
 			if (callee instanceof Player) {
 				player = (Player)callee;
 			} else {

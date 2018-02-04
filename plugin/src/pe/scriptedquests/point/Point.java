@@ -1,6 +1,7 @@
 package pe.scriptedquests.point;
 
 import org.bukkit.Location;
+import org.bukkit.World;
 
 public class Point {
 	public double mX;
@@ -22,5 +23,9 @@ public class Point {
 	public String toString() {
 		return "(" + Double.toString(mX) + ", " +
 			Double.toString(mY) + ", " + Double.toString(mZ) + ")";
+	}
+
+	public Location toLocation(World world) {
+		return new Location(world, mX, mY, mZ);
 	}
 }
