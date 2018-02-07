@@ -1,4 +1,4 @@
-bin
-out
-upload.sh
-utils
+/bin
+/out
+/upload.sh
+/utils

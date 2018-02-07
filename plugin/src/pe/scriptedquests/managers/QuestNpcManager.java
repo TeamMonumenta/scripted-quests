@@ -16,6 +16,7 @@ import pe.scriptedquests.Plugin;
 import pe.scriptedquests.quests.QuestNpc;
 import pe.scriptedquests.utils.FileUtils;
 import pe.scriptedquests.utils.MessagingUtils;
+import pe.scriptedquests.utils.MetadataUtils;
 
 public class QuestNpcManager {
 	HashMap<String, QuestNpc> mNpcs = new HashMap<String, QuestNpc>();
@@ -120,6 +121,11 @@ public class QuestNpcManager {
 
 		// Only entities with custom names
 		if (npcName == null || npcName.isEmpty()) {
+			return false;
+		}
+
+		// Only one interaction per player per tick
+		if (!MetadataUtils.checkOnceThisTick(plugin, player, "ScriptedQuestsNPCInteractNonce")) {
 			return false;
 		}
 
