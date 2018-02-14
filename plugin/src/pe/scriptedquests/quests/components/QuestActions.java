@@ -50,13 +50,19 @@ class QuestActions {
 				}
 
 				switch (key) {
+				case "command":
+					mActions.add(new ActionCommand(value));
+					break;
 				case "dialog":
 					mActions.add(new ActionDialog(npcName, displayName, entityType, value));
+					break;
+				case "function":
+					mActions.add(new ActionFunction(value));
 					break;
 				case "set_scores":
 					JsonObject scoreObject = value.getAsJsonObject();
 					if (scoreObject == null) {
-						throw new Exception("check_scores value is not an object!");
+						throw new Exception("set_scores value is not an object!");
 					}
 
 					Set<Entry<String, JsonElement>> scoreEntries = scoreObject.entrySet();
@@ -64,11 +70,8 @@ class QuestActions {
 						mActions.add(new ActionSetScore(scoreEnt.getKey(), scoreEnt.getValue()));
 					}
 					break;
-				case "command":
-					mActions.add(new ActionCommand(value));
-					break;
-				case "function":
-					mActions.add(new ActionFunction(value));
+				case "voice_over":
+					mActions.add(new ActionVoiceOver(value));
 					break;
 				case "rerun_components":
 					mActions.add(new ActionRerunComponents(npcName, entityType));
