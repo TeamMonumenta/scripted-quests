@@ -26,6 +26,8 @@ class ActionVoiceOver implements ActionBase {
 		Location location = entity.getLocation().add(0,entity.getHeight(),0);
 		float volume = 1.0f;
 		float pitch = 1.0f;
+		String lastSound = "";
+		player.stopSound(lastSound,SoundCategory.VOICE);
 		player.playSound(location, mSound, SoundCategory.VOICE, volume, pitch);
 	}
 }
