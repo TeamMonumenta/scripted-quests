@@ -84,7 +84,7 @@ public class QuestDeath {
 	public boolean deathEvent(Plugin plugin, PlayerDeathEvent event) {
 		Player player = event.getEntity();
 		if (mPrerequisites == null || mPrerequisites.prerequisitesMet(player)) {
-			mActions.doActions(plugin, player);
+			mActions.doActions(plugin, player, mPrerequisites);
 
 			event.setKeepInventory(mKeepInv);
 			event.setKeepLevel(mKeepInv);

@@ -83,11 +83,11 @@ class QuestActions {
 		}
 	}
 
-	void doActions(Plugin plugin, Player player) {
+	void doActions(Plugin plugin, Player player, QuestPrerequisites prereqs) {
 		if (mDelayTicks <= 0) {
 			// If not delayed, actions can run without restrictions
 			for (ActionBase action : mActions) {
-				action.doAction(plugin, player);
+				action.doAction(plugin, player, prereqs);
 			}
 		} else {
 			// If delayed, only one delayed group of actions is allowed per player
@@ -99,7 +99,7 @@ class QuestActions {
 					@Override
 					public void run() {
 						for (ActionBase action : mActions) {
-							action.doAction(plugin, player);
+							action.doAction(plugin, player, prereqs);
 						}
 
 						player.removeMetadata(Constants.PLAYER_QUEST_ACTIONS_LOCKED_METAKEY, plugin);

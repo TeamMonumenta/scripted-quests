@@ -1,18 +1,47 @@
 package pe.scriptedquests.quests;
 
+import java.util.ArrayList;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.Sound;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import pe.scriptedquests.Constants;
 import pe.scriptedquests.Plugin;
+import pe.scriptedquests.point.AreaBounds;
+import pe.scriptedquests.point.Point;
 import pe.scriptedquests.utils.MessagingUtils;
 
 public class DialogClickableTextEntry implements DialogBase {
+	public class PlayerClickableTextEntry {
+		private QuestPrerequisites mPrerequisites;
+		private QuestActions mActions;
+		private AreaBounds mValidArea;
+		private int mIdx;
+
+		public PlayerClickableTextEntry(QuestPrerequisites prereqs, QuestActions actions,
+		                                int idx, AreaBounds validArea) {
+			mPrerequisites = prereqs;
+			mActions = actions;
+			mValidArea = validArea;
+			mIdx = idx;
+		}
+
+		public void doActionsIfConditionsMatch(Plugin plugin, Player player, int idx) {
+			if (idx == mIdx && mValidArea.within(player.getLocation()) && (mPrerequisites == null
+			        || mPrerequisites.prerequisitesMet(player))) {
+				player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 0.7f, 0.9f);
+				mActions.doActions(plugin, player, mPrerequisites);
+			}
+		}
+	}
+
 	private String mText;
 	private QuestActions mActions;
 	private int mIdx;
@@ -63,16 +92,34 @@ public class DialogClickableTextEntry implements DialogBase {
 		}
 	}
 
+
+	@SuppressWarnings("unchecked")
 	@Override
-	public void sendDialog(Plugin plugin, Player player) {
+	public void sendDialog(Plugin plugin, Player player, QuestPrerequisites prereqs) {
 		MessagingUtils.sendClickableNPCMessage(plugin, player, mText,
 		                                       "/questtrigger " + Integer.toString(mIdx));
+
+		/* Create a new object describing the prereqs/actions/location for this clickable message */
+		PlayerClickableTextEntry newEntry = new PlayerClickableTextEntry(prereqs, mActions, mIdx,
+		        new AreaBounds("", new Point(player.getLocation().subtract(4.0, 4.0, 4.0)),
+		                       new Point(player.getLocation().add(4.0, 4.0, 4.0))));
+
+		/* Get the list of currently available clickable entries */
+		ArrayList<PlayerClickableTextEntry> availTriggers;
+		if (player.hasMetadata(Constants.PLAYER_CLICKABLE_DIALOG_METAKEY)) {
+			availTriggers = (ArrayList<PlayerClickableTextEntry>)player.getMetadata(
+			                    Constants.PLAYER_CLICKABLE_DIALOG_METAKEY).get(0).value();
+		} else {
+			availTriggers = new ArrayList<PlayerClickableTextEntry>();
+		}
+
+		/* Then we add this entry to the end of all available entries */
+		availTriggers.add(newEntry);
+
+		/* Attach the new list of clickable options to the player */
+		player.setMetadata(Constants.PLAYER_CLICKABLE_DIALOG_METAKEY,
+		                   new FixedMetadataValue(plugin, availTriggers));
 	}
 
-	public void doActionsIfIdxMatches(Plugin plugin, Player player, int idx) {
-		if (idx == mIdx) {
-			mActions.doActions(plugin, player);
-		}
-	}
 }
 

@@ -111,7 +111,7 @@ class ActionSetScore implements ActionBase {
 	}
 
 	@Override
-	public void doAction(Plugin plugin, Player player) {
+	public void doAction(Plugin plugin, Player player, QuestPrerequisites prereqs) {
 		mSetScore.apply(player, mScoreName);
 	}
 }

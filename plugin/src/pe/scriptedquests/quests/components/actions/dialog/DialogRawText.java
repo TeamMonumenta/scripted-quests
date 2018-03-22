@@ -27,7 +27,7 @@ class DialogRawText implements DialogBase {
 	}
 
 	@Override
-	public void sendDialog(Plugin plugin, Player player) {
+	public void sendDialog(Plugin plugin, Player player, QuestPrerequisites prereqs) {
 		for (String text : mText) {
 			MessagingUtils.sendRawMessage(player, text);
 		}

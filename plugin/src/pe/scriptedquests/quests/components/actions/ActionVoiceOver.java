@@ -21,7 +21,7 @@ class ActionVoiceOver implements ActionBase {
 	}
 
 	@Override
-	public void doAction(Plugin plugin, Player player) {
+	public void doAction(Plugin plugin, Player player, QuestPrerequisites prereqs) {
 		Entity entity = (Entity)player; // TODO Update this to the NPC
 		Location location = entity.getLocation().add(0,entity.getHeight(),0);
 		float volume = 1.0f;

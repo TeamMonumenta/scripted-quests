@@ -59,7 +59,7 @@ class QuestComponent {
 
 	void doActionsIfPrereqsMet(Plugin plugin, Player player) {
 		if (mPrerequisites == null || mPrerequisites.prerequisitesMet(player)) {
-			mActions.doActions(plugin, player);
+			mActions.doActions(plugin, player, mPrerequisites);
 		}
 	}
 }

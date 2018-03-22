@@ -17,7 +17,7 @@ class ActionCommand implements ActionBase {
 	}
 
 	@Override
-	public void doAction(Plugin plugin, Player player) {
+	public void doAction(Plugin plugin, Player player, QuestPrerequisites prereqs) {
 		//	Because there's no currently good way to run commands we need to run them via the console....janky....I know.
 		String commandStr = mCommand.replaceAll("@S", player.getName());
 		plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), commandStr);

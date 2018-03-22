@@ -41,9 +41,9 @@ class ActionDialog implements ActionBase {
 	}
 
 	@Override
-	public void doAction(Plugin plugin, Player player) {
+	public void doAction(Plugin plugin, Player player, QuestPrerequisites prereqs) {
 		for (DialogBase dialog : mDialogs) {
-			dialog.sendDialog(plugin, player);
+			dialog.sendDialog(plugin, player, prereqs);
 		}
 	}
 }

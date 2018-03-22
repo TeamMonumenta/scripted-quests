@@ -32,7 +32,7 @@ class DialogRandomText implements DialogBase {
 	}
 
 	@Override
-	public void sendDialog(Plugin plugin, Player player) {
+	public void sendDialog(Plugin plugin, Player player, QuestPrerequisites prereqs) {
 		int idx = mRandom.nextInt(mText.size());
 		MessagingUtils.sendNPCMessage(player, mDisplayName, mText.get(idx));
 	}

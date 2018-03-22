@@ -7,12 +7,10 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.Sound;
 
 import pe.scriptedquests.Constants;
 import pe.scriptedquests.Plugin;
-import pe.scriptedquests.point.AreaBounds;
-import pe.scriptedquests.quests.DialogClickableTextEntry;
+import pe.scriptedquests.quests.DialogClickableTextEntry.PlayerClickableTextEntry;
 
 public class QuestTrigger implements CommandExecutor {
 	private Plugin mPlugin;
@@ -54,25 +52,16 @@ public class QuestTrigger implements CommandExecutor {
 		}
 
 		// Get the list of available dialogs the player can currently click
-		if (player.hasMetadata(Constants.PLAYER_CLICKABLE_DIALOG_METAKEY) &&
-			player.hasMetadata(Constants.PLAYER_CLICKABLE_DIALOG_LOCATION_METAKEY)) {
-
-			AreaBounds validLocation = (AreaBounds)player.getMetadata(Constants.PLAYER_CLICKABLE_DIALOG_LOCATION_METAKEY).get(0).value();
-
+		if (player.hasMetadata(Constants.PLAYER_CLICKABLE_DIALOG_METAKEY)) {
 			@SuppressWarnings("unchecked")
-			ArrayList<DialogClickableTextEntry> availTriggers = (ArrayList<DialogClickableTextEntry>)
+			ArrayList<PlayerClickableTextEntry> availTriggers = (ArrayList<PlayerClickableTextEntry>)
 			                                                    player.getMetadata(Constants.PLAYER_CLICKABLE_DIALOG_METAKEY).get(0).value();
 
 			// Player can only click one dialog option per conversation
 			player.removeMetadata(Constants.PLAYER_CLICKABLE_DIALOG_METAKEY, mPlugin);
-			player.removeMetadata(Constants.PLAYER_CLICKABLE_DIALOG_LOCATION_METAKEY, mPlugin);
 
-			if (availTriggers != null && validLocation.within(player.getLocation())) {
-				player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 0.7f, 0.9f);
-
-				for (DialogClickableTextEntry entry : availTriggers) {
-					entry.doActionsIfIdxMatches(mPlugin, player, triggerIndex);
-				}
+			for (PlayerClickableTextEntry entry : availTriggers) {
+				entry.doActionsIfConditionsMatch(mPlugin, player, triggerIndex);
 			}
 		}
 

@@ -17,7 +17,7 @@ class ActionFunction implements ActionBase {
 	}
 
 	@Override
-	public void doAction(Plugin plugin, Player player) {
+	public void doAction(Plugin plugin, Player player, QuestPrerequisites prereqs) {
 		//	Because there's no currently good way to run functions we need to run them via the console....janky....I know.
 		String commandStr = String.format("execute %s ~ ~ ~ function %s", player.getName(), mFunctionFileName);
 		plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), commandStr);

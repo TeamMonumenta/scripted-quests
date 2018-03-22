@@ -16,7 +16,7 @@ class ActionRerunComponents implements ActionBase {
 	}
 
 	@Override
-	public void doAction(Plugin plugin, Player player) {
+	public void doAction(Plugin plugin, Player player, QuestPrerequisites prereqs) {
 		/*
 		 * Prevent infinite loops by preventing this specific action
 		 * from running itself again
