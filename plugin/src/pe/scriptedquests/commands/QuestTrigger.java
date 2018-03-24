@@ -1,6 +1,6 @@
 package pe.scriptedquests.commands;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -54,14 +54,16 @@ public class QuestTrigger implements CommandExecutor {
 		// Get the list of available dialogs the player can currently click
 		if (player.hasMetadata(Constants.PLAYER_CLICKABLE_DIALOG_METAKEY)) {
 			@SuppressWarnings("unchecked")
-			ArrayList<PlayerClickableTextEntry> availTriggers = (ArrayList<PlayerClickableTextEntry>)
-			                                                    player.getMetadata(Constants.PLAYER_CLICKABLE_DIALOG_METAKEY).get(0).value();
+			HashMap<Integer, PlayerClickableTextEntry> availTriggers =
+			    (HashMap<Integer, PlayerClickableTextEntry>)
+			    player.getMetadata(Constants.PLAYER_CLICKABLE_DIALOG_METAKEY).get(0).value();
 
 			// Player can only click one dialog option per conversation
 			player.removeMetadata(Constants.PLAYER_CLICKABLE_DIALOG_METAKEY, mPlugin);
 
-			for (PlayerClickableTextEntry entry : availTriggers) {
-				entry.doActionsIfConditionsMatch(mPlugin, player, triggerIndex);
+			PlayerClickableTextEntry entry = availTriggers.get(triggerIndex);
+			if (entry != null) {
+				entry.doActionsIfConditionsMatch(mPlugin, player);
 			}
 		}
 

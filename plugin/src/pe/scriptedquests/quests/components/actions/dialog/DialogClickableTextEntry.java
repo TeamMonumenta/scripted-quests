@@ -1,6 +1,6 @@
 package pe.scriptedquests.quests;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -23,19 +23,17 @@ public class DialogClickableTextEntry implements DialogBase {
 		private QuestPrerequisites mPrerequisites;
 		private QuestActions mActions;
 		private AreaBounds mValidArea;
-		private int mIdx;
 
 		public PlayerClickableTextEntry(QuestPrerequisites prereqs, QuestActions actions,
-		                                int idx, AreaBounds validArea) {
+		                                AreaBounds validArea) {
 			mPrerequisites = prereqs;
 			mActions = actions;
 			mValidArea = validArea;
-			mIdx = idx;
 		}
 
-		public void doActionsIfConditionsMatch(Plugin plugin, Player player, int idx) {
-			if (idx == mIdx && mValidArea.within(player.getLocation()) && (mPrerequisites == null
-			        || mPrerequisites.prerequisitesMet(player))) {
+		public void doActionsIfConditionsMatch(Plugin plugin, Player player) {
+			if (mValidArea.within(player.getLocation())
+			    && (mPrerequisites == null || mPrerequisites.prerequisitesMet(player))) {
 				player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 0.7f, 0.9f);
 				mActions.doActions(plugin, player, mPrerequisites);
 			}
@@ -100,26 +98,25 @@ public class DialogClickableTextEntry implements DialogBase {
 		                                       "/questtrigger " + Integer.toString(mIdx));
 
 		/* Create a new object describing the prereqs/actions/location for this clickable message */
-		PlayerClickableTextEntry newEntry = new PlayerClickableTextEntry(prereqs, mActions, mIdx,
+		PlayerClickableTextEntry newEntry = new PlayerClickableTextEntry(prereqs, mActions,
 		        new AreaBounds("", new Point(player.getLocation().subtract(4.0, 4.0, 4.0)),
 		                       new Point(player.getLocation().add(4.0, 4.0, 4.0))));
 
 		/* Get the list of currently available clickable entries */
-		ArrayList<PlayerClickableTextEntry> availTriggers;
+		HashMap<Integer, PlayerClickableTextEntry> availTriggers;
 		if (player.hasMetadata(Constants.PLAYER_CLICKABLE_DIALOG_METAKEY)) {
-			availTriggers = (ArrayList<PlayerClickableTextEntry>)player.getMetadata(
+			availTriggers = (HashMap<Integer, PlayerClickableTextEntry>)player.getMetadata(
 			                    Constants.PLAYER_CLICKABLE_DIALOG_METAKEY).get(0).value();
 		} else {
-			availTriggers = new ArrayList<PlayerClickableTextEntry>();
+			availTriggers = new HashMap<Integer, PlayerClickableTextEntry>();
 		}
 
 		/* Then we add this entry to the end of all available entries */
-		availTriggers.add(newEntry);
+		availTriggers.put(mIdx, newEntry);
 
 		/* Attach the new list of clickable options to the player */
 		player.setMetadata(Constants.PLAYER_CLICKABLE_DIALOG_METAKEY,
 		                   new FixedMetadataValue(plugin, availTriggers));
 	}
-
 }
 
