@@ -120,6 +120,7 @@ prerequisites:
 - check\_scores - Checks one or more scoreboard values for the player
 - check\_tags - Checks if the player has (or must not have) specific scoreboard tags
 - items\_in\_inventory - Checks that the player is carrying the specified items
+- item\_in\_hand - Checks that the item in the player's main hand meets specified criteria
 - location - Checks that the player is within an area
 
 actions:
