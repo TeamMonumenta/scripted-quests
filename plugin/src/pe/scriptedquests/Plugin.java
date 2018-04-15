@@ -1,18 +1,20 @@
 package pe.scriptedquests;
 
 import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.plugin.PluginManager;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.World;
 
 import pe.scriptedquests.commands.InteractNpc;
 import pe.scriptedquests.commands.QuestTrigger;
 import pe.scriptedquests.commands.ReloadQuests;
 import pe.scriptedquests.listeners.EntityListener;
 import pe.scriptedquests.listeners.PlayerListener;
-import pe.scriptedquests.managers.QuestNpcManager;
 import pe.scriptedquests.managers.QuestCompassManager;
 import pe.scriptedquests.managers.QuestDeathManager;
+import pe.scriptedquests.managers.QuestNpcManager;
+import pe.scriptedquests.utils.MetadataUtils;
 
 public class Plugin extends JavaPlugin {
 	public QuestCompassManager mQuestCompassManager;
@@ -44,5 +46,12 @@ public class Plugin extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		getServer().getScheduler().cancelTasks(this);
+
+		// Clear metadata keys for all players before unloading
+		for (World world : Bukkit.getWorlds()){
+			for (Player player : world.getPlayers()){
+				MetadataUtils.removeMetadata(this, player, Constants.ALL_METAKEYS);
+			}
+		}
 	}
 }

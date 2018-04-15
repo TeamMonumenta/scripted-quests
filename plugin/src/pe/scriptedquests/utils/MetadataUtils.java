@@ -1,5 +1,7 @@
 package pe.scriptedquests.utils;
 
+import java.util.List;
+
 import org.bukkit.entity.Entity;
 import org.bukkit.metadata.FixedMetadataValue;
 
@@ -24,5 +26,13 @@ public class MetadataUtils {
 
 		entity.setMetadata(metakey, new FixedMetadataValue(plugin, entity.getTicksLived()));
 		return true;
+	}
+
+	public static void removeMetadata(Plugin plugin, Entity entity, List<String> metakeys) {
+		for (String meta : metakeys) {
+			if (entity.hasMetadata(meta)) {
+				entity.removeMetadata(meta, plugin);
+			}
+		}
 	}
 }
