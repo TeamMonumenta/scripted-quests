@@ -7,13 +7,11 @@ import java.util.Set;
 
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.metadata.FixedMetadataValue;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import pe.scriptedquests.Constants;
 import pe.scriptedquests.Plugin;
 
 class QuestActions {
@@ -90,22 +88,14 @@ class QuestActions {
 				action.doAction(plugin, player, prereqs);
 			}
 		} else {
-			// If delayed, only one delayed group of actions is allowed per player
-			if (!player.hasMetadata(Constants.PLAYER_QUEST_ACTIONS_LOCKED_METAKEY)) {
-				player.setMetadata(Constants.PLAYER_QUEST_ACTIONS_LOCKED_METAKEY,
-				                   new FixedMetadataValue(plugin, true));
-
-				player.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-					@Override
-					public void run() {
-						for (ActionBase action : mActions) {
-							action.doAction(plugin, player, prereqs);
-						}
-
-						player.removeMetadata(Constants.PLAYER_QUEST_ACTIONS_LOCKED_METAKEY, plugin);
+			player.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+				@Override
+				public void run() {
+					for (ActionBase action : mActions) {
+						action.doAction(plugin, player, prereqs);
 					}
-				}, mDelayTicks);
-			}
+				}
+			}, mDelayTicks);
 		}
 	}
 }
