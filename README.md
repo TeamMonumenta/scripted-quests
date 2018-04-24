@@ -98,7 +98,7 @@ an NPC, quest components are run in-order (more than one may be executed).
   are only met once if the player will stay in that location for more than
   one invokation of interactnpc.
 - Note that running this command every tick is likely unnecessary for most
-  use cases - instead, attach it the command to a slow clock instead.
+  use cases - instead, attach it to a slow clock instead.
 
 `/questTrigger`
 - permission: `scriptedquests.questtrigger`
