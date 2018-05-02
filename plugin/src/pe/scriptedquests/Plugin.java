@@ -1,7 +1,6 @@
 package pe.scriptedquests;
 
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.World;
@@ -47,11 +46,6 @@ public class Plugin extends JavaPlugin {
 	public void onDisable() {
 		getServer().getScheduler().cancelTasks(this);
 
-		// Clear metadata keys for all players before unloading
-		for (World world : Bukkit.getWorlds()){
-			for (Player player : world.getPlayers()){
-				MetadataUtils.removeMetadata(this, player, Constants.ALL_METAKEYS);
-			}
-		}
+		MetadataUtils.removeAllMetadata(this);
 	}
 }

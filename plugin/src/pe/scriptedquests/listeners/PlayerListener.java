@@ -7,8 +7,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.Material;
@@ -16,23 +14,12 @@ import org.bukkit.Material;
 import pe.scriptedquests.Constants;
 import pe.scriptedquests.Plugin;
 import pe.scriptedquests.point.Point;
-import pe.scriptedquests.utils.MetadataUtils;
 
 public class PlayerListener implements Listener {
 	Plugin mPlugin = null;
 
 	public PlayerListener(Plugin plugin) {
 		mPlugin = plugin;
-	}
-
-	@EventHandler(priority = EventPriority.LOWEST)
-	public void PlayerJoinEvent(PlayerJoinEvent event) {
-		MetadataUtils.removeMetadata(mPlugin, event.getPlayer(), Constants.ALL_METAKEYS);
-	}
-
-	@EventHandler(priority = EventPriority.LOWEST)
-	public void PlayerQuitEvent(PlayerQuitEvent event) {
-		MetadataUtils.removeMetadata(mPlugin, event.getPlayer(), Constants.ALL_METAKEYS);
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
