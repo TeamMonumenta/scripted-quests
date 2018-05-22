@@ -36,6 +36,39 @@ class QuestPrerequisites {
 			JsonElement value = ent.getValue();
 
 			switch (key) {
+			case "and":
+				JsonArray array = value.getAsJsonArray();
+				if (array == null) {
+					throw new Exception("Prerequisites value for key '" + key + "' is not an array!");
+				}
+
+				Iterator<JsonElement> iter = array.iterator();
+				while (iter.hasNext()) {
+					mPrerequisites.add(QuestPrerequisites(iter.next(),"OP_AND"));
+				}
+				break;
+			case "or":
+				JsonArray array = value.getAsJsonArray();
+				if (array == null) {
+					throw new Exception("Prerequisites value for key '" + key + "' is not an array!");
+				}
+
+				Iterator<JsonElement> iter = array.iterator();
+				while (iter.hasNext()) {
+					mPrerequisites.add(QuestPrerequisites(iter.next(),"OP_OR"));
+				}
+				break;
+			case "not":
+				JsonArray array = value.getAsJsonArray();
+				if (array == null) {
+					throw new Exception("Prerequisites value for key '" + key + "' is not an array!");
+				}
+
+				Iterator<JsonElement> iter = array.iterator();
+				while (iter.hasNext()) {
+					mPrerequisites.add(QuestPrerequisites(iter.next(),"OP_NOT"));
+				}
+				break;
 			case "check_scores":
 				JsonObject scoreObject = value.getAsJsonObject();
 				if (scoreObject == null) {
@@ -51,29 +84,25 @@ class QuestPrerequisites {
 				mPrerequisites.add(new PrerequisiteCheckTags(value));
 				break;
 			case "items_in_inventory":
-				{
-					JsonArray array = value.getAsJsonArray();
-					if (array == null) {
-						throw new Exception("Prerequisites value for key '" + key + "' is not an array!");
-					}
+				JsonArray array = value.getAsJsonArray();
+				if (array == null) {
+					throw new Exception("Prerequisites value for key '" + key + "' is not an array!");
+				}
 
-					Iterator<JsonElement> iter = array.iterator();
-					while (iter.hasNext()) {
-						mPrerequisites.add(new PrerequisiteItemsInInventory(iter.next()));
-					}
+				Iterator<JsonElement> iter = array.iterator();
+				while (iter.hasNext()) {
+					mPrerequisites.add(new PrerequisiteItemsInInventory(iter.next()));
 				}
 				break;
 			case "item_in_hand":
-				{
-					JsonArray array = value.getAsJsonArray();
-					if (array == null) {
-						throw new Exception("Prerequisites value for key '" + key + "' is not an array!");
-					}
+				JsonArray array = value.getAsJsonArray();
+				if (array == null) {
+					throw new Exception("Prerequisites value for key '" + key + "' is not an array!");
+				}
 
-					Iterator<JsonElement> iter = array.iterator();
-					while (iter.hasNext()) {
-						mPrerequisites.add(new PrerequisiteItemInHand(iter.next()));
-					}
+				Iterator<JsonElement> iter = array.iterator();
+				while (iter.hasNext()) {
+					mPrerequisites.add(new PrerequisiteItemInHand(iter.next()));
 				}
 				break;
 			case "location":

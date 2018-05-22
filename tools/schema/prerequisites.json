@@ -4,8 +4,35 @@
     "defaultProperties": [],
     "additionalProperties": false,
     "properties": {
-        "check_scores": {
+        "and": {
             "propertyOrder": 1,
+            "title": "and",
+            "description": "Check if all contained prerequisites are true",
+            "type": "array",
+            "items": {
+                $ref: "schema/prerequisites.json"
+            }
+        },
+        "or": {
+            "propertyOrder": 1,
+            "title": "or",
+            "description": "Check if at least one contained prerequisites is true",
+            "type": "array",
+            "items": {
+                $ref: "schema/prerequisites.json"
+            }
+        },
+        "and": {
+            "propertyOrder": 1,
+            "title": "not",
+            "description": "Check if no contained prerequisites are true",
+            "type": "array",
+            "items": {
+                $ref: "schema/prerequisites.json"
+            }
+        },
+        "check_scores": {
+            "propertyOrder": 2,
             "title": "check_scores",
             "description": "Checks that the player has the specified scoreboard value(s). Click Properties, then type in the scoreboard name in the input box and click the 'add' button. Scoreboards are case-sensitive",
             "type": "object",
