@@ -46,7 +46,7 @@ class QuestComponent {
 			}
 
 			if (key.equals("prerequisites")) {
-				mPrerequisites = new QuestPrerequisites(value);
+				mPrerequisites = new QuestPrerequisites(value,"OP_AND");
 			} else if (key.equals("actions")) {
 				mActions = new QuestActions(npcName, displayName, entityType, delayTicks, value);
 			}

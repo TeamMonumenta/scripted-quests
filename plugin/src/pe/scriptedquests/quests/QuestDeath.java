@@ -65,7 +65,7 @@ public class QuestDeath {
 
 				break;
 			case "prerequisites":
-				mPrerequisites = new QuestPrerequisites(value);
+				mPrerequisites = new QuestPrerequisites(value,"OP_AND");
 				break;
 			case "actions":
 				mActions = new QuestActions("", "", EntityType.VILLAGER, 0, value);

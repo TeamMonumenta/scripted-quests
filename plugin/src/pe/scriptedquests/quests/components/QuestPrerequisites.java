@@ -12,10 +12,20 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 class QuestPrerequisites {
+/* I give up trying to figure out how to make an enum...
+	public enum Operator {
+		OP_AND,
+		OP_OR,
+		OP_NOT
+	}
+*/
 	private ArrayList<PrerequisiteBase> mPrerequisites = new ArrayList<PrerequisiteBase>();
+//	private Operator mOperator;
+	private String mOperator;
 
-	QuestPrerequisites(JsonElement element) throws Exception {
+	QuestPrerequisites(JsonElement element, String operator) throws Exception {
 		JsonObject object = element.getAsJsonObject();
+		mOperator = operator;
 		if (object == null) {
 			throw new Exception("prerequisites value is not an object!");
 		}
@@ -76,12 +86,32 @@ class QuestPrerequisites {
 	}
 
 	boolean prerequisitesMet(Player player) {
-		for (PrerequisiteBase prerequisite : mPrerequisites) {
-			if (!prerequisite.prerequisiteMet(player)) {
-				return false;
+		switch(mOperator) {
+		case "OP_OR":
+			for (PrerequisiteBase prerequisite : mPrerequisites) {
+				if (prerequisite.prerequisiteMet(player)) {
+					return true;
+				}
 			}
-		}
 
-		return true;
+			return false;
+		case "OP_NOT":
+			for (PrerequisiteBase prerequisite : mPrerequisites) {
+				if (prerequisite.prerequisiteMet(player)) {
+					return false;
+				}
+			}
+
+			return true;
+		default:
+		// "OP_AND"
+			for (PrerequisiteBase prerequisite : mPrerequisites) {
+				if (!prerequisite.prerequisiteMet(player)) {
+					return false;
+				}
+			}
+
+			return true;
+		}
 	}
 }
