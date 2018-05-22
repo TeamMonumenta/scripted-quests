@@ -23,7 +23,7 @@ public class QuestLocation {
 		if (prereq == null) {
 			throw new Exception("Failed to parse location prerequisites!");
 		}
-		mPrerequisites = new QuestPrerequisites(prereq,"OP_AND");
+		mPrerequisites = new QuestPrerequisites(prereq);
 
 		// Read x coordinate
 		JsonElement xElement = object.get("x");
@@ -63,7 +63,7 @@ public class QuestLocation {
 		return mMessage;
 	}
 
-	boolean prerequisitesMet(Player player) {
-		return mPrerequisites.prerequisitesMet(player);
+	boolean prerequisiteMet(Player player) {
+		return mPrerequisites.prerequisiteMet(player);
 	}
 }

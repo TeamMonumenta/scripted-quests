@@ -65,7 +65,7 @@ public class QuestDeath {
 
 				break;
 			case "prerequisites":
-				mPrerequisites = new QuestPrerequisites(value,"OP_AND");
+				mPrerequisites = new QuestPrerequisites(value);
 				break;
 			case "actions":
 				mActions = new QuestActions("", "", EntityType.VILLAGER, 0, value);
@@ -83,7 +83,7 @@ public class QuestDeath {
 	/* Returns true if prerequisites match and actions were taken, false otherwise */
 	public boolean deathEvent(Plugin plugin, PlayerDeathEvent event) {
 		Player player = event.getEntity();
-		if (mPrerequisites == null || mPrerequisites.prerequisitesMet(player)) {
+		if (mPrerequisites == null || mPrerequisites.prerequisiteMet(player)) {
 			mActions.doActions(plugin, player, mPrerequisites);
 
 			event.setKeepInventory(mKeepInv);

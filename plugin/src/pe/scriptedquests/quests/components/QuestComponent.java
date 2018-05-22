@@ -46,7 +46,7 @@ class QuestComponent {
 			}
 
 			if (key.equals("prerequisites")) {
-				mPrerequisites = new QuestPrerequisites(value,"OP_AND");
+				mPrerequisites = new QuestPrerequisites(value);
 			} else if (key.equals("actions")) {
 				mActions = new QuestActions(npcName, displayName, entityType, delayTicks, value);
 			}
@@ -58,7 +58,7 @@ class QuestComponent {
 	}
 
 	void doActionsIfPrereqsMet(Plugin plugin, Player player) {
-		if (mPrerequisites == null || mPrerequisites.prerequisitesMet(player)) {
+		if (mPrerequisites == null || mPrerequisites.prerequisiteMet(player)) {
 			mActions.doActions(plugin, player, mPrerequisites);
 		}
 	}

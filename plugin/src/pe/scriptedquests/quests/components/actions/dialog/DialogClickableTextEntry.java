@@ -33,7 +33,7 @@ public class DialogClickableTextEntry implements DialogBase {
 
 		public void doActionsIfConditionsMatch(Plugin plugin, Player player) {
 			if (mValidArea.within(player.getLocation())
-			    && (mPrerequisites == null || mPrerequisites.prerequisitesMet(player))) {
+			    && (mPrerequisites == null || mPrerequisites.prerequisiteMet(player))) {
 				player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 0.7f, 0.9f);
 				mActions.doActions(plugin, player, mPrerequisites);
 			}

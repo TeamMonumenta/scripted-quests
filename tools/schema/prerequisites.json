@@ -4,35 +4,8 @@
     "defaultProperties": [],
     "additionalProperties": false,
     "properties": {
-        "and": {
-            "propertyOrder": 1,
-            "title": "and",
-            "description": "Check if all contained prerequisites are true",
-            "type": "array",
-            "items": {
-                $ref: "schema/prerequisites.json"
-            }
-        },
-        "or": {
-            "propertyOrder": 1,
-            "title": "or",
-            "description": "Check if at least one contained prerequisites is true",
-            "type": "array",
-            "items": {
-                $ref: "schema/prerequisites.json"
-            }
-        },
-        "and": {
-            "propertyOrder": 1,
-            "title": "not",
-            "description": "Check if no contained prerequisites are true",
-            "type": "array",
-            "items": {
-                $ref: "schema/prerequisites.json"
-            }
-        },
         "check_scores": {
-            "propertyOrder": 2,
+            "propertyOrder": 1,
             "title": "check_scores",
             "description": "Checks that the player has the specified scoreboard value(s). Click Properties, then type in the scoreboard name in the input box and click the 'add' button. Scoreboards are case-sensitive",
             "type": "object",
@@ -200,6 +173,34 @@
                     "propertyOrder": 6
                 }
             }
+        },
+        "and": {
+            "propertyOrder": 6,
+            "title": "and",
+            "description": "Returns true if all contained prerequisites are true, false otherwise",
+            "type": "object",
+			$ref: "schema/prerequisites.json"
+        },
+        "or": {
+            "propertyOrder": 7,
+            "title": "or",
+            "description": "Returns true if any contained prerequisite is true, false otherwise",
+            "type": "object",
+			$ref: "schema/prerequisites.json"
+        },
+        "not_and": {
+            "propertyOrder": 8,
+            "title": "not_and",
+            "description": "Returns true if any contained prerequisite is false, false otherwise",
+            "type": "object",
+			$ref: "schema/prerequisites.json"
+        },
+        "not_or": {
+            "propertyOrder": 9,
+            "title": "not_or",
+            "description": "Returns true if all contained prerequisites are false, false otherwise",
+            "type": "object",
+			$ref: "schema/prerequisites.json"
         }
     }
 }

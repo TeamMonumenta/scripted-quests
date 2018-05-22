@@ -11,17 +11,14 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-class QuestPrerequisites {
-/* I give up trying to figure out how to make an enum...
-	public enum Operator {
-		OP_AND,
-		OP_OR,
-		OP_NOT
-	}
-*/
+class QuestPrerequisites implements PrerequisiteBase {
 	private ArrayList<PrerequisiteBase> mPrerequisites = new ArrayList<PrerequisiteBase>();
-//	private Operator mOperator;
 	private String mOperator;
+
+	/* Default to AND if no operator specified */
+	QuestPrerequisites(JsonElement element) throws Exception {
+		this(element, "and");
+	}
 
 	QuestPrerequisites(JsonElement element, String operator) throws Exception {
 		JsonObject object = element.getAsJsonObject();
@@ -37,37 +34,10 @@ class QuestPrerequisites {
 
 			switch (key) {
 			case "and":
-				JsonArray array = value.getAsJsonArray();
-				if (array == null) {
-					throw new Exception("Prerequisites value for key '" + key + "' is not an array!");
-				}
-
-				Iterator<JsonElement> iter = array.iterator();
-				while (iter.hasNext()) {
-					mPrerequisites.add(QuestPrerequisites(iter.next(),"OP_AND"));
-				}
-				break;
 			case "or":
-				JsonArray array = value.getAsJsonArray();
-				if (array == null) {
-					throw new Exception("Prerequisites value for key '" + key + "' is not an array!");
-				}
-
-				Iterator<JsonElement> iter = array.iterator();
-				while (iter.hasNext()) {
-					mPrerequisites.add(QuestPrerequisites(iter.next(),"OP_OR"));
-				}
-				break;
-			case "not":
-				JsonArray array = value.getAsJsonArray();
-				if (array == null) {
-					throw new Exception("Prerequisites value for key '" + key + "' is not an array!");
-				}
-
-				Iterator<JsonElement> iter = array.iterator();
-				while (iter.hasNext()) {
-					mPrerequisites.add(QuestPrerequisites(iter.next(),"OP_NOT"));
-				}
+			case "not_and":
+			case "not_or":
+				mPrerequisites.add(new QuestPrerequisites(value, key));
 				break;
 			case "check_scores":
 				JsonObject scoreObject = value.getAsJsonObject();
@@ -84,25 +54,29 @@ class QuestPrerequisites {
 				mPrerequisites.add(new PrerequisiteCheckTags(value));
 				break;
 			case "items_in_inventory":
-				JsonArray array = value.getAsJsonArray();
-				if (array == null) {
-					throw new Exception("Prerequisites value for key '" + key + "' is not an array!");
-				}
+				{
+					JsonArray array = value.getAsJsonArray();
+					if (array == null) {
+						throw new Exception("Prerequisites value for key '" + key + "' is not an array!");
+					}
 
-				Iterator<JsonElement> iter = array.iterator();
-				while (iter.hasNext()) {
-					mPrerequisites.add(new PrerequisiteItemsInInventory(iter.next()));
+					Iterator<JsonElement> iter = array.iterator();
+					while (iter.hasNext()) {
+						mPrerequisites.add(new PrerequisiteItemsInInventory(iter.next()));
+					}
 				}
 				break;
 			case "item_in_hand":
-				JsonArray array = value.getAsJsonArray();
-				if (array == null) {
-					throw new Exception("Prerequisites value for key '" + key + "' is not an array!");
-				}
+				{
+					JsonArray array = value.getAsJsonArray();
+					if (array == null) {
+						throw new Exception("Prerequisites value for key '" + key + "' is not an array!");
+					}
 
-				Iterator<JsonElement> iter = array.iterator();
-				while (iter.hasNext()) {
-					mPrerequisites.add(new PrerequisiteItemInHand(iter.next()));
+					Iterator<JsonElement> iter = array.iterator();
+					while (iter.hasNext()) {
+						mPrerequisites.add(new PrerequisiteItemInHand(iter.next()));
+					}
 				}
 				break;
 			case "location":
@@ -114,32 +88,36 @@ class QuestPrerequisites {
 		}
 	}
 
-	boolean prerequisitesMet(Player player) {
+	@Override
+	public boolean prerequisiteMet(Player player) {
 		switch(mOperator) {
-		case "OP_OR":
+		case "or":
 			for (PrerequisiteBase prerequisite : mPrerequisites) {
 				if (prerequisite.prerequisiteMet(player)) {
 					return true;
 				}
 			}
-
 			return false;
-		case "OP_NOT":
+		case "not_and":
 			for (PrerequisiteBase prerequisite : mPrerequisites) {
 				if (prerequisite.prerequisiteMet(player)) {
 					return false;
 				}
 			}
-
 			return true;
-		default:
-		// "OP_AND"
+		case "not_or":
+			for (PrerequisiteBase prerequisite : mPrerequisites) {
+				if (!prerequisite.prerequisiteMet(player)) {
+					return true;
+				}
+			}
+			return false;
+		default: // "and"
 			for (PrerequisiteBase prerequisite : mPrerequisites) {
 				if (!prerequisite.prerequisiteMet(player)) {
 					return false;
 				}
 			}
-
 			return true;
 		}
 	}

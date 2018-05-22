@@ -60,7 +60,7 @@ public class QuestCompass {
 		ArrayList<QuestLocation> availableMarkers = new ArrayList<QuestLocation>();
 
 		for (QuestLocation marker : mMarkers) {
-			if (marker.prerequisitesMet(player)) {
+			if (marker.prerequisiteMet(player)) {
 				availableMarkers.add(marker);
 			}
 		}
