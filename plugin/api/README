@@ -1,0 +1,2 @@
+To compile this plugin, you will need a Spigot jar to provide the API
+reference. Name that file spigot.jar in this folder.
