@@ -153,6 +153,11 @@
                 "description": "Runs a command via the console. Any instance of '@S' (uppercase!) will be replaced with the player's name.",
                 "type": "string"
             },
+            "give_loot": {
+                "title": "give_loot",
+                "description": "Gives the player all items from a loot table.",
+                "type": "string"
+            },
             "voice_over": {
                 "title": "voice_over",
                 "description": "Play a sound to the player as an NPC (WIP)",

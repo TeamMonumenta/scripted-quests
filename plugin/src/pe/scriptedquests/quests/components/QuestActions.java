@@ -57,6 +57,9 @@ class QuestActions {
 				case "function":
 					mActions.add(new ActionFunction(value));
 					break;
+				case "give_loot":
+					mActions.add(new ActionGiveLoot(value));
+					break;
 				case "set_scores":
 					JsonObject scoreObject = value.getAsJsonObject();
 					if (scoreObject == null) {
