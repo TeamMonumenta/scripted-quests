@@ -179,28 +179,28 @@
             "title": "and",
             "description": "Returns true if all contained prerequisites are true, false otherwise",
             "type": "object",
-			$ref: "schema/prerequisites.json"
+            "$ref": "schema/prerequisites.json"
         },
         "or": {
             "propertyOrder": 7,
             "title": "or",
             "description": "Returns true if any contained prerequisite is true, false otherwise",
             "type": "object",
-			$ref: "schema/prerequisites.json"
+            "$ref": "schema/prerequisites.json"
         },
         "not_and": {
             "propertyOrder": 8,
             "title": "not_and",
             "description": "Returns true if any contained prerequisite is false, false otherwise",
             "type": "object",
-			$ref: "schema/prerequisites.json"
+            "$ref": "schema/prerequisites.json"
         },
         "not_or": {
             "propertyOrder": 9,
             "title": "not_or",
             "description": "Returns true if all contained prerequisites are false, false otherwise",
             "type": "object",
-			$ref: "schema/prerequisites.json"
+            "$ref": "schema/prerequisites.json"
         }
     }
 }

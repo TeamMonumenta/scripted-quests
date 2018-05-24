@@ -51,7 +51,18 @@ class QuestPrerequisites implements PrerequisiteBase {
 				}
 				break;
 			case "check_tags":
-				mPrerequisites.add(new PrerequisiteCheckTags(value));
+				{
+				  JsonArray array = value.getAsJsonArray();
+				  if (array == null) {
+					  throw new Exception("Prerequisites value for key '" + key + "' is not an array!");
+				  }
+
+				  // Add all array entries
+				  Iterator<JsonElement> iter = array.iterator();
+				  while (iter.hasNext()) {
+					  mPrerequisites.add(new PrerequisiteCheckTags(iter.next()));
+				  }
+				}
 				break;
 			case "items_in_inventory":
 				{
@@ -91,6 +102,13 @@ class QuestPrerequisites implements PrerequisiteBase {
 	@Override
 	public boolean prerequisiteMet(Player player) {
 		switch(mOperator) {
+		case "not_or":
+			for (PrerequisiteBase prerequisite : mPrerequisites) {
+				if (prerequisite.prerequisiteMet(player)) {
+					return false;
+				}
+			}
+			return true;
 		case "or":
 			for (PrerequisiteBase prerequisite : mPrerequisites) {
 				if (prerequisite.prerequisiteMet(player)) {
@@ -99,13 +117,6 @@ class QuestPrerequisites implements PrerequisiteBase {
 			}
 			return false;
 		case "not_and":
-			for (PrerequisiteBase prerequisite : mPrerequisites) {
-				if (prerequisite.prerequisiteMet(player)) {
-					return false;
-				}
-			}
-			return true;
-		case "not_or":
 			for (PrerequisiteBase prerequisite : mPrerequisites) {
 				if (!prerequisite.prerequisiteMet(player)) {
 					return true;
