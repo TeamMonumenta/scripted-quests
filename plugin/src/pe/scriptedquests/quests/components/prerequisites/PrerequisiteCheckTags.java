@@ -1,12 +1,9 @@
 package pe.scriptedquests.quests;
 
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.bukkit.entity.Player;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 
 class PrerequisiteCheckTags implements PrerequisiteBase {

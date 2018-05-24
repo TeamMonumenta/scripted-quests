@@ -52,16 +52,16 @@ class QuestPrerequisites implements PrerequisiteBase {
 				break;
 			case "check_tags":
 				{
-				  JsonArray array = value.getAsJsonArray();
-				  if (array == null) {
-					  throw new Exception("Prerequisites value for key '" + key + "' is not an array!");
-				  }
+					JsonArray array = value.getAsJsonArray();
+					if (array == null) {
+						throw new Exception("Prerequisites value for key '" + key + "' is not an array!");
+					}
 
-				  // Add all array entries
-				  Iterator<JsonElement> iter = array.iterator();
-				  while (iter.hasNext()) {
-					  mPrerequisites.add(new PrerequisiteCheckTags(iter.next()));
-				  }
+					// Add all array entries
+					Iterator<JsonElement> iter = array.iterator();
+					while (iter.hasNext()) {
+						mPrerequisites.add(new PrerequisiteCheckTags(iter.next()));
+					}
 				}
 				break;
 			case "items_in_inventory":
@@ -101,7 +101,7 @@ class QuestPrerequisites implements PrerequisiteBase {
 
 	@Override
 	public boolean prerequisiteMet(Player player) {
-		switch(mOperator) {
+		switch (mOperator) {
 		case "not_or":
 			for (PrerequisiteBase prerequisite : mPrerequisites) {
 				if (prerequisite.prerequisiteMet(player)) {
