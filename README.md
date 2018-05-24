@@ -122,6 +122,9 @@ prerequisites:
 - items\_in\_inventory - Checks that the player is carrying the specified items
 - item\_in\_hand - Checks that the item in the player's main hand meets specified criteria
 - location - Checks that the player is within an area
+- and, or, not\_and, not\_or  - Allows building complex logical prerequisites.
+
+By default, prerequisites are and'ed together - all must be true.
 
 actions:
 - dialog - Interaction with an NPC
@@ -131,4 +134,5 @@ actions:
 - set\_scores - Sets scoreboard values for the player
 - function - Runs a function using the console "as" the player (@s = player)
 - command - Runs a command using the console
+- give\_loot - Generates loot from a loot table and gives it to the player
 - rerun-components - Re-runs all components for this NPC from the beginning
