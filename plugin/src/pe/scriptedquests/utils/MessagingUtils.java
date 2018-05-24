@@ -51,9 +51,8 @@ public class MessagingUtils {
 
 	public static void sendRawMessage(Player player, String message) {
 		message = translatePlayerName(player, message);
-		TextComponent formattedMessage = new TextComponent(ChatColor.translateAlternateColorCodes('&',
-		                                                   message));
-		player.spigot().sendMessage(formattedMessage);
+		String noAlternateColorCodes = ChatColor.translateAlternateColorCodes('&',message);
+		player.spigot().sendMessage(TextComponent.fromLegacyText(noAlternateColorCodes));
 	}
 
 	public static void sendClickableNPCMessage(Plugin plugin, Player player, String message,
