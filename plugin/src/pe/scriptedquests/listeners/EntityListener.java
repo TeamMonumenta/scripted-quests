@@ -3,6 +3,7 @@ package pe.scriptedquests.listeners;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -18,7 +19,6 @@ public class EntityListener implements Listener {
 		mPlugin = plugin;
 	}
 
-	//  An Entity hit another Entity.
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void EntityDamageByEntityEvent(EntityDamageByEntityEvent event) {
 		Entity damagee = event.getEntity();
@@ -40,6 +40,20 @@ public class EntityListener implements Listener {
 					mPlugin.mNpcManager.interactEvent(mPlugin, player, damagee.getCustomName(),
 					                                  damagee.getType(), npc);
 				}
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void EntityDamageEvent(EntityDamageEvent event) {
+		Entity damagee = event.getEntity();
+
+		QuestNpc npc = mPlugin.mNpcManager.getInteractNPC(damagee.getCustomName(), damagee.getType());
+		if (npc != null) {
+			DamageCause cause = event.getCause();
+			if (cause != DamageCause.CUSTOM && cause != DamageCause.VOID) {
+				/* This is a quest NPC - refuse to damage it */
+				event.setCancelled(true);
 			}
 		}
 	}
