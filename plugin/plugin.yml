@@ -14,3 +14,7 @@ commands:
     permission: scriptedquests.reloadquests
     description: Reloads quest config files
     usage: /reloadquests
+  giveloottable:
+    permission: scriptedquests.giveloottable
+    description: Gives the target player all loot from a loot table
+    usage: /execute @p<stuff> ~ ~ ~ giveloottable prefix:loot/table/path

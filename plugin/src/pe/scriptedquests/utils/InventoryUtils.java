@@ -1,7 +1,19 @@
 package pe.scriptedquests.utils;
 
 import java.util.List;
+import java.util.Random;
 
+import net.minecraft.server.v1_12_R1.EntityItem;
+import net.minecraft.server.v1_12_R1.EntityPlayer;
+import net.minecraft.server.v1_12_R1.LootTable;
+import net.minecraft.server.v1_12_R1.LootTableInfo;
+import net.minecraft.server.v1_12_R1.MinecraftKey;
+import net.minecraft.server.v1_12_R1.World;
+import net.minecraft.server.v1_12_R1.WorldServer;
+
+import org.bukkit.craftbukkit.v1_12_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -47,5 +59,34 @@ public class InventoryUtils {
 		}
 
 		return false;
+	}
+
+	public static void giveLootTableContents(Player player, String lootPath) throws Exception{
+		World nmsWorld = ((CraftWorld)player.getWorld()).getHandle();
+		EntityPlayer nmsPlayer = ((CraftPlayer)player).getHandle();
+
+		// Generate items from the specified loot table
+		LootTable lootTable = nmsWorld.getLootTableRegistry().a(new MinecraftKey(lootPath));
+		if (lootTable == null) {
+			throw new Exception("Unable to find loot table '" + lootPath + "'");
+		}
+
+		List<net.minecraft.server.v1_12_R1.ItemStack> loot = lootTable.a(new Random(),
+		                                                     new LootTableInfo(0, (WorldServer)nmsWorld,
+		                                                             nmsWorld.getLootTableRegistry(),
+		                                                             null, null, null));
+		if (loot == null) {
+			throw new Exception("Unable to retrieve loot from table '" + lootPath + "'");
+		}
+
+		// Give those items to the player (this code based on AdvancementRewards.java)
+		for (net.minecraft.server.v1_12_R1.ItemStack itemstack : loot) {
+			EntityItem entityitem = nmsPlayer.drop(itemstack, false);
+
+			if (entityitem != null) {
+				entityitem.r();
+				entityitem.d(nmsPlayer.getName());
+			}
+		}
 	}
 }

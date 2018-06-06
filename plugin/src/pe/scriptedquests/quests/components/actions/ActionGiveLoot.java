@@ -2,23 +2,12 @@ package pe.scriptedquests.quests;
 
 import com.google.gson.JsonElement;
 
-import java.util.List;
-import java.util.Random;
-
-import net.minecraft.server.v1_12_R1.EntityItem;
-import net.minecraft.server.v1_12_R1.EntityPlayer;
-import net.minecraft.server.v1_12_R1.ItemStack;
-import net.minecraft.server.v1_12_R1.LootTable;
-import net.minecraft.server.v1_12_R1.LootTableInfo;
-import net.minecraft.server.v1_12_R1.MinecraftKey;
-import net.minecraft.server.v1_12_R1.World;
-import net.minecraft.server.v1_12_R1.WorldServer;
-
-import org.bukkit.craftbukkit.v1_12_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import pe.scriptedquests.Plugin;
+import pe.scriptedquests.utils.InventoryUtils;
+import pe.scriptedquests.utils.MessagingUtils;
 
 class ActionGiveLoot implements ActionBase {
 	private String mLootPath;
@@ -32,24 +21,12 @@ class ActionGiveLoot implements ActionBase {
 
 	@Override
 	public void doAction(Plugin plugin, Player player, QuestPrerequisites prereqs) {
-		World nmsWorld = ((CraftWorld)player.getWorld()).getHandle();
-		EntityPlayer nmsPlayer = ((CraftPlayer)player).getHandle();
-
-		// Generate items from the specified loot table
-		LootTable lootTable = nmsWorld.getLootTableRegistry().a(new MinecraftKey(mLootPath));
-		List<ItemStack> loot = lootTable.a(new Random(),
-		                                   new LootTableInfo(0, (WorldServer)nmsWorld,
-		                                                     nmsWorld.getLootTableRegistry(),
-		                                                     null, null, null));
-
-		// Give those items to the player (this code based on AdvancementRewards.java)
-		for (ItemStack itemstack : loot) {
-			EntityItem entityitem = nmsPlayer.drop(itemstack, false);
-
-			if (entityitem != null) {
-				entityitem.r();
-				entityitem.d(nmsPlayer.getName());
-			}
+		try {
+			InventoryUtils.giveLootTableContents(player, mLootPath);
+		} catch (Exception e) {
+			player.sendMessage(ChatColor.RED + "BUG! Server failed to give you loot from the table '" + mLootPath + "'");
+			player.sendMessage(ChatColor.RED + "Please hover over the following message, take a screenshot, and report this to a moderator");
+			MessagingUtils.sendStackTrace(player, e);
 		}
 	}
 }
