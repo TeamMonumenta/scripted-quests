@@ -113,28 +113,43 @@ public class QuestNpcManager {
 		reload(plugin, null);
 	}
 
-	public boolean interactEvent(Plugin plugin, Player player, String npcName, EntityType entityType) {
+	public QuestNpc getInteractNPC(String npcName, EntityType entityType) {
 		// Only search for the entity's name if we have a quest with that entity type
 		if (!mEntityTypes.contains(entityType)) {
-			return false;
+			return null;
 		}
 
 		// Only entities with custom names
 		if (npcName == null || npcName.isEmpty()) {
-			return false;
+			return null;
 		}
 
+		// Return the NPC if we have an NPC with that name
+		QuestNpc npc = mNpcs.get(_squashNpcName(npcName));
+		if (npc != null) {
+			return npc;
+		}
+
+		return null;
+	}
+
+	public boolean interactEvent(Plugin plugin, Player player, String npcName, EntityType entityType) {
+		QuestNpc npc = getInteractNPC(npcName, entityType);
+		if (npc != null) {
+			return interactEvent(plugin, player, npcName, entityType, npc);
+		}
+		return false;
+	}
+
+	public boolean interactEvent(Plugin plugin, Player player, String npcName, EntityType entityType, QuestNpc npc) {
 		// Only one interaction per player per tick
 		if (!MetadataUtils.checkOnceThisTick(plugin, player, "ScriptedQuestsNPCInteractNonce")) {
 			return false;
 		}
 
-		// Run the interaction if we have an NPC with that name
-		QuestNpc npc = mNpcs.get(_squashNpcName(npcName));
 		if (npc != null) {
 			return npc.interactEvent(plugin, player, _squashNpcName(npcName), entityType);
 		}
-
 		return false;
 	}
 

@@ -2,12 +2,14 @@ package pe.scriptedquests.listeners;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import pe.scriptedquests.Plugin;
+import pe.scriptedquests.quests.QuestNpc;
 
 public class EntityListener implements Listener {
 	Plugin mPlugin;
@@ -25,11 +27,19 @@ public class EntityListener implements Listener {
 		if (damager instanceof Player) {
 			Player player = (Player)damager;
 
-			if (mPlugin.mNpcManager.interactEvent(mPlugin, player, damagee.getCustomName(),
-			                                      damagee.getType())) {
-				// This resulted in a quest interaction - cancel the damage event
+			QuestNpc npc = mPlugin.mNpcManager.getInteractNPC(damagee.getCustomName(), damagee.getType());
+			if (npc != null) {
+				/*
+				 * This is definitely a quest NPC, even if the player might not be able to interact with it
+				 * Cancel all damage done to it
+				 */
 				event.setCancelled(true);
-				return;
+
+				/* Only trigger quest interactions via melee attack */
+				if (event.getCause().equals(DamageCause.ENTITY_ATTACK)) {
+					mPlugin.mNpcManager.interactEvent(mPlugin, player, damagee.getCustomName(),
+					                                  damagee.getType(), npc);
+				}
 			}
 		}
 	}
