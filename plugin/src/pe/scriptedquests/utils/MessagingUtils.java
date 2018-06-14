@@ -57,6 +57,7 @@ public class MessagingUtils {
 
 	public static void sendClickableNPCMessage(Plugin plugin, Player player, String message,
 	                                           String commandStr) {
+		message = translatePlayerName(player, message);
 		TextComponent formattedMessage = new TextComponent("[" + message + "]");
 		formattedMessage.setColor(ChatColor.LIGHT_PURPLE);
 		formattedMessage.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, commandStr));
