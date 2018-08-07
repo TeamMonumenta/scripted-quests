@@ -49,7 +49,7 @@ Grab one of the plugin jar files from the [release](release) folder. Naming sche
 
 `ScriptedQuests_<Target.Minecraft.Version>_<Plugin.Version>-<CompileDate>-<CompileTime>`
 
-Or compile it yourself using the included Ant build script.
+Or compile it yourself using Maven.
 
 ## <a name="get-started"></a>Getting Started / Tutorial
 This plugin only currently has compiled versions for Spigot 1.12.2. It will probably work with older versions but you must compile it yourself.
