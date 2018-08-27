@@ -1,25 +1,15 @@
 #!/bin/bash
 
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-if [[ ! -e api/spigot.jar ]]; then
-	cat <<EOF
+# Update version number
+perl -p -i -e "s|<version>dev</version>|<version>$(git describe --tags --always --dirty)</version>|g" pom.xml
 
-ERROR: api/spigot.jar is missing!
-
-This repository does not bundle with it the Minecraft source code (for obvious
-legal reasons).
-
-Most plugins only require the Spigot API - however, this plugin uses direct
-calls into the Minecraft code (also called NMS) to be able to give loot from
-loot tables. That means you will need the full Spigot jar as an API reference
-to be able to compile this plugin. Place your copy of the Spigot jar file in
-api/spigot.jar and re-run this script.
-
+cat <<EOF
+NOTE: To build this project, you will likely also need to build spigot 1.12.2
+on the same system. This will place the spigot jar someplace Maven can find
+it so that this build will work too.
 EOF
-	exit 1
-fi
 
-ant pmd build jar
+mvn clean install
 retcode=$?
 if [[ $retcode -ne 0 ]]; then
 	exit $retcode
