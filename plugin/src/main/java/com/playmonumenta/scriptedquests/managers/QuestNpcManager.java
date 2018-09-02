@@ -88,23 +88,25 @@ public class QuestNpcManager {
 							   Integer.toString(numComponents) +
 							   " quest components from " + Integer.toString(numFiles) + " files");
 
-			Collections.sort(listOfNpcs);
-			String outMsg = "";
-			for (String npc : listOfNpcs) {
-				if (outMsg.isEmpty()) {
-					outMsg = npc;
-				} else {
-					outMsg = outMsg + ", " + npc;
+			if (numFiles <= 20) {
+				Collections.sort(listOfNpcs);
+				String outMsg = "";
+				for (String npc : listOfNpcs) {
+					if (outMsg.isEmpty()) {
+						outMsg = npc;
+					} else {
+						outMsg = outMsg + ", " + npc;
+					}
+
+					if (outMsg.length() > 1000) {
+						sender.sendMessage(ChatColor.GOLD + outMsg);
+						outMsg = "";
+					}
 				}
 
-				if (outMsg.length() > 1000) {
+				if (!outMsg.isEmpty()) {
 					sender.sendMessage(ChatColor.GOLD + outMsg);
-					outMsg = "";
 				}
-			}
-
-			if (!outMsg.isEmpty()) {
-				sender.sendMessage(ChatColor.GOLD + outMsg);
 			}
 		}
 	}

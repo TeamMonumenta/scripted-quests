@@ -81,23 +81,25 @@ public class QuestCompassManager {
 			                   Integer.toString(numQuestLocations) +
 			                   " quest compass locations from " + Integer.toString(numFiles) + " files");
 
-			Collections.sort(listOfQuests);
-			String outMsg = "";
-			for (String npc : listOfQuests) {
-				if (outMsg.isEmpty()) {
-					outMsg = npc;
-				} else {
-					outMsg = outMsg + ", " + npc;
+			if (numFiles <= 20) {
+				Collections.sort(listOfQuests);
+				String outMsg = "";
+				for (String npc : listOfQuests) {
+					if (outMsg.isEmpty()) {
+						outMsg = npc;
+					} else {
+						outMsg = outMsg + ", " + npc;
+					}
+
+					if (outMsg.length() > 1000) {
+						sender.sendMessage(ChatColor.GOLD + outMsg);
+						outMsg = "";
+					}
 				}
 
-				if (outMsg.length() > 1000) {
+				if (!outMsg.isEmpty()) {
 					sender.sendMessage(ChatColor.GOLD + outMsg);
-					outMsg = "";
 				}
-			}
-
-			if (!outMsg.isEmpty()) {
-				sender.sendMessage(ChatColor.GOLD + outMsg);
 			}
 		}
 	}
