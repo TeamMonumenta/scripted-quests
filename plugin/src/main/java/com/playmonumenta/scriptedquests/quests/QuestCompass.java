@@ -2,6 +2,7 @@ package com.playmonumenta.scriptedquests.quests;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -56,8 +57,8 @@ public class QuestCompass {
 		}
 	}
 
-	public ArrayList<QuestLocation> getMarkers(Player player) {
-		ArrayList<QuestLocation> availableMarkers = new ArrayList<QuestLocation>();
+	public List<CompassLocation> getMarkers(Player player) {
+		List<CompassLocation> availableMarkers = new ArrayList<CompassLocation>();
 
 		for (QuestLocation marker : mMarkers) {
 			if (marker.prerequisiteMet(player)) {

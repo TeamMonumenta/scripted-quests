@@ -7,7 +7,7 @@ import org.bukkit.World;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-public class QuestLocation {
+public class QuestLocation implements CompassLocation {
 	private QuestPrerequisites mPrerequisites;
 	private Location mLoc;
 	private String mMessage;

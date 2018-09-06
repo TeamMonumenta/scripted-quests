@@ -1,7 +1,17 @@
 package com.playmonumenta.scriptedquests.managers;
 
+import com.playmonumenta.scriptedquests.Constants;
+import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.quests.CompassLocation;
+import com.playmonumenta.scriptedquests.quests.DeathLocation;
+import com.playmonumenta.scriptedquests.quests.QuestCompass;
+import com.playmonumenta.scriptedquests.utils.FileUtils;
+import com.playmonumenta.scriptedquests.utils.MessagingUtils;
+import com.playmonumenta.scriptedquests.utils.ScoreboardUtils;
+
 import java.io.File;
 import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -9,13 +19,6 @@ import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.quests.QuestLocation;
-import com.playmonumenta.scriptedquests.quests.QuestCompass;
-import com.playmonumenta.scriptedquests.utils.FileUtils;
-import com.playmonumenta.scriptedquests.utils.MessagingUtils;
-import com.playmonumenta.scriptedquests.utils.ScoreboardUtils;
 
 public class QuestCompassManager {
 	Plugin mPlugin;
@@ -104,11 +107,12 @@ public class QuestCompassManager {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private int _showCurrentQuest(Player player, int index) {
-		List<QuestLocation> markers = new ArrayList<QuestLocation>();
+		List<CompassLocation> markers = new ArrayList<CompassLocation>();
 		List<String> markerTitles = new ArrayList<String>();
 		for (QuestCompass quest : mQuests) {
-			List <QuestLocation> questMarkers = quest.getMarkers(player);
+			List<CompassLocation> questMarkers = quest.getMarkers(player);
 
 			// Add all the valid markers to a list, and add their titles to another list
 			markers.addAll(quest.getMarkers(player));
@@ -124,6 +128,25 @@ public class QuestCompassManager {
 			}
 		}
 
+		// Add player death locations since the server was restarted
+		if (player.hasMetadata(Constants.PLAYER_DEATH_LOCATION_METAKEY)) {
+			List<DeathLocation> deathEntries =
+				(List<DeathLocation>)player.getMetadata(Constants.PLAYER_DEATH_LOCATION_METAKEY).get(0).value();
+			for (int i = 0; i < deathEntries.size(); i++) {
+				// Add this death location to the list of markers
+				markers.add(deathEntries.get(i));
+
+				String title = ChatColor.RED + "" + ChatColor.BOLD + "Death"
+				               + ChatColor.RESET + "" + ChatColor.AQUA;
+
+				if (deathEntries.size() > 1) {
+					title += " [" + (i + 1) + "/" + deathEntries.size() + "]";
+				}
+
+				markerTitles.add(title);
+			}
+		}
+
 		if (index >= markers.size()) {
 			index = 0;
 		}
@@ -131,7 +154,7 @@ public class QuestCompassManager {
 		if (markers.size() == 0) {
 			MessagingUtils.sendActionBarMessage(mPlugin, player, "You have no active quest.");
 		} else {
-			QuestLocation currentMarker = markers.get(index);
+			CompassLocation currentMarker = markers.get(index);
 
 			MessagingUtils.sendRawMessage(player, markerTitles.get(index) + ": " + currentMarker.getMessage());
 
