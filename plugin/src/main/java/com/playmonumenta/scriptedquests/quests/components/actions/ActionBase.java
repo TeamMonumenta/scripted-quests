@@ -5,5 +5,5 @@ import org.bukkit.entity.Player;
 import com.playmonumenta.scriptedquests.Plugin;
 
 interface ActionBase {
-	public void doAction(Plugin plugin, Player player, QuestPrerequisites prereqs);
+	void doAction(Plugin plugin, Player player, QuestPrerequisites prereqs);
 }

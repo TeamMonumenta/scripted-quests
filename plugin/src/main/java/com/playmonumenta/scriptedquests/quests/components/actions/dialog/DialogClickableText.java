@@ -24,7 +24,7 @@ class DialogClickableText implements DialogBase {
 		 *  it'd just mean you could click dialog from a different NPC way up in chat
 		 *  and it'd potentially trigger a current conversation
 		 */
-		int entryIdx = (new Random()).nextInt();
+		int entryIdx = new Random().nextInt();
 
 		if (element.isJsonObject()) {
 			mEntries.add(new DialogClickableTextEntry(npcName, displayName, entityType, element, entryIdx));

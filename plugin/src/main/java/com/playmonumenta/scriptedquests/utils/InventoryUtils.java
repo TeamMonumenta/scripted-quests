@@ -50,10 +50,8 @@ public class InventoryUtils {
 			ItemMeta meta = item.getItemMeta();
 			if (meta != null) {
 				String displayName = meta.getDisplayName();
-				if (displayName != null && !displayName.isEmpty()) {
-					if (displayName.contains(nameText)) {
-						return true;
-					}
+				if (displayName != null && !displayName.isEmpty() && displayName.contains(nameText)) {
+					return true;
 				}
 			}
 		}

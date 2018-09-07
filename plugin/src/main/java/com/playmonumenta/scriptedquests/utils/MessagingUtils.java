@@ -28,7 +28,7 @@ import com.playmonumenta.scriptedquests.Plugin;
 
 public class MessagingUtils {
 	public static String translatePlayerName(Player player, String message) {
-		return (message.replaceAll("@S", player.getName()));
+		return message.replaceAll("@S", player.getName());
 	}
 
 	public static void sendActionBarMessage(Plugin plugin, Player player, String message) {
