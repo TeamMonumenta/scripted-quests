@@ -39,6 +39,9 @@ ordinary compass will make it point to some coordinates. For example:
 
 ![Example quest compass](./samples/compass.png)
 
+Additonally, the compass will point to locations where you have died since the
+server last restarted, and tells you how long ago those deaths were.
+
 You can also create quests that involve the player dying in-game. These "death"
 quest elements can trigger actions when the player dies if they meet specific
 pre-requisites. This can involve keeping the player's inventory, respawning at
@@ -49,10 +52,13 @@ Grab one of the plugin jar files from the [release](release) folder. Naming sche
 
 `ScriptedQuests_<Target.Minecraft.Version>_<Plugin.Version>-<CompileDate>-<CompileTime>`
 
-Or compile it yourself using Maven.
+Or compile it yourself using Maven. Note that ScriptedQuests uses NMS - so you
+must have also compiled Spigot on the system you are using to compile
+ScriptedQuests.
 
 ## <a name="get-started"></a>Getting Started / Tutorial
-This plugin only currently has compiled versions for Spigot 1.12.2. It will probably work with older versions but you must compile it yourself.
+This plugin only currently has compiled versions for Spigot 1.12.2. It will
+probably work with older versions but you must compile it yourself.
 
 - Install it like all spigot plugins by placing it in your plugins folder.
 - Start your spigot server. This should create some folders under
