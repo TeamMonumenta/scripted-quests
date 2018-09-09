@@ -11,12 +11,12 @@ import com.google.gson.JsonObject;
 
 import com.playmonumenta.scriptedquests.Plugin;
 
-class QuestComponent {
+public class QuestComponent {
 	private QuestPrerequisites mPrerequisites = null;
 	private QuestActions mActions = null;
 
-	QuestComponent(String npcName, String displayName,
-	               EntityType entityType, JsonElement element) throws Exception {
+	public QuestComponent(String npcName, String displayName,
+	                      EntityType entityType, JsonElement element) throws Exception {
 		JsonObject object = element.getAsJsonObject();
 		if (object == null) {
 			throw new Exception("quest_components value is not an object!");
@@ -57,7 +57,7 @@ class QuestComponent {
 		}
 	}
 
-	void doActionsIfPrereqsMet(Plugin plugin, Player player) {
+	public void doActionsIfPrereqsMet(Plugin plugin, Player player) {
 		if (mPrerequisites == null || mPrerequisites.prerequisiteMet(player)) {
 			mActions.doActions(plugin, player, mPrerequisites);
 		}
