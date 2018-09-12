@@ -1,22 +1,25 @@
 package com.playmonumenta.scriptedquests.commands;
 
+import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.utils.InventoryUtils;
+import com.playmonumenta.scriptedquests.utils.MessagingUtils;
+
+import java.util.Random;
+
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ProxiedCommandSender;
 import org.bukkit.entity.Player;
 
-import org.bukkit.ChatColor;
-
-import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.utils.InventoryUtils;
-import com.playmonumenta.scriptedquests.utils.MessagingUtils;
-
 public class GiveLootTable implements CommandExecutor {
-	Plugin mPlugin;
+	private Plugin mPlugin;
+	private Random mRandom;
 
 	public GiveLootTable(Plugin plugin) {
 		mPlugin = plugin;
+		mRandom = new Random();
 	}
 
 	@Override
@@ -50,7 +53,7 @@ public class GiveLootTable implements CommandExecutor {
 		}
 
 		try {
-			InventoryUtils.giveLootTableContents(player, lootPath);
+			InventoryUtils.giveLootTableContents(player, lootPath, mRandom);
 		} catch (Exception e) {
 			player.sendMessage(ChatColor.RED + "BUG! Server failed to give you loot from the table '" + lootPath + "'");
 			player.sendMessage(ChatColor.RED + "Please hover over the following message, take a screenshot, and report this to a moderator");
