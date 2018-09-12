@@ -1,13 +1,11 @@
 #!/bin/bash
 
-# Update version number
-perl -p -i -e "s|<version>dev</version>|<version>$(git describe --tags --always --dirty)</version>|g" pom.xml
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-cat <<EOF
-NOTE: To build this project, you will likely also need to build spigot 1.12.2
-on the same system. This will place the spigot jar someplace Maven can find
-it so that this build will work too.
-EOF
+# Update version number
+VERSION=$(git describe --tags --always --dirty)
+perl -p -i -e "s|<version>dev</version>|<version>$VERSION</version>|g" "$SCRIPT_DIR/pom.xml"
+perl -p -i -e "s|^version: .*$|version: $VERSION|g" "$SCRIPT_DIR/src/main/resources/plugin.yml"
 
 mvn clean install
 retcode=$?
