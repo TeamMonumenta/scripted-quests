@@ -145,7 +145,7 @@
             },
             "function": {
                 "title": "function",
-                "description": "Runs a function via the console as the player (/execute <playername> ~ ~ ~ function <function>)",
+                "description": "Runs a function via the console as the player (/execute as <playername> at @s run function <function>)",
                 "type": "string"
             },
             "command": {

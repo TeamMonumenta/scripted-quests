@@ -99,7 +99,7 @@ an NPC, quest components are run in-order (more than one may be executed).
   list: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html
 - This command can be used to build location-based quests that don't
   involve clicking on an NPC. To do this, use a repeating command block.
-  with a command of this form: `execute @p[r=5] ~ ~ ~ interactnpc Aimee VILLAGER`
+  with a command of this form: `execute as @p[r=5] run interactnpc Aimee VILLAGER`
 - You will need to structure your QuestComponent so that the pre-requisites
   are only met once if the player will stay in that location for more than
   one invokation of interactnpc.

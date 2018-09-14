@@ -1,12 +1,12 @@
 name: ScriptedQuests
 main: com.playmonumenta.scriptedquests.Plugin
-version: 1.0
+version: 1.8
 api-version: 1.13
 commands:
   interactnpc:
     permission: scriptedquests.interactnpc
     description: Triggers a quest interaction for the target player with the named NPC of type EntityType.
-    usage: /execute @p ~ ~ ~ interactnpc <NpcName> [EntityType]
+    usage: /execute as @p run interactnpc <NpcName> [EntityType]
   questtrigger:
     permission: scriptedquests.questtrigger
     description: Invoked when a player clicks a chat message
@@ -18,4 +18,4 @@ commands:
   giveloottable:
     permission: scriptedquests.giveloottable
     description: Gives the target player all loot from a loot table
-    usage: /execute @p<stuff> ~ ~ ~ giveloottable prefix:loot/table/path
+    usage: /execute as @p run giveloottable prefix:loot/table/path
