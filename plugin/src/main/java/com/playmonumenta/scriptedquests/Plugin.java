@@ -36,7 +36,7 @@ public class Plugin extends JavaPlugin {
 		getCommand("reloadQuests").setExecutor(new ReloadQuests(this));
 		getCommand("questTrigger").setExecutor(new QuestTrigger(this));
 		getCommand("interactNpc").setExecutor(new InteractNpc(this));
-		getCommand("giveLootTable").setExecutor(new GiveLootTable(this));
+		getCommand("giveLootTable").setExecutor(new GiveLootTable());
 
 		mQuestCompassManager = new QuestCompassManager(this);
 		mNpcManager = new QuestNpcManager(this);

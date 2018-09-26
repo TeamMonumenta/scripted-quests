@@ -158,6 +158,26 @@
                 "description": "Gives the player all items from a loot table.",
                 "type": "string"
             },
+            "interact_npc": {
+                "title": "interact_npc",
+                "description": "Triggers a follow-on interaction with a different NPC.",
+                "type": "object",
+                "defaultProperties": [
+                    "name"
+                ],
+                "properties": {
+                    "name": {
+                        "title": "name",
+                        "description": "Name of the NPC to have the player interact with.",
+                        "type": "string"
+                    },
+                    "entity_type": {
+                        "title": "entity_type",
+                        "description": "EntityType of the NPC to have the player interact with (default is VILLAGER).",
+                        "type": "string"
+                    }
+                }
+            },
             "voice_over": {
                 "title": "voice_over",
                 "description": "Play a sound to the player as an NPC (WIP)",

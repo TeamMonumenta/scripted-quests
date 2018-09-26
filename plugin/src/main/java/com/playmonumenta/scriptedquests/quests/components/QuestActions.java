@@ -60,6 +60,9 @@ class QuestActions {
 				case "give_loot":
 					mActions.add(new ActionGiveLoot(value));
 					break;
+				case "interact_npc":
+					mActions.add(new ActionInteractNpc(value));
+					break;
 				case "set_scores":
 					JsonObject scoreObject = value.getAsJsonObject();
 					if (scoreObject == null) {

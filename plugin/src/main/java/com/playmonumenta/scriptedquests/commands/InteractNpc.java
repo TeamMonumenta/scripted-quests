@@ -61,7 +61,7 @@ public class InteractNpc implements CommandExecutor {
 			return false;
 		}
 
-		if (!mPlugin.mNpcManager.interactEvent(mPlugin, player, npcName, npcType)) {
+		if (!mPlugin.mNpcManager.interactEvent(mPlugin, player, npcName, npcType, true)) {
 			sender.sendMessage(ChatColor.RED + "No interaction available for player '" + player.getName() +
 			                   "' and NPC '" + npcName + "'");
 			return false;

@@ -135,17 +135,17 @@ public class QuestNpcManager {
 		return null;
 	}
 
-	public boolean interactEvent(Plugin plugin, Player player, String npcName, EntityType entityType) {
+	public boolean interactEvent(Plugin plugin, Player player, String npcName, EntityType entityType, boolean force) {
 		QuestNpc npc = getInteractNPC(npcName, entityType);
 		if (npc != null) {
-			return interactEvent(plugin, player, npcName, entityType, npc);
+			return interactEvent(plugin, player, npcName, entityType, npc, force);
 		}
 		return false;
 	}
 
-	public boolean interactEvent(Plugin plugin, Player player, String npcName, EntityType entityType, QuestNpc npc) {
+	public boolean interactEvent(Plugin plugin, Player player, String npcName, EntityType entityType, QuestNpc npc, boolean force) {
 		// Only one interaction per player per tick
-		if (!MetadataUtils.checkOnceThisTick(plugin, player, "ScriptedQuestsNPCInteractNonce")) {
+		if (!force && !MetadataUtils.checkOnceThisTick(plugin, player, "ScriptedQuestsNPCInteractNonce")) {
 			return false;
 		}
 

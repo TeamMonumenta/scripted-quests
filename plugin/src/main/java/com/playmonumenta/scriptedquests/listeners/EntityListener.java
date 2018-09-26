@@ -38,7 +38,7 @@ public class EntityListener implements Listener {
 				/* Only trigger quest interactions via melee attack */
 				if (event.getCause().equals(DamageCause.ENTITY_ATTACK)) {
 					mPlugin.mNpcManager.interactEvent(mPlugin, player, damagee.getCustomName(),
-					                                  damagee.getType(), npc);
+					                                  damagee.getType(), npc, false);
 				}
 			}
 		}

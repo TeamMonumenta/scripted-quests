@@ -23,7 +23,7 @@ class ActionRerunComponents implements ActionBase {
 		 */
 		if (!mLocked) {
 			mLocked = true;
-			plugin.mNpcManager.interactEvent(plugin, player, mNpcName, mEntityType);
+			plugin.mNpcManager.interactEvent(plugin, player, mNpcName, mEntityType, true);
 			mLocked = false;
 		} else {
 			plugin.getLogger().severe("Stopped infinite loop for NPC '" + mNpcName + "'");

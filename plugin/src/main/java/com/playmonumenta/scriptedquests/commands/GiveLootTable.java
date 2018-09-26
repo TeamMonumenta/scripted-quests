@@ -1,6 +1,5 @@
 package com.playmonumenta.scriptedquests.commands;
 
-import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.utils.InventoryUtils;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 
@@ -14,11 +13,9 @@ import org.bukkit.command.ProxiedCommandSender;
 import org.bukkit.entity.Player;
 
 public class GiveLootTable implements CommandExecutor {
-	private Plugin mPlugin;
 	private Random mRandom;
 
-	public GiveLootTable(Plugin plugin) {
-		mPlugin = plugin;
+	public GiveLootTable() {
 		mRandom = new Random();
 	}
 
