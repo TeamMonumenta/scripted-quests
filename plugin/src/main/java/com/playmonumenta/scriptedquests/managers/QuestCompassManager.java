@@ -57,6 +57,7 @@ public class QuestCompassManager {
 			return;
 		}
 
+		Collections.sort(listOfFiles);
 		for (File file : listOfFiles) {
 			try {
 				// Load this file into a QuestNpc object
