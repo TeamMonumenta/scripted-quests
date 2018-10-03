@@ -61,6 +61,9 @@ public class PlayerListener implements Listener {
 
 		// Add this death location to the beginning of the list
 		deathEntries.add(0, new DeathLocation(event.getEntity().getLocation(), System.currentTimeMillis()));
+		if (deathEntries.size() > 3) {
+			deathEntries.remove(3);
+		}
 
 		// Set the updated list on the player
 		player.setMetadata(Constants.PLAYER_DEATH_LOCATION_METAKEY, new FixedMetadataValue(mPlugin, deathEntries));
