@@ -1,72 +1,60 @@
 package com.playmonumenta.scriptedquests.commands;
 
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
+import com.playmonumenta.scriptedquests.Plugin;
+
+import io.github.jorelali.commandapi.api.arguments.Argument;
+import io.github.jorelali.commandapi.api.arguments.EntityTypeArgument;
+import io.github.jorelali.commandapi.api.arguments.StringArgument;
+import io.github.jorelali.commandapi.api.CommandPermission;
+import io.github.jorelali.commandapi.api.CommandAPI;
+
+import java.util.LinkedHashMap;
+
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ProxiedCommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
-import org.bukkit.ChatColor;
+public class InteractNpc {
+	public static void register(Plugin plugin) {
+		/* First one of these has both required arguments */
+		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
 
-import com.playmonumenta.scriptedquests.Plugin;
+		arguments.put("npcName", new StringArgument());
+		arguments.put("npcType", new EntityTypeArgument());
 
-public class InteractNpc implements CommandExecutor {
-	Plugin mPlugin;
+		CommandAPI.getInstance().register("interactnpc",
+		                                  new CommandPermission("scriptedquests.interactnpc"),
+		                                  arguments,
+										  (sender, args) -> {
+			                                  interact(plugin, sender, (String)args[0], (EntityType)args[1]);
+		                                  }
+		);
 
-	public InteractNpc(Plugin plugin) {
-		mPlugin = plugin;
+		/* Second one just has the npc name with VILLAGER as default */
+		arguments = new LinkedHashMap<>();
+
+		arguments.put("npcName", new StringArgument());
+
+		CommandAPI.getInstance().register("interactnpc",
+		                                  new CommandPermission("scriptedquests.interactnpc"),
+		                                  arguments,
+										  (sender, args) -> {
+			                                  interact(plugin, sender, (String)args[0], EntityType.VILLAGER);
+		                                  }
+		);
 	}
 
-	@Override
-	public boolean onCommand(CommandSender sender, Command command, String arg2, String[] arg3) {
-		Player player;
-
-		// Check argument count
-		if (arg3.length != 1 && arg3.length != 2) {
-			sender.sendMessage(ChatColor.RED + "Invalid number of parameters!");
-			return false;
-		}
-
-		// Parse NPC name
-		String npcName = arg3[0];
-
-		// Parse optional NPC EntityType
-		EntityType npcType;
-		if (arg3.length == 2) {
-			try {
-				npcType = EntityType.valueOf(arg3[1]);
-			} catch (IllegalArgumentException e) {
-				sender.sendMessage(ChatColor.RED +
-				                   "Invalid EntityType! Must exactly match one of Spigot's EntityType values.");
-				return false;
-			}
-		} else {
-			npcType = EntityType.VILLAGER;
-		}
-
-		// Figure out what player was the target of the command
+	private static void interact(Plugin plugin, CommandSender sender, String npcName, EntityType npcType) {
 		if (sender instanceof Player) {
-			player = (Player)sender;
-		} else if (sender instanceof ProxiedCommandSender) {
-			CommandSender callee = ((ProxiedCommandSender)sender).getCallee();
-			if (callee instanceof Player) {
-				player = (Player)callee;
-			} else {
-				sender.sendMessage(ChatColor.RED + "Execute command detected with non-player target!");
-				return false;
+			Player player = (Player) sender;
+
+			if (!plugin.mNpcManager.interactEvent(plugin, player, npcName, npcType, true)) {
+				sender.sendMessage(ChatColor.RED + "No interaction available for player '" + player.getName() +
+				                   "' and NPC '" + npcName + "'");
 			}
 		} else {
-			sender.sendMessage(ChatColor.RED + "This command must be run by/on a player!");
-			return false;
+			sender.sendMessage("This command must be run by/on a player!");
 		}
-
-		if (!mPlugin.mNpcManager.interactEvent(mPlugin, player, npcName, npcType, true)) {
-			sender.sendMessage(ChatColor.RED + "No interaction available for player '" + player.getName() +
-			                   "' and NPC '" + npcName + "'");
-			return false;
-		}
-
-		return true;
 	}
 }

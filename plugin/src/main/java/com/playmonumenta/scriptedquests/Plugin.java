@@ -1,10 +1,5 @@
 package com.playmonumenta.scriptedquests;
 
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.World;
-
 import com.playmonumenta.scriptedquests.commands.GiveLootTable;
 import com.playmonumenta.scriptedquests.commands.InteractNpc;
 import com.playmonumenta.scriptedquests.commands.QuestTrigger;
@@ -15,6 +10,11 @@ import com.playmonumenta.scriptedquests.managers.QuestCompassManager;
 import com.playmonumenta.scriptedquests.managers.QuestDeathManager;
 import com.playmonumenta.scriptedquests.managers.QuestNpcManager;
 import com.playmonumenta.scriptedquests.utils.MetadataUtils;
+
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.World;
 
 public class Plugin extends JavaPlugin {
 	public QuestCompassManager mQuestCompassManager;
@@ -35,12 +35,15 @@ public class Plugin extends JavaPlugin {
 
 		getCommand("reloadQuests").setExecutor(new ReloadQuests(this));
 		getCommand("questTrigger").setExecutor(new QuestTrigger(this));
-		getCommand("interactNpc").setExecutor(new InteractNpc(this));
 		getCommand("giveLootTable").setExecutor(new GiveLootTable());
+
+		/* These plugins register directly with minecraft, bypassing spigot */
+		InteractNpc.register(this);
 
 		mQuestCompassManager = new QuestCompassManager(this);
 		mNpcManager = new QuestNpcManager(this);
 		mDeathManager = new QuestDeathManager(this);
+
 	}
 
 	//	Logic that is performed upon disabling the plugin.
