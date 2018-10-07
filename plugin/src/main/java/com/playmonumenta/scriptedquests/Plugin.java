@@ -11,6 +11,8 @@ import com.playmonumenta.scriptedquests.managers.QuestDeathManager;
 import com.playmonumenta.scriptedquests.managers.QuestNpcManager;
 import com.playmonumenta.scriptedquests.utils.MetadataUtils;
 
+import java.util.Random;
+
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.PluginManager;
@@ -22,6 +24,7 @@ public class Plugin extends JavaPlugin {
 	public QuestDeathManager mDeathManager;
 
 	public World mWorld;
+	public Random mRandom = new Random();
 
 	//	Logic that is performed upon enabling the plugin.
 	@Override
@@ -35,10 +38,10 @@ public class Plugin extends JavaPlugin {
 
 		getCommand("reloadQuests").setExecutor(new ReloadQuests(this));
 		getCommand("questTrigger").setExecutor(new QuestTrigger(this));
-		getCommand("giveLootTable").setExecutor(new GiveLootTable());
 
 		/* These plugins register directly with minecraft, bypassing spigot */
 		InteractNpc.register(this);
+		GiveLootTable.register(mRandom);
 
 		mQuestCompassManager = new QuestCompassManager(this);
 		mNpcManager = new QuestNpcManager(this);

@@ -3,60 +3,43 @@ package com.playmonumenta.scriptedquests.commands;
 import com.playmonumenta.scriptedquests.utils.InventoryUtils;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 
+import io.github.jorelali.commandapi.api.arguments.Argument;
+import io.github.jorelali.commandapi.api.arguments.EntitySelectorArgument;
+import io.github.jorelali.commandapi.api.arguments.EntitySelectorArgument.EntitySelector;
+import io.github.jorelali.commandapi.api.arguments.TextArgument;
+import io.github.jorelali.commandapi.api.CommandAPI;
+import io.github.jorelali.commandapi.api.CommandPermission;
+
+import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.Random;
 
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.ProxiedCommandSender;
 import org.bukkit.entity.Player;
 
-public class GiveLootTable implements CommandExecutor {
-	private Random mRandom;
+public class GiveLootTable {
+	@SuppressWarnings("unchecked")
+	public static void register(Random random) {
+		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
 
-	public GiveLootTable() {
-		mRandom = new Random();
-	}
+		arguments.put("players", new EntitySelectorArgument(EntitySelector.MANY_PLAYERS));
+		arguments.put("lootTablePath", new TextArgument());
 
-	@Override
-	public boolean onCommand(CommandSender sender, Command command, String arg2, String[] arg3) {
-		// Check argument count
-		if (arg3.length != 1) {
-			sender.sendMessage(ChatColor.RED + "Invalid number of parameters!");
-			return false;
-		}
-
-		String lootPath = arg3[0];
-		if (!lootPath.contains(":")) {
-			sender.sendMessage(ChatColor.RED + "Loot table path should be of the form prefix:path/to/loot");
-			sender.sendMessage(ChatColor.RED + "For example: 'minecraft:entities/creeper'");
-			return false;
-		}
-
-		Player player = null;
-		if (sender instanceof Player) {
-			player = (Player)sender;
-		} else if (sender instanceof ProxiedCommandSender) {
-			CommandSender callee = ((ProxiedCommandSender)sender).getCallee();
-			if (callee instanceof Player) {
-				player = (Player)callee;
-			}
-		}
-
-		if (player == null) {
-            sender.sendMessage(ChatColor.RED + "This command must be run by/on a player!");
-			return false;
-		}
-
-		try {
-			InventoryUtils.giveLootTableContents(player, lootPath, mRandom);
-		} catch (Exception e) {
-			player.sendMessage(ChatColor.RED + "BUG! Server failed to give you loot from the table '" + lootPath + "'");
-			player.sendMessage(ChatColor.RED + "Please hover over the following message, take a screenshot, and report this to a moderator");
-			MessagingUtils.sendStackTrace(player, e);
-		}
-
-		return true;
+		CommandAPI.getInstance().register("giveloottable",
+		                                  new CommandPermission("scriptedquests.giveloottable"),
+		                                  arguments,
+		                                  (sender, args) -> {
+		                                      String lootPath = (String)args[1];
+		                                      for (Player player : (Collection<Player>)args[0]) {
+		                                          try {
+		                                              InventoryUtils.giveLootTableContents(player, lootPath, random);
+		                                          } catch (Exception e) {
+		                                              player.sendMessage(ChatColor.RED + "BUG! Server failed to give you loot from the table '" + lootPath + "'");
+		                                              player.sendMessage(ChatColor.RED + "Please hover over the following message, take a screenshot, and report this to a moderator");
+		                                              MessagingUtils.sendStackTrace(player, e);
+		                                          }
+		                                      }
+		                                  }
+		);
 	}
 }
