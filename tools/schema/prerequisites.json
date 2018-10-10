@@ -18,7 +18,7 @@
                     "oneOf": [
                         {
                             "title": "Exactly",
-                            "$ref": "schema/score.json"
+                            "$ref": "score.json"
                         },
                         {
                             "title": "Range",
@@ -26,11 +26,11 @@
                             "properties": {
                                 "min": {
                                     "title": "Minimum",
-                                    "$ref": "schema/score.json"
+                                    "$ref": "score.json"
                                 },
                                 "max": {
                                     "title": "Maximum",
-                                    "$ref": "schema/score.json"
+                                    "$ref": "score.json"
                                 }
                             }
                         },
@@ -144,32 +144,32 @@
             "properties": {
                 "x1": {
                     "required": true,
-                    "$ref": "schema/coordinate.json",
+                    "$ref": "coordinate.json",
                     "propertyOrder": 1
                 },
                 "y1": {
                     "required": true,
-                    "$ref": "schema/coordinate.json",
+                    "$ref": "coordinate.json",
                     "propertyOrder": 2
                 },
                 "z1": {
                     "required": true,
-                    "$ref": "schema/coordinate.json",
+                    "$ref": "coordinate.json",
                     "propertyOrder": 3
                 },
                 "x2": {
                     "required": true,
-                    "$ref": "schema/coordinate.json",
+                    "$ref": "coordinate.json",
                     "propertyOrder": 4
                 },
                 "y2": {
                     "required": true,
-                    "$ref": "schema/coordinate.json",
+                    "$ref": "coordinate.json",
                     "propertyOrder": 5
                 },
                 "z2": {
                     "required": true,
-                    "$ref": "schema/coordinate.json",
+                    "$ref": "coordinate.json",
                     "propertyOrder": 6
                 }
             }
@@ -179,28 +179,28 @@
             "title": "and",
             "description": "Returns true if all contained prerequisites are true, false otherwise",
             "type": "object",
-            "$ref": "schema/prerequisites.json"
+            "$ref": "prerequisites.json"
         },
         "or": {
             "propertyOrder": 7,
             "title": "or",
             "description": "Returns true if any contained prerequisite is true, false otherwise",
             "type": "object",
-            "$ref": "schema/prerequisites.json"
+            "$ref": "prerequisites.json"
         },
         "not_and": {
             "propertyOrder": 8,
             "title": "not_and",
             "description": "Returns true if any contained prerequisite is false, false otherwise",
             "type": "object",
-            "$ref": "schema/prerequisites.json"
+            "$ref": "prerequisites.json"
         },
         "not_or": {
             "propertyOrder": 9,
             "title": "not_or",
             "description": "Returns true if all contained prerequisites are false, false otherwise",
             "type": "object",
-            "$ref": "schema/prerequisites.json"
+            "$ref": "prerequisites.json"
         }
     }
 }
