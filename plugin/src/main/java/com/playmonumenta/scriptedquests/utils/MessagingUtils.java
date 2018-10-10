@@ -31,10 +31,15 @@ public class MessagingUtils {
 		return message.replaceAll("@S", player.getName());
 	}
 
-	public static void sendActionBarMessage(Plugin plugin, Player player, String message) {
+	public static void sendActionBarMessage(Player player, String message) {
+		sendActionBarMessage(player, ChatColor.YELLOW, false, message);
+	}
+
+	public static void sendActionBarMessage(Player player, ChatColor color, boolean bold, String message) {
 		message = translatePlayerName(player, message);
 		TextComponent formattedMessage = new TextComponent(message);
-		formattedMessage.setColor(ChatColor.YELLOW);
+		formattedMessage.setColor(color);
+		formattedMessage.setBold(bold);
 		player.spigot().sendMessage(ChatMessageType.ACTION_BAR, formattedMessage);
 	}
 

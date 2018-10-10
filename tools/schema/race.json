@@ -1,0 +1,156 @@
+{
+    "title": "Race",
+    "defaultProperties": [
+        "name",
+        "label",
+        "start",
+        "scoreboard",
+        "show_stats",
+        "waypoints",
+        "times"
+    ],
+    "additionalProperties":false,
+    "properties": {
+        "name": {
+            "required": true,
+            "propertyOrder": 1,
+            "title": "name",
+            "description": "Nicely formatted name of the race to show to players",
+            "type": "string"
+        },
+        "label": {
+            "required": true,
+            "propertyOrder": 2,
+            "title": "label",
+            "description": "Label with no spaces to use with commands",
+            "type": "string"
+        },
+        "start": {
+            "required": true,
+            "propertyOrder": 3,
+            "title": "start",
+            "description": "Starting location for the race",
+            "$ref": "position.json"
+        },
+        "scoreboard": {
+            "required": false,
+            "propertyOrder": 4,
+            "title": "scoreboard",
+            "description": "Optional. Scoreboard used to track times for this race. If not specified, race completion times will not be saved.",
+            "type": "string"
+        },
+        "show_stats": {
+            "required": true,
+            "propertyOrder": 5,
+            "title": "show_stats",
+            "description": "Show the race summary at the end of the race",
+            "type": "boolean",
+            "format": "checkbox",
+            "default": "true"
+        },
+        "waypoints": {
+            "required": true,
+            "propertyOrder": 6,
+            "title": "waypoints",
+            "description": "A list of race waypoints",
+            "type": "array",
+            "format": "tabs",
+            "minItems": 1,
+            "items": {
+                "headerTemplate": "{{self.x}} {{self.y}} {{self.z}}",
+                "type": "object",
+                "additionalProperties": false,
+                "defaultProperties": [
+                    "x",
+                    "y",
+                    "z"
+                ],
+                "properties": {
+                    "x": {
+                        "required": true,
+                        "$ref": "coordinate.json",
+                        "propertyOrder": 1
+                    },
+                    "y": {
+                        "required": true,
+                        "$ref": "coordinate.json",
+                        "propertyOrder": 2
+                    },
+                    "z": {
+                        "required": true,
+                        "$ref": "coordinate.json",
+                        "propertyOrder": 3
+                    },
+                    "actions": {
+                        "required": false,
+                        "description": "Actions to take immediately after player reaches this point",
+                        "$ref": "actions.json",
+                        "propertyOrder": 6
+                    }
+                }
+            }
+        },
+        "times": {
+            "required": true,
+            "propertyOrder": 7,
+            "title": "times",
+            "description": "A list of goal times to beat. Copy/paste this into the 'times' element for a starting point:           [{\"label\":\"Master\",\"time\":1,\"color\":\"&a&l\"},{\"label\":\"Gold\",\"time\":1,\"color\":\"&6&l\"},{\"label\":\"Silver\",\"time\":1,\"color\":\"&f&l\"},{\"label\":\"Bronze\",\"time\":1,\"color\":\"&4&l\"},{\"label\":\"Complete\",\"time\":1,\"color\":\"&7&l\"}]",
+            "type": "array",
+            "format": "tabs",
+            "minItems": 1,
+            "items": {
+                "headerTemplate": "{{self.label}}",
+                "properties": {
+                    "label": {
+                        "description": "Name of this category on the leaderboard (Master, Gold, Silver, Bronze, etc.)",
+                        "required": true,
+                        "type": "string",
+                        "propertyOrder": 1
+                    },
+                    "time": {
+                        "required": true,
+                        "description": "Time to beat to be in this category (in seconds)",
+                        "type": "number",
+                        "minimum": 1,
+                        "maximum": 29999984,
+                        "propertyOrder": 2
+                    },
+                    "color": {
+                        "required": true,
+                        "type": "string",
+                        "description": "The prefix color of this category on the leaderboard (&c for red, &c&l for red bold, etc.)",
+                        "propertyOrder": 3
+                    },
+                    "actions": {
+                        "required": false,
+                        "description": "Actions to take EVERY TIME the player beats this time",
+                        "title": "actions",
+                        "type": "array",
+                        "minItems": 1,
+                        "items": {
+                            "defaultProperties": [
+                                "command"
+                            ],
+                            "$ref": "action.json"
+                        },
+                        "propertyOrder": 4
+                    }
+                }
+            }
+        },
+        "lose_actions": {
+            "required": false,
+            "propertyOrder": 8,
+            "description": "Actions to take when the player loses the race",
+            "title": "lose_actions",
+            "type": "array",
+            "minItems": 1,
+            "items": {
+                "defaultProperties": [
+                    "command"
+                ],
+                "$ref": "action.json"
+            }
+        }
+    }
+}

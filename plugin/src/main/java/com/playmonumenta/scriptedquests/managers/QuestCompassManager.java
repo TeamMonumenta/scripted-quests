@@ -153,7 +153,7 @@ public class QuestCompassManager {
 		}
 
 		if (markers.size() == 0) {
-			MessagingUtils.sendActionBarMessage(mPlugin, player, "You have no active quest.");
+			MessagingUtils.sendActionBarMessage(player, "You have no active quest.");
 		} else {
 			CompassLocation currentMarker = markers.get(index);
 

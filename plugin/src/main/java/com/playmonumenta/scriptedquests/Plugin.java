@@ -3,12 +3,14 @@ package com.playmonumenta.scriptedquests;
 import com.playmonumenta.scriptedquests.commands.GiveLootTable;
 import com.playmonumenta.scriptedquests.commands.InteractNpc;
 import com.playmonumenta.scriptedquests.commands.QuestTrigger;
+import com.playmonumenta.scriptedquests.commands.Race;
 import com.playmonumenta.scriptedquests.commands.ReloadQuests;
 import com.playmonumenta.scriptedquests.listeners.EntityListener;
 import com.playmonumenta.scriptedquests.listeners.PlayerListener;
 import com.playmonumenta.scriptedquests.managers.QuestCompassManager;
 import com.playmonumenta.scriptedquests.managers.QuestDeathManager;
 import com.playmonumenta.scriptedquests.managers.QuestNpcManager;
+import com.playmonumenta.scriptedquests.managers.RaceManager;
 import com.playmonumenta.scriptedquests.utils.MetadataUtils;
 
 import java.util.Random;
@@ -22,6 +24,7 @@ public class Plugin extends JavaPlugin {
 	public QuestCompassManager mQuestCompassManager;
 	public QuestNpcManager mNpcManager;
 	public QuestDeathManager mDeathManager;
+	public RaceManager mRaceManager;
 
 	public World mWorld;
 	public Random mRandom = new Random();
@@ -36,17 +39,18 @@ public class Plugin extends JavaPlugin {
 		manager.registerEvents(new EntityListener(this), this);
 		manager.registerEvents(new PlayerListener(this), this);
 
+		mQuestCompassManager = new QuestCompassManager(this);
+		mNpcManager = new QuestNpcManager(this);
+		mDeathManager = new QuestDeathManager(this);
+		mRaceManager = new RaceManager(this);
+
 		getCommand("reloadQuests").setExecutor(new ReloadQuests(this));
 		getCommand("questTrigger").setExecutor(new QuestTrigger(this));
 
 		/* These plugins register directly with minecraft, bypassing spigot */
 		InteractNpc.register(this);
 		GiveLootTable.register(mRandom);
-
-		mQuestCompassManager = new QuestCompassManager(this);
-		mNpcManager = new QuestNpcManager(this);
-		mDeathManager = new QuestDeathManager(this);
-
+		Race.register(mRaceManager);
 	}
 
 	//	Logic that is performed upon disabling the plugin.

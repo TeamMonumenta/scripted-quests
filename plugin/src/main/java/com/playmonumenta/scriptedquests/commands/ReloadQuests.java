@@ -25,6 +25,7 @@ public class ReloadQuests implements CommandExecutor {
 		mPlugin.mNpcManager.reload(mPlugin, sender);
 		mPlugin.mQuestCompassManager.reload(mPlugin, sender);
 		mPlugin.mDeathManager.reload(mPlugin, sender);
+		mPlugin.mRaceManager.reload(mPlugin, sender);
 
 		return true;
 	}

@@ -14,12 +14,12 @@ import com.google.gson.JsonObject;
 
 import com.playmonumenta.scriptedquests.Plugin;
 
-class QuestActions {
+public class QuestActions {
 	private ArrayList<ActionBase> mActions = new ArrayList<ActionBase>();
 	private int mDelayTicks = 0;
 
-	QuestActions(String npcName, String displayName, EntityType entityType,
-	             int delayTicks, JsonElement element) throws Exception {
+	public QuestActions(String npcName, String displayName, EntityType entityType,
+	                    int delayTicks, JsonElement element) throws Exception {
 		mDelayTicks = delayTicks;
 
 		JsonArray array = element.getAsJsonArray();
@@ -78,7 +78,9 @@ class QuestActions {
 					mActions.add(new ActionVoiceOver(value));
 					break;
 				case "rerun_components":
-					mActions.add(new ActionRerunComponents(npcName, entityType));
+					if (entityType != null) {
+						mActions.add(new ActionRerunComponents(npcName, entityType));
+					}
 					break;
 				default:
 					throw new Exception("Unknown actions key: " + key);
@@ -87,7 +89,7 @@ class QuestActions {
 		}
 	}
 
-	void doActions(Plugin plugin, Player player, QuestPrerequisites prereqs) {
+	public void doActions(Plugin plugin, Player player, QuestPrerequisites prereqs) {
 		if (mDelayTicks <= 0) {
 			// If not delayed, actions can run without restrictions
 			for (ActionBase action : mActions) {
