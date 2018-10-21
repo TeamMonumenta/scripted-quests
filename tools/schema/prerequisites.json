@@ -42,17 +42,26 @@
                 }
             }
         },
-        "check_tags": {
+        "check_advancements": {
             "propertyOrder": 2,
+            "title": "check_advancements",
+            "description": "Check if the player has that advancement; if an advancement starts with !, check if the player does not have that advancement",
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "check_tags": {
+            "propertyOrder": 3,
             "title": "check_tags",
-            "description": "Check if all listed tags are on the player; if a listed tag starts with !, check if that tag is not on the player instead",
+            "description": "Check if the player has that tag; if a listed tag starts with !, check if the player does not have that tag instead",
             "type": "array",
             "items": {
                 "type": "string"
             }
         },
         "items_in_inventory": {
-            "propertyOrder": 3,
+            "propertyOrder": 4,
             "title": "items_in_inventory",
             "description": "Checks that all of the specified items are present in the player's inventory",
             "type": "array",
@@ -115,28 +124,28 @@
             }
         },
         "and": {
-            "propertyOrder": 6,
+            "propertyOrder": 7,
             "title": "and",
             "description": "Returns true if all contained prerequisites are true, false otherwise",
             "type": "object",
             "$ref": "prerequisites.json"
         },
         "or": {
-            "propertyOrder": 7,
+            "propertyOrder": 8,
             "title": "or",
             "description": "Returns true if any contained prerequisite is true, false otherwise",
             "type": "object",
             "$ref": "prerequisites.json"
         },
         "not_and": {
-            "propertyOrder": 8,
+            "propertyOrder": 9,
             "title": "not_and",
             "description": "Returns true if any contained prerequisite is false, false otherwise",
             "type": "object",
             "$ref": "prerequisites.json"
         },
         "not_or": {
-            "propertyOrder": 9,
+            "propertyOrder": 10,
             "title": "not_or",
             "description": "Returns true if all contained prerequisites are false, false otherwise",
             "type": "object",

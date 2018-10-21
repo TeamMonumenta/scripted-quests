@@ -50,6 +50,20 @@ class QuestPrerequisites implements PrerequisiteBase {
 					mPrerequisites.add(new PrerequisiteCheckScores(scoreEnt.getKey(), scoreEnt.getValue()));
 				}
 				break;
+			case "check_advancements":
+				{
+					JsonArray array = value.getAsJsonArray();
+					if (array == null) {
+						throw new Exception("Prerequisites value for key '" + key + "' is not an array!");
+					}
+
+					// Add all array entries
+					Iterator<JsonElement> iter = array.iterator();
+					while (iter.hasNext()) {
+						mPrerequisites.add(new PrerequisiteCheckAdvancements(iter.next()));
+					}
+				}
+				break;
 			case "check_tags":
 				{
 					JsonArray array = value.getAsJsonArray();
