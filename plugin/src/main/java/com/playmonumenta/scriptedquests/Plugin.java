@@ -2,6 +2,7 @@ package com.playmonumenta.scriptedquests;
 
 import com.playmonumenta.scriptedquests.commands.GiveLootTable;
 import com.playmonumenta.scriptedquests.commands.InteractNpc;
+import com.playmonumenta.scriptedquests.commands.Leaderboard;
 import com.playmonumenta.scriptedquests.commands.QuestTrigger;
 import com.playmonumenta.scriptedquests.commands.Race;
 import com.playmonumenta.scriptedquests.commands.ReloadQuests;
@@ -51,6 +52,7 @@ public class Plugin extends JavaPlugin {
 		InteractNpc.register(this);
 		GiveLootTable.register(mRandom);
 		Race.register(mRaceManager);
+		Leaderboard.register();
 	}
 
 	//	Logic that is performed upon disabling the plugin.
