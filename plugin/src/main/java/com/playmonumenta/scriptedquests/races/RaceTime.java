@@ -8,9 +8,9 @@ import com.playmonumenta.scriptedquests.quests.QuestActions;
 
 import org.bukkit.entity.Player;
 
-public class RaceTime {
+public class RaceTime implements Comparable<RaceTime> {
 	private final String mLabel;
-	private final int mTime;
+	protected final int mTime;
 	private final String mColor;
 	private final QuestActions mActions;
 
@@ -73,5 +73,13 @@ public class RaceTime {
 
 	public String getColor() {
 		return mColor;
+	}
+
+	@Override
+	public int compareTo(RaceTime other){
+		// compareTo should return < 0 if this is supposed to be
+		// less than other, > 0 if this is supposed to be greater than
+		// other and 0 if they are supposed to be equal
+		return mTime < other.mTime ? -1 : mTime == other.mTime ? 0 : 1;
 	}
 }

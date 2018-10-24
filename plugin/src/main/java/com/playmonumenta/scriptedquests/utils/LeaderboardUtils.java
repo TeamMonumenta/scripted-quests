@@ -12,11 +12,21 @@ public class LeaderboardUtils {
 		private String mName;
 		private String mColor;
 		protected int mValue;
+		private String mValueStr;
 
 		public LeaderboardEntry(String name, String color, int value) {
+			this(name, color, value, null);
+		}
+
+		public LeaderboardEntry(String name, String color, int value, String valueStr) {
 			mName = name;
 			mColor = color;
 			mValue = value;
+			if (valueStr != null) {
+				mValueStr = valueStr;
+			} else {
+				mValueStr = Integer.toString(value);
+			}
 		}
 
 		public String getName() {
@@ -29,6 +39,10 @@ public class LeaderboardUtils {
 
 		public int getValue() {
 			return mValue;
+		}
+
+		public String getValueStr() {
+			return mValueStr;
 		}
 
 		public void setColor(String color) {
@@ -60,7 +74,7 @@ public class LeaderboardUtils {
 		for (int i = (page - 1) * 10; i < Math.min(page * 10, values.size()); i++) {
 			LeaderboardEntry entry = values.get(i);
 
-			player.sendMessage(String.format("%s%-3s - %-15s -    %s", entry.getColor(), i + 1, entry.getName(), entry.getValue()));
+			player.sendMessage(String.format("%s%-3s - %-15s -    %s", entry.getColor(), i + 1, entry.getName(), entry.getValueStr()));
 		}
 		player.sendMessage(" ");
 
@@ -68,7 +82,7 @@ public class LeaderboardUtils {
 		for (LeaderboardEntry entry : values) {
 			i++;
 			if (entry.getName().equals(player.getName())) {
-				player.sendMessage(String.format("%s%-3s - %-15s -    %s", "" + ChatColor.BLUE + ChatColor.BOLD, i, entry.getName(), entry.getValue()));
+				player.sendMessage(String.format("%s%-3s - %-15s -    %s", "" + ChatColor.BLUE + ChatColor.BOLD, i, entry.getName(), entry.getValueStr()));
 				break;
 			}
 		}

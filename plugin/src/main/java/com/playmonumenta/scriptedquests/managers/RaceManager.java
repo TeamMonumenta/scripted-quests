@@ -127,7 +127,12 @@ public class RaceManager {
 		}
 	}
 
-	//TODO: Task to tick all of the races
+	public void sendLeaderboard(Player player, String raceLabel, int startLine) {
+		RaceFactory raceFactory = mRaceFactories.get(raceLabel);
+		if (raceFactory != null) {
+			raceFactory.sendLeaderboard(player, startLine);
+		}
+	}
 
 	/* This should ONLY be called by a Race that wants to remove itself! */
 	public void __removeRace(Player player) {

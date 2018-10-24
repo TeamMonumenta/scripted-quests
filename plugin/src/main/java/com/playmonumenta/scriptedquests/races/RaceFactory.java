@@ -9,15 +9,21 @@ import com.playmonumenta.scriptedquests.managers.RaceManager;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.QuestActions;
 import com.playmonumenta.scriptedquests.utils.FileUtils;
+import com.playmonumenta.scriptedquests.utils.LeaderboardUtils;
+import com.playmonumenta.scriptedquests.utils.RaceUtils;
+import com.playmonumenta.scriptedquests.utils.LeaderboardUtils.LeaderboardEntry;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.Location;
 import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Score;
 import org.bukkit.World;
 
 /*
@@ -27,7 +33,7 @@ import org.bukkit.World;
 public class RaceFactory {
 	private final String mName;
 	private final String mLabel;
-	private final Objective mScoreboard;
+	private final Objective mObjective;
 	private final boolean mShowStats;
 	private final Location mStart;
 	private final List<RaceWaypoint> mWaypoints = new ArrayList<RaceWaypoint>();
@@ -78,12 +84,12 @@ public class RaceFactory {
 				throw new Exception("Failed to parse 'scoreboard' label for file '" +
 				fileLocation + "' as string");
 			}
-			mScoreboard = Bukkit.getScoreboardManager().getMainScoreboard().getObjective(objectiveStr);
-			if (mScoreboard == null) {
+			mObjective = Bukkit.getScoreboardManager().getMainScoreboard().getObjective(objectiveStr);
+			if (mObjective == null) {
 				throw new Exception("Scoreboard objective '" + objectiveStr + "' does not exist");
 			}
 		} else {
-			mScoreboard = null;
+			mObjective = null;
 		}
 
 		// show_stats
@@ -128,6 +134,8 @@ public class RaceFactory {
 			JsonElement entry = timesIter.next();
 			mTimes.add(new RaceTime(entry));
 		}
+		// Sort the medal times in case they weren't specified in descending order
+		Collections.sort(mTimes, Collections.reverseOrder());
 
 		// lose_actions (optional)
 		JsonElement loseActionsElement = object.get("lose_actions");
@@ -201,7 +209,66 @@ public class RaceFactory {
 	}
 
 	public Race createRace(Player player) {
-		return new Race(mPlugin, mManager, player, mName, mLabel, mScoreboard,
+		return new Race(mPlugin, mManager, player, mName, mLabel, mObjective,
 		                mShowStats, mStart, mWaypoints, mTimes, mLoseActions);
+	}
+
+	public void sendLeaderboard(Player player, int page) {
+		if (mObjective == null) {
+			player.sendMessage(ChatColor.RED + "No leaderboard exists for race '" + mLabel + "'");
+			return;
+		}
+
+		List<LeaderboardEntry> entries = new ArrayList<LeaderboardEntry>();
+
+		for (String name : mObjective.getScoreboard().getEntries()) {
+			Score score = mObjective.getScore(name);
+			if (score.isScoreSet()) {
+				int value = score.getScore();
+				if (value != 0) {
+					entries.add(new LeaderboardEntry(name, "", value, RaceUtils.msToTimeString(value)));
+				}
+			}
+		}
+
+		// Sort descending
+		Collections.sort(entries, Collections.reverseOrder());
+
+		/*
+		 * As we iterate through the leaderboard entries (sorted),
+		 * also walk through this sorted list so we only traverse each
+		 * list once
+		 */
+		int timeIdx = 0;
+		RaceTime time = null;
+		if (mTimes.size() > timeIdx) {
+			time = mTimes.get(timeIdx);
+		}
+
+		for (LeaderboardEntry entry : entries) {
+			// Went through all entries in this time bracket - go to next
+			while (time != null && entry.getValue() > time.getTime()) {
+				timeIdx++;
+				if (mTimes.size() > timeIdx) {
+					time = mTimes.get(timeIdx);
+				} else {
+					time = null;
+				}
+			}
+
+			if (time != null) {
+				// Since time is not null, player score must be better than it
+				entry.setColor(time.getColor());
+			} else {
+				entry.setColor("" + ChatColor.GRAY + ChatColor.BOLD);
+			}
+
+			if (entry.getName().equals(player.getName())) {
+				entry.setColor("" + ChatColor.BLUE + ChatColor.BOLD);
+			}
+		}
+
+		LeaderboardUtils.sendLeaderboard(player, mName, entries, page,
+		                                 "/race leaderboard @s " + mLabel);
 	}
 }

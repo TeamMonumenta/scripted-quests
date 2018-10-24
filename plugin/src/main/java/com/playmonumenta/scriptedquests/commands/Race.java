@@ -51,7 +51,7 @@ public class Race {
 		arguments.put("leaderboard", new LiteralArgument("leaderboard"));
 		arguments.put("players", new EntitySelectorArgument(EntitySelector.MANY_PLAYERS));
 		arguments.put("raceLabel", new StringArgument());
-		arguments.put("startLine", new IntegerArgument(1)); // Min 1
+		arguments.put("page", new IntegerArgument(1)); // Min 1
 		CommandAPI.getInstance().register("race",
 		                                  new CommandPermission("scriptedquests.race.leaderboard"),
 		                                  arguments,
@@ -77,9 +77,9 @@ public class Race {
 	}
 
 	private static void raceLeaderboard(RaceManager manager, CommandSender sender,
-	                                    Collection<Player>players, String raceLabel, int startLine) {
+	                                    Collection<Player>players, String raceLabel, int page) {
 		for (Player player : players) {
-			//TODO
+			manager.sendLeaderboard(player, raceLabel, page);
 		}
 	}
 }
