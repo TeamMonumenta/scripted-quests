@@ -11,6 +11,8 @@ import org.bukkit.event.Listener;
 
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.QuestNpc;
+import org.bukkit.event.entity.AreaEffectCloudApplyEvent;
+import org.bukkit.event.entity.PotionSplashEvent;
 
 public class EntityListener implements Listener {
 	Plugin mPlugin;
@@ -56,5 +58,17 @@ public class EntityListener implements Listener {
 				event.setCancelled(true);
 			}
 		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void PotionSplashEvent(PotionSplashEvent event) {
+		// Don't apply potion effects to quest entities
+		event.getAffectedEntities().removeIf(entity -> mPlugin.mNpcManager.getInteractNPC(entity.getCustomName(), entity.getType()) != null);
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void AreaEffectCloudApplyEvent(AreaEffectCloudApplyEvent event) {
+		// Don't apply potion effects to quest entities
+		event.getAffectedEntities().removeIf(entity -> mPlugin.mNpcManager.getInteractNPC(entity.getCustomName(), entity.getType()) != null);
 	}
 }
