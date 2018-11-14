@@ -50,6 +50,7 @@ public class Leaderboard {
 		List<LeaderboardEntry> entries = new ArrayList<LeaderboardEntry>();
 
 		Objective obj = Bukkit.getScoreboardManager().getMainScoreboard().getObjective(objective);
+		String displayName = obj.getDisplayName();
 		for (String name : obj.getScoreboard().getEntries()) {
 			Score score = obj.getScore(name);
 			if (score.isScoreSet()) {
@@ -89,7 +90,7 @@ public class Leaderboard {
 			index++;
 		}
 
-		LeaderboardUtils.sendLeaderboard(player, objective, entries, page,
+		LeaderboardUtils.sendLeaderboard(player, displayName, entries, page,
 		                                 "/leaderboard @s " + objective + (descending ? " true" : " false"));
 	}
 }
