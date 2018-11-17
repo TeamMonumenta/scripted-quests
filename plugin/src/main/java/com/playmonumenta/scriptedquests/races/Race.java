@@ -62,7 +62,8 @@ public class Race {
 	private long mStartTime;
 	private long mMaxTime;
 	private int mTicks;
-	private int mFrame;
+	private int mFrame = 0;
+	private TimeBar mTimeBar;
 
 	public Race(Plugin plugin, RaceManager manager, Player player, String name, String label,
 	            Objective scoreboard, boolean showStats, Location start,
@@ -108,6 +109,10 @@ public class Race {
 		// Copy the waypoints to something local to work with
 		mRemainingWaypoints = new ArrayDeque<RaceWaypoint>(mWaypoints);
 		mNextWaypoint = mRemainingWaypoints.removeFirst();
+
+		// TODO: Teleport player to race
+
+		mTimeBar = new TimeBar(mPlayer, mTimes);
 	}
 
 	public void tick() {
@@ -119,8 +124,7 @@ public class Race {
 			mPlayer.sendMessage("" + ChatColor.RED + ChatColor.BOLD + "You ran out of time!");
 			lose();
 		}
-		//TODO
-		//timeBar.update(mPlayer, timeElapsed, medTimes);
+		mTimeBar.update(timeElapsed);
 
 		// Check if player went too far away
 		if (distance > 100) {
@@ -176,8 +180,7 @@ public class Race {
 	private void end() {
 		mManager.__removeRace(mPlayer);
 
-		//TODO
-		//timeBar.bar.setVisible(false);
+		mTimeBar.cancel();
 		for (Entity e : mRingEntities) {
 			e.remove();
 		}
