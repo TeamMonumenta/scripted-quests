@@ -64,13 +64,13 @@
                     required: true,
                     propertyOrder: 1,
                     title: "npc",
-                    description: "NPC's name with spaces and color codes deleted. \"CaptainMurano\" works, \"Captain Murano\" and \"Captain_Murano\" do not.",
+                    description: "NPC's name. Will be the NPC's display_name if that is not specified. Any characters except a-zA-Z0-9 will be stripped to create a condensed name to use with /interactnpc",
                     type: "string"
                 },
                 display_name: {
                     propertyOrder: 2,
                     title: "display_name",
-                    description: "NPC's name as displayed in chat messages sent from the NPC. Can contain spaces and technically colors, though use of colors is generally discouraged here.",
+                    description: "NPC's name as displayed in chat messages sent from the NPC. Can contain spaces and technically colors, though use of colors is discouraged here.",
                     type: "string"
                 },
                 entity_type: {
