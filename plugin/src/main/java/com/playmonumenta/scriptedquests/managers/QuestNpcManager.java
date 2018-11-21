@@ -67,12 +67,12 @@ public class QuestNpcManager {
 				mEntityTypes.add(npc.getEntityType());
 
 				// Check if an existing NPC already exists with quest components
-				QuestNpc existingNpc = mNpcs.get(_squashNpcName(npc.getNpcName()));
+				QuestNpc existingNpc = mNpcs.get(npc.getNpcName());
 				if (existingNpc != null) {
 					// Existing NPC - add the new quest components to it
 					existingNpc.addFromQuest(plugin, npc);
 				} else {
-					mNpcs.put(_squashNpcName(npc.getNpcName()), npc);
+					mNpcs.put(npc.getNpcName(), npc);
 				}
 			} catch (Exception e) {
 				plugin.getLogger().severe("Caught exception: " + e);
@@ -129,7 +129,7 @@ public class QuestNpcManager {
 		}
 
 		// Return the NPC if we have an NPC with that name
-		QuestNpc npc = mNpcs.get(_squashNpcName(npcName));
+		QuestNpc npc = mNpcs.get(QuestNpc.squashNpcName(npcName));
 		if (npc != null) {
 			return npc;
 		}
@@ -152,12 +152,8 @@ public class QuestNpcManager {
 		}
 
 		if (npc != null) {
-			return npc.interactEvent(plugin, player, _squashNpcName(npcName), entityType);
+			return npc.interactEvent(plugin, player, QuestNpc.squashNpcName(npcName), entityType);
 		}
 		return false;
-	}
-
-	private String _squashNpcName(String name) {
-		return ChatColor.stripColor(name.replaceAll("\\s+", ""));
 	}
 }
