@@ -19,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.Sound;
 import org.bukkit.util.Vector;
@@ -61,9 +62,9 @@ public class Race {
 	private RaceWaypoint mNextWaypoint;
 	private long mStartTime;
 	private long mMaxTime;
-	private int mTicks;
 	private int mFrame = 0;
-	private TimeBar mTimeBar;
+	private TimeBar mTimeBar = null;
+	private boolean mCountdownActive = false;
 
 	public Race(Plugin plugin, RaceManager manager, Player player, String name, String label,
 	            Objective scoreboard, boolean showStats, Location start,
@@ -103,6 +104,15 @@ public class Race {
 	}
 
 	public void restart() {
+		if (mCountdownActive) {
+			// Refuse this restart request if still starting
+			return;
+		}
+
+		if (mTimeBar != null) {
+			mTimeBar.cancel();
+		}
+
 		mStartTime = System.currentTimeMillis();
 		mMaxTime = mTimes.get(mTimes.size() - 1).getTime();
 
@@ -110,9 +120,64 @@ public class Race {
 		mRemainingWaypoints = new ArrayDeque<RaceWaypoint>(mWaypoints);
 		mNextWaypoint = mRemainingWaypoints.removeFirst();
 
-		// TODO: Teleport player to race
-
+		// Create the timetracking bar
 		mTimeBar = new TimeBar(mPlayer, mTimes);
+
+		countdownStart();
+	}
+
+	public void countdownStart() {
+		mCountdownActive = true;
+
+		new BukkitRunnable() {
+			int mTicks = 0;
+			final String name = mPlayer.getName();
+
+			@Override
+			public void run() {
+				// Teleport player if they get too far away from the start while counting down
+				if (mTicks < 60 && mPlayer.getLocation().distance(mStart) > 0.8) {
+					mPlayer.teleport(mStart);
+				}
+
+				if (mTicks == 0) {
+					// TODO once restarting race works, used to be if !no_ui
+					// mPlayer.sendMessage("" + ChatColor.BLUE + "Reminder:\nShift + Left-Click: Abandon\nShift + Right-Click: Retry");
+
+					// 3
+					mPlayer.sendTitle(ChatColor.RED + "" + ChatColor.BOLD + "3", "", 0, 20, 0);
+					mWorld.playSound(mPlayer.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 0.890899f);
+				} else if (mTicks == 20) {
+					// 2
+					mPlayer.sendTitle(ChatColor.GOLD + "" + ChatColor.BOLD + "2", "", 0, 20, 0);
+					mWorld.playSound(mPlayer.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 0.890899f);
+				} else if (mTicks == 40) {
+					// 1
+					mPlayer.sendTitle(ChatColor.GREEN + "" + ChatColor.BOLD + "1", "", 0, 20, 0);
+					mWorld.playSound(mPlayer.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 0.890899f);
+				} else if (mTicks == 60) {
+					// Go chime & title
+					mWorld.playSound(mPlayer.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1,  1.781797f);
+					mPlayer.sendTitle(ChatColor.WHITE + "" + ChatColor.BOLD + "GO", "", 0, 4, 0);
+
+					// Reset race start time and create time bar
+					mStartTime = System.currentTimeMillis();
+					mCountdownActive = false;
+				} else if (mTicks > 60 && mTicks < 120 && (mTicks % 6 == 0)) {
+					// Go (white)
+					mPlayer.sendTitle(ChatColor.WHITE + "" + ChatColor.BOLD + "GO", "", 0, 4, 0);
+				} else if (mTicks > 60 && mTicks < 120 && ((mTicks + 3) % 6 == 0)) {
+					// Go (aqua)
+					mPlayer.sendTitle(ChatColor.AQUA + "" + ChatColor.BOLD + "GO", "", 0, 4, 0);
+				} else if (mTicks == 120) {
+					// Clear title
+					mPlayer.sendTitle(" ", "", 0, 20, 0);
+					this.cancel();
+				}
+
+				mTicks++;
+			}
+		}.runTaskTimer(mPlugin, 0, 1);
 	}
 
 	public void tick() {
@@ -120,6 +185,9 @@ public class Race {
 
 		// Time remaining display
 		int timeElapsed = (int)(System.currentTimeMillis() - mStartTime);
+		if (mCountdownActive) {
+			timeElapsed = 0;
+		}
 		if (timeElapsed > mMaxTime) {
 			mPlayer.sendMessage("" + ChatColor.RED + ChatColor.BOLD + "You ran out of time!");
 			lose();
