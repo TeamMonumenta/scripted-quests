@@ -262,7 +262,6 @@ public class Race {
 			}
 
 			if (endTime <= medalTime) {
-				time.doActions(mPlugin, mPlayer);
 				if (medalTime < bestMedalTime) {
 					bestMedalTime = medalTime;
 					bestMedalColor = time.getColor();
@@ -286,6 +285,13 @@ public class Race {
 			mPlayer.sendMessage(String.format("  %s  Your Time   - %16s",
 			                                  "" + ChatColor.BLUE + ChatColor.BOLD,
 			                                  "" + ChatColor.ITALIC + bestMedalColor + RaceUtils.msToTimeString(endTime)));
+		}
+
+		/* Last thing is to do any actions associated with the race */
+		for (RaceTime time : mTimes) {
+			if (endTime <= time.getTime()) {
+				time.doActions(mPlugin, mPlayer);
+			}
 		}
 	}
 }
