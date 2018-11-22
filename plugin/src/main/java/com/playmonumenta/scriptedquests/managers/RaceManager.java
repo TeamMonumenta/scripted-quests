@@ -127,6 +127,13 @@ public class RaceManager {
 		}
 	}
 
+	public void cancelAllRaces() {
+		for (Race race : mActiveRaces.values()) {
+			race.abort();
+		}
+		mActiveRaces.clear();
+	}
+
 	public void sendLeaderboard(Player player, String raceLabel, int startLine) {
 		RaceFactory raceFactory = mRaceFactories.get(raceLabel);
 		if (raceFactory != null) {

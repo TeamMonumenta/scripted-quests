@@ -262,6 +262,20 @@ public class Race {
 		end();
 	}
 
+	/*
+	 * Called by race manager when cancelling all races
+	 */
+	public void abort() {
+		if (mLoseActions != null) {
+			mLoseActions.doActions(mPlugin, mPlayer, null);
+		}
+		mPlayer.teleport(mStopLoc);
+		mTimeBar.cancel();
+		for (Entity e : mRingEntities) {
+			e.remove();
+		}
+	}
+
 	private void win(int endTime) {
 		end();
 

@@ -60,6 +60,8 @@ public class Plugin extends JavaPlugin {
 	public void onDisable() {
 		getServer().getScheduler().cancelTasks(this);
 
+		mRaceManager.cancelAllRaces();
+
 		MetadataUtils.removeAllMetadata(this);
 	}
 }
