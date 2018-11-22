@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.QuestActions;
 
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 public class RaceTime implements Comparable<RaceTime> {
@@ -42,7 +43,7 @@ public class RaceTime implements Comparable<RaceTime> {
 		// color
 		JsonElement colorElement = object.get("color");
 		if (colorElement != null) {
-			mColor = colorElement.getAsString();
+			mColor = ChatColor.translateAlternateColorCodes('&', colorElement.getAsString());
 		} else {
 			throw new Exception("times entry missing color value!");
 		}

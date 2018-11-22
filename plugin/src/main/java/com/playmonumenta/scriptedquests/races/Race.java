@@ -197,10 +197,9 @@ public class Race {
 	private void win(int endTime) {
 		end();
 
-		//TODO: Record time here
-
-		if (!mShowStats) {
-			return;
+		/* Set score on player */
+		if (mScoreboard != null) {
+			mScoreboard.getScore(mPlayer.getName()).setScore(endTime);
 		}
 
 		//TODO: Ring times
@@ -234,9 +233,11 @@ public class Race {
 
 		// display race end info
 		//header
-		mPlayer.sendMessage("" + ChatColor.DARK_AQUA + ChatColor.BOLD +   "----====----       " + ChatColor.AQUA + ChatColor.BOLD + "Speedruns" + ChatColor.DARK_AQUA  + ChatColor.BOLD + "       ----====----\n");
-		mPlayer.sendMessage(" " +  String.format("%s - %s", "" + ChatColor.AQUA + "Race Recap", " " + ChatColor.YELLOW + mName));
-		mPlayer.sendMessage(" ");
+		if (mShowStats) {
+			mPlayer.sendMessage("" + ChatColor.DARK_AQUA + ChatColor.BOLD +   "----====----       " + ChatColor.AQUA + ChatColor.BOLD + "Speedruns" + ChatColor.DARK_AQUA  + ChatColor.BOLD + "       ----====----\n");
+			mPlayer.sendMessage(" " +  String.format("%s - %s", "" + ChatColor.AQUA + "Race Recap", " " + ChatColor.YELLOW + mName));
+			mPlayer.sendMessage(" ");
+		}
 
 		//TODO: World record time first
 		/*
@@ -251,12 +252,14 @@ public class Race {
 		String bestMedalColor = null;
 		for (RaceTime time : mTimes) {
 			int medalTime = time.getTime();
-			mPlayer.sendMessage(String.format("  %s   %s      - %16s  | %s %s",
-											  "" + time.getColor(),
-											  "" + time.getLabel(),
-											  "" + RaceUtils.msToTimeString(medalTime),
-											  "" + ((endTime <= medalTime) ? ("" + time.getColor() + "\u272A") : ("" + ChatColor.GRAY + ChatColor.BOLD + "\u272A")),
-											  "" + ((endTime <= medalTime) ? ("" + ChatColor.BLUE + ChatColor.BOLD + "( -" + RaceUtils.msToTimeString(medalTime - endTime) + ")") : ("" + ChatColor.RED + ChatColor.BOLD + "( +" + RaceUtils.msToTimeString(endTime - medalTime) + ")"))));
+			if (mShowStats) {
+				mPlayer.sendMessage(String.format("  %s   %s      - %16s  | %s %s",
+				                                  "" + time.getColor(),
+				                                  "" + time.getLabel(),
+				                                  "" + RaceUtils.msToTimeString(medalTime),
+				                                  "" + ((endTime <= medalTime) ? ("" + time.getColor() + "\u272A") : ("" + ChatColor.GRAY + ChatColor.BOLD + "\u272A")),
+				                                  "" + ((endTime <= medalTime) ? ("" + ChatColor.BLUE + ChatColor.BOLD + "( -" + RaceUtils.msToTimeString(medalTime - endTime) + ")") : ("" + ChatColor.RED + ChatColor.BOLD + "( +" + RaceUtils.msToTimeString(endTime - medalTime) + ")"))));
+			}
 
 			if (endTime <= medalTime) {
 				time.doActions(mPlugin, mPlayer);
@@ -267,9 +270,11 @@ public class Race {
 			}
 		}
 
-		mPlayer.sendMessage(" ");
+		if (mShowStats) {
+			mPlayer.sendMessage(" ");
+		}
 
-		if (mScoreboard != null) {
+		if (mScoreboard != null && mShowStats) {
 			int personalBest = mScoreboard.getScore(mPlayer.getName()).getScore();
 			mPlayer.sendMessage(String.format("  %s Personal Best - %16s  | %s",
 											  "" + ChatColor.BLUE + ChatColor.BOLD,
@@ -277,8 +282,10 @@ public class Race {
 											  "" + ((endTime <= personalBest) ? ("" + ChatColor.BLUE + ChatColor.BOLD + "( -" + RaceUtils.msToTimeString(personalBest - endTime) + ")") : ("" + ChatColor.RED + ChatColor.BOLD + "( +" + RaceUtils.msToTimeString(endTime - personalBest) + ")"))));
 		}
 
-		mPlayer.sendMessage(String.format("  %s  Your Time   - %16s",
-										  "" + ChatColor.BLUE + ChatColor.BOLD,
-										  "" + ChatColor.ITALIC + bestMedalColor + RaceUtils.msToTimeString(endTime)));
+		if (mShowStats) {
+			mPlayer.sendMessage(String.format("  %s  Your Time   - %16s",
+			                                  "" + ChatColor.BLUE + ChatColor.BOLD,
+			                                  "" + ChatColor.ITALIC + bestMedalColor + RaceUtils.msToTimeString(endTime)));
+		}
 	}
 }
