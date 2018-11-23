@@ -4,10 +4,12 @@ import java.util.List;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.Location;
 import org.bukkit.loot.LootContext;
 import org.bukkit.NamespacedKey;
 
@@ -66,8 +68,19 @@ public class InventoryUtils {
 		LootContext lootContext = new LootContext.Builder(player.getLocation()).build();
 
 		PlayerInventory inv = player.getInventory();
+		boolean itemsDropped = false;
 		for (ItemStack item : Bukkit.getLootTable(lootNamespace).populateLoot(random, lootContext)) {
-			inv.addItem(item);
+			if (inv.firstEmpty() == -1) {
+				itemsDropped = true;
+				Location ploc = player.getLocation();
+				ploc.getWorld().dropItem(ploc, item);
+			} else {
+				inv.addItem(item);
+			}
+		}
+
+		if (itemsDropped) {
+			player.sendMessage(ChatColor.RED + "Your inventory is full! Some items were dropped on the ground!");
 		}
 	}
 }
