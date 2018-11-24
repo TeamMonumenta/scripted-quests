@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.ChatColor;
@@ -36,8 +37,8 @@ public class RaceManager {
 		mPlugin = plugin;
 		String raceLocation = plugin.getDataFolder() + File.separator +  "races";
 		mRaceFactories = new HashMap<String, RaceFactory>();
-		ArrayList<File> listOfFiles;
-		ArrayList<String> listOfRaceNames = new ArrayList<String>();
+		List<File> listOfFiles;
+		List<String> listOfRaceNames = new ArrayList<String>();
 		int numRaces = 0;
 
 		// Attempt to load all JSON files in subdirectories
@@ -104,10 +105,15 @@ public class RaceManager {
 			mRunnable.cancel();
 		}
 		mRunnable = new BukkitRunnable() {
+			/* This temporary list is necessary to avoid ConcurrentModificationException's */
+			private List<Race> mRaceTemp = new ArrayList<Race>(20);
+
 			@Override
 			public void run() {
 				if (mActiveRaces.size() > 0) {
-					for (Race race : mActiveRaces.values()) {
+					mRaceTemp.clear();
+					mRaceTemp.addAll(mActiveRaces.values());
+					for (Race race : mRaceTemp) {
 						race.tick();
 					}
 				}
