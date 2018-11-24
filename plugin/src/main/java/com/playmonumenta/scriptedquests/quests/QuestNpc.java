@@ -55,7 +55,7 @@ public class QuestNpc {
 		// Read the npc's display name
 		JsonElement displayName = object.get("display_name");
 		if (displayName == null || displayName.getAsString() == null) {
-			mDisplayName = mNpcName;
+			mDisplayName = npc.getAsString();
 		} else {
 			mDisplayName = displayName.getAsString();
 		}
