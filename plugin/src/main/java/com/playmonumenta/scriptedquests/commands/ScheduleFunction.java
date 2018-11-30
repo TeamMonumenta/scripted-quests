@@ -3,10 +3,12 @@ package com.playmonumenta.scriptedquests.commands;
 import com.playmonumenta.scriptedquests.Plugin;
 
 import io.github.jorelali.commandapi.api.arguments.Argument;
-import io.github.jorelali.commandapi.api.arguments.GreedyStringArgument;
+import io.github.jorelali.commandapi.api.arguments.FunctionArgument;
 import io.github.jorelali.commandapi.api.arguments.IntegerArgument;
+import io.github.jorelali.commandapi.api.arguments.LiteralArgument;
 import io.github.jorelali.commandapi.api.CommandAPI;
 import io.github.jorelali.commandapi.api.CommandPermission;
+import io.github.jorelali.commandapi.api.FunctionWrapper;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -15,31 +17,33 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 
-public class DelayedCommand {
-	private class DelayedCommandEntry {
+public class ScheduleFunction {
+	private class DelayedFunction {
 		protected int ticksLeft;
-		protected String command;
+		protected FunctionWrapper[] function;
 
-		protected DelayedCommandEntry(int ticksLeftIn, String commandIn) {
+		protected DelayedFunction(int ticksLeftIn, FunctionWrapper[] functionIn) {
 			ticksLeft = ticksLeftIn;
-			command = commandIn;
+			function = functionIn;
 		}
 
 		protected void run() {
-			mPlugin.getServer().dispatchCommand(mPlugin.getServer().getConsoleSender(), command);
+			for (FunctionWrapper func : function) {
+				func.run();
+			}
 		}
 	}
 
-	private final List<DelayedCommandEntry> mCommands = new ArrayList<DelayedCommandEntry>();
+	private final List<DelayedFunction> mFunctions = new ArrayList<DelayedFunction>();
 	private final Plugin mPlugin;
 	private Integer mTaskId = null;
 	private final Runnable mRunnable = new Runnable() {
 		@Override
 		public void run() {
-			Iterator<DelayedCommandEntry> it = mCommands.iterator();
+			Iterator<DelayedFunction> it = mFunctions.iterator();
 			while (it.hasNext())
 			{
-				DelayedCommandEntry entry = it.next();
+				DelayedFunction entry = it.next();
 				entry.ticksLeft--;
 
 				if (entry.ticksLeft < 0) {
@@ -49,7 +53,7 @@ public class DelayedCommand {
 				}
 			}
 
-			if (mCommands.isEmpty()) {
+			if (mFunctions.isEmpty()) {
 				Bukkit.getScheduler().cancelTask(mTaskId);
 				mTaskId = null;
 			}
@@ -57,24 +61,25 @@ public class DelayedCommand {
 	};
 
 	@SuppressWarnings("unchecked")
-	public DelayedCommand(Plugin plugin) {
+	public ScheduleFunction(Plugin plugin) {
 		mPlugin = plugin;
 		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
 
+		arguments.put("literal", new LiteralArgument("function"));
+		arguments.put("function", new FunctionArgument());
 		arguments.put("ticks", new IntegerArgument(0));
-		arguments.put("command", new GreedyStringArgument());
 
-		CommandAPI.getInstance().register("delayedcommand",
-		                                  new CommandPermission("scriptedquests.delayedcommand"),
+		CommandAPI.getInstance().register("schedule",
+		                                  new CommandPermission("scriptedquests.schedulefunction"),
 		                                  arguments,
 		                                  (sender, args) -> {
-											  addDelayedCommand((Integer)args[0], (String)args[1]);
+											  addDelayedFunction((FunctionWrapper[])args[0], (Integer)args[1]);
 		                                  }
 		);
 	}
 
-	private void addDelayedCommand(int ticks, String command) {
-		mCommands.add(new DelayedCommandEntry(ticks, command));
+	private void addDelayedFunction(FunctionWrapper[] function, int ticks) {
+		mFunctions.add(new DelayedFunction(ticks, function));
 
 		if (mTaskId == null) {
 			mTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(mPlugin, mRunnable, 0, 1);
@@ -83,10 +88,10 @@ public class DelayedCommand {
 
 	/* Run all the remaining commands now, even though they are scheduled for later */
 	public void cancel() {
-		for (DelayedCommandEntry entry : mCommands) {
+		for (DelayedFunction entry : mFunctions) {
 			entry.run();
 		}
-		mCommands.clear();
+		mFunctions.clear();
 
 		if (mTaskId != null) {
 			Bukkit.getScheduler().cancelTask(mTaskId);

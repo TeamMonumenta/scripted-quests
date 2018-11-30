@@ -1,6 +1,6 @@
 package com.playmonumenta.scriptedquests;
 
-import com.playmonumenta.scriptedquests.commands.DelayedCommand;
+import com.playmonumenta.scriptedquests.commands.ScheduleFunction;
 import com.playmonumenta.scriptedquests.commands.GiveLootTable;
 import com.playmonumenta.scriptedquests.commands.InteractNpc;
 import com.playmonumenta.scriptedquests.commands.Leaderboard;
@@ -30,7 +30,7 @@ public class Plugin extends JavaPlugin {
 
 	public World mWorld;
 	public Random mRandom = new Random();
-	private DelayedCommand mDelayedCommand;
+	private ScheduleFunction mScheduledFunctionsManager;
 
 	//	Logic that is performed upon enabling the plugin.
 	@Override
@@ -56,7 +56,7 @@ public class Plugin extends JavaPlugin {
 		Race.register(mRaceManager);
 		Leaderboard.register();
 
-		mDelayedCommand = new DelayedCommand(this);
+		mScheduledFunctionsManager = new ScheduleFunction(this);
 	}
 
 	//	Logic that is performed upon disabling the plugin.
@@ -69,7 +69,7 @@ public class Plugin extends JavaPlugin {
 		MetadataUtils.removeAllMetadata(this);
 
 		// Run all pending delayed commands
-		mDelayedCommand.cancel();
-		mDelayedCommand = null;
+		mScheduledFunctionsManager.cancel();
+		mScheduledFunctionsManager = null;
 	}
 }
