@@ -1,12 +1,13 @@
 package com.playmonumenta.scriptedquests;
 
-import com.playmonumenta.scriptedquests.commands.ScheduleFunction;
 import com.playmonumenta.scriptedquests.commands.GiveLootTable;
 import com.playmonumenta.scriptedquests.commands.InteractNpc;
 import com.playmonumenta.scriptedquests.commands.Leaderboard;
 import com.playmonumenta.scriptedquests.commands.QuestTrigger;
 import com.playmonumenta.scriptedquests.commands.Race;
+import com.playmonumenta.scriptedquests.commands.RandomNumber;
 import com.playmonumenta.scriptedquests.commands.ReloadQuests;
+import com.playmonumenta.scriptedquests.commands.ScheduleFunction;
 import com.playmonumenta.scriptedquests.listeners.EntityListener;
 import com.playmonumenta.scriptedquests.listeners.PlayerListener;
 import com.playmonumenta.scriptedquests.managers.QuestCompassManager;
@@ -55,6 +56,7 @@ public class Plugin extends JavaPlugin {
 		GiveLootTable.register(mRandom);
 		Race.register(mRaceManager);
 		Leaderboard.register();
+		RandomNumber.register();
 
 		mScheduledFunctionsManager = new ScheduleFunction(this);
 	}
