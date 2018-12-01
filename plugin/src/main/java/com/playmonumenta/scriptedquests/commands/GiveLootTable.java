@@ -26,7 +26,7 @@ public class GiveLootTable {
 		arguments.put("lootTablePath", new TextArgument());
 
 		CommandAPI.getInstance().register("giveloottable",
-		                                  new CommandPermission("scriptedquests.giveloottable"),
+		                                  CommandPermission.fromString("scriptedquests.giveloottable"),
 		                                  arguments,
 		                                  (sender, args) -> {
 		                                      String lootPath = (String)args[1];

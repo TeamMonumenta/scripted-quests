@@ -29,7 +29,7 @@ public class InteractNpc {
 		arguments.put("npcType", new EntityTypeArgument());
 
 		CommandAPI.getInstance().register("interactnpc",
-		                                  new CommandPermission("scriptedquests.interactnpc"),
+		                                  CommandPermission.fromString("scriptedquests.interactnpc"),
 		                                  arguments,
 		                                  (sender, args) -> {
 		                                      interact(plugin, sender, (Collection<Player>)args[0],
@@ -44,7 +44,7 @@ public class InteractNpc {
 		arguments.put("npcName", new StringArgument());
 
 		CommandAPI.getInstance().register("interactnpc",
-		                                  new CommandPermission("scriptedquests.interactnpc"),
+		                                  CommandPermission.fromString("scriptedquests.interactnpc"),
 		                                  arguments,
 		                                  (sender, args) -> {
 		                                      interact(plugin, sender, (Collection<Player>)args[0],

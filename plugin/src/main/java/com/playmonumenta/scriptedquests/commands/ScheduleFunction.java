@@ -70,7 +70,7 @@ public class ScheduleFunction {
 		arguments.put("ticks", new IntegerArgument(0));
 
 		CommandAPI.getInstance().register("schedule",
-		                                  new CommandPermission("scriptedquests.schedulefunction"),
+		                                  CommandPermission.fromString("scriptedquests.schedulefunction"),
 		                                  arguments,
 		                                  (sender, args) -> {
 											  addDelayedFunction((FunctionWrapper[])args[0], (Integer)args[1]);

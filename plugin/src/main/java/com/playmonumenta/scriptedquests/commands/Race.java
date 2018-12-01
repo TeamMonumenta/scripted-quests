@@ -28,7 +28,7 @@ public class Race {
 		arguments.put("raceLabel", new StringArgument());
 
 		CommandAPI.getInstance().register("race",
-		                                  new CommandPermission("scriptedquests.race.start"),
+		                                  CommandPermission.fromString("scriptedquests.race.start"),
 		                                  arguments,
 		                                  (sender, args) -> {
 		                                      raceStart(manager, sender, (Collection<Player>)args[0],
@@ -40,7 +40,7 @@ public class Race {
 		arguments.put("stop", new LiteralArgument("stop"));
 		arguments.put("players", new EntitySelectorArgument(EntitySelector.MANY_PLAYERS));
 		CommandAPI.getInstance().register("race",
-		                                  new CommandPermission("scriptedquests.race.stop"),
+		                                  CommandPermission.fromString("scriptedquests.race.stop"),
 		                                  arguments,
 		                                  (sender, args) -> {
 		                                      raceStop(manager, sender, (Collection<Player>)args[0]);
@@ -53,7 +53,7 @@ public class Race {
 		arguments.put("raceLabel", new StringArgument());
 		arguments.put("page", new IntegerArgument(1)); // Min 1
 		CommandAPI.getInstance().register("race",
-		                                  new CommandPermission("scriptedquests.race.leaderboard"),
+		                                  CommandPermission.fromString("scriptedquests.race.leaderboard"),
 		                                  arguments,
 		                                  (sender, args) -> {
 		                                      raceLeaderboard(manager, sender, (Collection<Player>)args[0],

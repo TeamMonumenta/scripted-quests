@@ -35,7 +35,7 @@ public class Leaderboard {
 		arguments.put("page", new IntegerArgument(1)); // Min 1
 
 		CommandAPI.getInstance().register("leaderboard",
-		                                  new CommandPermission("scriptedquests.leaderboard"),
+		                                  CommandPermission.fromString("scriptedquests.leaderboard"),
 		                                  arguments,
 		                                  (sender, args) -> {
 		                                      for (Player player : (Collection<Player>)args[0]) {

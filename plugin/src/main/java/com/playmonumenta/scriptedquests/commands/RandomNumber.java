@@ -19,7 +19,7 @@ public class RandomNumber {
 		arguments.put("max", new IntegerArgument());
 
 		CommandAPI.getInstance().register("randomnumber",
-		                                  new CommandPermission("scriptedquests.randomnumber"),
+		                                  CommandPermission.fromString("scriptedquests.randomnumber"),
 		                                  arguments,
 		                                  (sender, args) -> {
 											  return mRandom.nextInt((Integer)args[0], (Integer)args[1] + 1);
