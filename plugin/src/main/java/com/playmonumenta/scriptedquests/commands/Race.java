@@ -1,6 +1,6 @@
 package com.playmonumenta.scriptedquests.commands;
 
-import com.playmonumenta.scriptedquests.managers.RaceManager;
+import com.playmonumenta.scriptedquests.Plugin;
 
 import io.github.jorelali.commandapi.api.arguments.Argument;
 import io.github.jorelali.commandapi.api.arguments.EntitySelectorArgument;
@@ -19,7 +19,7 @@ import org.bukkit.entity.Player;
 
 public class Race {
 	@SuppressWarnings("unchecked")
-	public static void register(RaceManager manager) {
+	public static void register(Plugin plugin) {
 		/* First one of these has both required arguments */
 		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
 
@@ -31,7 +31,7 @@ public class Race {
 		                                  CommandPermission.fromString("scriptedquests.race.start"),
 		                                  arguments,
 		                                  (sender, args) -> {
-		                                      raceStart(manager, sender, (Collection<Player>)args[0],
+		                                      raceStart(plugin, sender, (Collection<Player>)args[0],
 		                                                (String)args[1]);
 		                                  }
 		);
@@ -43,7 +43,7 @@ public class Race {
 		                                  CommandPermission.fromString("scriptedquests.race.stop"),
 		                                  arguments,
 		                                  (sender, args) -> {
-		                                      raceStop(manager, sender, (Collection<Player>)args[0]);
+		                                      raceStop(plugin, sender, (Collection<Player>)args[0]);
 		                                  }
 		);
 
@@ -56,30 +56,36 @@ public class Race {
 		                                  CommandPermission.fromString("scriptedquests.race.leaderboard"),
 		                                  arguments,
 		                                  (sender, args) -> {
-		                                      raceLeaderboard(manager, sender, (Collection<Player>)args[0],
+		                                      raceLeaderboard(plugin, sender, (Collection<Player>)args[0],
 		                                                      (String)args[1], (Integer)args[2]);
 		                                  }
 		);
 	}
 
-	private static void raceStart(RaceManager manager, CommandSender sender,
+	private static void raceStart(Plugin plugin, CommandSender sender,
 	                              Collection<Player>players, String raceLabel) {
-		for (Player player : players) {
-			manager.startRace(player, raceLabel);
+		if (plugin.mRaceManager != null) {
+			for (Player player : players) {
+				plugin.mRaceManager.startRace(player, raceLabel);
+			}
 		}
 	}
 
-	private static void raceStop(RaceManager manager, CommandSender sender,
+	private static void raceStop(Plugin plugin, CommandSender sender,
 	                             Collection<Player>players) {
-		for (Player player : players) {
-			manager.cancelRace(player);
+		if (plugin.mRaceManager != null) {
+			for (Player player : players) {
+				plugin.mRaceManager.cancelRace(player);
+			}
 		}
 	}
 
-	private static void raceLeaderboard(RaceManager manager, CommandSender sender,
+	private static void raceLeaderboard(Plugin plugin, CommandSender sender,
 	                                    Collection<Player>players, String raceLabel, int page) {
-		for (Player player : players) {
-			manager.sendLeaderboard(player, raceLabel, page);
+		if (plugin.mRaceManager != null) {
+			for (Player player : players) {
+				plugin.mRaceManager.sendLeaderboard(player, raceLabel, page);
+			}
 		}
 	}
 }

@@ -33,7 +33,23 @@ public class Plugin extends JavaPlugin {
 	public Random mRandom = new Random();
 	private ScheduleFunction mScheduledFunctionsManager;
 
-	//	Logic that is performed upon enabling the plugin.
+	@Override
+	public void onLoad() {
+		/*
+		 * CommandAPI commands which register directly and are usable in functions
+		 *
+		 * These need to register immediately on load to prevent function loading errors
+		 */
+
+		InteractNpc.register(this);
+		GiveLootTable.register(mRandom);
+		Race.register(this);
+		Leaderboard.register();
+		RandomNumber.register();
+
+		mScheduledFunctionsManager = new ScheduleFunction(this);
+	}
+
 	@Override
 	public void onEnable() {
 		PluginManager manager = getServer().getPluginManager();
@@ -50,18 +66,8 @@ public class Plugin extends JavaPlugin {
 
 		getCommand("reloadQuests").setExecutor(new ReloadQuests(this));
 		getCommand("questTrigger").setExecutor(new QuestTrigger(this));
-
-		/* These plugins register directly with minecraft, bypassing spigot */
-		InteractNpc.register(this);
-		GiveLootTable.register(mRandom);
-		Race.register(mRaceManager);
-		Leaderboard.register();
-		RandomNumber.register();
-
-		mScheduledFunctionsManager = new ScheduleFunction(this);
 	}
 
-	//	Logic that is performed upon disabling the plugin.
 	@Override
 	public void onDisable() {
 		getServer().getScheduler().cancelTasks(this);

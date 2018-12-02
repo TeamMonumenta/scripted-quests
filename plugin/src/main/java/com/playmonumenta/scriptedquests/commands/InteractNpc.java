@@ -55,10 +55,12 @@ public class InteractNpc {
 
 	private static void interact(Plugin plugin, CommandSender sender, Collection<Player>players,
 	                             String npcName, EntityType npcType) {
-		for (Player player : players) {
-			if (!plugin.mNpcManager.interactEvent(plugin, player, npcName, npcType, true)) {
-				sender.sendMessage(ChatColor.RED + "No interaction available for player '" + player.getName() +
-				                   "' and NPC '" + npcName + "'");
+		if (plugin.mNpcManager != null) {
+			for (Player player : players) {
+				if (!plugin.mNpcManager.interactEvent(plugin, player, npcName, npcType, true)) {
+					sender.sendMessage(ChatColor.RED + "No interaction available for player '" + player.getName() +
+									   "' and NPC '" + npcName + "'");
+				}
 			}
 		}
 	}
