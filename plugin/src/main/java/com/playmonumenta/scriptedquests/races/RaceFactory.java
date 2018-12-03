@@ -134,8 +134,10 @@ public class RaceFactory {
 			JsonElement entry = timesIter.next();
 			mTimes.add(new RaceTime(entry));
 		}
-		// Sort the medal times in case they weren't specified in descending order
-		Collections.sort(mTimes, Collections.reverseOrder());
+		// Sort the medal times in case they weren't specified in the right order
+		// Note: This is ascending time, descending medal goodness order
+		// (since higher time is "worse")
+		Collections.sort(mTimes);
 
 		// lose_actions (optional)
 		JsonElement loseActionsElement = object.get("lose_actions");

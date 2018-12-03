@@ -19,8 +19,7 @@ public class TimeBar {
 	public BossBar mBar;
 
 	public TimeBar(Player runner, List<RaceTime> times) {
-		mTimes = new ArrayList<RaceTime>(times);
-		Collections.sort(mTimes);
+		mTimes = times;
 
 		mBar = Bukkit.getServer().createBossBar("", BarColor.WHITE, BarStyle.SOLID);
 		mBar.addPlayer(runner);
