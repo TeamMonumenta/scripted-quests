@@ -50,6 +50,10 @@ public class Leaderboard {
 		List<LeaderboardEntry> entries = new ArrayList<LeaderboardEntry>();
 
 		Objective obj = Bukkit.getScoreboardManager().getMainScoreboard().getObjective(objective);
+		if (obj == null) {
+			player.sendMessage(ChatColor.RED + "The scoreboard objective '" + objective + "' does not exist");
+			return;
+		}
 		String displayName = obj.getDisplayName();
 		for (String name : obj.getScoreboard().getEntries()) {
 			Score score = obj.getScore(name);
