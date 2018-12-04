@@ -37,6 +37,7 @@ public class ScheduleFunction {
 	private final List<DelayedFunction> mFunctions = new ArrayList<DelayedFunction>();
 	private final Plugin mPlugin;
 	private Integer mTaskId = null;
+	private final List<DelayedFunction> mFunctionsToRun = new ArrayList<DelayedFunction>();
 	private final Runnable mRunnable = new Runnable() {
 		@Override
 		public void run() {
@@ -47,11 +48,16 @@ public class ScheduleFunction {
 				entry.ticksLeft--;
 
 				if (entry.ticksLeft < 0) {
-					entry.run();
+					mFunctionsToRun.add(entry);
 
 					it.remove();
 				}
 			}
+
+			for (DelayedFunction entry : mFunctionsToRun) {
+				entry.run();
+			}
+			mFunctionsToRun.clear();
 
 			if (mFunctions.isEmpty()) {
 				Bukkit.getScheduler().cancelTask(mTaskId);
