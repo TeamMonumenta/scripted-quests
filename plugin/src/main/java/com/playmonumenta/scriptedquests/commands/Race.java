@@ -28,7 +28,7 @@ public class Race {
 		arguments.put("raceLabel", new StringArgument());
 
 		CommandAPI.getInstance().register("race",
-		                                  CommandPermission.fromString("scriptedquests.race.start"),
+		                                  CommandPermission.NONE,
 		                                  arguments,
 		                                  (sender, args) -> {
 		                                      raceStart(plugin, sender, (Collection<Player>)args[0],
@@ -40,7 +40,7 @@ public class Race {
 		arguments.put("stop", new LiteralArgument("stop"));
 		arguments.put("players", new EntitySelectorArgument(EntitySelector.MANY_PLAYERS));
 		CommandAPI.getInstance().register("race",
-		                                  CommandPermission.fromString("scriptedquests.race.stop"),
+		                                  CommandPermission.NONE,
 		                                  arguments,
 		                                  (sender, args) -> {
 		                                      raceStop(plugin, sender, (Collection<Player>)args[0]);
@@ -53,7 +53,7 @@ public class Race {
 		arguments.put("raceLabel", new StringArgument());
 		arguments.put("page", new IntegerArgument(1)); // Min 1
 		CommandAPI.getInstance().register("race",
-		                                  CommandPermission.fromString("scriptedquests.race.leaderboard"),
+		                                  CommandPermission.NONE,
 		                                  arguments,
 		                                  (sender, args) -> {
 		                                      raceLeaderboard(plugin, sender, (Collection<Player>)args[0],
@@ -64,24 +64,31 @@ public class Race {
 
 	private static void raceStart(Plugin plugin, CommandSender sender,
 	                              Collection<Player>players, String raceLabel) {
-		if (plugin.mRaceManager != null) {
-			for (Player player : players) {
-				plugin.mRaceManager.startRace(player, raceLabel);
+		// Check permission
+		if (sender.hasPermission("scriptedquests.race")) {
+			if (plugin.mRaceManager != null) {
+				for (Player player : players) {
+					plugin.mRaceManager.startRace(player, raceLabel);
+				}
 			}
 		}
 	}
 
 	private static void raceStop(Plugin plugin, CommandSender sender,
 	                             Collection<Player>players) {
-		if (plugin.mRaceManager != null) {
-			for (Player player : players) {
-				plugin.mRaceManager.cancelRace(player);
+		// Check permission
+		if (sender.hasPermission("scriptedquests.race")) {
+			if (plugin.mRaceManager != null) {
+				for (Player player : players) {
+					plugin.mRaceManager.cancelRace(player);
+				}
 			}
 		}
 	}
 
 	private static void raceLeaderboard(Plugin plugin, CommandSender sender,
 	                                    Collection<Player>players, String raceLabel, int page) {
+		// Anyone can use this - no permission check
 		if (plugin.mRaceManager != null) {
 			for (Player player : players) {
 				plugin.mRaceManager.sendLeaderboard(player, raceLabel, page);
