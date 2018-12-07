@@ -48,6 +48,7 @@ public class Race {
 	private final Objective mScoreboard;
 	private final boolean mShowStats;
 	private final Location mStart;
+	private final QuestActions mStartActions;
 	private final List<RaceWaypoint> mWaypoints;
 	private final List<RaceTime> mTimes;
 	private final QuestActions mLoseActions;
@@ -67,7 +68,7 @@ public class Race {
 	private boolean mCountdownActive = false;
 
 	public Race(Plugin plugin, RaceManager manager, Player player, String name, String label,
-	            Objective scoreboard, boolean showStats, Location start,
+	            Objective scoreboard, boolean showStats, Location start, QuestActions startActions,
 	            List<RaceWaypoint> waypoints, List<RaceTime> times, QuestActions loseActions) {
 		mPlugin = plugin;
 		mManager = manager;
@@ -77,6 +78,7 @@ public class Race {
 		mScoreboard = scoreboard;
 		mShowStats = showStats;
 		mStart = start;
+		mStartActions = startActions;
 		mWaypoints = waypoints;
 		mTimes = times;
 		mLoseActions = loseActions;
@@ -111,6 +113,10 @@ public class Race {
 
 		if (mTimeBar != null) {
 			mTimeBar.cancel();
+		}
+
+		if (mStartActions != null) {
+			mStartActions.doActions(mPlugin, mPlayer, null);
 		}
 
 		mStartTime = System.currentTimeMillis();

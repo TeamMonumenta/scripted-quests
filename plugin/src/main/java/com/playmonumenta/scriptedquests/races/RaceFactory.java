@@ -36,6 +36,7 @@ public class RaceFactory {
 	private final Objective mObjective;
 	private final boolean mShowStats;
 	private final Location mStart;
+	private final QuestActions mStartActions;
 	private final List<RaceWaypoint> mWaypoints = new ArrayList<RaceWaypoint>();
 	private final List<RaceTime> mTimes = new ArrayList<RaceTime>();
 	private final QuestActions mLoseActions;
@@ -139,6 +140,15 @@ public class RaceFactory {
 		// (since higher time is "worse")
 		Collections.sort(mTimes);
 
+		// start_actions (optional)
+		JsonElement startActionsElement = object.get("start_actions");
+		if (startActionsElement != null) {
+			// Actions should not use NPC dialog or rerun_components since they make no sense here
+			mStartActions = new QuestActions("REPORT_THIS_BUG", "REPORT_THIS_BUG", null, 0, startActionsElement);
+		} else {
+			mStartActions = null;
+		}
+
 		// lose_actions (optional)
 		JsonElement loseActionsElement = object.get("lose_actions");
 		if (loseActionsElement != null) {
@@ -212,7 +222,7 @@ public class RaceFactory {
 
 	public Race createRace(Player player) {
 		return new Race(mPlugin, mManager, player, mName, mLabel, mObjective,
-		                mShowStats, mStart, mWaypoints, mTimes, mLoseActions);
+		                mShowStats, mStart, mStartActions, mWaypoints, mTimes, mLoseActions);
 	}
 
 	public void sendLeaderboard(Player player, int page) {
