@@ -15,6 +15,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.Material;
@@ -73,6 +74,9 @@ public class PlayerListener implements Listener {
 	public void PlayerRespawnEvent(PlayerRespawnEvent event) {
 		Player player = event.getPlayer();
 
+		// Stop racing (if applicable)
+		mPlugin.mRaceManager.cancelRace(event.getPlayer());
+
 		/*
 		 * If the player died and has metadata indicating they should respawn somewhere,
 		 * set their respawn location there and remove the metadata
@@ -82,5 +86,11 @@ public class PlayerListener implements Listener {
 			event.setRespawnLocation(respawnPoint.toLocation(mPlugin.mWorld));
 			player.removeMetadata(Constants.PLAYER_RESPAWN_POINT_METAKEY, mPlugin);
 		}
+	}
+
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void PlayerQuitEvent(PlayerQuitEvent event) {
+		// Stop racing (if applicable)
+		mPlugin.mRaceManager.cancelRace(event.getPlayer());
 	}
 }
