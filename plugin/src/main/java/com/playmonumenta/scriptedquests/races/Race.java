@@ -209,6 +209,10 @@ public class Race {
 			//		MessagingUtils.sendActionBarMessage(mPlayer, net.md_5.bungee.api.ChatColor.GREEN, true, RaceUtils.msToTimeString(timeElapsed));
 			//  }
 			//} else {
+
+			// Run the actions for reaching this ring
+			mNextWaypoint.doActions(mPlugin, mPlayer);
+
 			MessagingUtils.sendActionBarMessage(mPlayer, net.md_5.bungee.api.ChatColor.BLUE, true, RaceUtils.msToTimeString(timeElapsed));
 			mWorld.playSound(mPlayer.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1, 1.5f);
 
