@@ -21,6 +21,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Score;
 import org.bukkit.Sound;
 import org.bukkit.util.Vector;
 import org.bukkit.World;
@@ -291,7 +292,10 @@ public class Race {
 
 		/* Set score on player */
 		if (mScoreboard != null) {
-			mScoreboard.getScore(mPlayer.getName()).setScore(endTime);
+			Score score = mScoreboard.getScore(mPlayer.getName());
+			if (!score.isScoreSet() || endTime < score.getScore()) {
+				score.setScore(endTime);
+			}
 		}
 
 		//TODO: Ring times
