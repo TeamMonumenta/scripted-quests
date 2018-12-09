@@ -244,7 +244,7 @@ public class RaceFactory {
 		}
 
 		// Sort descending
-		Collections.sort(entries, Collections.reverseOrder());
+		Collections.sort(entries);
 
 		/*
 		 * As we iterate through the leaderboard entries (sorted),
