@@ -1,185 +1,298 @@
 {
-    "title": "Action",
-    "type": "object",
-    "additionalProperties": false,
-    "properties": {
+  "type": "object",
+  "options": {
+    "keep_oneof_values": false
+  },
+  "oneOf": [
+    {
+      "title": "dialog",
+      "additionalProperties": false,
+      "required": [
+        "dialog"
+      ],
+      "defaultProperties": [
+        "dialog"
+      ],
+      "properties": {
+        "prerequisites": {
+          "$ref": "prerequisites.json"
+        },
         "dialog": {
-            "title": "dialog",
-            "description": "Formatting supported with &amp; and §, and @S becomes the player's name",
-            "type": "object",
-            "defaultProperties": [
-                "text"
-            ],
-            "properties": {
-                "text": {
-                    "title": "text",
-                    "description": "Text spoken by NPC. '[Name] ' part is handled by the plugin",
-                    "options": {
-                        "keep_oneof_values": false
-                    },
-                    "oneOf": [
-                        {
-                            "title": "One line",
-                            "type": "string"
-                        },
-                        {
-                            "title": "Multiple lines",
-                            "type": "array",
-                            "minItems": 2,
-                            "items": {
-                                "title": "A line",
-                                "type": "string"
-                            }
-                        }
-                    ]
+          "description": "Formatting supported with &amp; and §, and @S becomes the player's name",
+          "type": "object",
+          "defaultProperties": [
+            "text"
+          ],
+          "properties": {
+            "text": {
+              "title": "text",
+              "description": "Text spoken by NPC. '[Name] ' part is handled by the plugin",
+              "options": {
+                "keep_oneof_values": false
+              },
+              "oneOf": [
+                {
+                  "title": "One line",
+                  "type": "string"
                 },
-                "raw_text": {
-                    "title": "raw_text",
-                    "description": "No name or formatting included by default",
-                    "options": {
-                        "keep_oneof_values": false
-                    },
-                    "oneOf": [
-                        {
-                            "title": "One line",
-                            "type": "string"
-                        },
-                        {
-                            "title": "Multiple lines",
-                            "type": "array",
-                            "minItems": 2,
-                            "items": {
-                                "title": "A line",
-                                "type": "string"
-                            }
-                        }
-                    ]
-                },
-                "clickable_text": {
-                    "title": "clickable_text",
-                    "description": "Colored, formatted, and put in [] for you.",
-                    "type": "array",
-                    "format": "tabs",
-                    "minItems": 1,
-                    "items": {
-                        "headerTemplate": "{{self.player_text}}",
-                        "type": "object",
-                        "defaultProperties": [
-                            "player_text",
-                            "actions"
-                        ],
-                        "properties": {
-                            "player_text": {
-                                "required": true,
-                                "propertyOrder": 1,
-                                "title": "player_text",
-                                "description": "Player's response",
-                                "type": "string"
-                            },
-                            "delay_actions_by_ticks": {
-                                "propertyOrder": 2,
-                                "$ref": "delay_actions_by_ticks.json"
-                            },
-                            "actions": {
-                                "required": true,
-                                "propertyOrder": 3,
-                                "$ref": "actions.json"
-                            }
-                        }
-                    }
-                },
-                "random_text": {
-                    "title": "random_text",
-                    "type": "array",
-                    "minItems": 2,
-                    "items": {
-                        "title": "A random line",
-                        "type": "string"
-                    }
+                {
+                  "title": "Multiple lines",
+                  "type": "array",
+                  "minItems": 2,
+                  "items": {
+                    "title": "A line",
+                    "type": "string"
+                  }
                 }
+              ]
+            },
+            "raw_text": {
+              "title": "raw_text",
+              "description": "No name or formatting included by default",
+              "options": {
+                "keep_oneof_values": false
+              },
+              "oneOf": [
+                {
+                  "title": "One line",
+                  "type": "string"
+                },
+                {
+                  "title": "Multiple lines",
+                  "type": "array",
+                  "minItems": 2,
+                  "items": {
+                    "title": "A line",
+                    "type": "string"
+                  }
+                }
+              ]
+            },
+            "clickable_text": {
+              "title": "clickable_text",
+              "description": "Colored, formatted, and put in [] for you.",
+              "type": "array",
+              "format": "tabs",
+              "minItems": 1,
+              "items": {
+                "headerTemplate": "{{self.player_text}}",
+                "type": "object",
+                "defaultProperties": [
+                  "player_text",
+                  "actions"
+                ],
+                "properties": {
+                  "player_text": {
+                    "required": true,
+                    "propertyOrder": 1,
+                    "title": "player_text",
+                    "description": "Player's response",
+                    "type": "string"
+                  },
+                  "delay_actions_by_ticks": {
+                    "propertyOrder": 2,
+                    "$ref": "delay_actions_by_ticks.json"
+                  },
+                  "actions": {
+                    "required": true,
+                    "propertyOrder": 3,
+                    "$ref": "actions.json"
+                  }
+                }
+              }
+            },
+            "random_text": {
+              "title": "random_text",
+              "type": "array",
+              "minItems": 2,
+              "items": {
+                "title": "A random line",
+                "type": "string"
+              }
             }
+          }
+        }
+      }
+    },
+    {
+      "title": "set_scores",
+      "additionalProperties": false,
+      "required": [
+        "set_scores"
+      ],
+      "defaultProperties": [
+        "set_scores"
+      ],
+      "properties": {
+        "prerequisites": {
+          "$ref": "prerequisites.json"
         },
         "set_scores": {
-            "title": "set_scores",
-            "description": "Set the player's specified scoreboard value(s). Click Properties, then type in the scoreboard name in the input box and click the 'add' button. Scoreboards are case-sensitive",
-            "type": "object",
-            "patternProperties": {
-                ".*": {
-                    "headerTemplate": "{{i}}",
-                    "options": {
-                        "keep_oneof_values": false
+          "description": "Set the player's specified scoreboard value(s). Click Properties, then type in the scoreboard name in the input box and click the 'add' button. Scoreboards are case-sensitive",
+          "type": "object",
+          "patternProperties": {
+            ".*": {
+              "headerTemplate": "{{i}}",
+              "options": {
+                "keep_oneof_values": false
+              },
+              "oneOf": [
+                {
+                  "title": "Exactly",
+                  "$ref": "score.json"
+                },
+                {
+                  "title": "Random",
+                  "type": "object",
+                  "properties": {
+                    "min": {
+                      "title": "Minimum",
+                      "$ref": "score.json"
                     },
-                    "oneOf": [
-                        {
-                            "title": "Exactly",
-                            "$ref": "score.json"
-                        },
-                        {
-                            "title": "Random",
-                            "type": "object",
-                            "properties": {
-                                "min": {
-                                    "title": "Minimum",
-                                    "$ref": "score.json"
-                                },
-                                "max": {
-                                    "title": "Maximum",
-                                    "$ref": "score.json"
-                                }
-                            }
-                        },
-                        {
-                            "title": "Copy from",
-                            "type": "string"
-                        }
-                    ]
+                    "max": {
+                      "title": "Maximum",
+                      "$ref": "score.json"
+                    }
+                  }
+                },
+                {
+                  "title": "Copy from",
+                  "type": "string"
                 }
+              ]
             }
+          }
+        }
+      }
+    },
+    {
+      "title": "function",
+      "additionalProperties": false,
+      "required": [
+        "function"
+      ],
+      "defaultProperties": [
+        "function"
+      ],
+      "properties": {
+        "prerequisites": {
+          "$ref": "prerequisites.json"
         },
         "function": {
-            "title": "function",
-            "description": "Runs a function via the console as the player (/execute as <playername> at @s run function <function>)",
-            "type": "string"
+          "description": "Runs a function via the console as the player (/execute as <playername> at @s run function <function>)",
+          "type": "string"
+        }
+      }
+    },
+    {
+      "title": "command",
+      "additionalProperties": false,
+      "required": [
+        "command"
+      ],
+      "defaultProperties": [
+        "command"
+      ],
+      "properties": {
+        "prerequisites": {
+          "$ref": "prerequisites.json"
         },
         "command": {
-            "title": "command",
-            "description": "Runs a command via the console. Any instance of '@S' (uppercase!) will be replaced with the player's name.",
-            "type": "string"
+          "description": "Runs a command via the console. Any instance of '@S' (uppercase!) will be replaced with the player's name.",
+          "type": "string"
+        }
+      }
+    },
+    {
+      "title": "give_loot",
+      "additionalProperties": false,
+      "required": [
+        "give_loot"
+      ],
+      "defaultProperties": [
+        "give_loot"
+      ],
+      "properties": {
+        "prerequisites": {
+          "$ref": "prerequisites.json"
         },
         "give_loot": {
-            "title": "give_loot",
-            "description": "Gives the player all items from a loot table.",
-            "type": "string"
+          "description": "Gives the player all items from a loot table.",
+          "type": "string"
+        }
+      }
+    },
+    {
+      "title": "interact_npc",
+      "additionalProperties": false,
+      "required": [
+        "interact_npc"
+      ],
+      "defaultProperties": [
+        "interact_npc"
+      ],
+      "properties": {
+        "prerequisites": {
+          "$ref": "prerequisites.json"
         },
         "interact_npc": {
-            "title": "interact_npc",
-            "description": "Triggers a follow-on interaction with a different NPC.",
-            "type": "object",
-            "defaultProperties": [
-                "name"
-            ],
-            "properties": {
-                "name": {
-                    "title": "name",
-                    "description": "Name of the NPC to have the player interact with.",
-                    "type": "string"
-                },
-                "entity_type": {
-                    "title": "entity_type",
-                    "description": "EntityType of the NPC to have the player interact with (default is VILLAGER).",
-                    "type": "string"
-                }
+          "description": "Triggers a follow-on interaction with a different NPC.",
+          "type": "object",
+          "defaultProperties": [
+            "name"
+          ],
+          "properties": {
+            "name": {
+              "title": "name",
+              "description": "Name of the NPC to have the player interact with.",
+              "type": "string"
+            },
+            "entity_type": {
+              "title": "entity_type",
+              "description": "EntityType of the NPC to have the player interact with (default is VILLAGER).",
+              "type": "string"
             }
+          }
+        }
+      }
+    },
+    {
+      "title": "voice_over",
+      "additionalProperties": false,
+      "required": [
+        "voice_over"
+      ],
+      "defaultProperties": [
+        "voice_over"
+      ],
+      "properties": {
+        "prerequisites": {
+          "$ref": "prerequisites.json"
         },
         "voice_over": {
-            "title": "voice_over",
-            "description": "Play a sound to the player as an NPC (WIP)",
-            "type": "string"
+          "description": "Play a sound to the player as an NPC (WIP)",
+          "type": "string"
+        }
+      }
+    },
+    {
+      "title": "rerun_components",
+      "additionalProperties": false,
+      "required": [
+        "rerun_components"
+      ],
+      "defaultProperties": [
+        "rerun_components"
+      ],
+      "properties": {
+        "prerequisites": {
+          "$ref": "prerequisites.json"
         },
         "rerun_components": {
-            "title": "rerun_components",
-            "description": "Re-runs all quest components tied to this specific NPC (including those specified in other files). To prevent infinite loops, this action will not run itself, even if conditions indicate it should.",
-            "type": "null"
+          "description": "Re-runs all quest components tied to this specific NPC (including those specified in other files). To prevent infinite loops, this action will not run itself, even if conditions indicate it should.",
+          "type": "null"
         }
+      }
     }
+  ]
 }
