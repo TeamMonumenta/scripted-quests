@@ -293,7 +293,7 @@ public class Race {
 		/* Set score on player */
 		if (mScoreboard != null) {
 			Score score = mScoreboard.getScore(mPlayer.getName());
-			if (!score.isScoreSet() || endTime < score.getScore()) {
+			if (!score.isScoreSet() || score.getScore() == 0 || endTime < score.getScore()) {
 				score.setScore(endTime);
 			}
 		}
