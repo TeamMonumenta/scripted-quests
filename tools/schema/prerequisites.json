@@ -123,6 +123,37 @@
                 }
             }
         },
+        "test_for_block": {
+            "propertyOrder": 6,
+            "title": "test_for_block",
+            "description": "Checks that the block at x y z is the specified material. Will test on the current world the player is in. WILL FAIL IF CHUNK IS NOT LOADED!",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "x": {
+                    "required": true,
+                    "$ref": "coordinate.json",
+                    "propertyOrder": 1
+                },
+                "y": {
+                    "required": true,
+                    "$ref": "coordinate.json",
+                    "propertyOrder": 2
+                },
+                "z": {
+                    "required": true,
+                    "$ref": "coordinate.json",
+                    "propertyOrder": 3
+                },
+                "type": {
+                    "required": true,
+					"title": "type",
+					"description": "Matches if the item type is exactly this Material. List of available materials can be found here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html",
+					"type": "string",
+                    "propertyOrder": 4
+                }
+            }
+        },
         "and": {
             "propertyOrder": 7,
             "title": "and",

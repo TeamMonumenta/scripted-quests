@@ -17,6 +17,7 @@ import com.playmonumenta.scriptedquests.quests.components.prerequisites.Prerequi
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteItemInHand;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteItemsInInventory;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteLocation;
+import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteTestForBlock;
 
 public class QuestPrerequisites implements PrerequisiteBase {
 	private ArrayList<PrerequisiteBase> mPrerequisites = new ArrayList<PrerequisiteBase>();
@@ -108,6 +109,19 @@ public class QuestPrerequisites implements PrerequisiteBase {
 					Iterator<JsonElement> iter = array.iterator();
 					while (iter.hasNext()) {
 						mPrerequisites.add(new PrerequisiteItemInHand(iter.next()));
+					}
+				}
+				break;
+			case "test_for_block":
+				{
+					JsonArray array = value.getAsJsonArray();
+					if (array == null) {
+						throw new Exception("Prerequisites value for key '" + key + "' is not an array!");
+					}
+
+					Iterator<JsonElement> iter = array.iterator();
+					while (iter.hasNext()) {
+						mPrerequisites.add(new PrerequisiteTestForBlock(iter.next()));
 					}
 				}
 				break;
