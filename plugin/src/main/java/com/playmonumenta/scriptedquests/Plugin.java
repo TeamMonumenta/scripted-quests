@@ -1,6 +1,14 @@
 package com.playmonumenta.scriptedquests;
 
+import java.util.Random;
+
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.java.JavaPlugin;
+
 import com.playmonumenta.scriptedquests.commands.GiveLootTable;
+import com.playmonumenta.scriptedquests.commands.HasPermission;
 import com.playmonumenta.scriptedquests.commands.InteractNpc;
 import com.playmonumenta.scriptedquests.commands.Leaderboard;
 import com.playmonumenta.scriptedquests.commands.QuestTrigger;
@@ -15,13 +23,6 @@ import com.playmonumenta.scriptedquests.managers.QuestDeathManager;
 import com.playmonumenta.scriptedquests.managers.QuestNpcManager;
 import com.playmonumenta.scriptedquests.managers.RaceManager;
 import com.playmonumenta.scriptedquests.utils.MetadataUtils;
-
-import java.util.Random;
-
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.World;
 
 public class Plugin extends JavaPlugin {
 	public QuestCompassManager mQuestCompassManager;
@@ -46,6 +47,7 @@ public class Plugin extends JavaPlugin {
 		Race.register(this);
 		Leaderboard.register();
 		RandomNumber.register();
+		HasPermission.register();
 
 		mScheduledFunctionsManager = new ScheduleFunction(this);
 	}
