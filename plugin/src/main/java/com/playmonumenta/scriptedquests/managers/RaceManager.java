@@ -125,6 +125,14 @@ public class RaceManager {
 		reload(plugin, null);
 	}
 
+	public boolean isRacing(Player player) {
+		Race race = mActiveRaces.get(player.getUniqueId());
+		if (race != null) {
+			return true;
+		}
+		return false;
+	}
+
 	public void cancelRace(Player player) {
 		Race race = mActiveRaces.get(player.getUniqueId());
 		if (race != null) {

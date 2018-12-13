@@ -150,6 +150,11 @@ public class QuestNpcManager {
 			return false;
 		}
 
+		// Players who are racing can not interact with NPCs
+		if (plugin.mRaceManager.isRacing(player)) {
+			return false;
+		}
+
 		if (npc != null) {
 			return npc.interactEvent(plugin, player, QuestNpc.squashNpcName(npcName), entityType);
 		}

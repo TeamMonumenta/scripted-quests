@@ -44,6 +44,11 @@ public class QuestTrigger implements CommandExecutor {
 		Player player = (Player)sender;
 		int triggerIndex;
 
+		// Players who are racing can not interact with NPCs
+		if (mPlugin.mRaceManager.isRacing(player)) {
+			return false;
+		}
+
 		try {
 			triggerIndex = Integer.parseInt(arg3[0]);
 		} catch (NumberFormatException e) {
