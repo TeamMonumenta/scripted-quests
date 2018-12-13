@@ -1,4 +1,4 @@
-package com.playmonumenta.scriptedquests.quests;
+package com.playmonumenta.scriptedquests.quests.components.prerequisites;
 
 import java.util.Map.Entry;
 import java.util.Set;
@@ -9,7 +9,7 @@ import com.google.gson.JsonElement;
 
 import com.playmonumenta.scriptedquests.utils.ScoreboardUtils;
 
-class PrerequisiteCheckScores implements PrerequisiteBase {
+public class PrerequisiteCheckScores implements PrerequisiteBase {
 	private class CheckScore {
 		// This should be an enum, but idk how to set those up. -Nick
 		private int mOperation;
@@ -56,7 +56,7 @@ class PrerequisiteCheckScores implements PrerequisiteBase {
 	private String mScoreName;
 	private CheckScore mCheckScore;
 
-	PrerequisiteCheckScores(String scoreName, JsonElement value) throws Exception {
+	public PrerequisiteCheckScores(String scoreName, JsonElement value) throws Exception {
 		mScoreName = scoreName;
 
 		if (value.isJsonPrimitive()) {

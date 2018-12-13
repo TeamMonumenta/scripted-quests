@@ -1,4 +1,4 @@
-package com.playmonumenta.scriptedquests.quests;
+package com.playmonumenta.scriptedquests.quests.components.prerequisites;
 
 import java.util.Map.Entry;
 import java.util.Set;
@@ -11,10 +11,10 @@ import com.google.gson.JsonElement;
 import com.playmonumenta.scriptedquests.point.AreaBounds;
 import com.playmonumenta.scriptedquests.point.Point;
 
-class PrerequisiteLocation implements PrerequisiteBase {
+public class PrerequisiteLocation implements PrerequisiteBase {
 	private AreaBounds mAreaBounds;
 
-	PrerequisiteLocation(JsonElement element) throws Exception {
+	public PrerequisiteLocation(JsonElement element) throws Exception {
 		JsonObject object = element.getAsJsonObject();
 		if (object == null) {
 			throw new Exception("location value is not an object!");

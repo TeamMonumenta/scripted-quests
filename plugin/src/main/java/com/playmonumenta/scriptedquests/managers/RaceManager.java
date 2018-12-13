@@ -1,14 +1,7 @@
 package com.playmonumenta.scriptedquests.managers;
 
-import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.races.Race;
-import com.playmonumenta.scriptedquests.races.RaceFactory;
-import com.playmonumenta.scriptedquests.utils.FileUtils;
-import com.playmonumenta.scriptedquests.utils.MessagingUtils;
-
 import java.io.File;
 import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -19,6 +12,12 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.races.Race;
+import com.playmonumenta.scriptedquests.races.RaceFactory;
+import com.playmonumenta.scriptedquests.utils.FileUtils;
+import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 
 public class RaceManager {
 	private Plugin mPlugin;

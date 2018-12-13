@@ -1,17 +1,7 @@
 package com.playmonumenta.scriptedquests.managers;
 
-import com.playmonumenta.scriptedquests.Constants;
-import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.quests.CompassLocation;
-import com.playmonumenta.scriptedquests.quests.DeathLocation;
-import com.playmonumenta.scriptedquests.quests.QuestCompass;
-import com.playmonumenta.scriptedquests.utils.FileUtils;
-import com.playmonumenta.scriptedquests.utils.MessagingUtils;
-import com.playmonumenta.scriptedquests.utils.ScoreboardUtils;
-
 import java.io.File;
 import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -19,6 +9,15 @@ import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import com.playmonumenta.scriptedquests.Constants;
+import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.quests.QuestCompass;
+import com.playmonumenta.scriptedquests.quests.components.CompassLocation;
+import com.playmonumenta.scriptedquests.quests.components.DeathLocation;
+import com.playmonumenta.scriptedquests.utils.FileUtils;
+import com.playmonumenta.scriptedquests.utils.MessagingUtils;
+import com.playmonumenta.scriptedquests.utils.ScoreboardUtils;
 
 public class QuestCompassManager {
 	Plugin mPlugin;

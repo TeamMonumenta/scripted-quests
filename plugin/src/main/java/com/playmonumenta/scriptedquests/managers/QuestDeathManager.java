@@ -1,22 +1,20 @@
 package com.playmonumenta.scriptedquests.managers;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-
-import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.quests.QuestDeath;
-import com.playmonumenta.scriptedquests.utils.FileUtils;
-import com.playmonumenta.scriptedquests.utils.MessagingUtils;
-
 import java.io.File;
 import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.Collections;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.entity.PlayerDeathEvent;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.quests.QuestDeath;
+import com.playmonumenta.scriptedquests.utils.FileUtils;
+import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 
 public class QuestDeathManager {
 	ArrayList<QuestDeath> mDeaths = new ArrayList<QuestDeath>();

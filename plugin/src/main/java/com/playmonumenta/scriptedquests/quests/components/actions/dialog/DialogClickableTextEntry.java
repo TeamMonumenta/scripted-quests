@@ -1,21 +1,22 @@
-package com.playmonumenta.scriptedquests.quests;
+package com.playmonumenta.scriptedquests.quests.components.actions.dialog;
 
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.bukkit.Sound;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.Sound;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
 import com.playmonumenta.scriptedquests.Constants;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.point.AreaBounds;
 import com.playmonumenta.scriptedquests.point.Point;
+import com.playmonumenta.scriptedquests.quests.components.QuestActions;
+import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 
 public class DialogClickableTextEntry implements DialogBase {

@@ -1,10 +1,10 @@
 package com.playmonumenta.scriptedquests.commands;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-import org.bukkit.ChatColor;
 import com.playmonumenta.scriptedquests.Plugin;
 
 public class ReloadQuests implements CommandExecutor {

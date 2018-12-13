@@ -1,21 +1,21 @@
 package com.playmonumenta.scriptedquests.commands;
 
+import java.util.Collection;
+import java.util.LinkedHashMap;
+
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
 import com.playmonumenta.scriptedquests.Plugin;
 
+import io.github.jorelali.commandapi.api.CommandAPI;
+import io.github.jorelali.commandapi.api.CommandPermission;
 import io.github.jorelali.commandapi.api.arguments.Argument;
 import io.github.jorelali.commandapi.api.arguments.EntitySelectorArgument;
 import io.github.jorelali.commandapi.api.arguments.EntitySelectorArgument.EntitySelector;
 import io.github.jorelali.commandapi.api.arguments.IntegerArgument;
 import io.github.jorelali.commandapi.api.arguments.LiteralArgument;
 import io.github.jorelali.commandapi.api.arguments.StringArgument;
-import io.github.jorelali.commandapi.api.CommandAPI;
-import io.github.jorelali.commandapi.api.CommandPermission;
-
-import java.util.Collection;
-import java.util.LinkedHashMap;
-
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 public class Race {
 	@SuppressWarnings("unchecked")

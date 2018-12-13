@@ -1,21 +1,21 @@
 package com.playmonumenta.scriptedquests.commands;
 
-import com.playmonumenta.scriptedquests.Plugin;
-
-import io.github.jorelali.commandapi.api.arguments.Argument;
-import io.github.jorelali.commandapi.api.arguments.FunctionArgument;
-import io.github.jorelali.commandapi.api.arguments.IntegerArgument;
-import io.github.jorelali.commandapi.api.arguments.LiteralArgument;
-import io.github.jorelali.commandapi.api.CommandAPI;
-import io.github.jorelali.commandapi.api.CommandPermission;
-import io.github.jorelali.commandapi.api.FunctionWrapper;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.bukkit.Bukkit;
+
+import com.playmonumenta.scriptedquests.Plugin;
+
+import io.github.jorelali.commandapi.api.CommandAPI;
+import io.github.jorelali.commandapi.api.CommandPermission;
+import io.github.jorelali.commandapi.api.FunctionWrapper;
+import io.github.jorelali.commandapi.api.arguments.Argument;
+import io.github.jorelali.commandapi.api.arguments.FunctionArgument;
+import io.github.jorelali.commandapi.api.arguments.IntegerArgument;
+import io.github.jorelali.commandapi.api.arguments.LiteralArgument;
 
 public class ScheduleFunction {
 	private class DelayedFunction {
@@ -66,7 +66,6 @@ public class ScheduleFunction {
 		}
 	};
 
-	@SuppressWarnings("unchecked")
 	public ScheduleFunction(Plugin plugin) {
 		mPlugin = plugin;
 		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();

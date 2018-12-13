@@ -1,4 +1,4 @@
-package com.playmonumenta.scriptedquests.quests;
+package com.playmonumenta.scriptedquests.quests.components;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -10,17 +10,24 @@ import org.bukkit.entity.Player;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteBase;
+import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteCheckAdvancements;
+import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteCheckScores;
+import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteCheckTags;
+import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteItemInHand;
+import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteItemsInInventory;
+import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteLocation;
 
-class QuestPrerequisites implements PrerequisiteBase {
+public class QuestPrerequisites implements PrerequisiteBase {
 	private ArrayList<PrerequisiteBase> mPrerequisites = new ArrayList<PrerequisiteBase>();
 	private String mOperator;
 
 	/* Default to AND if no operator specified */
-	QuestPrerequisites(JsonElement element) throws Exception {
+	public QuestPrerequisites(JsonElement element) throws Exception {
 		this(element, "and");
 	}
 
-	QuestPrerequisites(JsonElement element, String operator) throws Exception {
+	public QuestPrerequisites(JsonElement element, String operator) throws Exception {
 		JsonObject object = element.getAsJsonObject();
 		mOperator = operator;
 		if (object == null) {

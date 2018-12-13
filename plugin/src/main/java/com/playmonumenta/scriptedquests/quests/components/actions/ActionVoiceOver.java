@@ -1,19 +1,18 @@
-package com.playmonumenta.scriptedquests.quests;
-
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
+package com.playmonumenta.scriptedquests.quests.components.actions;
 
 import org.bukkit.Location;
 import org.bukkit.SoundCategory;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 
 import com.google.gson.JsonElement;
-
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 
-class ActionVoiceOver implements ActionBase {
+public class ActionVoiceOver implements ActionBase {
 	private String mSound;
 
-	ActionVoiceOver(JsonElement element) throws Exception {
+	public ActionVoiceOver(JsonElement element) throws Exception {
 		mSound = element.getAsString();
 		if (mSound == null) {
 			throw new Exception("Voice Over value is not a string!");

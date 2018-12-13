@@ -1,4 +1,4 @@
-package com.playmonumenta.scriptedquests.quests;
+package com.playmonumenta.scriptedquests.quests.components;
 
 import org.bukkit.Location;
 

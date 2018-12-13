@@ -3,14 +3,12 @@ package com.playmonumenta.scriptedquests.utils;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
-// https://www.spigotmc.org/wiki/the-chat-component-api/
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
+import com.playmonumenta.scriptedquests.Plugin;
+
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
 /*
 ChatMessageType contains the following:
@@ -20,11 +18,12 @@ SYSTEM
 
 https://ci.md-5.net/job/BungeeCord/ws/chat/target/apidocs/net/md_5/bungee/api/ChatMessageType.html
 */
-
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
-import com.playmonumenta.scriptedquests.Plugin;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
+// https://www.spigotmc.org/wiki/the-chat-component-api/
 
 public class MessagingUtils {
 	public static String translatePlayerName(Player player, String message) {

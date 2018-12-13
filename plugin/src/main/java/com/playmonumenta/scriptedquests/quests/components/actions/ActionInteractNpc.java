@@ -1,9 +1,4 @@
-package com.playmonumenta.scriptedquests.quests;
-
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-
-import com.playmonumenta.scriptedquests.Plugin;
+package com.playmonumenta.scriptedquests.quests.components.actions;
 
 import java.util.Map.Entry;
 import java.util.Set;
@@ -11,11 +6,16 @@ import java.util.Set;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
-class ActionInteractNpc implements ActionBase {
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
+
+public class ActionInteractNpc implements ActionBase {
 	private String mName;
 	private EntityType mType = EntityType.VILLAGER;
 
-	ActionInteractNpc(JsonElement element) throws Exception {
+	public ActionInteractNpc(JsonElement element) throws Exception {
 		JsonObject object = element.getAsJsonObject();
 		if (object == null) {
 			throw new Exception("interact_npc value is not an object!");

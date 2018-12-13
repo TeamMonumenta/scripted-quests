@@ -1,15 +1,15 @@
-package com.playmonumenta.scriptedquests.quests;
+package com.playmonumenta.scriptedquests.quests.components.actions;
 
 import org.bukkit.entity.Player;
 
 import com.google.gson.JsonElement;
-
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 
-class ActionCommand implements ActionBase {
+public class ActionCommand implements ActionBase {
 	private String mCommand;
 
-	ActionCommand(JsonElement element) throws Exception {
+	public ActionCommand(JsonElement element) throws Exception {
 		mCommand = element.getAsString();
 		if (mCommand == null) {
 			throw new Exception("Command value is not a string!");

@@ -1,30 +1,30 @@
 package com.playmonumenta.scriptedquests.races;
 
-import com.playmonumenta.scriptedquests.managers.RaceManager;
-import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.quests.QuestActions;
-import com.playmonumenta.scriptedquests.utils.MessagingUtils;
-import com.playmonumenta.scriptedquests.utils.RaceUtils;
-
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
-import org.bukkit.Sound;
 import org.bukkit.util.Vector;
-import org.bukkit.World;
+
+import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.managers.RaceManager;
+import com.playmonumenta.scriptedquests.quests.components.QuestActions;
+import com.playmonumenta.scriptedquests.utils.MessagingUtils;
+import com.playmonumenta.scriptedquests.utils.RaceUtils;
 
 /*
  * A Race is a currently active race a player is doing
@@ -138,7 +138,6 @@ public class Race {
 
 		new BukkitRunnable() {
 			int mTicks = 0;
-			final String name = mPlayer.getName();
 
 			@Override
 			public void run() {
@@ -240,7 +239,6 @@ public class Race {
 	private void animation() {
 		mFrame++;
 
-		Location ploc = mPlayer.getLocation();
 		Location rloc = mNextWaypoint.getPosition().toLocation(mWorld);
 
 		// Ring location faces player

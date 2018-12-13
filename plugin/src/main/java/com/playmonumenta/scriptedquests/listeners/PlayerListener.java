@@ -1,25 +1,25 @@
 package com.playmonumenta.scriptedquests.listeners;
 
-import com.playmonumenta.scriptedquests.Constants;
-import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.point.Point;
-import com.playmonumenta.scriptedquests.quests.DeathLocation;
-
 import java.util.LinkedList;
 import java.util.List;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.Material;
 import org.bukkit.metadata.FixedMetadataValue;
+
+import com.playmonumenta.scriptedquests.Constants;
+import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.point.Point;
+import com.playmonumenta.scriptedquests.quests.components.DeathLocation;
 
 public class PlayerListener implements Listener {
 	Plugin mPlugin = null;

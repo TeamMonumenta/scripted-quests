@@ -1,4 +1,4 @@
-package com.playmonumenta.scriptedquests.quests;
+package com.playmonumenta.scriptedquests.quests.components.actions.dialog;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -8,13 +8,13 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import com.google.gson.JsonElement;
-
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 
-class DialogClickableText implements DialogBase {
+public class DialogClickableText implements DialogBase {
 	private ArrayList<DialogClickableTextEntry> mEntries = new ArrayList<DialogClickableTextEntry>();
 
-	DialogClickableText(String npcName, String displayName,
+	public DialogClickableText(String npcName, String displayName,
 	                    EntityType entityType, JsonElement element) throws Exception {
 		/*
 		 * Integer used to determine which of the available clickable entries was

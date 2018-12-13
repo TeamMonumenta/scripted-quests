@@ -1,21 +1,21 @@
 package com.playmonumenta.scriptedquests.commands;
 
-import com.playmonumenta.scriptedquests.utils.InventoryUtils;
-import com.playmonumenta.scriptedquests.utils.MessagingUtils;
-
-import io.github.jorelali.commandapi.api.arguments.Argument;
-import io.github.jorelali.commandapi.api.arguments.EntitySelectorArgument;
-import io.github.jorelali.commandapi.api.arguments.EntitySelectorArgument.EntitySelector;
-import io.github.jorelali.commandapi.api.arguments.TextArgument;
-import io.github.jorelali.commandapi.api.CommandAPI;
-import io.github.jorelali.commandapi.api.CommandPermission;
-
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Random;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+
+import com.playmonumenta.scriptedquests.utils.InventoryUtils;
+import com.playmonumenta.scriptedquests.utils.MessagingUtils;
+
+import io.github.jorelali.commandapi.api.CommandAPI;
+import io.github.jorelali.commandapi.api.CommandPermission;
+import io.github.jorelali.commandapi.api.arguments.Argument;
+import io.github.jorelali.commandapi.api.arguments.EntitySelectorArgument;
+import io.github.jorelali.commandapi.api.arguments.EntitySelectorArgument.EntitySelector;
+import io.github.jorelali.commandapi.api.arguments.TextArgument;
 
 public class GiveLootTable {
 	@SuppressWarnings("unchecked")

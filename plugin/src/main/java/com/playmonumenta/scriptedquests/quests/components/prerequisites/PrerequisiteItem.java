@@ -1,4 +1,4 @@
-package com.playmonumenta.scriptedquests.quests;
+package com.playmonumenta.scriptedquests.quests.components.prerequisites;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -11,13 +11,13 @@ import java.util.Set;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.Material;
 
-class PrerequisiteItem {
+public class PrerequisiteItem {
 	private String mName = "";
 	private String mLore = "";
 	private Material mType = Material.AIR;
 	private int mCount = 1;
 
-	PrerequisiteItem(JsonElement element) throws Exception {
+	public PrerequisiteItem(JsonElement element) throws Exception {
 		JsonObject object = element.getAsJsonObject();
 		if (object == null) {
 			throw new Exception("item value is not an object!");

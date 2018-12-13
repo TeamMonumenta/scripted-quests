@@ -1,4 +1,4 @@
-package com.playmonumenta.scriptedquests.quests;
+package com.playmonumenta.scriptedquests.quests.components.actions;
 
 import java.util.Map.Entry;
 import java.util.Random;
@@ -7,11 +7,11 @@ import java.util.Set;
 import org.bukkit.entity.Player;
 
 import com.google.gson.JsonElement;
-
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import com.playmonumenta.scriptedquests.utils.ScoreboardUtils;
 
-class ActionSetScore implements ActionBase {
+public class ActionSetScore implements ActionBase {
 	private class SetScore {
 		// This should be an enum, but idk how to set those up. -Nick
 		private int mOperation;
@@ -61,7 +61,7 @@ class ActionSetScore implements ActionBase {
 	private String mScoreName;
 	private SetScore mSetScore;
 
-	ActionSetScore(String scoreName, JsonElement value) throws Exception {
+	public ActionSetScore(String scoreName, JsonElement value) throws Exception {
 		mScoreName = scoreName;
 
 		if (value.isJsonPrimitive()) {

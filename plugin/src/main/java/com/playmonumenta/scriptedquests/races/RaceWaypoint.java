@@ -1,13 +1,12 @@
 package com.playmonumenta.scriptedquests.races;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-
-import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.quests.QuestActions;
-
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.quests.components.QuestActions;
 
 public class RaceWaypoint {
 	private final Vector mPosition;

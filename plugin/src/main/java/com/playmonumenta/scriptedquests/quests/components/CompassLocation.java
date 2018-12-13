@@ -1,9 +1,9 @@
-package com.playmonumenta.scriptedquests.quests;
+package com.playmonumenta.scriptedquests.quests.components;
 
 import org.bukkit.Location;
 
 public interface CompassLocation {
-	Location getLocation();
+	public Location getLocation();
 
-	String getMessage();
+	public String getMessage();
 }

@@ -1,6 +1,4 @@
-package com.playmonumenta.scriptedquests.quests;
-
-import com.playmonumenta.scriptedquests.Plugin;
+package com.playmonumenta.scriptedquests.quests.components.actions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,14 +6,17 @@ import java.util.List;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
-class ActionRerunComponents implements ActionBase {
+import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
+
+public class ActionRerunComponents implements ActionBase {
 	private final String mNpcName;
 	private final EntityType mEntityType;
 
 	// Array list should be faster than hashmap for such small set
 	private final List<Player> mLocked = new ArrayList<Player>(10);
 
-	ActionRerunComponents(String npcName, EntityType entityType) {
+	public ActionRerunComponents(String npcName, EntityType entityType) {
 		mNpcName = npcName;
 		mEntityType = entityType;
 	}

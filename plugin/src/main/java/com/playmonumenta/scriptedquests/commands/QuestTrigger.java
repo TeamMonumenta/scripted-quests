@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 
 import com.playmonumenta.scriptedquests.Constants;
 import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.quests.DialogClickableTextEntry.PlayerClickableTextEntry;
+import com.playmonumenta.scriptedquests.quests.components.actions.dialog.DialogClickableTextEntry.PlayerClickableTextEntry;
 
 public class QuestTrigger implements CommandExecutor {
 	private Plugin mPlugin;

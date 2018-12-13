@@ -1,18 +1,5 @@
 package com.playmonumenta.scriptedquests.races;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-
-import com.playmonumenta.scriptedquests.managers.RaceManager;
-import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.quests.QuestActions;
-import com.playmonumenta.scriptedquests.utils.FileUtils;
-import com.playmonumenta.scriptedquests.utils.LeaderboardUtils;
-import com.playmonumenta.scriptedquests.utils.RaceUtils;
-import com.playmonumenta.scriptedquests.utils.LeaderboardUtils.LeaderboardEntry;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -20,11 +7,23 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
-import org.bukkit.World;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.managers.RaceManager;
+import com.playmonumenta.scriptedquests.quests.components.QuestActions;
+import com.playmonumenta.scriptedquests.utils.FileUtils;
+import com.playmonumenta.scriptedquests.utils.LeaderboardUtils;
+import com.playmonumenta.scriptedquests.utils.LeaderboardUtils.LeaderboardEntry;
+import com.playmonumenta.scriptedquests.utils.RaceUtils;
 
 /*
  * A RaceFactory object is a parsed version of a JSON race file.
@@ -98,12 +97,7 @@ public class RaceFactory {
 		if (show_stats == null) {
 			throw new Exception("'show_stats' entry for race '" + fileLocation + "' is required");
 		}
-		Boolean stats = show_stats.getAsBoolean();
-		if (stats == null) {
-			throw new Exception("Failed to parse 'show_stats' label for file '" +
-			fileLocation + "' as boolean");
-		}
-		mShowStats = stats;
+		mShowStats = show_stats.getAsBoolean();
 
 		// start
 		JsonElement start = object.get("start");

@@ -1,4 +1,4 @@
-package com.playmonumenta.scriptedquests.quests;
+package com.playmonumenta.scriptedquests.quests.components;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -11,8 +11,16 @@ import org.bukkit.entity.Player;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.quests.components.actions.ActionBase;
+import com.playmonumenta.scriptedquests.quests.components.actions.ActionCommand;
+import com.playmonumenta.scriptedquests.quests.components.actions.ActionDialog;
+import com.playmonumenta.scriptedquests.quests.components.actions.ActionFunction;
+import com.playmonumenta.scriptedquests.quests.components.actions.ActionGiveLoot;
+import com.playmonumenta.scriptedquests.quests.components.actions.ActionInteractNpc;
+import com.playmonumenta.scriptedquests.quests.components.actions.ActionRerunComponents;
+import com.playmonumenta.scriptedquests.quests.components.actions.ActionSetScore;
+import com.playmonumenta.scriptedquests.quests.components.actions.ActionVoiceOver;
 
 public class QuestActions {
 	private ArrayList<ActionBase> mActions = new ArrayList<ActionBase>();

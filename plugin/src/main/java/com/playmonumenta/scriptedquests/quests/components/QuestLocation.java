@@ -1,8 +1,8 @@
-package com.playmonumenta.scriptedquests.quests;
+package com.playmonumenta.scriptedquests.quests.components;
 
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -63,7 +63,7 @@ public class QuestLocation implements CompassLocation {
 		return mMessage;
 	}
 
-	boolean prerequisiteMet(Player player) {
+	public boolean prerequisiteMet(Player player) {
 		return mPrerequisites.prerequisiteMet(player);
 	}
 }

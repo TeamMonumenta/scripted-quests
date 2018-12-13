@@ -1,4 +1,4 @@
-package com.playmonumenta.scriptedquests.quests;
+package com.playmonumenta.scriptedquests.quests.components.prerequisites;
 
 import java.util.Set;
 
@@ -6,11 +6,11 @@ import org.bukkit.entity.Player;
 
 import com.google.gson.JsonElement;
 
-class PrerequisiteCheckTags implements PrerequisiteBase {
+public class PrerequisiteCheckTags implements PrerequisiteBase {
 	private boolean mInverted;
 	private String mTag;
 
-	PrerequisiteCheckTags(JsonElement value) throws Exception {
+	public PrerequisiteCheckTags(JsonElement value) throws Exception {
 		String tag = value.getAsString();
 		if (tag == null) {
 			throw new Exception("tag value is not a string!");

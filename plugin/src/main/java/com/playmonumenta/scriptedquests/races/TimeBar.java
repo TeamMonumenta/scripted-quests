@@ -1,14 +1,12 @@
 package com.playmonumenta.scriptedquests.races;
 
-import java.util.List;
 import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 public class TimeBar {

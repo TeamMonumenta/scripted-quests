@@ -1,4 +1,4 @@
-package com.playmonumenta.scriptedquests.quests;
+package com.playmonumenta.scriptedquests.quests.components.actions;
 
 import java.util.ArrayList;
 import java.util.Map.Entry;
@@ -9,13 +9,18 @@ import org.bukkit.entity.Player;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
+import com.playmonumenta.scriptedquests.quests.components.actions.dialog.DialogBase;
+import com.playmonumenta.scriptedquests.quests.components.actions.dialog.DialogClickableText;
+import com.playmonumenta.scriptedquests.quests.components.actions.dialog.DialogRandomText;
+import com.playmonumenta.scriptedquests.quests.components.actions.dialog.DialogRawText;
+import com.playmonumenta.scriptedquests.quests.components.actions.dialog.DialogText;
 
-class ActionDialog implements ActionBase {
+public class ActionDialog implements ActionBase {
 	private ArrayList<DialogBase> mDialogs = new ArrayList<DialogBase>();
 
-	ActionDialog(String npcName, String displayName,
+	public ActionDialog(String npcName, String displayName,
 	             EntityType entityType, JsonElement element) throws Exception {
 		JsonObject object = element.getAsJsonObject();
 		if (object == null) {

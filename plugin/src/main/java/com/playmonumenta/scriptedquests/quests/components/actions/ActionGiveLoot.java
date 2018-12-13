@@ -1,21 +1,21 @@
-package com.playmonumenta.scriptedquests.quests;
-
-import com.google.gson.JsonElement;
-
-import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.utils.InventoryUtils;
-import com.playmonumenta.scriptedquests.utils.MessagingUtils;
+package com.playmonumenta.scriptedquests.quests.components.actions;
 
 import java.util.Random;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-class ActionGiveLoot implements ActionBase {
+import com.google.gson.JsonElement;
+import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
+import com.playmonumenta.scriptedquests.utils.InventoryUtils;
+import com.playmonumenta.scriptedquests.utils.MessagingUtils;
+
+public class ActionGiveLoot implements ActionBase {
 	private String mLootPath;
 	private Random mRandom;
 
-	ActionGiveLoot(JsonElement element) throws Exception {
+	public ActionGiveLoot(JsonElement element) throws Exception {
 		mLootPath = element.getAsString();
 		if (mLootPath == null) {
 			throw new Exception("Command value is not a string!");

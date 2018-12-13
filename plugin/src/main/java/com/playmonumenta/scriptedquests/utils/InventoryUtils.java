@@ -5,13 +5,13 @@ import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.Location;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.loot.LootContext;
-import org.bukkit.NamespacedKey;
 
 public class InventoryUtils {
 	public static boolean testForItemWithLore(ItemStack item, String loreText) {

@@ -1,7 +1,7 @@
-package com.playmonumenta.scriptedquests.quests;
+package com.playmonumenta.scriptedquests.quests.components.prerequisites;
 
 import org.bukkit.entity.Player;
 
-interface PrerequisiteBase {
+public interface PrerequisiteBase {
 	boolean prerequisiteMet(Player player);
 }

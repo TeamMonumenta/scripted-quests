@@ -1,14 +1,7 @@
 package com.playmonumenta.scriptedquests.managers;
 
-import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.quests.QuestNpc;
-import com.playmonumenta.scriptedquests.utils.FileUtils;
-import com.playmonumenta.scriptedquests.utils.MessagingUtils;
-import com.playmonumenta.scriptedquests.utils.MetadataUtils;
-
 import java.io.File;
 import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -18,6 +11,12 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+
+import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.quests.QuestNpc;
+import com.playmonumenta.scriptedquests.utils.FileUtils;
+import com.playmonumenta.scriptedquests.utils.MessagingUtils;
+import com.playmonumenta.scriptedquests.utils.MetadataUtils;
 
 public class QuestNpcManager {
 	HashMap<String, QuestNpc> mNpcs = new HashMap<String, QuestNpc>();

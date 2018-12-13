@@ -11,7 +11,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
+import com.playmonumenta.scriptedquests.quests.components.CompassLocation;
+import com.playmonumenta.scriptedquests.quests.components.QuestLocation;
 import com.playmonumenta.scriptedquests.utils.FileUtils;
 
 public class QuestCompass {

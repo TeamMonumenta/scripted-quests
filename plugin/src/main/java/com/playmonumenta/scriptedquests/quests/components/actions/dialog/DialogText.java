@@ -1,4 +1,4 @@
-package com.playmonumenta.scriptedquests.quests;
+package com.playmonumenta.scriptedquests.quests.components.actions.dialog;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -6,15 +6,15 @@ import java.util.Iterator;
 import org.bukkit.entity.Player;
 
 import com.google.gson.JsonElement;
-
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 
-class DialogText implements DialogBase {
+public class DialogText implements DialogBase {
 	private String mDisplayName;
 	private ArrayList<String> mText = new ArrayList<String>();
 
-	DialogText(String displayName, JsonElement element) throws Exception {
+	public DialogText(String displayName, JsonElement element) throws Exception {
 		mDisplayName = displayName;
 
 		if (element.isJsonPrimitive()) {

@@ -1,13 +1,5 @@
 package com.playmonumenta.scriptedquests.quests;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-
-import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.utils.FileUtils;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -16,6 +8,14 @@ import java.util.Set;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
+import com.playmonumenta.scriptedquests.utils.FileUtils;
 
 /*
  * A QuestNpc object holds all the quest components belonging to an NPC with a specific name

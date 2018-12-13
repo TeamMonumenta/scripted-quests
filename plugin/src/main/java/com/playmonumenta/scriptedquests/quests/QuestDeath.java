@@ -3,17 +3,18 @@ package com.playmonumenta.scriptedquests.quests;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.bukkit.entity.Player;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
 import com.playmonumenta.scriptedquests.Constants;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.point.Point;
+import com.playmonumenta.scriptedquests.quests.components.QuestActions;
+import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 
 /*
  * A QuestDeath object holds all the quest components bound together with a particular

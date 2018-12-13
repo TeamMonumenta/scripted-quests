@@ -1,4 +1,4 @@
-package com.playmonumenta.scriptedquests.quests;
+package com.playmonumenta.scriptedquests.quests.components.prerequisites;
 
 import com.google.gson.JsonElement;
 
@@ -8,11 +8,11 @@ import org.bukkit.advancement.Advancement;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-class PrerequisiteCheckAdvancements implements PrerequisiteBase {
+public class PrerequisiteCheckAdvancements implements PrerequisiteBase {
 	private boolean mInverted;
 	private Advancement mAdvancement;
 
-	PrerequisiteCheckAdvancements(JsonElement value) throws Exception {
+	public PrerequisiteCheckAdvancements(JsonElement value) throws Exception {
 		String advancement = value.getAsString();
 		if (advancement == null) {
 			throw new Exception("advancement value is not a string!");

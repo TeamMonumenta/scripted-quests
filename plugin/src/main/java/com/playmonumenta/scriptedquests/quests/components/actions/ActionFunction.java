@@ -1,15 +1,15 @@
-package com.playmonumenta.scriptedquests.quests;
+package com.playmonumenta.scriptedquests.quests.components.actions;
 
 import org.bukkit.entity.Player;
 
 import com.google.gson.JsonElement;
-
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 
-class ActionFunction implements ActionBase {
+public class ActionFunction implements ActionBase {
 	private String mFunctionFileName;
 
-	ActionFunction(JsonElement element) throws Exception {
+	public ActionFunction(JsonElement element) throws Exception {
 		mFunctionFileName = element.getAsString();
 		if (mFunctionFileName == null) {
 			throw new Exception("function value is not a string!");

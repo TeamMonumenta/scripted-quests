@@ -1,13 +1,13 @@
-package com.playmonumenta.scriptedquests.quests;
+package com.playmonumenta.scriptedquests.quests.components.prerequisites;
 
 import com.google.gson.JsonElement;
 
 import org.bukkit.entity.Player;
 
-class PrerequisiteItemsInInventory implements PrerequisiteBase {
+public class PrerequisiteItemsInInventory implements PrerequisiteBase {
 	private final PrerequisiteItem mPrereqItem;
 
-	PrerequisiteItemsInInventory(JsonElement element) throws Exception {
+	public PrerequisiteItemsInInventory(JsonElement element) throws Exception {
 		mPrereqItem = new PrerequisiteItem(element);
 	}
 

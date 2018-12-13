@@ -1,4 +1,4 @@
-package com.playmonumenta.scriptedquests.quests;
+package com.playmonumenta.scriptedquests.quests.components;
 
 import java.util.Map.Entry;
 import java.util.Set;
@@ -8,7 +8,6 @@ import org.bukkit.entity.Player;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
 import com.playmonumenta.scriptedquests.Plugin;
 
 public class QuestComponent {
