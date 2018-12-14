@@ -113,17 +113,7 @@ public class QuestPrerequisites implements PrerequisiteBase {
 				}
 				break;
 			case "test_for_block":
-				{
-					JsonArray array = value.getAsJsonArray();
-					if (array == null) {
-						throw new Exception("Prerequisites value for key '" + key + "' is not an array!");
-					}
-
-					Iterator<JsonElement> iter = array.iterator();
-					while (iter.hasNext()) {
-						mPrerequisites.add(new PrerequisiteTestForBlock(iter.next()));
-					}
-				}
+				mPrerequisites.add(new PrerequisiteTestForBlock(value));
 				break;
 			case "location":
 				mPrerequisites.add(new PrerequisiteLocation(value));
