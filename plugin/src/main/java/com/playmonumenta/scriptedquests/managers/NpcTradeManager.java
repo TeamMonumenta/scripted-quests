@@ -27,6 +27,9 @@ public class NpcTradeManager {
 		String tradersLocation = plugin.getDataFolder() + File.separator + "traders";
 		ArrayList<File> listOfFiles;
 
+		// Clear old entries
+		mTraders.clear();
+
 		// Attempt to load all JSON files in subdirectories
 		try {
 			File directory = new File(tradersLocation);
