@@ -1,0 +1,47 @@
+{
+    "title": "Trader",
+    "defaultProperties": [
+        "npc",
+        "trades"
+    ],
+    "additionalProperties":false,
+    "properties": {
+		"npc": {
+			"required": true,
+			"propertyOrder": 1,
+			"title": "npc",
+			"description": "NPC's name - same as when used in quests",
+			"type": "string"
+		},
+        "trades": {
+            "required": true,
+            "propertyOrder": 4,
+			"description": "List of trades that are restricted. Unrestricted trades need not be specified.",
+            "title": "trades",
+            "type": "array",
+            "minItems": 1,
+            "items": {
+                "defaultProperties": [
+                    "index",
+                    "prerequisites"
+				],
+				"additionalProperties":false,
+				"properties": {
+					"index": {
+						"propertyOrder": 1,
+						"required": true,
+						"type": "number",
+						"minimum": 0,
+						"maximum": 29999984,
+						"description": "Which trade this prerequisite restricts. First trade = 0. Must be unique for this NPC!"
+					},
+					"prerequisites": {
+						"required": true,
+						"propertyOrder": 2,
+						"$ref": "prerequisites.json"
+					}
+				}
+            }
+        }
+    }
+}

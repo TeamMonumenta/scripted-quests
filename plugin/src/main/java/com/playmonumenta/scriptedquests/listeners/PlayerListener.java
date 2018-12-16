@@ -4,12 +4,15 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -43,6 +46,20 @@ public class PlayerListener implements Listener {
 			}
 		}
 	}
+
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void PlayerInteractEntityEvent(PlayerInteractEntityEvent event) {
+		Entity entity = event.getRightClicked();
+		Player player = event.getPlayer();
+		if (entity instanceof Villager) {
+			Villager villager = (Villager)entity;
+
+			if (!villager.isTrading()) {
+				mPlugin.mTradeManager.setNpcTrades(mPlugin, villager, player);
+			}
+		}
+	}
+
 
 	@SuppressWarnings("unchecked")
 	@EventHandler(priority = EventPriority.LOWEST)

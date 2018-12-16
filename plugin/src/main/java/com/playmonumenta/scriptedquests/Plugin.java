@@ -21,6 +21,7 @@ import com.playmonumenta.scriptedquests.listeners.PlayerListener;
 import com.playmonumenta.scriptedquests.managers.QuestCompassManager;
 import com.playmonumenta.scriptedquests.managers.QuestDeathManager;
 import com.playmonumenta.scriptedquests.managers.QuestNpcManager;
+import com.playmonumenta.scriptedquests.managers.NpcTradeManager;
 import com.playmonumenta.scriptedquests.managers.RaceManager;
 import com.playmonumenta.scriptedquests.utils.MetadataUtils;
 
@@ -29,6 +30,7 @@ public class Plugin extends JavaPlugin {
 	public QuestNpcManager mNpcManager;
 	public QuestDeathManager mDeathManager;
 	public RaceManager mRaceManager;
+	public NpcTradeManager mTradeManager;
 
 	public World mWorld;
 	public Random mRandom = new Random();
@@ -63,6 +65,7 @@ public class Plugin extends JavaPlugin {
 
 		mQuestCompassManager = new QuestCompassManager(this);
 		mNpcManager = new QuestNpcManager(this);
+		mTradeManager = new NpcTradeManager(this);
 		mDeathManager = new QuestDeathManager(this);
 		mRaceManager = new RaceManager(this);
 
