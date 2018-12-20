@@ -1,5 +1,7 @@
 package com.playmonumenta.scriptedquests.quests;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -21,6 +23,20 @@ import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
  * set of death rules (keep inventory, respawn location, etc.)
  */
 public class QuestDeath {
+	public class DeathActions {
+		private final QuestActions mActions;
+		private final QuestPrerequisites mPrerequisites;
+
+		public DeathActions(QuestActions actions, QuestPrerequisites prerequisites) {
+			mActions = actions;
+			mPrerequisites = prerequisites;
+		}
+
+		public void doActions(Plugin plugin, Player player) {
+			mActions.doActions(plugin, player, mPrerequisites);
+		}
+	}
+
 	private Point mRespawnPt = null;
 	private boolean mKeepInv = false;
 	private QuestPrerequisites mPrerequisites = null;
@@ -82,10 +98,19 @@ public class QuestDeath {
 	}
 
 	/* Returns true if prerequisites match and actions were taken, false otherwise */
+	@SuppressWarnings("unchecked")
 	public boolean deathEvent(Plugin plugin, PlayerDeathEvent event) {
 		Player player = event.getEntity();
 		if (mPrerequisites == null || mPrerequisites.prerequisiteMet(player)) {
-			mActions.doActions(plugin, player, mPrerequisites);
+			List<DeathActions> actionsList;
+			if (player.hasMetadata(Constants.PLAYER_RESPAWN_ACTIONS_METAKEY)) {
+				actionsList = (List<DeathActions>)player.getMetadata(Constants.PLAYER_RESPAWN_ACTIONS_METAKEY).get(0).value();
+			} else {
+				actionsList = new ArrayList<DeathActions>(5);
+			}
+			actionsList.add(new DeathActions(mActions, mPrerequisites));
+			player.setMetadata(Constants.PLAYER_RESPAWN_ACTIONS_METAKEY,
+			                   new FixedMetadataValue(plugin, actionsList));
 
 			event.setKeepInventory(mKeepInv);
 			event.setKeepLevel(mKeepInv);

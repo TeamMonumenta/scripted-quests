@@ -22,6 +22,7 @@ import org.bukkit.metadata.FixedMetadataValue;
 import com.playmonumenta.scriptedquests.Constants;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.point.Point;
+import com.playmonumenta.scriptedquests.quests.QuestDeath.DeathActions;
 import com.playmonumenta.scriptedquests.quests.components.DeathLocation;
 
 public class PlayerListener implements Listener {
@@ -87,6 +88,7 @@ public class PlayerListener implements Listener {
 		player.setMetadata(Constants.PLAYER_DEATH_LOCATION_METAKEY, new FixedMetadataValue(mPlugin, deathEntries));
 	}
 
+	@SuppressWarnings("unchecked")
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void PlayerRespawnEvent(PlayerRespawnEvent event) {
 		Player player = event.getPlayer();
@@ -102,6 +104,18 @@ public class PlayerListener implements Listener {
 			Point respawnPoint = (Point)player.getMetadata(Constants.PLAYER_RESPAWN_POINT_METAKEY).get(0).value();
 			event.setRespawnLocation(respawnPoint.toLocation(mPlugin.mWorld));
 			player.removeMetadata(Constants.PLAYER_RESPAWN_POINT_METAKEY, mPlugin);
+		}
+
+		/*
+		 * If the player died and triggered death quest, run the actions stored in metadata
+		 * after the player respawns, then remove the metadata
+		 */
+		if (player.hasMetadata(Constants.PLAYER_RESPAWN_ACTIONS_METAKEY)) {
+			List<DeathActions> actions = (List<DeathActions>)player.getMetadata(Constants.PLAYER_RESPAWN_ACTIONS_METAKEY).get(0).value();
+			for (DeathActions action : actions) {
+				action.doActions(mPlugin, player);
+			}
+			player.removeMetadata(Constants.PLAYER_RESPAWN_ACTIONS_METAKEY, mPlugin);
 		}
 	}
 
