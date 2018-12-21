@@ -18,6 +18,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import com.playmonumenta.scriptedquests.Constants;
 import com.playmonumenta.scriptedquests.Plugin;
@@ -111,11 +112,16 @@ public class PlayerListener implements Listener {
 		 * after the player respawns, then remove the metadata
 		 */
 		if (player.hasMetadata(Constants.PLAYER_RESPAWN_ACTIONS_METAKEY)) {
-			List<DeathActions> actions = (List<DeathActions>)player.getMetadata(Constants.PLAYER_RESPAWN_ACTIONS_METAKEY).get(0).value();
-			for (DeathActions action : actions) {
-				action.doActions(mPlugin, player);
-			}
-			player.removeMetadata(Constants.PLAYER_RESPAWN_ACTIONS_METAKEY, mPlugin);
+			new BukkitRunnable() {
+				@Override
+				public void run() {
+					List<DeathActions> actions = (List<DeathActions>)player.getMetadata(Constants.PLAYER_RESPAWN_ACTIONS_METAKEY).get(0).value();
+					for (DeathActions action : actions) {
+						action.doActions(mPlugin, player);
+					}
+					player.removeMetadata(Constants.PLAYER_RESPAWN_ACTIONS_METAKEY, mPlugin);
+				}
+			}.runTaskLater(mPlugin, 1);
 		}
 	}
 
