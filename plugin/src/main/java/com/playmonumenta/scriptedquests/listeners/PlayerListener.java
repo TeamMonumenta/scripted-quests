@@ -64,7 +64,7 @@ public class PlayerListener implements Listener {
 
 
 	@SuppressWarnings("unchecked")
-	@EventHandler(priority = EventPriority.LOWEST)
+	@EventHandler(priority = EventPriority.HIGH)
 	public void PlayerDeathEvent(PlayerDeathEvent event) {
 		Player player = event.getEntity();
 		mPlugin.mDeathManager.deathEvent(mPlugin, event);
