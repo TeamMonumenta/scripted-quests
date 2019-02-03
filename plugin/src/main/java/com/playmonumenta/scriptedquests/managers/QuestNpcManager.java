@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -19,16 +20,16 @@ import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 import com.playmonumenta.scriptedquests.utils.MetadataUtils;
 
 public class QuestNpcManager {
-	HashMap<String, QuestNpc> mNpcs = new HashMap<String, QuestNpc>();
-
-	EnumSet<EntityType> mEntityTypes = EnumSet.noneOf(EntityType.class);
+	private final Plugin mPlugin;
+	private final Map<EntityType, Map<String, QuestNpc>> mNpcs = new HashMap<EntityType, Map<String, QuestNpc>>();
+	private final EnumSet<EntityType> mEntityTypes = EnumSet.noneOf(EntityType.class);
 
 	/*
 	 * If sender is non-null, it will be sent debugging information
 	 */
 	public void reload(Plugin plugin, CommandSender sender) {
 		String npcsLocation = plugin.getDataFolder() + File.separator +  "npcs";
-		mNpcs = new HashMap<String, QuestNpc>();
+		mNpcs.clear();
 		ArrayList<File> listOfFiles;
 		ArrayList<String> listOfNpcs = new ArrayList<String>();
 		int numComponents = 0;
@@ -63,15 +64,23 @@ public class QuestNpcManager {
 				listOfNpcs.add(npc.getNpcName() + ":" + Integer.toString(newComponents));
 
 				// Track this type of entity from now on when entities are interacted with
-				mEntityTypes.add(npc.getEntityType());
+				EntityType type = npc.getEntityType();
+				mEntityTypes.add(type);
 
 				// Check if an existing NPC already exists with quest components
-				QuestNpc existingNpc = mNpcs.get(npc.getNpcName());
+				Map<String, QuestNpc> entityNpcMap = mNpcs.get(type);
+				if (entityNpcMap == null) {
+					// This is the first NPC of this type - create the map for it
+					entityNpcMap = new HashMap<String, QuestNpc>();
+					mNpcs.put(type, entityNpcMap);
+				}
+
+				QuestNpc existingNpc = entityNpcMap.get(npc.getNpcName());
 				if (existingNpc != null) {
 					// Existing NPC - add the new quest components to it
 					existingNpc.addFromQuest(plugin, npc);
 				} else {
-					mNpcs.put(npc.getNpcName(), npc);
+					entityNpcMap.put(npc.getNpcName(), npc);
 				}
 			} catch (Exception e) {
 				plugin.getLogger().severe("Caught exception: " + e);
@@ -113,6 +122,7 @@ public class QuestNpcManager {
 	}
 
 	public QuestNpcManager(Plugin plugin) {
+		mPlugin = plugin;
 		reload(plugin, null);
 	}
 
@@ -128,9 +138,16 @@ public class QuestNpcManager {
 		}
 
 		// Return the NPC if we have an NPC with that name
-		QuestNpc npc = mNpcs.get(QuestNpc.squashNpcName(npcName));
-		if (npc != null) {
-			return npc;
+		Map<String, QuestNpc> entityNpcMap = mNpcs.get(entityType);
+		if (entityNpcMap == null) {
+			mPlugin.getLogger().severe("BUG! EntityTypes contains type '" +
+			                          entityType.toString() + "' but there is no map for it!");
+			return null;
+		} else {
+			QuestNpc npc = entityNpcMap.get(QuestNpc.squashNpcName(npcName));
+			if (npc != null) {
+				return npc;
+			}
 		}
 
 		return null;
