@@ -30,6 +30,7 @@ public class QuestNpcManager {
 	public void reload(Plugin plugin, CommandSender sender) {
 		String npcsLocation = plugin.getDataFolder() + File.separator +  "npcs";
 		mNpcs.clear();
+		mEntityTypes.clear();
 		ArrayList<File> listOfFiles;
 		ArrayList<String> listOfNpcs = new ArrayList<String>();
 		int numComponents = 0;
