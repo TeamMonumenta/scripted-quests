@@ -6,6 +6,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.AreaEffectCloudApplyEvent;
+import org.bukkit.event.entity.EntityCombustByBlockEvent;
+import org.bukkit.event.entity.EntityCombustByEntityEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -52,15 +54,43 @@ public class EntityListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
-	public void EntityDamageEvent(EntityDamageEvent event) {
-		Entity damagee = event.getEntity();
+	public void EntityCombustByBlockEvent(EntityDamageEvent event) {
+		if (!event.isCancelled()) {
+			Entity damagee = event.getEntity();
 
-		QuestNpc npc = mPlugin.mNpcManager.getInteractNPC(damagee.getCustomName(), damagee.getType());
-		if (npc != null) {
-			DamageCause cause = event.getCause();
-			if (cause != DamageCause.CUSTOM && cause != DamageCause.VOID) {
+			QuestNpc npc = mPlugin.mNpcManager.getInteractNPC(damagee.getCustomName(), damagee.getType());
+			if (npc != null) {
 				/* This is a quest NPC - refuse to damage it */
 				event.setCancelled(true);
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void EntityCombustByEntityEvent(EntityDamageEvent event) {
+		if (!event.isCancelled()) {
+			Entity damagee = event.getEntity();
+
+			QuestNpc npc = mPlugin.mNpcManager.getInteractNPC(damagee.getCustomName(), damagee.getType());
+			if (npc != null) {
+				/* This is a quest NPC - refuse to damage it */
+				event.setCancelled(true);
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void EntityDamageEvent(EntityDamageEvent event) {
+		if (!event.isCancelled()) {
+			Entity damagee = event.getEntity();
+
+			QuestNpc npc = mPlugin.mNpcManager.getInteractNPC(damagee.getCustomName(), damagee.getType());
+			if (npc != null) {
+				DamageCause cause = event.getCause();
+				if (cause != DamageCause.CUSTOM && cause != DamageCause.VOID) {
+					/* This is a quest NPC - refuse to damage it */
+					event.setCancelled(true);
+				}
 			}
 		}
 	}
