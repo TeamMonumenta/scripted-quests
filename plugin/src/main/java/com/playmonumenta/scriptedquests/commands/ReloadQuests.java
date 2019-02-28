@@ -22,11 +22,8 @@ public class ReloadQuests implements CommandExecutor {
 		}
 
 		sender.sendMessage(ChatColor.GOLD + "Reloading config...");
-		mPlugin.mNpcManager.reload(mPlugin, sender);
-		mPlugin.mTradeManager.reload(mPlugin, sender);
-		mPlugin.mQuestCompassManager.reload(mPlugin, sender);
-		mPlugin.mDeathManager.reload(mPlugin, sender);
-		mPlugin.mRaceManager.reload(mPlugin, sender);
+
+		mPlugin.reloadConfig(sender);
 
 		return true;
 	}
