@@ -28,6 +28,14 @@ public class CommandTimer implements Listener {
 		private final int mPlayerRange;
 		private final boolean mRepeat;
 
+		/*
+		 * The last state a repeater was set to - only used for repeaters
+		 *
+		 * Default to "on" so the first thing that happens after loading
+		 * is to turn it off if no players in range
+		 */
+		private boolean mRepeaterEnabled = true;
+
 		protected CommandTimerInstance(Location loc, int playerRange, boolean repeat) {
 			mLoc = loc;
 			mPlayerRange = playerRange;
@@ -46,8 +54,19 @@ public class CommandTimer implements Listener {
 		protected void tick(Plugin plugin) {
 			if (mPlayerRange <= 0 || isPlayerNearby(mLoc, mPlayerRange)) {
 				setAutoState(plugin, mLoc, true);
-			} else if (mRepeat) {
+				mRepeaterEnabled = true;
+			} else if (mRepeat && mRepeaterEnabled) {
+				/* Turn repeaters back off again when player is out of range */
 				setAutoState(plugin, mLoc, false);
+				mRepeaterEnabled = false;
+			}
+		}
+
+		protected void unload(Plugin plugin) {
+			if (mRepeat && mRepeaterEnabled) {
+				/* Turn repeaters back off when unloading timer */
+				setAutoState(plugin, mLoc, false);
+				mRepeaterEnabled = false;
 			}
 		}
 
@@ -143,10 +162,17 @@ public class CommandTimer implements Listener {
 	 *******************************************************************************/
 
 	public void unload(Entity entity) {
-		mTimers.remove(entity.getUniqueId());
+		CommandTimerInstance timer = mTimers.get(entity.getUniqueId());
+		if (timer != null) {
+			timer.unload(mPlugin);
+			mTimers.remove(entity.getUniqueId());
+		}
 	}
 
 	public void unloadAndAbort() {
+		for (CommandTimerInstance timer : mTimers.values()) {
+			timer.unload(mPlugin);
+		}
 		mTimers.clear();
 		mRunnable.cancel();
 	}
