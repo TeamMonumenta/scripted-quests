@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -50,6 +51,24 @@ public class CommandTimer implements Listener {
 			}
 		}
 
+		protected void setName(ArmorStand entity, String periodStr) {
+			String name = "";
+			if (mRepeat) {
+				name += ChatColor.LIGHT_PURPLE + "Repeater ";
+			} else {
+				name += ChatColor.GOLD + "Timer ";
+			}
+			name += periodStr;
+			if (mPlayerRange <= 0) {
+				name += ChatColor.DARK_PURPLE + "always ";
+			} else if (mPlayerRange > 1000) {
+				name += ChatColor.YELLOW + "range=" + Integer.toString(mPlayerRange);
+			} else {
+				name += ChatColor.GREEN + "range=" + Integer.toString(mPlayerRange);
+			}
+			entity.setCustomName(name);
+		}
+
 		private static java.lang.reflect.Method cachedHandleMethod = null;
 		private static java.lang.reflect.Method cachedAutoMethod = null;
 		private static void setAutoState(Plugin plugin, Location loc, boolean auto) {
@@ -87,10 +106,22 @@ public class CommandTimer implements Listener {
 	private final Plugin mPlugin;
 	private final Map<UUID, CommandTimerInstance> mTimers;
 	private final BukkitRunnable mRunnable;
+	private final int mPeriod;
+	private final String mPeriodStr;
 
 	public CommandTimer(Plugin plugin, int period) {
 		mPlugin = plugin;
+		mPeriod = period;
 		mTimers = new LinkedHashMap<UUID, CommandTimerInstance>();
+
+		if (mPeriod % 1200 == 0) {
+			mPeriodStr = ChatColor.BLUE + Integer.toString(mPeriod / 1200) + "m";
+		} else if (mPeriod % 20 == 0) {
+			mPeriodStr = ChatColor.BLUE + Integer.toString(mPeriod / 20) + "s";
+		} else {
+			mPeriodStr = ChatColor.BLUE + Integer.toString(mPeriod) + "t";
+		}
+
 		mRunnable = new BukkitRunnable() {
 			@Override
 			public void run() {
@@ -156,8 +187,14 @@ public class CommandTimer implements Listener {
 		}
 
 		mTimers.put(entity.getUniqueId(), timer);
+
 		if (mPlugin.mShowTimerNames != null) {
+			/* If configured to show or hide timer names, do so */
 			entity.setCustomNameVisible(mPlugin.mShowTimerNames);
+			if (mPlugin.mShowTimerNames) {
+				/* If showing names, rename the armor stand to match what it actually does */
+				timer.setName(entity, mPeriodStr);
+			}
 		}
 	}
 }
