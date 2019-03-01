@@ -20,6 +20,7 @@ import com.playmonumenta.scriptedquests.commands.Race;
 import com.playmonumenta.scriptedquests.commands.RandomNumber;
 import com.playmonumenta.scriptedquests.commands.ReloadQuests;
 import com.playmonumenta.scriptedquests.commands.ScheduleFunction;
+import com.playmonumenta.scriptedquests.commands.TimerDebug;
 import com.playmonumenta.scriptedquests.listeners.EntityListener;
 import com.playmonumenta.scriptedquests.listeners.PlayerListener;
 import com.playmonumenta.scriptedquests.managers.NpcTradeManager;
@@ -40,6 +41,7 @@ public class Plugin extends JavaPlugin {
 	public QuestDeathManager mDeathManager;
 	public RaceManager mRaceManager;
 	public NpcTradeManager mTradeManager;
+	public CommandTimerManager mTimerManager;
 
 	public World mWorld;
 	public Random mRandom = new Random();
@@ -59,6 +61,7 @@ public class Plugin extends JavaPlugin {
 		Leaderboard.register();
 		RandomNumber.register();
 		HasPermission.register();
+		TimerDebug.register(this);
 
 		mScheduledFunctionsManager = new ScheduleFunction(this);
 	}
@@ -71,15 +74,16 @@ public class Plugin extends JavaPlugin {
 
 		mWorld = Bukkit.getWorlds().get(0);
 
-		manager.registerEvents(new EntityListener(this), this);
-		manager.registerEvents(new PlayerListener(this), this);
-		manager.registerEvents(new CommandTimerManager(this), this);
-
 		mQuestCompassManager = new QuestCompassManager(this);
 		mNpcManager = new QuestNpcManager(this);
 		mTradeManager = new NpcTradeManager(this);
 		mDeathManager = new QuestDeathManager(this);
 		mRaceManager = new RaceManager(this);
+		mTimerManager = new CommandTimerManager(this);
+
+		manager.registerEvents(new EntityListener(this), this);
+		manager.registerEvents(new PlayerListener(this), this);
+		manager.registerEvents(mTimerManager, this);
 
 		getCommand("reloadQuests").setExecutor(new ReloadQuests(this));
 		getCommand("questTrigger").setExecutor(new QuestTrigger(this));
@@ -90,6 +94,7 @@ public class Plugin extends JavaPlugin {
 		getServer().getScheduler().cancelTasks(this);
 
 		mRaceManager.cancelAllRaces();
+		mTimerManager.unloadAll();
 
 		MetadataUtils.removeAllMetadata(this);
 

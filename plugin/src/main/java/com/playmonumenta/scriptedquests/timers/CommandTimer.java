@@ -14,6 +14,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.CommandBlock;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -25,6 +26,7 @@ import com.playmonumenta.scriptedquests.Plugin;
 public class CommandTimer implements Listener {
 	private static class CommandTimerInstance {
 		private final Location mLoc;
+		private final String mPeriodStr;
 		private final int mPlayerRange;
 		private final boolean mRepeat;
 
@@ -36,23 +38,28 @@ public class CommandTimer implements Listener {
 		 */
 		private boolean mRepeaterEnabled = true;
 
-		protected CommandTimerInstance(Location loc, int playerRange, boolean repeat) {
+		private CommandTimerInstance(Location loc, String periodStr, int playerRange, boolean repeat) {
 			mLoc = loc;
+			mPeriodStr = periodStr;
 			mPlayerRange = playerRange;
 			mRepeat = repeat;
 		}
 
-		private static boolean isPlayerNearby(Location loc, double radius) {
+		private boolean canRun() {
+			if (mPlayerRange <= 0) {
+				return true;
+			}
+
 			for (Player player : Bukkit.getOnlinePlayers()) {
-				if (loc.distance(player.getLocation()) <= radius && player.getGameMode() != GameMode.SPECTATOR) {
+				if (mLoc.distance(player.getLocation()) <= mPlayerRange && player.getGameMode() != GameMode.SPECTATOR) {
 					return true;
 				}
 			}
 			return false;
 		}
 
-		protected void tick(Plugin plugin) {
-			if (mPlayerRange <= 0 || isPlayerNearby(mLoc, mPlayerRange)) {
+		private void tick(Plugin plugin) {
+			if (canRun()) {
 				setAutoState(plugin, mLoc, true);
 				mRepeaterEnabled = true;
 			} else if (mRepeat && mRepeaterEnabled) {
@@ -62,7 +69,7 @@ public class CommandTimer implements Listener {
 			}
 		}
 
-		protected void unload(Plugin plugin) {
+		private void unload(Plugin plugin) {
 			if (mRepeat && mRepeaterEnabled) {
 				/* Turn repeaters back off when unloading timer */
 				setAutoState(plugin, mLoc, false);
@@ -70,14 +77,18 @@ public class CommandTimer implements Listener {
 			}
 		}
 
-		protected void setName(ArmorStand entity, String periodStr) {
+		private void setName(ArmorStand entity) {
+			entity.setCustomName(getName());
+		}
+
+		private String getName() {
 			String name = "";
 			if (mRepeat) {
 				name += ChatColor.LIGHT_PURPLE + "Repeater ";
 			} else {
 				name += ChatColor.GOLD + "Timer ";
 			}
-			name += periodStr;
+			name += mPeriodStr + " ";
 			if (mPlayerRange <= 0) {
 				name += ChatColor.DARK_PURPLE + "always ";
 			} else if (mPlayerRange > 1000) {
@@ -85,7 +96,14 @@ public class CommandTimer implements Listener {
 			} else {
 				name += ChatColor.GREEN + "range=" + Integer.toString(mPlayerRange);
 			}
-			entity.setCustomName(name);
+			return name;
+		}
+
+		public String toString() {
+			return Integer.toString(mLoc.getBlockX()) + " " +
+			       Integer.toString(mLoc.getBlockY()) + " " +
+			       Integer.toString(mLoc.getBlockZ()) + " " +
+			       getName();
 		}
 
 		private static java.lang.reflect.Method cachedHandleMethod = null;
@@ -198,15 +216,19 @@ public class CommandTimer implements Listener {
 
 		if (tags.contains("repeat")) {
 			if (loc.getBlock().getType().equals(Material.REPEATING_COMMAND_BLOCK)) {
-				timer = new CommandTimerInstance(loc, playerRange, true);
+				timer = new CommandTimerInstance(loc, mPeriodStr, playerRange, true);
 			} else {
+				entity.setCustomNameVisible(true);
+				entity.setCustomName(ChatColor.RED + "" + ChatColor.BOLD + "Timer: INVALID BLOCK");
 				mPlugin.getLogger().warning("Timer is missing repeating command block at " + loc.toString());
 				return;
 			}
 		} else {
 			if (loc.getBlock().getType().equals(Material.COMMAND_BLOCK)) {
-				timer = new CommandTimerInstance(loc, playerRange, false);
+				timer = new CommandTimerInstance(loc, mPeriodStr, playerRange, false);
 			} else {
+				entity.setCustomNameVisible(true);
+				entity.setCustomName(ChatColor.RED + "" + ChatColor.BOLD + "Timer: INVALID BLOCK");
 				mPlugin.getLogger().warning("Timer is missing impulse command block at " + loc.toString());
 				return;
 			}
@@ -219,7 +241,15 @@ public class CommandTimer implements Listener {
 			entity.setCustomNameVisible(mPlugin.mShowTimerNames);
 			if (mPlugin.mShowTimerNames) {
 				/* If showing names, rename the armor stand to match what it actually does */
-				timer.setName(entity, mPeriodStr);
+				timer.setName(entity);
+			}
+		}
+	}
+
+	public void tellTimers(CommandSender sender, boolean enabledOnly) {
+		for (CommandTimerInstance timer : mTimers.values()) {
+			if (!enabledOnly || timer.canRun()) {
+				sender.sendMessage(timer.toString());
 			}
 		}
 	}

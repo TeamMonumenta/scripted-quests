@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
@@ -132,5 +133,11 @@ public class CommandTimerManager implements Listener {
 		}
 
 		return null;
+	}
+
+	public void tellTimers(CommandSender sender, boolean enabledOnly) {
+		for (CommandTimer timer : mCommandTimers.values()) {
+			timer.tellTimers(sender, enabledOnly);
+		}
 	}
 }
