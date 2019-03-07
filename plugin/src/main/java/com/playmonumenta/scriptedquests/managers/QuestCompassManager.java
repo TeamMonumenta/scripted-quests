@@ -4,7 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -20,12 +23,39 @@ import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 import com.playmonumenta.scriptedquests.utils.ScoreboardUtils;
 
 public class QuestCompassManager {
-	Plugin mPlugin;
-	List<QuestCompass> mQuests = new ArrayList<QuestCompass>();
+	private static class ValidCompassEntry {
+		private final CompassLocation mLocation;
+		private final String mTitle;
+
+		private ValidCompassEntry(CompassLocation loc, String title) {
+			mLocation = loc;
+			mTitle = title;
+		}
+
+		private void directPlayer(Player player) {
+			MessagingUtils.sendRawMessage(player, mTitle + ": " + mLocation.getMessage());
+			player.setCompassTarget(mLocation.getLocation());
+		}
+	}
+
+	private static class CompassCacheEntry {
+		private final int mLastRefresh;
+		private final List<ValidCompassEntry> mEntries;
+
+		private CompassCacheEntry(Player player, List<ValidCompassEntry> entries) {
+			mLastRefresh = player.getTicksLived();
+			mEntries = entries;
+		}
+
+		private boolean isStillValid(Player player) {
+			return Math.abs(player.getTicksLived() - mLastRefresh) < 200;
+		}
+	}
+
+	private List<QuestCompass> mQuests = new ArrayList<QuestCompass>();
+	private final Map<UUID, CompassCacheEntry> mCompassCache = new HashMap<UUID, CompassCacheEntry>();
 
 	public QuestCompassManager(Plugin plugin) {
-		mPlugin = plugin;
-
 		reload(plugin, null);
 	}
 
@@ -108,14 +138,25 @@ public class QuestCompassManager {
 	}
 
 	@SuppressWarnings("unchecked")
-	private int _showCurrentQuest(Player player, int index) {
-		List<CompassLocation> markers = new ArrayList<CompassLocation>();
-		List<String> markerTitles = new ArrayList<String>();
+	private List<ValidCompassEntry> _getCurrentMarkerTitles(Player player) {
+		/*
+		 * First check the cache - if it is still valid, returned the cached data
+		 * This dramatically improves performance when there are many compass entries
+		 */
+		CompassCacheEntry cachedEntry = mCompassCache.get(player.getUniqueId());
+		if (cachedEntry != null && cachedEntry.isStillValid(player)) {
+			return cachedEntry.mEntries;
+		}
+
+
+		/*
+		 * No cached entry - need to recompute everything
+		 */
+		List<ValidCompassEntry> entries = new ArrayList<ValidCompassEntry>();
 		for (QuestCompass quest : mQuests) {
 			List<CompassLocation> questMarkers = quest.getMarkers(player);
 
-			// Add all the valid markers to a list, and add their titles to another list
-			markers.addAll(quest.getMarkers(player));
+			// Add all the valid markers/titles to the list
 			for (int i = 0; i < questMarkers.size(); i++) {
 				String title = ChatColor.AQUA + "" + ChatColor.BOLD + quest.getQuestName()
 				               + ChatColor.RESET + "" + ChatColor.AQUA;
@@ -124,18 +165,15 @@ public class QuestCompassManager {
 					title += " [" + (i + 1) + "/" + questMarkers.size() + "]";
 				}
 
-				markerTitles.add(title);
+				entries.add(new ValidCompassEntry(questMarkers.get(i), title));
 			}
 		}
 
-		// Add player death locations since the server was restarted
+		// Add player death locations
 		if (player.hasMetadata(Constants.PLAYER_DEATH_LOCATION_METAKEY)) {
 			List<DeathLocation> deathEntries =
-				(List<DeathLocation>)player.getMetadata(Constants.PLAYER_DEATH_LOCATION_METAKEY).get(0).value();
+			    (List<DeathLocation>)player.getMetadata(Constants.PLAYER_DEATH_LOCATION_METAKEY).get(0).value();
 			for (int i = 0; i < deathEntries.size(); i++) {
-				// Add this death location to the list of markers
-				markers.add(deathEntries.get(i));
-
 				String title = ChatColor.RED + "" + ChatColor.BOLD + "Death"
 				               + ChatColor.RESET + "" + ChatColor.AQUA;
 
@@ -143,22 +181,27 @@ public class QuestCompassManager {
 					title += " [" + (i + 1) + "/" + deathEntries.size() + "]";
 				}
 
-				markerTitles.add(title);
+				entries.add(new ValidCompassEntry(deathEntries.get(i), title));
 			}
 		}
 
-		if (index >= markers.size()) {
+		// Cache this result for later
+		mCompassCache.put(player.getUniqueId(), new CompassCacheEntry(player, entries));
+
+		return entries;
+	}
+
+	private int _showCurrentQuest(Player player, int index) {
+		List<ValidCompassEntry> entries = _getCurrentMarkerTitles(player);
+
+		if (index >= entries.size()) {
 			index = 0;
 		}
 
-		if (markers.size() == 0) {
+		if (entries.size() == 0) {
 			MessagingUtils.sendActionBarMessage(player, "You have no active quest.");
 		} else {
-			CompassLocation currentMarker = markers.get(index);
-
-			MessagingUtils.sendRawMessage(player, markerTitles.get(index) + ": " + currentMarker.getMessage());
-
-			player.setCompassTarget(currentMarker.getLocation());
+			entries.get(index).directPlayer(player);
 		}
 
 		return index;
