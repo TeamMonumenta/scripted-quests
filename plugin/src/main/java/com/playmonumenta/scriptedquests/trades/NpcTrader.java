@@ -12,6 +12,7 @@ import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.inventory.MerchantRecipe;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.google.gson.Gson;
@@ -27,6 +28,7 @@ import com.playmonumenta.scriptedquests.utils.FileUtils;
  * Only one NpcTrader object exists per NPC name
  */
 public class NpcTrader {
+	public static final String TRADER_MODIFIED_METAKEY = "ScriptedQuestsTraderModified";
 	private final ArrayList<NpcTrade> mTrades = new ArrayList<NpcTrade>();
 	private final String mNpcName;
 
@@ -129,12 +131,17 @@ public class NpcTrader {
 
 			villager.setRecipes(modifiedRecipes);
 
+			villager.setMetadata(TRADER_MODIFIED_METAKEY, new FixedMetadataValue(plugin, 0));
+
 			new BukkitRunnable() {
 				@Override
 				public void run() {
-					villager.setRecipes(origRecipes);
+					if (!villager.isTrading()) {
+						villager.removeMetadata(TRADER_MODIFIED_METAKEY, plugin);
+						villager.setRecipes(origRecipes);
+					}
 				}
-			}.runTaskLater(plugin, 0);
+			}.runTaskTimer(plugin, 1, 1);
 		}
 	}
 }
