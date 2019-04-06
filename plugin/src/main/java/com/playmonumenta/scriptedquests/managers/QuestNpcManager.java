@@ -10,6 +10,7 @@ import java.util.Map;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
@@ -154,15 +155,21 @@ public class QuestNpcManager {
 		return null;
 	}
 
-	public boolean interactEvent(Plugin plugin, Player player, String npcName, EntityType entityType, boolean force) {
+	/*
+	 * Note: npcEntity might be null
+	 */
+	public boolean interactEvent(Plugin plugin, Player player, String npcName, EntityType entityType, Entity npcEntity, boolean force) {
 		QuestNpc npc = getInteractNPC(npcName, entityType);
 		if (npc != null) {
-			return interactEvent(plugin, player, npcName, entityType, npc, force);
+			return interactEvent(plugin, player, npcName, entityType, npcEntity, npc, force);
 		}
 		return false;
 	}
 
-	public boolean interactEvent(Plugin plugin, Player player, String npcName, EntityType entityType, QuestNpc npc, boolean force) {
+	/*
+	 * Note: npcEntity might be null
+	 */
+	public boolean interactEvent(Plugin plugin, Player player, String npcName, EntityType entityType, Entity npcEntity, QuestNpc npc, boolean force) {
 		// Only one interaction per player per tick
 		if (!force && !MetadataUtils.checkOnceThisTick(plugin, player, "ScriptedQuestsNPCInteractNonce")) {
 			return false;
@@ -174,7 +181,7 @@ public class QuestNpcManager {
 		}
 
 		if (npc != null) {
-			return npc.interactEvent(plugin, player, QuestNpc.squashNpcName(npcName), entityType);
+			return npc.interactEvent(plugin, player, QuestNpc.squashNpcName(npcName), entityType, npcEntity);
 		}
 		return false;
 	}

@@ -107,7 +107,7 @@ public class NpcTrader {
 		boolean modified = false;
 		String modifiedSlots = null;
 		for (NpcTrade trade : mTrades) {
-			if (!trade.prerequisiteMet(player)) {
+			if (!trade.prerequisiteMet(player, villager)) {
 				if (modifiedRecipes.size() <= trade.getIndex()) {
 					player.sendMessage(ChatColor.RED + "BUG! This NPC has too few trades for some reason. Please report this!");
 				} else {

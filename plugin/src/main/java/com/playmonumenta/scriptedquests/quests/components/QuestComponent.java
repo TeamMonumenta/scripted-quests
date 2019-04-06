@@ -3,6 +3,7 @@ package com.playmonumenta.scriptedquests.quests.components;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
@@ -56,9 +57,9 @@ public class QuestComponent {
 		}
 	}
 
-	public void doActionsIfPrereqsMet(Plugin plugin, Player player) {
-		if (mPrerequisites == null || mPrerequisites.prerequisiteMet(player)) {
-			mActions.doActions(plugin, player, mPrerequisites);
+	public void doActionsIfPrereqsMet(Plugin plugin, Player player, Entity npcEntity) {
+		if (mPrerequisites == null || mPrerequisites.prerequisiteMet(player, npcEntity)) {
+			mActions.doActions(plugin, player, npcEntity, mPrerequisites);
 		}
 	}
 }

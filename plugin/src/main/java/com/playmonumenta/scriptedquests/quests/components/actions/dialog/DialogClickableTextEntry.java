@@ -5,6 +5,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.bukkit.Sound;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -21,22 +22,24 @@ import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 
 public class DialogClickableTextEntry implements DialogBase {
 	public class PlayerClickableTextEntry {
-		private QuestPrerequisites mPrerequisites;
-		private QuestActions mActions;
-		private AreaBounds mValidArea;
+		private final QuestPrerequisites mPrerequisites;
+		private final QuestActions mActions;
+		private final AreaBounds mValidArea;
+		private final Entity mNpcEntity;
 
 		public PlayerClickableTextEntry(QuestPrerequisites prereqs, QuestActions actions,
-		                                AreaBounds validArea) {
+		                                Entity npcEntity, AreaBounds validArea) {
 			mPrerequisites = prereqs;
 			mActions = actions;
 			mValidArea = validArea;
+			mNpcEntity = npcEntity;
 		}
 
 		public void doActionsIfConditionsMatch(Plugin plugin, Player player) {
 			if (mValidArea.within(player.getLocation())
-			    && (mPrerequisites == null || mPrerequisites.prerequisiteMet(player))) {
+			    && (mPrerequisites == null || mPrerequisites.prerequisiteMet(player, mNpcEntity))) {
 				player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 0.7f, 0.9f);
-				mActions.doActions(plugin, player, mPrerequisites);
+				mActions.doActions(plugin, player, mNpcEntity, mPrerequisites);
 			}
 		}
 	}
@@ -94,12 +97,12 @@ public class DialogClickableTextEntry implements DialogBase {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void sendDialog(Plugin plugin, Player player, QuestPrerequisites prereqs) {
+	public void sendDialog(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
 		MessagingUtils.sendClickableNPCMessage(plugin, player, mText,
 		                                       "/questtrigger " + Integer.toString(mIdx));
 
 		/* Create a new object describing the prereqs/actions/location for this clickable message */
-		PlayerClickableTextEntry newEntry = new PlayerClickableTextEntry(prereqs, mActions,
+		PlayerClickableTextEntry newEntry = new PlayerClickableTextEntry(prereqs, mActions, npcEntity,
 		        new AreaBounds("", new Point(player.getLocation().subtract(4.0, 4.0, 4.0)),
 		                       new Point(player.getLocation().add(4.0, 4.0, 4.0))));
 

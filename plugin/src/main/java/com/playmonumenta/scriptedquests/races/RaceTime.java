@@ -59,7 +59,7 @@ public class RaceTime implements Comparable<RaceTime> {
 
 	public void doActions(Plugin plugin, Player player) {
 		if (mActions != null) {
-			mActions.doActions(plugin, player, null);
+			mActions.doActions(plugin, player, null, null);
 		}
 	}
 

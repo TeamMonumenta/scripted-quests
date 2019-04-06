@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
@@ -97,18 +98,18 @@ public class QuestActions {
 		}
 	}
 
-	public void doActions(Plugin plugin, Player player, QuestPrerequisites prereqs) {
+	public void doActions(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
 		if (mDelayTicks <= 0) {
 			// If not delayed, actions can run without restrictions
 			for (ActionBase action : mActions) {
-				action.doAction(plugin, player, prereqs);
+				action.doAction(plugin, player, npcEntity, prereqs);
 			}
 		} else {
 			player.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
 				@Override
 				public void run() {
 					for (ActionBase action : mActions) {
-						action.doAction(plugin, player, prereqs);
+						action.doAction(plugin, player, npcEntity, prereqs);
 					}
 				}
 			}, mDelayTicks);

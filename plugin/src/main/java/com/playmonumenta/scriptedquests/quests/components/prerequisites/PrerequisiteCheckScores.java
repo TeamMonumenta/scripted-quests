@@ -3,10 +3,9 @@ package com.playmonumenta.scriptedquests.quests.components.prerequisites;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.bukkit.entity.Player;
+import org.bukkit.entity.Entity;
 
 import com.google.gson.JsonElement;
-
 import com.playmonumenta.scriptedquests.utils.ScoreboardUtils;
 
 public class PrerequisiteCheckScores implements PrerequisiteBase {
@@ -37,13 +36,13 @@ public class PrerequisiteCheckScores implements PrerequisiteBase {
 			mOperation = CHECK_RANGE;
 		}
 
-		boolean check(Player player, String scoreName) {
-			int value = ScoreboardUtils.getScoreboardValue(player, scoreName);
+		boolean check(Entity entity, String scoreName) {
+			int value = ScoreboardUtils.getScoreboardValue(entity, scoreName);
 			switch (mOperation) {
 			case CHECK_EXACT:
 				return value == mMin;
 			case CHECK_OTHER:
-				mMin = ScoreboardUtils.getScoreboardValue(player, mOtherScore);
+				mMin = ScoreboardUtils.getScoreboardValue(entity, mOtherScore);
 				return value == mMin;
 			case CHECK_RANGE:
 				return value >= mMin && value <= mMax;
@@ -103,7 +102,7 @@ public class PrerequisiteCheckScores implements PrerequisiteBase {
 	}
 
 	@Override
-	public boolean prerequisiteMet(Player player) {
-		return mCheckScore.check(player, mScoreName);
+	public boolean prerequisiteMet(Entity entity, Entity npcEntity) {
+		return mCheckScore.check(entity, mScoreName);
 	}
 }

@@ -117,7 +117,7 @@ public class Race {
 		}
 
 		if (mStartActions != null) {
-			mStartActions.doActions(mPlugin, mPlayer, null);
+			mStartActions.doActions(mPlugin, mPlayer, null, null);
 		}
 
 		mStartTime = System.currentTimeMillis();
@@ -265,7 +265,7 @@ public class Race {
 
 	public void lose() {
 		if (mLoseActions != null) {
-			mLoseActions.doActions(mPlugin, mPlayer, null);
+			mLoseActions.doActions(mPlugin, mPlayer, null, null);
 		}
 		mPlayer.teleport(mStopLoc);
 		end();
@@ -276,7 +276,7 @@ public class Race {
 	 */
 	public void abort() {
 		if (mLoseActions != null) {
-			mLoseActions.doActions(mPlugin, mPlayer, null);
+			mLoseActions.doActions(mPlugin, mPlayer, null, null);
 		}
 		mPlayer.teleport(mStopLoc);
 		mTimeBar.cancel();

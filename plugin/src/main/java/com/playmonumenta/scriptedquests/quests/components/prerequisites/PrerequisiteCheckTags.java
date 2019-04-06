@@ -2,7 +2,7 @@ package com.playmonumenta.scriptedquests.quests.components.prerequisites;
 
 import java.util.Set;
 
-import org.bukkit.entity.Player;
+import org.bukkit.entity.Entity;
 
 import com.google.gson.JsonElement;
 
@@ -26,8 +26,8 @@ public class PrerequisiteCheckTags implements PrerequisiteBase {
 	}
 
 	@Override
-	public boolean prerequisiteMet(Player player) {
-		Set<String> playerTags = player.getScoreboardTags();
-		return mInverted ^ playerTags.contains(mTag);
+	public boolean prerequisiteMet(Entity entity, Entity npcEntity) {
+		Set<String> entityTags = entity.getScoreboardTags();
+		return mInverted ^ entityTags.contains(mTag);
 	}
 }

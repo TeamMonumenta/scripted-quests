@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
 
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
@@ -41,9 +42,9 @@ public class DialogClickableText implements DialogBase {
 	}
 
 	@Override
-	public void sendDialog(Plugin plugin, Player player, QuestPrerequisites prereqs) {
+	public void sendDialog(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
 		for (DialogClickableTextEntry entry : mEntries) {
-			entry.sendDialog(plugin, player, prereqs);
+			entry.sendDialog(plugin, player, npcEntity, prereqs);
 		}
 	}
 }

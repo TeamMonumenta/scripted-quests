@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
@@ -128,10 +129,11 @@ public class QuestNpc {
 
 	// Returns true if any quest components were attempted with this NPC
 	// False otherwise
-	public boolean interactEvent(Plugin plugin, Player player, String npcName, EntityType entityType) {
+	// Note: npcEntity might be null
+	public boolean interactEvent(Plugin plugin, Player player, String npcName, EntityType entityType, Entity npcEntity) {
 		if (mEntityType.equals(entityType) && mNpcName.equals(npcName)) {
 			for (QuestComponent component : mComponents) {
-				component.doActionsIfPrereqsMet(plugin, player);
+				component.doActionsIfPrereqsMet(plugin, player, npcEntity);
 			}
 			return true;
 		}

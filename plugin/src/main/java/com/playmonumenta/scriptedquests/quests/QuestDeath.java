@@ -33,7 +33,7 @@ public class QuestDeath {
 		}
 
 		public void doActions(Plugin plugin, Player player) {
-			mActions.doActions(plugin, player, mPrerequisites);
+			mActions.doActions(plugin, player, null, mPrerequisites);
 		}
 	}
 
@@ -101,7 +101,7 @@ public class QuestDeath {
 	@SuppressWarnings("unchecked")
 	public boolean deathEvent(Plugin plugin, PlayerDeathEvent event) {
 		Player player = event.getEntity();
-		if (mPrerequisites == null || mPrerequisites.prerequisiteMet(player)) {
+		if (mPrerequisites == null || mPrerequisites.prerequisiteMet(player, null)) {
 			List<DeathActions> actionsList;
 			if (player.hasMetadata(Constants.PLAYER_RESPAWN_ACTIONS_METAKEY)) {
 				actionsList = (List<DeathActions>)player.getMetadata(Constants.PLAYER_RESPAWN_ACTIONS_METAKEY).get(0).value();

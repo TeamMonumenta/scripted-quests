@@ -4,6 +4,7 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import com.google.gson.JsonElement;
@@ -111,7 +112,7 @@ public class ActionSetScore implements ActionBase {
 	}
 
 	@Override
-	public void doAction(Plugin plugin, Player player, QuestPrerequisites prereqs) {
+	public void doAction(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
 		mSetScore.apply(player, mScoreName);
 	}
 }

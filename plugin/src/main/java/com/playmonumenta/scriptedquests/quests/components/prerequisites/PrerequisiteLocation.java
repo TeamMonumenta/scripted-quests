@@ -3,11 +3,10 @@ package com.playmonumenta.scriptedquests.quests.components.prerequisites;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.bukkit.entity.Player;
+import org.bukkit.entity.Entity;
 
-import com.google.gson.JsonObject;
 import com.google.gson.JsonElement;
-
+import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.point.AreaBounds;
 import com.playmonumenta.scriptedquests.point.Point;
 
@@ -57,7 +56,7 @@ public class PrerequisiteLocation implements PrerequisiteBase {
 	}
 
 	@Override
-	public boolean prerequisiteMet(Player player) {
-		return mAreaBounds.within(player.getLocation());
+	public boolean prerequisiteMet(Entity entity, Entity npcEntity) {
+		return mAreaBounds.within(entity.getLocation());
 	}
 }

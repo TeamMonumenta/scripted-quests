@@ -5,7 +5,7 @@ import java.util.Set;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.Entity;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -62,8 +62,8 @@ public class PrerequisiteTestForBlock implements PrerequisiteBase {
 	}
 
 	@Override
-	public boolean prerequisiteMet(Player player) {
-		mLoc.setWorld(player.getWorld());
+	public boolean prerequisiteMet(Entity entity, Entity npcEntity) {
+		mLoc.setWorld(entity.getWorld());
 
 		if (mLoc.getBlock().getType().equals(mType)) {
 			return true;

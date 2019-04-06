@@ -3,6 +3,7 @@ package com.playmonumenta.scriptedquests.quests.components.actions;
 import java.lang.reflect.Method;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import com.google.gson.JsonElement;
@@ -53,7 +54,7 @@ public class ActionCommand implements ActionBase {
 	}
 
 	@Override
-	public void doAction(Plugin plugin, Player player, QuestPrerequisites prereqs) {
+	public void doAction(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
 		//	Because there's no currently good way to run commands we need to run them via the console....janky....I know.
 		String commandStr = mCommand.replaceAll("@S", player.getName());
 		plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), commandStr);

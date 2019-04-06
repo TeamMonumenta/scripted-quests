@@ -3,6 +3,7 @@ package com.playmonumenta.scriptedquests.quests.components.actions;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
@@ -44,8 +45,12 @@ public class ActionInteractNpc implements ActionBase {
 	}
 
 	@Override
-	public void doAction(Plugin plugin, Player player, QuestPrerequisites prereqs) {
-		if (!plugin.mNpcManager.interactEvent(plugin, player, mName, mType, true)) {
+	public void doAction(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
+		/*
+		 * Important - we are switching the context here to a different entity - so we don't pass
+		 * npcEntity into that interaction
+		 */
+		if (!plugin.mNpcManager.interactEvent(plugin, player, mName, mType, null, true)) {
 			plugin.getLogger().severe("No interaction available for player '" + player.getName() +
 			                          "' and NPC '" + mName + "'");
 		}

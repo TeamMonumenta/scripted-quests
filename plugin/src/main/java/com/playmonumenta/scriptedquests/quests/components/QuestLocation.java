@@ -64,6 +64,6 @@ public class QuestLocation implements CompassLocation {
 	}
 
 	public boolean prerequisiteMet(Player player) {
-		return mPrerequisites.prerequisiteMet(player);
+		return mPrerequisites.prerequisiteMet(player, null);
 	}
 }

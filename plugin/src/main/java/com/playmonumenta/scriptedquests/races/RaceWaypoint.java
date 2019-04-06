@@ -63,7 +63,7 @@ public class RaceWaypoint {
 
 	public void doActions(Plugin plugin, Player player) {
 		if (mActions != null) {
-			mActions.doActions(plugin, player, null);
+			mActions.doActions(plugin, player, null, null);
 		}
 	}
 }

@@ -3,6 +3,7 @@ package com.playmonumenta.scriptedquests.quests.components.actions;
 import java.util.Random;
 
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import com.google.gson.JsonElement;
@@ -24,7 +25,7 @@ public class ActionGiveLoot implements ActionBase {
 	}
 
 	@Override
-	public void doAction(Plugin plugin, Player player, QuestPrerequisites prereqs) {
+	public void doAction(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
 		try {
 			InventoryUtils.giveLootTableContents(player, mLootPath, mRandom);
 		} catch (Exception e) {

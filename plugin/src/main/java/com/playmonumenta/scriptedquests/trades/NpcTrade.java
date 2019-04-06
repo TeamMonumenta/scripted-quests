@@ -3,6 +3,7 @@ package com.playmonumenta.scriptedquests.trades;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import com.google.gson.JsonElement;
@@ -50,8 +51,8 @@ public class NpcTrade implements Comparable<NpcTrade> {
 		return mIndex;
 	}
 
-	public boolean prerequisiteMet(Player player) {
-		return mPrerequisites.prerequisiteMet(player);
+	public boolean prerequisiteMet(Player player, Entity npc) {
+		return mPrerequisites.prerequisiteMet(player, npc);
 	}
 
 	@Override

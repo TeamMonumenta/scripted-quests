@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
 
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import com.google.gson.JsonElement;
@@ -32,7 +33,7 @@ public class DialogRandomText implements DialogBase {
 	}
 
 	@Override
-	public void sendDialog(Plugin plugin, Player player, QuestPrerequisites prereqs) {
+	public void sendDialog(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
 		int idx = mRandom.nextInt(mText.size());
 		MessagingUtils.sendNPCMessage(player, mDisplayName, mText.get(idx));
 	}

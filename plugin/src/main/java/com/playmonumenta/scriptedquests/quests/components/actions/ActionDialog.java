@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
@@ -46,9 +47,9 @@ public class ActionDialog implements ActionBase {
 	}
 
 	@Override
-	public void doAction(Plugin plugin, Player player, QuestPrerequisites prereqs) {
+	public void doAction(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
 		for (DialogBase dialog : mDialogs) {
-			dialog.sendDialog(plugin, player, prereqs);
+			dialog.sendDialog(plugin, player, npcEntity, prereqs);
 		}
 	}
 }

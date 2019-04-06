@@ -3,6 +3,7 @@ package com.playmonumenta.scriptedquests.quests.components.actions.dialog;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import com.google.gson.JsonElement;
@@ -27,7 +28,7 @@ public class DialogRawText implements DialogBase {
 	}
 
 	@Override
-	public void sendDialog(Plugin plugin, Player player, QuestPrerequisites prereqs) {
+	public void sendDialog(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
 		for (String text : mText) {
 			MessagingUtils.sendRawMessage(player, text);
 		}
