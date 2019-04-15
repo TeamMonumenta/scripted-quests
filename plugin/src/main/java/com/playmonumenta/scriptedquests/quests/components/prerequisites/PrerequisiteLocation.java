@@ -19,12 +19,12 @@ public class PrerequisiteLocation implements PrerequisiteBase {
 			throw new Exception("location value is not an object!");
 		}
 
-		Integer x1 = null;
-		Integer x2 = null;
-		Integer y1 = null;
-		Integer y2 = null;
-		Integer z1 = null;
-		Integer z2 = null;
+		Double x1 = null;
+		Double x2 = null;
+		Double y1 = null;
+		Double y2 = null;
+		Double z1 = null;
+		Double z2 = null;
 
 		Set<Entry<String, JsonElement>> entries = object.entrySet();
 		for (Entry<String, JsonElement> ent : entries) {
@@ -32,17 +32,17 @@ public class PrerequisiteLocation implements PrerequisiteBase {
 			JsonElement value = ent.getValue();
 
 			if (key.equals("x1")) {
-				x1 = value.getAsInt();
+				x1 = value.getAsDouble();
 			} else if (key.equals("x2")) {
-				x2 = value.getAsInt();
+				x2 = value.getAsDouble();
 			} else if (key.equals("y1")) {
-				y1 = value.getAsInt();
+				y1 = value.getAsDouble();
 			} else if (key.equals("y2")) {
-				y2 = value.getAsInt();
+				y2 = value.getAsDouble();
 			} else if (key.equals("z1")) {
-				z1 = value.getAsInt();
+				z1 = value.getAsDouble();
 			} else if (key.equals("z2")) {
-				z2 = value.getAsInt();
+				z2 = value.getAsDouble();
 			} else {
 				throw new Exception("Unknown location key: '" + key + "'");
 			}

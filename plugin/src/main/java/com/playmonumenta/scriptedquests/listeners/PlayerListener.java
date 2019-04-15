@@ -14,6 +14,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
@@ -130,6 +131,12 @@ public class PlayerListener implements Listener {
 				}
 			}.runTaskLater(mPlugin, 1);
 		}
+	}
+
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void PlayerJoinEvent(PlayerJoinEvent event) {
+		// Handle login quest events
+		mPlugin.mLoginManager.loginEvent(mPlugin, event);
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)

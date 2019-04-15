@@ -56,27 +56,27 @@ public class QuestDeath {
 				JsonObject coordObj = value.getAsJsonObject();
 				// Read x coordinate
 				JsonElement xElement = coordObj.get("x");
-				int x = 0;
+				double x = 0;
 				if (xElement == null) {
 					throw new Exception("Failed to parse location x value!");
 				}
-				x = xElement.getAsInt();
+				x = xElement.getAsDouble();
 
 				// Read y coordinate
 				JsonElement yElement = coordObj.get("y");
-				int y = 0;
+				double y = 0;
 				if (yElement == null) {
 					throw new Exception("Failed to parse location y value!");
 				}
-				y = yElement.getAsInt();
+				y = yElement.getAsDouble();
 
 				// Read z coordinate
 				JsonElement zElement = coordObj.get("z");
-				int z = 0;
+				double z = 0;
 				if (zElement == null) {
 					throw new Exception("Failed to parse location z value!");
 				}
-				z = zElement.getAsInt();
+				z = zElement.getAsDouble();
 
 				mRespawnPt = new Point(x, y, z);
 

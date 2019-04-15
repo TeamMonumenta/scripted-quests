@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>ScriptedQuests Login Editor</title>
+
+    <!-- Foundation CSS framework (Bootstrap and jQueryUI also supported) -->
+    <link rel='stylesheet' href='//cdn.jsdelivr.net/bootstrap/3.2.0/css/bootstrap.css'>
+    <!-- Font Awesome icons (Bootstrap, Foundation, and jQueryUI also supported) -->
+    <link rel='stylesheet' href='//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.3/css/font-awesome.css'>
+
+    <link rel='stylesheet' href='//cdn.jsdelivr.net/sceditor/1.4.3/jquery.sceditor.default.min.css'>
+    <link rel='stylesheet' href='//cdn.jsdelivr.net/sceditor/1.4.3/themes/modern.min.css'>
+    <script src='//cdn.jsdelivr.net/jquery/2.1.1/jquery.min.js'></script>
+    <script src='//cdn.jsdelivr.net/sceditor/1.4.3/jquery.sceditor.min.js'></script>
+    <script src='//cdn.jsdelivr.net/sceditor/1.4.3/plugins/xhtml.js'></script>
+    <script src="//cdn.jsdelivr.net/npm/@json-editor/json-editor/dist/jsoneditor.min.js"></script>
+</head>
+<body>
+<div class='container'>
+    <div class='row' style='padding-bottom: 15px;'>
+        <div class='col-md-12'>
+            <h1>ScriptedQuests Login Editor</h1>
+            <br>
+            <a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html">Entity Types</a>
+            <br>
+            <a href="https://minecraft.gamepedia.com/Formatting_codes">Minecraft Formatting Codes</a>
+        </div>
+    </div>
+    <div class='row' style='padding-bottom: 15px;'>
+        <div class='col-md-12'>
+            <button id='restore' class='btn btn-info'>Restore to Default</button>
+            <span id='valid_indicator' class='label label-success'></span>
+        </div>
+    </div>
+    <div class='row'>
+        <div class='col-md-12'>
+            <div id='editor_holder'></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    JSONEditor.defaults.theme = 'bootstrap3';
+    JSONEditor.defaults.iconlib = 'fontawesome4';
+    JSONEditor.plugins.sceditor.style = "//cdn.jsdelivr.net/sceditor/1.4.3/jquery.sceditor.default.min.css";
+
+    // Initialize the editor
+    var editor = new JSONEditor(document.getElementById('editor_holder'),{
+		// Enable fetching schemas via ajax
+		ajax: true,
+
+        // The schema for the editor
+        schema: {
+            title: "Quest Login",
+            defaultProperties: [
+                "min_time_logged_out",
+                "actions",
+                "prerequisites"
+            ],
+            additionalProperties:false,
+            properties: {
+				min_time_logged_out: {
+                    propertyOrder: 1,
+                    required: false,
+					title: "min_time_logged_out",
+					description: "Minimum number of seconds the player has been logged out",
+					type: "integer",
+					minimum: 1,
+					default: 300,
+				},
+				prerequisites: {
+                    propertyOrder: 2,
+                    required: false,
+					$ref: "schema/prerequisites.json",
+				},
+                actions: {
+                    propertyOrder: 3,
+                    required: true,
+					$ref: "schema/actions.json",
+				},
+            }
+        }
+    });
+
+    // Hook up the Restore to Default button
+    document.getElementById('restore').addEventListener('click',function() {
+        editor.setValue(starting_value);
+    });
+
+    // Hook up the validation indicator to update its
+    // status whenever the editor changes
+    editor.on('change',function() {
+        // Get an array of errors from the validator
+        var errors = editor.validate();
+
+        var indicator = document.getElementById('valid_indicator');
+
+        // Not valid
+        if(errors.length) {
+            indicator.className = 'label label-danger'
+            indicator.textContent = "not valid";
+        }
+        // Valid
+        else {
+            indicator.className = 'label label-success'
+            indicator.textContent = "valid";
+        }
+    });
+</script>
+</body>
+</html>
