@@ -54,18 +54,28 @@
         schema: {
             title: "Quest Login",
             defaultProperties: [
+                "min_time_logged_out",
                 "actions",
                 "quest_components"
             ],
             additionalProperties:false,
             properties: {
-				prerequisites: {
+				min_time_logged_out: {
                     propertyOrder: 1,
+                    required: false,
+					title: "min_time_logged_out",
+					description: "Minimum number of seconds the player has been logged out",
+					type: "integer",
+					minimum: 1,
+					default: 300,
+				},
+				prerequisites: {
+                    propertyOrder: 2,
                     required: false,
 					$ref: "schema/prerequisites.json",
 				},
                 actions: {
-                    propertyOrder: 2,
+                    propertyOrder: 3,
                     required: true,
 					$ref: "schema/actions.json",
 				},

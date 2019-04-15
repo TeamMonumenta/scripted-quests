@@ -1,5 +1,7 @@
 package com.playmonumenta.scriptedquests.quests;
 
+import java.lang.System;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -37,6 +39,7 @@ public class QuestLogin {
 	}
 
 	private QuestPrerequisites mPrerequisites = null;
+	private long mMinLogoutTime = 0;
 	private QuestActions mActions = null;
 
 	public QuestLogin(JsonObject object) throws Exception {
@@ -46,6 +49,13 @@ public class QuestLogin {
 			JsonElement value = ent.getValue();
 
 			switch (key) {
+			case "min_time_logged_out":
+				Long minLogoutTimeSeconds = value.getAsLong();
+				if (minLogoutTimeSeconds == null) {
+					throw new Exception("Failed to parse minimum time logged out value!");
+				}
+				mMinLogoutTime = 1000 * minLogoutTimeSeconds;
+				break;
 			case "prerequisites":
 				mPrerequisites = new QuestPrerequisites(value);
 				break;
@@ -62,6 +72,12 @@ public class QuestLogin {
 	@SuppressWarnings("unchecked")
 	public boolean loginEvent(Plugin plugin, PlayerJoinEvent event) {
 		Player player = event.getPlayer();
+		long timeLoggedOut = System.currentTimeMillis() - player.getLastPlayed();
+
+		if (timeLoggedOut < mMinLogoutTime) {
+			return false;
+		}
+
 		if (mPrerequisites == null || mPrerequisites.prerequisiteMet(player, null)) {
 			mActions.doActions(plugin, player, null, mPrerequisites);
 			return true;
