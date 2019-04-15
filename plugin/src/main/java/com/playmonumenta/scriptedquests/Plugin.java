@@ -39,7 +39,7 @@ public class Plugin extends JavaPlugin {
 
 	public QuestCompassManager mQuestCompassManager;
 	public QuestNpcManager mNpcManager;
-	public QuestLogoutManager mQuestLogoutManager;
+	public QuestLogoutManager mLogoutManager;
 	public QuestDeathManager mDeathManager;
 	public RaceManager mRaceManager;
 	public NpcTradeManager mTradeManager;
@@ -79,7 +79,7 @@ public class Plugin extends JavaPlugin {
 		mQuestCompassManager = new QuestCompassManager(this);
 		mNpcManager = new QuestNpcManager(this);
 		mTradeManager = new NpcTradeManager(this);
-		mQuestLogoutManager = new QuestLogoutManager(this);
+		mLogoutManager = new QuestLogoutManager(this);
 		mDeathManager = new QuestDeathManager(this);
 		mRaceManager = new RaceManager(this);
 		mTimerManager = new CommandTimerManager(this);
@@ -112,7 +112,7 @@ public class Plugin extends JavaPlugin {
 		mNpcManager.reload(this, sender);
 		mTradeManager.reload(this, sender);
 		mQuestCompassManager.reload(this, sender);
-		mQuestLogoutManager.reload(this, sender);
+		mLogoutManager.reload(this, sender);
 		mDeathManager.reload(this, sender);
 		mRaceManager.reload(this, sender);
 	}

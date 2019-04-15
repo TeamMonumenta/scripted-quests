@@ -136,7 +136,7 @@ public class PlayerListener implements Listener {
 	public void PlayerQuitEvent(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
 		// Handle logout quest events
-		
+		mPlugin.mLogoutManager.logoutEvent(mPlugin, event);
 
 		// Stop racing (if applicable)
 		mPlugin.mRaceManager.cancelRace(player);
