@@ -79,14 +79,16 @@ public class QuestLogoutManager {
 	}
 
 	public boolean logoutEvent(Plugin plugin, PlayerQuitEvent event) {
+		boolean success = false;
+
 		/* Try each available logout-triggered quest */
 		for (QuestLogout logout : mLogouts) {
-			/* Stop after the first matching quest */
+			/* Don't stop after the first matching quest */
 			if (logout.logoutEvent(plugin, event)) {
-				return true;
+				success = true;
 			}
 		}
 
-		return false;
+		return success;
 	}
 }

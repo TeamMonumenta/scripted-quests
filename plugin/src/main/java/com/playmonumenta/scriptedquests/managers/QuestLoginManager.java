@@ -79,14 +79,16 @@ public class QuestLoginManager {
 	}
 
 	public boolean loginEvent(Plugin plugin, PlayerJoinEvent event) {
+		boolean success = false;
+
 		/* Try each available login-triggered quest */
 		for (QuestLogin login : mLogins) {
-			/* Stop after the first matching quest */
+			/* Don't stop after the first matching quest */
 			if (login.loginEvent(plugin, event)) {
-				return true;
+				success = true;
 			}
 		}
 
-		return false;
+		return success;
 	}
 }
