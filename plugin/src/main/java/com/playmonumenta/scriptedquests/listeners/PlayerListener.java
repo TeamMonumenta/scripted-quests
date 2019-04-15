@@ -134,7 +134,11 @@ public class PlayerListener implements Listener {
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void PlayerQuitEvent(PlayerQuitEvent event) {
+		Player player = event.getPlayer();
+		// Handle logout quest events
+		
+
 		// Stop racing (if applicable)
-		mPlugin.mRaceManager.cancelRace(event.getPlayer());
+		mPlugin.mRaceManager.cancelRace(player);
 	}
 }
