@@ -7,7 +7,7 @@ import java.util.Set;
 
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -18,15 +18,15 @@ import com.playmonumenta.scriptedquests.quests.components.QuestActions;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 
 /*
- * A QuestLogout object holds all the quest components bound together with a particular
- * set of logout rules (respawn location, etc.)
+ * A QuestLogin object holds all the quest components bound together with a particular
+ * set of login rules (respawn location, etc.)
  */
-public class QuestLogout {
-	public class LogoutActions {
+public class QuestLogin {
+	public class LoginActions {
 		private final QuestActions mActions;
 		private final QuestPrerequisites mPrerequisites;
 
-		public LogoutActions(QuestActions actions, QuestPrerequisites prerequisites) {
+		public LoginActions(QuestActions actions, QuestPrerequisites prerequisites) {
 			mActions = actions;
 			mPrerequisites = prerequisites;
 		}
@@ -39,7 +39,7 @@ public class QuestLogout {
 	private QuestPrerequisites mPrerequisites = null;
 	private QuestActions mActions = null;
 
-	public QuestLogout(JsonObject object) throws Exception {
+	public QuestLogin(JsonObject object) throws Exception {
 		Set<Entry<String, JsonElement>> entries = object.entrySet();
 		for (Entry<String, JsonElement> ent : entries) {
 			String key = ent.getKey();
@@ -53,14 +53,14 @@ public class QuestLogout {
 				mActions = new QuestActions("", "", EntityType.VILLAGER, 0, value);
 				break;
 			default:
-				throw new Exception("Unknown logout quest key: '" + key + "'");
+				throw new Exception("Unknown login quest key: '" + key + "'");
 			}
 		}
 	}
 
 	/* Returns true if prerequisites match and actions were taken, false otherwise */
 	@SuppressWarnings("unchecked")
-	public boolean logoutEvent(Plugin plugin, PlayerQuitEvent event) {
+	public boolean loginEvent(Plugin plugin, PlayerJoinEvent event) {
 		Player player = event.getPlayer();
 		if (mPrerequisites == null || mPrerequisites.prerequisiteMet(player, null)) {
 			mActions.doActions(plugin, player, null, mPrerequisites);
