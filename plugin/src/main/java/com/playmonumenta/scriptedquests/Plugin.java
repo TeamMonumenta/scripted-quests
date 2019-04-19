@@ -27,6 +27,7 @@ import com.playmonumenta.scriptedquests.managers.NpcTradeManager;
 import com.playmonumenta.scriptedquests.managers.QuestCompassManager;
 import com.playmonumenta.scriptedquests.managers.QuestDeathManager;
 import com.playmonumenta.scriptedquests.managers.QuestLoginManager;
+import com.playmonumenta.scriptedquests.managers.QuestLogoutManager;
 import com.playmonumenta.scriptedquests.managers.QuestNpcManager;
 import com.playmonumenta.scriptedquests.managers.RaceManager;
 import com.playmonumenta.scriptedquests.timers.CommandTimerManager;
@@ -40,6 +41,7 @@ public class Plugin extends JavaPlugin {
 	public QuestCompassManager mQuestCompassManager;
 	public QuestNpcManager mNpcManager;
 	public QuestLoginManager mLoginManager;
+	public QuestLogoutManager mLogoutManager;
 	public QuestDeathManager mDeathManager;
 	public RaceManager mRaceManager;
 	public NpcTradeManager mTradeManager;
@@ -80,6 +82,7 @@ public class Plugin extends JavaPlugin {
 		mNpcManager = new QuestNpcManager(this);
 		mTradeManager = new NpcTradeManager(this);
 		mLoginManager = new QuestLoginManager(this);
+		mLogoutManager = new QuestLogoutManager(this);
 		mDeathManager = new QuestDeathManager(this);
 		mRaceManager = new RaceManager(this);
 		mTimerManager = new CommandTimerManager(this);
@@ -113,6 +116,7 @@ public class Plugin extends JavaPlugin {
 		mTradeManager.reload(this, sender);
 		mQuestCompassManager.reload(this, sender);
 		mLoginManager.reload(this, sender);
+		mLogoutManager.reload(this, sender);
 		mDeathManager.reload(this, sender);
 		mRaceManager.reload(this, sender);
 	}

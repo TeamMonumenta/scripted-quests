@@ -135,13 +135,18 @@ public class PlayerListener implements Listener {
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void PlayerJoinEvent(PlayerJoinEvent event) {
+		Player player = event.getPlayer();
 		// Handle login quest events
 		mPlugin.mLoginManager.loginEvent(mPlugin, event);
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void PlayerQuitEvent(PlayerQuitEvent event) {
+		Player player = event.getPlayer();
+		// Handle logout quest events
+		mPlugin.mLogoutManager.logoutEvent(mPlugin, event);
+
 		// Stop racing (if applicable)
-		mPlugin.mRaceManager.cancelRace(event.getPlayer());
+		mPlugin.mRaceManager.cancelRace(player);
 	}
 }

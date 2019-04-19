@@ -83,6 +83,7 @@ the various quest options
 - Quest Compass Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/quest_compass_editor.html
 - Quest Death Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/quest_death_editor.html
 - Quest Login Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/quest_login_editor.html
+- Quest Logout Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/quest_logout_editor.html
 - Race Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/race_editor.html
 - Trader Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/trader_editor.html
 
