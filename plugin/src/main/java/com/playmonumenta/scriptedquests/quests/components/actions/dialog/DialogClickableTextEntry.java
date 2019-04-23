@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -40,6 +41,9 @@ public class DialogClickableTextEntry implements DialogBase {
 			    && (mPrerequisites == null || mPrerequisites.prerequisiteMet(player, mNpcEntity))) {
 				player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 0.7f, 0.9f);
 				mActions.doActions(plugin, player, mNpcEntity, mPrerequisites);
+			} else {
+				player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 0.7f, 0.3f);
+				player.sendMessage(ChatColor.RED + "You moved too far away to be heard");
 			}
 		}
 	}
