@@ -236,10 +236,11 @@ public class CommandTimer implements Listener {
 
 		mTimers.put(entity.getUniqueId(), timer);
 
+		entity.setInvulnerable(true);
+
 		if (mPlugin.mShowTimerNames != null) {
 			/* If configured to show or hide timer names, do so */
 			entity.setCustomNameVisible(mPlugin.mShowTimerNames);
-			entity.setInvulnerable(mPlugin.mShowTimerNames);
 			if (mPlugin.mShowTimerNames) {
 				/* If showing names, rename the armor stand to match what it actually does */
 				timer.setName(entity);
