@@ -10,13 +10,11 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
-import com.playmonumenta.scriptedquests.utils.FileUtils;
 
 /*
  * A QuestNpc object holds all the quest components belonging to an NPC with a specific name
@@ -30,26 +28,14 @@ public class QuestNpc {
 	private final String mDisplayName;
 	private final EntityType mEntityType;
 
-	public QuestNpc(String fileLocation) throws Exception {
-		String content = FileUtils.readFile(fileLocation);
-		if (content == null || content.isEmpty()) {
-			throw new Exception("File '" + fileLocation + "' is empty?");
-		}
-
-		Gson gson = new Gson();
-		JsonObject object = gson.fromJson(content, JsonObject.class);
-		if (object == null) {
-			throw new Exception("Failed to parse file '" + fileLocation + "' as JSON object");
-		}
-
+	public QuestNpc(JsonObject object) throws Exception {
 		// Read the npc's name first
 		JsonElement npc = object.get("npc");
 		if (npc == null) {
-			throw new Exception("'npc' entry for quest '" + fileLocation + "' is required");
+			throw new Exception("'npc' entry is required");
 		}
 		if (npc.getAsString() == null || squashNpcName(npc.getAsString()).isEmpty()) {
-			throw new Exception("Failed to parse 'npc' name for file '" +
-								fileLocation + "' as string");
+			throw new Exception("Failed to parse 'npc' name");
 		}
 		mNpcName = squashNpcName(npc.getAsString());
 
@@ -83,8 +69,7 @@ public class QuestNpc {
 			if (key.equals("quest_components")) {
 				JsonArray array = object.getAsJsonArray(key);
 				if (array == null) {
-					throw new Exception("Failed to parse 'quest_components' for file '"
-										+ fileLocation + "' as JSON array");
+					throw new Exception("Failed to parse 'quest_components'");
 				}
 
 				Iterator<JsonElement> iter = array.iterator();

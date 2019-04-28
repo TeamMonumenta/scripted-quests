@@ -13,14 +13,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.managers.RaceManager;
 import com.playmonumenta.scriptedquests.quests.components.QuestActions;
-import com.playmonumenta.scriptedquests.utils.FileUtils;
 import com.playmonumenta.scriptedquests.utils.LeaderboardUtils;
 import com.playmonumenta.scriptedquests.utils.LeaderboardUtils.LeaderboardEntry;
 import com.playmonumenta.scriptedquests.utils.RaceUtils;
@@ -42,38 +40,25 @@ public class RaceFactory {
 	private final Plugin mPlugin;
 	private final RaceManager mManager;
 
-	public RaceFactory(String fileLocation, Plugin plugin, RaceManager manager) throws Exception {
-		String content = FileUtils.readFile(fileLocation);
-		if (content == null || content.isEmpty()) {
-			throw new Exception("Race file '" + fileLocation + "' could not be read!");
-		}
-
-		Gson gson = new Gson();
-		JsonObject object = gson.fromJson(content, JsonObject.class);
-		if (object == null) {
-			throw new Exception("Failed to parse file '" + fileLocation + "' as JSON object");
-		}
-
+	public RaceFactory(JsonObject object, Plugin plugin, RaceManager manager) throws Exception {
 		// name
 		JsonElement name = object.get("name");
 		if (name == null) {
-			throw new Exception("'name' entry for race '" + fileLocation + "' is required");
+			throw new Exception("'name' entry is required");
 		}
 		mName = name.getAsString();
 		if (mName == null) {
-			throw new Exception("Failed to parse 'name' name for file '" +
-			fileLocation + "' as string");
+			throw new Exception("Failed to parse 'name' name as string");
 		}
 
 		// label
 		JsonElement label = object.get("label");
 		if (label == null) {
-			throw new Exception("'label' entry for race '" + fileLocation + "' is required");
+			throw new Exception("'label' entry is required");
 		}
 		mLabel = label.getAsString();
 		if (mLabel == null) {
-			throw new Exception("Failed to parse 'label' label for file '" +
-			fileLocation + "' as string");
+			throw new Exception("Failed to parse 'label' label as string");
 		}
 
 		// scoreboard
@@ -81,8 +66,7 @@ public class RaceFactory {
 		if (scoreboard != null) {
 			String objectiveStr = scoreboard.getAsString();
 			if (objectiveStr == null) {
-				throw new Exception("Failed to parse 'scoreboard' label for file '" +
-				fileLocation + "' as string");
+				throw new Exception("Failed to parse 'scoreboard' label as string");
 			}
 			mObjective = Bukkit.getScoreboardManager().getMainScoreboard().getObjective(objectiveStr);
 			if (mObjective == null) {
@@ -95,22 +79,21 @@ public class RaceFactory {
 		// show_stats
 		JsonElement show_stats = object.get("show_stats");
 		if (show_stats == null) {
-			throw new Exception("'show_stats' entry for race '" + fileLocation + "' is required");
+			throw new Exception("'show_stats' entry is required");
 		}
 		mShowStats = show_stats.getAsBoolean();
 
 		// start
 		JsonElement start = object.get("start");
 		if (start == null) {
-			throw new Exception("'start' entry for race '" + fileLocation + "' is required");
+			throw new Exception("'start' entry is required");
 		}
-		mStart = parseLocation(start, Bukkit.getWorlds().get(0), "start", fileLocation);
+		mStart = parseLocation(start, Bukkit.getWorlds().get(0), "start");
 
 		// waypoints
 		JsonArray waypointsArray = object.getAsJsonArray("waypoints");
 		if (waypointsArray == null) {
-			throw new Exception("Failed to parse 'waypoints' for file '"
-			+ fileLocation + "' as JSON array");
+			throw new Exception("Failed to parse 'waypoints' as JSON array");
 		}
 		Iterator<JsonElement> waypointsIter = waypointsArray.iterator();
 		while (waypointsIter.hasNext()) {
@@ -121,8 +104,7 @@ public class RaceFactory {
 		// times
 		JsonArray timesArray = object.getAsJsonArray("times");
 		if (timesArray == null) {
-			throw new Exception("Failed to parse 'times' for file '"
-			+ fileLocation + "' as JSON array");
+			throw new Exception("Failed to parse 'times' as JSON array");
 		}
 		Iterator<JsonElement> timesIter = timesArray.iterator();
 		while (timesIter.hasNext()) {
@@ -160,10 +142,10 @@ public class RaceFactory {
 		return mLabel;
 	}
 
-	private Location parseLocation(JsonElement element, World world, String label, String fileLocation) throws Exception {
+	private Location parseLocation(JsonElement element, World world, String label) throws Exception {
 		JsonObject object = element.getAsJsonObject();
 		if (object == null) {
-			throw new Exception("'" + label + "' entry for race '" + fileLocation + "' is not an object");
+			throw new Exception("'" + label + "' entry is not an object");
 		}
 
 		// x

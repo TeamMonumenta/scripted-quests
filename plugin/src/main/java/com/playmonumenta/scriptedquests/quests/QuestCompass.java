@@ -7,54 +7,43 @@ import java.util.List;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.quests.components.CompassLocation;
 import com.playmonumenta.scriptedquests.quests.components.QuestLocation;
-import com.playmonumenta.scriptedquests.utils.FileUtils;
 
 public class QuestCompass {
 	private String mQuestName;
 	private ArrayList<QuestLocation> mMarkers = new ArrayList<QuestLocation>();
 
-	public QuestCompass(World world, String fileLocation) throws Exception {
-		String content = FileUtils.readFile(fileLocation);
-		if (content != null && !content.isEmpty()) {
-			Gson gson = new Gson();
-			JsonObject object = gson.fromJson(content, JsonObject.class);
-			if (object == null) {
-				throw new Exception("Failed to parse file '" + fileLocation + "' as JSON object");
-			}
+	public QuestCompass(World world, JsonObject object) throws Exception {
+		// Read the quest name
+		JsonElement questName = object.get("quest_name");
+		if (questName == null) {
+			throw new Exception("'quest_name' entry is required");
+		}
+		mQuestName = questName.getAsString();
+		if (mQuestName == null) {
+			throw new Exception("Failed to parse 'quest_name' as string");
+		}
 
-			// Read the quest name
-			JsonElement questName = object.get("quest_name");
-			if (questName == null) {
-				throw new Exception("'quest_name' entry for file '" + fileLocation + "' is required");
-			}
-			mQuestName = questName.getAsString();
-			if (mQuestName == null) {
-				throw new Exception("Failed to parse 'quest_name' for file '" + fileLocation + "' as string");
-			}
+		// Read the locations
+		JsonElement locations = object.get("locations");
+		if (locations == null) {
+			throw new Exception("'locations' entry is required");
+		}
+		JsonArray array = locations.getAsJsonArray();
+		if (array == null) {
+			throw new Exception("Failed to parse 'locations' as JSON array");
+		}
 
-			// Read the locations
-			JsonElement locations = object.get("locations");
-			if (locations == null) {
-				throw new Exception("'locations' entry for file '" + fileLocation + "' is required");
-			}
-			JsonArray array = locations.getAsJsonArray();
-			if (array == null) {
-				throw new Exception("Failed to parse 'locations' for file '" + fileLocation + "' as JSON array");
-			}
+		// Loop over the locations and add them
+		Iterator<JsonElement> iter = array.iterator();
+		while (iter.hasNext()) {
+			JsonElement entry = iter.next();
 
-			// Loop over the locations and add them
-			Iterator<JsonElement> iter = array.iterator();
-			while (iter.hasNext()) {
-				JsonElement entry = iter.next();
-
-				mMarkers.add(new QuestLocation(world, entry));
-			}
+			mMarkers.add(new QuestLocation(world, entry));
 		}
 	}
 

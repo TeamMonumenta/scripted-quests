@@ -15,13 +15,11 @@ import org.bukkit.inventory.MerchantRecipe;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.QuestNpc;
-import com.playmonumenta.scriptedquests.utils.FileUtils;
 
 /*
  * An NpcTrader object holds prerequisites for each trade slot in the NPC's inventory
@@ -32,34 +30,21 @@ public class NpcTrader {
 	private final ArrayList<NpcTrade> mTrades = new ArrayList<NpcTrade>();
 	private final String mNpcName;
 
-	public NpcTrader(String fileLocation) throws Exception {
-		String content = FileUtils.readFile(fileLocation);
-		if (content == null || content.isEmpty()) {
-			throw new Exception("File '" + fileLocation + "' is empty?");
-		}
-
-		Gson gson = new Gson();
-		JsonObject object = gson.fromJson(content, JsonObject.class);
-		if (object == null) {
-			throw new Exception("Failed to parse file '" + fileLocation + "' as JSON object");
-		}
-
+	public NpcTrader(JsonObject object) throws Exception {
 		// Read the npc's name first
 		JsonElement npc = object.get("npc");
 		if (npc == null) {
-			throw new Exception("'npc' entry for quest '" + fileLocation + "' is required");
+			throw new Exception("'npc' entry is required");
 		}
 		if (npc.getAsString() == null || QuestNpc.squashNpcName(npc.getAsString()).isEmpty()) {
-			throw new Exception("Failed to parse 'npc' name for file '" +
-								fileLocation + "' as string");
+			throw new Exception("Failed to parse 'npc' name as string");
 		}
 		mNpcName = QuestNpc.squashNpcName(npc.getAsString());
 
 		// Read the npc's trades
 		JsonArray array = object.getAsJsonArray("trades");
 		if (array == null) {
-			throw new Exception("Failed to parse 'trades' for file '"
-								+ fileLocation + "' as JSON array");
+			throw new Exception("Failed to parse 'trades' as JSON array");
 		}
 		Iterator<JsonElement> iter = array.iterator();
 		while (iter.hasNext()) {

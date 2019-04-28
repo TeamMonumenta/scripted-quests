@@ -1,9 +1,6 @@
 package com.playmonumenta.scriptedquests.managers;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,8 +15,8 @@ import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.QuestCompass;
 import com.playmonumenta.scriptedquests.quests.components.CompassLocation;
 import com.playmonumenta.scriptedquests.quests.components.DeathLocation;
-import com.playmonumenta.scriptedquests.utils.FileUtils;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
+import com.playmonumenta.scriptedquests.utils.QuestUtils;
 import com.playmonumenta.scriptedquests.utils.ScoreboardUtils;
 
 public class QuestCompassManager {
@@ -52,7 +49,7 @@ public class QuestCompassManager {
 		}
 	}
 
-	private List<QuestCompass> mQuests = new ArrayList<QuestCompass>();
+	private final List<QuestCompass> mQuests = new ArrayList<QuestCompass>();
 	private final Map<UUID, CompassCacheEntry> mCompassCache = new HashMap<UUID, CompassCacheEntry>();
 
 	public QuestCompassManager(Plugin plugin) {
@@ -63,78 +60,12 @@ public class QuestCompassManager {
 	 * If sender is non-null, it will be sent debugging information
 	 */
 	public void reload(Plugin plugin, CommandSender sender) {
-		String compassLocation = plugin.getDataFolder() + File.separator +  "compass";
-		mQuests = new ArrayList<QuestCompass>();
-		ArrayList<File> listOfFiles;
-		ArrayList<String> listOfQuests = new ArrayList<String>();
-		int numQuestLocations = 0;
-		int numFiles = 0;
-
-		// Attempt to load all JSON files in subdirectories of "compass"
-		try {
-			File directory = new File(compassLocation);
-			if (!directory.exists()) {
-				directory.mkdirs();
-			}
-
-			listOfFiles = FileUtils.getFilesInDirectory(compassLocation, ".json");
-		} catch (IOException e) {
-			plugin.getLogger().severe("Caught exception trying to reload quest compass: " + e);
-			if (sender != null) {
-				sender.sendMessage(ChatColor.RED + "Caught exception trying to reload quest compass: " + e);
-			}
-			return;
-		}
-
-		Collections.sort(listOfFiles);
-		for (File file : listOfFiles) {
-			try {
-				// Load this file into a QuestNpc object
-				QuestCompass quest = new QuestCompass(plugin.mWorld, file.getPath());
-
-				// Keep track of statistics for pretty printing later
-				int newLocations = quest.getMarkers().size();
-				numQuestLocations += newLocations;
-				numFiles++;
-				listOfQuests.add(quest.getQuestName() + ":" + Integer.toString(newLocations));
-				mQuests.add(quest);
-			} catch (Exception e) {
-				plugin.getLogger().severe("Caught exception: " + e);
-				e.printStackTrace();
-
-				if (sender != null) {
-					sender.sendMessage(ChatColor.RED + "Failed to load quest file '" + file.getPath() + "'");
-					MessagingUtils.sendStackTrace(sender, e);
-				}
-			}
-		}
-
-		if (sender != null) {
-			sender.sendMessage(ChatColor.GOLD + "Loaded " +
-			                   Integer.toString(numQuestLocations) +
-			                   " quest compass locations from " + Integer.toString(numFiles) + " files");
-
-			if (numFiles <= 20) {
-				Collections.sort(listOfQuests);
-				String outMsg = "";
-				for (String npc : listOfQuests) {
-					if (outMsg.isEmpty()) {
-						outMsg = npc;
-					} else {
-						outMsg = outMsg + ", " + npc;
-					}
-
-					if (outMsg.length() > 1000) {
-						sender.sendMessage(ChatColor.GOLD + outMsg);
-						outMsg = "";
-					}
-				}
-
-				if (!outMsg.isEmpty()) {
-					sender.sendMessage(ChatColor.GOLD + outMsg);
-				}
-			}
-		}
+		mQuests.clear();
+		QuestUtils.loadScriptedQuests(plugin, "compass", sender, (object) -> {
+			QuestCompass quest = new QuestCompass(plugin.mWorld, object);
+			mQuests.add(quest);
+			return quest.getQuestName() + ":" + Integer.toString(quest.getMarkers().size());
+		});
 	}
 
 	@SuppressWarnings("unchecked")
