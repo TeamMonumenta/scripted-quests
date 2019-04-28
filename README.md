@@ -85,6 +85,7 @@ the various quest options
 - Quest Login Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/quest_login_editor.html
 - Race Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/race_editor.html
 - Trader Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/trader_editor.html
+- Clickable Actions Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/clickable_editor.html
 
 ## <a name="structure"></a>Structure of a Quests File:
 Each quest file has the following info:

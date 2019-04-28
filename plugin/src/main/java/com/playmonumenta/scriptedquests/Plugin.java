@@ -11,6 +11,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.playmonumenta.scriptedquests.commands.Clickable;
 import com.playmonumenta.scriptedquests.commands.GiveLootTable;
 import com.playmonumenta.scriptedquests.commands.HasPermission;
 import com.playmonumenta.scriptedquests.commands.InteractNpc;
@@ -23,6 +24,7 @@ import com.playmonumenta.scriptedquests.commands.ScheduleFunction;
 import com.playmonumenta.scriptedquests.commands.TimerDebug;
 import com.playmonumenta.scriptedquests.listeners.EntityListener;
 import com.playmonumenta.scriptedquests.listeners.PlayerListener;
+import com.playmonumenta.scriptedquests.managers.ClickableManager;
 import com.playmonumenta.scriptedquests.managers.NpcTradeManager;
 import com.playmonumenta.scriptedquests.managers.QuestCompassManager;
 import com.playmonumenta.scriptedquests.managers.QuestDeathManager;
@@ -39,6 +41,7 @@ public class Plugin extends JavaPlugin {
 
 	public QuestCompassManager mQuestCompassManager;
 	public QuestNpcManager mNpcManager;
+	public ClickableManager mClickableManager;
 	public QuestLoginManager mLoginManager;
 	public QuestDeathManager mDeathManager;
 	public RaceManager mRaceManager;
@@ -58,6 +61,7 @@ public class Plugin extends JavaPlugin {
 		 */
 
 		InteractNpc.register(this);
+		Clickable.register(this);
 		GiveLootTable.register(mRandom);
 		Race.register(this);
 		Leaderboard.register();
@@ -78,6 +82,7 @@ public class Plugin extends JavaPlugin {
 
 		mQuestCompassManager = new QuestCompassManager(this);
 		mNpcManager = new QuestNpcManager(this);
+		mClickableManager = new ClickableManager(this);
 		mTradeManager = new NpcTradeManager(this);
 		mLoginManager = new QuestLoginManager(this);
 		mDeathManager = new QuestDeathManager(this);
@@ -110,6 +115,7 @@ public class Plugin extends JavaPlugin {
 	public void reloadConfig(CommandSender sender) {
 		reloadConfigYaml(sender);
 		mNpcManager.reload(this, sender);
+		mClickableManager.reload(this, sender);
 		mTradeManager.reload(this, sender);
 		mQuestCompassManager.reload(this, sender);
 		mLoginManager.reload(this, sender);

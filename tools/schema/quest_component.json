@@ -1,0 +1,25 @@
+{
+    "type": "object",
+    "defaultProperties": [
+        "prerequisites",
+        "actions"
+    ],
+    "additionalProperties":false,
+    "properties": {
+        "prerequisites": {
+            "propertyOrder": 1,
+            "required": false,
+            "$ref": "prerequisites.json"
+        },
+        "delay_actions_by_ticks": {
+            "propertyOrder": 2,
+            "required": false,
+            "$ref": "delay_actions_by_ticks.json"
+        },
+        "actions": {
+            "propertyOrder": 3,
+            "required": true,
+            "$ref": "actions.json"
+        }
+    }
+}

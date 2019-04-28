@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>ScriptedQuests Quest Editor</title>
+    <title>ScriptedQuests Player Clickable Commands Editor</title>
 
     <!-- Foundation CSS framework (Bootstrap and jQueryUI also supported) -->
     <link rel='stylesheet' href='//cdn.jsdelivr.net/bootstrap/3.2.0/css/bootstrap.css'>
@@ -20,8 +20,8 @@
 <div class='container'>
     <div class='row' style='padding-bottom: 15px;'>
         <div class='col-md-12'>
-            <h1>ScriptedQuests Quest Editor</h1>
-            <p>Quest Compass data is stored as a separate file, as quests data is npc specific, and compass data is quest specific.</p>
+            <h1>ScriptedQuests Player Clickable Commands Editor</h1>
+            <p>Each of these is a command players can run via '/clickable label' that triggers this action text. This is useful for signs and books with clickable links. Players have access to run these any time (even if they don't have the book!) so using prerequisites is essential</p>
             <br>
             <a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html">Entity Types</a>
             <br>
@@ -53,35 +53,29 @@
 
         // The schema for the editor
         schema: {
-            title: "Quest NPC",
+            title: "Player Clickable Command",
             defaultProperties: [
-                "npc",
+                "label",
                 "quest_components"
             ],
             additionalProperties:false,
             properties: {
-                npc: {
+                label: {
                     required: true,
                     propertyOrder: 1,
-                    title: "npc",
-                    description: "NPC's name. Will be the NPC's display_name if that is not specified. Any characters except a-zA-Z0-9 will be stripped to create a condensed name to use with /interactnpc",
+                    title: "label",
+                    description: "Unique label that identifies this player-sent clickable interaction",
                     type: "string"
                 },
                 display_name: {
                     propertyOrder: 2,
                     title: "display_name",
-                    description: "NPC's name as displayed in chat messages sent from the NPC. Can contain spaces and technically colors, though use of colors is discouraged here.",
-                    type: "string"
-                },
-                entity_type: {
-                    propertyOrder: 3,
-                    title: "entity_type",
-                    description: "Bukkit/Spigot EntityType. Can be any of these choices: VILLAGER (default), ARMOR_STAND, BAT, BLAZE, CAVE_SPIDER, CHICKEN, COW, CREEPER, DONKEY, ELDER_GUARDIAN, ENDER_DRAGON, ENDERMAN, ENDERMITE, EVOKER, GHAST, GIANT, GUARDIAN, HORSE, HUSK, ILLUSIONER, IRON_GOLEM, LLAMA, MAGMA_CUBE, MULE, MUSHROOM_COW, OCELOT, PARROT, PIG, PIG_ZOMBIE, POLAR_BEAR, RABBIT, SHEEP, SHULKER, SILVERFISH, SKELETON, SKELETON_HORSE, SLIME, SNOWMAN, SPIDER, SQUID, STRAY, VEX, VINDICATOR, WITCH, WITHER, WITHER_SKELETON, WOLF, ZOMBIE, ZOMBIE_HORSE, ZOMBIE_VILLAGER",
+                    description: "Optional display name of the NPC, necessary if regular text is used in dialog",
                     type: "string"
                 },
                 quest_components: {
                     required: true,
-                    propertyOrder: 4,
+                    propertyOrder: 3,
                     title: "quest_components",
                     description: "A list of actions with associated prerequisites",
                     type: "array",
