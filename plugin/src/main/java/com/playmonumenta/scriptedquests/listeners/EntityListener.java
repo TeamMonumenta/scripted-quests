@@ -28,6 +28,9 @@ public class EntityListener implements Listener {
 
 		if (damager instanceof Player) {
 			Player player = (Player)damager;
+			if (player.isRiptiding()) {
+				return;
+			}
 
 			QuestNpc npc = mPlugin.mNpcManager.getInteractNPC(damagee.getCustomName(), damagee.getType());
 			if (npc != null) {
