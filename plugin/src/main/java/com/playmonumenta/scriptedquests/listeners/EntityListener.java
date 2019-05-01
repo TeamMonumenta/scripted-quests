@@ -9,7 +9,9 @@ import org.bukkit.event.entity.AreaEffectCloudApplyEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
+import org.bukkit.potion.PotionEffectType;
 
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.QuestNpc;
@@ -59,6 +61,22 @@ public class EntityListener implements Listener {
 			if (cause != DamageCause.CUSTOM && cause != DamageCause.VOID) {
 				/* This is a quest NPC - refuse to damage it */
 				event.setCancelled(true);
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void EntityPotionEffectEvent(EntityPotionEffectEvent event) {
+		if (!event.isCancelled()) {
+			Entity damagee = event.getEntity();
+
+			QuestNpc npc = mPlugin.mNpcManager.getInteractNPC(damagee.getCustomName(), damagee.getType());
+			if (npc != null) {
+				if (event.getAction().equals(EntityPotionEffectEvent.Action.ADDED) &&
+					!event.getNewEffect().getType().equals(PotionEffectType.HEAL)) {
+					/* Can not apply potion effects to NPCs */
+					event.setCancelled(true);
+				}
 			}
 		}
 	}
