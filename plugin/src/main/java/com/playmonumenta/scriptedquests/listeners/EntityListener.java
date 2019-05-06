@@ -54,7 +54,7 @@ public class EntityListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
-	public void EntityCombustByBlockEvent(EntityDamageEvent event) {
+	public void EntityCombustByBlockEvent(EntityCombustByBlockEvent event) {
 		if (!event.isCancelled()) {
 			Entity damagee = event.getEntity();
 
@@ -67,7 +67,7 @@ public class EntityListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
-	public void EntityCombustByEntityEvent(EntityDamageEvent event) {
+	public void EntityCombustByEntityEvent(EntityCombustByEntityEvent event) {
 		if (!event.isCancelled()) {
 			Entity damagee = event.getEntity();
 
