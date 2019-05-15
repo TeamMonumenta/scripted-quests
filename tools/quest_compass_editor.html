@@ -77,8 +77,7 @@
                     // The object will start with only these properties
                     defaultProperties: [
                         "prerequisites",
-                        "x",
-                        "z",
+                        "waypoints",
                         "message"
                     ],
                     additionalProperties:false,
@@ -88,15 +87,18 @@
                             propertyOrder: 1,
                             $ref: "schema/prerequisites.json"
                         },
-                        x: {
+                        waypoints: {
                             required: true,
                             propertyOrder: 2,
-							$ref: "schema/coordinate.json",
-                        },
-                        z: {
-                            required: true,
-                            propertyOrder: 3,
-							$ref: "schema/coordinate.json",
+                            title: "waypoints",
+                            description: "Ordered list of waypoints to reach this objective",
+                            type: "array",
+                            format: "tabs",
+                            minItems: 1,
+                            items: {
+                                headerTemplate: "{{self.x}}, {{self.y}}, {{self.z}}",
+                                $ref: "schema/xyz.json"
+                            }
                         },
                         message: {
                             required: true,

@@ -1,0 +1,21 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "x": {
+            "required": true,
+            "$ref": "coordinate.json",
+            "propertyOrder": 1
+        },
+        "y": {
+            "required": true,
+            "$ref": "coordinate.json",
+            "propertyOrder": 2
+        },
+        "z": {
+            "required": true,
+            "$ref": "coordinate.json",
+            "propertyOrder": 3
+		}
+    }
+}
