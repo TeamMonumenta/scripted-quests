@@ -36,7 +36,7 @@ public class MessagingUtils {
 
 	public static void sendActionBarMessage(Player player, ChatColor color, boolean bold, String message) {
 		message = translatePlayerName(player, message);
-		TextComponent formattedMessage = new TextComponent(message);
+		TextComponent formattedMessage = new TextComponent(TextComponent.fromLegacyText(message));
 		formattedMessage.setColor(color);
 		formattedMessage.setBold(bold);
 		player.spigot().sendMessage(ChatMessageType.ACTION_BAR, formattedMessage);
@@ -44,9 +44,9 @@ public class MessagingUtils {
 
 	public static void sendNPCMessage(Player player, String displayName, String message) {
 		message = ChatColor.translateAlternateColorCodes('&',translatePlayerName(player, message));
-		TextComponent formattedMessage = new TextComponent("[" + displayName + "] ");
+		TextComponent formattedMessage = new TextComponent(TextComponent.fromLegacyText("[" + displayName + "] "));
 		formattedMessage.setColor(ChatColor.GOLD);
-		TextComponent tempText = new TextComponent(message);
+		TextComponent tempText = new TextComponent(TextComponent.fromLegacyText(message));
 		tempText.setColor(ChatColor.WHITE);
 		formattedMessage.addExtra(tempText);
 
@@ -59,13 +59,13 @@ public class MessagingUtils {
 	public static void sendRawMessage(Player player, String message) {
 		message = translatePlayerName(player, message);
 		String noAlternateColorCodes = ChatColor.translateAlternateColorCodes('&',message);
-		player.spigot().sendMessage(ChatMessageType.SYSTEM,TextComponent.fromLegacyText(noAlternateColorCodes));
+		player.spigot().sendMessage(ChatMessageType.SYSTEM, TextComponent.fromLegacyText(noAlternateColorCodes));
 	}
 
 	public static void sendClickableNPCMessage(Plugin plugin, Player player, String message,
 	                                           String commandStr) {
 		message = translatePlayerName(player, message);
-		TextComponent formattedMessage = new TextComponent("[" + message + "]");
+		TextComponent formattedMessage = new TextComponent(TextComponent.fromLegacyText("[" + message + "]"));
 		formattedMessage.setColor(ChatColor.LIGHT_PURPLE);
 		formattedMessage.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, commandStr));
 
@@ -79,7 +79,7 @@ public class MessagingUtils {
 		TextComponent formattedMessage;
 		String errorMessage = e.getLocalizedMessage();
 		if (errorMessage != null) {
-			formattedMessage = new TextComponent(errorMessage);
+			formattedMessage = new TextComponent(TextComponent.fromLegacyText(errorMessage));
 		} else {
 			formattedMessage = new
 			TextComponent("An error occured without a set message. Hover for stack trace.");
