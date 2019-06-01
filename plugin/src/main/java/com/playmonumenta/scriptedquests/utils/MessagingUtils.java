@@ -43,7 +43,7 @@ public class MessagingUtils {
 	}
 
 	public static void sendNPCMessage(Player player, String displayName, String message) {
-		message = translatePlayerName(player, message);
+		message = ChatColor.translateAlternateColorCodes('&',translatePlayerName(player, message));
 		TextComponent formattedMessage = new TextComponent("[" + displayName + "] ");
 		formattedMessage.setColor(ChatColor.GOLD);
 		TextComponent tempText = new TextComponent(message);
