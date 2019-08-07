@@ -124,6 +124,9 @@ public class NpcTrader {
 					if (!villager.isTrading()) {
 						villager.removeMetadata(TRADER_MODIFIED_METAKEY, plugin);
 						villager.setRecipes(origRecipes);
+						this.cancel();
+					} else if (!villager.isValid() || villager.isDead()) {
+						this.cancel();
 					}
 				}
 			}.runTaskTimer(plugin, 1, 1);
