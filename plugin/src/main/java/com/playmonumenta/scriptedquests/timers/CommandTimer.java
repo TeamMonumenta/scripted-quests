@@ -84,17 +84,32 @@ public class CommandTimer implements Listener {
 			return;
 		}
 
-		int playerRange = -1;
+		int playerRangeTemp = -1;
 
 		for (String tag : tags) {
 			if (tag.startsWith("range=")) {
-				playerRange = Integer.parseInt(tag.substring(6));
+				playerRangeTemp = Integer.parseInt(tag.substring(6));
+				break;
 			}
 		}
 
-		Location loc = entity.getLocation().subtract(0, 1, 0);
-		TimerCoords coords = new TimerCoords(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+		final int playerRange = playerRangeTemp;
+		final Location loc = entity.getLocation().subtract(0, 1, 0);
+		final TimerCoords coords = new TimerCoords(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
 
+		if (!tryAddTimer(entity, tags, playerRange, loc, coords)) {
+			// Adding initially failed, try exactly one more time in 10 ticks
+			new BukkitRunnable() {
+				@Override
+				public void run() {
+					tryAddTimer(entity, tags, playerRange, loc, coords);
+				}
+			}.runTaskLater(mPlugin, 10);
+		}
+	}
+
+	/* Tries to add the timer. Returns true if successful, false if not */
+	private boolean tryAddTimer(final ArmorStand entity, final Set<String> tags, final int playerRange, final Location loc, final TimerCoords coords) {
 		CommandTimerInstance timer;
 
 		if (tags.contains("repeat")) {
@@ -104,7 +119,7 @@ public class CommandTimer implements Listener {
 				entity.setCustomNameVisible(true);
 				entity.setCustomName(ChatColor.RED + "" + ChatColor.BOLD + "Timer: INVALID BLOCK");
 				mPlugin.getLogger().warning("Timer is missing repeating command block at " + loc.toString());
-				return;
+				return false;
 			}
 		} else {
 			if (loc.getBlock().getType().equals(Material.COMMAND_BLOCK)) {
@@ -113,7 +128,7 @@ public class CommandTimer implements Listener {
 				entity.setCustomNameVisible(true);
 				entity.setCustomName(ChatColor.RED + "" + ChatColor.BOLD + "Timer: INVALID BLOCK");
 				mPlugin.getLogger().warning("Timer is missing impulse command block at " + loc.toString());
-				return;
+				return false;
 			}
 		}
 
@@ -138,6 +153,8 @@ public class CommandTimer implements Listener {
 				timer.setName(entity);
 			}
 		}
+
+		return true;
 	}
 
 	public void tellTimers(CommandSender sender, boolean enabledOnly) {
