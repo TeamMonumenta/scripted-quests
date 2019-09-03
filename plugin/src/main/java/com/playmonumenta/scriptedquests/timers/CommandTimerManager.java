@@ -19,7 +19,6 @@ import org.bukkit.event.world.ChunkUnloadEvent;
 import com.playmonumenta.scriptedquests.Plugin;
 
 public class CommandTimerManager implements Listener {
-
 	private final Plugin mPlugin;
 	private final Map<Integer, CommandTimer> mCommandTimers;
 

@@ -3,6 +3,7 @@ package com.playmonumenta.scriptedquests.timers;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.UUID;
 
 import org.bukkit.ChatColor;
@@ -17,6 +18,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 import com.playmonumenta.scriptedquests.Plugin;
 
 public class CommandTimer implements Listener {
+	private final TreeMap<TimerCoords, ArmorStand> mCoords = new TreeMap<>();
+
 	private final Plugin mPlugin;
 	private final Map<UUID, CommandTimerInstance> mTimers;
 	private final BukkitRunnable mRunnable;
@@ -60,6 +63,7 @@ public class CommandTimer implements Listener {
 		CommandTimerInstance timer = mTimers.get(entity.getUniqueId());
 		if (timer != null) {
 			timer.unload(mPlugin);
+			mCoords.remove(timer.getCoords());
 			mTimers.remove(entity.getUniqueId());
 		}
 	}
@@ -70,6 +74,7 @@ public class CommandTimer implements Listener {
 		}
 		mTimers.clear();
 		mRunnable.cancel();
+		mCoords.clear();
 	}
 
 	public void addEntity(final ArmorStand entity, final Set<String> tags) {
@@ -88,12 +93,13 @@ public class CommandTimer implements Listener {
 		}
 
 		Location loc = entity.getLocation().subtract(0, 1, 0);
+		TimerCoords coords = new TimerCoords(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
 
 		CommandTimerInstance timer;
 
 		if (tags.contains("repeat")) {
 			if (loc.getBlock().getType().equals(Material.REPEATING_COMMAND_BLOCK)) {
-				timer = new CommandTimerInstance(loc, mPeriodStr, playerRange, true);
+				timer = new CommandTimerInstance(loc, coords, mPeriodStr, playerRange, true);
 			} else {
 				entity.setCustomNameVisible(true);
 				entity.setCustomName(ChatColor.RED + "" + ChatColor.BOLD + "Timer: INVALID BLOCK");
@@ -102,7 +108,7 @@ public class CommandTimer implements Listener {
 			}
 		} else {
 			if (loc.getBlock().getType().equals(Material.COMMAND_BLOCK)) {
-				timer = new CommandTimerInstance(loc, mPeriodStr, playerRange, false);
+				timer = new CommandTimerInstance(loc, coords, mPeriodStr, playerRange, false);
 			} else {
 				entity.setCustomNameVisible(true);
 				entity.setCustomName(ChatColor.RED + "" + ChatColor.BOLD + "Timer: INVALID BLOCK");
@@ -110,6 +116,15 @@ public class CommandTimer implements Listener {
 				return;
 			}
 		}
+
+		/* Store a reference to the location where this timer sits */
+		ArmorStand existing = mCoords.get(coords);
+		if (existing != null) {
+			/* There is already a timer here! Unload and kill it */
+			unload(existing);
+			existing.remove();
+		}
+		mCoords.put(coords, entity);
 
 		mTimers.put(entity.getUniqueId(), timer);
 

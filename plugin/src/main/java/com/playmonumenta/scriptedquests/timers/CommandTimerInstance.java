@@ -16,6 +16,7 @@ import com.playmonumenta.scriptedquests.Plugin;
 
 public class CommandTimerInstance {
 	private final Location mLoc;
+	private final TimerCoords mCoords;
 	private final String mPeriodStr;
 	private final int mPlayerRange;
 	private final boolean mRepeat;
@@ -28,8 +29,9 @@ public class CommandTimerInstance {
 	 */
 	private boolean mRepeaterEnabled = true;
 
-	public CommandTimerInstance(Location loc, String periodStr, int playerRange, boolean repeat) {
+	public CommandTimerInstance(Location loc, TimerCoords coords, String periodStr, int playerRange, boolean repeat) {
 		mLoc = loc;
+		mCoords = coords;
 		mPeriodStr = periodStr;
 		mPlayerRange = playerRange;
 		mRepeat = repeat;
@@ -94,6 +96,10 @@ public class CommandTimerInstance {
 			   Integer.toString(mLoc.getBlockY()) + " " +
 			   Integer.toString(mLoc.getBlockZ()) + " " +
 			   getName();
+	}
+
+	public TimerCoords getCoords() {
+		return mCoords;
 	}
 
 	private static java.lang.reflect.Method cachedHandleMethod = null;
