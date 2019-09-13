@@ -12,6 +12,8 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.playmonumenta.scriptedquests.commands.Clickable;
+import com.playmonumenta.scriptedquests.commands.Code;
+import com.playmonumenta.scriptedquests.commands.GenerateCode;
 import com.playmonumenta.scriptedquests.commands.GiveLootTable;
 import com.playmonumenta.scriptedquests.commands.HasPermission;
 import com.playmonumenta.scriptedquests.commands.InteractNpc;
@@ -25,6 +27,7 @@ import com.playmonumenta.scriptedquests.commands.TimerDebug;
 import com.playmonumenta.scriptedquests.listeners.EntityListener;
 import com.playmonumenta.scriptedquests.listeners.PlayerListener;
 import com.playmonumenta.scriptedquests.managers.ClickableManager;
+import com.playmonumenta.scriptedquests.managers.CodeManager;
 import com.playmonumenta.scriptedquests.managers.NpcTradeManager;
 import com.playmonumenta.scriptedquests.managers.QuestCompassManager;
 import com.playmonumenta.scriptedquests.managers.QuestDeathManager;
@@ -47,6 +50,7 @@ public class Plugin extends JavaPlugin {
 	public RaceManager mRaceManager;
 	public NpcTradeManager mTradeManager;
 	public CommandTimerManager mTimerManager;
+	public CodeManager mCodeManager;
 
 	public World mWorld;
 	public Random mRandom = new Random();
@@ -68,6 +72,8 @@ public class Plugin extends JavaPlugin {
 		RandomNumber.register();
 		HasPermission.register();
 		TimerDebug.register(this);
+		GenerateCode.register(this);
+		Code.register(this);
 
 		mScheduledFunctionsManager = new ScheduleFunction(this);
 	}
@@ -88,6 +94,7 @@ public class Plugin extends JavaPlugin {
 		mDeathManager = new QuestDeathManager(this);
 		mRaceManager = new RaceManager(this);
 		mTimerManager = new CommandTimerManager(this);
+		mCodeManager = new CodeManager(this);
 
 		manager.registerEvents(new EntityListener(this), this);
 		manager.registerEvents(new PlayerListener(this), this);
@@ -121,6 +128,7 @@ public class Plugin extends JavaPlugin {
 		mLoginManager.reload(this, sender);
 		mDeathManager.reload(this, sender);
 		mRaceManager.reload(this, sender);
+		mCodeManager.reload(this, sender);
 	}
 
 	private void reloadConfigYaml(CommandSender sender) {
