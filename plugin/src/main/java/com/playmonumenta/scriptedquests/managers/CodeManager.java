@@ -62,7 +62,7 @@ public class CodeManager {
 			code = entry.getCodeForPlayer(player);
 		}
 
-		player.sendMessage(ChatColor.GOLD + " " + ChatColor.BOLD + code);
+		player.sendMessage(ChatColor.GOLD + " " + ChatColor.BOLD + "/code " + code);
 	}
 }
 
