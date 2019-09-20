@@ -188,6 +188,13 @@
             "description": "Returns true if all contained prerequisites are false, false otherwise",
             "type": "object",
             "$ref": "prerequisites.json"
+        },
+        "only_one_of": {
+            "propertyOrder": 12,
+            "title": "only_one_of",
+            "description": "Returns true if exactly one contained prerequisite is true, false otherwise",
+            "type": "object",
+            "$ref": "prerequisites.json"
         }
     }
 }

@@ -48,6 +48,7 @@ public class QuestPrerequisites implements PrerequisiteBase {
 			case "or":
 			case "not_and":
 			case "not_or":
+			case "only_one_of":
 				mPrerequisites.add(new QuestPrerequisites(value, key, false));
 				break;
 			case "use_npc_for_prereqs":
@@ -171,6 +172,25 @@ public class QuestPrerequisites implements PrerequisiteBase {
 				}
 			}
 			return false;
+		case "only_one_of":
+			boolean val = false;
+			for (PrerequisiteBase prerequisite : mPrerequisites) {
+				if (prerequisite.prerequisiteMet(entity, npc)) {
+					if (val) {
+						/*
+						 * Had a true value, then another true value
+						 * Definitely not only_one_of
+						 */
+						return false;
+					} else {
+						/*
+						 * No true value yet - store it and keep looping
+						 */
+						val = true;
+					}
+				}
+			}
+			return val;
 		default: // "and"
 			for (PrerequisiteBase prerequisite : mPrerequisites) {
 				if (!prerequisite.prerequisiteMet(entity, npc)) {
