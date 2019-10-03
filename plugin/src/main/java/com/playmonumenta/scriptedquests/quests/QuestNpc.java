@@ -126,6 +126,6 @@ public class QuestNpc {
 	}
 
 	public static String squashNpcName(String name) {
-		return ChatColor.stripColor(name).replaceAll("[^a-zA-Z0-9]", "");
+		return ChatColor.stripColor(name).replaceAll("[^a-zA-Z0-9-]", "");
 	}
 }
