@@ -14,6 +14,7 @@ import com.playmonumenta.scriptedquests.quests.components.prerequisites.Prerequi
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteCheckAdvancements;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteCheckScores;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteCheckTags;
+import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteFullyHealed;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteItemInHand;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteItemsInInventory;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteLocation;
@@ -124,6 +125,9 @@ public class QuestPrerequisites implements PrerequisiteBase {
 				break;
 			case "location":
 				mPrerequisites.add(new PrerequisiteLocation(value));
+				break;
+			case "is_fully_healed":
+				mPrerequisites.add(new PrerequisiteFullyHealed(value));
 				break;
 			default:
 				throw new Exception("Unknown prerequisites key: '" + key + "'");
