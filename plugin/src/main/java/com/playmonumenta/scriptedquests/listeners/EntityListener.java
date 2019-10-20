@@ -13,13 +13,14 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.QuestNpc;
 
 public class EntityListener implements Listener {
-	Plugin mPlugin;
+	private Plugin mPlugin;
 
 	public EntityListener(Plugin plugin) {
 		mPlugin = plugin;
@@ -32,6 +33,7 @@ public class EntityListener implements Listener {
 
 		if (damager instanceof Player) {
 			Player player = (Player)damager;
+			ItemStack item = player.getInventory().getItemInMainHand();
 			if (player.isRiptiding()) {
 				return;
 			}
@@ -49,6 +51,8 @@ public class EntityListener implements Listener {
 					mPlugin.mNpcManager.interactEvent(mPlugin, player, damagee.getCustomName(),
 					                                  damagee.getType(), damagee, npc, false);
 				}
+			} else {
+				mPlugin.mInteractableManager.attackEntityEvent(mPlugin, player, item, damagee);
 			}
 		}
 	}

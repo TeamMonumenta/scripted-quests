@@ -87,6 +87,7 @@ the various quest options
 - Trader Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/trader_editor.html
 - Redeemable Codes Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/code_editor.html
 - Clickable Actions Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/clickable_editor.html
+- Interactable Items Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/interactable_editor.html
 
 ## <a name="structure"></a>Structure of a Quests File:
 Each quest file has the following info:

@@ -17,6 +17,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -30,7 +31,7 @@ import com.playmonumenta.scriptedquests.trades.NpcTrader;
 import com.playmonumenta.scriptedquests.utils.MetadataUtils;
 
 public class PlayerListener implements Listener {
-	Plugin mPlugin = null;
+	private Plugin mPlugin = null;
 
 	public PlayerListener(Plugin plugin) {
 		mPlugin = plugin;
@@ -41,6 +42,8 @@ public class PlayerListener implements Listener {
 		Action action = event.getAction();
 		Player player = event.getPlayer();
 		ItemStack item = event.getItem();
+
+		mPlugin.mInteractableManager.interactEvent(mPlugin, player, item, action);
 
 		if (item != null && item.getType() == Material.COMPASS &&
 		    player != null && !player.isSneaking()) {
@@ -67,6 +70,15 @@ public class PlayerListener implements Listener {
 			if (!villager.isTrading() && MetadataUtils.checkOnceThisTick(mPlugin, player, "ScriptedQuestsTraderNonce")) {
 				mPlugin.mTradeManager.setNpcTrades(mPlugin, villager, player);
 			}
+		}
+		if (!event.isCancelled()) {
+			ItemStack item;
+			if (event.getHand() == EquipmentSlot.HAND) {
+				item = player.getInventory().getItemInMainHand();
+			} else {
+				item = player.getInventory().getItemInOffHand();
+			}
+			mPlugin.mInteractableManager.interactEntityEvent(mPlugin, player, item, entity);
 		}
 	}
 
