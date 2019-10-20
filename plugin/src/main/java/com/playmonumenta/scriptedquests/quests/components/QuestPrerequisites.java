@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteGamemode;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteItemInEitherHand;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteItemInOffHand;
 import org.bukkit.entity.Entity;
@@ -157,6 +158,9 @@ public class QuestPrerequisites implements PrerequisiteBase {
 				break;
 			case "is_sneaking":
 				mPrerequisites.add(new PrerequisiteSneaking(value));
+				break;
+			case "gamemode":
+				mPrerequisites.add(new PrerequisiteGamemode(value));
 				break;
 			default:
 				throw new Exception("Unknown prerequisites key: '" + key + "'");
