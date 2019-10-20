@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteItemInOffHand;
 import org.bukkit.entity.Entity;
 
 import com.google.gson.JsonArray;
@@ -115,9 +116,20 @@ public class QuestPrerequisites implements PrerequisiteBase {
 						throw new Exception("Prerequisites value for key '" + key + "' is not an array!");
 					}
 
-					Iterator<JsonElement> iter = array.iterator();
-					while (iter.hasNext()) {
-						mPrerequisites.add(new PrerequisiteItemInHand(iter.next()));
+					for (JsonElement jsonElement : array) {
+						mPrerequisites.add(new PrerequisiteItemInHand(jsonElement));
+					}
+				}
+				break;
+			case "item_in_off_hand":
+				{
+					JsonArray array = value.getAsJsonArray();
+					if (array == null) {
+						throw new Exception("Prerequisites value for key '" + key + "' is not an array!");
+					}
+
+					for (JsonElement jsonElement : array) {
+						mPrerequisites.add(new PrerequisiteItemInOffHand(jsonElement));
 					}
 				}
 				break;
