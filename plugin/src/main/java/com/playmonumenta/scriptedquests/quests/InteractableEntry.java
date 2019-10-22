@@ -17,10 +17,11 @@ import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
 
 public class InteractableEntry {
-	public static enum InteractType {
+	public enum InteractType {
 		RIGHT_CLICK_AIR,
 		RIGHT_CLICK_BLOCK,
 		RIGHT_CLICK_ENTITY,
+		RIGHT_CLICK_FUNCTIONAL,
 		LEFT_CLICK_AIR,
 		LEFT_CLICK_BLOCK,
 		LEFT_CLICK_ENTITY;
@@ -33,6 +34,8 @@ public class InteractableEntry {
 					return RIGHT_CLICK_BLOCK;
 				case "right_click_entity":
 					return RIGHT_CLICK_ENTITY;
+				case "right_click_functional":
+					return RIGHT_CLICK_FUNCTIONAL;
 				case "left_click_air":
 					return LEFT_CLICK_AIR;
 				case "left_click_block":

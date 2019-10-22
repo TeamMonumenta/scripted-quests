@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
@@ -42,8 +43,9 @@ public class PlayerListener implements Listener {
 		Action action = event.getAction();
 		Player player = event.getPlayer();
 		ItemStack item = event.getItem();
+		Block block = event.getClickedBlock();
 
-		mPlugin.mInteractableManager.interactEvent(mPlugin, player, item, action);
+		mPlugin.mInteractableManager.interactEvent(mPlugin, player, item, block, action);
 
 		if (item != null && item.getType() == Material.COMPASS &&
 		    player != null && !player.isSneaking()) {

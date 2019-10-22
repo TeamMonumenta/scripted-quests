@@ -5,7 +5,9 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
+import com.playmonumenta.scriptedquests.utils.MaterialUtils;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -42,7 +44,7 @@ public class InteractableManager {
 		});
 	}
 
-	public void interactEvent(Plugin plugin, Player player, ItemStack item, Action action) {
+	public void interactEvent(Plugin plugin, Player player, ItemStack item, Block block, Action action) {
 		if (item != null && mInteractables.containsKey(item.getType())) {
 			InteractType interact;
 			switch (action) {
@@ -50,7 +52,7 @@ public class InteractableManager {
 					interact = InteractType.RIGHT_CLICK_AIR;
 					break;
 				case RIGHT_CLICK_BLOCK:
-					interact = InteractType.RIGHT_CLICK_BLOCK;
+					interact = (block != null && MaterialUtils.isInteractableBlock(block.getType())) ? InteractType.RIGHT_CLICK_FUNCTIONAL : InteractType.RIGHT_CLICK_BLOCK;
 					break;
 				case LEFT_CLICK_AIR:
 					interact = InteractType.LEFT_CLICK_AIR;
