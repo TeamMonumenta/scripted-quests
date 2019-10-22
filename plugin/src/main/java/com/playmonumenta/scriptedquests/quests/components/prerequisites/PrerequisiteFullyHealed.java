@@ -17,7 +17,7 @@ public class PrerequisiteFullyHealed implements PrerequisiteBase {
 	public boolean prerequisiteMet(Entity entity, Entity npcEntity) {
 		if (entity instanceof LivingEntity) {
 			LivingEntity le = (LivingEntity)entity;
-			return !(mValue ^ (le.getHealth() > le.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() - 0.5));
+			return mValue == (le.getHealth() > le.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() - 0.5);
 		}
 		return mValue;
 	}
