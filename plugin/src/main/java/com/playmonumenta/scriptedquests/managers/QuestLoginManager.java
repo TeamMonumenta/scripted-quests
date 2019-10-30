@@ -21,10 +21,6 @@ public class QuestLoginManager {
 		});
 	}
 
-	public QuestLoginManager(Plugin plugin) {
-		reload(plugin, null);
-	}
-
 	public boolean loginEvent(Plugin plugin, PlayerJoinEvent event) {
 		boolean success = false;
 

@@ -52,10 +52,6 @@ public class QuestCompassManager {
 	private final List<QuestCompass> mQuests = new ArrayList<QuestCompass>();
 	private final Map<UUID, CompassCacheEntry> mCompassCache = new HashMap<UUID, CompassCacheEntry>();
 
-	public QuestCompassManager(Plugin plugin) {
-		reload(plugin, null);
-	}
-
 	/*
 	 * If sender is non-null, it will be sent debugging information
 	 */

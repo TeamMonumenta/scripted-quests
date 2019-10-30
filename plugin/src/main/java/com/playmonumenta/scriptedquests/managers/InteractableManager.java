@@ -22,10 +22,6 @@ import com.playmonumenta.scriptedquests.utils.QuestUtils;
 public class InteractableManager {
 	private final Map<Material, List<InteractableEntry>> mInteractables = new EnumMap<>(Material.class);
 
-	public InteractableManager(Plugin plugin) {
-		reload(plugin, null);
-	}
-
 	/*
 	 * If sender is non-null, it will be sent debugging information
 	 */

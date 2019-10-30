@@ -10,6 +10,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import com.playmonumenta.scriptedquests.commands.Clickable;
 import com.playmonumenta.scriptedquests.commands.Code;
@@ -27,8 +28,8 @@ import com.playmonumenta.scriptedquests.commands.TimerDebug;
 import com.playmonumenta.scriptedquests.listeners.EntityListener;
 import com.playmonumenta.scriptedquests.listeners.PlayerListener;
 import com.playmonumenta.scriptedquests.managers.ClickableManager;
-import com.playmonumenta.scriptedquests.managers.InteractableManager;
 import com.playmonumenta.scriptedquests.managers.CodeManager;
+import com.playmonumenta.scriptedquests.managers.InteractableManager;
 import com.playmonumenta.scriptedquests.managers.NpcTradeManager;
 import com.playmonumenta.scriptedquests.managers.QuestCompassManager;
 import com.playmonumenta.scriptedquests.managers.QuestDeathManager;
@@ -88,16 +89,17 @@ public class Plugin extends JavaPlugin {
 
 		mWorld = Bukkit.getWorlds().get(0);
 
-		mQuestCompassManager = new QuestCompassManager(this);
+		mQuestCompassManager = new QuestCompassManager();
 		mNpcManager = new QuestNpcManager(this);
-		mClickableManager = new ClickableManager(this);
-		mInteractableManager = new InteractableManager(this);
-		mTradeManager = new NpcTradeManager(this);
-		mLoginManager = new QuestLoginManager(this);
-		mDeathManager = new QuestDeathManager(this);
-		mRaceManager = new RaceManager(this);
+		mClickableManager = new ClickableManager();
+		mInteractableManager = new InteractableManager();
+		mTradeManager = new NpcTradeManager();
+		mLoginManager = new QuestLoginManager();
+		mDeathManager = new QuestDeathManager();
+		mRaceManager = new RaceManager();
+		mCodeManager = new CodeManager();
+
 		mTimerManager = new CommandTimerManager(this);
-		mCodeManager = new CodeManager(this);
 
 		manager.registerEvents(new EntityListener(this), this);
 		manager.registerEvents(new PlayerListener(this), this);
@@ -105,6 +107,14 @@ public class Plugin extends JavaPlugin {
 
 		getCommand("reloadQuests").setExecutor(new ReloadQuests(this));
 		getCommand("questTrigger").setExecutor(new QuestTrigger(this));
+
+		/* Load the config 1 tick later to let other plugins load */
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				reloadConfig(null);
+			}
+		}.runTaskLater(this, 1);
 	}
 
 	@Override

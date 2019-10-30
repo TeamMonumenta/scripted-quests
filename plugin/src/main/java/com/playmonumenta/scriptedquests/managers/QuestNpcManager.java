@@ -56,7 +56,6 @@ public class QuestNpcManager {
 
 	public QuestNpcManager(Plugin plugin) {
 		mPlugin = plugin;
-		reload(plugin, null);
 	}
 
 	public QuestNpc getInteractNPC(String npcName, EntityType entityType) {

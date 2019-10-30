@@ -35,10 +35,6 @@ public class CodeManager {
 		});
 	}
 
-	public CodeManager(Plugin plugin) {
-		reload(plugin, null);
-	}
-
 	public void playerEnteredCodeEvent(Plugin plugin, Player player, String code) {
 		boolean success = false;
 		for (CodeEntry entry : mCodes.values()) {

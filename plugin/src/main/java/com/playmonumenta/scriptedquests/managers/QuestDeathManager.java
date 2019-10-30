@@ -21,10 +21,6 @@ public class QuestDeathManager {
 		});
 	}
 
-	public QuestDeathManager(Plugin plugin) {
-		reload(plugin, null);
-	}
-
 	public boolean deathEvent(Plugin plugin, PlayerDeathEvent event) {
 		/* Try each available death-triggered quest */
 		for (QuestDeath death : mDeaths) {

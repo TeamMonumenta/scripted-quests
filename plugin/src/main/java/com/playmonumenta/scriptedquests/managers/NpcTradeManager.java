@@ -33,10 +33,6 @@ public class NpcTradeManager {
 		});
 	}
 
-	public NpcTradeManager(Plugin plugin) {
-		reload(plugin, null);
-	}
-
 	public void setNpcTrades(Plugin plugin, Villager villager, Player player) {
 		if (villager.getCustomName() != null) {
 			NpcTrader trader = mTraders.get(QuestNpc.squashNpcName(villager.getCustomName()));

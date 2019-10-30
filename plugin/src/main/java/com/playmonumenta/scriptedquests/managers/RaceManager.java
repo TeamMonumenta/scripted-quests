@@ -65,10 +65,6 @@ public class RaceManager {
 		mRunnable.runTaskTimer(plugin, 0, 2);
 	}
 
-	public RaceManager(Plugin plugin) {
-		reload(plugin, null);
-	}
-
 	public boolean isRacing(Player player) {
 		Race race = mActiveRaces.get(player.getUniqueId());
 		if (race != null) {

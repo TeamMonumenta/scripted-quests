@@ -34,10 +34,6 @@ public class ClickableManager {
 		});
 	}
 
-	public ClickableManager(Plugin plugin) {
-		reload(plugin, null);
-	}
-
 	public boolean clickEvent(Plugin plugin, Player player, String label) {
 		// Players who are racing can not click things
 		if (plugin.mRaceManager.isRacing(player)) {
