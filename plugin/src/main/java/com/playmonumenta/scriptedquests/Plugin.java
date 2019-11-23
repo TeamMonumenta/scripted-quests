@@ -24,6 +24,7 @@ import com.playmonumenta.scriptedquests.commands.Race;
 import com.playmonumenta.scriptedquests.commands.RandomNumber;
 import com.playmonumenta.scriptedquests.commands.ReloadQuests;
 import com.playmonumenta.scriptedquests.commands.ScheduleFunction;
+import com.playmonumenta.scriptedquests.commands.SetVelocity;
 import com.playmonumenta.scriptedquests.commands.TimerDebug;
 import com.playmonumenta.scriptedquests.listeners.EntityListener;
 import com.playmonumenta.scriptedquests.listeners.PlayerListener;
@@ -77,6 +78,7 @@ public class Plugin extends JavaPlugin {
 		TimerDebug.register(this);
 		GenerateCode.register(this);
 		Code.register(this);
+		SetVelocity.register();
 
 		mScheduledFunctionsManager = new ScheduleFunction(this);
 	}
