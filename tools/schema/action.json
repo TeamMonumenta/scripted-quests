@@ -143,7 +143,7 @@
         },
         "command": {
             "title": "command",
-            "description": "Runs a command via the console. Any instance of '@S' (uppercase!) will be replaced with the player's name.",
+            "description": "Runs a command via the console. Any instance of '@S' (uppercase!) will be replaced with the player's name. Any instance of '@N' (uppercase!) will be replaced with the NPC's UUID, which can be used like @e to target a specific entity. The NPC must be selected by trading or punching to use the entity UUID, or the player will receive an error instead.",
             "type": "string"
         },
         "give_loot": {
