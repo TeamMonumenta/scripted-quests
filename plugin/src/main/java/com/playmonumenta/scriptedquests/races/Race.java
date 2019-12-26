@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -67,6 +68,7 @@ public class Race {
 	private int mFrame = 0;
 	private TimeBar mTimeBar = null;
 	private boolean mCountdownActive = false;
+	private int mWRTime;
 
 	public Race(Plugin plugin, RaceManager manager, Player player, String name, String label,
 	            Objective scoreboard, boolean showStats, Location start, QuestActions startActions,
@@ -86,6 +88,7 @@ public class Race {
 
 		mWorld = player.getWorld();
 		mStopLoc = player.getLocation();
+		mWRTime = getWRTime();
 
 		// Create the ring entities in the right shape
 		Location baseLoc = mWaypoints.get(0).getPosition().toLocation(mWorld);
@@ -293,6 +296,17 @@ public class Race {
 			Score score = mScoreboard.getScore(mPlayer.getName());
 			if (!score.isScoreSet() || score.getScore() == 0 || endTime < score.getScore()) {
 				score.setScore(endTime);
+				// handle new world record
+				if (mWRTime > endTime) {
+					String cmdStr = "broadcastcommand tellraw @a [\"\",{\"text\":\"" +
+						mPlayer.getName() +
+						"\",\"color\":\"blue\"},{\"text\":\" broke a new world record time for \",\"color\":\"dark_aqua\"},{\"text\":\"" +
+						mName +
+						"\",\"color\":\"blue\"},{\"text\":\"\\nNew time: \",\"color\":\"dark_aqua\"},{\"text\":\""+
+						RaceUtils.msToTimeString(endTime) +
+						"\",\"color\":\"blue\"}]";
+					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmdStr);
+				}
 			}
 		}
 
@@ -334,13 +348,12 @@ public class Race {
 		}
 
 		//TODO: World record time first
-		/*
+
 		mPlayer.sendMessage(String.format("  %sWorld Record - %16s  | %s %s",
 										  "" + ChatColor.AQUA + ChatColor.BOLD,
-										  "" + RaceUtils.msToTimeString(wrTime),
-										  "" + ((endTime <= wrTime) ? ("" + ChatColor.AQUA + ChatColor.BOLD + "\u272A") : ("" + ChatColor.GRAY + ChatColor.BOLD + "\u272A")),
-										  "" + ((endTime <= wrTime) ? ("" + ChatColor.BLUE + ChatColor.BOLD + "( -" + RaceUtils.msToTimeString(wrTime - endTime) + ")") : ("" + ChatColor.RED + ChatColor.BOLD + "( +" + RaceUtils.msToTimeString(endTime - wrTime) + ")"))));
-										  */
+										  "" + RaceUtils.msToTimeString(mWRTime),
+										  "" + ((endTime <= mWRTime) ? ("" + ChatColor.AQUA + ChatColor.BOLD + "\u272A") : ("" + ChatColor.GRAY + ChatColor.BOLD + "\u272A")),
+										  "" + ((endTime <= mWRTime) ? ("" + ChatColor.BLUE + ChatColor.BOLD + "( -" + RaceUtils.msToTimeString(mWRTime - endTime) + ")") : ("" + ChatColor.RED + ChatColor.BOLD + "( +" + RaceUtils.msToTimeString(endTime - mWRTime) + ")"))));
 
 		int bestMedalTime = Integer.MAX_VALUE;
 		String bestMedalColor = null;
@@ -387,5 +400,17 @@ public class Race {
 				time.doActions(mPlugin, mPlayer);
 			}
 		}
+	}
+
+	private int getWRTime() {
+		int top = Integer.MAX_VALUE;
+		int score;
+		for(String name : mScoreboard.getScoreboard().getEntries()) {
+			score = mScoreboard.getScore(name).getScore();
+			if(score < top && score > 0) {
+				top = score;
+			}
+		}
+		return top;
 	}
 }
