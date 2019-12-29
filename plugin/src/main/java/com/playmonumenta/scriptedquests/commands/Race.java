@@ -48,6 +48,17 @@ public class Race {
 		);
 
 		arguments = new LinkedHashMap<>();
+		arguments.put("win", new LiteralArgument("win"));
+		arguments.put("players", new EntitySelectorArgument(EntitySelector.MANY_PLAYERS));
+		CommandAPI.getInstance().register("race",
+										  CommandPermission.NONE,
+										  arguments,
+										  (sender, args) -> {
+										  	raceWin(plugin, sender, (Collection<Player>)args[0]);
+										  }
+		);
+
+		arguments = new LinkedHashMap<>();
 		arguments.put("leaderboard", new LiteralArgument("leaderboard"));
 		arguments.put("players", new EntitySelectorArgument(EntitySelector.MANY_PLAYERS));
 		arguments.put("raceLabel", new StringArgument());
@@ -81,6 +92,18 @@ public class Race {
 			if (plugin.mRaceManager != null) {
 				for (Player player : players) {
 					plugin.mRaceManager.cancelRace(player);
+				}
+			}
+		}
+	}
+
+	private static void raceWin(Plugin plugin, CommandSender sender,
+								Collection<Player>players) {
+		// Check permission
+		if (sender.hasPermission("scriptedquests.race")) {
+			if (plugin.mRaceManager != null) {
+				for (Player player : players) {
+					plugin.mRaceManager.winRace(player);
 				}
 			}
 		}
