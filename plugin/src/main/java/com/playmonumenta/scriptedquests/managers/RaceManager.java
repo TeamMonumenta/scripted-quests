@@ -82,7 +82,7 @@ public class RaceManager {
 
 	public void cancelRaceByDeath(Player player) {
 		Race race = mActiveRaces.get(player.getUniqueId());
-		if (race != null && race.isRingless()) {
+		if (race != null && !race.isRingless()) {
 			race.lose();
 		}
 	}
