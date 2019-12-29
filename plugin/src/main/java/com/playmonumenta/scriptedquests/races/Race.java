@@ -423,4 +423,8 @@ public class Race {
 		}
 		return top;
 	}
+
+	public boolean isRingless() {
+		return mRingless;
+	}
 }
