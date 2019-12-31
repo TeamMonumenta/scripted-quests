@@ -67,8 +67,7 @@ public class ActionCommand implements ActionBase {
 				player.spigot().sendMessage(ChatMessageType.SYSTEM, TextComponent.fromLegacyText(commandErr));
 				return;
 			}
-		}
-		else {
+		} else {
 			commandStr = commandStr.replaceAll("@N", npcEntity.getUniqueId​().toString​());
 		}
 		commandStr = commandStr.replaceAll("@S", player.getName());
