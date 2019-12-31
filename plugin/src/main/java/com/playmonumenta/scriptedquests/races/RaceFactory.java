@@ -32,6 +32,7 @@ public class RaceFactory {
 	private final String mLabel;
 	private final Objective mObjective;
 	private final boolean mShowStats;
+	private final boolean mRingless;
 	private final Location mStart;
 	private final QuestActions mStartActions;
 	private final List<RaceWaypoint> mWaypoints = new ArrayList<RaceWaypoint>();
@@ -82,6 +83,15 @@ public class RaceFactory {
 			throw new Exception("'show_stats' entry is required");
 		}
 		mShowStats = show_stats.getAsBoolean();
+
+		// ringless
+		JsonElement ringless = object.get("ringless");
+		if (ringless == null) {
+			// default to not ringless
+			mRingless = false;
+		} else {
+			mRingless = show_stats.getAsBoolean();
+		}
 
 		// start
 		JsonElement start = object.get("start");
@@ -198,7 +208,7 @@ public class RaceFactory {
 
 	public Race createRace(Player player) {
 		return new Race(mPlugin, mManager, player, mName, mLabel, mObjective,
-		                mShowStats, mStart, mStartActions, mWaypoints, mTimes, mLoseActions);
+		                mShowStats, mRingless, mStart, mStartActions, mWaypoints, mTimes, mLoseActions);
 	}
 
 	public void sendLeaderboard(Player player, int page) {

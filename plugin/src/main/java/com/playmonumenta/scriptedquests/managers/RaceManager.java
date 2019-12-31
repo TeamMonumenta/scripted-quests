@@ -80,6 +80,20 @@ public class RaceManager {
 		}
 	}
 
+	public void cancelRaceByDeath(Player player) {
+		Race race = mActiveRaces.get(player.getUniqueId());
+		if (race != null && !race.isRingless()) {
+			race.lose();
+		}
+	}
+
+	public void winRace(Player player) {
+		Race race = mActiveRaces.get(player.getUniqueId());
+		if (race != null) {
+			race.win(race.getTimeElapsed());
+		}
+	}
+
 	public void cancelAllRaces() {
 		for (Race race : mActiveRaces.values()) {
 			race.abort();

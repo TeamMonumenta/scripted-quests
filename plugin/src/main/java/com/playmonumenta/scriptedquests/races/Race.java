@@ -49,6 +49,7 @@ public class Race {
 	private final String mLabel;
 	private final Objective mScoreboard;
 	private final boolean mShowStats;
+	private final boolean mRingless;
 	private final Location mStart;
 	private final QuestActions mStartActions;
 	private final List<RaceWaypoint> mWaypoints;
@@ -71,7 +72,7 @@ public class Race {
 	private int mWRTime;
 
 	public Race(Plugin plugin, RaceManager manager, Player player, String name, String label,
-	            Objective scoreboard, boolean showStats, Location start, QuestActions startActions,
+	            Objective scoreboard, boolean showStats, boolean ringless, Location start, QuestActions startActions,
 	            List<RaceWaypoint> waypoints, List<RaceTime> times, QuestActions loseActions) {
 		mPlugin = plugin;
 		mManager = manager;
@@ -80,6 +81,7 @@ public class Race {
 		mLabel = label;
 		mScoreboard = scoreboard;
 		mShowStats = showStats;
+		mRingless = ringless;
 		mStart = start;
 		mStartActions = startActions;
 		mWaypoints = waypoints;
@@ -145,7 +147,7 @@ public class Race {
 			@Override
 			public void run() {
 				// Teleport player if they get too far away from the start while counting down
-				if (mTicks < 60 && mPlayer.getLocation().distance(mStart) > 0.8) {
+				if (mTicks < 60 && mPlayer.getLocation().distance(mStart) > 0.8 && !mRingless) {
 					mPlayer.teleport(mStart);
 				}
 
@@ -189,11 +191,15 @@ public class Race {
 		}.runTaskTimer(mPlugin, 0, 1);
 	}
 
+	public int getTimeElapsed() {
+		return (int)(System.currentTimeMillis() - mStartTime);
+	}
+
 	public void tick() {
 		double distance = mPlayer.getEyeLocation().toVector().distance(mNextWaypoint.getPosition());
 
 		// Time remaining display
-		int timeElapsed = (int)(System.currentTimeMillis() - mStartTime);
+		int timeElapsed = this.getTimeElapsed();
 		if (mCountdownActive) {
 			timeElapsed = 0;
 		}
@@ -203,36 +209,40 @@ public class Race {
 		}
 		mTimeBar.update(timeElapsed);
 
-		// Check if player went too far away
-		if (distance > 100) {
-			mPlayer.sendMessage("" + ChatColor.RED + ChatColor.BOLD + "You went too far away from the race path!");
-			lose();
-		} else if (distance < 4) {
-			// TODO: Tell the player if they are going faster or slower than before
-			//possibleRingTimes.add(timeElapsed);
-			//if (has_ring_times) {
-			//  int oldtime = ringTimes.get(actualRing);
-			//  if (oldtime < timeElapsed) {
-			//		MessagingUtils.sendActionBarMessage(mPlayer, net.md_5.bungee.api.ChatColor.RED, true, RaceUtils.msToTimeString(timeElapsed));
-			//  } else {
-			//		MessagingUtils.sendActionBarMessage(mPlayer, net.md_5.bungee.api.ChatColor.GREEN, true, RaceUtils.msToTimeString(timeElapsed));
-			//  }
-			//} else {
+		if (!mRingless) {
 
-			// Run the actions for reaching this ring
-			mNextWaypoint.doActions(mPlugin, mPlayer);
+			// Check if player went too far away
+			if (distance > 100) {
+				mPlayer.sendMessage("" + ChatColor.RED + ChatColor.BOLD + "You went too far away from the race path!");
+				lose();
+			} else if (distance < 4) {
+				// TODO: Tell the player if they are going faster or slower than before
+				//possibleRingTimes.add(timeElapsed);
+				//if (has_ring_times) {
+				//  int oldtime = ringTimes.get(actualRing);
+				//  if (oldtime < timeElapsed) {
+				//		MessagingUtils.sendActionBarMessage(mPlayer, net.md_5.bungee.api.ChatColor.RED, true, RaceUtils.msToTimeString(timeElapsed));
+				//  } else {
+				//		MessagingUtils.sendActionBarMessage(mPlayer, net.md_5.bungee.api.ChatColor.GREEN, true, RaceUtils.msToTimeString(timeElapsed));
+				//  }
+				//} else {
 
-			MessagingUtils.sendActionBarMessage(mPlayer, net.md_5.bungee.api.ChatColor.BLUE, true, RaceUtils.msToTimeString(timeElapsed));
-			mWorld.playSound(mPlayer.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1, 1.5f);
+				// Run the actions for reaching this ring
+				mNextWaypoint.doActions(mPlugin, mPlayer);
 
-			if (mRemainingWaypoints.size() == 0) {
-				win(timeElapsed);
-			} else {
-				mNextWaypoint = mRemainingWaypoints.removeFirst();
+				MessagingUtils.sendActionBarMessage(mPlayer, net.md_5.bungee.api.ChatColor.BLUE, true, RaceUtils.msToTimeString(timeElapsed));
+				mWorld.playSound(mPlayer.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1, 1.5f);
+
+				if (mRemainingWaypoints.size() == 0) {
+					win(timeElapsed);
+				} else {
+					mNextWaypoint = mRemainingWaypoints.removeFirst();
+				}
 			}
-		}
 
-		animation();
+			animation();
+
+		}
 	}
 
 	/*
@@ -288,7 +298,7 @@ public class Race {
 		}
 	}
 
-	private void win(int endTime) {
+	public void win(int endTime) {
 		end();
 
 		/* Set score on player */
@@ -412,5 +422,9 @@ public class Race {
 			}
 		}
 		return top;
+	}
+
+	public boolean isRingless() {
+		return mRingless;
 	}
 }

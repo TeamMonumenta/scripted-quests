@@ -117,7 +117,7 @@ public class PlayerListener implements Listener {
 		Player player = event.getPlayer();
 
 		// Stop racing (if applicable)
-		mPlugin.mRaceManager.cancelRace(event.getPlayer());
+		mPlugin.mRaceManager.cancelRaceByDeath(event.getPlayer());
 
 		/*
 		 * If the player died and has metadata indicating they should respawn somewhere,
