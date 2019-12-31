@@ -12,7 +12,6 @@ import com.mojang.brigadier.ParseResults;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 
-// For error requesting UUID of null npc
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 
@@ -63,7 +62,7 @@ public class ActionCommand implements ActionBase {
 		//	Because there's no currently good way to run commands we need to run them via the console....janky....I know.
 		String commandStr = mCommand;
 		if (npcEntity == null) {
-			if (commandStr.contains("@U")) {
+			if (commandStr.contains("@N")) {
 				String commandErr = "§4Cannot run ScriptedQuest command without direct NPC interaction: /" + commandStr;
 				player.spigot().sendMessage(ChatMessageType.SYSTEM, TextComponent.fromLegacyText(commandErr));
 				return;
