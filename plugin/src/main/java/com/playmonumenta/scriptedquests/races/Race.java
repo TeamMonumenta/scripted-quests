@@ -415,6 +415,10 @@ public class Race {
 	private int getWRTime() {
 		int top = Integer.MAX_VALUE;
 		int score;
+		if (mScoreboard == null || mScoreboard.getScoreboard() == null) {
+			// no scoreboard = statless race, return a dummy world record
+			return 1;
+		}
 		for(String name : mScoreboard.getScoreboard().getEntries()) {
 			score = mScoreboard.getScore(name).getScore();
 			if(score < top && score > 0) {
