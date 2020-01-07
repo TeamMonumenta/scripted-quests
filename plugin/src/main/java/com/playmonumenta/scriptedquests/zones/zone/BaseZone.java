@@ -1,5 +1,6 @@
 package com.playmonumenta.scriptedquests.zones.zone;
 
+import org.bukkit.Axis;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
@@ -124,6 +125,31 @@ public class BaseZone implements Cloneable {
 	 */
 	public boolean isValid() {
 		return mSize.getX() > 0 && mSize.getY() > 0 && mSize.getZ() > 0;
+	}
+
+	public boolean within(Vector loc, Axis axis) {
+		double test;
+		double min;
+		double max;
+
+		switch (axis) {
+		case X:
+			test = loc.getX();
+			min = minCorner().getX();
+			max = trueMaxCorner().getX();
+			break;
+		case Z:
+			test = loc.getZ();
+			min = minCorner().getZ();
+			max = trueMaxCorner().getZ();
+			break;
+		default:
+			test = loc.getY();
+			min = minCorner().getY();
+			max = trueMaxCorner().getY();
+		}
+
+		return test >= min && test < max;
 	}
 
 	public boolean within(Vector loc) throws Exception {

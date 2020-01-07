@@ -11,16 +11,14 @@ import org.bukkit.util.Vector;
  * Each zone also keeps track of its fragments.
  */
 public class ZoneFragment extends BaseZone {
-	// TODO This should be Zone, not BaseZone
-	protected BaseZone mParent;
+	private Zone mParent;
 
 	public ZoneFragment(ZoneFragment other) throws Exception {
 		super(other);
 		mParent = other.mParent;
 	}
 
-	// TODO This should be Zone, not BaseZone
-	public ZoneFragment(BaseZone other) throws Exception {
+	public ZoneFragment(Zone other) throws Exception {
 		super(other);
 		mParent = other;
 	}
@@ -62,16 +60,13 @@ public class ZoneFragment extends BaseZone {
 			lowerMax.setX(pos.getX());
 			upperMin.setX(pos.getX());
 			break;
-		case Y:
-			lowerMax.setX(pos.getX());
-			upperMin.setX(pos.getX());
-			break;
 		case Z:
 			lowerMax.setX(pos.getX());
 			upperMin.setX(pos.getX());
 			break;
 		default:
-			throw new Exception("Unknown axis.");
+			lowerMax.setX(pos.getX());
+			upperMin.setX(pos.getX());
 		}
 
 		lower.maxCorner(lowerMax);
@@ -205,5 +200,9 @@ public class ZoneFragment extends BaseZone {
 		result.maxCorner(resultMax);
 
 		return result;
+	}
+
+	public Zone parent() {
+		return mParent;
 	}
 }
