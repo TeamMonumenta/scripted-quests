@@ -1,7 +1,9 @@
 package com.playmonumenta.scriptedquests.zones.zone;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.bukkit.Axis;
 import org.bukkit.util.Vector;
@@ -50,4 +52,28 @@ public class Zone extends BaseZone {
 		}
 		mFragments = newFragments;
 	}
+
+	/*
+	 * Minimize the number of uneclipsed fragments.
+	 *
+	 * This works with only one zone's fragments at a time, and doesn't
+	 * need to be run again. This reduces n significantly for runtime.
+	 *
+	 * TODO Implement this based on the same function in:
+	 * https://github.com/NickNackGus/monumenta-zone-prototype/blob/master/python/lib/zone/zone.py
+	 */
+	/*
+	public void defragment() throws Exception {
+		if (mFragments.size() < 2) {
+			return;
+		}
+
+		HashMap<int, HashMap<Set<int>, ZoneFragment>> allMergedCombinations = new HashMap<int, HashMap<Set<int>, ZoneFragment>>;
+		private ArrayList<ZoneFragment> recursiveOptimalDefrag(HashMap<int, HashMap<Set<int>, ZoneFragment>> allMergedCombinations,
+		                                                       ArrayList<ZoneFragment> resultsSoFar,
+		                                                       Set<int> remainingIds);
+
+		return;
+	}
+	*/
 }

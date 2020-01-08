@@ -51,6 +51,30 @@ public class BaseZone implements Cloneable {
 		}
 	}
 
+	public static double vectorAxis(Vector vector, Axis axis) {
+		switch (axis) {
+		case X:
+			return vector.getX();
+		case Z:
+			return vector.getZ();
+		default:
+			return vector.getY();
+		}
+	}
+
+	public static void vectorAxis(Vector vector, Axis axis, double value) {
+		switch (axis) {
+		case X:
+			vector.setX(value);
+			break;
+		case Z:
+			vector.setZ(value);
+			break;
+		default:
+			vector.setY(value);
+		}
+	}
+
 	/*
 	 * Returns the smallest integer coordinate that is inside the zone on each axis.
 	 */
@@ -128,26 +152,9 @@ public class BaseZone implements Cloneable {
 	}
 
 	public boolean within(Vector loc, Axis axis) {
-		double test;
-		double min;
-		double max;
-
-		switch (axis) {
-		case X:
-			test = loc.getX();
-			min = minCorner().getX();
-			max = trueMaxCorner().getX();
-			break;
-		case Z:
-			test = loc.getZ();
-			min = minCorner().getZ();
-			max = trueMaxCorner().getZ();
-			break;
-		default:
-			test = loc.getY();
-			min = minCorner().getY();
-			max = trueMaxCorner().getY();
-		}
+		double test = vectorAxis(loc, axis);
+		double min = vectorAxis(minCorner(), axis);
+		double max = vectorAxis(trueMaxCorner(), axis);
 
 		return test >= min && test < max;
 	}
@@ -157,14 +164,15 @@ public class BaseZone implements Cloneable {
 			throw new Exception("loc may not be null.");
 		}
 
-		double x = loc.getX();
-		double y = loc.getY();
-		double z = loc.getZ();
-
-		Vector min = minCorner();
-		Vector max = trueMaxCorner();
-
-		return x >= min.getX() && x < max.getX() && y >= min.getY() && y < max.getY() && z >= min.getZ() && z < max.getZ();
+		for (Axis axis : Axis.values()) {
+			double test = vectorAxis(loc, axis);
+			double min = vectorAxis(minCorner(), axis);
+			double max = vectorAxis(trueMaxCorner(), axis);
+			if (test < min || test >= max) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public boolean within(Location loc) throws Exception {
@@ -188,13 +196,11 @@ public class BaseZone implements Cloneable {
 		Vector otherMin = other.minCorner();
 		Vector otherMax = other.maxCorner();
 
-		if (selfMax.getX() < otherMin.getX() ||
-		    selfMax.getY() < otherMin.getY() ||
-		    selfMax.getZ() < otherMin.getZ() ||
-		    otherMax.getX() < selfMin.getX() ||
-		    otherMax.getY() < selfMin.getY() ||
-		    otherMax.getZ() < selfMin.getZ()) {
-			return null;
+		for (Axis axis : Axis.values()) {
+			if (vectorAxis(selfMax, axis) < vectorAxis(otherMin, axis) ||
+				vectorAxis(otherMax, axis) < vectorAxis(selfMin, axis)) {
+				return null;
+			}
 		}
 
 		Vector resultMin = Vector.getMaximum(selfMin, otherMin);
