@@ -111,13 +111,13 @@ public class ZoneFragment extends BaseZone {
 				workZone = tempSplitResult[0];
 				upper = tempSplitResult[1];
 
-				if (lower.isValid()) {
+				if (lower != null) {
 					result.add(lower);
 				}
-				if (workZone.isValid()) {
+				if (workZone != null) {
 					result.add(workZone);
 				}
-				if (upper.isValid()) {
+				if (upper != null) {
 					result.add(upper);
 				}
 			}
@@ -131,10 +131,10 @@ public class ZoneFragment extends BaseZone {
 			centerZone = tempSplitResult[0];
 			upper = tempSplitResult[1];
 
-			if (lower.isValid()) {
+			if (lower != null) {
 				result.add(lower);
 			}
-			if (upper.isValid()) {
+			if (upper != null) {
 				result.add(upper);
 			}
 		}

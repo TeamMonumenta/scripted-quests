@@ -50,6 +50,7 @@ public class Zone extends BaseZone {
 
 			newFragments.addAll(fragment.splitByOverlap(subOverlap));
 		}
+		// TODO if (newFragments.size() == 0) Print warning/error/something (total eclipse of this zone)
 		mFragments = newFragments;
 	}
 
@@ -76,4 +77,10 @@ public class Zone extends BaseZone {
 		return;
 	}
 	*/
+
+	public ArrayList<ZoneFragment> zoneFragments() {
+		ArrayList<ZoneFragment> result = new ArrayList<ZoneFragment>();
+		result.addAll(mFragments);
+		return result;
+	}
 }

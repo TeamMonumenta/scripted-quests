@@ -151,17 +151,9 @@ public class BaseZone implements Cloneable {
 		return mSize.getX() > 0 && mSize.getY() > 0 && mSize.getZ() > 0;
 	}
 
-	public boolean within(Vector loc, Axis axis) {
-		double test = vectorAxis(loc, axis);
-		double min = vectorAxis(minCorner(), axis);
-		double max = vectorAxis(trueMaxCorner(), axis);
-
-		return test >= min && test < max;
-	}
-
-	public boolean within(Vector loc) throws Exception {
+	public boolean within(Vector loc) {
 		if (loc == null) {
-			throw new Exception("loc may not be null.");
+			return false;
 		}
 
 		for (Axis axis : Axis.values()) {
@@ -175,9 +167,9 @@ public class BaseZone implements Cloneable {
 		return true;
 	}
 
-	public boolean within(Location loc) throws Exception {
+	public boolean within(Location loc) {
 		if (loc == null) {
-			throw new Exception("loc may not be null.");
+			return false;
 		}
 
 		return within(loc.toVector());
@@ -206,6 +198,12 @@ public class BaseZone implements Cloneable {
 		Vector resultMin = Vector.getMaximum(selfMin, otherMin);
 		Vector resultMax = Vector.getMinimum(selfMax, otherMax);
 
-		return new BaseZone(resultMin, resultMax);
+		BaseZone result = new BaseZone(resultMin, resultMax);
+
+		if (result.isValid()) {
+			return result;
+		}
+
+		return null;
 	}
 }

@@ -15,7 +15,7 @@ public class LeafZoneTree extends BaseZoneTree {
 		mZone = zone;
 	}
 
-	public ZoneFragment getZoneFragment(Vector loc) throws Exception {
+	public ZoneFragment getZoneFragment(Vector loc) {
 		if (mZone.within(loc)) {
 			return mZone;
 		} else {

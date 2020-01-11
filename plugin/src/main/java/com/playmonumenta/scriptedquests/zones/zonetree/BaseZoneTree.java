@@ -27,11 +27,11 @@ public abstract class BaseZoneTree {
 	 * For a given location, return the fragment that contains it.
 	 * Returns null if no fragment overlaps it.
 	 */
-	public abstract ZoneFragment getZoneFragment(Vector loc) throws Exception;
+	public abstract ZoneFragment getZoneFragment(Vector loc);
 
-	public ZoneFragment getZoneFragment(Location loc) throws Exception {
+	public ZoneFragment getZoneFragment(Location loc) {
 		if (loc == null) {
-			throw new Exception("loc may not be null.");
+			return null;
 		}
 
 		return getZoneFragment(loc.toVector());
@@ -41,13 +41,13 @@ public abstract class BaseZoneTree {
 	 * For a given location, return the zone that contains it.
 	 * Returns null if no zone overlaps it.
 	 */
-	public Zone getZone(Vector loc) throws Exception {
+	public Zone getZone(Vector loc) {
 		return getZoneFragment(loc).parent();
 	}
 
-	public Zone getZone(Location loc) throws Exception {
+	public Zone getZone(Location loc) {
 		if (loc == null) {
-			throw new Exception("loc may not be null.");
+			return null;
 		}
 
 		return getZone(loc.toVector());

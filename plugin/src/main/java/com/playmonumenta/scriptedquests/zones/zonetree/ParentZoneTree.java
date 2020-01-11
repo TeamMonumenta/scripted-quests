@@ -97,7 +97,11 @@ public class ParentZoneTree extends BaseZoneTree {
 		mMore = CreateZoneTree(bestSplit.mMore);
 	}
 
-	public ZoneFragment getZoneFragment(Vector loc) throws Exception {
+	public ZoneFragment getZoneFragment(Vector loc) {
+		if (loc == null) {
+			return null;
+		}
+
 		ZoneFragment result = null;
 		double test = BaseZone.vectorAxis(loc, mAxis);
 
