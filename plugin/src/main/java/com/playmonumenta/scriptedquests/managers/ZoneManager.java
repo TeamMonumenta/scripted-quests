@@ -26,7 +26,6 @@ import com.playmonumenta.scriptedquests.zones.zonetree.BaseZoneTree;
 public class ZoneManager {
 	static BukkitRunnable playerTracker = null;
 
-	private Plugin mPlugin;
 	private HashMap<String, ZoneLayer> mLayers = new HashMap<String, ZoneLayer>();
 	private BaseZoneTree mZoneTree = null;
 	private Map<Player, ZoneFragment> lastPlayerZoneFragment = new HashMap<Player, ZoneFragment>();
@@ -146,16 +145,32 @@ public class ZoneManager {
 						ZoneChangeEvent zoneEvent = new ZoneChangeEvent(player, layerName, lastZone, currentZone);
 						Bukkit.getPluginManager().callEvent(zoneEvent);
 
-						LinkedHashSet<String> removedProperties = lastZone.getProperties();
-						removedProperties.removeAll(currentZone.getProperties());
+						LinkedHashSet<String> lastProperties;
+						if (lastZone == null) {
+							lastProperties = new LinkedHashSet<String>();
+						} else {
+							lastProperties = lastZone.getProperties();
+						}
+
+						LinkedHashSet<String> currentProperties;
+						if (currentZone == null) {
+							currentProperties = new LinkedHashSet<String>();
+						} else {
+							currentProperties = currentZone.getProperties();
+						}
+
+						LinkedHashSet<String> removedProperties = new LinkedHashSet<String>();
+						removedProperties.addAll(lastProperties);
+						removedProperties.removeAll(currentProperties);
 						for (String property : removedProperties) {
 							ZonePropertyChangeEvent event;
 							event = new ZonePropertyChangeEvent(player, layerName, "!" + property);
 							Bukkit.getPluginManager().callEvent(event);
 						}
 
-						LinkedHashSet<String> addedProperties = currentZone.getProperties();
-						addedProperties.removeAll(lastZone.getProperties());
+						LinkedHashSet<String> addedProperties = new LinkedHashSet<String>();
+						addedProperties.addAll(currentProperties);
+						addedProperties.removeAll(lastProperties);
 						for (String property : addedProperties) {
 							ZonePropertyChangeEvent event;
 							event = new ZonePropertyChangeEvent(player, layerName, property);
@@ -167,10 +182,6 @@ public class ZoneManager {
 		};
 
 		playerTracker.runTaskTimer(plugin, 0, 5);
-	}
-
-	public ZoneManager(Plugin plugin) {
-		mPlugin = plugin;
 	}
 
 	/*

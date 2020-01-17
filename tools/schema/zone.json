@@ -1,0 +1,31 @@
+{
+    "type": "object",
+    "defaultProperties": [
+        "name",
+        "properties",
+        "location"
+    ],
+    "additionalProperties":false,
+    "properties": {
+        "name": {
+            "required": true,
+            "propertyOrder": 1,
+            "title": "name",
+            "description": "Zone name - so you'll know which zone you're looking at layer.",
+            "type": "string"
+        },
+        "properties": {
+            "propertyOrder": 2,
+            "title": "properties",
+            "description": "A list of properties for this zone, in order. Property groups are identified by the prefix '#'. Properties that are not desired from a group can be removed with the prefix '!', as if it was never there.",
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "location": {
+            "propertyOrder": 3,
+            "$ref": "location.json"
+        }
+    }
+}

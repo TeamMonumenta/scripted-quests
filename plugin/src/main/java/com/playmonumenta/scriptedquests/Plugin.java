@@ -28,6 +28,7 @@ import com.playmonumenta.scriptedquests.commands.SetVelocity;
 import com.playmonumenta.scriptedquests.commands.TimerDebug;
 import com.playmonumenta.scriptedquests.listeners.EntityListener;
 import com.playmonumenta.scriptedquests.listeners.PlayerListener;
+import com.playmonumenta.scriptedquests.listeners.ZonePropertyListener;
 import com.playmonumenta.scriptedquests.managers.ClickableManager;
 import com.playmonumenta.scriptedquests.managers.CodeManager;
 import com.playmonumenta.scriptedquests.managers.InteractableManager;
@@ -38,6 +39,7 @@ import com.playmonumenta.scriptedquests.managers.QuestLoginManager;
 import com.playmonumenta.scriptedquests.managers.QuestNpcManager;
 import com.playmonumenta.scriptedquests.managers.RaceManager;
 import com.playmonumenta.scriptedquests.managers.ZoneManager;
+import com.playmonumenta.scriptedquests.managers.ZonePropertyManager;
 import com.playmonumenta.scriptedquests.timers.CommandTimerManager;
 import com.playmonumenta.scriptedquests.utils.MetadataUtils;
 
@@ -57,6 +59,7 @@ public class Plugin extends JavaPlugin {
 	public CommandTimerManager mTimerManager;
 	public CodeManager mCodeManager;
 	public ZoneManager mZoneManager;
+	public ZonePropertyManager mZonePropertyManager;
 
 	public World mWorld;
 	public Random mRandom = new Random();
@@ -102,12 +105,14 @@ public class Plugin extends JavaPlugin {
 		mDeathManager = new QuestDeathManager();
 		mRaceManager = new RaceManager();
 		mCodeManager = new CodeManager();
-		mZoneManager = new ZoneManager(this);
+		mZoneManager = new ZoneManager();
+		mZonePropertyManager = new ZonePropertyManager();
 
 		mTimerManager = new CommandTimerManager(this);
 
 		manager.registerEvents(new EntityListener(this), this);
 		manager.registerEvents(new PlayerListener(this), this);
+		manager.registerEvents(new ZonePropertyListener(this), this);
 		manager.registerEvents(mTimerManager, this);
 
 		getCommand("reloadQuests").setExecutor(new ReloadQuests(this));
@@ -148,6 +153,7 @@ public class Plugin extends JavaPlugin {
 		mDeathManager.reload(this, sender);
 		mRaceManager.reload(this, sender);
 		mCodeManager.reload(this, sender);
+		mZonePropertyManager.reload(this, sender);
 		mZoneManager.reload(this, sender);
 	}
 

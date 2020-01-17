@@ -84,8 +84,10 @@ public class ZoneProperty {
 		}
 
 		//////////////////////////////////////// Fail if other keys exist ////////////////////////////////////////
-		Set<String> keys = object.keySet();
-		for (String key : keys) {
+		Set<Entry<String, JsonElement>> entries = object.entrySet();
+		for (Entry<String, JsonElement> ent : entries) {
+			String key = ent.getKey();
+
 			if (!key.equals("layer") && !key.equals("name") && !key.equals("display_name")
 				&& !key.equals("quest_components")) {
 				throw new Exception("Unknown quest key: " + key);

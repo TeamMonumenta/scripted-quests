@@ -110,42 +110,7 @@
         },
         "location": {
             "propertyOrder": 8,
-            "title": "location",
-            "description": "Checks that the player is inside the specified location.",
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "x1": {
-                    "required": true,
-                    "$ref": "coordinate.json",
-                    "propertyOrder": 1
-                },
-                "y1": {
-                    "required": true,
-                    "$ref": "coordinate.json",
-                    "propertyOrder": 2
-                },
-                "z1": {
-                    "required": true,
-                    "$ref": "coordinate.json",
-                    "propertyOrder": 3
-                },
-                "x2": {
-                    "required": true,
-                    "$ref": "coordinate.json",
-                    "propertyOrder": 4
-                },
-                "y2": {
-                    "required": true,
-                    "$ref": "coordinate.json",
-                    "propertyOrder": 5
-                },
-                "z2": {
-                    "required": true,
-                    "$ref": "coordinate.json",
-                    "propertyOrder": 6
-                }
-            }
+            "$ref": "location.json"
         },
         "test_for_block": {
             "propertyOrder": 9,
@@ -171,9 +136,9 @@
                 },
                 "type": {
                     "required": true,
-					"title": "type",
-					"description": "Matches if the item type is exactly this Material. List of available materials can be found here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html",
-					"type": "string",
+                    "title": "type",
+                    "description": "Matches if the item type is exactly this Material. List of available materials can be found here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html",
+                    "type": "string",
                     "propertyOrder": 4
                 }
             }

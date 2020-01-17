@@ -79,13 +79,13 @@ public class Zone extends BaseZone {
 				corners[2] = value.getAsDouble();
 				break;
 			case "x2":
-				corners[4] = value.getAsDouble();
+				corners[3] = value.getAsDouble();
 				break;
 			case "y2":
-				corners[5] = value.getAsDouble();
+				corners[4] = value.getAsDouble();
 				break;
 			case "z2":
-				corners[6] = value.getAsDouble();
+				corners[5] = value.getAsDouble();
 				break;
 			default:
 				throw new Exception("Unknown location key: '" + key + "'");

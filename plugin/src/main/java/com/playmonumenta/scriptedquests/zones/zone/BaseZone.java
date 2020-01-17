@@ -71,8 +71,8 @@ public class BaseZone {
 	 * Returns the largest integer coordinate that is inside the zone on each axis.
 	 */
 	public Vector maxCorner() {
-		Vector result = mPosition.clone();
-		result.add(mSize);
+		Vector result = trueMaxCorner();
+		mSize.subtract(new Vector(1, 1, 1));
 		return result;
 	}
 
@@ -81,15 +81,15 @@ public class BaseZone {
 	 */
 	public void maxCorner(Vector other) {
 		mSize.add(other);
-		mSize.subtract(mPosition);
+		mSize.subtract(maxCorner());
 	}
 
 	/*
 	 * Returns the smallest coordinate that is outside the zone on each axis.
 	 */
 	public Vector trueMaxCorner() {
-		Vector result = maxCorner();
-		result.add(new Vector(1, 1, 1));
+		Vector result = mPosition.clone();
+		result.add(mSize);
 		return result;
 	}
 
@@ -97,7 +97,8 @@ public class BaseZone {
 	 * Sets the smallest coordinate that is outside the zone on each axis.
 	 */
 	public void trueMaxCorner(Vector other) {
-		maxCorner(other);
+		mSize.add(other);
+		mSize.subtract(trueMaxCorner());
 	}
 
 	public Vector size() {

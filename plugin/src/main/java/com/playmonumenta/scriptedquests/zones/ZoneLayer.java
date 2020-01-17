@@ -3,6 +3,7 @@ package com.playmonumenta.scriptedquests.zones;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.Map.Entry;
 
@@ -34,44 +35,75 @@ public class ZoneLayer {
 		}
 		mName = object.get("name").getAsString();
 
+
 		// Load the property groups - why yes, this section is rather long.
 		if (object.get("property_groups") == null ||
 		    object.get("property_groups").getAsJsonObject() == null) {
 			throw new Exception("Failed to parse 'property_groups'");
 		}
+
 		HashMap<String, ArrayList<String>> propertyGroups = new HashMap<String, ArrayList<String>>();
+		HashMap<String, LinkedHashSet<String>> groupReferences = new HashMap<String, LinkedHashSet<String>>();
+
 		JsonObject propertyGroupsJson = object.get("property_groups").getAsJsonObject();
 		Set<Entry<String, JsonElement>> entries = propertyGroupsJson.entrySet();
+
 		for (Entry<String, JsonElement> ent : entries) {
 			String propertyGroupName = ent.getKey();
 			JsonElement propertyGroupJson = ent.getValue();
 
+			if (propertyGroupName == null || propertyGroupName.isEmpty()) {
+				throw new Exception("Failed to parse 'property_groups': group name may not be empty.");
+			}
 			if (propertyGroupJson.getAsJsonArray() == null) {
 				throw new Exception("Failed to parse 'property_groups." + propertyGroupName + "'");
 			}
+
 			ArrayList<String> propertyGroup = new ArrayList<String>();
+			LinkedHashSet<String> ownGroupReferences = new LinkedHashSet<String>();
+
 			Integer propertyGroupIndex = 0;
 			Iterator<JsonElement> propertyGroupIter = propertyGroupJson.getAsJsonArray().iterator();
+
 			while (propertyGroupIter.hasNext()) {
 				JsonElement propertyNameElement = propertyGroupIter.next();
 				String propertyName = propertyNameElement.getAsString();
+
 				if (propertyName == null) {
 					throw new Exception("Failed to parse 'property_groups." + propertyGroupName + "[" + Integer.toString(propertyGroupIndex) + "]'");
 				}
+
 				propertyGroup.add(propertyName);
+
+				String groupReference = propertyName;
+				if (groupReference.charAt(0) == '!') {
+					groupReference = groupReference.substring(1);
+				}
+				if (groupReference.charAt(0) == '#') {
+					ownGroupReferences.add(groupReference.substring(1));
+				}
+
 				propertyGroupIndex++;
+			}
+
+			groupReferences.put(propertyGroupName, ownGroupReferences);
+			if (hasPropertyGroupLoop(groupReferences, propertyGroupName)) {
+				throw new Exception("Loop detected in property group '" + propertyGroupName + "'. Groups may not reference themselves directly or indirectly.");
 			}
 
 			propertyGroups.put(propertyGroupName, propertyGroup);
 		}
+
 
 		// Load the zones
 		if (object.get("zones") == null ||
 		    object.get("zones").getAsJsonArray() == null) {
 			throw new Exception("Failed to parse 'zones'");
 		}
+
 		Integer zoneIndex = 0;
 		Iterator<JsonElement> zonesIter = object.get("zones").getAsJsonArray().iterator();
+
 		while (zonesIter.hasNext()) {
 			JsonElement zoneElement = zonesIter.next();
 			if (zoneElement.getAsJsonObject() == null) {
@@ -80,6 +112,7 @@ public class ZoneLayer {
 			mZones.add(Zone.ConstructFromJson(this, zoneElement.getAsJsonObject(), propertyGroups));
 			zoneIndex++;
 		}
+
 
 		// Split the zones into non-overlapping fragments
 		removeOverlaps(mZones);
@@ -139,5 +172,28 @@ public class ZoneLayer {
 				inner.splitByOverlap(overlap);
 			}
 		}
+	}
+
+	private boolean hasPropertyGroupLoop(HashMap<String, LinkedHashSet<String>> groupReferences, String startGroup) {
+		return hasPropertyGroupLoop(groupReferences, startGroup, startGroup);
+	}
+
+	private boolean hasPropertyGroupLoop(HashMap<String, LinkedHashSet<String>> groupReferences, String startGroup, String continueGroup) {
+		LinkedHashSet<String> subGroupReferences = groupReferences.get(continueGroup);
+		if (subGroupReferences == null) {
+			return false;
+		}
+
+		for (String subGroupReference : subGroupReferences) {
+			if (subGroupReference.equals(startGroup)) {
+				return true;
+			}
+
+			if (hasPropertyGroupLoop(groupReferences, startGroup, subGroupReference)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }

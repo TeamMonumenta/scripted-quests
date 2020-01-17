@@ -7,9 +7,9 @@ import org.bukkit.event.HandlerList;
 public class ZonePropertyChangeEvent extends Event {
 	private static final HandlerList handlers = new HandlerList();
 
+	private final Player mPlayer;
 	private final String mLayer;
 	private final String mProperty;
-	private final Player mPlayer;
 
 	public ZonePropertyChangeEvent(Player player, String layer, String property) {
 		mPlayer = player;
