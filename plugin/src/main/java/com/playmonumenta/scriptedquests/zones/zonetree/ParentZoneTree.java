@@ -28,7 +28,7 @@ public class ParentZoneTree extends BaseZoneTree {
 
 	private static final Axis[] AXIS_ORDER = {Axis.X, Axis.Z, Axis.Y};
 
-	public ParentZoneTree(ArrayList<ZoneFragment> zones) throws Exception {
+	public ParentZoneTree(ArrayList<ZoneFragment> zones) {
 		/*
 		 * Local class is used to get best balance without
 		 * exposinig incomplete results or creating tree nodes.
@@ -43,11 +43,6 @@ public class ParentZoneTree extends BaseZoneTree {
 			public ArrayList<ZoneFragment> mLess = new ArrayList<ZoneFragment>();
 			public ArrayList<ZoneFragment> mMid = new ArrayList<ZoneFragment>();
 			public ArrayList<ZoneFragment> mMore = new ArrayList<ZoneFragment>();
-		}
-
-
-		if (zones == null) {
-			throw new Exception("zones may not be null.");
 		}
 
 		// Default is an impossibly worst case scenario so it will never be chosen.
@@ -95,6 +90,16 @@ public class ParentZoneTree extends BaseZoneTree {
 		mLess = CreateZoneTree(bestSplit.mLess);
 		mMid = CreateZoneTree(bestSplit.mMid);
 		mMore = CreateZoneTree(bestSplit.mMore);
+	}
+
+	/*
+	 * Invalidate all fragments in the tree, causing any players inside them to be
+	 * considered outside them. This updates them to the correct zone automagically.
+	 */
+	public void invalidate() {
+		mLess.invalidate();
+		mMid.invalidate();
+		mMore.invalidate();
 	}
 
 	public ZoneFragment getZoneFragment(Vector loc) {

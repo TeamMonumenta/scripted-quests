@@ -37,6 +37,7 @@ import com.playmonumenta.scriptedquests.managers.QuestDeathManager;
 import com.playmonumenta.scriptedquests.managers.QuestLoginManager;
 import com.playmonumenta.scriptedquests.managers.QuestNpcManager;
 import com.playmonumenta.scriptedquests.managers.RaceManager;
+import com.playmonumenta.scriptedquests.managers.ZoneManager;
 import com.playmonumenta.scriptedquests.timers.CommandTimerManager;
 import com.playmonumenta.scriptedquests.utils.MetadataUtils;
 
@@ -55,6 +56,7 @@ public class Plugin extends JavaPlugin {
 	public NpcTradeManager mTradeManager;
 	public CommandTimerManager mTimerManager;
 	public CodeManager mCodeManager;
+	public ZoneManager mZoneManager;
 
 	public World mWorld;
 	public Random mRandom = new Random();
@@ -100,6 +102,7 @@ public class Plugin extends JavaPlugin {
 		mDeathManager = new QuestDeathManager();
 		mRaceManager = new RaceManager();
 		mCodeManager = new CodeManager();
+		mZoneManager = new ZoneManager(this);
 
 		mTimerManager = new CommandTimerManager(this);
 
@@ -145,6 +148,7 @@ public class Plugin extends JavaPlugin {
 		mDeathManager.reload(this, sender);
 		mRaceManager.reload(this, sender);
 		mCodeManager.reload(this, sender);
+		mZoneManager.reload(this, sender);
 	}
 
 	private void reloadConfigYaml(CommandSender sender) {

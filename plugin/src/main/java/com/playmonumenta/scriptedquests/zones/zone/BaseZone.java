@@ -1,18 +1,13 @@
 package com.playmonumenta.scriptedquests.zones.zone;
 
 import org.bukkit.Axis;
-import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
-public class BaseZone implements Cloneable {
+public class BaseZone {
 	protected Vector mPosition;
 	protected Vector mSize;
 
-	public BaseZone(BaseZone other) throws Exception {
-		if (other == null) {
-			throw new Exception("other may not be null.");
-		}
-
+	public BaseZone(BaseZone other) {
 		mPosition = other.mPosition.clone();
 		mSize = other.mSize.clone();
 	}
@@ -22,15 +17,7 @@ public class BaseZone implements Cloneable {
 	 * - Both are inclusive coordinates.
 	 * - The minimum/maximum are determined for you.
 	 */
-	public BaseZone(Vector pos1, Vector pos2) throws Exception {
-		if (pos1 == null) {
-			throw new Exception("pos1 may not be null.");
-		}
-
-		if (pos2 == null) {
-			throw new Exception("pos2 may not be null.");
-		}
-
+	public BaseZone(Vector pos1, Vector pos2) {
 		Vector posMin = Vector.getMinimum(pos1, pos2);
 		Vector posMax = Vector.getMaximum(pos1, pos2);
 
@@ -38,17 +25,6 @@ public class BaseZone implements Cloneable {
 		mSize = posMax.clone();
 		mSize.subtract(posMin);
 		mSize.add(new Vector(1, 1, 1));
-	}
-
-	@Override
-	public BaseZone clone() throws CloneNotSupportedException {
-		try {
-			return new BaseZone(this);
-		} catch (CloneNotSupportedException e) {
-			throw new Error(e);
-		} catch (Exception e) {
-			throw new CloneNotSupportedException("Cannot clone null object.");
-		}
 	}
 
 	public static double vectorAxis(Vector vector, Axis axis) {
@@ -85,11 +61,7 @@ public class BaseZone implements Cloneable {
 	/*
 	 * Sets the smallest integer coordinate that is inside the zone on each axis.
 	 */
-	public void minCorner(Vector other) throws Exception {
-		if (other == null) {
-			throw new Exception("other may not be null.");
-		}
-
+	public void minCorner(Vector other) {
 		mSize.add(mPosition);
 		mSize.subtract(other);
 		mPosition = other.clone();
@@ -107,11 +79,7 @@ public class BaseZone implements Cloneable {
 	/*
 	 * Sets the largest integer coordinate that is inside the zone on each axis.
 	 */
-	public void maxCorner(Vector other) throws Exception {
-		if (other == null) {
-			throw new Exception("other may not be null.");
-		}
-
+	public void maxCorner(Vector other) {
 		mSize.add(other);
 		mSize.subtract(mPosition);
 	}
@@ -128,11 +96,7 @@ public class BaseZone implements Cloneable {
 	/*
 	 * Sets the smallest coordinate that is outside the zone on each axis.
 	 */
-	public void trueMaxCorner(Vector other) throws Exception {
-		if (other == null) {
-			throw new Exception("other may not be null.");
-		}
-
+	public void trueMaxCorner(Vector other) {
 		maxCorner(other);
 	}
 
@@ -167,22 +131,10 @@ public class BaseZone implements Cloneable {
 		return true;
 	}
 
-	public boolean within(Location loc) {
-		if (loc == null) {
-			return false;
-		}
-
-		return within(loc.toVector());
-	}
-
 	/*
 	 * Returns a BaseZone that is inside this and the other zone.
 	 */
-	public BaseZone overlappingZone(BaseZone other) throws Exception {
-		if (other == null) {
-			throw new Exception("other may not be null.");
-		}
-
+	public BaseZone overlappingZone(BaseZone other) {
 		Vector selfMin = minCorner();
 		Vector selfMax = maxCorner();
 		Vector otherMin = other.minCorner();

@@ -1,6 +1,7 @@
 package com.playmonumenta.scriptedquests.zones.zone;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.bukkit.Axis;
 import org.bukkit.util.Vector;
@@ -11,27 +12,19 @@ import org.bukkit.util.Vector;
  * Each zone also keeps track of its fragments.
  */
 public class ZoneFragment extends BaseZone {
-	private Zone mParent;
+	private HashMap<String, Zone> mParents = new HashMap<String, Zone>();
+	private boolean mValid;
 
-	public ZoneFragment(ZoneFragment other) throws Exception {
+	public ZoneFragment(ZoneFragment other) {
 		super(other);
-		mParent = other.mParent;
+		mParents.putAll(other.mParents);
+		mValid = other.mValid;
 	}
 
-	public ZoneFragment(Zone other) throws Exception {
+	public ZoneFragment(Zone other) {
 		super(other);
-		mParent = other;
-	}
-
-	@Override
-	public ZoneFragment clone() throws CloneNotSupportedException {
-		try {
-			return new ZoneFragment(this);
-		} catch (CloneNotSupportedException e) {
-			throw new Error(e);
-		} catch (Exception e) {
-			throw new CloneNotSupportedException("Cannot clone null object.");
-		}
+		mParents.put(other.getLayerName(), other);
+		mValid = true;
 	}
 
 	/*
@@ -39,7 +32,7 @@ public class ZoneFragment extends BaseZone {
 	 *
 	 * Either zone may have a size of 0, and should be ignored.
 	 */
-	public ZoneFragment[] splitAxis(Vector pos, Axis axis) throws Exception {
+	public ZoneFragment[] splitAxis(Vector pos, Axis axis) {
 		ZoneFragment[] result = new ZoneFragment[2];
 
 		ZoneFragment lower;
@@ -80,12 +73,21 @@ public class ZoneFragment extends BaseZone {
 
 	/*
 	 * Returns a list of fragments of this zone, split by an overlapping zone.
+	 * Does not include overlap or register a new parent.
 	 */
-	public ArrayList<ZoneFragment> splitByOverlap(BaseZone overlap) throws Exception {
-		if (overlap == null) {
-			throw new Exception("overlap may not be null.");
-		}
+	public ArrayList<ZoneFragment> splitByOverlap(BaseZone overlap) {
+		return splitByOverlap(overlap, null);
+	}
 
+	/*
+	 * Returns a list of fragments of this zone, split by an overlapping zone.
+	 * Optionally register a new parent and return the center zone.
+	 *
+	 * When registering a new parent, only do so for one of the parent zones.
+	 * The other parent zone should have the overlap removed as normal to avoid
+	 * overlapping fragments.
+	 */
+	public ArrayList<ZoneFragment> splitByOverlap(BaseZone overlap, Zone newParent) {
 		ZoneFragment centerZone = new ZoneFragment(this);
 
 		Vector otherMin = overlap.minCorner();
@@ -139,6 +141,12 @@ public class ZoneFragment extends BaseZone {
 			}
 		}
 
+		// If registering a new parent, it may be added now that the center zone is the size of the overlap.
+		if (newParent != null) {
+			centerZone.mParents.put(newParent.getLayerName(), newParent);
+			result.add(centerZone);
+		}
+
 		return result;
 	}
 
@@ -147,7 +155,7 @@ public class ZoneFragment extends BaseZone {
 	 *
 	 * Returns the merged ZoneFragment or None.
 	 */
-	public ZoneFragment merge(ZoneFragment other) throws Exception {
+	public ZoneFragment merge(ZoneFragment other) {
 		Vector aMin = minCorner();
 		Vector aMax = maxCorner();
 		Vector bMin = other.minCorner();
@@ -202,7 +210,36 @@ public class ZoneFragment extends BaseZone {
 		return result;
 	}
 
-	public Zone parent() {
-		return mParent;
+	public HashMap<String, Zone> getParents() {
+		return mParents;
+	}
+
+	public Zone getParent(String layer) {
+		return mParents.get(layer);
+	}
+
+	public void invalidate() {
+		mValid = false;
+	}
+
+	@Override
+	public boolean within(Vector loc) {
+		if (loc == null) {
+			return false;
+		}
+
+		if (!mValid) {
+			return false;
+		}
+
+		for (Axis axis : Axis.values()) {
+			double test = vectorAxis(loc, axis);
+			double min = vectorAxis(minCorner(), axis);
+			double max = vectorAxis(trueMaxCorner(), axis);
+			if (test < min || test >= max) {
+				return false;
+			}
+		}
+		return true;
 	}
 }
