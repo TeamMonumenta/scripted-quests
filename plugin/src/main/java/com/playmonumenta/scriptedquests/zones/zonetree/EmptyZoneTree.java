@@ -17,4 +17,8 @@ public class EmptyZoneTree extends BaseZoneTree {
 	public ZoneFragment getZoneFragment(Vector loc) {
 		return null;
 	}
+
+	public String toString() {
+		return ("EmptyZoneTree()");
+	}
 }

@@ -45,9 +45,13 @@ public class ParentZoneTree extends BaseZoneTree {
 			public ArrayList<ZoneFragment> mMore = new ArrayList<ZoneFragment>();
 		}
 
+		System.out.format("Creating tree...%n");
+
 		// Default is an impossibly worst case scenario so it will never be chosen.
 		ParentData bestSplit = new ParentData();
-		bestSplit.mPriority = zones.size() + 1;
+		bestSplit.mPriority = zones.size();
+		System.out.format("Worst case: %3d = max(%3d, %3d, %3d) (No it doesn't...)%n", bestSplit.mPriority,
+		                  bestSplit.mLess.size(), bestSplit.mMid.size(), bestSplit.mMore.size());
 
 		for (ZoneFragment pivotZone : zones) {
 			for (Axis axis : AXIS_ORDER) {
@@ -75,8 +79,13 @@ public class ParentZoneTree extends BaseZoneTree {
 						}
 					}
 
+					testSplit.mPriority = Math.max(testSplit.mLess.size(), testSplit.mMore.size());
+					testSplit.mPriority = Math.max(testSplit.mPriority, testSplit.mMid.size());
+
 					if (testSplit.mPriority < bestSplit.mPriority) {
 						bestSplit = testSplit;
+						System.out.format("New best case: %3d = max(%3d, %3d, %3d)%n", bestSplit.mPriority,
+						                  bestSplit.mLess.size(), bestSplit.mMid.size(), bestSplit.mMore.size());
 					}
 				}
 			}
@@ -87,9 +96,24 @@ public class ParentZoneTree extends BaseZoneTree {
 		mPivot = bestSplit.mPivot;
 		mMidMin = bestSplit.mMidMin;
 		mMidMax = bestSplit.mMidMax;
-		mLess = CreateZoneTree(bestSplit.mLess);
-		mMid = CreateZoneTree(bestSplit.mMid);
-		mMore = CreateZoneTree(bestSplit.mMore);
+
+		if (bestSplit.mPriority == zones.size()) {
+			// TODO DEBUG!
+			System.out.format("A serious error has occured. Zone fragments dropped to keep us going.%n");
+			System.out.format("Zones:%n");
+			for (ZoneFragment zone : zones) {
+				System.out.format("- " + zone.toString() + "%n");
+			}
+			ArrayList<ZoneFragment> tempDebugList = new ArrayList<ZoneFragment>();
+			tempDebugList.add(zones.get(0));
+			mLess = CreateZoneTree(tempDebugList);
+			mMid = CreateZoneTree(tempDebugList);
+			mMore = CreateZoneTree(tempDebugList);
+		} else {
+			mLess = CreateZoneTree(bestSplit.mLess);
+			mMid = CreateZoneTree(bestSplit.mMid);
+			mMore = CreateZoneTree(bestSplit.mMore);
+		}
 	}
 
 	/*
@@ -123,5 +147,16 @@ public class ParentZoneTree extends BaseZoneTree {
 		}
 
 		return result;
+	}
+
+	public String toString() {
+		return ("(ParentZoneTree(<ArrayList<ZoneFragment>>): "
+		        + "mAxis=" + mAxis.toString() + ", "
+		        + "mPivot=" + Double.toString(mPivot) + ", "
+		        + "mLess=<BaseZoneTree>, "
+		        + "mMore=<BaseZoneTree>, "
+		        + "mMidMin=" + Double.toString(mMidMin) + ", "
+		        + "mMidMax=" + Double.toString(mMidMax) + ", "
+		        + "mMid=<BaseZoneTree>)");
 	}
 }

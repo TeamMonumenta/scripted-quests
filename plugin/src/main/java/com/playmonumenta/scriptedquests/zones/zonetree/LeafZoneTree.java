@@ -26,4 +26,8 @@ public class LeafZoneTree extends BaseZoneTree {
 			return null;
 		}
 	}
+
+	public String toString() {
+		return ("BaseZoneTree(" + mZone.toString() + ")");
+	}
 }

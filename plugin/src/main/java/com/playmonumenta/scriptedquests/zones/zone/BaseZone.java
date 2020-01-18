@@ -62,9 +62,15 @@ public class BaseZone {
 	 * Sets the smallest integer coordinate that is inside the zone on each axis.
 	 */
 	public void minCorner(Vector other) {
-		mSize.add(mPosition);
-		mSize.subtract(other);
-		mPosition = other.clone();
+		Vector newPosition = mPosition.clone();
+		Vector newSize = mSize.clone();
+
+		newSize.add(mPosition);
+		newSize.subtract(other);
+		newPosition = other.clone();
+
+		mPosition = newPosition;
+		mSize = newSize;
 	}
 
 	/*
@@ -72,7 +78,7 @@ public class BaseZone {
 	 */
 	public Vector maxCorner() {
 		Vector result = trueMaxCorner();
-		mSize.subtract(new Vector(1, 1, 1));
+		result.subtract(new Vector(1, 1, 1));
 		return result;
 	}
 
@@ -80,8 +86,12 @@ public class BaseZone {
 	 * Sets the largest integer coordinate that is inside the zone on each axis.
 	 */
 	public void maxCorner(Vector other) {
-		mSize.add(other);
-		mSize.subtract(maxCorner());
+		Vector newSize = mSize.clone();
+
+		newSize.add(other);
+		newSize.subtract(maxCorner());
+
+		mSize = newSize;
 	}
 
 	/*
@@ -97,8 +107,12 @@ public class BaseZone {
 	 * Sets the smallest coordinate that is outside the zone on each axis.
 	 */
 	public void trueMaxCorner(Vector other) {
-		mSize.add(other);
-		mSize.subtract(trueMaxCorner());
+		Vector newSize = mSize.clone();
+
+		newSize.add(other);
+		newSize.subtract(trueMaxCorner());
+
+		mSize = newSize;
 	}
 
 	public Vector size() {
@@ -158,5 +172,9 @@ public class BaseZone {
 		}
 
 		return null;
+	}
+
+	public String toString() {
+		return "BaseZone(" + minCorner().toString() + ", " + maxCorner().toString() + ")";
 	}
 }

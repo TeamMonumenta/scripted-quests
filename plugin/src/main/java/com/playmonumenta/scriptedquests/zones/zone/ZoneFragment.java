@@ -32,20 +32,13 @@ public class ZoneFragment extends BaseZone {
 	 *
 	 * Either zone may have a size of 0, and should be ignored.
 	 */
-	public ZoneFragment[] splitAxis(Vector pos, Axis axis) {
+	private ZoneFragment[] splitAxis(Vector pos, Axis axis) {
 		ZoneFragment[] result = new ZoneFragment[2];
 
-		ZoneFragment lower;
-		ZoneFragment upper;
+		ZoneFragment lower = new ZoneFragment(this);
+		ZoneFragment upper = new ZoneFragment(this);
 
-		try {
-			lower = new ZoneFragment(this);
-			upper = new ZoneFragment(this);
-		} catch (Exception e) {
-			throw e;
-		}
-
-		Vector lowerMax = lower.maxCorner();
+		Vector lowerMax = lower.trueMaxCorner();
 		Vector upperMin = upper.minCorner();
 
 		switch(axis) {
@@ -62,7 +55,7 @@ public class ZoneFragment extends BaseZone {
 			upperMin.setX(pos.getX());
 		}
 
-		lower.maxCorner(lowerMax);
+		lower.trueMaxCorner(lowerMax);
 		upper.minCorner(upperMin);
 
 		result[0] = lower;
@@ -113,13 +106,13 @@ public class ZoneFragment extends BaseZone {
 				workZone = tempSplitResult[0];
 				upper = tempSplitResult[1];
 
-				if (lower != null) {
+				if (lower != null && lower.isValid()) {
 					result.add(lower);
 				}
-				if (workZone != null) {
+				if (workZone != null && workZone.isValid()) {
 					result.add(workZone);
 				}
-				if (upper != null) {
+				if (upper != null && upper.isValid()) {
 					result.add(upper);
 				}
 			}
@@ -133,10 +126,10 @@ public class ZoneFragment extends BaseZone {
 			centerZone = tempSplitResult[0];
 			upper = tempSplitResult[1];
 
-			if (lower != null) {
+			if (lower != null && lower.isValid()) {
 				result.add(lower);
 			}
-			if (upper != null) {
+			if (upper != null && upper.isValid()) {
 				result.add(upper);
 			}
 		}
@@ -241,5 +234,12 @@ public class ZoneFragment extends BaseZone {
 			}
 		}
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		return ("(ZoneFragment(" + mParents.toString() + ") from "
+		        + minCorner().toString() + " to "
+		        + maxCorner().toString() + ")");
 	}
 }

@@ -246,4 +246,13 @@ public class Zone extends BaseZone {
 			currentProperties.add(propertyName);
 		}
 	}
+
+	@Override
+	public String toString() {
+		return ("Zone(layer('" + getLayerName() + "'), "
+		        + minCorner().toString() + ", "
+		        + maxCorner().toString() + ", "
+		        + mName + ", "
+		        + mProperties.toString() + ")");
+	}
 }

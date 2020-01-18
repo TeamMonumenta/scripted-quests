@@ -61,14 +61,14 @@ public class ZoneManager {
 			return layerName + ":" + Integer.toString(layer.getZones().size());
 		});
 
+		// Merge zone fragments within layers to prevent overlaps
+		mergeLayers();
+
 		// Create list of zones
 		ArrayList<Zone> zones = new ArrayList<Zone>();
 		for (ZoneLayer layer : mLayers.values()) {
 			zones.addAll(layer.getZones());
 		}
-
-		// Split the zones into non-overlapping fragments. This could take a little time.
-		mergeOverlaps(zones);
 
 		// TODO Defragment to reduce fragment count (approx 2-3x on average). This takes a long time.
 
@@ -229,16 +229,29 @@ public class ZoneManager {
 		return mZoneTree.getZone(layer, loc.toVector());
 	}
 
-	private void mergeOverlaps(ArrayList<Zone> zones) {
-		for (int i = 0; i < zones.size(); i++) {
-			Zone outer = zones.get(i);
-			for (Zone inner : zones.subList(i + 1, zones.size())) {
-				BaseZone overlap = outer.overlappingZone(inner);
+	private void mergeLayers() {
+		ArrayList<ZoneLayer> layers = new ArrayList<ZoneLayer>();
+		layers.addAll(mLayers.values());
+
+		int numLayers = layers.size();
+		for (int i = 0; i < numLayers; i++) {
+			ZoneLayer outer = layers.get(i);
+			for (int j = i + 1; j < numLayers; j++) {
+				ZoneLayer inner = layers.get(j);
+				mergeLayers(outer, inner);
+			}
+		}
+	}
+
+	private void mergeLayers(ZoneLayer outerLayer, ZoneLayer innerLayer) {
+		for (Zone outerZone : outerLayer.getZones()) {
+			for (Zone innerZone : innerLayer.getZones()) {
+				BaseZone overlap = outerZone.overlappingZone(innerZone);
 				if (overlap == null) {
 					continue;
 				}
-				outer.splitByOverlap(overlap, inner);
-				inner.splitByOverlap(overlap);
+				outerZone.splitByOverlap(overlap, innerZone);
+				innerZone.splitByOverlap(overlap);
 			}
 		}
 	}
