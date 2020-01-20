@@ -47,12 +47,12 @@ public class ZoneFragment extends BaseZone {
 			upperMin.setX(pos.getX());
 			break;
 		case Z:
-			lowerMax.setX(pos.getX());
-			upperMin.setX(pos.getX());
+			lowerMax.setZ(pos.getZ());
+			upperMin.setZ(pos.getZ());
 			break;
 		default:
-			lowerMax.setX(pos.getX());
-			upperMin.setX(pos.getX());
+			lowerMax.setY(pos.getY());
+			upperMin.setY(pos.getY());
 		}
 
 		lower.trueMaxCorner(lowerMax);

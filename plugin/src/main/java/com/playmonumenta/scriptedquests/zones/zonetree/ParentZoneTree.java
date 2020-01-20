@@ -45,13 +45,9 @@ public class ParentZoneTree extends BaseZoneTree {
 			public ArrayList<ZoneFragment> mMore = new ArrayList<ZoneFragment>();
 		}
 
-		System.out.format("Creating tree...%n");
-
 		// Default is an impossibly worst case scenario so it will never be chosen.
 		ParentData bestSplit = new ParentData();
 		bestSplit.mPriority = zones.size();
-		System.out.format("Worst case: %3d = max(%3d, %3d, %3d) (No it doesn't...)%n", bestSplit.mPriority,
-		                  bestSplit.mLess.size(), bestSplit.mMid.size(), bestSplit.mMore.size());
 
 		for (ZoneFragment pivotZone : zones) {
 			for (Axis axis : AXIS_ORDER) {
@@ -84,8 +80,6 @@ public class ParentZoneTree extends BaseZoneTree {
 
 					if (testSplit.mPriority < bestSplit.mPriority) {
 						bestSplit = testSplit;
-						System.out.format("New best case: %3d = max(%3d, %3d, %3d)%n", bestSplit.mPriority,
-						                  bestSplit.mLess.size(), bestSplit.mMid.size(), bestSplit.mMore.size());
 					}
 				}
 			}
@@ -98,7 +92,8 @@ public class ParentZoneTree extends BaseZoneTree {
 		mMidMax = bestSplit.mMidMax;
 
 		if (bestSplit.mPriority == zones.size()) {
-			// TODO DEBUG!
+			// Debug information - I'm almost certain only the else case will occur past this commit,
+			// but have left it in until this has been reviewed.
 			System.out.format("A serious error has occured. Zone fragments dropped to keep us going.%n");
 			System.out.format("Zones:%n");
 			for (ZoneFragment zone : zones) {

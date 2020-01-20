@@ -43,24 +43,20 @@ public class ZonePropertyManager {
 
 	public void changeEvent(Plugin plugin, Player player, String layerName, String name) {
 		if (layerName == null || layerName.isEmpty()) {
-			player.sendMessage(ChatColor.RED + "Invalid zone property layerName");
 			return;
 		}
 
 		if (name == null || name.isEmpty()) {
-			player.sendMessage(ChatColor.RED + "Invalid zone property name");
 			return;
 		}
 
 		HashMap<String, ZoneProperty> layer = mZoneProperties.get(layerName);
 		if (layer == null) {
-			player.sendMessage(ChatColor.RED + "No zone property matching layer '" + layerName + "'");
 			return;
 		}
 
 		ZoneProperty entry = layer.get(name);
 		if (entry == null) {
-			player.sendMessage(ChatColor.RED + "No zone property matching '" + name + "' in layer '" + layerName + "'");
 			return;
 		}
 
