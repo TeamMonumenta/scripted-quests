@@ -58,7 +58,8 @@
                     propertyOrder: 1,
                     title: "name",
                     description: "Unique layer name.",
-                    type: "string"
+                    type: "string",
+                    default: "default"
                 },
                 property_groups: {
                     propertyOrder: 2,
@@ -84,7 +85,7 @@
                     format: "tabs",
                     minItems: 1,
                     items: {
-                        headerTemplate: "{{i}}: {{self.name}}",
+                        headerTemplate: "{{i1}}: {{self.name}}",
                         $ref: "schema/zone.json"
                     }
                 }
