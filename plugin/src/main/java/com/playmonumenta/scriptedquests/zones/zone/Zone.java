@@ -137,16 +137,19 @@ public class Zone extends BaseZone {
 	/*
 	 * Split all fragments of this zone by an overlapping zone, removing overlap.
 	 */
-	public void splitByOverlap(BaseZone overlap) {
-		splitByOverlap(overlap, null);
+	public boolean splitByOverlap(BaseZone overlap) {
+		return splitByOverlap(overlap, null);
 	}
 
 	/*
 	 * Split all fragments of this zone by an overlapping zone,
 	 * marking otherZone as the parent of the exact overlap fragment if
 	 * it exists. Otherwise, the exact overlap fragment is discarded.
+	 *
+	 * Returns true if the zone being overlapped has been completely
+	 * eclipsed by the other zone.
 	 */
-	public void splitByOverlap(BaseZone overlap, Zone otherZone) {
+	public boolean splitByOverlap(BaseZone overlap, Zone otherZone) {
 		ArrayList<ZoneFragment> newFragments = new ArrayList<ZoneFragment>();
 		for (ZoneFragment fragment : mFragments) {
 			BaseZone subOverlap = fragment.overlappingZone(overlap);
@@ -160,8 +163,8 @@ public class Zone extends BaseZone {
 			newFragments.addAll(fragment.splitByOverlap(subOverlap, otherZone));
 			fragment.invalidate();
 		}
-		// TODO if (newFragments.size() == 0) Print warning/error/something (total eclipse of this zone)
 		mFragments = newFragments;
+		return newFragments.size() == 0;
 	}
 
 	/*

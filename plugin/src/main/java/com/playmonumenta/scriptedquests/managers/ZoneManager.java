@@ -33,13 +33,12 @@ public class ZoneManager {
 	/*
 	 * If sender is non-null, it will be sent debugging information
 	 *
-	 * TODO This can easily take several seconds to run, especially once defragmenting zones is possible.
-	 *      However, aside from when it first starts up, this is quite fast. Reloading after the first
-	 *      startup could even allow for an async load, only pausing long enough to swap the generated tree.
-	 *      If that's not good enough, an unbalanced tree is even faster to generate without too much
-	 *      slowdown, and the ZoneLayer class could be modified to handle determining which zones have
-	 *      priority if startup time NEEDS to be near-instant in exchange for slower clock speeds while the
-	 *      tree is loading. We have options. We will probably need some of them.
+	 * In the event we have enough zones this takes a while to load:
+	 * Reloading after the first startup could use an async load, only pausing long enough to swap
+	 * the generated tree. If that's not good enough, an unbalanced tree is even faster to generate
+	 * without too much slowdown, and the ZoneLayer class could be modified to handle determining
+	 * which zones have priority if startup time NEEDS to be near-instant in exchange for slower
+	 * clock speeds while the tree is loading. We have options.
 	 */
 	public void reload(Plugin plugin, CommandSender sender) {
 		for (ZoneLayer layer : mLayers.values()) {
@@ -49,7 +48,7 @@ public class ZoneManager {
 
 		QuestUtils.loadScriptedQuests(plugin, "zone_layers", sender, (object) -> {
 			// Load this file into a ZoneLayer object
-			ZoneLayer layer = new ZoneLayer(object);
+			ZoneLayer layer = new ZoneLayer(sender, object);
 			String layerName = layer.getName();
 
 			if (mLayers.containsKey(layerName)) {
@@ -79,7 +78,7 @@ public class ZoneManager {
 		}
 
 		// Create the new tree. This can take a long time!
-		BaseZoneTree newTree = BaseZoneTree.CreateZoneTree(zoneFragments);
+		BaseZoneTree newTree = BaseZoneTree.CreateZoneTree(sender, zoneFragments);
 
 		// Make sure only one player tracker runs at a time.
 		if (playerTracker != null && !playerTracker.isCancelled()) {

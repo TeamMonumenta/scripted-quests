@@ -10,7 +10,11 @@ import java.util.Map.Entry;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import org.bukkit.command.CommandSender;
 import org.bukkit.util.Vector;
+
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.TextComponent;
 
 import com.playmonumenta.scriptedquests.zones.zone.BaseZone;
 import com.playmonumenta.scriptedquests.zones.zone.Zone;
@@ -22,7 +26,7 @@ public class ZoneLayer {
 	private ArrayList<Zone> mZones = new ArrayList<Zone>();
 	private BaseZoneTree mZoneTree;
 
-	public ZoneLayer(JsonObject object) throws Exception {
+	public ZoneLayer(CommandSender sender, JsonObject object) throws Exception {
 		if (object == null) {
 			throw new Exception("object may not be null.");
 		}
@@ -115,7 +119,7 @@ public class ZoneLayer {
 
 
 		// Split the zones into non-overlapping fragments
-		removeOverlaps(mZones);
+		removeOverlaps(sender, mZones);
 
 		// TODO Defragment to reduce fragment count (approx 2-3x on average)
 
@@ -125,7 +129,7 @@ public class ZoneLayer {
 			zoneFragments.addAll(zone.getZoneFragments());
 		}
 
-		mZoneTree = BaseZoneTree.CreateZoneTree(zoneFragments);
+		mZoneTree = BaseZoneTree.CreateZoneTree(sender, zoneFragments);
 	}
 
 	public void invalidate() {
@@ -161,7 +165,7 @@ public class ZoneLayer {
 		return mZoneTree.getZone(mName, loc);
 	}
 
-	private void removeOverlaps(ArrayList<Zone> zones) throws Exception {
+	private void removeOverlaps(CommandSender sender, ArrayList<Zone> zones) throws Exception {
 		for (int i = 0; i < zones.size(); i++) {
 			Zone outer = zones.get(i);
 			for (Zone inner : zones.subList(i + 1, zones.size())) {
@@ -169,7 +173,13 @@ public class ZoneLayer {
 				if (overlap == null) {
 					continue;
 				}
-				inner.splitByOverlap(overlap);
+				if (inner.splitByOverlap(overlap)) {
+					String errorMessage = ChatColor.RED + "Total eclipse of zone "
+										+ ChatColor.BOLD + inner.getName()
+										+ ChatColor.RED + " by zone "
+										+ ChatColor.BOLD + outer.getName();
+					sender.spigot().sendMessage(TextComponent.fromLegacyText(errorMessage));
+				}
 			}
 		}
 	}

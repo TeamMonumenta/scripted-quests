@@ -4,19 +4,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bukkit.command.CommandSender;
 import org.bukkit.util.Vector;
 
 import com.playmonumenta.scriptedquests.zones.zone.Zone;
 import com.playmonumenta.scriptedquests.zones.zone.ZoneFragment;
 
 public abstract class BaseZoneTree {
-	public static BaseZoneTree CreateZoneTree(ArrayList<ZoneFragment> zones) {
+	public static BaseZoneTree CreateZoneTree(CommandSender sender, ArrayList<ZoneFragment> zones) {
 		if (zones.size() == 0) {
 			return new EmptyZoneTree();
 		} else if (zones.size() == 1) {
 			return new LeafZoneTree(zones.get(0));
 		} else {
-			return new ParentZoneTree(zones);
+			return new ParentZoneTree(sender, zones);
 		}
 	}
 

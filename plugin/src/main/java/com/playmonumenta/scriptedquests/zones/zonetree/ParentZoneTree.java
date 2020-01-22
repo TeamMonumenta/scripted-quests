@@ -4,7 +4,11 @@ import java.lang.Math;
 import java.util.ArrayList;
 
 import org.bukkit.Axis;
+import org.bukkit.command.CommandSender;
 import org.bukkit.util.Vector;
+
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.TextComponent;
 
 import com.playmonumenta.scriptedquests.zones.zone.BaseZone;
 import com.playmonumenta.scriptedquests.zones.zone.ZoneFragment;
@@ -28,7 +32,7 @@ public class ParentZoneTree extends BaseZoneTree {
 
 	private static final Axis[] AXIS_ORDER = {Axis.X, Axis.Z, Axis.Y};
 
-	public ParentZoneTree(ArrayList<ZoneFragment> zones) {
+	public ParentZoneTree(CommandSender sender, ArrayList<ZoneFragment> zones) {
 		/*
 		 * Local class is used to get best balance without
 		 * exposinig incomplete results or creating tree nodes.
@@ -91,24 +95,33 @@ public class ParentZoneTree extends BaseZoneTree {
 		mMidMin = bestSplit.mMidMin;
 		mMidMax = bestSplit.mMidMax;
 
-		if (bestSplit.mPriority == zones.size()) {
-			// Debug information - I'm almost certain only the else case will occur past this commit,
-			// but have left it in until this has been reviewed.
-			System.out.format("A serious error has occured. Zone fragments dropped to keep us going.%n");
-			System.out.format("Zones:%n");
+		if (bestSplit.mPriority >= zones.size()) {
+			/*
+			 * The priority of our best case scenario is equal to or worse than our worst case.
+			 *
+			 * This should only occur if two zone fragments overlap, which is prevented by earlier
+			 * sections of code. If this occurs, then somehow zone fragments are not being divided
+			 * or handled properly.
+			 */
+			sendError(sender, "A serious plugin error has occured. Zone fragments dropped to keep us going.");
+			sendError(sender, "Zones:");
 			for (ZoneFragment zone : zones) {
-				System.out.format("- " + zone.toString() + "%n");
+				sendError(sender, "- " + zone.toString());
 			}
 			ArrayList<ZoneFragment> tempDebugList = new ArrayList<ZoneFragment>();
 			tempDebugList.add(zones.get(0));
-			mLess = CreateZoneTree(tempDebugList);
-			mMid = CreateZoneTree(tempDebugList);
-			mMore = CreateZoneTree(tempDebugList);
+			mLess = CreateZoneTree(sender, tempDebugList);
+			mMid = CreateZoneTree(sender, tempDebugList);
+			mMore = CreateZoneTree(sender, tempDebugList);
 		} else {
-			mLess = CreateZoneTree(bestSplit.mLess);
-			mMid = CreateZoneTree(bestSplit.mMid);
-			mMore = CreateZoneTree(bestSplit.mMore);
+			mLess = CreateZoneTree(sender, bestSplit.mLess);
+			mMid = CreateZoneTree(sender, bestSplit.mMid);
+			mMore = CreateZoneTree(sender, bestSplit.mMore);
 		}
+	}
+
+	private void sendError(CommandSender sender, String message) {
+		sender.spigot().sendMessage(TextComponent.fromLegacyText(ChatColor.RED + message));
 	}
 
 	/*
