@@ -94,6 +94,20 @@ public class RaceManager {
 		}
 	}
 
+	public void restartRaceByClick(Player player) {
+		Race race = mActiveRaces.get(player.getUniqueId());
+		if (race != null && !race.isRingless() && !race.isStatless()) {
+			race.restart();
+		}
+	}
+
+	public void cancelRaceByClick(Player player) {
+		Race race = mActiveRaces.get(player.getUniqueId());
+		if (race != null && !race.isRingless() && !race.isStatless()) {
+			race.lose();
+		}
+	}
+
 	public void cancelAllRaces() {
 		for (Race race : mActiveRaces.values()) {
 			race.abort();

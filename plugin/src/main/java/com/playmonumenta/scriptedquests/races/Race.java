@@ -152,9 +152,9 @@ public class Race {
 				}
 
 				if (mTicks == 0) {
-					// TODO once restarting race works, used to be if !no_ui
-					// mPlayer.sendMessage("" + ChatColor.BLUE + "Reminder:\nShift + Left-Click: Abandon\nShift + Right-Click: Retry");
-
+					if (!mShowStats || !mRingless) {
+						mPlayer.sendMessage("" + ChatColor.BLUE + "Reminder:\nShift + Left-Click: Abandon\nShift + Right-Click: Retry");
+					}
 					// 3
 					mPlayer.sendTitle(ChatColor.RED + "" + ChatColor.BOLD + "3", "", 0, 20, 0);
 					mWorld.playSound(mPlayer.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 0.890899f);
@@ -431,4 +431,6 @@ public class Race {
 	public boolean isRingless() {
 		return mRingless;
 	}
+
+	public boolean isStatless() { return !mShowStats; }
 }
