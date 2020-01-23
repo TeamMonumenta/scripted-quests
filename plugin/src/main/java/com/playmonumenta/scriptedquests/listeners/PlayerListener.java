@@ -47,12 +47,24 @@ public class PlayerListener implements Listener {
 
 		mPlugin.mInteractableManager.interactEvent(mPlugin, player, item, block, action);
 
+		// compass
 		if (item != null && item.getType() == Material.COMPASS &&
 		    player != null && !player.isSneaking()) {
 			if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
 				mPlugin.mQuestCompassManager.showCurrentQuest(player);
 			} else if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
 				mPlugin.mQuestCompassManager.cycleQuestTracker(player);
+			}
+		}
+
+		// race actions
+		if (player.isSneaking()) {
+			if (mPlugin.mRaceManager.isRacing(player)) {
+				if (action == Action.LEFT_CLICK_AIR) {
+					mPlugin.mRaceManager.cancelRaceByClick(player);
+				} else if (action == Action.RIGHT_CLICK_AIR) {
+					mPlugin.mRaceManager.restartRaceByClick(player);
+				}
 			}
 		}
 	}

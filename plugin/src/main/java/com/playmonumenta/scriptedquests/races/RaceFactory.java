@@ -87,7 +87,8 @@ public class RaceFactory {
 		// ringless
 		JsonElement ringless = object.get("ringless");
 		if (ringless == null) {
-			// default to not ringless
+			//throw new Exception("'ringless' entry is required");
+			//ringless entry is not present at all in a lot of races.
 			mRingless = false;
 		} else {
 			mRingless = show_stats.getAsBoolean();
