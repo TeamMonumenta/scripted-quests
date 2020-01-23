@@ -12,6 +12,9 @@ import com.mojang.brigadier.ParseResults;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
+
 public class ActionCommand implements ActionBase {
 	private String mCommand;
 
@@ -39,8 +42,9 @@ public class ActionCommand implements ActionBase {
 			Class<?> commandDispatcherClass = Class.forName(packageName + "." + "CommandDispatcher");
 			Object brigadierCmdDispatcher = commandDispatcherClass.getDeclaredMethod("a").invoke(commandDispatcher);
 
+			String testCommandStr = mCommand.replaceAll("@S", "testuser").replaceAll("@N", "testnpc");
 			Method parse = CommandDispatcher.class.getDeclaredMethod("parse", String.class, Object.class);
-			pr = (ParseResults<?>) parse.invoke(brigadierCmdDispatcher, mCommand.replaceAll("@S", "testuser"), clw);
+			pr = (ParseResults<?>) parse.invoke(brigadierCmdDispatcher, testCommandStr, clw);
 		} catch (Exception e) {
 			// Failed to test the command - ignore it and print a log message
 			e.printStackTrace();
@@ -56,7 +60,17 @@ public class ActionCommand implements ActionBase {
 	@Override
 	public void doAction(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
 		//	Because there's no currently good way to run commands we need to run them via the console....janky....I know.
-		String commandStr = mCommand.replaceAll("@S", player.getName());
+		String commandStr = mCommand;
+		if (npcEntity == null) {
+			if (commandStr.contains("@N")) {
+				String commandErr = "§4Cannot run ScriptedQuest command without direct NPC interaction: /" + commandStr;
+				player.spigot().sendMessage(ChatMessageType.SYSTEM, TextComponent.fromLegacyText(commandErr));
+				return;
+			}
+		} else {
+			commandStr = commandStr.replaceAll("@N", npcEntity.getUniqueId​().toString​());
+		}
+		commandStr = commandStr.replaceAll("@S", player.getName());
 		plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), commandStr);
 	}
 }
