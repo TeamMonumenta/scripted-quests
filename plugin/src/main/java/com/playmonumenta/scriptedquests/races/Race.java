@@ -310,7 +310,7 @@ public class Race {
 				if (mWRTime > endTime) {
 					String cmdStr = "broadcastcommand tellraw @a [\"\",{\"text\":\"" +
 						mPlayer.getName() +
-						"\",\"color\":\"blue\"},{\"text\":\" broke a new world record time for \",\"color\":\"dark_aqua\"},{\"text\":\"" +
+						"\",\"color\":\"blue\"},{\"text\":\" has set a new world record for \",\"color\":\"dark_aqua\"},{\"text\":\"" +
 						mName +
 						"\",\"color\":\"blue\"},{\"text\":\"\\nNew time: \",\"color\":\"dark_aqua\"},{\"text\":\""+
 						RaceUtils.msToTimeString(endTime) +
