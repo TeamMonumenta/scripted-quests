@@ -47,6 +47,7 @@ public class Plugin extends JavaPlugin {
 	private FileConfiguration mConfig;
 	private File mConfigFile;
 	public Boolean mShowTimerNames = null;
+	public boolean mShowZonesDynmap = false;
 
 	public QuestCompassManager mQuestCompassManager;
 	public QuestNpcManager mNpcManager;
@@ -105,7 +106,7 @@ public class Plugin extends JavaPlugin {
 		mDeathManager = new QuestDeathManager();
 		mRaceManager = new RaceManager();
 		mCodeManager = new CodeManager();
-		mZoneManager = new ZoneManager();
+		mZoneManager = new ZoneManager(this);
 		mZonePropertyManager = new ZonePropertyManager();
 
 		mTimerManager = new CommandTimerManager(this);
@@ -174,6 +175,15 @@ public class Plugin extends JavaPlugin {
 			if (sender != null) {
 				sender.sendMessage("show_timer_names: null / not automatically changed");
 			}
+		}
+
+		if (mConfig.isBoolean("show_zones_dynmap")) {
+			mShowZonesDynmap = mConfig.getBoolean("show_timer_names", false);
+		} else {
+			mShowZonesDynmap = false;
+		}
+		if (sender != null) {
+			sender.sendMessage("show_zones_dynmap: " + Boolean.toString(mShowZonesDynmap));
 		}
 	}
 }

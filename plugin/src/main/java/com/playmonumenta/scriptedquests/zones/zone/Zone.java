@@ -119,11 +119,19 @@ public class Zone extends BaseZone {
 	 * - Both are inclusive coordinates.
 	 * - The minimum/maximum are determined for you.
 	 */
-	private Zone(ZoneLayer layer, Vector pos1, Vector pos2, String name, LinkedHashSet<String> properties) {
+	public Zone(ZoneLayer layer, Vector pos1, Vector pos2, String name, LinkedHashSet<String> properties) {
 		super(pos1, pos2);
 		mLayer = layer;
 		mName = name;
 		mProperties.addAll(properties);
+	}
+
+	/*
+	 * Reset the fragments of this Zone so they can be recalculated without reloading this zone.
+	 * Used to handle ZoneLayers from other plugins. This should only be called by its ZoneLayer.
+	 */
+	public void reloadFragments() {
+		mFragments.clear();
 
 		ZoneFragment initialFragment = new ZoneFragment(this);
 		mFragments.add(initialFragment);

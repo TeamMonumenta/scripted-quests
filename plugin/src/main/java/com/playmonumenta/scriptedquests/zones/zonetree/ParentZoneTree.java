@@ -10,7 +10,7 @@ import org.bukkit.util.Vector;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
 
-import com.playmonumenta.scriptedquests.zones.zone.BaseZone;
+import com.playmonumenta.scriptedquests.utils.ZoneUtils;
 import com.playmonumenta.scriptedquests.zones.zone.ZoneFragment;
 
 public class ParentZoneTree extends BaseZoneTree {
@@ -56,8 +56,8 @@ public class ParentZoneTree extends BaseZoneTree {
 		for (ZoneFragment pivotZone : zones) {
 			for (Axis axis : AXIS_ORDER) {
 				double[] possiblePivots = new double[2];
-				possiblePivots[0] = BaseZone.vectorAxis(pivotZone.minCorner(), axis);
-				possiblePivots[1] = BaseZone.vectorAxis(pivotZone.trueMaxCorner(), axis);
+				possiblePivots[0] = ZoneUtils.vectorAxis(pivotZone.minCorner(), axis);
+				possiblePivots[1] = ZoneUtils.vectorAxis(pivotZone.trueMaxCorner(), axis);
 				for (double pivot : possiblePivots) {
 					ParentData testSplit = new ParentData();
 					testSplit.mAxis = axis;
@@ -66,13 +66,13 @@ public class ParentZoneTree extends BaseZoneTree {
 					testSplit.mMidMax = pivot;
 
 					for (ZoneFragment zone : zones) {
-						if (pivot >= BaseZone.vectorAxis(zone.trueMaxCorner(), axis)) {
+						if (pivot >= ZoneUtils.vectorAxis(zone.trueMaxCorner(), axis)) {
 							testSplit.mLess.add(zone);
-						} else if (pivot >= BaseZone.vectorAxis(zone.minCorner(), axis)) {
+						} else if (pivot >= ZoneUtils.vectorAxis(zone.minCorner(), axis)) {
 							testSplit.mMidMin = Math.min(testSplit.mMidMin,
-							                             BaseZone.vectorAxis(zone.minCorner(), axis));
+							                             ZoneUtils.vectorAxis(zone.minCorner(), axis));
 							testSplit.mMidMax = Math.max(testSplit.mMidMax,
-							                             BaseZone.vectorAxis(zone.trueMaxCorner(), axis));
+							                             ZoneUtils.vectorAxis(zone.trueMaxCorner(), axis));
 							testSplit.mMid.add(zone);
 						} else {
 							testSplit.mMore.add(zone);
@@ -140,7 +140,7 @@ public class ParentZoneTree extends BaseZoneTree {
 		}
 
 		ZoneFragment result = null;
-		double test = BaseZone.vectorAxis(loc, mAxis);
+		double test = ZoneUtils.vectorAxis(loc, mAxis);
 
 		// Check zones that don't overlap the pivot first
 		if (test > mPivot) {

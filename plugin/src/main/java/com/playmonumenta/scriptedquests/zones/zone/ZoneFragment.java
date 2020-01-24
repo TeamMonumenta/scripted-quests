@@ -6,6 +6,8 @@ import java.util.HashMap;
 import org.bukkit.Axis;
 import org.bukkit.util.Vector;
 
+import com.playmonumenta.scriptedquests.utils.ZoneUtils;
+
 /*
  * A fragment of a zone; this is used to find zones quickly, but not hold their properties.
  * Instead, each fragment points to its parent, a zone with properties.
@@ -204,7 +206,9 @@ public class ZoneFragment extends BaseZone {
 	}
 
 	public HashMap<String, Zone> getParents() {
-		return mParents;
+		HashMap<String, Zone> result = new HashMap<String, Zone>();
+		result.putAll(mParents);
+		return result;
 	}
 
 	public Zone getParent(String layer) {
@@ -226,9 +230,9 @@ public class ZoneFragment extends BaseZone {
 		}
 
 		for (Axis axis : Axis.values()) {
-			double test = vectorAxis(loc, axis);
-			double min = vectorAxis(minCorner(), axis);
-			double max = vectorAxis(trueMaxCorner(), axis);
+			double test = ZoneUtils.vectorAxis(loc, axis);
+			double min = ZoneUtils.vectorAxis(minCorner(), axis);
+			double max = ZoneUtils.vectorAxis(trueMaxCorner(), axis);
 			if (test < min || test >= max) {
 				return false;
 			}

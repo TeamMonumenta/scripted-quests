@@ -3,6 +3,8 @@ package com.playmonumenta.scriptedquests.zones.zone;
 import org.bukkit.Axis;
 import org.bukkit.util.Vector;
 
+import com.playmonumenta.scriptedquests.utils.ZoneUtils;
+
 public class BaseZone {
 	protected Vector mPosition;
 	protected Vector mSize;
@@ -25,30 +27,6 @@ public class BaseZone {
 		mSize = posMax.clone();
 		mSize.subtract(posMin);
 		mSize.add(new Vector(1, 1, 1));
-	}
-
-	public static double vectorAxis(Vector vector, Axis axis) {
-		switch (axis) {
-		case X:
-			return vector.getX();
-		case Z:
-			return vector.getZ();
-		default:
-			return vector.getY();
-		}
-	}
-
-	public static void vectorAxis(Vector vector, Axis axis, double value) {
-		switch (axis) {
-		case X:
-			vector.setX(value);
-			break;
-		case Z:
-			vector.setZ(value);
-			break;
-		default:
-			vector.setY(value);
-		}
 	}
 
 	/*
@@ -136,9 +114,9 @@ public class BaseZone {
 		}
 
 		for (Axis axis : Axis.values()) {
-			double test = vectorAxis(loc, axis);
-			double min = vectorAxis(minCorner(), axis);
-			double max = vectorAxis(trueMaxCorner(), axis);
+			double test = ZoneUtils.vectorAxis(loc, axis);
+			double min = ZoneUtils.vectorAxis(minCorner(), axis);
+			double max = ZoneUtils.vectorAxis(trueMaxCorner(), axis);
 			if (test < min || test >= max) {
 				return false;
 			}
@@ -156,8 +134,8 @@ public class BaseZone {
 		Vector otherMax = other.maxCorner();
 
 		for (Axis axis : Axis.values()) {
-			if (vectorAxis(selfMax, axis) < vectorAxis(otherMin, axis) ||
-				vectorAxis(otherMax, axis) < vectorAxis(selfMin, axis)) {
+			if (ZoneUtils.vectorAxis(selfMax, axis) < ZoneUtils.vectorAxis(otherMin, axis) ||
+				ZoneUtils.vectorAxis(otherMax, axis) < ZoneUtils.vectorAxis(selfMin, axis)) {
 				return null;
 			}
 		}
