@@ -1,4 +1,12 @@
 # Changelog
+### 1.15
+- Added `/setvelocity @a x y z` command to launch players/entities around
+- Fixed outdated jsoneditor style
+- Load quests 1 tick after enabling to let other plugins register commands
+- Added race world record message broadcast
+- Added @N placeholder to run commands on the quest entity
+- Added ringless races
+- Added automated build & deploy to github packages
 
 ### 1.14
 - Interactables feature - trigger quest components when a player clicks with an item
