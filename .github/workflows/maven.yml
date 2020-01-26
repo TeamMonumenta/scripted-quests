@@ -1,12 +1,6 @@
 name: Java CI
 
-on:
-  push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - master
+on: [push, pull_request]
 
 jobs:
   build:
@@ -20,3 +14,11 @@ jobs:
     - name: Build with Maven
       working-directory: ./plugin
       run: ./compile.sh
+    - name: Deploy to Github Package Registry
+      working-directory: ./plugin
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        mkdir -p ~/.m2
+        echo "<settings><servers><server><id>github</id><username>x-access-token</username><password>${GITHUB_TOKEN}</password></server></servers></settings>" > ~/.m2/settings.xml
+        ./deploy.sh

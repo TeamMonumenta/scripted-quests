@@ -17,6 +17,14 @@
         <minecraft.server.version>1.13.2-R0.1-SNAPSHOT</minecraft.server.version>
     </properties>
 
+	<distributionManagement>
+		<repository>
+			<id>github</id>
+			<name>GitHub OWNER Apache Maven Packages</name>
+			<url>https://maven.pkg.github.com/TeamMonumenta/scripted-quests</url>
+		</repository>
+	</distributionManagement>
+
     <repositories>
         <repository>
             <id>spigotmc-repo</id>
