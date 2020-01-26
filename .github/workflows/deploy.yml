@@ -3,7 +3,9 @@ name: Java CI
 on:
   push:
     branches:
-      - master
+    - master
+    tags:
+    - '*'
 
 jobs:
   deploy:

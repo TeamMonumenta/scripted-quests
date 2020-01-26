@@ -7,7 +7,7 @@ cp "$SCRIPT_DIR/pom.xml" "$SCRIPT_DIR/pom.xml.compilebackup"
 cp "$SCRIPT_DIR/src/main/resources/plugin.yml" "$SCRIPT_DIR/src/main/resources/plugin.yml.compilebackup"
 
 # Update version number
-VERSION=$(git describe --tags --always --dirty)
+VERSION=$(git describe --tags --always --dirty --long)
 perl -p -i -e "s|<version>dev</version>|<version>$VERSION</version>|g" "$SCRIPT_DIR/pom.xml"
 perl -p -i -e "s|^version: .*$|version: $VERSION|g" "$SCRIPT_DIR/src/main/resources/plugin.yml"
 
