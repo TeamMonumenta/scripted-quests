@@ -84,6 +84,14 @@
                                 "required": true,
                                 "propertyOrder": 3,
                                 "$ref": "actions.json"
+                            },
+                            "player_valid_radius": {
+                                "description": "Range that the player is allowed to walk from the point where they were shown the message and still have the dialog work. Default is 4.0.",
+                                "required": false,
+                                "propertyOrder": 4,
+                                "type": "number",
+                                "minimum": 3,
+                                "maximum": 29999984
                             }
                         }
                     }

@@ -49,6 +49,7 @@ public class DialogClickableTextEntry implements DialogBase {
 	}
 
 	private String mText;
+	private Double mRadius = 4.0;
 	private QuestActions mActions;
 	private int mIdx;
 
@@ -72,7 +73,7 @@ public class DialogClickableTextEntry implements DialogBase {
 		for (Entry<String, JsonElement> ent : entries) {
 			String key = ent.getKey();
 
-			if (!key.equals("player_text") && !key.equals("actions") && !key.equals("delay_actions_by_ticks")) {
+			if (!key.equals("player_text") && !key.equals("player_valid_radius") && !key.equals("actions") && !key.equals("delay_actions_by_ticks")) {
 				throw new Exception("Unknown clickable_text key: " + key);
 			}
 
@@ -88,6 +89,8 @@ public class DialogClickableTextEntry implements DialogBase {
 				if (mText == null) {
 					throw new Exception("clickable_text player_text entry is not a string!");
 				}
+			} else if (key.equals("player_valid_radius")) {
+				mRadius = value.getAsDouble();
 			} else if (key.equals("actions")) {
 				mActions = new QuestActions(npcName, displayName, entityType, delayTicks, value);
 			}
@@ -107,8 +110,8 @@ public class DialogClickableTextEntry implements DialogBase {
 
 		/* Create a new object describing the prereqs/actions/location for this clickable message */
 		PlayerClickableTextEntry newEntry = new PlayerClickableTextEntry(prereqs, mActions, npcEntity,
-		        new AreaBounds("", new Point(player.getLocation().subtract(4.0, 4.0, 4.0)),
-		                       new Point(player.getLocation().add(4.0, 4.0, 4.0))));
+		        new AreaBounds("", new Point(player.getLocation().subtract(mRadius, mRadius, mRadius)),
+		                       new Point(player.getLocation().add(mRadius, mRadius, mRadius))));
 
 		/* Get the list of currently available clickable entries */
 		HashMap<Integer, PlayerClickableTextEntry> availTriggers;
