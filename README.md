@@ -13,16 +13,41 @@ JSON-driven Minecraft Spigot plugin for creating quests
 - [Current Capabilities](#capabilities)
 
 ## <a name="description"></a>Description
+This plugin is a Minecraft game developer's toolbox, greatly expanding and
+simplifies what you can do with minecraft commands.
+
+The idea is to be able to create complex mechanisms without having to write any
+plugin code. With ScriptedQuests, you can build things like quest interactions
+between players and NPCs (and much more) by creating configuration files with
+the provided web editor.
+
+Highlighted features:
+- NPC interaction: Smack an NPC to talk to them
+- Compass: Navigate around the world by cycling through compass objectives
+- Death: Run special logic when players die under specific conditions
+- Login: Run logic when players log in
+- Races: Challenge players to achieve the fastest time along a path
+- Traders: Restrict what villagers trade each player based on scores/rules
+- Codes: Create a reward code in one map that can be redeemed in another map
+- Clickables: Let non-op players run pre-bundled commands via chat
+- Interactables: Create actions that run when players click with specific items
+- Timers: Efficient command block clocks with optional player nearby detection
+- Utility commands: `/randomnumber`, `/giveloottable`, `/schedule function`, `/set velocity`
+
 This plugin was developed for use with Monumenta, a Minecraft
-Complete-The-Monument Massively-Multiplayer-Online (CTM MMO) server.
+Complete-The-Monument MMORPG server. It has proven to be perhaps the most
+generally valuable & reusable tool we have built over several years, and we
+hope others will find it useful too.
 
-It was developed to allow people who aren't expert command-block builders to
-make quests involving interaction with NPCs (mostly villagers). You can
-left-click on a villager (or other entity) to talk to them (cancelling the
-damage and displaying dialog, if any).
+## <a name="download"></a>Download
 
-This plugin has two components - the quest interaction system, and a quest
-compass which helps players navigate to the locations that the NPC's send them to.
+ScriptedQuests works on Minecraft 1.13 or higher. It also requires
+[CommandAPI](https://github.com/JorelAli/1.13-Command-API) version 1.8.x.
+
+You can download ScriptedQuests from [GitHub Packages](https://github.com/TeamMonumenta/scripted-quests/packages).
+This is automatically updated every time new changes are made. Click on the
+com.scriptedquests... link, and download the .jar file from the "Assets"
+category on the right side of the page.
 
 ## <a name="sample"></a>Sample
 Here is an example of interacting with a villager named Aimee:
@@ -47,21 +72,12 @@ quest elements can trigger actions when the player dies if they meet specific
 pre-requisites. This can involve keeping the player's inventory, respawning at
 a different location than normal, etc.
 
-## <a name="download"></a>Download
-Grab one of the plugin jar files from the [release](release) folder. Naming scheme:
-
-`ScriptedQuests_<Target.Minecraft.Version>_<Plugin.Version>-<CompileDate>-<CompileTime>`
-
-Or compile it yourself using Maven. Note that ScriptedQuests uses NMS - so you
-must have also compiled Spigot on the system you are using to compile
-ScriptedQuests.
-
 ## <a name="get-started"></a>Getting Started / Tutorial
 This plugin only currently has compiled versions for Spigot 1.12.2. It will
 probably work with older versions but you must compile it yourself.
 
-- Install it like all spigot plugins by placing it in your plugins folder.
-- Start your spigot server. This should create some folders under
+- Install it like all spigot/paper plugins by placing it in your plugins folder.
+- Start your server. This should create some folders under
   `plugins/ScriptedQuests/`
 - Summon a test villager: `/summon minecraft:villager ~ ~ ~ {CustomName:"Aimee"}`
 - Create the needed scoreboard: `/scoreboard objectives add Quest01 dummy`
@@ -103,9 +119,9 @@ an NPC, quest components are run in-order (more than one may be executed).
 - permission: `scriptedquests.interactnpc`
 - EntityType is optional (default = VILLAGER) and can be chosen from this
   list: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html
-- This command can be used to build location-based quests that don't
-  involve clicking on an NPC. To do this, use a repeating command block.
-  with a command of this form: `execute as @p[r=5] run interactnpc Aimee VILLAGER`
+- This command can be used to build location - based quests that don't
+  involve clicking on an NPC. To do this, use a repeating command block with a
+  command of this form: `execute as @p[r = 5] run interactnpc Aimee VILLAGER`
 - You will need to structure your QuestComponent so that the pre-requisites
   are only met once if the player will stay in that location for more than
   one invokation of interactnpc.
@@ -126,6 +142,61 @@ an NPC, quest components are run in-order (more than one may be executed).
 - Reloads Quest NPCs and Quest Compass.
 - Provides helpful debugging to resolve problems with any files that fail to load.
 - Hover over the error messages in chat for more information.
+
+`/clickable <label>`
+- permission: `scriptedquests.clickable`
+- Runs the clickable with the specified label. This is useful for giving non-op players
+  access to pre-prepared command bundles
+
+`/timerdebug <enabledOnly>`
+- permission: `scriptedquests.timerdebug`
+- Shows a list of all the currently loaded timers. If `enabledOnly` is true, will only
+  show timers that are currently active due to players matching the range criteria
+
+`/setvelocity <@a> <x> <y> <z>`
+- permission: `scriptedquests.setvelocity`
+- Sets the velocity of the targeted entity to x y z.
+
+`/schedule function <namespace:path/to/function> <ticks>`
+- permission: `scriptedquests.schedulefunction`
+- Schedules a function to run #ticks later. This is the exact same function provided in
+  1.14+, except it also allows the same function to be scheduled more than once.
+
+`/execute store result score <scoreboardplayer> <objective> run randomnumber <min> <max>`
+- permission: `scriptedquests.randomnumber`
+- Used to store a random number into a scoreboard value. `min` and `max` are inclusive.
+
+`/leaderboard <@a> <objective> <descending> <page>`
+- permission: `scriptedquests.leaderboard`
+- Shows the targeted players a leaderboard (sorted scoreboard) for the specified
+  objective. `descending` specifies order of results, page specifies which page to show.
+  **For players to be able to use the << >> arrows, they need to have this permission**.
+  This of course also lets them generate leaderboards for any scoreboard on the server.
+
+`/haspermission <@a> <permission.node>`
+- permission: `scriptedquests.haspermission`
+- Utility function to tell the player that runs the command whether the target player(s)
+  have the specified permission node or not. Also returns success/fail so you can use
+  it with /execute store
+
+`/giveloottable <@a> "<namespace:path/to/table>" [count]`
+- permission: `scriptedquests.giveloottable`
+- Gives all the items from the specified loot table to the specified players `count` times
+
+`/generatecode <@a> "<seed>"`
+- permission: `scriptedquests.generatecode`
+- Generates a unique three-word code for that player. This code will only work for that
+  player and the seed specified. Redeemed with `/code`. This is useful for building
+  cross-map functionality
+
+`/code <word1> <word2> <word3>`
+- permission: `scriptedquests.code`
+- Redeems a code for the player running the command. Will only do something if there is a
+  code file with the same seed as the code was generated for, and the code was generated by
+  the player attempting to redeem it.
+  **For players to be able to redeem codes they need this permission!**
+  This is highly resistant to guessing - players would have to guess ~130k combinations
+  on average to brute force this.
 
 ## <a name="capabilities"></a>Current Capabilities:
 prerequisites:
