@@ -215,6 +215,11 @@ public class ZoneFragment extends BaseZone {
 		return mParents.get(layer);
 	}
 
+	public boolean hasProperty(String layerName, String propertyName) {
+		Zone zone = getParent(layerName);
+		return zone != null && zone.hasProperty(propertyName);
+	}
+
 	public void invalidate() {
 		mValid = false;
 	}

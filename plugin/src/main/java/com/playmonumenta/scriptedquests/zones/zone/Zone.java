@@ -224,6 +224,10 @@ public class Zone extends BaseZone {
 		return result;
 	}
 
+	public boolean hasProperty(String propertyName) {
+		return mProperties.contains(propertyName);
+	}
+
 	private static void applyProperty(HashMap<String, ArrayList<String>> propertyGroups, LinkedHashSet<String> currentProperties, String propertyName) throws Exception {
 		applyProperty(propertyGroups, currentProperties, propertyName, false);
 	}

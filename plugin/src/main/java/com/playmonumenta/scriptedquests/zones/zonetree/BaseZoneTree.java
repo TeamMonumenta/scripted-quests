@@ -50,7 +50,7 @@ public abstract class BaseZoneTree {
 	 * For a given location and layer name, return the zone that contains it.
 	 * Returns null if no zone overlaps it on that layer.
 	 */
-	public Zone getZone(String layer, Vector loc) {
+	public Zone getZone(Vector loc, String layer) {
 		ZoneFragment fragment = getZoneFragment(loc);
 
 		if (fragment == null) {
@@ -58,5 +58,10 @@ public abstract class BaseZoneTree {
 		}
 
 		return fragment.getParent(layer);
+	}
+
+	public boolean hasProperty(Vector loc, String layerName, String propertyName) {
+		ZoneFragment fragment = getZoneFragment(loc);
+		return fragment != null && fragment.hasProperty(layerName, propertyName);
 	}
 }

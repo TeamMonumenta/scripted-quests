@@ -76,6 +76,69 @@ public class ZoneManager {
 		return true;
 	}
 
+	/*
+	 * For a given location, return the fragment that contains it.
+	 * Returns null if no fragment overlaps it.
+	 */
+	public ZoneFragment getZoneFragment(Vector loc) {
+		return mZoneTree.getZoneFragment(loc);
+	}
+
+	public ZoneFragment getZoneFragment(Location loc) {
+		if (loc == null) {
+			return null;
+		}
+
+		return mZoneTree.getZoneFragment(loc.toVector());
+	}
+
+	// For a given location, return the zones that contain it.
+	public HashMap<String, Zone> getZones(Vector loc) {
+		return mZoneTree.getZones(loc);
+	}
+
+	public HashMap<String, Zone> getZones(Location loc) {
+		if (loc == null) {
+			return null;
+		}
+
+		return mZoneTree.getZones(loc.toVector());
+	}
+
+	/*
+	 * For a given layer and location, return the zone that
+	 * contains it. Returns null if no zone overlaps it.
+	 */
+	public Zone getZone(Vector loc, String layer) {
+		return mZoneTree.getZone(loc, layer);
+	}
+
+	public Zone getZone(Location loc, String layer) {
+		if (loc == null) {
+			return null;
+		}
+
+		return mZoneTree.getZone(loc.toVector(), layer);
+	}
+
+	public boolean hasProperty(Vector loc, String layerName, String propertyName) {
+		return mZoneTree != null && mZoneTree.hasProperty(loc, layerName, propertyName);
+	}
+
+	public boolean hasProperty(Location loc, String layerName, String propertyName) {
+		return mZoneTree != null && mZoneTree.hasProperty(loc.toVector(), layerName, propertyName);
+	}
+
+	// Passing a player is optimized to use the last known location
+	public boolean hasProperty(Player player, String layerName, String propertyName) {
+		ZoneFragment lastFragment = lastPlayerZoneFragment.get(player);
+		if (lastFragment == null) {
+			return false;
+		}
+
+		return lastFragment.hasProperty(layerName, propertyName);
+	}
+
 	/************************************************************************************
 	 * End of methods for use with external plugins:
 	 ************************************************************************************/
@@ -243,51 +306,6 @@ public class ZoneManager {
 				Bukkit.getPluginManager().callEvent(event);
 			}
 		}
-	}
-
-	/*
-	 * For a given location, return the fragment that contains it.
-	 * Returns null if no fragment overlaps it.
-	 */
-	public ZoneFragment getZoneFragment(Vector loc) {
-		return mZoneTree.getZoneFragment(loc);
-	}
-
-	public ZoneFragment getZoneFragment(Location loc) {
-		if (loc == null) {
-			return null;
-		}
-
-		return mZoneTree.getZoneFragment(loc.toVector());
-	}
-
-	// For a given location, return the zones that contain it.
-	public HashMap<String, Zone> getZones(Vector loc) {
-		return mZoneTree.getZones(loc);
-	}
-
-	public HashMap<String, Zone> getZones(Location loc) {
-		if (loc == null) {
-			return null;
-		}
-
-		return mZoneTree.getZones(loc.toVector());
-	}
-
-	/*
-	 * For a given layer and location, return the zone that
-	 * contains it. Returns null if no zone overlaps it.
-	 */
-	public Zone getZone(String layer, Vector loc) {
-		return mZoneTree.getZone(layer, loc);
-	}
-
-	public Zone getZone(String layer, Location loc) {
-		if (loc == null) {
-			return null;
-		}
-
-		return mZoneTree.getZone(layer, loc.toVector());
 	}
 
 	private void mergeLayers() {
