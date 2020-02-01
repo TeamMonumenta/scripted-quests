@@ -17,9 +17,8 @@ import org.bukkit.util.Vector;
 import com.playmonumenta.scriptedquests.zones.ZoneLayer;
 
 /*
- * A fragment of a zone; this is used to find zones quickly, but not hold their properties.
- * Instead, each fragment points to its parent, a zone with properties.
- * Each zone also keeps track of its fragments.
+ * A zone, to be split into fragments. This class holds the name and properties, and the fragments determine
+ * if a point is inside the zone after overlaps are taken into account.
  */
 public class Zone extends BaseZone {
 	private ZoneLayer mLayer;
@@ -27,14 +26,6 @@ public class Zone extends BaseZone {
 	private ArrayList<ZoneFragment> mFragments = new ArrayList<ZoneFragment>();
 	private LinkedHashSet<String> mProperties = new LinkedHashSet<String>();
 
-	/*
-	 * Why yes, this does look weird. super() can only be called as the first method, and
-	 * the json needs to be parsed first - but we don't want to duplicate code from the
-	 * base class. By making this a static method, we made it possible to parse the
-	 * json before handling anything else, including super(). This looks doubly weird
-	 * for using the same method name - Zone - as the constructor, but this is a
-	 * constructor like any other.
-	 */
 	public static Zone ConstructFromJson(ZoneLayer layer, JsonObject object, HashMap<String, ArrayList<String>> propertyGroups) throws Exception {
 		if (layer == null) {
 			throw new Exception("layer may not be null.");
@@ -235,6 +226,9 @@ public class Zone extends BaseZone {
 	private static void applyProperty(HashMap<String, ArrayList<String>> propertyGroups, LinkedHashSet<String> currentProperties, String propertyName, boolean remove) throws Exception {
 		if (propertyName == null) {
 			throw new Exception("propertyName may not be null.");
+		}
+		if (propertyName.isEmpty()) {
+			throw new Exception("propertyName may not be empty (including after the prefix # or !).");
 		}
 		if (currentProperties == null) {
 			throw new Exception("currentProperties may not be null.");

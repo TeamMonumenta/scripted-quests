@@ -11,7 +11,7 @@ import com.playmonumenta.scriptedquests.zones.zone.Zone;
 import com.playmonumenta.scriptedquests.zones.zone.ZoneFragment;
 
 public abstract class BaseZoneTree {
-	public static BaseZoneTree CreateZoneTree(CommandSender sender, ArrayList<ZoneFragment> zones) {
+	public static BaseZoneTree CreateZoneTree(CommandSender sender, ArrayList<ZoneFragment> zones) throws Exception {
 		if (zones.size() == 0) {
 			return new EmptyZoneTree();
 		} else if (zones.size() == 1) {

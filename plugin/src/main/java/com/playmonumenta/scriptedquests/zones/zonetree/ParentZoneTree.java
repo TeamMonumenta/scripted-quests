@@ -32,10 +32,10 @@ public class ParentZoneTree extends BaseZoneTree {
 
 	private static final Axis[] AXIS_ORDER = {Axis.X, Axis.Z, Axis.Y};
 
-	public ParentZoneTree(CommandSender sender, ArrayList<ZoneFragment> zones) {
+	public ParentZoneTree(CommandSender sender, ArrayList<ZoneFragment> zones) throws Exception {
 		/*
 		 * Local class is used to get best balance without
-		 * exposinig incomplete results or creating tree nodes.
+		 * exposing incomplete results or creating tree nodes.
 		 */
 
 		 class ParentData {
@@ -57,7 +57,7 @@ public class ParentZoneTree extends BaseZoneTree {
 			for (Axis axis : AXIS_ORDER) {
 				double[] possiblePivots = new double[2];
 				possiblePivots[0] = ZoneUtils.vectorAxis(pivotZone.minCorner(), axis);
-				possiblePivots[1] = ZoneUtils.vectorAxis(pivotZone.trueMaxCorner(), axis);
+				possiblePivots[1] = ZoneUtils.vectorAxis(pivotZone.maxCornerExclusive(), axis);
 				for (double pivot : possiblePivots) {
 					ParentData testSplit = new ParentData();
 					testSplit.mAxis = axis;
@@ -66,13 +66,13 @@ public class ParentZoneTree extends BaseZoneTree {
 					testSplit.mMidMax = pivot;
 
 					for (ZoneFragment zone : zones) {
-						if (pivot >= ZoneUtils.vectorAxis(zone.trueMaxCorner(), axis)) {
+						if (pivot >= ZoneUtils.vectorAxis(zone.maxCornerExclusive(), axis)) {
 							testSplit.mLess.add(zone);
 						} else if (pivot >= ZoneUtils.vectorAxis(zone.minCorner(), axis)) {
 							testSplit.mMidMin = Math.min(testSplit.mMidMin,
 							                             ZoneUtils.vectorAxis(zone.minCorner(), axis));
 							testSplit.mMidMax = Math.max(testSplit.mMidMax,
-							                             ZoneUtils.vectorAxis(zone.trueMaxCorner(), axis));
+							                             ZoneUtils.vectorAxis(zone.maxCornerExclusive(), axis));
 							testSplit.mMid.add(zone);
 						} else {
 							testSplit.mMore.add(zone);
@@ -103,16 +103,11 @@ public class ParentZoneTree extends BaseZoneTree {
 			 * sections of code. If this occurs, then somehow zone fragments are not being divided
 			 * or handled properly.
 			 */
-			sendError(sender, "A serious plugin error has occured. Zone fragments dropped to keep us going.");
-			sendError(sender, "Zones:");
+			StringBuilder message = new StringBuilder("A serious plugin error has occured. Zones involved:");
 			for (ZoneFragment zone : zones) {
-				sendError(sender, "- " + zone.toString());
+				message.append("- " + zone.toString());
 			}
-			ArrayList<ZoneFragment> tempDebugList = new ArrayList<ZoneFragment>();
-			tempDebugList.add(zones.get(0));
-			mLess = CreateZoneTree(sender, tempDebugList);
-			mMid = CreateZoneTree(sender, tempDebugList);
-			mMore = CreateZoneTree(sender, tempDebugList);
+			throw new Exception(message.toString());
 		} else {
 			mLess = CreateZoneTree(sender, bestSplit.mLess);
 			mMid = CreateZoneTree(sender, bestSplit.mMid);
@@ -124,10 +119,6 @@ public class ParentZoneTree extends BaseZoneTree {
 		sender.spigot().sendMessage(TextComponent.fromLegacyText(ChatColor.RED + message));
 	}
 
-	/*
-	 * Invalidate all fragments in the tree, causing any players inside them to be
-	 * considered outside them. This updates them to the correct zone automagically.
-	 */
 	public void invalidate() {
 		mLess.invalidate();
 		mMid.invalidate();

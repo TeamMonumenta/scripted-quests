@@ -14,6 +14,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
 import com.playmonumenta.scriptedquests.zones.ZoneChangeEvent;
 import com.playmonumenta.scriptedquests.zones.ZonePropertyChangeEvent;
@@ -30,7 +31,7 @@ public class ZoneManager {
 	private HashMap<String, ZoneLayer> mLayers = new HashMap<String, ZoneLayer>();
 	private HashMap<String, ZoneLayer> mPluginLayers = new HashMap<String, ZoneLayer>();
 	private BaseZoneTree mZoneTree = null;
-	private Map<Player, ZoneFragment> lastPlayerZoneFragment = new HashMap<Player, ZoneFragment>();
+	private Map<Player, ZoneFragment> mLastPlayerZoneFragment = new HashMap<Player, ZoneFragment>();
 
 	public ZoneManager(Plugin plugin) {
 		mPlugin = plugin;
@@ -131,7 +132,7 @@ public class ZoneManager {
 
 	// Passing a player is optimized to use the last known location
 	public boolean hasProperty(Player player, String layerName, String propertyName) {
-		ZoneFragment lastFragment = lastPlayerZoneFragment.get(player);
+		ZoneFragment lastFragment = mLastPlayerZoneFragment.get(player);
 		if (lastFragment == null) {
 			return false;
 		}
@@ -193,7 +194,13 @@ public class ZoneManager {
 		}
 
 		// Create the new tree. This could take a long time with enough fragments.
-		BaseZoneTree newTree = BaseZoneTree.CreateZoneTree(sender, zoneFragments);
+		BaseZoneTree newTree;
+		try {
+			newTree = BaseZoneTree.CreateZoneTree(sender, zoneFragments);
+		} catch (Exception e) {
+			MessagingUtils.sendStackTrace(sender, e);
+			return;
+		}
 
 		// Make sure only one player tracker runs at a time.
 		if (playerTracker != null && !playerTracker.isCancelled()) {
@@ -214,7 +221,7 @@ public class ZoneManager {
 					Location playerLocation = player.getLocation();
 					Vector playerVector = playerLocation.toVector();
 
-					ZoneFragment lastZoneFragment = lastPlayerZoneFragment.get(player);
+					ZoneFragment lastZoneFragment = mLastPlayerZoneFragment.get(player);
 					if (lastZoneFragment != null && lastZoneFragment.within(playerVector)) {
 						// Player has not left their previous zone fragment; no zone change.
 						// Note that reloading invalidates previous zones, causing within() to
@@ -241,7 +248,7 @@ public class ZoneManager {
 	}
 
 	private void applyZoneChange(Player player, ZoneFragment currentZoneFragment) {
-		ZoneFragment lastZoneFragment = lastPlayerZoneFragment.get(player);
+		ZoneFragment lastZoneFragment = mLastPlayerZoneFragment.get(player);
 
 		HashMap<String, Zone> lastZones = new HashMap<String, Zone>();
 		if (lastZoneFragment != null) {
@@ -254,7 +261,7 @@ public class ZoneManager {
 		}
 
 		// We've already confirmed the player changed zone fragments; null is valid.
-		lastPlayerZoneFragment.put(player, currentZoneFragment);
+		mLastPlayerZoneFragment.put(player, currentZoneFragment);
 
 		if (currentZones == lastZones) {
 			// If the zones are identical between both fragments, nothing more to do.

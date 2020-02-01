@@ -40,7 +40,7 @@ public class ZoneFragment extends BaseZone {
 		ZoneFragment lower = new ZoneFragment(this);
 		ZoneFragment upper = new ZoneFragment(this);
 
-		Vector lowerMax = lower.trueMaxCorner();
+		Vector lowerMax = lower.maxCornerExclusive();
 		Vector upperMin = upper.minCorner();
 
 		switch(axis) {
@@ -57,7 +57,7 @@ public class ZoneFragment extends BaseZone {
 			upperMin.setY(pos.getY());
 		}
 
-		lower.trueMaxCorner(lowerMax);
+		lower.maxCornerExclusive(lowerMax);
 		upper.minCorner(upperMin);
 
 		result[0] = lower;
@@ -86,7 +86,7 @@ public class ZoneFragment extends BaseZone {
 		ZoneFragment centerZone = new ZoneFragment(this);
 
 		Vector otherMin = overlap.minCorner();
-		Vector otherMax = overlap.trueMaxCorner();
+		Vector otherMax = overlap.maxCornerExclusive();
 
 		ZoneFragment[] tempSplitResult;
 		ArrayList<ZoneFragment> result = new ArrayList<ZoneFragment>();
@@ -237,7 +237,7 @@ public class ZoneFragment extends BaseZone {
 		for (Axis axis : Axis.values()) {
 			double test = ZoneUtils.vectorAxis(loc, axis);
 			double min = ZoneUtils.vectorAxis(minCorner(), axis);
-			double max = ZoneUtils.vectorAxis(trueMaxCorner(), axis);
+			double max = ZoneUtils.vectorAxis(maxCornerExclusive(), axis);
 			if (test < min || test >= max) {
 				return false;
 			}

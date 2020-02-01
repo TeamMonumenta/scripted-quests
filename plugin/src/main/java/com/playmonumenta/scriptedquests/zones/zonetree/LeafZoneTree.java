@@ -11,10 +11,6 @@ public class LeafZoneTree extends BaseZoneTree {
 		mZone = zone;
 	}
 
-	/*
-	 * Invalidate all fragments in the tree, causing any players inside them to be
-	 * considered outside them. This updates them to the correct zone automagically.
-	 */
 	public void invalidate() {
 		mZone.invalidate();
 	}

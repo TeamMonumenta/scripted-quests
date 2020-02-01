@@ -343,11 +343,10 @@ public class ZoneLayer {
 
 			// TODO Replace the first false in createAreaMarker with true and make zoneLabel HTML markup here.
 
-			// TODO get the world string properly, not some hacked together solution
 			String world = Bukkit.getWorlds().get(0).getName();
 
 			Vector minCorner = zone.minCorner();
-			Vector maxCorner = zone.trueMaxCorner();
+			Vector maxCorner = zone.maxCornerExclusive();
 
 			double x[] = new double[2];
 			double z[] = new double[2];
