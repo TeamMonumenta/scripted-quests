@@ -26,7 +26,7 @@ import com.playmonumenta.scriptedquests.zones.zonetree.BaseZoneTree;
 
 public class ZoneManager {
 	private Plugin mPlugin;
-	static BukkitRunnable playerTracker = null;
+	static BukkitRunnable mPlayerTracker = null;
 
 	private HashMap<String, ZoneLayer> mLayers = new HashMap<String, ZoneLayer>();
 	private HashMap<String, ZoneLayer> mPluginLayers = new HashMap<String, ZoneLayer>();
@@ -203,18 +203,19 @@ public class ZoneManager {
 		}
 
 		// Make sure only one player tracker runs at a time.
-		if (playerTracker != null && !playerTracker.isCancelled()) {
-			playerTracker.cancel();
+		if (mPlayerTracker != null && !mPlayerTracker.isCancelled()) {
+			mPlayerTracker.cancel();
 		}
 
 		// Swap the tree out; this is really fast!
-		if (mZoneTree != null) {
-			mZoneTree.invalidate();
-		}
+		BaseZoneTree oldTree = mZoneTree;
 		mZoneTree = newTree;
+		if (oldTree != null) {
+			oldTree.invalidate();
+		}
 
 		// Start a new task to track players changing zones
-		playerTracker = new BukkitRunnable() {
+		mPlayerTracker = new BukkitRunnable() {
 			@Override
 			public void run() {
 				for (Player player : Bukkit.getOnlinePlayers()) {
@@ -240,7 +241,7 @@ public class ZoneManager {
 			}
 		};
 
-		playerTracker.runTaskTimer(plugin, 0, 5);
+		mPlayerTracker.runTaskTimer(plugin, 0, 5);
 	}
 
 	public void unregisterPlayer(Player player) {

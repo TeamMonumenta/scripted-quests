@@ -6,13 +6,31 @@ import java.util.Map;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.ZoneProperty;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
+import com.playmonumenta.scriptedquests.zones.ZonePropertyChangeEvent;
 
-public class ZonePropertyManager {
+public class ZonePropertyManager implements Listener {
+	private Plugin mPlugin;
 	private final HashMap<String, HashMap<String, ZoneProperty>> mZoneProperties = new HashMap<String, HashMap<String, ZoneProperty>>();
+
+	public ZonePropertyManager(Plugin plugin) {
+		mPlugin = plugin;
+	}
+
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void ZonePropertyChangeEvent(ZonePropertyChangeEvent event) {
+		Player player = event.getPlayer();
+		String layer = event.getLayer();
+		String property = event.getProperty();
+
+		changeEvent(player, layer, property);
+	}
 
 	/*
 	 * If sender is non-null, it will be sent debugging information
@@ -41,7 +59,7 @@ public class ZonePropertyManager {
 		});
 	}
 
-	public void changeEvent(Plugin plugin, Player player, String layerName, String name) {
+	private void changeEvent(Player player, String layerName, String name) {
 		if (layerName == null || layerName.isEmpty()) {
 			return;
 		}
@@ -60,6 +78,6 @@ public class ZonePropertyManager {
 			return;
 		}
 
-		entry.changeEvent(plugin, player);
+		entry.changeEvent(mPlugin, player);
 	}
 }

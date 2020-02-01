@@ -39,13 +39,13 @@ public class ZoneUtils {
 		// Magic numbers here are arbitrary, but >= 255. 0.0 <= hue < 1.0
 		// Magic numbers can be tweaked for better visual effect.
 		// Bitwise & used in place of modulus, as % is remainder (breaks on negatives!)
-		// H
-		float hue = (float) layerNameHash / 1023.0f + 0.31f; // Default doesn't *need* to be blue, but I *like* it blue.
+		// H; Default doesn't *need* to be blue, but I *like* it blue.
+		float hue = (float) layerNameHash / 1023.0f + 125.0f / 360.0f;
 		// Saturation and value (brightness) are biased away from gray.
 		// S
-		float saturation = 1.0f - 0.5f * ((float) (zoneNameHash & 511)) / 511.0f;
+		float saturation = 1.0f - 0.6f * ((float) (zoneNameHash & 0xffff)) / (float) 0xffff;
 		// V
-		float value = 1.0f - 0.5f * ((float) ((zoneNameHash / 511) & 511)) / 511.0f;
+		float value = 1.0f - 0.6f * ((float) ((zoneNameHash >> 16) & 0xffff)) / (float) 0xffff;
 
 		// Mask out alpha channel, dynmap expects only RGB.
 		return Color.HSBtoRGB(hue, saturation, value) & 0x00ffffff;

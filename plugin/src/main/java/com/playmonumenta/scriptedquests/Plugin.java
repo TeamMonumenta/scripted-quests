@@ -28,7 +28,6 @@ import com.playmonumenta.scriptedquests.commands.SetVelocity;
 import com.playmonumenta.scriptedquests.commands.TimerDebug;
 import com.playmonumenta.scriptedquests.listeners.EntityListener;
 import com.playmonumenta.scriptedquests.listeners.PlayerListener;
-import com.playmonumenta.scriptedquests.listeners.ZonePropertyListener;
 import com.playmonumenta.scriptedquests.managers.ClickableManager;
 import com.playmonumenta.scriptedquests.managers.CodeManager;
 import com.playmonumenta.scriptedquests.managers.InteractableManager;
@@ -107,14 +106,14 @@ public class Plugin extends JavaPlugin {
 		mRaceManager = new RaceManager();
 		mCodeManager = new CodeManager();
 		mZoneManager = new ZoneManager(this);
-		mZonePropertyManager = new ZonePropertyManager();
+		mZonePropertyManager = new ZonePropertyManager(this);
 
 		mTimerManager = new CommandTimerManager(this);
 
 		manager.registerEvents(new EntityListener(this), this);
 		manager.registerEvents(new PlayerListener(this), this);
-		manager.registerEvents(new ZonePropertyListener(this), this);
 		manager.registerEvents(mTimerManager, this);
+		manager.registerEvents(mZonePropertyManager, this);
 
 		getCommand("reloadQuests").setExecutor(new ReloadQuests(this));
 		getCommand("questTrigger").setExecutor(new QuestTrigger(this));
