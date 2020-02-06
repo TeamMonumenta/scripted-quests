@@ -169,5 +169,8 @@ public class PlayerListener implements Listener {
 	public void PlayerQuitEvent(PlayerQuitEvent event) {
 		// Stop racing (if applicable)
 		mPlugin.mRaceManager.cancelRace(event.getPlayer());
+
+		// Remove all zone properties from the player
+		mPlugin.mZoneManager.unregisterPlayer(event.getPlayer());
 	}
 }

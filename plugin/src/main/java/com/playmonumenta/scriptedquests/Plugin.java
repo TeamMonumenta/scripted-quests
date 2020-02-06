@@ -37,6 +37,8 @@ import com.playmonumenta.scriptedquests.managers.QuestDeathManager;
 import com.playmonumenta.scriptedquests.managers.QuestLoginManager;
 import com.playmonumenta.scriptedquests.managers.QuestNpcManager;
 import com.playmonumenta.scriptedquests.managers.RaceManager;
+import com.playmonumenta.scriptedquests.managers.ZoneManager;
+import com.playmonumenta.scriptedquests.managers.ZonePropertyManager;
 import com.playmonumenta.scriptedquests.timers.CommandTimerManager;
 import com.playmonumenta.scriptedquests.utils.MetadataUtils;
 
@@ -44,6 +46,7 @@ public class Plugin extends JavaPlugin {
 	private FileConfiguration mConfig;
 	private File mConfigFile;
 	public Boolean mShowTimerNames = null;
+	public boolean mShowZonesDynmap = false;
 
 	public QuestCompassManager mQuestCompassManager;
 	public QuestNpcManager mNpcManager;
@@ -55,6 +58,8 @@ public class Plugin extends JavaPlugin {
 	public NpcTradeManager mTradeManager;
 	public CommandTimerManager mTimerManager;
 	public CodeManager mCodeManager;
+	public ZoneManager mZoneManager;
+	public ZonePropertyManager mZonePropertyManager;
 
 	public World mWorld;
 	public Random mRandom = new Random();
@@ -100,12 +105,15 @@ public class Plugin extends JavaPlugin {
 		mDeathManager = new QuestDeathManager();
 		mRaceManager = new RaceManager();
 		mCodeManager = new CodeManager();
+		mZoneManager = new ZoneManager(this);
+		mZonePropertyManager = new ZonePropertyManager(this);
 
 		mTimerManager = new CommandTimerManager(this);
 
 		manager.registerEvents(new EntityListener(this), this);
 		manager.registerEvents(new PlayerListener(this), this);
 		manager.registerEvents(mTimerManager, this);
+		manager.registerEvents(mZonePropertyManager, this);
 
 		getCommand("reloadQuests").setExecutor(new ReloadQuests(this));
 		getCommand("questTrigger").setExecutor(new QuestTrigger(this));
@@ -145,6 +153,8 @@ public class Plugin extends JavaPlugin {
 		mDeathManager.reload(this, sender);
 		mRaceManager.reload(this, sender);
 		mCodeManager.reload(this, sender);
+		mZonePropertyManager.reload(this, sender);
+		mZoneManager.reload(this, sender);
 	}
 
 	private void reloadConfigYaml(CommandSender sender) {
@@ -164,6 +174,15 @@ public class Plugin extends JavaPlugin {
 			if (sender != null) {
 				sender.sendMessage("show_timer_names: null / not automatically changed");
 			}
+		}
+
+		if (mConfig.isBoolean("show_zones_dynmap")) {
+			mShowZonesDynmap = mConfig.getBoolean("show_timer_names", false);
+		} else {
+			mShowZonesDynmap = false;
+		}
+		if (sender != null) {
+			sender.sendMessage("show_zones_dynmap: " + Boolean.toString(mShowZonesDynmap));
 		}
 	}
 }
