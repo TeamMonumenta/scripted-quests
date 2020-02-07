@@ -10,6 +10,8 @@ import com.playmonumenta.scriptedquests.zones.zone.Zone;
 import com.playmonumenta.scriptedquests.zones.zone.ZoneFragment;
 
 public abstract class BaseZoneTree<T> {
+	protected int mFragmentCount = 0;
+
 	public static <T> BaseZoneTree<T> CreateZoneTree(CommandSender sender, ArrayList<ZoneFragment<T>> zones) throws Exception {
 		if (zones.size() == 0) {
 			return new EmptyZoneTree<T>();
@@ -62,5 +64,9 @@ public abstract class BaseZoneTree<T> {
 	public boolean hasProperty(Vector loc, String layerName, String propertyName) {
 		ZoneFragment<T> fragment = getZoneFragment(loc);
 		return fragment != null && fragment.hasProperty(layerName, propertyName);
+	}
+
+	public int fragmentCount() {
+		return mFragmentCount;
 	}
 }

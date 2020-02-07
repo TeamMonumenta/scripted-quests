@@ -8,6 +8,7 @@ public class LeafZoneTree<T> extends BaseZoneTree<T> {
 	private ZoneFragment<T> mZone;
 
 	public LeafZoneTree(ZoneFragment<T> zone) {
+		mFragmentCount = 1;
 		mZone = zone;
 	}
 

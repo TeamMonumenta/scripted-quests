@@ -14,6 +14,9 @@ public class ParentZoneTree<T> extends BaseZoneTree<T> {
 	private Axis mAxis;
 	// The pivot for mMore/mLess
 	private double mPivot;
+	// Lowest/highest value for this node and its children; allows returning null early
+	private double mMin;
+	private double mMax;
 	// Branch that is Less/More than pivot
 	private BaseZoneTree<T> mLess;
 	private BaseZoneTree<T> mMore;
@@ -45,11 +48,19 @@ public class ParentZoneTree<T> extends BaseZoneTree<T> {
 			public ArrayList<ZoneFragment<T>> mMore = new ArrayList<ZoneFragment<T>>();
 		}
 
+		mFragmentCount = zones.size();
+
+		Vector minVector = zones.get(0).minCorner();
+		Vector maxVector = zones.get(0).maxCornerExclusive();
+
 		// Default is an impossibly worst case scenario so it will never be chosen.
 		ParentData bestSplit = new ParentData();
-		bestSplit.mPriority = zones.size();
+		bestSplit.mPriority = mFragmentCount;
 
 		for (ZoneFragment<T> pivotZone : zones) {
+			minVector = Vector.getMinimum(minVector, pivotZone.minCorner());
+			maxVector = Vector.getMaximum(maxVector, pivotZone.maxCornerExclusive());
+
 			for (Axis axis : AXIS_ORDER) {
 				double[] possiblePivots = new double[2];
 				possiblePivots[0] = ZoneUtils.vectorAxis(pivotZone.minCorner(), axis);
@@ -87,11 +98,13 @@ public class ParentZoneTree<T> extends BaseZoneTree<T> {
 
 		// This is the answer we want. Copy values to self.
 		mAxis = bestSplit.mAxis;
+		mMin = ZoneUtils.vectorAxis(minVector, mAxis);
+		mMax = ZoneUtils.vectorAxis(maxVector, mAxis);
 		mPivot = bestSplit.mPivot;
 		mMidMin = bestSplit.mMidMin;
 		mMidMax = bestSplit.mMidMax;
 
-		if (bestSplit.mPriority >= zones.size()) {
+		if (bestSplit.mPriority >= mFragmentCount) {
 			/*
 			 * The priority of our best case scenario is equal to or worse than our worst case.
 			 *
@@ -125,6 +138,11 @@ public class ParentZoneTree<T> extends BaseZoneTree<T> {
 		ZoneFragment<T> result = null;
 		double test = ZoneUtils.vectorAxis(loc, mAxis);
 
+		// If the test point is outside this node, return null immediately.
+		if (test < mMin || test >= mMax) {
+			return null;
+		}
+
 		// Check zones that don't overlap the pivot first
 		if (test > mPivot) {
 			result = mMore.getZoneFragment(loc);
@@ -144,6 +162,8 @@ public class ParentZoneTree<T> extends BaseZoneTree<T> {
 		return ("(ParentZoneTree(<ArrayList<ZoneFragment>>): "
 		        + "mAxis=" + mAxis.toString() + ", "
 		        + "mPivot=" + Double.toString(mPivot) + ", "
+		        + "mMin=" + Double.toString(mMin) + ", "
+		        + "mMax=" + Double.toString(mMax) + ", "
 		        + "mLess=<BaseZoneTree>, "
 		        + "mMore=<BaseZoneTree>, "
 		        + "mMidMin=" + Double.toString(mMidMin) + ", "
