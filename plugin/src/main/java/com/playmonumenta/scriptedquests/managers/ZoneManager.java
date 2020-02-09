@@ -158,6 +158,7 @@ public class ZoneManager {
 	 */
 	public void reload(Plugin plugin, CommandSender sender) {
 		for (ZoneLayer<T> layer : mLayers.values()) {
+			// Cause zones to stop tracking their fragments; speeds up garbage collection.
 			layer.invalidate();
 		}
 		mLayers.clear();
@@ -198,7 +199,7 @@ public class ZoneManager {
 		// Create the new tree. This could take a long time with enough fragments.
 		BaseZoneTree<T> newTree;
 		try {
-			newTree = BaseZoneTree.CreateZoneTree(sender, zoneFragments);
+			newTree = BaseZoneTree.CreateZoneTree(plugin, sender, zoneFragments);
 		} catch (Exception e) {
 			MessagingUtils.sendStackTrace(sender, e);
 			return;
@@ -213,6 +214,7 @@ public class ZoneManager {
 		BaseZoneTree<T> oldTree = mZoneTree;
 		mZoneTree = newTree;
 		if (oldTree != null) {
+			// Force all fragments to consider all locations as outside themselves
 			oldTree.invalidate();
 		}
 
@@ -273,7 +275,7 @@ public class ZoneManager {
 		}
 
 		// Zones changed, send an event for each layer.
-		LinkedHashSet<String> mentionedLayerNames = new LinkedHashSet<String>();
+		Set<String> mentionedLayerNames = new LinkedHashSet<String>();
 		mentionedLayerNames.addAll(lastZones.keySet());
 		mentionedLayerNames.addAll(currentZones.keySet());
 		for (String layerName : mentionedLayerNames) {
@@ -284,21 +286,21 @@ public class ZoneManager {
 			ZoneChangeEvent zoneEvent = new ZoneChangeEvent(player, layerName, lastZone, currentZone);
 			Bukkit.getPluginManager().callEvent(zoneEvent);
 
-			LinkedHashSet<String> lastProperties;
+			Set<String> lastProperties;
 			if (lastZone == null) {
 				lastProperties = new LinkedHashSet<String>();
 			} else {
 				lastProperties = lastZone.getProperties();
 			}
 
-			LinkedHashSet<String> currentProperties;
+			Set<String> currentProperties;
 			if (currentZone == null) {
 				currentProperties = new LinkedHashSet<String>();
 			} else {
 				currentProperties = currentZone.getProperties();
 			}
 
-			LinkedHashSet<String> removedProperties = new LinkedHashSet<String>();
+			Set<String> removedProperties = new LinkedHashSet<String>();
 			removedProperties.addAll(lastProperties);
 			removedProperties.removeAll(currentProperties);
 			for (String property : removedProperties) {
@@ -307,7 +309,7 @@ public class ZoneManager {
 				Bukkit.getPluginManager().callEvent(event);
 			}
 
-			LinkedHashSet<String> addedProperties = new LinkedHashSet<String>();
+			Set<String> addedProperties = new LinkedHashSet<String>();
 			addedProperties.addAll(currentProperties);
 			addedProperties.removeAll(lastProperties);
 			for (String property : addedProperties) {
@@ -339,8 +341,8 @@ public class ZoneManager {
 				if (overlap == null) {
 					continue;
 				}
-				outerZone.splitByOverlap(overlap, innerZone);
-				innerZone.splitByOverlap(overlap);
+				outerZone.splitByOverlap(overlap, innerZone, true);
+				innerZone.splitByOverlap(overlap, outerZone);
 			}
 		}
 	}

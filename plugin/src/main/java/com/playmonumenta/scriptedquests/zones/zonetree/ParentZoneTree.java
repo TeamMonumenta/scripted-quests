@@ -6,6 +6,9 @@ import org.bukkit.Axis;
 import org.bukkit.command.CommandSender;
 import org.bukkit.util.Vector;
 
+import org.dynmap.markers.MarkerSet;
+
+import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.utils.ZoneUtils;
 import com.playmonumenta.scriptedquests.zones.zone.ZoneFragment;
 
@@ -31,7 +34,7 @@ public class ParentZoneTree<T> extends BaseZoneTree<T> {
 
 	private static final Axis[] AXIS_ORDER = {Axis.X, Axis.Z, Axis.Y};
 
-	public ParentZoneTree(CommandSender sender, ArrayList<ZoneFragment<T>> zones) throws Exception {
+	public ParentZoneTree(Plugin plugin, CommandSender sender, ArrayList<ZoneFragment<T>> zones) throws Exception {
 		/*
 		 * Local class is used to get best balance without
 		 * exposing incomplete results or creating tree nodes.
@@ -118,9 +121,9 @@ public class ParentZoneTree<T> extends BaseZoneTree<T> {
 			}
 			throw new Exception(message.toString());
 		} else {
-			mLess = CreateZoneTree(sender, bestSplit.mLess);
-			mMid = CreateZoneTree(sender, bestSplit.mMid);
-			mMore = CreateZoneTree(sender, bestSplit.mMore);
+			mLess = CreateZoneTree(plugin, sender, bestSplit.mLess);
+			mMid = CreateZoneTree(plugin, sender, bestSplit.mMid);
+			mMore = CreateZoneTree(plugin, sender, bestSplit.mMore);
 		}
 	}
 
@@ -156,6 +159,21 @@ public class ParentZoneTree<T> extends BaseZoneTree<T> {
 		}
 
 		return result;
+	}
+
+	public void refreshDynmapTree(MarkerSet markerSet, int parentR, int parentG, int parentB) {
+		mLess.refreshDynmapTree(markerSet,
+		                        (parentR + 255)/2,
+		                        parentG/2,
+		                        parentB/2);
+		mMid.refreshDynmapTree(markerSet,
+		                       parentR/2,
+		                       (parentG + 255)/2,
+		                       parentB/2);
+		mMore.refreshDynmapTree(markerSet,
+		                        parentR/2,
+		                        parentG/2,
+		                        (parentB + 255)/2);
 	}
 
 	public String toString() {
