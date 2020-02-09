@@ -1,26 +1,22 @@
 package com.playmonumenta.scriptedquests.zones.zonetree;
 
-import java.lang.Math;
 import java.util.ArrayList;
 
 import org.bukkit.Axis;
 import org.bukkit.command.CommandSender;
 import org.bukkit.util.Vector;
 
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.TextComponent;
-
 import com.playmonumenta.scriptedquests.utils.ZoneUtils;
 import com.playmonumenta.scriptedquests.zones.zone.ZoneFragment;
 
-public class ParentZoneTree extends BaseZoneTree {
+public class ParentZoneTree<T> extends BaseZoneTree<T> {
 	// The axis this node is split over.
 	private Axis mAxis;
 	// The pivot for mMore/mLess
 	private double mPivot;
 	// Branch that is Less/More than pivot
-	private BaseZoneTree mLess;
-	private BaseZoneTree mMore;
+	private BaseZoneTree<T> mLess;
+	private BaseZoneTree<T> mMore;
 
 	// Some zones may overlap the pivot
 	// Min coordinate of middle zones
@@ -28,11 +24,11 @@ public class ParentZoneTree extends BaseZoneTree {
 	// Max coordinate of middle zones
 	private double mMidMax;
 	// Branch that contains the pivot
-	private BaseZoneTree mMid;
+	private BaseZoneTree<T> mMid;
 
 	private static final Axis[] AXIS_ORDER = {Axis.X, Axis.Z, Axis.Y};
 
-	public ParentZoneTree(CommandSender sender, ArrayList<ZoneFragment> zones) throws Exception {
+	public ParentZoneTree(CommandSender sender, ArrayList<ZoneFragment<T>> zones) throws Exception {
 		/*
 		 * Local class is used to get best balance without
 		 * exposing incomplete results or creating tree nodes.
@@ -44,16 +40,16 @@ public class ParentZoneTree extends BaseZoneTree {
 			public double mPivot;
 			public double mMidMin;
 			public double mMidMax;
-			public ArrayList<ZoneFragment> mLess = new ArrayList<ZoneFragment>();
-			public ArrayList<ZoneFragment> mMid = new ArrayList<ZoneFragment>();
-			public ArrayList<ZoneFragment> mMore = new ArrayList<ZoneFragment>();
+			public ArrayList<ZoneFragment<T>> mLess = new ArrayList<ZoneFragment<T>>();
+			public ArrayList<ZoneFragment<T>> mMid = new ArrayList<ZoneFragment<T>>();
+			public ArrayList<ZoneFragment<T>> mMore = new ArrayList<ZoneFragment<T>>();
 		}
 
 		// Default is an impossibly worst case scenario so it will never be chosen.
 		ParentData bestSplit = new ParentData();
 		bestSplit.mPriority = zones.size();
 
-		for (ZoneFragment pivotZone : zones) {
+		for (ZoneFragment<T> pivotZone : zones) {
 			for (Axis axis : AXIS_ORDER) {
 				double[] possiblePivots = new double[2];
 				possiblePivots[0] = ZoneUtils.vectorAxis(pivotZone.minCorner(), axis);
@@ -65,7 +61,7 @@ public class ParentZoneTree extends BaseZoneTree {
 					testSplit.mMidMin = pivot;
 					testSplit.mMidMax = pivot;
 
-					for (ZoneFragment zone : zones) {
+					for (ZoneFragment<T> zone : zones) {
 						if (pivot >= ZoneUtils.vectorAxis(zone.maxCornerExclusive(), axis)) {
 							testSplit.mLess.add(zone);
 						} else if (pivot >= ZoneUtils.vectorAxis(zone.minCorner(), axis)) {
@@ -104,7 +100,7 @@ public class ParentZoneTree extends BaseZoneTree {
 			 * or handled properly.
 			 */
 			StringBuilder message = new StringBuilder("A serious plugin error has occured. Zones involved:");
-			for (ZoneFragment zone : zones) {
+			for (ZoneFragment<T> zone : zones) {
 				message.append("- " + zone.toString());
 			}
 			throw new Exception(message.toString());
@@ -115,22 +111,18 @@ public class ParentZoneTree extends BaseZoneTree {
 		}
 	}
 
-	private void sendError(CommandSender sender, String message) {
-		sender.spigot().sendMessage(TextComponent.fromLegacyText(ChatColor.RED + message));
-	}
-
 	public void invalidate() {
 		mLess.invalidate();
 		mMid.invalidate();
 		mMore.invalidate();
 	}
 
-	public ZoneFragment getZoneFragment(Vector loc) {
+	public ZoneFragment<T> getZoneFragment(Vector loc) {
 		if (loc == null) {
 			return null;
 		}
 
-		ZoneFragment result = null;
+		ZoneFragment<T> result = null;
 		double test = ZoneUtils.vectorAxis(loc, mAxis);
 
 		// Check zones that don't overlap the pivot first

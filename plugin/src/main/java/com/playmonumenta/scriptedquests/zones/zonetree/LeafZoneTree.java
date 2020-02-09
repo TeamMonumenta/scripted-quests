@@ -4,10 +4,10 @@ import org.bukkit.util.Vector;
 
 import com.playmonumenta.scriptedquests.zones.zone.ZoneFragment;
 
-public class LeafZoneTree extends BaseZoneTree {
-	private ZoneFragment mZone;
+public class LeafZoneTree<T> extends BaseZoneTree<T> {
+	private ZoneFragment<T> mZone;
 
-	public LeafZoneTree(ZoneFragment zone) {
+	public LeafZoneTree(ZoneFragment<T> zone) {
 		mZone = zone;
 	}
 
@@ -15,7 +15,7 @@ public class LeafZoneTree extends BaseZoneTree {
 		mZone.invalidate();
 	}
 
-	public ZoneFragment getZoneFragment(Vector loc) {
+	public ZoneFragment<T> getZoneFragment(Vector loc) {
 		if (mZone.within(loc)) {
 			return mZone;
 		} else {

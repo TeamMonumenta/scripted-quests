@@ -43,6 +43,8 @@ import com.playmonumenta.scriptedquests.timers.CommandTimerManager;
 import com.playmonumenta.scriptedquests.utils.MetadataUtils;
 
 public class Plugin extends JavaPlugin {
+	private static Plugin INSTANCE = null;
+
 	private FileConfiguration mConfig;
 	private File mConfigFile;
 	public Boolean mShowTimerNames = null;
@@ -90,6 +92,8 @@ public class Plugin extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
+		INSTANCE = this;
+
 		reloadConfigYaml(null);
 
 		PluginManager manager = getServer().getPluginManager();
@@ -129,6 +133,8 @@ public class Plugin extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
+		INSTANCE = null;
+
 		getServer().getScheduler().cancelTasks(this);
 
 		mRaceManager.cancelAllRaces();
@@ -184,5 +190,9 @@ public class Plugin extends JavaPlugin {
 		if (sender != null) {
 			sender.sendMessage("show_zones_dynmap: " + Boolean.toString(mShowZonesDynmap));
 		}
+	}
+
+	public static Plugin getInstance() {
+		return INSTANCE;
 	}
 }

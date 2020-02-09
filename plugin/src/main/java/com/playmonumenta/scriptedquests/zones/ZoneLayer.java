@@ -4,24 +4,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.Set;
 import java.util.Map.Entry;
-
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.util.Vector;
-
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.TextComponent;
-
 import org.dynmap.DynmapCommonAPI;
+import org.dynmap.markers.AreaMarker;
 import org.dynmap.markers.MarkerAPI;
 import org.dynmap.markers.MarkerSet;
-import org.dynmap.markers.AreaMarker;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.utils.ZoneUtils;
 import com.playmonumenta.scriptedquests.zones.zone.BaseZone;
@@ -29,11 +24,14 @@ import com.playmonumenta.scriptedquests.zones.zone.Zone;
 import com.playmonumenta.scriptedquests.zones.zone.ZoneFragment;
 import com.playmonumenta.scriptedquests.zones.zonetree.BaseZoneTree;
 
-public class ZoneLayer {
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.TextComponent;
+
+public class ZoneLayer<T> {
 	private static final String DYNMAP_PREFIX = "SQZone";
 
 	private String mName;
-	private ArrayList<Zone> mZones = new ArrayList<Zone>();
+	private ArrayList<Zone<T>> mZones = new ArrayList<Zone<T>>();
 
 	/*
 	 * This should only be called by the ZoneManager.
@@ -127,11 +125,11 @@ public class ZoneLayer {
 			if (zoneElement.getAsJsonObject() == null) {
 				throw new Exception("Failed to parse 'zones[" + Integer.toString(zoneIndex) + "]'");
 			}
-			mZones.add(Zone.ConstructFromJson(this, zoneElement.getAsJsonObject(), propertyGroups));
+			mZones.add(Zone.constructFromJson(this, zoneElement.getAsJsonObject(), propertyGroups, (T)null));
 			zoneIndex++;
 		}
 
-		reloadFragments(plugin, sender);
+		reloadFragments(sender);
 	}
 
 	/************************************************************************************
@@ -153,15 +151,17 @@ public class ZoneLayer {
 	 * pos1 and pos2 define the bounds of the zone, similar to /fill. Order doesn't matter.
 	 * name is the name of the zone.
 	 * properties is the set of properties for the zone.
+	 * tag is an object that the calling plugin would like to be associated
+	 *   with the zone for easy reference later
 	 *
 	 * Property group support is not provided for this method. Your plugin will need to
 	 * handle that on its own.
 	 */
-	public boolean addZone(Vector pos1, Vector pos2, String name, LinkedHashSet<String> properties) {
-		Zone zone = null;
+	public boolean addZone(Vector pos1, Vector pos2, String name, LinkedHashSet<String> properties, T tag) {
+		Zone<T> zone = null;
 
 		try {
-			zone = new Zone(this, pos1, pos2, name, properties);
+			zone = new Zone<T>(this, pos1, pos2, name, properties, tag);
 		} catch (Exception e) {
 			return false;
 		}
@@ -182,12 +182,12 @@ public class ZoneLayer {
 	 *
 	 * Returns a subclass of BaseZoneTree.
 	 */
-	public BaseZoneTree createZoneTree(Plugin plugin, CommandSender sender) throws Exception {
-		reloadFragments(plugin, sender);
+	public BaseZoneTree<T> createZoneTree(CommandSender sender) throws Exception {
+		reloadFragments(sender);
 
 		// Create list of all zone fragments.
-		ArrayList<ZoneFragment> zoneFragments = new ArrayList<ZoneFragment>();
-		for (Zone zone : mZones) {
+		ArrayList<ZoneFragment<T>> zoneFragments = new ArrayList<ZoneFragment<T>>();
+		for (Zone<T> zone : mZones) {
 			zoneFragments.addAll(zone.getZoneFragments());
 		}
 
@@ -204,8 +204,8 @@ public class ZoneLayer {
 	 * Used to handle ZoneLayers from other plugins. This should only be called by the ZoneManager
 	 * and the ZoneLayer constructor.
 	 */
-	public void reloadFragments(Plugin plugin, CommandSender sender) throws Exception {
-		for (Zone zone : mZones) {
+	public void reloadFragments(CommandSender sender) throws Exception {
+		for (Zone<T> zone : mZones) {
 			zone.reloadFragments();
 		}
 
@@ -214,7 +214,7 @@ public class ZoneLayer {
 
 		// TODO Defragment to reduce fragment count (approx 2-3x on average)
 
-		if (plugin.mShowZonesDynmap) {
+		if (Plugin.getInstance().mShowZonesDynmap) {
 			refreshDynmapLayer();
 		}
 	}
@@ -224,7 +224,7 @@ public class ZoneLayer {
 	 */
 	public void invalidate() {
 		// Not strictly required, but improves garbage collection by removing loops
-		for (Zone zone : mZones) {
+		for (Zone<T> zone : mZones) {
 			zone.invalidate();
 		}
 	}
@@ -233,16 +233,16 @@ public class ZoneLayer {
 		return mName;
 	}
 
-	public ArrayList<Zone> getZones() {
-		ArrayList<Zone> result = new ArrayList<Zone>();
+	public ArrayList<Zone<T>> getZones() {
+		ArrayList<Zone<T>> result = new ArrayList<Zone<T>>();
 		result.addAll(mZones);
 		return result;
 	}
 
-	private void removeOverlaps(CommandSender sender, ArrayList<Zone> zones) throws Exception {
+	private void removeOverlaps(CommandSender sender, ArrayList<Zone<T>> zones) throws Exception {
 		for (int i = 0; i < zones.size(); i++) {
-			Zone outer = zones.get(i);
-			for (Zone inner : zones.subList(i + 1, zones.size())) {
+			Zone<T> outer = zones.get(i);
+			for (Zone<T> inner : zones.subList(i + 1, zones.size())) {
 				BaseZone overlap = outer.overlappingZone(inner);
 				if (overlap == null) {
 					continue;
@@ -335,7 +335,7 @@ public class ZoneLayer {
 		// This isn't 100% consistent either way, but it's more consistent like this without needing
 		// to render every zone fragment (which is also an option).
 		for (int zoneIndex = mZones.size() - 1; zoneIndex >= 0; zoneIndex--) {
-			Zone zone = mZones.get(zoneIndex);
+			Zone<T> zone = mZones.get(zoneIndex);
 
 			String zoneLabel = zone.getName();
 			int zoneColor = ZoneUtils.getColor(mName, zoneLabel);
