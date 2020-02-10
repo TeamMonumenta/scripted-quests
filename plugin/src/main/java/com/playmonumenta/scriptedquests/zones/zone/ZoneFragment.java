@@ -172,9 +172,17 @@ public class ZoneFragment<T> extends BaseZone {
 	/*
 	 * Merge two ZoneFragments without changing their combined size/shape.
 	 *
+	 * Assumes fragments do not overlap.
+	 *
 	 * Returns the merged ZoneFragment or None.
 	 */
 	public ZoneFragment<T> merge(ZoneFragment<T> other) {
+		if (mValid != other.mValid ||
+		    mParents != other.mParents ||
+		    mParentsAndEclipsed != other.mParentsAndEclipsed) {
+			return null;
+		}
+
 		Vector aMin = minCorner();
 		Vector aMax = maxCorner();
 		Vector bMin = other.minCorner();
@@ -194,8 +202,8 @@ public class ZoneFragment<T> extends BaseZone {
 			return null;
 		}
 		if (matchingAxes == 3) {
-			// These are the same zone; return self.
-			return this;
+			// These are the same zone; return clone of self.
+			return new ZoneFragment(this);
 		}
 
 		// Confirm zone fragments touch on mismatched axis
