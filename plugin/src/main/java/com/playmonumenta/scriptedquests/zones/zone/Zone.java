@@ -4,29 +4,27 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-
-import org.bukkit.Axis;
 import org.bukkit.util.Vector;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.zones.ZoneLayer;
 
 /*
  * A zone, to be split into fragments. This class holds the name and properties, and the fragments determine
  * if a point is inside the zone after overlaps are taken into account.
  */
-public class Zone extends BaseZone {
-	private ZoneLayer mLayer;
-	private String mName;
-	private ArrayList<ZoneFragment> mFragments = new ArrayList<ZoneFragment>();
-	private LinkedHashSet<String> mProperties = new LinkedHashSet<String>();
+public class Zone<T> extends BaseZone {
+	private final ZoneLayer<T> mLayer;
+	private final String mName;
+	private ArrayList<ZoneFragment<T>> mFragments = new ArrayList<ZoneFragment<T>>();
+	private final LinkedHashSet<String> mProperties = new LinkedHashSet<String>();
+	private final T mTag;
 
-	public static Zone ConstructFromJson(ZoneLayer layer, JsonObject object, HashMap<String, ArrayList<String>> propertyGroups) throws Exception {
+	public static <T> Zone<T> constructFromJson(ZoneLayer<T> layer, JsonObject object, HashMap<String, ArrayList<String>> propertyGroups, T tag) throws Exception {
 		if (layer == null) {
 			throw new Exception("layer may not be null.");
 		}
@@ -102,7 +100,7 @@ public class Zone extends BaseZone {
 			applyProperty(propertyGroups, properties, propertyName);
 		}
 
-		return new Zone(layer, pos1, pos2, name, properties);
+		return new Zone<T>(layer, pos1, pos2, name, properties, tag);
 	}
 
 	/*
@@ -110,11 +108,12 @@ public class Zone extends BaseZone {
 	 * - Both are inclusive coordinates.
 	 * - The minimum/maximum are determined for you.
 	 */
-	public Zone(ZoneLayer layer, Vector pos1, Vector pos2, String name, LinkedHashSet<String> properties) {
+	public Zone(ZoneLayer<T> layer, Vector pos1, Vector pos2, String name, LinkedHashSet<String> properties, T tag) {
 		super(pos1, pos2);
 		mLayer = layer;
 		mName = name;
 		mProperties.addAll(properties);
+		mTag = tag;
 	}
 
 	/*
@@ -124,7 +123,7 @@ public class Zone extends BaseZone {
 	public void reloadFragments() {
 		mFragments.clear();
 
-		ZoneFragment initialFragment = new ZoneFragment(this);
+		ZoneFragment<T> initialFragment = new ZoneFragment<T>(this);
 		mFragments.add(initialFragment);
 	}
 
@@ -140,6 +139,10 @@ public class Zone extends BaseZone {
 		return splitByOverlap(overlap, null);
 	}
 
+	public T getTag() {
+		return mTag;
+	}
+
 	/*
 	 * Split all fragments of this zone by an overlapping zone,
 	 * marking otherZone as the parent of the exact overlap fragment if
@@ -148,9 +151,9 @@ public class Zone extends BaseZone {
 	 * Returns true if the zone being overlapped has been completely
 	 * eclipsed by the other zone.
 	 */
-	public boolean splitByOverlap(BaseZone overlap, Zone otherZone) {
-		ArrayList<ZoneFragment> newFragments = new ArrayList<ZoneFragment>();
-		for (ZoneFragment fragment : mFragments) {
+	public boolean splitByOverlap(BaseZone overlap, Zone<T> otherZone) {
+		ArrayList<ZoneFragment<T>> newFragments = new ArrayList<ZoneFragment<T>>();
+		for (ZoneFragment<T> fragment : mFragments) {
 			BaseZone subOverlap = fragment.overlappingZone(overlap);
 
 			if (subOverlap == null)
@@ -191,7 +194,7 @@ public class Zone extends BaseZone {
 	}
 	*/
 
-	public ZoneLayer getLayer() {
+	public ZoneLayer<T> getLayer() {
 		return mLayer;
 	}
 
@@ -203,8 +206,8 @@ public class Zone extends BaseZone {
 		return mName;
 	}
 
-	public ArrayList<ZoneFragment> getZoneFragments() {
-		ArrayList<ZoneFragment> result = new ArrayList<ZoneFragment>();
+	public ArrayList<ZoneFragment<T>> getZoneFragments() {
+		ArrayList<ZoneFragment<T>> result = new ArrayList<ZoneFragment<T>>();
 		result.addAll(mFragments);
 		return result;
 	}

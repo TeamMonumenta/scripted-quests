@@ -13,17 +13,17 @@ import com.playmonumenta.scriptedquests.utils.ZoneUtils;
  * Instead, each fragment points to its parent, a zone with properties.
  * Each zone also keeps track of its fragments.
  */
-public class ZoneFragment extends BaseZone {
-	private HashMap<String, Zone> mParents = new HashMap<String, Zone>();
+public class ZoneFragment<T> extends BaseZone {
+	private HashMap<String, Zone<T>> mParents = new HashMap<String, Zone<T>>();
 	private boolean mValid;
 
-	public ZoneFragment(ZoneFragment other) {
+	public ZoneFragment(ZoneFragment<T> other) {
 		super(other);
 		mParents.putAll(other.mParents);
 		mValid = other.mValid;
 	}
 
-	public ZoneFragment(Zone other) {
+	public ZoneFragment(Zone<T> other) {
 		super(other);
 		mParents.put(other.getLayerName(), other);
 		mValid = true;
@@ -34,11 +34,12 @@ public class ZoneFragment extends BaseZone {
 	 *
 	 * Either zone may have a size of 0, and should be ignored.
 	 */
-	private ZoneFragment[] splitAxis(Vector pos, Axis axis) {
-		ZoneFragment[] result = new ZoneFragment[2];
+	@SuppressWarnings("unchecked")
+	private ZoneFragment<T>[] splitAxis(Vector pos, Axis axis) {
+		ZoneFragment<T>[] result = (ZoneFragment<T>[]) new ZoneFragment[2];
 
-		ZoneFragment lower = new ZoneFragment(this);
-		ZoneFragment upper = new ZoneFragment(this);
+		ZoneFragment<T> lower = new ZoneFragment<T>(this);
+		ZoneFragment<T> upper = new ZoneFragment<T>(this);
 
 		Vector lowerMax = lower.maxCornerExclusive();
 		Vector upperMin = upper.minCorner();
@@ -70,7 +71,7 @@ public class ZoneFragment extends BaseZone {
 	 * Returns a list of fragments of this zone, split by an overlapping zone.
 	 * Does not include overlap or register a new parent.
 	 */
-	public ArrayList<ZoneFragment> splitByOverlap(BaseZone overlap) {
+	public ArrayList<ZoneFragment<T>> splitByOverlap(BaseZone overlap) {
 		return splitByOverlap(overlap, null);
 	}
 
@@ -82,23 +83,23 @@ public class ZoneFragment extends BaseZone {
 	 * The other parent zone should have the overlap removed as normal to avoid
 	 * overlapping fragments.
 	 */
-	public ArrayList<ZoneFragment> splitByOverlap(BaseZone overlap, Zone newParent) {
-		ZoneFragment centerZone = new ZoneFragment(this);
+	public ArrayList<ZoneFragment<T>> splitByOverlap(BaseZone overlap, Zone<T> newParent) {
+		ZoneFragment<T> centerZone = new ZoneFragment<T>(this);
 
 		Vector otherMin = overlap.minCorner();
 		Vector otherMax = overlap.maxCornerExclusive();
 
-		ZoneFragment[] tempSplitResult;
-		ArrayList<ZoneFragment> result = new ArrayList<ZoneFragment>();
+		ZoneFragment<T>[] tempSplitResult;
+		ArrayList<ZoneFragment<T>> result = new ArrayList<ZoneFragment<T>>();
 
 		for (Axis axis : Axis.values()) {
-			ZoneFragment lower;
-			ZoneFragment upper;
+			ZoneFragment<T> lower;
+			ZoneFragment<T> upper;
 
-			ArrayList<ZoneFragment> workZones = result;
-			result = new ArrayList<ZoneFragment>();
+			ArrayList<ZoneFragment<T>> workZones = result;
+			result = new ArrayList<ZoneFragment<T>>();
 
-			for (ZoneFragment workZone : workZones) {
+			for (ZoneFragment<T> workZone : workZones) {
 				// Add zones split from existing split zones
 				tempSplitResult = workZone.splitAxis(otherMin, axis);
 				lower = tempSplitResult[0];
@@ -150,7 +151,7 @@ public class ZoneFragment extends BaseZone {
 	 *
 	 * Returns the merged ZoneFragment or None.
 	 */
-	public ZoneFragment merge(ZoneFragment other) {
+	public ZoneFragment<T> merge(ZoneFragment<T> other) {
 		Vector aMin = minCorner();
 		Vector aMax = maxCorner();
 		Vector bMin = other.minCorner();
@@ -190,9 +191,9 @@ public class ZoneFragment extends BaseZone {
 		}
 
 		// Merging is possible, go for it.
-		ZoneFragment result;
+		ZoneFragment<T> result;
 		try {
-			result = new ZoneFragment(this);
+			result = new ZoneFragment<T>(this);
 		} catch (Exception e) {
 			throw e;
 		}
@@ -205,18 +206,18 @@ public class ZoneFragment extends BaseZone {
 		return result;
 	}
 
-	public HashMap<String, Zone> getParents() {
-		HashMap<String, Zone> result = new HashMap<String, Zone>();
+	public HashMap<String, Zone<T>> getParents() {
+		HashMap<String, Zone<T>> result = new HashMap<String, Zone<T>>();
 		result.putAll(mParents);
 		return result;
 	}
 
-	public Zone getParent(String layer) {
+	public Zone<T> getParent(String layer) {
 		return mParents.get(layer);
 	}
 
 	public boolean hasProperty(String layerName, String propertyName) {
-		Zone zone = getParent(layerName);
+		Zone<T> zone = getParent(layerName);
 		return zone != null && zone.hasProperty(propertyName);
 	}
 

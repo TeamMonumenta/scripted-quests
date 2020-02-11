@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -17,21 +16,24 @@ import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
 import com.playmonumenta.scriptedquests.zones.ZoneChangeEvent;
-import com.playmonumenta.scriptedquests.zones.ZonePropertyChangeEvent;
 import com.playmonumenta.scriptedquests.zones.ZoneLayer;
+import com.playmonumenta.scriptedquests.zones.ZonePropertyChangeEvent;
 import com.playmonumenta.scriptedquests.zones.zone.BaseZone;
 import com.playmonumenta.scriptedquests.zones.zone.Zone;
 import com.playmonumenta.scriptedquests.zones.zone.ZoneFragment;
 import com.playmonumenta.scriptedquests.zones.zonetree.BaseZoneTree;
 
 public class ZoneManager {
+	/* Currently unused - the Zone Manager doesn't need to store any extra data on the Zone objects themselves */
+	private static class T { }
+
 	private Plugin mPlugin;
 	static BukkitRunnable mPlayerTracker = null;
 
-	private HashMap<String, ZoneLayer> mLayers = new HashMap<String, ZoneLayer>();
-	private HashMap<String, ZoneLayer> mPluginLayers = new HashMap<String, ZoneLayer>();
-	private BaseZoneTree mZoneTree = null;
-	private Map<Player, ZoneFragment> mLastPlayerZoneFragment = new HashMap<Player, ZoneFragment>();
+	private HashMap<String, ZoneLayer<T>> mLayers = new HashMap<String, ZoneLayer<T>>();
+	private HashMap<String, ZoneLayer<T>> mPluginLayers = new HashMap<String, ZoneLayer<T>>();
+	private BaseZoneTree<T> mZoneTree = null;
+	private Map<Player, ZoneFragment<T>> mLastPlayerZoneFragment = new HashMap<Player, ZoneFragment<T>>();
 
 	public ZoneManager(Plugin plugin) {
 		mPlugin = plugin;
@@ -46,7 +48,7 @@ public class ZoneManager {
 	 *
 	 * Returns true on success, false on failure.
 	 */
-	public boolean registerPluginZoneLayer(ZoneLayer layer) {
+	public boolean registerPluginZoneLayer(ZoneLayer<T> layer) {
 		if (layer == null) {
 			return false;
 		}
@@ -81,11 +83,11 @@ public class ZoneManager {
 	 * For a given location, return the fragment that contains it.
 	 * Returns null if no fragment overlaps it.
 	 */
-	public ZoneFragment getZoneFragment(Vector loc) {
+	public ZoneFragment<T> getZoneFragment(Vector loc) {
 		return mZoneTree.getZoneFragment(loc);
 	}
 
-	public ZoneFragment getZoneFragment(Location loc) {
+	public ZoneFragment<T> getZoneFragment(Location loc) {
 		if (loc == null) {
 			return null;
 		}
@@ -94,11 +96,11 @@ public class ZoneManager {
 	}
 
 	// For a given location, return the zones that contain it.
-	public HashMap<String, Zone> getZones(Vector loc) {
+	public HashMap<String, Zone<T>> getZones(Vector loc) {
 		return mZoneTree.getZones(loc);
 	}
 
-	public HashMap<String, Zone> getZones(Location loc) {
+	public HashMap<String, Zone<T>> getZones(Location loc) {
 		if (loc == null) {
 			return null;
 		}
@@ -110,11 +112,11 @@ public class ZoneManager {
 	 * For a given layer and location, return the zone that
 	 * contains it. Returns null if no zone overlaps it.
 	 */
-	public Zone getZone(Vector loc, String layer) {
+	public Zone<T> getZone(Vector loc, String layer) {
 		return mZoneTree.getZone(loc, layer);
 	}
 
-	public Zone getZone(Location loc, String layer) {
+	public Zone<T> getZone(Location loc, String layer) {
 		if (loc == null) {
 			return null;
 		}
@@ -132,7 +134,7 @@ public class ZoneManager {
 
 	// Passing a player is optimized to use the last known location
 	public boolean hasProperty(Player player, String layerName, String propertyName) {
-		ZoneFragment lastFragment = mLastPlayerZoneFragment.get(player);
+		ZoneFragment<T> lastFragment = mLastPlayerZoneFragment.get(player);
 		if (lastFragment == null) {
 			return false;
 		}
@@ -155,7 +157,7 @@ public class ZoneManager {
 	 * clock speeds while the tree is loading. We have options.
 	 */
 	public void reload(Plugin plugin, CommandSender sender) {
-		for (ZoneLayer layer : mLayers.values()) {
+		for (ZoneLayer<T> layer : mLayers.values()) {
 			layer.invalidate();
 		}
 		mLayers.clear();
@@ -164,7 +166,7 @@ public class ZoneManager {
 		mLayers.putAll(mPluginLayers);
 		QuestUtils.loadScriptedQuests(plugin, "zone_layers", sender, (object) -> {
 			// Load this file into a ZoneLayer object
-			ZoneLayer layer = new ZoneLayer(plugin, sender, object);
+			ZoneLayer<T> layer = new ZoneLayer<T>(plugin, sender, object);
 			String layerName = layer.getName();
 
 			if (mLayers.containsKey(layerName)) {
@@ -180,21 +182,21 @@ public class ZoneManager {
 		mergeLayers();
 
 		// Create list of zones
-		ArrayList<Zone> zones = new ArrayList<Zone>();
-		for (ZoneLayer layer : mLayers.values()) {
+		ArrayList<Zone<T>> zones = new ArrayList<Zone<T>>();
+		for (ZoneLayer<T> layer : mLayers.values()) {
 			zones.addAll(layer.getZones());
 		}
 
 		// TODO Defragment to reduce fragment count (approx 2-3x on average). This takes a long time.
 
 		// Create list of all zone fragments.
-		ArrayList<ZoneFragment> zoneFragments = new ArrayList<ZoneFragment>();
-		for (Zone zone : zones) {
+		ArrayList<ZoneFragment<T>> zoneFragments = new ArrayList<ZoneFragment<T>>();
+		for (Zone<T> zone : zones) {
 			zoneFragments.addAll(zone.getZoneFragments());
 		}
 
 		// Create the new tree. This could take a long time with enough fragments.
-		BaseZoneTree newTree;
+		BaseZoneTree<T> newTree;
 		try {
 			newTree = BaseZoneTree.CreateZoneTree(sender, zoneFragments);
 		} catch (Exception e) {
@@ -208,7 +210,7 @@ public class ZoneManager {
 		}
 
 		// Swap the tree out; this is really fast!
-		BaseZoneTree oldTree = mZoneTree;
+		BaseZoneTree<T> oldTree = mZoneTree;
 		mZoneTree = newTree;
 		if (oldTree != null) {
 			oldTree.invalidate();
@@ -222,7 +224,7 @@ public class ZoneManager {
 					Location playerLocation = player.getLocation();
 					Vector playerVector = playerLocation.toVector();
 
-					ZoneFragment lastZoneFragment = mLastPlayerZoneFragment.get(player);
+					ZoneFragment<T> lastZoneFragment = mLastPlayerZoneFragment.get(player);
 					if (lastZoneFragment != null && lastZoneFragment.within(playerVector)) {
 						// Player has not left their previous zone fragment; no zone change.
 						// Note that reloading invalidates previous zones, causing within() to
@@ -230,7 +232,7 @@ public class ZoneManager {
 						continue;
 					}
 
-					ZoneFragment currentZoneFragment = getZoneFragment(playerVector);
+					ZoneFragment<T> currentZoneFragment = getZoneFragment(playerVector);
 					if (lastZoneFragment == null && currentZoneFragment == null) {
 						// Player was not in a previous zone fragment, and isn't in one now; no zone change.
 						continue;
@@ -248,15 +250,15 @@ public class ZoneManager {
 		applyZoneChange(player, null);
 	}
 
-	private void applyZoneChange(Player player, ZoneFragment currentZoneFragment) {
-		ZoneFragment lastZoneFragment = mLastPlayerZoneFragment.get(player);
+	private void applyZoneChange(Player player, ZoneFragment<T> currentZoneFragment) {
+		ZoneFragment<T> lastZoneFragment = mLastPlayerZoneFragment.get(player);
 
-		HashMap<String, Zone> lastZones = new HashMap<String, Zone>();
+		HashMap<String, Zone<T>> lastZones = new HashMap<String, Zone<T>>();
 		if (lastZoneFragment != null) {
 			lastZones = lastZoneFragment.getParents();
 		}
 
-		HashMap<String, Zone> currentZones = new HashMap<String, Zone>();
+		HashMap<String, Zone<T>> currentZones = new HashMap<String, Zone<T>>();
 		if (currentZoneFragment != null) {
 			currentZones = currentZoneFragment.getParents();
 		}
@@ -276,8 +278,8 @@ public class ZoneManager {
 		mentionedLayerNames.addAll(currentZones.keySet());
 		for (String layerName : mentionedLayerNames) {
 			// Null zones are valid - indicates no zone.
-			Zone lastZone = lastZones.get(layerName);
-			Zone currentZone = currentZones.get(layerName);
+			Zone<T> lastZone = lastZones.get(layerName);
+			Zone<T> currentZone = currentZones.get(layerName);
 
 			ZoneChangeEvent zoneEvent = new ZoneChangeEvent(player, layerName, lastZone, currentZone);
 			Bukkit.getPluginManager().callEvent(zoneEvent);
@@ -317,22 +319,22 @@ public class ZoneManager {
 	}
 
 	private void mergeLayers() {
-		ArrayList<ZoneLayer> layers = new ArrayList<ZoneLayer>();
+		ArrayList<ZoneLayer<T>> layers = new ArrayList<ZoneLayer<T>>();
 		layers.addAll(mLayers.values());
 
 		int numLayers = layers.size();
 		for (int i = 0; i < numLayers; i++) {
-			ZoneLayer outer = layers.get(i);
+			ZoneLayer<T> outer = layers.get(i);
 			for (int j = i + 1; j < numLayers; j++) {
-				ZoneLayer inner = layers.get(j);
+				ZoneLayer<T> inner = layers.get(j);
 				mergeLayers(outer, inner);
 			}
 		}
 	}
 
-	private void mergeLayers(ZoneLayer outerLayer, ZoneLayer innerLayer) {
-		for (Zone outerZone : outerLayer.getZones()) {
-			for (Zone innerZone : innerLayer.getZones()) {
+	private void mergeLayers(ZoneLayer<T> outerLayer, ZoneLayer<T> innerLayer) {
+		for (Zone<T> outerZone : outerLayer.getZones()) {
+			for (Zone<T> innerZone : innerLayer.getZones()) {
 				BaseZone overlap = outerZone.overlappingZone(innerZone);
 				if (overlap == null) {
 					continue;
