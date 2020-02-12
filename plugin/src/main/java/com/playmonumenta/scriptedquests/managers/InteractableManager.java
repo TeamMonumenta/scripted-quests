@@ -40,7 +40,18 @@ public class InteractableManager {
 		});
 	}
 
-	public void interactEvent(Plugin plugin, Player player, ItemStack item, Block block, Action action) {
+	/**
+	 * interactEvent should be called by listeners whenever a player left or right clicks air or a block
+	 * @param plugin The plugin calling the event
+	 * @param player The player who clicked
+	 * @param item   The item the player clicked with
+	 * @param block  The block the player clicked. Null if clicked air.
+	 * @param action The click type, determines if it was a left/right click, and if it clicked air or a block.
+	 * @return True if the PlayerInteractEvent that called this method should be cancelled.
+	 *         Some interactables do cancel the event, others do not.
+	 */
+	public boolean interactEvent(Plugin plugin, Player player, ItemStack item, Block block, Action action) {
+		boolean cancelEvent = false;
 		if (item != null && mInteractables.containsKey(item.getType())) {
 			InteractType interact;
 			switch (action) {
@@ -57,27 +68,57 @@ public class InteractableManager {
 					interact = InteractType.LEFT_CLICK_BLOCK;
 					break;
 				default:
-					return;
+					return false;
 			}
 			for (InteractableEntry entry : mInteractables.get(item.getType())) {
-				entry.interactEvent(plugin, player, null, interact);
+				if (entry.interactEvent(plugin, player, null, interact)) {
+					cancelEvent = true;
+				}
 			}
 		}
+		return cancelEvent;
 	}
 
-	public void interactEntityEvent(Plugin plugin, Player player, ItemStack item, Entity target) {
+
+	/**
+	 * interactEvent should be called by listeners whenever a player left or right clicks air or a block
+	 * @param plugin The plugin calling the event
+	 * @param player The player who clicked
+	 * @param item   The item the player clicked with
+	 * @param target The entity the player clicked.
+	 * @return True if the PlayerInteractEntityEvent that called this method should be cancelled.
+	 *         Some interactables do cancel the event, others do not.
+	 */
+	public boolean interactEntityEvent(Plugin plugin, Player player, ItemStack item, Entity target) {
+		boolean cancelEvent = false;
 		if (mInteractables.containsKey(item.getType())) {
 			for (InteractableEntry entry : mInteractables.get(item.getType())) {
-				entry.interactEvent(plugin, player, target, InteractType.RIGHT_CLICK_ENTITY);
+				if (entry.interactEvent(plugin, player, target, InteractType.RIGHT_CLICK_ENTITY)) {
+					cancelEvent = true;
+				}
 			}
 		}
+		return cancelEvent;
 	}
 
-	public void attackEntityEvent(Plugin plugin, Player player, ItemStack item, Entity target) {
+	/**
+	 * interactEvent should be called by listeners whenever a player left or right clicks air or a block
+	 * @param plugin The plugin calling the event
+	 * @param player The player who clicked
+	 * @param item   The item the player clicked with
+	 * @param target The entity the player clicked.
+	 * @return True if the EntityDamageByEntityEvent that called this method should be cancelled.
+	 *         Some interactables do cancel the event, others do not.
+	 */
+	public boolean attackEntityEvent(Plugin plugin, Player player, ItemStack item, Entity target) {
+		boolean cancelEvent = false;
 		if (mInteractables.containsKey(item.getType())) {
 			for (InteractableEntry entry : mInteractables.get(item.getType())) {
-				entry.interactEvent(plugin, player, target, InteractType.LEFT_CLICK_ENTITY);
+				if (entry.interactEvent(plugin, player, target, InteractType.LEFT_CLICK_ENTITY)) {
+					cancelEvent = true;
+				}
 			}
 		}
+		return cancelEvent;
 	}
 }

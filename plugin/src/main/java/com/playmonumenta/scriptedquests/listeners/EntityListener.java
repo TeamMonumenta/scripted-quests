@@ -52,7 +52,10 @@ public class EntityListener implements Listener {
 					                                  damagee.getType(), damagee, npc, false);
 				}
 			} else {
-				mPlugin.mInteractableManager.attackEntityEvent(mPlugin, player, item, damagee);
+				if (mPlugin.mInteractableManager.attackEntityEvent(mPlugin, player, item, damagee)) {
+					// interactEntityEvent returning true means this event should be canceled
+					event.setCancelled(true);
+				}
 			}
 		}
 	}

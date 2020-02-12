@@ -57,9 +57,11 @@ public class QuestComponent {
 		}
 	}
 
-	public void doActionsIfPrereqsMet(Plugin plugin, Player player, Entity npcEntity) {
+	public boolean doActionsIfPrereqsMet(Plugin plugin, Player player, Entity npcEntity) {
 		if (mPrerequisites == null || mPrerequisites.prerequisiteMet(player, npcEntity)) {
 			mActions.doActions(plugin, player, npcEntity, mPrerequisites);
+			return true;
 		}
+		return false;
 	}
 }
