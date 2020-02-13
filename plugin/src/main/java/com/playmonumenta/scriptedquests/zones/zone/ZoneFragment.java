@@ -23,11 +23,11 @@ public class ZoneFragment<T> extends BaseZone {
 	public ZoneFragment(ZoneFragment<T> other) {
 		super(other);
 		mParents.putAll(other.mParents);
-		for (Map.Entry<String, ArrayList<Zone>> entry : other.mParentsAndEclipsed.entrySet()) {
+		for (Map.Entry<String, ArrayList<Zone<T>>> entry : other.mParentsAndEclipsed.entrySet()) {
 			String layerName = entry.getKey();
-			ArrayList<Zone> otherZones = entry.getValue();
+			ArrayList<Zone<T>> otherZones = entry.getValue();
 
-			ArrayList<Zone> zones = new ArrayList<Zone>();
+			ArrayList<Zone<T>> zones = new ArrayList<Zone<T>>();
 			zones.addAll(otherZones);
 			mParentsAndEclipsed.put(layerName, zones);
 		}
@@ -37,7 +37,7 @@ public class ZoneFragment<T> extends BaseZone {
 	public ZoneFragment(Zone<T> other) {
 		super(other);
 		mParents.put(other.getLayerName(), other);
-		ArrayList<Zone> zones = new ArrayList<Zone>();
+		ArrayList<Zone<T>> zones = new ArrayList<Zone<T>>();
 		mParentsAndEclipsed.put(other.getLayerName(), zones);
 		mValid = true;
 	}
@@ -154,9 +154,9 @@ public class ZoneFragment<T> extends BaseZone {
 		centerZone.mParents.put(newParentLayer, newParent);
 
 		// Track the new parent zone of the center fragment, even if it's eclipsed.
-		ArrayList<Zone> newParentLayerZones = mParentsAndEclipsed.get(newParentLayer);
+		ArrayList<Zone<T>> newParentLayerZones = mParentsAndEclipsed.get(newParentLayer);
 		if (newParentLayerZones == null) {
-			newParentLayerZones = new ArrayList<Zone>();
+			newParentLayerZones = new ArrayList<Zone<T>>();
 			mParentsAndEclipsed.put(newParentLayer, newParentLayerZones);
 		}
 		newParentLayerZones.add(newParent);
@@ -203,7 +203,7 @@ public class ZoneFragment<T> extends BaseZone {
 		}
 		if (matchingAxes == 3) {
 			// These are the same zone; return clone of self.
-			return new ZoneFragment(this);
+			return new ZoneFragment<T>(this);
 		}
 
 		// Confirm zone fragments touch on mismatched axis
@@ -247,22 +247,22 @@ public class ZoneFragment<T> extends BaseZone {
 		return mParents.get(layer);
 	}
 
-	public HashMap<String, ArrayList<Zone>> getParentsAndEclipsed() {
-		HashMap<String, ArrayList<Zone>> result = new HashMap<String, ArrayList<Zone>>();
-		for (Map.Entry<String, ArrayList<Zone>> entry : mParentsAndEclipsed.entrySet()) {
+	public HashMap<String, ArrayList<Zone<T>>> getParentsAndEclipsed() {
+		HashMap<String, ArrayList<Zone<T>>> result = new HashMap<String, ArrayList<Zone<T>>>();
+		for (Map.Entry<String, ArrayList<Zone<T>>> entry : mParentsAndEclipsed.entrySet()) {
 			String layerName = entry.getKey();
-			ArrayList<Zone> zones = entry.getValue();
+			ArrayList<Zone<T>> zones = entry.getValue();
 
-			ArrayList<Zone> resultZones = new ArrayList<Zone>();
+			ArrayList<Zone<T>> resultZones = new ArrayList<Zone<T>>();
 			resultZones.addAll(zones);
 			result.put(layerName, resultZones);
 		}
 		return result;
 	}
 
-	public ArrayList<Zone> getParentAndEclipsed(String layer) {
-		ArrayList<Zone> zones = mParentsAndEclipsed.get(layer);
-		ArrayList<Zone> result = new ArrayList<Zone>();
+	public ArrayList<Zone<T>> getParentAndEclipsed(String layer) {
+		ArrayList<Zone<T>> zones = mParentsAndEclipsed.get(layer);
+		ArrayList<Zone<T>> result = new ArrayList<Zone<T>>();
 		if (zones != null) {
 			result.addAll(zones);
 		}

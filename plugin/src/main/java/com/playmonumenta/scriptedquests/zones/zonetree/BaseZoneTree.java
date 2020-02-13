@@ -2,6 +2,7 @@ package com.playmonumenta.scriptedquests.zones.zonetree;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -19,16 +20,17 @@ import com.playmonumenta.scriptedquests.zones.zone.ZoneFragment;
 public abstract class BaseZoneTree<T> {
 	protected int mFragmentCount = 0;
 
-	public static <T> BaseZoneTree<T> CreateZoneTree(Plugin plugin, CommandSender sender, ArrayList<ZoneFragment<T>> zones) throws Exception {
-		BaseZoneTree result;
+	public static <T> BaseZoneTree<T> CreateZoneTree(CommandSender sender, ArrayList<ZoneFragment<T>> zones) throws Exception {
+		BaseZoneTree<T> result;
 		if (zones.size() == 0) {
 			result = new EmptyZoneTree<T>();
 		} else if (zones.size() == 1) {
 			result = new LeafZoneTree<T>(zones.get(0));
 		} else {
-			result = new ParentZoneTree<T>(plugin, sender, zones);
+			result = new ParentZoneTree<T>(sender, zones);
+		}
 
-		if (plugin.mShowZonesDynmap) {
+		if (Plugin.getInstance().mShowZonesDynmap) {
 			result.refreshDynmapTree();
 		}
 

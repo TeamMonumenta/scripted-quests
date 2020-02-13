@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -167,7 +168,7 @@ public class ZoneManager {
 		mLayers.putAll(mPluginLayers);
 		QuestUtils.loadScriptedQuests(plugin, "zone_layers", sender, (object) -> {
 			// Load this file into a ZoneLayer object
-			ZoneLayer<T> layer = new ZoneLayer<T>(plugin, sender, object);
+			ZoneLayer<T> layer = new ZoneLayer<T>(sender, object);
 			String layerName = layer.getName();
 
 			if (mLayers.containsKey(layerName)) {
@@ -199,7 +200,7 @@ public class ZoneManager {
 		// Create the new tree. This could take a long time with enough fragments.
 		BaseZoneTree<T> newTree;
 		try {
-			newTree = BaseZoneTree.CreateZoneTree(plugin, sender, zoneFragments);
+			newTree = BaseZoneTree.CreateZoneTree(sender, zoneFragments);
 		} catch (Exception e) {
 			MessagingUtils.sendStackTrace(sender, e);
 			return;

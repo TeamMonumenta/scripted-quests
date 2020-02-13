@@ -142,7 +142,7 @@ public class Zone<T> extends BaseZone {
 	/*
 	 * Split all fragments of this zone by an overlapping zone, removing overlap.
 	 */
-	public boolean splitByOverlap(BaseZone overlap, Zone otherZone) {
+	public boolean splitByOverlap(BaseZone overlap, Zone<T> otherZone) {
 		return splitByOverlap(overlap, otherZone, false);
 	}
 

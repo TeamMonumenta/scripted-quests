@@ -36,7 +36,7 @@ public class ZoneLayer<T> {
 	/*
 	 * This should only be called by the ZoneManager.
 	 */
-	public ZoneLayer(Plugin plugin, CommandSender sender, JsonObject object) throws Exception {
+	public ZoneLayer(CommandSender sender, JsonObject object) throws Exception {
 		if (object == null) {
 			throw new Exception("object may not be null.");
 		}
@@ -192,7 +192,7 @@ public class ZoneLayer<T> {
 		}
 
 		// Create the new tree.
-		return BaseZoneTree.CreateZoneTree(plugin, sender, zoneFragments);
+		return BaseZoneTree.CreateZoneTree(sender, zoneFragments);
 	}
 
 	/************************************************************************************
