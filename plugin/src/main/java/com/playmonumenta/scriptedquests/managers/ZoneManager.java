@@ -189,7 +189,10 @@ public class ZoneManager {
 			zones.addAll(layer.getZones());
 		}
 
-		// TODO Defragment to reduce fragment count (approx 2-3x on average). This takes a long time.
+		// Defragment to reduce fragment count (approx 2-3x on average). This takes a long time.
+		for (Zone<T> zone : zones) {
+			zone.defragment();
+		}
 
 		// Create list of all zone fragments.
 		ArrayList<ZoneFragment<T>> zoneFragments = new ArrayList<ZoneFragment<T>>();

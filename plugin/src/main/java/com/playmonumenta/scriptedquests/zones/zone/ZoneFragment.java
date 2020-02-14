@@ -178,15 +178,15 @@ public class ZoneFragment<T> extends BaseZone {
 	 */
 	public ZoneFragment<T> merge(ZoneFragment<T> other) {
 		if (mValid != other.mValid ||
-		    mParents != other.mParents ||
-		    mParentsAndEclipsed != other.mParentsAndEclipsed) {
+		    !mParents.equals(other.mParents) ||
+		    !mParentsAndEclipsed.equals(other.mParentsAndEclipsed)) {
 			return null;
 		}
 
 		Vector aMin = minCorner();
-		Vector aMax = maxCorner();
+		Vector aMax = maxCornerExclusive();
 		Vector bMin = other.minCorner();
-		Vector bMax = other.maxCorner();
+		Vector bMax = other.maxCornerExclusive();
 
 		boolean xMatches = aMin.getX() == bMin.getX() && aMax.getX() == bMax.getX();
 		boolean yMatches = aMin.getY() == bMin.getY() && aMax.getY() == bMax.getY();
@@ -232,7 +232,7 @@ public class ZoneFragment<T> extends BaseZone {
 		Vector resultMin = Vector.getMinimum(aMin, bMin);
 		Vector resultMax = Vector.getMaximum(aMax, bMax);
 		result.minCorner(resultMin);
-		result.maxCorner(resultMax);
+		result.maxCornerExclusive(resultMax);
 
 		return result;
 	}
@@ -304,9 +304,15 @@ public class ZoneFragment<T> extends BaseZone {
 		return true;
 	}
 
+	public boolean equals(ZoneFragment<T> other) {
+		return (super.equals(other) &&
+		        mParents.equals(other.mParents) &&
+		        mParentsAndEclipsed.equals(other.mParentsAndEclipsed));
+	}
+
 	@Override
 	public int hashCode() {
-		int result = ((BaseZone) this).hashCode();
+		int result = super.hashCode();
 		result = 31*result + mParents.hashCode();
 		result = 31*result + mParentsAndEclipsed.hashCode();
 		return result;

@@ -222,15 +222,15 @@ public class Zone<T> extends BaseZone {
 				 * and C = A + B, C is level 2 (contains 2 original fragments).
 				 * If D = C + A, D is level 3 (upperLevel = 2, lowerLevel = 1, 2 + 1)
 				 */
-				 for (Integer mergeLevel = 2; mergeLevel <= fragments.size(); mergeLevel++) {
+				for (Integer mergeLevel = 2; mergeLevel <= fragments.size(); mergeLevel++) {
 					mergeAtLevel(mergeLevel);
-				 }
+				}
 			}
 
 			public void mergeAtLevel(Integer mergeLevel) {
 				FragCombos<T> fragCombos = new FragCombos<T>();
 				mMergedCombos.put(mergeLevel, fragCombos);
-				for (Integer lowerLevel = 2; lowerLevel <= mergeLevel/2; lowerLevel++) {
+				for (Integer lowerLevel = 1; lowerLevel <= mergeLevel/2; lowerLevel++) {
 					Integer upperLevel = mergeLevel - lowerLevel;
 					mergeTwoLevels(fragCombos, mergeLevel, lowerLevel, upperLevel);
 				}
@@ -400,9 +400,15 @@ public class Zone<T> extends BaseZone {
 		}
 	}
 
+	public boolean equals(Zone<T> other) {
+		return (super.equals(other) &&
+		        getLayerName().equals(other.getLayerName()) &&
+		        getName().equals(other.getName()));
+	}
+
 	@Override
 	public int hashCode() {
-		int result = ((BaseZone) this).hashCode();
+		int result = super.hashCode();
 		result = 31*result + getLayerName().hashCode();
 		result = 31*result + getName().hashCode();
 		return result;
