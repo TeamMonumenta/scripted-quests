@@ -51,6 +51,7 @@ public class InteractableEntry {
 	private final ArrayList<QuestComponent> mComponents = new ArrayList<>();
 	private final EnumSet<InteractType> mInteractTypes = EnumSet.noneOf(InteractType.class);
 	private final Material mMaterial;
+	private final Boolean mCancelEvent;
 
 	public InteractableEntry(JsonObject object) throws Exception {
 		//////////////////////////////////////// material (Required) ////////////////////////////////////////
@@ -92,12 +93,17 @@ public class InteractableEntry {
 			mComponents.add(new QuestComponent("", "", EntityType.PLAYER, entry));
 		}
 
+		//////////////////////////////////////// cancel_event (Optional) ////////////////////////////////////////
+		// Read the optional cancel_event value - default to false (do not cancel)
+		JsonElement cancelEvent = object.get("cancel_event");
+		mCancelEvent = cancelEvent != null && cancelEvent.getAsBoolean();
+
 		//////////////////////////////////////// Fail if other keys exist ////////////////////////////////////////
 		Set<Map.Entry<String, JsonElement>> entries = object.entrySet();
 		for (Map.Entry<String, JsonElement> ent : entries) {
 			String key = ent.getKey();
 
-			if (!key.equals("material") && !key.equals("click_types")
+			if (!key.equals("material") && !key.equals("click_types") && !key.equals("cancel_event")
 				&& !key.equals("quest_components")) {
 				throw new Exception("Unknown quest key: " + key);
 			}
@@ -112,11 +118,15 @@ public class InteractableEntry {
 		return mMaterial;
 	}
 
-	public void interactEvent(Plugin plugin, Player player, Entity entity, InteractType interactType) {
+	public boolean interactEvent(Plugin plugin, Player player, Entity entity, InteractType interactType) {
+		boolean cancelEvent = false;
 		if (mInteractTypes.contains(interactType)) {
 			for (QuestComponent component : mComponents) {
-				component.doActionsIfPrereqsMet(plugin, player, entity);
+				if (component.doActionsIfPrereqsMet(plugin, player, entity)) {
+					cancelEvent = mCancelEvent;
+				}
 			}
 		}
+		return cancelEvent;
 	}
 }

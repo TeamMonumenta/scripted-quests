@@ -49,6 +49,7 @@
             defaultProperties: [
                 "material",
                 "click_types",
+                "cancel_event",
                 "quest_components"
             ],
             additionalProperties:false,
@@ -81,9 +82,18 @@
                         ]
                     }
                 },
+                cancel_event: {
+                    required: false,
+                    propertyOrder: 3,
+                    title: "cancel_event",
+                    description: "If any component has all of its prerequisites succeed, stop actions such as opening chests, clicking buttons, throwing ender pearls, etc.",
+                    type: "boolean",
+                    format: "checkbox",
+                    default: false
+                },
                 quest_components: {
                     required: true,
-                    propertyOrder: 3,
+                    propertyOrder: 4,
                     title: "quest_components",
                     description: "A list of actions with associated prerequisites",
                     type: "array",

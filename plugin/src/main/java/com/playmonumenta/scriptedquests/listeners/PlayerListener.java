@@ -45,7 +45,11 @@ public class PlayerListener implements Listener {
 		ItemStack item = event.getItem();
 		Block block = event.getClickedBlock();
 
-		mPlugin.mInteractableManager.interactEvent(mPlugin, player, item, block, action);
+		if (mPlugin.mInteractableManager.interactEvent(mPlugin, player, item, block, action)) {
+			// interactEvent returning true means this event should be canceled
+			event.setCancelled(true);
+			return;
+		}
 
 		// compass
 		if (item != null && item.getType() == Material.COMPASS &&
@@ -92,7 +96,10 @@ public class PlayerListener implements Listener {
 			} else {
 				item = player.getInventory().getItemInOffHand();
 			}
-			mPlugin.mInteractableManager.interactEntityEvent(mPlugin, player, item, entity);
+			if (mPlugin.mInteractableManager.interactEntityEvent(mPlugin, player, item, entity)) {
+				// interactEntityEvent returning true means this event should be canceled
+				event.setCancelled(true);
+			}
 		}
 	}
 
