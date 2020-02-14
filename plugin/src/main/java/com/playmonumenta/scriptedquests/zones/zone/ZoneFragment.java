@@ -304,6 +304,12 @@ public class ZoneFragment<T> extends BaseZone {
 		return true;
 	}
 
+	public boolean equals(ZoneFragment<T> other) {
+		return (super.equals(other) &&
+		        mParents.equals(other.mParents) &&
+		        mParentsAndEclipsed.equals(other.mParentsAndEclipsed));
+	}
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public boolean equals(Object o) {
