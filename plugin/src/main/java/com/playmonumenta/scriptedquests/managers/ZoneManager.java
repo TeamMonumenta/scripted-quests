@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -208,6 +209,12 @@ public class ZoneManager {
 			MessagingUtils.sendStackTrace(sender, e);
 			return;
 		}
+		sender.sendMessage(ChatColor.GOLD + "Zone tree stats - fragments: "
+		                   + Integer.toString(newTree.fragmentCount())
+		                   + ", max depth: "
+		                   + Integer.toString(newTree.maxDepth())
+		                   + ", ave depth: "
+		                   + String.format("%.2f", newTree.averageDepth()));
 
 		// Make sure only one player tracker runs at a time.
 		if (mPlayerTracker != null && !mPlayerTracker.isCancelled()) {

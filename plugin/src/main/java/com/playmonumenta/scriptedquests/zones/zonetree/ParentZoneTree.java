@@ -160,6 +160,20 @@ public class ParentZoneTree<T> extends BaseZoneTree<T> {
 		return result;
 	}
 
+	public int maxDepth() {
+		return 1 + Math.max(mLess.maxDepth(),
+		                    Math.max(mMid.maxDepth(),
+		                             mMore.maxDepth()));
+	}
+
+	protected int totalDepth() {
+		int result = fragmentCount();
+		result += mLess.totalDepth();
+		result += mMid.totalDepth();
+		result += mMore.totalDepth();
+		return result;
+	}
+
 	public void refreshDynmapTree(MarkerSet markerSet, int parentR, int parentG, int parentB) {
 		mLess.refreshDynmapTree(markerSet,
 		                        (parentR + 255)/2,

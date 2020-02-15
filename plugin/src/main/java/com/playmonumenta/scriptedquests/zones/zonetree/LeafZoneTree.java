@@ -28,6 +28,14 @@ public class LeafZoneTree<T> extends BaseZoneTree<T> {
 		}
 	}
 
+	public int maxDepth() {
+		return 1;
+	}
+
+	protected int totalDepth() {
+		return 1;
+	}
+
 	public void refreshDynmapTree(MarkerSet markerSet, int parentR, int parentG, int parentB) {
 		int r = parentR;
 		int g = parentG;

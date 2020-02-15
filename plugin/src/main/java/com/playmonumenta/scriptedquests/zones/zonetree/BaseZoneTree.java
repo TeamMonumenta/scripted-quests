@@ -85,6 +85,14 @@ public abstract class BaseZoneTree<T> {
 		return mFragmentCount;
 	}
 
+	public abstract int maxDepth();
+
+	protected abstract int totalDepth();
+
+	public float averageDepth() {
+		return (float) totalDepth() / (float) fragmentCount();
+	}
+
 	public void refreshDynmapTree() {
 		DynmapCommonAPI dynmapHook = (DynmapCommonAPI) Bukkit.getServer().getPluginManager().getPlugin("dynmap");
 		if (dynmapHook == null) {
