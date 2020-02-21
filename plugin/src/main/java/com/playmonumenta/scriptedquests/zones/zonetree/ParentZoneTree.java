@@ -3,8 +3,9 @@ package com.playmonumenta.scriptedquests.zones.zonetree;
 import java.util.ArrayList;
 
 import org.bukkit.Axis;
-import org.bukkit.command.CommandSender;
 import org.bukkit.util.Vector;
+
+import org.dynmap.markers.MarkerSet;
 
 import com.playmonumenta.scriptedquests.utils.ZoneUtils;
 import com.playmonumenta.scriptedquests.zones.zone.ZoneFragment;
@@ -14,6 +15,9 @@ public class ParentZoneTree<T> extends BaseZoneTree<T> {
 	private Axis mAxis;
 	// The pivot for mMore/mLess
 	private double mPivot;
+	// Lowest/highest value for this node and its children; allows returning null early
+	private double mMin;
+	private double mMax;
 	// Branch that is Less/More than pivot
 	private BaseZoneTree<T> mLess;
 	private BaseZoneTree<T> mMore;
@@ -28,7 +32,7 @@ public class ParentZoneTree<T> extends BaseZoneTree<T> {
 
 	private static final Axis[] AXIS_ORDER = {Axis.X, Axis.Z, Axis.Y};
 
-	public ParentZoneTree(CommandSender sender, ArrayList<ZoneFragment<T>> zones) throws Exception {
+	public ParentZoneTree(ArrayList<ZoneFragment<T>> zones) throws Exception {
 		/*
 		 * Local class is used to get best balance without
 		 * exposing incomplete results or creating tree nodes.
@@ -45,11 +49,19 @@ public class ParentZoneTree<T> extends BaseZoneTree<T> {
 			public ArrayList<ZoneFragment<T>> mMore = new ArrayList<ZoneFragment<T>>();
 		}
 
+		mFragmentCount = zones.size();
+
+		Vector minVector = zones.get(0).minCorner();
+		Vector maxVector = zones.get(0).maxCornerExclusive();
+
 		// Default is an impossibly worst case scenario so it will never be chosen.
 		ParentData bestSplit = new ParentData();
-		bestSplit.mPriority = zones.size();
+		bestSplit.mPriority = mFragmentCount;
 
 		for (ZoneFragment<T> pivotZone : zones) {
+			minVector = Vector.getMinimum(minVector, pivotZone.minCorner());
+			maxVector = Vector.getMaximum(maxVector, pivotZone.maxCornerExclusive());
+
 			for (Axis axis : AXIS_ORDER) {
 				double[] possiblePivots = new double[2];
 				possiblePivots[0] = ZoneUtils.vectorAxis(pivotZone.minCorner(), axis);
@@ -87,11 +99,13 @@ public class ParentZoneTree<T> extends BaseZoneTree<T> {
 
 		// This is the answer we want. Copy values to self.
 		mAxis = bestSplit.mAxis;
+		mMin = ZoneUtils.vectorAxis(minVector, mAxis);
+		mMax = ZoneUtils.vectorAxis(maxVector, mAxis);
 		mPivot = bestSplit.mPivot;
 		mMidMin = bestSplit.mMidMin;
 		mMidMax = bestSplit.mMidMax;
 
-		if (bestSplit.mPriority >= zones.size()) {
+		if (bestSplit.mPriority >= mFragmentCount) {
 			/*
 			 * The priority of our best case scenario is equal to or worse than our worst case.
 			 *
@@ -101,13 +115,13 @@ public class ParentZoneTree<T> extends BaseZoneTree<T> {
 			 */
 			StringBuilder message = new StringBuilder("A serious plugin error has occured. Zones involved:");
 			for (ZoneFragment<T> zone : zones) {
-				message.append("- " + zone.toString());
+				message.append("\n- " + zone.toString());
 			}
 			throw new Exception(message.toString());
 		} else {
-			mLess = CreateZoneTree(sender, bestSplit.mLess);
-			mMid = CreateZoneTree(sender, bestSplit.mMid);
-			mMore = CreateZoneTree(sender, bestSplit.mMore);
+			mLess = CreateZoneTree(bestSplit.mLess);
+			mMid = CreateZoneTree(bestSplit.mMid);
+			mMore = CreateZoneTree(bestSplit.mMore);
 		}
 	}
 
@@ -125,6 +139,11 @@ public class ParentZoneTree<T> extends BaseZoneTree<T> {
 		ZoneFragment<T> result = null;
 		double test = ZoneUtils.vectorAxis(loc, mAxis);
 
+		// If the test point is outside this node, return null immediately.
+		if (test < mMin || test >= mMax) {
+			return null;
+		}
+
 		// Check zones that don't overlap the pivot first
 		if (test > mPivot) {
 			result = mMore.getZoneFragment(loc);
@@ -140,10 +159,41 @@ public class ParentZoneTree<T> extends BaseZoneTree<T> {
 		return result;
 	}
 
+	public int maxDepth() {
+		return 1 + Math.max(mLess.maxDepth(),
+		                    Math.max(mMid.maxDepth(),
+		                             mMore.maxDepth()));
+	}
+
+	protected int totalDepth() {
+		int result = fragmentCount();
+		result += mLess.totalDepth();
+		result += mMid.totalDepth();
+		result += mMore.totalDepth();
+		return result;
+	}
+
+	public void refreshDynmapTree(MarkerSet markerSet, int parentR, int parentG, int parentB) {
+		mLess.refreshDynmapTree(markerSet,
+		                        (parentR + 255)/2,
+		                        parentG/2,
+		                        parentB/2);
+		mMid.refreshDynmapTree(markerSet,
+		                       parentR/2,
+		                       (parentG + 255)/2,
+		                       parentB/2);
+		mMore.refreshDynmapTree(markerSet,
+		                        parentR/2,
+		                        parentG/2,
+		                        (parentB + 255)/2);
+	}
+
 	public String toString() {
 		return ("(ParentZoneTree(<ArrayList<ZoneFragment>>): "
 		        + "mAxis=" + mAxis.toString() + ", "
 		        + "mPivot=" + Double.toString(mPivot) + ", "
+		        + "mMin=" + Double.toString(mMin) + ", "
+		        + "mMax=" + Double.toString(mMax) + ", "
 		        + "mLess=<BaseZoneTree>, "
 		        + "mMore=<BaseZoneTree>, "
 		        + "mMidMin=" + Double.toString(mMidMin) + ", "

@@ -152,6 +152,15 @@ public class BaseZone {
 		return null;
 	}
 
+	public boolean equals(BaseZone other) {
+		return (mPosition.equals(other.mPosition) &&
+		        mSize.equals(other.mSize));
+	}
+
+	public int hashCode() {
+		return 31*mPosition.hashCode() + mSize.hashCode();
+	}
+
 	public String toString() {
 		return "BaseZone(" + minCorner().toString() + ", " + maxCorner().toString() + ")";
 	}

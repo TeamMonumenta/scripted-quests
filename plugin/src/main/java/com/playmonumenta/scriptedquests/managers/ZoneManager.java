@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -158,6 +160,7 @@ public class ZoneManager {
 	 */
 	public void reload(Plugin plugin, CommandSender sender) {
 		for (ZoneLayer<T> layer : mLayers.values()) {
+			// Cause zones to stop tracking their fragments; speeds up garbage collection.
 			layer.invalidate();
 		}
 		mLayers.clear();
@@ -166,7 +169,7 @@ public class ZoneManager {
 		mLayers.putAll(mPluginLayers);
 		QuestUtils.loadScriptedQuests(plugin, "zone_layers", sender, (object) -> {
 			// Load this file into a ZoneLayer object
-			ZoneLayer<T> layer = new ZoneLayer<T>(plugin, sender, object);
+			ZoneLayer<T> layer = new ZoneLayer<T>(sender, object);
 			String layerName = layer.getName();
 
 			if (mLayers.containsKey(layerName)) {
@@ -187,7 +190,10 @@ public class ZoneManager {
 			zones.addAll(layer.getZones());
 		}
 
-		// TODO Defragment to reduce fragment count (approx 2-3x on average). This takes a long time.
+		// Defragment to reduce fragment count (approx 2-3x on average). This takes a long time.
+		for (Zone<T> zone : zones) {
+			zone.defragment();
+		}
 
 		// Create list of all zone fragments.
 		ArrayList<ZoneFragment<T>> zoneFragments = new ArrayList<ZoneFragment<T>>();
@@ -198,10 +204,18 @@ public class ZoneManager {
 		// Create the new tree. This could take a long time with enough fragments.
 		BaseZoneTree<T> newTree;
 		try {
-			newTree = BaseZoneTree.CreateZoneTree(sender, zoneFragments);
+			newTree = BaseZoneTree.CreateZoneTree(zoneFragments);
 		} catch (Exception e) {
 			MessagingUtils.sendStackTrace(sender, e);
 			return;
+		}
+		if (sender != null) {
+			sender.sendMessage(ChatColor.GOLD + "Zone tree stats - fragments: "
+			                + Integer.toString(newTree.fragmentCount())
+			                + ", max depth: "
+			                + Integer.toString(newTree.maxDepth())
+			                + ", ave depth: "
+			                + String.format("%.2f", newTree.averageDepth()));
 		}
 
 		// Make sure only one player tracker runs at a time.
@@ -213,6 +227,7 @@ public class ZoneManager {
 		BaseZoneTree<T> oldTree = mZoneTree;
 		mZoneTree = newTree;
 		if (oldTree != null) {
+			// Force all fragments to consider all locations as outside themselves
 			oldTree.invalidate();
 		}
 
@@ -273,8 +288,7 @@ public class ZoneManager {
 		}
 
 		// Zones changed, send an event for each layer.
-		LinkedHashSet<String> mentionedLayerNames = new LinkedHashSet<String>();
-		mentionedLayerNames.addAll(lastZones.keySet());
+		Set<String> mentionedLayerNames = new LinkedHashSet<String>(lastZones.keySet());
 		mentionedLayerNames.addAll(currentZones.keySet());
 		for (String layerName : mentionedLayerNames) {
 			// Null zones are valid - indicates no zone.
@@ -284,22 +298,21 @@ public class ZoneManager {
 			ZoneChangeEvent zoneEvent = new ZoneChangeEvent(player, layerName, lastZone, currentZone);
 			Bukkit.getPluginManager().callEvent(zoneEvent);
 
-			LinkedHashSet<String> lastProperties;
+			Set<String> lastProperties;
 			if (lastZone == null) {
 				lastProperties = new LinkedHashSet<String>();
 			} else {
 				lastProperties = lastZone.getProperties();
 			}
 
-			LinkedHashSet<String> currentProperties;
+			Set<String> currentProperties;
 			if (currentZone == null) {
 				currentProperties = new LinkedHashSet<String>();
 			} else {
 				currentProperties = currentZone.getProperties();
 			}
 
-			LinkedHashSet<String> removedProperties = new LinkedHashSet<String>();
-			removedProperties.addAll(lastProperties);
+			Set<String> removedProperties = new LinkedHashSet<String>(lastProperties);
 			removedProperties.removeAll(currentProperties);
 			for (String property : removedProperties) {
 				ZonePropertyChangeEvent event;
@@ -307,8 +320,7 @@ public class ZoneManager {
 				Bukkit.getPluginManager().callEvent(event);
 			}
 
-			LinkedHashSet<String> addedProperties = new LinkedHashSet<String>();
-			addedProperties.addAll(currentProperties);
+			Set<String> addedProperties = new LinkedHashSet<String>(currentProperties);
 			addedProperties.removeAll(lastProperties);
 			for (String property : addedProperties) {
 				ZonePropertyChangeEvent event;
@@ -319,8 +331,7 @@ public class ZoneManager {
 	}
 
 	private void mergeLayers() {
-		ArrayList<ZoneLayer<T>> layers = new ArrayList<ZoneLayer<T>>();
-		layers.addAll(mLayers.values());
+		ArrayList<ZoneLayer<T>> layers = new ArrayList<ZoneLayer<T>>(mLayers.values());
 
 		int numLayers = layers.size();
 		for (int i = 0; i < numLayers; i++) {
@@ -339,8 +350,8 @@ public class ZoneManager {
 				if (overlap == null) {
 					continue;
 				}
-				outerZone.splitByOverlap(overlap, innerZone);
-				innerZone.splitByOverlap(overlap);
+				outerZone.splitByOverlap(overlap, innerZone, true);
+				innerZone.splitByOverlap(overlap, outerZone);
 			}
 		}
 	}

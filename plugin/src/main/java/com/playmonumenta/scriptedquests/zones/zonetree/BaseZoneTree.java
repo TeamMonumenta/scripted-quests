@@ -2,22 +2,38 @@ package com.playmonumenta.scriptedquests.zones.zonetree;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
-import org.bukkit.command.CommandSender;
+import org.bukkit.Bukkit;
 import org.bukkit.util.Vector;
 
+import org.dynmap.DynmapCommonAPI;
+import org.dynmap.markers.MarkerAPI;
+import org.dynmap.markers.MarkerSet;
+
+import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.zones.ZoneLayer;
 import com.playmonumenta.scriptedquests.zones.zone.Zone;
 import com.playmonumenta.scriptedquests.zones.zone.ZoneFragment;
 
 public abstract class BaseZoneTree<T> {
-	public static <T> BaseZoneTree<T> CreateZoneTree(CommandSender sender, ArrayList<ZoneFragment<T>> zones) throws Exception {
+	protected int mFragmentCount = 0;
+
+	public static <T> BaseZoneTree<T> CreateZoneTree(ArrayList<ZoneFragment<T>> zones) throws Exception {
+		BaseZoneTree<T> result;
 		if (zones.size() == 0) {
-			return new EmptyZoneTree<T>();
+			result = new EmptyZoneTree<T>();
 		} else if (zones.size() == 1) {
-			return new LeafZoneTree<T>(zones.get(0));
+			result = new LeafZoneTree<T>(zones.get(0));
 		} else {
-			return new ParentZoneTree<T>(sender, zones);
+			result = new ParentZoneTree<T>(zones);
 		}
+
+		if (Plugin.getInstance().mShowZonesDynmap) {
+			result.refreshDynmapTree();
+		}
+
+		return result;
 	}
 
 	/*
@@ -63,4 +79,45 @@ public abstract class BaseZoneTree<T> {
 		ZoneFragment<T> fragment = getZoneFragment(loc);
 		return fragment != null && fragment.hasProperty(layerName, propertyName);
 	}
+
+	public int fragmentCount() {
+		return mFragmentCount;
+	}
+
+	public abstract int maxDepth();
+
+	protected abstract int totalDepth();
+
+	public float averageDepth() {
+		return (float) totalDepth() / (float) fragmentCount();
+	}
+
+	public void refreshDynmapTree() {
+		DynmapCommonAPI dynmapHook = (DynmapCommonAPI) Bukkit.getServer().getPluginManager().getPlugin("dynmap");
+		if (dynmapHook == null) {
+			return;
+		}
+
+		MarkerAPI markerHook = dynmapHook.getMarkerAPI();
+		if (markerHook == null) {
+			// Not initialized
+			return;
+		}
+
+		String markerSetId = ZoneLayer.DYNMAP_PREFIX + "Tree";
+		MarkerSet markerSet;
+
+		markerSet = markerHook.getMarkerSet(markerSetId);
+		if (markerSet != null) {
+			// Delete old marker set
+			markerSet.deleteMarkerSet();
+		}
+		// Create a new marker set
+		markerSet = markerHook.createMarkerSet(markerSetId, "Zone Tree", null, false);
+		markerSet.setHideByDefault(true);
+
+		refreshDynmapTree(markerSet, 0, 0, 0);
+	}
+
+	public abstract void refreshDynmapTree(MarkerSet markerSet, int parentR, int parentG, int parentB);
 }

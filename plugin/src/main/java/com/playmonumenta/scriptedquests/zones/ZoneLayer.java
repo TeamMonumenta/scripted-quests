@@ -28,7 +28,7 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
 
 public class ZoneLayer<T> {
-	private static final String DYNMAP_PREFIX = "SQZone";
+	public static final String DYNMAP_PREFIX = "SQZone";
 
 	private String mName;
 	private ArrayList<Zone<T>> mZones = new ArrayList<Zone<T>>();
@@ -36,7 +36,7 @@ public class ZoneLayer<T> {
 	/*
 	 * This should only be called by the ZoneManager.
 	 */
-	public ZoneLayer(Plugin plugin, CommandSender sender, JsonObject object) throws Exception {
+	public ZoneLayer(CommandSender sender, JsonObject object) throws Exception {
 		if (object == null) {
 			throw new Exception("object may not be null.");
 		}
@@ -192,7 +192,7 @@ public class ZoneLayer<T> {
 		}
 
 		// Create the new tree.
-		return BaseZoneTree.CreateZoneTree(sender, zoneFragments);
+		return BaseZoneTree.CreateZoneTree(zoneFragments);
 	}
 
 	/************************************************************************************
@@ -220,10 +220,14 @@ public class ZoneLayer<T> {
 	}
 
 	/*
+	 * Force all zones to discard their current fragments. The fragments will
+	 * continue to reference their parent zones after this.
+	 *
+	 * Not strictly required, but improves garbage collection by removing loops
+	 *
 	 * This should only be called by the ZoneManager.
 	 */
 	public void invalidate() {
-		// Not strictly required, but improves garbage collection by removing loops
 		for (Zone<T> zone : mZones) {
 			zone.invalidate();
 		}
@@ -247,13 +251,14 @@ public class ZoneLayer<T> {
 				if (overlap == null) {
 					continue;
 				}
-				if (inner.splitByOverlap(overlap)) {
+				if (inner.splitByOverlap(overlap, outer)) {
 					String errorMessage = ChatColor.RED + "Total eclipse of zone "
 										+ ChatColor.BOLD + inner.getName()
 										+ ChatColor.RED + " by zone "
 										+ ChatColor.BOLD + outer.getName();
 					sender.spigot().sendMessage(TextComponent.fromLegacyText(errorMessage));
 				}
+				outer.splitByOverlap(overlap, inner, true);
 			}
 		}
 	}

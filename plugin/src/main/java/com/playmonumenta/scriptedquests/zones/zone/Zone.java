@@ -37,7 +37,7 @@ public class Zone<T> extends BaseZone {
 
 		Double[] corners = new Double[6];
 		String name;
-		LinkedHashSet<String> properties = new LinkedHashSet<String>();
+		Set<String> properties = new LinkedHashSet<String>();
 
 		// Load the zone name
 		if (object.get("name") == null ||
@@ -108,7 +108,7 @@ public class Zone<T> extends BaseZone {
 	 * - Both are inclusive coordinates.
 	 * - The minimum/maximum are determined for you.
 	 */
-	public Zone(ZoneLayer<T> layer, Vector pos1, Vector pos2, String name, LinkedHashSet<String> properties, T tag) {
+	public Zone(ZoneLayer<T> layer, Vector pos1, Vector pos2, String name, Set<String> properties, T tag) {
 		super(pos1, pos2);
 		mLayer = layer;
 		mName = name;
@@ -122,21 +122,26 @@ public class Zone<T> extends BaseZone {
 	 */
 	public void reloadFragments() {
 		mFragments.clear();
-
-		ZoneFragment<T> initialFragment = new ZoneFragment<T>(this);
-		mFragments.add(initialFragment);
+		mFragments.add(new ZoneFragment<T>(this));
 	}
 
+	/*
+	 * Remove references to fragments from this zone.
+	 *
+	 * Note that the fragments point to the zone, too. This only prevents further
+	 * modification of the old fragments from the current zone object.
+	 *
+	 * Not strictly required, but speeds up garbage collection by eliminating loops.
+	 */
 	public void invalidate() {
-		// Not strictly required, but speeds up garbage collection by eliminating loops.
 		mFragments.clear();
 	}
 
 	/*
 	 * Split all fragments of this zone by an overlapping zone, removing overlap.
 	 */
-	public boolean splitByOverlap(BaseZone overlap) {
-		return splitByOverlap(overlap, null);
+	public boolean splitByOverlap(BaseZone overlap, Zone<T> otherZone) {
+		return splitByOverlap(overlap, otherZone, false);
 	}
 
 	public T getTag() {
@@ -151,7 +156,7 @@ public class Zone<T> extends BaseZone {
 	 * Returns true if the zone being overlapped has been completely
 	 * eclipsed by the other zone.
 	 */
-	public boolean splitByOverlap(BaseZone overlap, Zone<T> otherZone) {
+	public boolean splitByOverlap(BaseZone overlap, Zone<T> otherZone, boolean includeOther) {
 		ArrayList<ZoneFragment<T>> newFragments = new ArrayList<ZoneFragment<T>>();
 		for (ZoneFragment<T> fragment : mFragments) {
 			BaseZone subOverlap = fragment.overlappingZone(overlap);
@@ -162,7 +167,7 @@ public class Zone<T> extends BaseZone {
 				continue;
 			}
 
-			newFragments.addAll(fragment.splitByOverlap(subOverlap, otherZone));
+			newFragments.addAll(fragment.splitByOverlap(subOverlap, otherZone, includeOther));
 			fragment.invalidate();
 		}
 		mFragments = newFragments;
@@ -174,25 +179,21 @@ public class Zone<T> extends BaseZone {
 	 *
 	 * This works with only one zone's fragments at a time, and doesn't
 	 * need to be run again. This reduces n significantly for runtime.
-	 *
-	 * TODO Implement this based on the same function in:
-	 * https://github.com/NickNackGus/monumenta-zone-prototype/blob/master/python/lib/zone/zone.py
-	 * Also needs to invalidate fragments of merged zones.
 	 */
-	/*
 	public void defragment() {
 		if (mFragments.size() < 2) {
 			return;
 		}
 
-		HashMap<int, HashMap<LinkedHashSet<int>, ZoneFragment>> allMergedCombinations = new HashMap<int, HashMap<LinkedHashSet<int>, ZoneFragment>>;
-		private ArrayList<ZoneFragment> recursiveOptimalDefrag(HashMap<int, HashMap<LinkedHashSet<int>, ZoneFragment>> allMergedCombinations,
-		                                                       ArrayList<ZoneFragment> resultsSoFar,
-		                                                       LinkedHashSet<int> remainingIds);
+		// Load current fragments into defragmenter
+		ZoneDefragmenter<T> defragmenter = new ZoneDefragmenter<T>(mFragments);
 
-		return;
+		// Invalidate all current fragments.
+		invalidate();
+
+		// Get fewest fragments that represent the same thing (mostly large combos)
+		mFragments = defragmenter.optimalMerge();
 	}
-	*/
 
 	public ZoneLayer<T> getLayer() {
 		return mLayer;
@@ -207,26 +208,22 @@ public class Zone<T> extends BaseZone {
 	}
 
 	public ArrayList<ZoneFragment<T>> getZoneFragments() {
-		ArrayList<ZoneFragment<T>> result = new ArrayList<ZoneFragment<T>>();
-		result.addAll(mFragments);
-		return result;
+		return new ArrayList<ZoneFragment<T>>(mFragments);
 	}
 
-	public LinkedHashSet<String> getProperties() {
-		LinkedHashSet<String> result = new LinkedHashSet<String>();
-		result.addAll(mProperties);
-		return result;
+	public Set<String> getProperties() {
+		return new LinkedHashSet<String>(mProperties);
 	}
 
 	public boolean hasProperty(String propertyName) {
 		return mProperties.contains(propertyName);
 	}
 
-	private static void applyProperty(HashMap<String, ArrayList<String>> propertyGroups, LinkedHashSet<String> currentProperties, String propertyName) throws Exception {
+	private static void applyProperty(HashMap<String, ArrayList<String>> propertyGroups, Set<String> currentProperties, String propertyName) throws Exception {
 		applyProperty(propertyGroups, currentProperties, propertyName, false);
 	}
 
-	private static void applyProperty(HashMap<String, ArrayList<String>> propertyGroups, LinkedHashSet<String> currentProperties, String propertyName, boolean remove) throws Exception {
+	private static void applyProperty(HashMap<String, ArrayList<String>> propertyGroups, Set<String> currentProperties, String propertyName, boolean remove) throws Exception {
 		if (propertyName == null) {
 			throw new Exception("propertyName may not be null.");
 		}
@@ -257,6 +254,20 @@ public class Zone<T> extends BaseZone {
 		} else {
 			currentProperties.add(propertyName);
 		}
+	}
+
+	public boolean equals(Zone<T> other) {
+		return (super.equals(other) &&
+		        getLayerName().equals(other.getLayerName()) &&
+		        getName().equals(other.getName()));
+	}
+
+	@Override
+	public int hashCode() {
+		int result = super.hashCode();
+		result = 31*result + getLayerName().hashCode();
+		result = 31*result + getName().hashCode();
+		return result;
 	}
 
 	@Override

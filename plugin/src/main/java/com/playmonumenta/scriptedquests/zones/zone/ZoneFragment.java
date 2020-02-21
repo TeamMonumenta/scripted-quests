@@ -2,6 +2,8 @@ package com.playmonumenta.scriptedquests.zones.zone;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import org.bukkit.Axis;
 import org.bukkit.util.Vector;
@@ -15,17 +17,24 @@ import com.playmonumenta.scriptedquests.utils.ZoneUtils;
  */
 public class ZoneFragment<T> extends BaseZone {
 	private HashMap<String, Zone<T>> mParents = new HashMap<String, Zone<T>>();
+	private HashMap<String, ArrayList<Zone<T>>> mParentsAndEclipsed = new HashMap<String, ArrayList<Zone<T>>>();
 	private boolean mValid;
 
 	public ZoneFragment(ZoneFragment<T> other) {
 		super(other);
 		mParents.putAll(other.mParents);
+		for (Map.Entry<String, ArrayList<Zone<T>>> entry : other.mParentsAndEclipsed.entrySet()) {
+			mParentsAndEclipsed.put(entry.getKey(), new ArrayList<Zone<T>>(entry.getValue()));
+		}
 		mValid = other.mValid;
 	}
 
 	public ZoneFragment(Zone<T> other) {
 		super(other);
 		mParents.put(other.getLayerName(), other);
+		ArrayList<Zone<T>> zones = new ArrayList<Zone<T>>();
+		zones.add(other);
+		mParentsAndEclipsed.put(other.getLayerName(), zones);
 		mValid = true;
 	}
 
@@ -71,8 +80,8 @@ public class ZoneFragment<T> extends BaseZone {
 	 * Returns a list of fragments of this zone, split by an overlapping zone.
 	 * Does not include overlap or register a new parent.
 	 */
-	public ArrayList<ZoneFragment<T>> splitByOverlap(BaseZone overlap) {
-		return splitByOverlap(overlap, null);
+	public ArrayList<ZoneFragment<T>> splitByOverlap(BaseZone overlap, Zone<T> newParent) {
+		return splitByOverlap(overlap, newParent, false);
 	}
 
 	/*
@@ -83,7 +92,7 @@ public class ZoneFragment<T> extends BaseZone {
 	 * The other parent zone should have the overlap removed as normal to avoid
 	 * overlapping fragments.
 	 */
-	public ArrayList<ZoneFragment<T>> splitByOverlap(BaseZone overlap, Zone<T> newParent) {
+	public ArrayList<ZoneFragment<T>> splitByOverlap(BaseZone overlap, Zone<T> newParent, boolean includeOverlap) {
 		ZoneFragment<T> centerZone = new ZoneFragment<T>(this);
 
 		Vector otherMin = overlap.minCorner();
@@ -137,9 +146,19 @@ public class ZoneFragment<T> extends BaseZone {
 			}
 		}
 
+		String newParentLayer = newParent.getLayerName();
+		centerZone.mParents.put(newParentLayer, newParent);
+
+		// Track the new parent zone of the center fragment, even if it's eclipsed.
+		ArrayList<Zone<T>> newParentLayerZones = mParentsAndEclipsed.get(newParentLayer);
+		if (newParentLayerZones == null) {
+			newParentLayerZones = new ArrayList<Zone<T>>();
+			mParentsAndEclipsed.put(newParentLayer, newParentLayerZones);
+		}
+		newParentLayerZones.add(newParent);
+
 		// If registering a new parent, it may be added now that the center zone is the size of the overlap.
-		if (newParent != null) {
-			centerZone.mParents.put(newParent.getLayerName(), newParent);
+		if (includeOverlap) {
 			result.add(centerZone);
 		}
 
@@ -149,13 +168,21 @@ public class ZoneFragment<T> extends BaseZone {
 	/*
 	 * Merge two ZoneFragments without changing their combined size/shape.
 	 *
+	 * Assumes fragments do not overlap.
+	 *
 	 * Returns the merged ZoneFragment or None.
 	 */
 	public ZoneFragment<T> merge(ZoneFragment<T> other) {
+		if (mValid != other.mValid ||
+		    !mParents.equals(other.mParents) ||
+		    !mParentsAndEclipsed.equals(other.mParentsAndEclipsed)) {
+			return null;
+		}
+
 		Vector aMin = minCorner();
-		Vector aMax = maxCorner();
+		Vector aMax = maxCornerExclusive();
 		Vector bMin = other.minCorner();
-		Vector bMax = other.maxCorner();
+		Vector bMax = other.maxCornerExclusive();
 
 		boolean xMatches = aMin.getX() == bMin.getX() && aMax.getX() == bMax.getX();
 		boolean yMatches = aMin.getY() == bMin.getY() && aMax.getY() == bMax.getY();
@@ -171,8 +198,8 @@ public class ZoneFragment<T> extends BaseZone {
 			return null;
 		}
 		if (matchingAxes == 3) {
-			// These are the same zone; return self.
-			return this;
+			// These are the same zone; return clone of self.
+			return new ZoneFragment<T>(this);
 		}
 
 		// Confirm zone fragments touch on mismatched axis
@@ -201,7 +228,7 @@ public class ZoneFragment<T> extends BaseZone {
 		Vector resultMin = Vector.getMinimum(aMin, bMin);
 		Vector resultMax = Vector.getMaximum(aMax, bMax);
 		result.minCorner(resultMin);
-		result.maxCorner(resultMax);
+		result.maxCornerExclusive(resultMax);
 
 		return result;
 	}
@@ -216,11 +243,38 @@ public class ZoneFragment<T> extends BaseZone {
 		return mParents.get(layer);
 	}
 
+	public HashMap<String, ArrayList<Zone<T>>> getParentsAndEclipsed() {
+		HashMap<String, ArrayList<Zone<T>>> result = new HashMap<String, ArrayList<Zone<T>>>();
+		for (Map.Entry<String, ArrayList<Zone<T>>> entry : mParentsAndEclipsed.entrySet()) {
+			String layerName = entry.getKey();
+			ArrayList<Zone<T>> zones = entry.getValue();
+
+			ArrayList<Zone<T>> resultZones = new ArrayList<Zone<T>>();
+			resultZones.addAll(zones);
+			result.put(layerName, resultZones);
+		}
+		return result;
+	}
+
+	public ArrayList<Zone<T>> getParentAndEclipsed(String layer) {
+		ArrayList<Zone<T>> zones = mParentsAndEclipsed.get(layer);
+		ArrayList<Zone<T>> result = new ArrayList<Zone<T>>();
+		if (zones != null) {
+			result.addAll(zones);
+		}
+		return result;
+	}
+
 	public boolean hasProperty(String layerName, String propertyName) {
 		Zone<T> zone = getParent(layerName);
 		return zone != null && zone.hasProperty(propertyName);
 	}
 
+	/*
+	 * Force all future tests for locations within this zone to return false.
+	 *
+	 * This means any code tracking previous fragments/zones will be forced to check again when reloading zones.
+	 */
 	public void invalidate() {
 		mValid = false;
 	}
@@ -244,6 +298,20 @@ public class ZoneFragment<T> extends BaseZone {
 			}
 		}
 		return true;
+	}
+
+	public boolean equals(ZoneFragment<T> other) {
+		return (super.equals(other) &&
+		        mParents.equals(other.mParents) &&
+		        mParentsAndEclipsed.equals(other.mParentsAndEclipsed));
+	}
+
+	@Override
+	public int hashCode() {
+		int result = super.hashCode();
+		result = 31*result + mParents.hashCode();
+		result = 31*result + mParentsAndEclipsed.hashCode();
+		return result;
 	}
 
 	@Override
