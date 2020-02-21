@@ -3,7 +3,6 @@ package com.playmonumenta.scriptedquests.zones.zonetree;
 import java.util.ArrayList;
 
 import org.bukkit.Axis;
-import org.bukkit.command.CommandSender;
 import org.bukkit.util.Vector;
 
 import org.dynmap.markers.MarkerSet;
@@ -33,7 +32,7 @@ public class ParentZoneTree<T> extends BaseZoneTree<T> {
 
 	private static final Axis[] AXIS_ORDER = {Axis.X, Axis.Z, Axis.Y};
 
-	public ParentZoneTree(CommandSender sender, ArrayList<ZoneFragment<T>> zones) throws Exception {
+	public ParentZoneTree(ArrayList<ZoneFragment<T>> zones) throws Exception {
 		/*
 		 * Local class is used to get best balance without
 		 * exposing incomplete results or creating tree nodes.
@@ -116,13 +115,13 @@ public class ParentZoneTree<T> extends BaseZoneTree<T> {
 			 */
 			StringBuilder message = new StringBuilder("A serious plugin error has occured. Zones involved:");
 			for (ZoneFragment<T> zone : zones) {
-				message.append("- " + zone.toString());
+				message.append("\n- " + zone.toString());
 			}
 			throw new Exception(message.toString());
 		} else {
-			mLess = CreateZoneTree(sender, bestSplit.mLess);
-			mMid = CreateZoneTree(sender, bestSplit.mMid);
-			mMore = CreateZoneTree(sender, bestSplit.mMore);
+			mLess = CreateZoneTree(bestSplit.mLess);
+			mMid = CreateZoneTree(bestSplit.mMid);
+			mMore = CreateZoneTree(bestSplit.mMore);
 		}
 	}
 

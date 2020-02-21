@@ -204,17 +204,19 @@ public class ZoneManager {
 		// Create the new tree. This could take a long time with enough fragments.
 		BaseZoneTree<T> newTree;
 		try {
-			newTree = BaseZoneTree.CreateZoneTree(sender, zoneFragments);
+			newTree = BaseZoneTree.CreateZoneTree(zoneFragments);
 		} catch (Exception e) {
 			MessagingUtils.sendStackTrace(sender, e);
 			return;
 		}
-		sender.sendMessage(ChatColor.GOLD + "Zone tree stats - fragments: "
-		                   + Integer.toString(newTree.fragmentCount())
-		                   + ", max depth: "
-		                   + Integer.toString(newTree.maxDepth())
-		                   + ", ave depth: "
-		                   + String.format("%.2f", newTree.averageDepth()));
+		if (sender != null) {
+			sender.sendMessage(ChatColor.GOLD + "Zone tree stats - fragments: "
+			                + Integer.toString(newTree.fragmentCount())
+			                + ", max depth: "
+			                + Integer.toString(newTree.maxDepth())
+			                + ", ave depth: "
+			                + String.format("%.2f", newTree.averageDepth()));
+		}
 
 		// Make sure only one player tracker runs at a time.
 		if (mPlayerTracker != null && !mPlayerTracker.isCancelled()) {
@@ -286,8 +288,7 @@ public class ZoneManager {
 		}
 
 		// Zones changed, send an event for each layer.
-		Set<String> mentionedLayerNames = new LinkedHashSet<String>();
-		mentionedLayerNames.addAll(lastZones.keySet());
+		Set<String> mentionedLayerNames = new LinkedHashSet<String>(lastZones.keySet());
 		mentionedLayerNames.addAll(currentZones.keySet());
 		for (String layerName : mentionedLayerNames) {
 			// Null zones are valid - indicates no zone.
@@ -311,8 +312,7 @@ public class ZoneManager {
 				currentProperties = currentZone.getProperties();
 			}
 
-			Set<String> removedProperties = new LinkedHashSet<String>();
-			removedProperties.addAll(lastProperties);
+			Set<String> removedProperties = new LinkedHashSet<String>(lastProperties);
 			removedProperties.removeAll(currentProperties);
 			for (String property : removedProperties) {
 				ZonePropertyChangeEvent event;
@@ -320,8 +320,7 @@ public class ZoneManager {
 				Bukkit.getPluginManager().callEvent(event);
 			}
 
-			Set<String> addedProperties = new LinkedHashSet<String>();
-			addedProperties.addAll(currentProperties);
+			Set<String> addedProperties = new LinkedHashSet<String>(currentProperties);
 			addedProperties.removeAll(lastProperties);
 			for (String property : addedProperties) {
 				ZonePropertyChangeEvent event;
@@ -332,8 +331,7 @@ public class ZoneManager {
 	}
 
 	private void mergeLayers() {
-		ArrayList<ZoneLayer<T>> layers = new ArrayList<ZoneLayer<T>>();
-		layers.addAll(mLayers.values());
+		ArrayList<ZoneLayer<T>> layers = new ArrayList<ZoneLayer<T>>(mLayers.values());
 
 		int numLayers = layers.size();
 		for (int i = 0; i < numLayers; i++) {

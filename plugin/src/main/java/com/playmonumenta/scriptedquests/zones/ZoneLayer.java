@@ -192,7 +192,7 @@ public class ZoneLayer<T> {
 		}
 
 		// Create the new tree.
-		return BaseZoneTree.CreateZoneTree(sender, zoneFragments);
+		return BaseZoneTree.CreateZoneTree(zoneFragments);
 	}
 
 	/************************************************************************************

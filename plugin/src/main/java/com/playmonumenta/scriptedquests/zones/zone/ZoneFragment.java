@@ -24,12 +24,7 @@ public class ZoneFragment<T> extends BaseZone {
 		super(other);
 		mParents.putAll(other.mParents);
 		for (Map.Entry<String, ArrayList<Zone<T>>> entry : other.mParentsAndEclipsed.entrySet()) {
-			String layerName = entry.getKey();
-			ArrayList<Zone<T>> otherZones = entry.getValue();
-
-			ArrayList<Zone<T>> zones = new ArrayList<Zone<T>>();
-			zones.addAll(otherZones);
-			mParentsAndEclipsed.put(layerName, zones);
+			mParentsAndEclipsed.put(entry.getKey(), new ArrayList<Zone<T>>(entry.getValue()));
 		}
 		mValid = other.mValid;
 	}
@@ -38,6 +33,7 @@ public class ZoneFragment<T> extends BaseZone {
 		super(other);
 		mParents.put(other.getLayerName(), other);
 		ArrayList<Zone<T>> zones = new ArrayList<Zone<T>>();
+		zones.add(other);
 		mParentsAndEclipsed.put(other.getLayerName(), zones);
 		mValid = true;
 	}
