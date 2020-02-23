@@ -14,6 +14,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import com.playmonumenta.scriptedquests.commands.Clickable;
 import com.playmonumenta.scriptedquests.commands.Code;
+import com.playmonumenta.scriptedquests.commands.DebugZones;
 import com.playmonumenta.scriptedquests.commands.GenerateCode;
 import com.playmonumenta.scriptedquests.commands.GiveLootTable;
 import com.playmonumenta.scriptedquests.commands.HasPermission;
@@ -86,6 +87,7 @@ public class Plugin extends JavaPlugin {
 		GenerateCode.register(this);
 		Code.register(this);
 		SetVelocity.register();
+		DebugZones.register(this);
 
 		mScheduledFunctionsManager = new ScheduleFunction(this);
 	}

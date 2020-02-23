@@ -355,4 +355,32 @@ public class ZoneManager {
 			}
 		}
 	}
+
+	public void sendDebug(CommandSender sender, Player player) {
+		sendDebug(sender, player.getLocation().toVector(), mLastPlayerZoneFragment.get(player));
+	}
+
+	public void sendDebug(CommandSender sender, Vector loc) {
+		sendDebug(sender, loc, getZoneFragment(loc));
+	}
+
+	private void sendDebug(CommandSender sender, Vector loc, ZoneFragment<T> fragment) {
+		if (fragment == null) {
+			sender.sendMessage("Target is not in any zone.");
+			return;
+		}
+
+		if (!fragment.within(loc)) {
+			sender.sendMessage("Target is not in the zone fragment they were reported in.");
+		}
+		sender.sendMessage(fragment.toString());
+
+		HashMap<String, Zone<T>> fragmentParents = fragment.getParents();
+		if (fragmentParents.size() == 0) {
+			sender.sendMessage("Fragment has no parent zones! Where did it come from?");
+		}
+		for (Zone<T> zone : fragmentParents.values()) {
+			sender.sendMessage(zone.toString());
+		}
+	}
 }
