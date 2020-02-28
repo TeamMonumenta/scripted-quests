@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.Map.Entry;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
@@ -31,7 +32,7 @@ public class ZoneLayer<T> {
 	public static final String DYNMAP_PREFIX = "SQZone";
 
 	private String mName;
-	private ArrayList<Zone<T>> mZones = new ArrayList<Zone<T>>();
+	private List<Zone<T>> mZones = new ArrayList<Zone<T>>();
 
 	/*
 	 * This should only be called by the ZoneManager.
@@ -56,13 +57,12 @@ public class ZoneLayer<T> {
 			throw new Exception("Failed to parse 'property_groups'");
 		}
 
-		HashMap<String, ArrayList<String>> propertyGroups = new HashMap<String, ArrayList<String>>();
-		HashMap<String, LinkedHashSet<String>> groupReferences = new HashMap<String, LinkedHashSet<String>>();
+		Map<String, List<String>> propertyGroups = new HashMap<String, List<String>>();
+		Map<String, Set<String>> groupReferences = new HashMap<String, Set<String>>();
 
 		JsonObject propertyGroupsJson = object.get("property_groups").getAsJsonObject();
-		Set<Entry<String, JsonElement>> entries = propertyGroupsJson.entrySet();
 
-		for (Entry<String, JsonElement> ent : entries) {
+		for (Map.Entry<String, JsonElement> ent : propertyGroupsJson.entrySet()) {
 			String propertyGroupName = ent.getKey();
 			JsonElement propertyGroupJson = ent.getValue();
 
@@ -73,8 +73,8 @@ public class ZoneLayer<T> {
 				throw new Exception("Failed to parse 'property_groups." + propertyGroupName + "'");
 			}
 
-			ArrayList<String> propertyGroup = new ArrayList<String>();
-			LinkedHashSet<String> ownGroupReferences = new LinkedHashSet<String>();
+			List<String> propertyGroup = new ArrayList<String>();
+			Set<String> ownGroupReferences = new LinkedHashSet<String>();
 
 			Integer propertyGroupIndex = 0;
 			Iterator<JsonElement> propertyGroupIter = propertyGroupJson.getAsJsonArray().iterator();
@@ -157,7 +157,7 @@ public class ZoneLayer<T> {
 	 * Property group support is not provided for this method. Your plugin will need to
 	 * handle that on its own.
 	 */
-	public boolean addZone(Vector pos1, Vector pos2, String name, LinkedHashSet<String> properties, T tag) {
+	public boolean addZone(Vector pos1, Vector pos2, String name, Set<String> properties, T tag) {
 		Zone<T> zone = null;
 
 		try {
@@ -186,7 +186,7 @@ public class ZoneLayer<T> {
 		reloadFragments(sender);
 
 		// Create list of all zone fragments.
-		ArrayList<ZoneFragment<T>> zoneFragments = new ArrayList<ZoneFragment<T>>();
+		List<ZoneFragment<T>> zoneFragments = new ArrayList<ZoneFragment<T>>();
 		for (Zone<T> zone : mZones) {
 			zoneFragments.addAll(zone.getZoneFragments());
 		}
@@ -237,13 +237,26 @@ public class ZoneLayer<T> {
 		return mName;
 	}
 
-	public ArrayList<Zone<T>> getZones() {
-		ArrayList<Zone<T>> result = new ArrayList<Zone<T>>();
+	public List<Zone<T>> getZones() {
+		List<Zone<T>> result = new ArrayList<Zone<T>>();
 		result.addAll(mZones);
 		return result;
 	}
 
-	private void removeOverlaps(CommandSender sender, ArrayList<Zone<T>> zones) throws Exception {
+	/*
+	 * Use this only as a fallback; it's slower than using a zone tree.
+	 */
+	public Zone<T> fallbackGetZone(Vector loc) {
+		for (Zone<T> zone : mZones) {
+			if (zone.within(loc)) {
+				return zone;
+			}
+		}
+
+		return null;
+	}
+
+	private void removeOverlaps(CommandSender sender, List<Zone<T>> zones) throws Exception {
 		for (int i = 0; i < zones.size(); i++) {
 			Zone<T> outer = zones.get(i);
 			for (Zone<T> inner : zones.subList(i + 1, zones.size())) {
@@ -263,12 +276,12 @@ public class ZoneLayer<T> {
 		}
 	}
 
-	private boolean hasPropertyGroupLoop(HashMap<String, LinkedHashSet<String>> groupReferences, String startGroup) {
+	private boolean hasPropertyGroupLoop(Map<String, Set<String>> groupReferences, String startGroup) {
 		return hasPropertyGroupLoop(groupReferences, startGroup, startGroup);
 	}
 
-	private boolean hasPropertyGroupLoop(HashMap<String, LinkedHashSet<String>> groupReferences, String startGroup, String continueGroup) {
-		LinkedHashSet<String> subGroupReferences = groupReferences.get(continueGroup);
+	private boolean hasPropertyGroupLoop(Map<String, Set<String>> groupReferences, String startGroup, String continueGroup) {
+		Set<String> subGroupReferences = groupReferences.get(continueGroup);
 		if (subGroupReferences == null) {
 			return false;
 		}
@@ -302,7 +315,7 @@ public class ZoneLayer<T> {
 		}
 
 		// Duplicate set of MarkerSets in case the return value is a view, not a copy.
-		LinkedHashSet<MarkerSet> allMarkerSets = new LinkedHashSet<MarkerSet>();
+		Set<MarkerSet> allMarkerSets = new LinkedHashSet<MarkerSet>();
 		allMarkerSets.addAll(markerHook.getMarkerSets());
 		for (MarkerSet markerSet : allMarkerSets) {
 			if (markerSet != null &&

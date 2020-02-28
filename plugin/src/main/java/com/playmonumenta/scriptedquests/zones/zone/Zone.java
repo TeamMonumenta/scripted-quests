@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.Map.Entry;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.bukkit.util.Vector;
@@ -20,11 +21,11 @@ import com.playmonumenta.scriptedquests.zones.ZoneLayer;
 public class Zone<T> extends BaseZone {
 	private final ZoneLayer<T> mLayer;
 	private final String mName;
-	private ArrayList<ZoneFragment<T>> mFragments = new ArrayList<ZoneFragment<T>>();
-	private final LinkedHashSet<String> mProperties = new LinkedHashSet<String>();
+	private List<ZoneFragment<T>> mFragments = new ArrayList<ZoneFragment<T>>();
+	private final Set<String> mProperties = new LinkedHashSet<String>();
 	private final T mTag;
 
-	public static <T> Zone<T> constructFromJson(ZoneLayer<T> layer, JsonObject object, HashMap<String, ArrayList<String>> propertyGroups, T tag) throws Exception {
+	public static <T> Zone<T> constructFromJson(ZoneLayer<T> layer, JsonObject object, Map<String, List<String>> propertyGroups, T tag) throws Exception {
 		if (layer == null) {
 			throw new Exception("layer may not be null.");
 		}
@@ -53,8 +54,7 @@ public class Zone<T> extends BaseZone {
 			throw new Exception("Failed to parse 'location'");
 		}
 		JsonObject locationJson = object.get("location").getAsJsonObject();
-		Set<Entry<String, JsonElement>> entries = locationJson.entrySet();
-		for (Entry<String, JsonElement> ent : entries) {
+		for (Map.Entry<String, JsonElement> ent : locationJson.entrySet()) {
 			String key = ent.getKey();
 			JsonElement value = ent.getValue();
 			switch (key) {
@@ -137,15 +137,15 @@ public class Zone<T> extends BaseZone {
 		mFragments.clear();
 	}
 
+	public T getTag() {
+		return mTag;
+	}
+
 	/*
 	 * Split all fragments of this zone by an overlapping zone, removing overlap.
 	 */
 	public boolean splitByOverlap(BaseZone overlap, Zone<T> otherZone) {
 		return splitByOverlap(overlap, otherZone, false);
-	}
-
-	public T getTag() {
-		return mTag;
 	}
 
 	/*
@@ -157,7 +157,7 @@ public class Zone<T> extends BaseZone {
 	 * eclipsed by the other zone.
 	 */
 	public boolean splitByOverlap(BaseZone overlap, Zone<T> otherZone, boolean includeOther) {
-		ArrayList<ZoneFragment<T>> newFragments = new ArrayList<ZoneFragment<T>>();
+		List<ZoneFragment<T>> newFragments = new ArrayList<ZoneFragment<T>>();
 		for (ZoneFragment<T> fragment : mFragments) {
 			BaseZone subOverlap = fragment.overlappingZone(overlap);
 
@@ -207,7 +207,7 @@ public class Zone<T> extends BaseZone {
 		return mName;
 	}
 
-	public ArrayList<ZoneFragment<T>> getZoneFragments() {
+	public List<ZoneFragment<T>> getZoneFragments() {
 		return new ArrayList<ZoneFragment<T>>(mFragments);
 	}
 
@@ -219,11 +219,11 @@ public class Zone<T> extends BaseZone {
 		return mProperties.contains(propertyName);
 	}
 
-	private static void applyProperty(HashMap<String, ArrayList<String>> propertyGroups, Set<String> currentProperties, String propertyName) throws Exception {
+	private static void applyProperty(Map<String, List<String>> propertyGroups, Set<String> currentProperties, String propertyName) throws Exception {
 		applyProperty(propertyGroups, currentProperties, propertyName, false);
 	}
 
-	private static void applyProperty(HashMap<String, ArrayList<String>> propertyGroups, Set<String> currentProperties, String propertyName, boolean remove) throws Exception {
+	private static void applyProperty(Map<String, List<String>> propertyGroups, Set<String> currentProperties, String propertyName, boolean remove) throws Exception {
 		if (propertyName == null) {
 			throw new Exception("propertyName may not be null.");
 		}
@@ -239,7 +239,7 @@ public class Zone<T> extends BaseZone {
 
 		char prefix = propertyName.charAt(0);
 		if (prefix == '#') {
-			ArrayList<String> propertyGroup = propertyGroups.get(propertyName.substring(1));
+			List<String> propertyGroup = propertyGroups.get(propertyName.substring(1));
 			if (propertyGroup == null) {
 				throw new Exception("No such property group: " + propertyName);
 			}

@@ -50,6 +50,7 @@ public class Plugin extends JavaPlugin {
 	private File mConfigFile;
 	public Boolean mShowTimerNames = null;
 	public boolean mShowZonesDynmap = false;
+	public boolean mFallbackZoneLookup = false;
 
 	public QuestCompassManager mQuestCompassManager;
 	public QuestNpcManager mNpcManager;
@@ -191,6 +192,15 @@ public class Plugin extends JavaPlugin {
 		}
 		if (sender != null) {
 			sender.sendMessage("show_zones_dynmap: " + Boolean.toString(mShowZonesDynmap));
+		}
+
+		if (mConfig.isBoolean("fallback_zone_lookup")) {
+			mFallbackZoneLookup = mConfig.getBoolean("fallback_zone_lookup", false);
+		} else {
+			mFallbackZoneLookup = false;
+		}
+		if (sender != null) {
+			sender.sendMessage("fallback_zone_lookup: " + Boolean.toString(mFallbackZoneLookup));
 		}
 	}
 

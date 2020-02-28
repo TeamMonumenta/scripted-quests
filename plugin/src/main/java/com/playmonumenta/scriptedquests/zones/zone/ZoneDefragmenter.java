@@ -3,22 +3,23 @@ package com.playmonumenta.scriptedquests.zones.zone;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.Map.Entry;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 class ZoneDefragmenter<T> {
-	class FragCombos<T> extends HashMap<LinkedHashSet<Integer>, ZoneFragment<T>> {}
+	class FragCombos<T> extends HashMap<Set<Integer>, ZoneFragment<T>> {}
 
-	private HashMap<Integer, FragCombos<T>> mMergedCombos = new HashMap<Integer, FragCombos<T>>();
-	private LinkedHashSet<Integer> mAllIds = new LinkedHashSet<Integer>();
+	private Map<Integer, FragCombos<T>> mMergedCombos = new HashMap<Integer, FragCombos<T>>();
+	private Set<Integer> mAllIds = new LinkedHashSet<Integer>();
 
-	public ZoneDefragmenter(ArrayList<ZoneFragment<T>> fragments) {
+	public ZoneDefragmenter(List<ZoneFragment<T>> fragments) {
 		FragCombos<T> fragCombos = new FragCombos<T>();
 		mMergedCombos.put(1, fragCombos);
 		Integer i = 0;
 		for (ZoneFragment<T> fragment : fragments) {
 			// Individual fragments are groups of 1
-			LinkedHashSet<Integer> mergedIds = new LinkedHashSet<Integer>();
+			Set<Integer> mergedIds = new LinkedHashSet<Integer>();
 			mergedIds.add(i);
 			fragCombos.put(mergedIds, new ZoneFragment<T>(fragment));
 
@@ -53,14 +54,14 @@ class ZoneDefragmenter<T> {
 		// Previous code ensures null will not appear.
 		FragCombos<T> upperGroup = mMergedCombos.get(upperLevel);
 		FragCombos<T> lowerGroup = mMergedCombos.get(lowerLevel);
-		for (Entry<LinkedHashSet<Integer>, ZoneFragment<T>> upperEntry : upperGroup.entrySet()) {
-			LinkedHashSet<Integer> upperIds = upperEntry.getKey();
+		for (Map.Entry<Set<Integer>, ZoneFragment<T>> upperEntry : upperGroup.entrySet()) {
+			Set<Integer> upperIds = upperEntry.getKey();
 			ZoneFragment<T> upperZone = upperEntry.getValue();
-			for (Entry<LinkedHashSet<Integer>, ZoneFragment<T>> lowerEntry : lowerGroup.entrySet()) {
-				LinkedHashSet<Integer> lowerIds = lowerEntry.getKey();
+			for (Map.Entry<Set<Integer>, ZoneFragment<T>> lowerEntry : lowerGroup.entrySet()) {
+				Set<Integer> lowerIds = lowerEntry.getKey();
 				ZoneFragment<T> lowerZone = lowerEntry.getValue();
 
-				LinkedHashSet<Integer> mergedIds = new LinkedHashSet<Integer>(lowerIds);
+				Set<Integer> mergedIds = new LinkedHashSet<Integer>(lowerIds);
 				mergedIds.addAll(upperIds);
 				if (mergedIds.size() != mergeLevel) {
 					// Some IDs were in common, so this isn't the merge_level we're looking for
@@ -81,9 +82,9 @@ class ZoneDefragmenter<T> {
 		}
 	}
 
-	public ArrayList<ZoneFragment<T>> optimalMerge() {
-		ArrayList<ZoneFragment<T>> resultsSoFar = new ArrayList<ZoneFragment<T>>();
-		LinkedHashSet<Integer> remainingIds = new LinkedHashSet<Integer>(mAllIds);
+	public List<ZoneFragment<T>> optimalMerge() {
+		List<ZoneFragment<T>> resultsSoFar = new ArrayList<ZoneFragment<T>>();
+		Set<Integer> remainingIds = new LinkedHashSet<Integer>(mAllIds);
 		return optimalMerge(resultsSoFar, mAllIds);
 	}
 
@@ -94,24 +95,24 @@ class ZoneDefragmenter<T> {
 		*
 		* Returns the best solution (list of zones), or null (to continue searching).
 		*/
-	public ArrayList<ZoneFragment<T>> optimalMerge(ArrayList<ZoneFragment<T>> resultsSoFar, LinkedHashSet<Integer> remainingIds) {
+	public List<ZoneFragment<T>> optimalMerge(List<ZoneFragment<T>> resultsSoFar, Set<Integer> remainingIds) {
 		for (Integer mergeLevel = remainingIds.size(); mergeLevel >= 0; mergeLevel--) {
 			FragCombos<T> fragCombos = mMergedCombos.get(mergeLevel);
-			for (Entry<LinkedHashSet<Integer>, ZoneFragment<T>> entry : fragCombos.entrySet()) {
-				LinkedHashSet<Integer> mergedIds = entry.getKey();
+			for (Map.Entry<Set<Integer>, ZoneFragment<T>> entry : fragCombos.entrySet()) {
+				Set<Integer> mergedIds = entry.getKey();
 				ZoneFragment<T> mergedZone = entry.getValue();
 
-				ArrayList<ZoneFragment<T>> result = new ArrayList<ZoneFragment<T>>(resultsSoFar);
+				List<ZoneFragment<T>> result = new ArrayList<ZoneFragment<T>>(resultsSoFar);
 				result.add(mergedZone);
 
-				LinkedHashSet<Integer> overlappedIds = new LinkedHashSet<Integer>(mergedIds);
+				Set<Integer> overlappedIds = new LinkedHashSet<Integer>(mergedIds);
 				overlappedIds.removeAll(remainingIds);
 				if (!overlappedIds.isEmpty()) {
 					// Overlap detected; not allowed even in the same ID
 					continue;
 				}
 
-				LinkedHashSet<Integer> newRemaining = new LinkedHashSet<Integer>(remainingIds);
+				Set<Integer> newRemaining = new LinkedHashSet<Integer>(remainingIds);
 				newRemaining.removeAll(mergedIds);
 				if (newRemaining.isEmpty()) {
 					//Best possible result!

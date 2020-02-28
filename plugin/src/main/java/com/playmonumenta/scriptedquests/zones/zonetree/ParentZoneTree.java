@@ -1,6 +1,7 @@
 package com.playmonumenta.scriptedquests.zones.zonetree;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.Axis;
 import org.bukkit.util.Vector;
@@ -32,7 +33,7 @@ public class ParentZoneTree<T> extends BaseZoneTree<T> {
 
 	private static final Axis[] AXIS_ORDER = {Axis.X, Axis.Z, Axis.Y};
 
-	public ParentZoneTree(ArrayList<ZoneFragment<T>> zones) throws Exception {
+	public ParentZoneTree(List<ZoneFragment<T>> zones) throws Exception {
 		/*
 		 * Local class is used to get best balance without
 		 * exposing incomplete results or creating tree nodes.
@@ -44,9 +45,9 @@ public class ParentZoneTree<T> extends BaseZoneTree<T> {
 			public double mPivot;
 			public double mMidMin;
 			public double mMidMax;
-			public ArrayList<ZoneFragment<T>> mLess = new ArrayList<ZoneFragment<T>>();
-			public ArrayList<ZoneFragment<T>> mMid = new ArrayList<ZoneFragment<T>>();
-			public ArrayList<ZoneFragment<T>> mMore = new ArrayList<ZoneFragment<T>>();
+			public List<ZoneFragment<T>> mLess = new ArrayList<ZoneFragment<T>>();
+			public List<ZoneFragment<T>> mMid = new ArrayList<ZoneFragment<T>>();
+			public List<ZoneFragment<T>> mMore = new ArrayList<ZoneFragment<T>>();
 		}
 
 		mFragmentCount = zones.size();
@@ -189,7 +190,7 @@ public class ParentZoneTree<T> extends BaseZoneTree<T> {
 	}
 
 	public String toString() {
-		return ("(ParentZoneTree(<ArrayList<ZoneFragment>>): "
+		return ("(ParentZoneTree(<List<ZoneFragment>>): "
 		        + "mAxis=" + mAxis.toString() + ", "
 		        + "mPivot=" + Double.toString(mPivot) + ", "
 		        + "mMin=" + Double.toString(mMin) + ", "

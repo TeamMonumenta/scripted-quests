@@ -17,7 +17,7 @@ import com.playmonumenta.scriptedquests.zones.ZonePropertyChangeEvent;
 
 public class ZonePropertyManager implements Listener {
 	private Plugin mPlugin;
-	private final HashMap<String, HashMap<String, ZoneProperty>> mZoneProperties = new HashMap<String, HashMap<String, ZoneProperty>>();
+	private final Map<String, Map<String, ZoneProperty>> mZoneProperties = new HashMap<String, Map<String, ZoneProperty>>();
 
 	public ZonePropertyManager(Plugin plugin) {
 		mPlugin = plugin;
@@ -47,7 +47,7 @@ public class ZonePropertyManager implements Listener {
 			if (!mZoneProperties.containsKey(layerName)) {
 				mZoneProperties.put(layerName, new HashMap<String, ZoneProperty>());
 			}
-			HashMap<String, ZoneProperty> layer = mZoneProperties.get(layerName);
+			Map<String, ZoneProperty> layer = mZoneProperties.get(layerName);
 
 			if (layer.containsKey(name)) {
 				throw new Exception(name + "' already exists on layer '" + layerName + "'!");
@@ -68,7 +68,7 @@ public class ZonePropertyManager implements Listener {
 			return;
 		}
 
-		HashMap<String, ZoneProperty> layer = mZoneProperties.get(layerName);
+		Map<String, ZoneProperty> layer = mZoneProperties.get(layerName);
 		if (layer == null) {
 			return;
 		}
