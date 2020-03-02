@@ -37,13 +37,15 @@ public class DialogClickableTextEntry implements DialogBase {
 		}
 
 		public void doActionsIfConditionsMatch(Plugin plugin, Player player) {
-			if (mValidArea.within(player.getLocation())
-			    && (mPrerequisites == null || mPrerequisites.prerequisiteMet(player, mNpcEntity))) {
-				player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 0.7f, 0.9f);
-				mActions.doActions(plugin, player, mNpcEntity, mPrerequisites);
-			} else {
+			if (!mValidArea.within(player.getLocation())) {
 				player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 0.7f, 0.3f);
 				player.sendMessage(ChatColor.RED + "You moved too far away to be heard");
+			} else if (mPrerequisites != null && !mPrerequisites.prerequisiteMet(player, mNpcEntity)) {
+				player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 0.7f, 0.3f);
+				player.sendMessage(ChatColor.RED + "You no longer meet the requirements for this option");
+			} else {
+				player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 0.7f, 0.9f);
+				mActions.doActions(plugin, player, mNpcEntity, mPrerequisites);
 			}
 		}
 	}
