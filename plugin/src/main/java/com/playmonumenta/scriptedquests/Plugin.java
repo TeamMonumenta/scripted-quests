@@ -186,7 +186,7 @@ public class Plugin extends JavaPlugin {
 		}
 
 		if (mConfig.isBoolean("show_zones_dynmap")) {
-			mShowZonesDynmap = mConfig.getBoolean("show_timer_names", false);
+			mShowZonesDynmap = mConfig.getBoolean("show_zones_dynmap", false);
 		} else {
 			mShowZonesDynmap = false;
 		}
