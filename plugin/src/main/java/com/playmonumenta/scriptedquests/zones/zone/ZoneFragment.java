@@ -2,6 +2,7 @@ package com.playmonumenta.scriptedquests.zones.zone;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -16,14 +17,14 @@ import com.playmonumenta.scriptedquests.utils.ZoneUtils;
  * Each zone also keeps track of its fragments.
  */
 public class ZoneFragment<T> extends BaseZone {
-	private HashMap<String, Zone<T>> mParents = new HashMap<String, Zone<T>>();
-	private HashMap<String, ArrayList<Zone<T>>> mParentsAndEclipsed = new HashMap<String, ArrayList<Zone<T>>>();
+	private Map<String, Zone<T>> mParents = new HashMap<String, Zone<T>>();
+	private Map<String, List<Zone<T>>> mParentsAndEclipsed = new HashMap<String, List<Zone<T>>>();
 	private boolean mValid;
 
 	public ZoneFragment(ZoneFragment<T> other) {
 		super(other);
 		mParents.putAll(other.mParents);
-		for (Map.Entry<String, ArrayList<Zone<T>>> entry : other.mParentsAndEclipsed.entrySet()) {
+		for (Map.Entry<String, List<Zone<T>>> entry : other.mParentsAndEclipsed.entrySet()) {
 			mParentsAndEclipsed.put(entry.getKey(), new ArrayList<Zone<T>>(entry.getValue()));
 		}
 		mValid = other.mValid;
@@ -32,7 +33,7 @@ public class ZoneFragment<T> extends BaseZone {
 	public ZoneFragment(Zone<T> other) {
 		super(other);
 		mParents.put(other.getLayerName(), other);
-		ArrayList<Zone<T>> zones = new ArrayList<Zone<T>>();
+		List<Zone<T>> zones = new ArrayList<Zone<T>>();
 		zones.add(other);
 		mParentsAndEclipsed.put(other.getLayerName(), zones);
 		mValid = true;
@@ -80,7 +81,7 @@ public class ZoneFragment<T> extends BaseZone {
 	 * Returns a list of fragments of this zone, split by an overlapping zone.
 	 * Does not include overlap or register a new parent.
 	 */
-	public ArrayList<ZoneFragment<T>> splitByOverlap(BaseZone overlap, Zone<T> newParent) {
+	public List<ZoneFragment<T>> splitByOverlap(BaseZone overlap, Zone<T> newParent) {
 		return splitByOverlap(overlap, newParent, false);
 	}
 
@@ -92,20 +93,20 @@ public class ZoneFragment<T> extends BaseZone {
 	 * The other parent zone should have the overlap removed as normal to avoid
 	 * overlapping fragments.
 	 */
-	public ArrayList<ZoneFragment<T>> splitByOverlap(BaseZone overlap, Zone<T> newParent, boolean includeOverlap) {
+	public List<ZoneFragment<T>> splitByOverlap(BaseZone overlap, Zone<T> newParent, boolean includeOverlap) {
 		ZoneFragment<T> centerZone = new ZoneFragment<T>(this);
 
 		Vector otherMin = overlap.minCorner();
 		Vector otherMax = overlap.maxCornerExclusive();
 
 		ZoneFragment<T>[] tempSplitResult;
-		ArrayList<ZoneFragment<T>> result = new ArrayList<ZoneFragment<T>>();
+		List<ZoneFragment<T>> result = new ArrayList<ZoneFragment<T>>();
 
 		for (Axis axis : Axis.values()) {
 			ZoneFragment<T> lower;
 			ZoneFragment<T> upper;
 
-			ArrayList<ZoneFragment<T>> workZones = result;
+			List<ZoneFragment<T>> workZones = result;
 			result = new ArrayList<ZoneFragment<T>>();
 
 			for (ZoneFragment<T> workZone : workZones) {
@@ -146,14 +147,18 @@ public class ZoneFragment<T> extends BaseZone {
 			}
 		}
 
+		// If the center fragment is kept, the original parents take priority over the new parent
+		// Failing to do this would mean the fragment takes priority from the wrong zone
 		String newParentLayer = newParent.getLayerName();
-		centerZone.mParents.put(newParentLayer, newParent);
+		if (!centerZone.mParents.containsKey(newParentLayer)) {
+			centerZone.mParents.put(newParentLayer, newParent);
+		}
 
 		// Track the new parent zone of the center fragment, even if it's eclipsed.
-		ArrayList<Zone<T>> newParentLayerZones = mParentsAndEclipsed.get(newParentLayer);
+		List<Zone<T>> newParentLayerZones = centerZone.mParentsAndEclipsed.get(newParentLayer);
 		if (newParentLayerZones == null) {
 			newParentLayerZones = new ArrayList<Zone<T>>();
-			mParentsAndEclipsed.put(newParentLayer, newParentLayerZones);
+			centerZone.mParentsAndEclipsed.put(newParentLayer, newParentLayerZones);
 		}
 		newParentLayerZones.add(newParent);
 
@@ -233,8 +238,8 @@ public class ZoneFragment<T> extends BaseZone {
 		return result;
 	}
 
-	public HashMap<String, Zone<T>> getParents() {
-		HashMap<String, Zone<T>> result = new HashMap<String, Zone<T>>();
+	public Map<String, Zone<T>> getParents() {
+		Map<String, Zone<T>> result = new HashMap<String, Zone<T>>();
 		result.putAll(mParents);
 		return result;
 	}
@@ -243,22 +248,22 @@ public class ZoneFragment<T> extends BaseZone {
 		return mParents.get(layer);
 	}
 
-	public HashMap<String, ArrayList<Zone<T>>> getParentsAndEclipsed() {
-		HashMap<String, ArrayList<Zone<T>>> result = new HashMap<String, ArrayList<Zone<T>>>();
-		for (Map.Entry<String, ArrayList<Zone<T>>> entry : mParentsAndEclipsed.entrySet()) {
+	public Map<String, List<Zone<T>>> getParentsAndEclipsed() {
+		Map<String, List<Zone<T>>> result = new HashMap<String, List<Zone<T>>>();
+		for (Map.Entry<String, List<Zone<T>>> entry : mParentsAndEclipsed.entrySet()) {
 			String layerName = entry.getKey();
-			ArrayList<Zone<T>> zones = entry.getValue();
+			List<Zone<T>> zones = entry.getValue();
 
-			ArrayList<Zone<T>> resultZones = new ArrayList<Zone<T>>();
+			List<Zone<T>> resultZones = new ArrayList<Zone<T>>();
 			resultZones.addAll(zones);
 			result.put(layerName, resultZones);
 		}
 		return result;
 	}
 
-	public ArrayList<Zone<T>> getParentAndEclipsed(String layer) {
-		ArrayList<Zone<T>> zones = mParentsAndEclipsed.get(layer);
-		ArrayList<Zone<T>> result = new ArrayList<Zone<T>>();
+	public List<Zone<T>> getParentAndEclipsed(String layer) {
+		List<Zone<T>> zones = mParentsAndEclipsed.get(layer);
+		List<Zone<T>> result = new ArrayList<Zone<T>>();
 		if (zones != null) {
 			result.addAll(zones);
 		}
