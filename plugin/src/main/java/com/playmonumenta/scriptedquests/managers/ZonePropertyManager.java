@@ -3,7 +3,6 @@ package com.playmonumenta.scriptedquests.managers;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -24,7 +23,7 @@ public class ZonePropertyManager implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
-	public void ZonePropertyChangeEvent(ZonePropertyChangeEvent event) {
+	public void zonePropertyChangeEvent(ZonePropertyChangeEvent event) {
 		Player player = event.getPlayer();
 		String layer = event.getLayer();
 		String property = event.getProperty();

@@ -104,6 +104,7 @@ public class CommandTimerInstance {
 
 	private static java.lang.reflect.Method cachedHandleMethod = null;
 	private static java.lang.reflect.Method cachedAutoMethod = null;
+
 	private static void setAutoState(Plugin plugin, Location loc, boolean auto) {
 		Block block = loc.getBlock();
 		BlockState state = block.getState();

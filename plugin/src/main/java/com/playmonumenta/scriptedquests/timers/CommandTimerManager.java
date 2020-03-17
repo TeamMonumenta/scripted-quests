@@ -41,19 +41,19 @@ public class CommandTimerManager implements Listener {
 	 *******************************************************************************/
 
 	@EventHandler(priority = EventPriority.LOWEST)
-	public void EntitySpawnEvent(EntitySpawnEvent event) {
+	public void entitySpawnEvent(EntitySpawnEvent event) {
 		processEntity(event.getEntity());
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
-	public void ChunkLoadEvent(ChunkLoadEvent event) {
+	public void chunkLoadEvent(ChunkLoadEvent event) {
 		for (Entity entity : event.getChunk().getEntities()) {
 			processEntity(entity);
 		}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void ChunkUnloadEvent(ChunkUnloadEvent event) {
+	public void chunkUnloadEvent(ChunkUnloadEvent event) {
 		Entity[] entities = event.getChunk().getEntities();
 
 		for (Entity entity : entities) {
@@ -62,7 +62,7 @@ public class CommandTimerManager implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void EntityDeathEvent(EntityDeathEvent event) {
+	public void entityDeathEvent(EntityDeathEvent event) {
 		unload(event.getEntity());
 	}
 

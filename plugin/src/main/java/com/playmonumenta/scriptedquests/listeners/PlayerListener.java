@@ -39,7 +39,7 @@ public class PlayerListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
-	public void PlayerInteractEvent(PlayerInteractEvent event) {
+	public void playerInteractEvent(PlayerInteractEvent event) {
 		Action action = event.getAction();
 		Player player = event.getPlayer();
 		ItemStack item = event.getItem();
@@ -74,7 +74,7 @@ public class PlayerListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
-	public void PlayerInteractEntityEvent(PlayerInteractEntityEvent event) {
+	public void playerInteractEntityEvent(PlayerInteractEntityEvent event) {
 		Entity entity = event.getRightClicked();
 		Player player = event.getPlayer();
 		if (entity instanceof Villager) {
@@ -106,7 +106,7 @@ public class PlayerListener implements Listener {
 
 	@SuppressWarnings("unchecked")
 	@EventHandler(priority = EventPriority.LOWEST)
-	public void PlayerDeathEvent(PlayerDeathEvent event) {
+	public void playerDeathEvent(PlayerDeathEvent event) {
 		Player player = event.getEntity();
 		mPlugin.mDeathManager.deathEvent(mPlugin, event);
 
@@ -132,7 +132,7 @@ public class PlayerListener implements Listener {
 
 	@SuppressWarnings("unchecked")
 	@EventHandler(priority = EventPriority.LOWEST)
-	public void PlayerRespawnEvent(PlayerRespawnEvent event) {
+	public void playerRespawnEvent(PlayerRespawnEvent event) {
 		Player player = event.getPlayer();
 
 		// Stop racing (if applicable)
@@ -167,13 +167,13 @@ public class PlayerListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
-	public void PlayerJoinEvent(PlayerJoinEvent event) {
+	public void playerJoinEvent(PlayerJoinEvent event) {
 		// Handle login quest events
 		mPlugin.mLoginManager.loginEvent(mPlugin, event);
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
-	public void PlayerQuitEvent(PlayerQuitEvent event) {
+	public void playerQuitEvent(PlayerQuitEvent event) {
 		// Stop racing (if applicable)
 		mPlugin.mRaceManager.cancelRace(event.getPlayer());
 

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.bukkit.Axis;
 import org.bukkit.util.Vector;
@@ -54,7 +53,7 @@ public class ZoneFragment<T> extends BaseZone {
 		Vector lowerMax = lower.maxCornerExclusive();
 		Vector upperMin = upper.minCorner();
 
-		switch(axis) {
+		switch (axis) {
 		case X:
 			lowerMax.setX(pos.getX());
 			upperMin.setX(pos.getX());
@@ -305,7 +304,13 @@ public class ZoneFragment<T> extends BaseZone {
 		return true;
 	}
 
-	public boolean equals(ZoneFragment<T> other) {
+	@Override
+	@SuppressWarnings("unchecked")
+	public boolean equals(Object o) {
+		if (!(o instanceof ZoneFragment)) {
+			return false;
+		}
+		ZoneFragment<T> other = (ZoneFragment<T>)o;
 		return (super.equals(other) &&
 		        mParents.equals(other.mParents) &&
 		        mParentsAndEclipsed.equals(other.mParentsAndEclipsed));

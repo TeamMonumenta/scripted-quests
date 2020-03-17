@@ -192,7 +192,7 @@ public class ZoneLayer<T> {
 		}
 
 		// Create the new tree.
-		return BaseZoneTree.CreateZoneTree(zoneFragments);
+		return BaseZoneTree.createZoneTree(zoneFragments);
 	}
 
 	/************************************************************************************
@@ -366,8 +366,8 @@ public class ZoneLayer<T> {
 			Vector minCorner = zone.minCorner();
 			Vector maxCorner = zone.maxCornerExclusive();
 
-			double x[] = new double[2];
-			double z[] = new double[2];
+			double[] x = new double[2];
+			double[] z = new double[2];
 			x[0] = minCorner.getX();
 			z[0] = minCorner.getZ();
 			x[1] = maxCorner.getX();

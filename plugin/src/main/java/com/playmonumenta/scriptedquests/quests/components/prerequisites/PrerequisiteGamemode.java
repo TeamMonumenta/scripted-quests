@@ -32,7 +32,7 @@ public class PrerequisiteGamemode implements PrerequisiteBase {
 					mValues.add(GameMode.SPECTATOR);
 					break;
 				default:
-					throw new Exception("Invalid gamemode: "+value.getAsString());
+					throw new Exception("Invalid gamemode: " + value.getAsString());
 			}
 		}
 	}

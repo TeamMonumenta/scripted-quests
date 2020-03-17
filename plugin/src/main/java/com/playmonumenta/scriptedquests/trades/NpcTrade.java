@@ -56,7 +56,7 @@ public class NpcTrade implements Comparable<NpcTrade> {
 	}
 
 	@Override
-	public int compareTo(NpcTrade other){
+	public int compareTo(NpcTrade other) {
 		// compareTo should return < 0 if this is supposed to be
 		// less than other, > 0 if this is supposed to be greater than
 		// other and 0 if they are supposed to be equal

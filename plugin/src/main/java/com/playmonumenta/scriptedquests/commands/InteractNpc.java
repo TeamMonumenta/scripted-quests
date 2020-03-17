@@ -53,7 +53,7 @@ public class InteractNpc {
 		);
 	}
 
-	private static void interact(Plugin plugin, CommandSender sender, Collection<Player>players,
+	private static void interact(Plugin plugin, CommandSender sender, Collection<Player> players,
 	                             String npcName, EntityType npcType) {
 		if (plugin.mNpcManager != null) {
 			for (Player player : players) {

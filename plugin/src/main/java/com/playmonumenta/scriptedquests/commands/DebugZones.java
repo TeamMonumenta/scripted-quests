@@ -2,9 +2,10 @@ package com.playmonumenta.scriptedquests.commands;
 
 import java.util.LinkedHashMap;
 
-import org.bukkit.entity.Player;
 import org.bukkit.Location;
-import org.bukkit.util.Vector;
+import org.bukkit.entity.Player;
+
+import com.playmonumenta.scriptedquests.Plugin;
 
 import io.github.jorelali.commandapi.api.CommandAPI;
 import io.github.jorelali.commandapi.api.CommandPermission;
@@ -13,10 +14,7 @@ import io.github.jorelali.commandapi.api.arguments.EntitySelectorArgument;
 import io.github.jorelali.commandapi.api.arguments.EntitySelectorArgument.EntitySelector;
 import io.github.jorelali.commandapi.api.arguments.LocationArgument;
 
-import com.playmonumenta.scriptedquests.Plugin;
-
 public class DebugZones {
-	@SuppressWarnings("unchecked")
 	public static void register(Plugin plugin) {
 		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
 

@@ -1,13 +1,11 @@
 package com.playmonumenta.scriptedquests.zones.zonetree;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.util.Vector;
-
 import org.dynmap.DynmapCommonAPI;
 import org.dynmap.markers.MarkerAPI;
 import org.dynmap.markers.MarkerSet;
@@ -20,7 +18,7 @@ import com.playmonumenta.scriptedquests.zones.zone.ZoneFragment;
 public abstract class BaseZoneTree<T> {
 	protected int mFragmentCount = 0;
 
-	public static <T> BaseZoneTree<T> CreateZoneTree(List<ZoneFragment<T>> zones) throws Exception {
+	public static <T> BaseZoneTree<T> createZoneTree(List<ZoneFragment<T>> zones) throws Exception {
 		BaseZoneTree<T> result;
 		if (zones.size() == 0) {
 			result = new EmptyZoneTree<T>();

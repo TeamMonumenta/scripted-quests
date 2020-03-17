@@ -54,8 +54,8 @@ public class LeafZoneTree<T> extends BaseZoneTree<T> {
 		Vector minCorner = mZone.minCorner();
 		Vector maxCorner = mZone.maxCornerExclusive();
 
-		double x[] = new double[2];
-		double z[] = new double[2];
+		double[] x = new double[2];
+		double[] z = new double[2];
 		x[0] = minCorner.getX();
 		z[0] = minCorner.getZ();
 		x[1] = maxCorner.getX();

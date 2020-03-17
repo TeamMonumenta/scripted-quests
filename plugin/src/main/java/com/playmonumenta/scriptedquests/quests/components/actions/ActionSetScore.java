@@ -42,18 +42,19 @@ public class ActionSetScore implements ActionBase {
 		}
 
 		void apply(Player player, String targetScore) {
-			int temp_score;
+			int tempScore;
 			switch (mOperation) {
-			case SET_EXACT:
-				ScoreboardUtils.setScoreboardValue(player, targetScore, mValue);
-				break;
 			case SET_COPY:
-				temp_score = ScoreboardUtils.getScoreboardValue(player, mSourceScore);
-				ScoreboardUtils.setScoreboardValue(player, targetScore, temp_score);
+				tempScore = ScoreboardUtils.getScoreboardValue(player, mSourceScore);
+				ScoreboardUtils.setScoreboardValue(player, targetScore, tempScore);
 				break;
 			case SET_RANDOM:
-				temp_score = mValue + mRandom.nextInt(mValueRange);
-				ScoreboardUtils.setScoreboardValue(player, targetScore, temp_score);
+				tempScore = mValue + mRandom.nextInt(mValueRange);
+				ScoreboardUtils.setScoreboardValue(player, targetScore, tempScore);
+				break;
+			case SET_EXACT:
+			default:
+				ScoreboardUtils.setScoreboardValue(player, targetScore, mValue);
 				break;
 			}
 		}

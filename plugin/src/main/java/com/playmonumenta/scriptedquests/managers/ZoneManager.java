@@ -103,7 +103,7 @@ public class ZoneManager {
 
 	// For a given location, return the zones that contain it.
 	public Map<String, Zone<T>> getZones(Vector loc) {
-		return getZones(loc, mPlugin.mFallbackZoneLookup);
+		return getZonesInternal(loc, mPlugin.mFallbackZoneLookup);
 	}
 
 	public Map<String, Zone<T>> getZones(Location loc) {
@@ -241,7 +241,7 @@ public class ZoneManager {
 		// Create the new tree. This could take a long time with enough fragments.
 		BaseZoneTree<T> newTree;
 		try {
-			newTree = BaseZoneTree.CreateZoneTree(zoneFragments);
+			newTree = BaseZoneTree.createZoneTree(zoneFragments);
 		} catch (Exception e) {
 			MessagingUtils.sendStackTrace(sender, e);
 			return;
@@ -310,7 +310,7 @@ public class ZoneManager {
 	}
 
 	// For a given location, return the zones that contain it.
-	private Map<String, Zone<T>> getZones(Vector loc, boolean fallbackZoneLookup) {
+	private Map<String, Zone<T>> getZonesInternal(Vector loc, boolean fallbackZoneLookup) {
 		if (fallbackZoneLookup) {
 			Map<String, Zone<T>> result = new HashMap<String, Zone<T>>();
 			for (Map.Entry<String, ZoneLayer<T>> entry : mLayers.entrySet()) {
@@ -501,8 +501,8 @@ public class ZoneManager {
 	}
 
 	public void sendDebug(CommandSender sender, Vector loc) {
-		Map<String, Zone<T>> fallbackZones = getZones(loc, true);
-		Map<String, Zone<T>> fastZones = getZones(loc, false);
+		Map<String, Zone<T>> fallbackZones = getZonesInternal(loc, true);
+		Map<String, Zone<T>> fastZones = getZonesInternal(loc, false);
 		if (fallbackZones == null && fastZones == null) {
 			sender.sendMessage("Fast lookup matches slow/reliable lookup (both null)");
 		} else if (fallbackZones == null || fastZones == null || !fallbackZones.equals(fastZones)) {

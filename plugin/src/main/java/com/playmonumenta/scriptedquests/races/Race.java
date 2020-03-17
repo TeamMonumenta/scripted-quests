@@ -46,7 +46,6 @@ public class Race {
 	private final RaceManager mManager;
 	private final Player mPlayer;
 	private final String mName;
-	private final String mLabel;
 	private final Objective mScoreboard;
 	private final boolean mShowStats;
 	private final boolean mRingless;
@@ -71,14 +70,13 @@ public class Race {
 	private boolean mCountdownActive = false;
 	private int mWRTime;
 
-	public Race(Plugin plugin, RaceManager manager, Player player, String name, String label,
+	public Race(Plugin plugin, RaceManager manager, Player player, String name,
 	            Objective scoreboard, boolean showStats, boolean ringless, Location start, QuestActions startActions,
 	            List<RaceWaypoint> waypoints, List<RaceTime> times, QuestActions loseActions) {
 		mPlugin = plugin;
 		mManager = manager;
 		mPlayer = player;
 		mName = name;
-		mLabel = label;
 		mScoreboard = scoreboard;
 		mShowStats = showStats;
 		mRingless = ringless;
@@ -268,7 +266,7 @@ public class Race {
 	 * This should only be called from win() and lose()
 	 */
 	private void end() {
-		mManager.__removeRace(mPlayer);
+		mManager.removeRace(mPlayer);
 
 		mTimeBar.cancel();
 		for (Entity e : mRingEntities) {
@@ -312,7 +310,7 @@ public class Race {
 						mPlayer.getName() +
 						"\",\"color\":\"blue\"},{\"text\":\" has set a new world record for \",\"color\":\"dark_aqua\"},{\"text\":\"" +
 						mName +
-						"\",\"color\":\"blue\"},{\"text\":\"\\nNew time: \",\"color\":\"dark_aqua\"},{\"text\":\""+
+						"\",\"color\":\"blue\"},{\"text\":\"\\nNew time: \",\"color\":\"dark_aqua\"},{\"text\":\"" +
 						RaceUtils.msToTimeString(endTime) +
 						"\",\"color\":\"blue\"}]";
 					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmdStr);
@@ -419,9 +417,9 @@ public class Race {
 			// no scoreboard = statless race, return a dummy world record
 			return 1;
 		}
-		for(String name : mScoreboard.getScoreboard().getEntries()) {
+		for (String name : mScoreboard.getScoreboard().getEntries()) {
 			score = mScoreboard.getScore(name).getScore();
-			if(score < top && score > 0) {
+			if (score < top && score > 0) {
 				top = score;
 			}
 		}
@@ -432,5 +430,7 @@ public class Race {
 		return mRingless;
 	}
 
-	public boolean isStatless() { return !mShowStats; }
+	public boolean isStatless() {
+		return !mShowStats;
+	}
 }

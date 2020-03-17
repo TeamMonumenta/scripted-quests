@@ -78,11 +78,11 @@ public class RaceFactory {
 		}
 
 		// show_stats
-		JsonElement show_stats = object.get("show_stats");
-		if (show_stats == null) {
+		JsonElement showStats = object.get("show_stats");
+		if (showStats == null) {
 			throw new Exception("'show_stats' entry is required");
 		}
-		mShowStats = show_stats.getAsBoolean();
+		mShowStats = showStats.getAsBoolean();
 
 		// ringless
 		JsonElement ringless = object.get("ringless");
@@ -91,7 +91,7 @@ public class RaceFactory {
 			//ringless entry is not present at all in a lot of races.
 			mRingless = false;
 		} else {
-			mRingless = show_stats.getAsBoolean();
+			mRingless = showStats.getAsBoolean();
 		}
 
 		// start
@@ -208,7 +208,7 @@ public class RaceFactory {
 	}
 
 	public Race createRace(Player player) {
-		return new Race(mPlugin, mManager, player, mName, mLabel, mObjective,
+		return new Race(mPlugin, mManager, player, mName, mObjective,
 		                mShowStats, mRingless, mStart, mStartActions, mWaypoints, mTimes, mLoseActions);
 	}
 
