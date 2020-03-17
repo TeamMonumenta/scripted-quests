@@ -54,7 +54,7 @@ public class ZoneFragment<T> extends BaseZone {
 		Vector lowerMax = lower.maxCornerExclusive();
 		Vector upperMin = upper.minCorner();
 
-		switch(axis) {
+		switch (axis) {
 		case X:
 			lowerMax.setX(pos.getX());
 			upperMin.setX(pos.getX());

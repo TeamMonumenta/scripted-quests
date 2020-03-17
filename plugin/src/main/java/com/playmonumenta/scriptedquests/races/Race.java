@@ -268,7 +268,7 @@ public class Race {
 	 * This should only be called from win() and lose()
 	 */
 	private void end() {
-		mManager.__removeRace(mPlayer);
+		mManager.removeRace(mPlayer);
 
 		mTimeBar.cancel();
 		for (Entity e : mRingEntities) {

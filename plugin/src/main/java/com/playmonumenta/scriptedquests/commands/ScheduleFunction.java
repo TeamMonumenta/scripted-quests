@@ -19,16 +19,16 @@ import io.github.jorelali.commandapi.api.arguments.LiteralArgument;
 
 public class ScheduleFunction {
 	private class DelayedFunction {
-		protected int ticksLeft;
-		protected FunctionWrapper[] function;
+		protected int mTicksLeft;
+		private FunctionWrapper[] mFunction;
 
 		protected DelayedFunction(int ticksLeftIn, FunctionWrapper[] functionIn) {
-			ticksLeft = ticksLeftIn;
-			function = functionIn;
+			mTicksLeft = ticksLeftIn;
+			mFunction = functionIn;
 		}
 
 		protected void run() {
-			for (FunctionWrapper func : function) {
+			for (FunctionWrapper func : mFunction) {
 				func.run();
 			}
 		}
@@ -45,9 +45,9 @@ public class ScheduleFunction {
 			while (it.hasNext())
 			{
 				DelayedFunction entry = it.next();
-				entry.ticksLeft--;
+				entry.mTicksLeft--;
 
-				if (entry.ticksLeft < 0) {
+				if (entry.mTicksLeft < 0) {
 					mFunctionsToRun.add(entry);
 
 					it.remove();

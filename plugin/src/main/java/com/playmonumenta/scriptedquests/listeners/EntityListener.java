@@ -27,7 +27,7 @@ public class EntityListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
-	public void EntityDamageByEntityEvent(EntityDamageByEntityEvent event) {
+	public void entityDamageByEntityEvent(EntityDamageByEntityEvent event) {
 		Entity damagee = event.getEntity();
 		Entity damager = event.getDamager();
 
@@ -61,7 +61,7 @@ public class EntityListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
-	public void EntityCombustByBlockEvent(EntityCombustByBlockEvent event) {
+	public void entityCombustByBlockEvent(EntityCombustByBlockEvent event) {
 		if (!event.isCancelled()) {
 			Entity damagee = event.getEntity();
 
@@ -74,7 +74,7 @@ public class EntityListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
-	public void EntityCombustByEntityEvent(EntityCombustByEntityEvent event) {
+	public void entityCombustByEntityEvent(EntityCombustByEntityEvent event) {
 		if (!event.isCancelled()) {
 			Entity damagee = event.getEntity();
 
@@ -87,7 +87,7 @@ public class EntityListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
-	public void EntityDamageEvent(EntityDamageEvent event) {
+	public void entityDamageEvent(EntityDamageEvent event) {
 		if (!event.isCancelled()) {
 			Entity damagee = event.getEntity();
 
@@ -103,7 +103,7 @@ public class EntityListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
-	public void EntityPotionEffectEvent(EntityPotionEffectEvent event) {
+	public void entityPotionEffectEvent(EntityPotionEffectEvent event) {
 		if (!event.isCancelled()) {
 			Entity damagee = event.getEntity();
 
@@ -119,13 +119,13 @@ public class EntityListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void PotionSplashEvent(PotionSplashEvent event) {
+	public void potionSplashEvent(PotionSplashEvent event) {
 		// Don't apply potion effects to quest entities
 		event.getAffectedEntities().removeIf(entity -> mPlugin.mNpcManager.getInteractNPC(entity.getCustomName(), entity.getType()) != null);
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void AreaEffectCloudApplyEvent(AreaEffectCloudApplyEvent event) {
+	public void areaEffectCloudApplyEvent(AreaEffectCloudApplyEvent event) {
 		// Don't apply potion effects to quest entities
 		event.getAffectedEntities().removeIf(entity -> mPlugin.mNpcManager.getInteractNPC(entity.getCustomName(), entity.getType()) != null);
 	}

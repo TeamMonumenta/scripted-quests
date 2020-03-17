@@ -65,7 +65,7 @@ public class QuestCompassManager {
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<ValidCompassEntry> _getCurrentMarkerTitles(Player player) {
+	private List<ValidCompassEntry> getCurrentMarkerTitles(Player player) {
 		/*
 		 * First check the cache - if it is still valid, returned the cached data
 		 * This dramatically improves performance when there are many compass entries
@@ -118,8 +118,8 @@ public class QuestCompassManager {
 		return entries;
 	}
 
-	private int _showCurrentQuest(Player player, int index) {
-		List<ValidCompassEntry> entries = _getCurrentMarkerTitles(player);
+	private int showCurrentQuest(Player player, int index) {
+		List<ValidCompassEntry> entries = getCurrentMarkerTitles(player);
 
 		if (index >= entries.size()) {
 			index = 0;
@@ -137,13 +137,13 @@ public class QuestCompassManager {
 	public void showCurrentQuest(Player player) {
 		int index = ScoreboardUtils.getScoreboardValue(player, "locationIndex");
 
-		_showCurrentQuest(player, index);
+		showCurrentQuest(player, index);
 	}
 
 	public void cycleQuestTracker(Player player) {
 		int index = ScoreboardUtils.getScoreboardValue(player, "locationIndex") + 1;
 
-		index = _showCurrentQuest(player, index);
+		index = showCurrentQuest(player, index);
 
 		ScoreboardUtils.setScoreboardValue(player, "locationIndex", index);
 	}

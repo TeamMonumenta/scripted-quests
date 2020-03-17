@@ -74,7 +74,7 @@ public class Race {
 	}
 
 	private static void raceStart(Plugin plugin, CommandSender sender,
-	                              Collection<Player>players, String raceLabel) {
+	                              Collection<Player> players, String raceLabel) {
 		// Check permission
 		if (sender.hasPermission("scriptedquests.race")) {
 			if (plugin.mRaceManager != null) {
@@ -86,7 +86,7 @@ public class Race {
 	}
 
 	private static void raceStop(Plugin plugin, CommandSender sender,
-	                             Collection<Player>players) {
+	                             Collection<Player> players) {
 		// Check permission
 		if (sender.hasPermission("scriptedquests.race")) {
 			if (plugin.mRaceManager != null) {
@@ -98,7 +98,7 @@ public class Race {
 	}
 
 	private static void raceWin(Plugin plugin, CommandSender sender,
-								Collection<Player>players) {
+								Collection<Player> players) {
 		// Check permission
 		if (sender.hasPermission("scriptedquests.race")) {
 			if (plugin.mRaceManager != null) {
@@ -110,7 +110,7 @@ public class Race {
 	}
 
 	private static void raceLeaderboard(Plugin plugin, CommandSender sender,
-	                                    Collection<Player>players, String raceLabel, int page) {
+	                                    Collection<Player> players, String raceLabel, int page) {
 		// Anyone can use this - no permission check
 		if (plugin.mRaceManager != null) {
 			for (Player player : players) {

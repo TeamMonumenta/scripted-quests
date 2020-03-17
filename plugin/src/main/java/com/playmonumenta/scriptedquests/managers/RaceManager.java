@@ -123,7 +123,7 @@ public class RaceManager {
 	}
 
 	/* This should ONLY be called by a Race that wants to remove itself! */
-	public void __removeRace(Player player) {
+	public void removeRace(Player player) {
 		mActiveRaces.remove(player.getUniqueId());
 	}
 

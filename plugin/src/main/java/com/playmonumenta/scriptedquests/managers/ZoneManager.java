@@ -241,7 +241,7 @@ public class ZoneManager {
 		// Create the new tree. This could take a long time with enough fragments.
 		BaseZoneTree<T> newTree;
 		try {
-			newTree = BaseZoneTree.CreateZoneTree(zoneFragments);
+			newTree = BaseZoneTree.createZoneTree(zoneFragments);
 		} catch (Exception e) {
 			MessagingUtils.sendStackTrace(sender, e);
 			return;

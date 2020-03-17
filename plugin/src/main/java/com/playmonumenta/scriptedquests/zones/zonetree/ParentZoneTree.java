@@ -120,9 +120,9 @@ public class ParentZoneTree<T> extends BaseZoneTree<T> {
 			}
 			throw new Exception(message.toString());
 		} else {
-			mLess = CreateZoneTree(bestSplit.mLess);
-			mMid = CreateZoneTree(bestSplit.mMid);
-			mMore = CreateZoneTree(bestSplit.mMore);
+			mLess = createZoneTree(bestSplit.mLess);
+			mMid = createZoneTree(bestSplit.mMid);
+			mMore = createZoneTree(bestSplit.mMore);
 		}
 	}
 

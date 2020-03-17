@@ -161,8 +161,7 @@ public class Zone<T> extends BaseZone {
 		for (ZoneFragment<T> fragment : mFragments) {
 			BaseZone subOverlap = fragment.overlappingZone(overlap);
 
-			if (subOverlap == null)
-			{
+			if (subOverlap == null) {
 				newFragments.add(fragment);
 				continue;
 			}

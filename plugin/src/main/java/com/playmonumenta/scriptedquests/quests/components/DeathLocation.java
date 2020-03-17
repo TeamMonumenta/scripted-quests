@@ -2,7 +2,7 @@ package com.playmonumenta.scriptedquests.quests.components;
 
 import org.bukkit.Location;
 
-public class DeathLocation implements CompassLocation{
+public class DeathLocation implements CompassLocation {
 	private Location mLoc;
 	private long mDeathTime;
 

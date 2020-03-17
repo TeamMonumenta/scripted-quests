@@ -25,7 +25,7 @@ public class ActionCommand implements ActionBase {
 		}
 
 		//Need to make sure command does not have the / at the start - this breaks the Parser
-		if(mCommand.charAt(0) == '/') {
+		if (mCommand.charAt(0) == '/') {
 			mCommand = mCommand.substring(1);
 		}
 
@@ -68,7 +68,7 @@ public class ActionCommand implements ActionBase {
 				return;
 			}
 		} else {
-			commandStr = commandStr.replaceAll("@N", npcEntity.getUniqueId​().toString​());
+			commandStr = commandStr.replaceAll("@N", npcEntity.getUniqueId().toString());
 		}
 		commandStr = commandStr.replaceAll("@S", player.getName());
 		plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), commandStr);
