@@ -310,7 +310,7 @@ public class Race {
 						mPlayer.getName() +
 						"\",\"color\":\"blue\"},{\"text\":\" has set a new world record for \",\"color\":\"dark_aqua\"},{\"text\":\"" +
 						mName +
-						"\",\"color\":\"blue\"},{\"text\":\"\\nNew time: \",\"color\":\"dark_aqua\"},{\"text\":\""+
+						"\",\"color\":\"blue\"},{\"text\":\"\\nNew time: \",\"color\":\"dark_aqua\"},{\"text\":\"" +
 						RaceUtils.msToTimeString(endTime) +
 						"\",\"color\":\"blue\"}]";
 					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmdStr);
