@@ -42,8 +42,7 @@ public class ScheduleFunction {
 		@Override
 		public void run() {
 			Iterator<DelayedFunction> it = mFunctions.iterator();
-			while (it.hasNext())
-			{
+			while (it.hasNext()) {
 				DelayedFunction entry = it.next();
 				entry.mTicksLeft--;
 

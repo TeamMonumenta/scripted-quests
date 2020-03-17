@@ -46,7 +46,6 @@ public class Race {
 	private final RaceManager mManager;
 	private final Player mPlayer;
 	private final String mName;
-	private final String mLabel;
 	private final Objective mScoreboard;
 	private final boolean mShowStats;
 	private final boolean mRingless;
@@ -71,14 +70,13 @@ public class Race {
 	private boolean mCountdownActive = false;
 	private int mWRTime;
 
-	public Race(Plugin plugin, RaceManager manager, Player player, String name, String label,
+	public Race(Plugin plugin, RaceManager manager, Player player, String name,
 	            Objective scoreboard, boolean showStats, boolean ringless, Location start, QuestActions startActions,
 	            List<RaceWaypoint> waypoints, List<RaceTime> times, QuestActions loseActions) {
 		mPlugin = plugin;
 		mManager = manager;
 		mPlayer = player;
 		mName = name;
-		mLabel = label;
 		mScoreboard = scoreboard;
 		mShowStats = showStats;
 		mRingless = ringless;
@@ -419,9 +417,9 @@ public class Race {
 			// no scoreboard = statless race, return a dummy world record
 			return 1;
 		}
-		for(String name : mScoreboard.getScoreboard().getEntries()) {
+		for (String name : mScoreboard.getScoreboard().getEntries()) {
 			score = mScoreboard.getScore(name).getScore();
-			if(score < top && score > 0) {
+			if (score < top && score > 0) {
 				top = score;
 			}
 		}
@@ -432,5 +430,7 @@ public class Race {
 		return mRingless;
 	}
 
-	public boolean isStatless() { return !mShowStats; }
+	public boolean isStatless() {
+		return !mShowStats;
+	}
 }

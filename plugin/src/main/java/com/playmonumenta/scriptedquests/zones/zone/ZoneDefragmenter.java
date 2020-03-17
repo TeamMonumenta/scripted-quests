@@ -84,7 +84,6 @@ class ZoneDefragmenter<T> {
 
 	public List<ZoneFragment<T>> optimalMerge() {
 		List<ZoneFragment<T>> resultsSoFar = new ArrayList<ZoneFragment<T>>();
-		Set<Integer> remainingIds = new LinkedHashSet<Integer>(mAllIds);
 		return optimalMerge(resultsSoFar, mAllIds);
 	}
 

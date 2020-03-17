@@ -3,7 +3,7 @@ package com.playmonumenta.scriptedquests.quests.components;
 import org.bukkit.Location;
 
 public interface CompassLocation {
-	public Location getLocation();
+	Location getLocation();
 
-	public String getMessage();
+	String getMessage();
 }

@@ -67,7 +67,7 @@ public class Race {
 		                                  CommandPermission.NONE,
 		                                  arguments,
 		                                  (sender, args) -> {
-		                                      raceLeaderboard(plugin, sender, (Collection<Player>)args[0],
+		                                      raceLeaderboard(plugin, (Collection<Player>)args[0],
 		                                                      (String)args[1], (Integer)args[2]);
 		                                  }
 		);
@@ -109,8 +109,7 @@ public class Race {
 		}
 	}
 
-	private static void raceLeaderboard(Plugin plugin, CommandSender sender,
-	                                    Collection<Player> players, String raceLabel, int page) {
+	private static void raceLeaderboard(Plugin plugin, Collection<Player> players, String raceLabel, int page) {
 		// Anyone can use this - no permission check
 		if (plugin.mRaceManager != null) {
 			for (Player player : players) {

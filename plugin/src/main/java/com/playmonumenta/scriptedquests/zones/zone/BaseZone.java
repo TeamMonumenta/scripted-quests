@@ -152,11 +152,18 @@ public class BaseZone {
 		return null;
 	}
 
-	public boolean equals(BaseZone other) {
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof BaseZone)) {
+			return false;
+		}
+
+		BaseZone other = (BaseZone)o;
 		return (mPosition.equals(other.mPosition) &&
 		        mSize.equals(other.mSize));
 	}
 
+	@Override
 	public int hashCode() {
 		return 31*mPosition.hashCode() + mSize.hashCode();
 	}

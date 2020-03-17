@@ -76,7 +76,7 @@ public class RaceTime implements Comparable<RaceTime> {
 	}
 
 	@Override
-	public int compareTo(RaceTime other){
+	public int compareTo(RaceTime other) {
 		// compareTo should return < 0 if this is supposed to be
 		// less than other, > 0 if this is supposed to be greater than
 		// other and 0 if they are supposed to be equal

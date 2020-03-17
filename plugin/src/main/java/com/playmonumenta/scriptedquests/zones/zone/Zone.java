@@ -1,7 +1,6 @@
 package com.playmonumenta.scriptedquests.zones.zone;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -255,7 +254,14 @@ public class Zone<T> extends BaseZone {
 		}
 	}
 
-	public boolean equals(Zone<T> other) {
+	@Override
+	@SuppressWarnings("unchecked")
+	public boolean equals(Object o) {
+		if (!(o instanceof Zone)) {
+			return false;
+		}
+
+		Zone<T> other = (Zone<T>)o;
 		return (super.equals(other) &&
 		        getLayerName().equals(other.getLayerName()) &&
 		        getName().equals(other.getName()));

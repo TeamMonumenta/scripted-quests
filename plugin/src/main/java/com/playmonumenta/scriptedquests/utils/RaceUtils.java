@@ -21,7 +21,13 @@ public class RaceUtils {
 		double sy = Math.sin(yaw);
 		double cr = Math.cos(roll);
 		double sr = Math.sin(roll);
-		double x, bx, y, by, z, bz;
+		double x;
+		double bx;
+		double y;
+		double by;
+		double z;
+		double bz;
+
 		for (Vector point : points) {
 			x = point.getX();
 			bx = x;
@@ -34,8 +40,9 @@ public class RaceUtils {
 			z = ((z * cp - by * sp) * cy + bx * sy) * scale;
 			list.add(new Location(center.getWorld(), (center.getX() + x), (center.getY() + y), (center.getZ() + z)));
 		}
-		return list;
+
 		// list contains all the locations of the rotated shape at the specified center
+		return list;
 	}
 
 	public static String msToTimeString(int ms) {
