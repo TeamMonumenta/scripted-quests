@@ -7,4 +7,5 @@ public class Constants {
 	public static final String PLAYER_RESPAWN_POINT_METAKEY = "ScriptedQuestsPlayerRespawnPoint";
 	public static final String PLAYER_RESPAWN_ACTIONS_METAKEY = "ScriptedQuestsPlayerRespawnActions";
 	public static final String PLAYER_DEATH_LOCATION_METAKEY = "ScriptedQuestsPlayerDeathLocation";
+	public static final String PLAYER_VOICE_OVER_METAKEY = "ScriptedQuestsPlayerVoiceOver";
 }

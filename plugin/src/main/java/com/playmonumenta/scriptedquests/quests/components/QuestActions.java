@@ -84,7 +84,7 @@ public class QuestActions {
 					}
 					break;
 				case "voice_over":
-					mActions.add(new ActionVoiceOver(value));
+					mActions.add(new ActionVoiceOver(entityType, npcName, value));
 					break;
 				case "rerun_components":
 					if (entityType != null) {
