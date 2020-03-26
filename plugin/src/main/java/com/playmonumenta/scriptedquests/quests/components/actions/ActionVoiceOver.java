@@ -16,7 +16,7 @@ import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 
 public class ActionVoiceOver implements ActionBase {
-	private final int maxVOPerPlayer = 12;
+	private final int mMaxVOPerPlayer = 12;
 	private final String mNpcKey;
 	private final String mSound;
 
@@ -29,16 +29,18 @@ public class ActionVoiceOver implements ActionBase {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public void doAction(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
 		Map<String, String> playerLastSounds = null;
 		if (player.hasMetadata(Constants.PLAYER_VOICE_OVER_METAKEY)) {
+
 			playerLastSounds = (Map<String, String>) player.getMetadata(Constants.PLAYER_VOICE_OVER_METAKEY).get(0).value();
 		} else {
 			// LRU map via https://stackoverflow.com/a/11469731
-			playerLastSounds = new LinkedHashMap<String, String>(maxVOPerPlayer+1, 1.0f, true) {
+			playerLastSounds = new LinkedHashMap<String, String>(mMaxVOPerPlayer + 1, 1.0f, true) {
 				@Override
 				protected boolean removeEldestEntry(Map.Entry<String, String> eldest) {
-					if (size() > maxVOPerPlayer) {
+					if (size() > mMaxVOPerPlayer) {
 						player.stopSound(eldest.getValue(), SoundCategory.VOICE);
 						return true;
 					}
