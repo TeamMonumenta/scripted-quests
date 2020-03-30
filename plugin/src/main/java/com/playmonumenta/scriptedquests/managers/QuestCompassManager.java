@@ -15,23 +15,24 @@ import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.QuestCompass;
 import com.playmonumenta.scriptedquests.quests.components.CompassLocation;
 import com.playmonumenta.scriptedquests.quests.components.DeathLocation;
+import com.playmonumenta.scriptedquests.quests.components.QuestLocation;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
 import com.playmonumenta.scriptedquests.utils.ScoreboardUtils;
 
 public class QuestCompassManager {
 	private static class ValidCompassEntry {
-		private final CompassLocation mLocation;
+		private final QuestLocation mLocation;
 		private final String mTitle;
 
-		private ValidCompassEntry(CompassLocation loc, String title) {
+		private ValidCompassEntry(QuestLocation loc, String title) {
 			mLocation = loc;
 			mTitle = title;
 		}
 
-		private void directPlayer(Player player) {
+		private void directPlayer(WaypointManager mgr, Player player) {
 			MessagingUtils.sendRawMessage(player, mTitle + ": " + mLocation.getMessage());
-			player.setCompassTarget(mLocation.getLocation());
+			mgr.setWaypoint(player, mLocation.getWaypoints());
 		}
 	}
 
@@ -51,6 +52,12 @@ public class QuestCompassManager {
 
 	private final List<QuestCompass> mQuests = new ArrayList<QuestCompass>();
 	private final Map<UUID, CompassCacheEntry> mCompassCache = new HashMap<UUID, CompassCacheEntry>();
+	private final Plugin mPlugin;
+
+	public QuestCompassManager(Plugin plugin) {
+		mPlugin = plugin;
+		reload(plugin, null);
+	}
 
 	/*
 	 * If sender is non-null, it will be sent debugging information
@@ -128,7 +135,7 @@ public class QuestCompassManager {
 		if (entries.size() == 0) {
 			MessagingUtils.sendActionBarMessage(player, "You have no active quest.");
 		} else {
-			entries.get(index).directPlayer(player);
+			entries.get(index).directPlayer(mPlugin.mWaypointManager, player);
 		}
 
 		return index;

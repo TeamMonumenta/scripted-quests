@@ -11,11 +11,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.quests.components.CompassLocation;
-import com.playmonumenta.scriptedquests.quests.components.QuestLocation;
 
 public class QuestCompass {
 	private String mQuestName;
-	private ArrayList<QuestLocation> mMarkers = new ArrayList<QuestLocation>();
+	private ArrayList<CompassLocation> mMarkers = new ArrayList<CompassLocation>();
 
 	public QuestCompass(World world, JsonObject object) throws Exception {
 		// Read the quest name
@@ -43,14 +42,14 @@ public class QuestCompass {
 		while (iter.hasNext()) {
 			JsonElement entry = iter.next();
 
-			mMarkers.add(new QuestLocation(world, entry));
+			mMarkers.add(new CompassLocation(world, entry));
 		}
 	}
 
 	public List<CompassLocation> getMarkers(Player player) {
 		List<CompassLocation> availableMarkers = new ArrayList<CompassLocation>();
 
-		for (QuestLocation marker : mMarkers) {
+		for (CompassLocation marker : mMarkers) {
 			if (marker.prerequisiteMet(player)) {
 				availableMarkers.add(marker);
 			}
@@ -59,7 +58,7 @@ public class QuestCompass {
 		return availableMarkers;
 	}
 
-	public ArrayList<QuestLocation> getMarkers() {
+	public ArrayList<CompassLocation> getMarkers() {
 		return mMarkers;
 	}
 

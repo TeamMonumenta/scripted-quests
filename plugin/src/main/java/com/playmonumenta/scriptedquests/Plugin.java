@@ -38,6 +38,7 @@ import com.playmonumenta.scriptedquests.managers.QuestDeathManager;
 import com.playmonumenta.scriptedquests.managers.QuestLoginManager;
 import com.playmonumenta.scriptedquests.managers.QuestNpcManager;
 import com.playmonumenta.scriptedquests.managers.RaceManager;
+import com.playmonumenta.scriptedquests.managers.WaypointManager;
 import com.playmonumenta.scriptedquests.managers.ZoneManager;
 import com.playmonumenta.scriptedquests.managers.ZonePropertyManager;
 import com.playmonumenta.scriptedquests.timers.CommandTimerManager;
@@ -64,6 +65,7 @@ public class Plugin extends JavaPlugin {
 	public CodeManager mCodeManager;
 	public ZoneManager mZoneManager;
 	public ZonePropertyManager mZonePropertyManager;
+	public WaypointManager mWaypointManager;
 
 	public World mWorld;
 	public Random mRandom = new Random();
@@ -103,7 +105,7 @@ public class Plugin extends JavaPlugin {
 
 		mWorld = Bukkit.getWorlds().get(0);
 
-		mQuestCompassManager = new QuestCompassManager();
+		mQuestCompassManager = new QuestCompassManager(this);
 		mNpcManager = new QuestNpcManager(this);
 		mClickableManager = new ClickableManager();
 		mInteractableManager = new InteractableManager();
@@ -114,8 +116,8 @@ public class Plugin extends JavaPlugin {
 		mCodeManager = new CodeManager();
 		mZoneManager = new ZoneManager(this);
 		mZonePropertyManager = new ZonePropertyManager(this);
-
 		mTimerManager = new CommandTimerManager(this);
+		mWaypointManager = new WaypointManager(this);
 
 		manager.registerEvents(new EntityListener(this), this);
 		manager.registerEvents(new PlayerListener(this), this);
@@ -142,6 +144,7 @@ public class Plugin extends JavaPlugin {
 
 		mRaceManager.cancelAllRaces();
 		mTimerManager.unloadAll();
+		mWaypointManager.cancelAll();
 
 		MetadataUtils.removeAllMetadata(this);
 

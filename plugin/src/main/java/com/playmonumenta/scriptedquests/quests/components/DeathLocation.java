@@ -1,23 +1,25 @@
 package com.playmonumenta.scriptedquests.quests.components;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.Location;
 
-public class DeathLocation implements CompassLocation {
-	private Location mLoc;
-	private long mDeathTime;
+public class DeathLocation implements QuestLocation {
+	private final long mDeathTime;
+	private final List<Location> mWaypoints = new ArrayList<Location>(1);
 
 	public DeathLocation(Location loc, long deathTime) {
-		mLoc = loc.clone();
 		mDeathTime = deathTime;
+		mWaypoints.add(loc);
 	}
 
 	public String getTimeDifference(long compareTime) {
-		long diff = compareTime - mDeathTime;
-
-		long diffSeconds = diff / 1000 % 60;
-		long diffMinutes = diff / (60 * 1000) % 60;
-		long diffHours = diff / (60 * 60 * 1000) % 24;
-		long diffDays = diff / (24 * 60 * 60 * 1000);
+		final long diff = compareTime - mDeathTime;
+		final long diffSeconds = diff / 1000 % 60;
+		final long diffMinutes = diff / (60 * 1000) % 60;
+		final long diffHours = diff / (60 * 60 * 1000) % 24;
+		final long diffDays = diff / (24 * 60 * 60 * 1000);
 
 		String timeStr = "";
 		if (diffDays > 0) {
@@ -64,8 +66,13 @@ public class DeathLocation implements CompassLocation {
 	}
 
 	@Override
+	public List<Location> getWaypoints() {
+		return mWaypoints;
+	}
+
+	@Override
 	public Location getLocation() {
-		return mLoc;
+		return mWaypoints.get(0);
 	}
 
 	@Override
