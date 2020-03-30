@@ -22,7 +22,8 @@ public class WaypointManager {
 	/* Radius of the helix animation at the destination */
 	private static final double WAYPOINT_DEST_ANIM_RADIUS = 2;
 	/* Min/max distances the player must be from the goal to play any animations at all */
-	private static final double WAYPOINT_DEST_ANIM_MIN_DIST = 7;
+	private static final double WAYPOINT_SWITCH_OFFSET = 7;
+	private static final double WAYPOINT_FINAL_ANIM_MIN_DIST = 6;
 	private static final double WAYPOINT_DEST_ANIM_MAX_DIST = 48;
 	/* Minimum distance the player must be from the goal to play the fast/slow beam animation */
 	private static final double WAYPOINT_BEAM_ANIM_MIN_DIST = 7;
@@ -72,7 +73,7 @@ public class WaypointManager {
 				continue;
 			}
 
-			if (dist < closestDist || dist < distance2D(prevLoc, loc) + 5) {
+			if (dist < closestDist || dist < distance2D(prevLoc, loc) + WAYPOINT_SWITCH_OFFSET) {
 				/* This is either the closest location OR it's closer than the distance between this and the last waypoint */
 				closestLoc = loc;
 				closestDist = dist;
@@ -127,12 +128,13 @@ public class WaypointManager {
 					}
 
 					Location targetLoc = getNextPoint(player, waypoints);
+					boolean isLast = targetLoc.equals(waypoints.get(waypoints.size() - 1));
 					player.setCompassTarget(targetLoc);
 
 					Location playerLoc = player.getLocation();
 					double targetDist = playerLoc.distance(targetLoc);
 
-					if (targetDist < WAYPOINT_DEST_ANIM_MIN_DIST) {
+					if (isLast && targetDist < WAYPOINT_FINAL_ANIM_MIN_DIST) {
 						iter.remove();
 						continue;
 					}
@@ -142,7 +144,7 @@ public class WaypointManager {
 					}
 
 					// Spawn slow-moving helix at the target location if it is close enough to be seen
-					if (targetDist < WAYPOINT_DEST_ANIM_MAX_DIST) {
+					if (isLast && targetDist < WAYPOINT_DEST_ANIM_MAX_DIST) {
 						new BukkitRunnable() {
 							double mY = -1.0;
 							double mTheta = mHelixStart;
@@ -157,7 +159,7 @@ public class WaypointManager {
 								mTheta += Math.PI / 10;
 
 								double targetDist = player.getLocation().distance(targetLoc);
-								if (mY >= 4.0 || targetDist < WAYPOINT_DEST_ANIM_MIN_DIST || targetDist > WAYPOINT_DEST_ANIM_MAX_DIST) {
+								if (mY >= 4.0 || targetDist < WAYPOINT_FINAL_ANIM_MIN_DIST || targetDist > WAYPOINT_DEST_ANIM_MAX_DIST) {
 									this.cancel();
 								}
 							}
@@ -170,7 +172,7 @@ public class WaypointManager {
 					if (averageLoc == null) {
 						averageLoc = playerLoc.clone();
 					}
-					averageLoc = averageLoc.multiply(3.0d).add(playerLoc).multiply(0.25d);
+					averageLoc = averageLoc.add(playerLoc).multiply(0.5d);
 					mPlayerAverageLocs.put(player, averageLoc);
 
 					/* Create particles that lead to the destination */
