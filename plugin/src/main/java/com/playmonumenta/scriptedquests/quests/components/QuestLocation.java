@@ -9,13 +9,13 @@ public interface QuestLocation {
 	 * Returns a list of waypoints, where the last waypoint is the same locatios as getLocation()
 	 * Caller must not modify this!
 	 */
-	public List<Location> getWaypoints();
+	List<Location> getWaypoints();
 
 	/*
 	 * Returns the last waypoint
 	 * Caller must not modify this!
 	 */
-	public Location getLocation();
+	Location getLocation();
 
-	public String getMessage();
+	String getMessage();
 }

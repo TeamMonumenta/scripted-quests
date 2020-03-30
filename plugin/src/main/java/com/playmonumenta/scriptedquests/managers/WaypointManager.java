@@ -13,6 +13,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.playmonumenta.scriptedquests.Plugin;
+
 public class WaypointManager {
 	/* Number of ticks between re-checking waypoint progress */
 	private static final int WAYPOINT_DELAY = 20;
@@ -103,7 +104,7 @@ public class WaypointManager {
 		}
 
 		mRunnable = new BukkitRunnable() {
-			double helixStart = 0;
+			double mHelixStart = 0;
 
 			@Override
 			public void run() {
@@ -143,25 +144,25 @@ public class WaypointManager {
 					// Spawn slow-moving helix at the target location if it is close enough to be seen
 					if (targetDist < WAYPOINT_DEST_ANIM_MAX_DIST) {
 						new BukkitRunnable() {
-							double y = -1.0;
-							double theta = helixStart;
+							double mY = -1.0;
+							double mTheta = mHelixStart;
 
 							public void run() {
-								Vector offset = new Vector(WAYPOINT_DEST_ANIM_RADIUS * Math.cos(theta),
-														   y,
-														   WAYPOINT_DEST_ANIM_RADIUS * Math.sin(theta));
+								Vector offset = new Vector(WAYPOINT_DEST_ANIM_RADIUS * Math.cos(mTheta),
+														   mY,
+														   WAYPOINT_DEST_ANIM_RADIUS * Math.sin(mTheta));
 								player.spawnParticle(Particle.SPELL_INSTANT, targetLoc.clone().add(offset), 1, 0.01, 0.01, 0.01, 0);
 
-								y += 0.1;
-								theta += Math.PI / 10;
+								mY += 0.1;
+								mTheta += Math.PI / 10;
 
 								double targetDist = player.getLocation().distance(targetLoc);
-								if (y >= 4.0 || targetDist < WAYPOINT_DEST_ANIM_MIN_DIST || targetDist > WAYPOINT_DEST_ANIM_MAX_DIST) {
+								if (mY >= 4.0 || targetDist < WAYPOINT_DEST_ANIM_MIN_DIST || targetDist > WAYPOINT_DEST_ANIM_MAX_DIST) {
 									this.cancel();
 								}
 							}
 						}.runTaskTimer(mPlugin, 0, 2);
-						helixStart += Math.PI / 4;
+						mHelixStart += Math.PI / 4;
 					}
 
 					/* Rolling average player location - 19 parts previous location, 1 part new location */
@@ -177,16 +178,16 @@ public class WaypointManager {
 						if (playerLoc.distance(averageLoc) > WAYPOINT_PLAYER_MOVE_THRESH) {
 							/* Player is actively moving - need to use fast particles to keep up with them */
 							new BukkitRunnable() {
-								int t = 0;
+								int mTicks = 0;
 
 								@Override
 								public void run() {
-									t++;
+									mTicks++;
 									Location particleLoc = player.getLocation().add(0, 0.2, 0);
 									Vector dir = getDirectionTo(targetLoc.clone().add(0, 0.2, 0), particleLoc);
 									particleLoc.add(dir.multiply(8));
 									player.spawnParticle(Particle.VILLAGER_HAPPY, particleLoc, 1, 0.1, 0.1, 0.1, 1);
-									if (t >= WAYPOINT_DELAY / 3) {
+									if (mTicks >= WAYPOINT_DELAY / 3) {
 										this.cancel();
 									}
 								}
@@ -197,20 +198,20 @@ public class WaypointManager {
 							Vector dir = getDirectionTo(targetLoc.clone().add(0, 0.5, 0), particleLoc);
 							dir.multiply(0.6);
 							new BukkitRunnable() {
-								Location playerStartLoc = playerLoc.clone();
-								int t = 0;
+								Location mPlayerStartLoc = playerLoc.clone();
+								int mTicks = 0;
 
 								@Override
 								public void run() {
-									t += WAYPOINT_SLOW_BEAM_TICK_PERIOD;
+									mTicks += WAYPOINT_SLOW_BEAM_TICK_PERIOD;
 									particleLoc.add(dir);
 									if (RAND.nextFloat() > 0.5) {
 										player.spawnParticle(Particle.VILLAGER_HAPPY, particleLoc, 1, 0.1, 0.1, 0.1, 1);
 									}
 									// Stop this animated beam when it has lingered too long, reaches the target, or the player moves
-									if (t >= WAYPOINT_SLOW_BEAM_MAX_TICKS
+									if (mTicks >= WAYPOINT_SLOW_BEAM_MAX_TICKS
 										|| particleLoc.distance(targetLoc) < 1.5
-										|| player.getLocation().distance(playerStartLoc) > WAYPOINT_PLAYER_MOVE_THRESH) {
+										|| player.getLocation().distance(mPlayerStartLoc) > WAYPOINT_PLAYER_MOVE_THRESH) {
 										this.cancel();
 									}
 								}
