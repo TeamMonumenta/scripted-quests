@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -16,18 +17,20 @@ public class WaypointManager {
 	/* Number of ticks between re-checking waypoint progress */
 	private static final int WAYPOINT_DELAY = 20;
 	/* Threshold of movement relative to moving average which counts as moving */
-	private static final double WAYPOINT_PLAYER_MOVE_THRESH = 2;
+	private static final double WAYPOINT_PLAYER_MOVE_THRESH = 1.5;
 	/* Radius of the helix animation at the destination */
 	private static final double WAYPOINT_DEST_ANIM_RADIUS = 2;
 	/* Min/max distances the player must be from the goal to play any animations at all */
-	private static final double WAYPOINT_DEST_ANIM_MIN_DIST = 5;
+	private static final double WAYPOINT_DEST_ANIM_MIN_DIST = 7;
 	private static final double WAYPOINT_DEST_ANIM_MAX_DIST = 48;
 	/* Minimum distance the player must be from the goal to play the fast/slow beam animation */
-	private static final double WAYPOINT_BEAM_ANIM_MIN_DIST = 16;
+	private static final double WAYPOINT_BEAM_ANIM_MIN_DIST = 7;
 	/* Number of ticks between updates to the slow moving beam */
 	private static final int WAYPOINT_SLOW_BEAM_TICK_PERIOD = 5;
 	/* Number of total ticks the slow moving beam can be alive for */
 	private static final int WAYPOINT_SLOW_BEAM_MAX_TICKS = 140;
+
+	private static final Random RAND = new Random();
 
 	private final Plugin mPlugin;
 	private final Map<Player, List<Location>> mPlayers = new LinkedHashMap<Player, List<Location>>();
@@ -82,7 +85,7 @@ public class WaypointManager {
 			closestLoc = closestLoc.clone();
 			closestLoc.setY(playerLoc.getY());
 		}
-		return closestLoc;
+		return closestLoc.clone();
 	}
 
 	public WaypointManager(Plugin plugin) {
@@ -143,7 +146,7 @@ public class WaypointManager {
 								Vector offset = new Vector(WAYPOINT_DEST_ANIM_RADIUS * Math.cos(theta),
 														   y,
 														   WAYPOINT_DEST_ANIM_RADIUS * Math.sin(theta));
-								player.spawnParticle(Particle.SPELL_INSTANT, targetLoc.add(offset), 1, 0.01, 0.01, 0.01, 0);
+								player.spawnParticle(Particle.SPELL_INSTANT, targetLoc.clone().add(offset), 1, 0.01, 0.01, 0.01, 0);
 
 								y += 0.1;
 								theta += Math.PI / 10;
@@ -162,48 +165,53 @@ public class WaypointManager {
 					if (averageLoc == null) {
 						averageLoc = playerLoc.clone();
 					}
-					averageLoc = averageLoc.multiply(19.0d).add(playerLoc).multiply(0.05d);
+					averageLoc = averageLoc.multiply(3.0d).add(playerLoc).multiply(0.25d);
+					mPlayerAverageLocs.put(player, averageLoc);
 
 					/* Create particles that lead to the destination */
-					if (playerLoc.distance(averageLoc) > WAYPOINT_PLAYER_MOVE_THRESH && targetDist > WAYPOINT_BEAM_ANIM_MIN_DIST) {
-						/* Player is actively moving - need to use fast particles to keep up with them */
-						new BukkitRunnable() {
-							int t = 0;
+					if (targetDist > WAYPOINT_BEAM_ANIM_MIN_DIST) {
+						if (playerLoc.distance(averageLoc) > WAYPOINT_PLAYER_MOVE_THRESH) {
+							/* Player is actively moving - need to use fast particles to keep up with them */
+							new BukkitRunnable() {
+								int t = 0;
 
-							@Override
-							public void run() {
-								t++;
-								Location particleLoc = playerLoc.add(0, 0.5, 0);
-								Vector dir = getDirectionTo(targetLoc.clone().add(0, 0.5, 0), particleLoc);
-								particleLoc.add(dir.multiply(6));
-								player.spawnParticle(Particle.VILLAGER_HAPPY, particleLoc, 2, 0.1, 0.1, 0.1, 0);
-								if (t >= WAYPOINT_DELAY) {
-									this.cancel();
+								@Override
+								public void run() {
+									t++;
+									Location particleLoc = player.getLocation().add(0, 0.2, 0);
+									Vector dir = getDirectionTo(targetLoc.clone().add(0, 0.2, 0), particleLoc);
+									particleLoc.add(dir.multiply(8));
+									player.spawnParticle(Particle.VILLAGER_HAPPY, particleLoc, 1, 0.1, 0.1, 0.1, 1);
+									if (t >= WAYPOINT_DELAY / 3) {
+										this.cancel();
+									}
 								}
-							}
-						}.runTaskTimer(mPlugin, 0, 1);
-					} else {
-						/* Player is basically standing still - more detailed animation is possible */
-						Location particleLoc = playerLoc.add(0, 0.5, 0);
-						Vector dir = getDirectionTo(targetLoc.clone().add(0, 0.5, 0), particleLoc);
-						dir.multiply(0.6);
-						new BukkitRunnable() {
-							Location playerStartLoc = playerLoc.clone();
-							int t = 0;
+							}.runTaskTimer(mPlugin, 0, 3);
+						} else {
+							/* Player is basically standing still - more detailed animation is possible */
+							Location particleLoc = playerLoc.add(0, 0.5, 0);
+							Vector dir = getDirectionTo(targetLoc.clone().add(0, 0.5, 0), particleLoc);
+							dir.multiply(0.6);
+							new BukkitRunnable() {
+								Location playerStartLoc = playerLoc.clone();
+								int t = 0;
 
-							@Override
-							public void run() {
-								t += WAYPOINT_SLOW_BEAM_TICK_PERIOD;
-								particleLoc.add(dir);
-								player.spawnParticle(Particle.VILLAGER_HAPPY, particleLoc, 2, 0.1, 0.1, 0.1, 0);
-								// Stop this animated beam when it has lingered too long, reaches the target, or the player moves
-								if (t >= WAYPOINT_SLOW_BEAM_MAX_TICKS
-								    || particleLoc.distance(targetLoc) < 1.5
-									|| player.getLocation().distance(playerStartLoc) > WAYPOINT_PLAYER_MOVE_THRESH) {
-									this.cancel();
+								@Override
+								public void run() {
+									t += WAYPOINT_SLOW_BEAM_TICK_PERIOD;
+									particleLoc.add(dir);
+									if (RAND.nextFloat() > 0.5) {
+										player.spawnParticle(Particle.VILLAGER_HAPPY, particleLoc, 1, 0.1, 0.1, 0.1, 1);
+									}
+									// Stop this animated beam when it has lingered too long, reaches the target, or the player moves
+									if (t >= WAYPOINT_SLOW_BEAM_MAX_TICKS
+										|| particleLoc.distance(targetLoc) < 1.5
+										|| player.getLocation().distance(playerStartLoc) > WAYPOINT_PLAYER_MOVE_THRESH) {
+										this.cancel();
+									}
 								}
-							}
-						}.runTaskTimer(mPlugin, 0, WAYPOINT_SLOW_BEAM_TICK_PERIOD);
+							}.runTaskTimer(mPlugin, 0, WAYPOINT_SLOW_BEAM_TICK_PERIOD);
+						}
 					}
 				}
 			}

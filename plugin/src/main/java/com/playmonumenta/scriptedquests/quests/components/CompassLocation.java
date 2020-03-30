@@ -65,7 +65,7 @@ public class CompassLocation implements QuestLocation {
 				}
 				z = zElement.getAsInt();
 
-				mWaypoints.add(new Location(world, x, y, z));
+				mWaypoints.add(new Location(world, x + 0.5, y, z + 0.5));
 			}
 
 		} else {
@@ -85,7 +85,7 @@ public class CompassLocation implements QuestLocation {
 			}
 			z = zElement.getAsInt();
 
-			mWaypoints.add(new Location(world, x, -1, z));
+			mWaypoints.add(new Location(world, x + 0.5, -1, z + 0.5));
 		}
 
 		// Read message
