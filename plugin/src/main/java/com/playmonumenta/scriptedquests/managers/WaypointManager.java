@@ -136,6 +136,10 @@ public class WaypointManager {
 						continue;
 					}
 
+					if (player.getScoreboardTags().contains("noCompassParticles")) {
+						continue;
+					}
+
 					// Spawn slow-moving helix at the target location if it is close enough to be seen
 					if (targetDist < WAYPOINT_DEST_ANIM_MAX_DIST) {
 						new BukkitRunnable() {
@@ -227,11 +231,9 @@ public class WaypointManager {
 	public void setWaypoint(Player player, List<Location> waypoints) {
 		if (waypoints == null || waypoints.isEmpty()) {
 			mPlayers.remove(player);
+			return;
 		}
-		if (!player.getScoreboardTags().contains("noCompassParticles")) {
-			// This player has compass particles enabled
-			mPlayers.put(player, waypoints);
-		}
+		mPlayers.put(player, waypoints);
 		ensureTaskIsRunning();
 	}
 }
