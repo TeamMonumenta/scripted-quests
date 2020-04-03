@@ -169,7 +169,13 @@ public class PlayerListener implements Listener {
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void playerJoinEvent(PlayerJoinEvent event) {
 		// Handle login quest events
-		mPlugin.mLoginManager.loginEvent(mPlugin, event);
+		// TODO: This works around an annoying interaction with Monumenta player data transfer. It should be removed later.
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				mPlugin.mLoginManager.loginEvent(mPlugin, event);
+			}
+		}.runTaskLater(mPlugin, 3);
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
