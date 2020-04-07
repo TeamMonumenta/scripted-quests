@@ -215,7 +215,7 @@ public class ZoneLayer<T> {
 	 * Used to handle ZoneLayers from other plugins. This should only be called by the ZoneManager
 	 * and the ZoneLayer constructor.
 	 */
-	public void reloadFragments(CommandSender sender) throws Exception {
+	public void reloadFragments(CommandSender sender) {
 		for (Zone<T> zone : mZones) {
 			zone.reloadFragments();
 		}
@@ -265,7 +265,7 @@ public class ZoneLayer<T> {
 		return null;
 	}
 
-	private void removeOverlaps(CommandSender sender, List<Zone<T>> zones) throws Exception {
+	private void removeOverlaps(CommandSender sender, List<Zone<T>> zones) {
 		for (int i = 0; i < zones.size(); i++) {
 			Zone<T> outer = zones.get(i);
 			for (Zone<T> inner : zones.subList(i + 1, zones.size())) {
