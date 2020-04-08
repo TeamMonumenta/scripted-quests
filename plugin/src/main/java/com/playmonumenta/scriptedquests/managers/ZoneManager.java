@@ -501,8 +501,15 @@ public class ZoneManager {
 			if (fragmentParents.size() == 0) {
 				sender.sendMessage("Fragment has no parent zones! Where did it come from?");
 			}
+			sender.sendMessage("Fragment parents:");
 			for (Zone<T> zone : fragmentParents.values()) {
 				sender.sendMessage(zone.toString());
+			}
+			sender.sendMessage("Fragment parents and eclipsed:");
+			for (List<Zone<T>> zones : cachedFragment.getParentsAndEclipsed().values()) {
+				for (Zone<T> zone : zones) {
+					sender.sendMessage(zone.toString());
+				}
 			}
 		}
 
@@ -565,8 +572,15 @@ public class ZoneManager {
 		if (fragmentParents.size() == 0) {
 			sender.sendMessage("Fragment has no parent zones! Where did it come from?");
 		}
+		sender.sendMessage("Fragment parents:");
 		for (Zone<T> zone : fragmentParents.values()) {
 			sender.sendMessage(zone.toString());
+		}
+		sender.sendMessage("Fragment parents and eclipsed:");
+		for (List<Zone<T>> zones : fragment.getParentsAndEclipsed().values()) {
+			for (Zone<T> zone : zones) {
+				sender.sendMessage(zone.toString());
+			}
 		}
 	}
 }

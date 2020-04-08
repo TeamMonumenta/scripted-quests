@@ -52,7 +52,7 @@ public class ZoneLayer<T> {
 		mName = object.get("name").getAsString();
 
 		// Load whether this layer is hidden by default on the dynmap
-		if (object.get("hidden") == null &&
+		if (object.get("hidden") != null &&
 		    object.get("hidden").getAsBoolean()) {
 			mHidden = object.get("hidden").getAsBoolean();
 		}
