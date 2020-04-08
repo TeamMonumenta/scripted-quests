@@ -63,13 +63,15 @@ public class ZoneManager {
 			return false;
 		}
 
-		mLayers.put(layerName, layer);
+		mPluginLayers.put(layerName, layer);
 		reload(mPlugin, null);
 		return true;
 	}
 
 	/*
 	 * Unregister a ZoneLayer from an external plugin.
+	 *
+	 * Be sure to call invalidate() on the old layer before discarding to ease garbage collection.
 	 *
 	 * Returns true on success, false on failure.
 	 */
@@ -79,6 +81,25 @@ public class ZoneManager {
 		}
 
 		mPluginLayers.remove(layerName);
+		reload(mPlugin, null);
+		return true;
+	}
+
+	/*
+	 * Replace a ZoneLayer from an external plugin.
+	 *
+	 * Be sure to call invalidate() on the old layer before discarding to ease garbage collection.
+	 *
+	 * Returns true on success, false on failure.
+	 */
+	public boolean replacePluginZoneLayer(ZoneLayer<T> layer) {
+		if (layer == null) {
+			return false;
+		}
+
+		String layerName = layer.getName();
+
+		mPluginLayers.put(layerName, layer);
 		reload(mPlugin, null);
 		return true;
 	}
@@ -202,6 +223,11 @@ public class ZoneManager {
 		}
 		mLayers.clear();
 		ZoneLayer.clearDynmapLayers();
+
+		// Refresh plugin layers
+		for (ZoneLayer<T> layer : mPluginLayers.values()) {
+			layer.reloadFragments(sender);
+		}
 
 		mLayers.putAll(mPluginLayers);
 		QuestUtils.loadScriptedQuests(plugin, "zone_layers", sender, (object) -> {
@@ -475,8 +501,15 @@ public class ZoneManager {
 			if (fragmentParents.size() == 0) {
 				sender.sendMessage("Fragment has no parent zones! Where did it come from?");
 			}
+			sender.sendMessage("Fragment parents:");
 			for (Zone<T> zone : fragmentParents.values()) {
 				sender.sendMessage(zone.toString());
+			}
+			sender.sendMessage("Fragment parents and eclipsed:");
+			for (List<Zone<T>> zones : cachedFragment.getParentsAndEclipsed().values()) {
+				for (Zone<T> zone : zones) {
+					sender.sendMessage(zone.toString());
+				}
 			}
 		}
 
@@ -539,8 +572,15 @@ public class ZoneManager {
 		if (fragmentParents.size() == 0) {
 			sender.sendMessage("Fragment has no parent zones! Where did it come from?");
 		}
+		sender.sendMessage("Fragment parents:");
 		for (Zone<T> zone : fragmentParents.values()) {
 			sender.sendMessage(zone.toString());
+		}
+		sender.sendMessage("Fragment parents and eclipsed:");
+		for (List<Zone<T>> zones : fragment.getParentsAndEclipsed().values()) {
+			for (Zone<T> zone : zones) {
+				sender.sendMessage(zone.toString());
+			}
 		}
 	}
 }

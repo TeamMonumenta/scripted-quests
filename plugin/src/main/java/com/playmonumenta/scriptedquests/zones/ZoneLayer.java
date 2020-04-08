@@ -32,6 +32,7 @@ public class ZoneLayer<T> {
 	public static final String DYNMAP_PREFIX = "SQZone";
 
 	private String mName;
+	private boolean mHidden = false;
 	private List<Zone<T>> mZones = new ArrayList<Zone<T>>();
 
 	/*
@@ -50,6 +51,11 @@ public class ZoneLayer<T> {
 		}
 		mName = object.get("name").getAsString();
 
+		// Load whether this layer is hidden by default on the dynmap
+		if (object.get("hidden") != null &&
+		    object.get("hidden").getAsBoolean()) {
+			mHidden = object.get("hidden").getAsBoolean();
+		}
 
 		// Load the property groups - why yes, this section is rather long.
 		if (object.get("property_groups") == null ||
@@ -145,6 +151,11 @@ public class ZoneLayer<T> {
 		mName = name;
 	}
 
+	public ZoneLayer(String name, boolean hidden) {
+		mName = name;
+		mHidden = hidden;
+	}
+
 	/*
 	 * Interface to add a zone from external plugins. First zone added has the highest priority.
 	 *
@@ -204,15 +215,13 @@ public class ZoneLayer<T> {
 	 * Used to handle ZoneLayers from other plugins. This should only be called by the ZoneManager
 	 * and the ZoneLayer constructor.
 	 */
-	public void reloadFragments(CommandSender sender) throws Exception {
+	public void reloadFragments(CommandSender sender) {
 		for (Zone<T> zone : mZones) {
 			zone.reloadFragments();
 		}
 
 		// Split the zones into non-overlapping fragments
 		removeOverlaps(sender, mZones);
-
-		// TODO Defragment to reduce fragment count (approx 2-3x on average)
 
 		if (Plugin.getInstance().mShowZonesDynmap) {
 			refreshDynmapLayer();
@@ -256,7 +265,7 @@ public class ZoneLayer<T> {
 		return null;
 	}
 
-	private void removeOverlaps(CommandSender sender, List<Zone<T>> zones) throws Exception {
+	private void removeOverlaps(CommandSender sender, List<Zone<T>> zones) {
 		for (int i = 0; i < zones.size(); i++) {
 			Zone<T> outer = zones.get(i);
 			for (Zone<T> inner : zones.subList(i + 1, zones.size())) {
@@ -348,6 +357,9 @@ public class ZoneLayer<T> {
 		}
 		// Create a new marker set
 		markerSet = markerHook.createMarkerSet(markerSetId, mName, null, false);
+
+		// Mark hidden if needed
+		markerSet.setHideByDefault(mHidden);
 
 		// Zones reversed so clicking on the overlap of two zones returns the highest priority zone.
 		// This isn't 100% consistent either way, but it's more consistent like this without needing

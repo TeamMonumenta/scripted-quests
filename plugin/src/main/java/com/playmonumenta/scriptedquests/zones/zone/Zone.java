@@ -254,6 +254,12 @@ public class Zone<T> extends BaseZone {
 		}
 	}
 
+	public boolean equals(Zone<T> other) {
+		return (super.equals(other) &&
+		        getLayerName().equals(other.getLayerName()) &&
+		        getName().equals(other.getName()));
+	}
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public boolean equals(Object o) {
