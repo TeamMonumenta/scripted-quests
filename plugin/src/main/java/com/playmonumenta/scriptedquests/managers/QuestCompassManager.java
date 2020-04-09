@@ -52,6 +52,7 @@ public class QuestCompassManager {
 
 	private final List<QuestCompass> mQuests = new ArrayList<QuestCompass>();
 	private final Map<UUID, CompassCacheEntry> mCompassCache = new HashMap<UUID, CompassCacheEntry>();
+	private final Map<Player, Integer> mCurrentIndex = new HashMap<>();
 	private final Plugin mPlugin;
 
 	public QuestCompassManager(Plugin plugin) {
@@ -142,16 +143,23 @@ public class QuestCompassManager {
 	}
 
 	public void showCurrentQuest(Player player) {
-		int index = ScoreboardUtils.getScoreboardValue(player, "locationIndex");
+		Integer index = mCurrentIndex.get(player);
+		if (index == null) {
+			index = 0;
+		}
 
 		showCurrentQuest(player, index);
 	}
 
 	public void cycleQuestTracker(Player player) {
-		int index = ScoreboardUtils.getScoreboardValue(player, "locationIndex") + 1;
+		Integer index = mCurrentIndex.get(player);
+		if (index == null) {
+			index = 0;
+		}
+		index += 1;
 
 		index = showCurrentQuest(player, index);
 
-		ScoreboardUtils.setScoreboardValue(player, "locationIndex", index);
+		mCurrentIndex.put(player, index);
 	}
 }
