@@ -6,12 +6,12 @@ import org.dynmap.markers.MarkerSet;
 
 import com.playmonumenta.scriptedquests.zones.zone.ZoneFragment;
 
-public class EmptyZoneTree<T> extends BaseZoneTree<T> {
+public class EmptyZoneTree extends BaseZoneTree {
 	public void invalidate() {
 		// Nothing to do! Still needs to be a valid method, though.
 	}
 
-	public ZoneFragment<T> getZoneFragment(Vector loc) {
+	public ZoneFragment getZoneFragment(Vector loc) {
 		return null;
 	}
 

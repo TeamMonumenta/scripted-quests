@@ -28,16 +28,14 @@ import com.playmonumenta.scriptedquests.zones.zonetree.BaseZoneTree;
 
 public class ZoneManager {
 	/* Currently unused - the Zone Manager doesn't need to store any extra data on the Zone objects themselves */
-	private static class T { }
-
 	private Plugin mPlugin;
 	static BukkitRunnable mPlayerTracker = null;
 
-	private Map<String, ZoneLayer<T>> mLayers = new HashMap<String, ZoneLayer<T>>();
-	private Map<String, ZoneLayer<T>> mPluginLayers = new HashMap<String, ZoneLayer<T>>();
-	private BaseZoneTree<T> mZoneTree = null;
-	private Map<Player, ZoneFragment<T>> mLastPlayerZoneFragment = new HashMap<Player, ZoneFragment<T>>();
-	private Map<Player, Map<String, Zone<T>>> mLastPlayerZones = new HashMap<Player, Map<String, Zone<T>>>();
+	private Map<String, ZoneLayer> mLayers = new HashMap<String, ZoneLayer>();
+	private Map<String, ZoneLayer> mPluginLayers = new HashMap<String, ZoneLayer>();
+	private BaseZoneTree mZoneTree = null;
+	private Map<Player, ZoneFragment> mLastPlayerZoneFragment = new HashMap<Player, ZoneFragment>();
+	private Map<Player, Map<String, Zone>> mLastPlayerZones = new HashMap<Player, Map<String, Zone>>();
 
 	public ZoneManager(Plugin plugin) {
 		mPlugin = plugin;
@@ -52,7 +50,7 @@ public class ZoneManager {
 	 *
 	 * Returns true on success, false on failure.
 	 */
-	public boolean registerPluginZoneLayer(ZoneLayer<T> layer) {
+	public boolean registerPluginZoneLayer(ZoneLayer layer) {
 		if (layer == null) {
 			return false;
 		}
@@ -92,7 +90,7 @@ public class ZoneManager {
 	 *
 	 * Returns true on success, false on failure.
 	 */
-	public boolean replacePluginZoneLayer(ZoneLayer<T> layer) {
+	public boolean replacePluginZoneLayer(ZoneLayer layer) {
 		if (layer == null) {
 			return false;
 		}
@@ -110,11 +108,11 @@ public class ZoneManager {
 	 *
 	 * If fallback zone lookup is enabled, this should be avoided.
 	 */
-	public ZoneFragment<T> getZoneFragment(Vector loc) {
+	public ZoneFragment getZoneFragment(Vector loc) {
 		return mZoneTree.getZoneFragment(loc);
 	}
 
-	public ZoneFragment<T> getZoneFragment(Location loc) {
+	public ZoneFragment getZoneFragment(Location loc) {
 		if (loc == null) {
 			return null;
 		}
@@ -123,13 +121,13 @@ public class ZoneManager {
 	}
 
 	// For a given location, return the zones that contain it.
-	public Map<String, Zone<T>> getZones(Vector loc) {
+	public Map<String, Zone> getZones(Vector loc) {
 		return getZonesInternal(loc, mPlugin.mFallbackZoneLookup);
 	}
 
-	public Map<String, Zone<T>> getZones(Location loc) {
+	public Map<String, Zone> getZones(Location loc) {
 		if (loc == null) {
-			return new HashMap<String, Zone<T>>();
+			return new HashMap<String, Zone>();
 		}
 
 		return mZoneTree.getZones(loc.toVector());
@@ -139,9 +137,9 @@ public class ZoneManager {
 	 * For a given layer and location, return the zone that
 	 * contains it. Returns null if no zone overlaps it.
 	 */
-	public Zone<T> getZone(Vector loc, String layer) {
+	public Zone getZone(Vector loc, String layer) {
 		if (mPlugin.mFallbackZoneLookup) {
-			ZoneLayer<T> zoneLayer = mLayers.get(layer);
+			ZoneLayer zoneLayer = mLayers.get(layer);
 			if (zoneLayer == null) {
 				return null;
 			}
@@ -151,7 +149,7 @@ public class ZoneManager {
 		}
 	}
 
-	public Zone<T> getZone(Location loc, String layer) {
+	public Zone getZone(Location loc, String layer) {
 		if (loc == null) {
 			return null;
 		}
@@ -160,7 +158,7 @@ public class ZoneManager {
 	}
 
 	public boolean hasProperty(Vector loc, String layerName, String propertyName) {
-		Zone<T> zone = getZone(loc, layerName);
+		Zone zone = getZone(loc, layerName);
 		if (zone == null) {
 			return false;
 		}
@@ -181,19 +179,19 @@ public class ZoneManager {
 				return false;
 			}
 
-			Map<String, Zone<T>> zones = mLastPlayerZones.get(player);
+			Map<String, Zone> zones = mLastPlayerZones.get(player);
 			if (zones == null) {
 				return false;
 			}
 
-			Zone<T> zone = zones.get(layerName);
+			Zone zone = zones.get(layerName);
 			if (zone == null) {
 				return false;
 			}
 
 			return zone.hasProperty(propertyName);
 		} else {
-			ZoneFragment<T> lastFragment = mLastPlayerZoneFragment.get(player);
+			ZoneFragment lastFragment = mLastPlayerZoneFragment.get(player);
 			if (lastFragment == null) {
 				return false;
 			}
@@ -217,7 +215,7 @@ public class ZoneManager {
 	 * clock speeds while the tree is loading. We have options.
 	 */
 	public void reload(Plugin plugin, CommandSender sender) {
-		for (ZoneLayer<T> layer : mLayers.values()) {
+		for (ZoneLayer layer : mLayers.values()) {
 			// Cause zones to stop tracking their fragments; speeds up garbage collection.
 			layer.invalidate();
 		}
@@ -225,14 +223,14 @@ public class ZoneManager {
 		ZoneLayer.clearDynmapLayers();
 
 		// Refresh plugin layers
-		for (ZoneLayer<T> layer : mPluginLayers.values()) {
+		for (ZoneLayer layer : mPluginLayers.values()) {
 			layer.reloadFragments(sender);
 		}
 
 		mLayers.putAll(mPluginLayers);
 		QuestUtils.loadScriptedQuests(plugin, "zone_layers", sender, (object) -> {
 			// Load this file into a ZoneLayer object
-			ZoneLayer<T> layer = new ZoneLayer<T>(sender, object);
+			ZoneLayer layer = new ZoneLayer(sender, object);
 			String layerName = layer.getName();
 
 			if (mLayers.containsKey(layerName)) {
@@ -248,24 +246,24 @@ public class ZoneManager {
 		mergeLayers();
 
 		// Create list of zones
-		List<Zone<T>> zones = new ArrayList<Zone<T>>();
-		for (ZoneLayer<T> layer : mLayers.values()) {
+		List<Zone> zones = new ArrayList<Zone>();
+		for (ZoneLayer layer : mLayers.values()) {
 			zones.addAll(layer.getZones());
 		}
 
 		// Defragment to reduce fragment count (approx 2-3x on average). This takes a long time.
-		for (Zone<T> zone : zones) {
+		for (Zone zone : zones) {
 			zone.defragment();
 		}
 
 		// Create list of all zone fragments.
-		List<ZoneFragment<T>> zoneFragments = new ArrayList<ZoneFragment<T>>();
-		for (Zone<T> zone : zones) {
+		List<ZoneFragment> zoneFragments = new ArrayList<ZoneFragment>();
+		for (Zone zone : zones) {
 			zoneFragments.addAll(zone.getZoneFragments());
 		}
 
 		// Create the new tree. This could take a long time with enough fragments.
-		BaseZoneTree<T> newTree;
+		BaseZoneTree newTree;
 		try {
 			newTree = BaseZoneTree.createZoneTree(zoneFragments);
 		} catch (Exception e) {
@@ -287,7 +285,7 @@ public class ZoneManager {
 		}
 
 		// Swap the tree out; this is really fast!
-		BaseZoneTree<T> oldTree = mZoneTree;
+		BaseZoneTree oldTree = mZoneTree;
 		mZoneTree = newTree;
 		if (oldTree != null) {
 			// Force all fragments to consider all locations as outside themselves
@@ -304,16 +302,16 @@ public class ZoneManager {
 
 					if (mPlugin.mFallbackZoneLookup) {
 						// getZones() will use fallback zone lookup in this case
-						Map<String, Zone<T>> currentZones = getZones(playerVector);
+						Map<String, Zone> currentZones = getZones(playerVector);
 						// Need to check all layer names, not just the ones the player is in
 						for (String layerName : mLayers.keySet()) {
-							Zone<T> currentZone = currentZones.get(layerName);
+							Zone currentZone = currentZones.get(layerName);
 							// Handles comparing to previous zone if needed
 							applyZoneChange(player, layerName, currentZone);
 						}
 					}
 
-					ZoneFragment<T> lastZoneFragment = mLastPlayerZoneFragment.get(player);
+					ZoneFragment lastZoneFragment = mLastPlayerZoneFragment.get(player);
 					if (lastZoneFragment != null && lastZoneFragment.within(playerVector)) {
 						// Player has not left their previous zone fragment; no zone change.
 						// Note that reloading invalidates previous zones, causing within() to
@@ -321,7 +319,7 @@ public class ZoneManager {
 						continue;
 					}
 
-					ZoneFragment<T> currentZoneFragment = getZoneFragment(playerVector);
+					ZoneFragment currentZoneFragment = getZoneFragment(playerVector);
 					if (lastZoneFragment == null && currentZoneFragment == null) {
 						// Player was not in a previous zone fragment, and isn't in one now; no zone change.
 						continue;
@@ -336,14 +334,14 @@ public class ZoneManager {
 	}
 
 	// For a given location, return the zones that contain it.
-	private Map<String, Zone<T>> getZonesInternal(Vector loc, boolean fallbackZoneLookup) {
+	private Map<String, Zone> getZonesInternal(Vector loc, boolean fallbackZoneLookup) {
 		if (fallbackZoneLookup) {
-			Map<String, Zone<T>> result = new HashMap<String, Zone<T>>();
-			for (Map.Entry<String, ZoneLayer<T>> entry : mLayers.entrySet()) {
+			Map<String, Zone> result = new HashMap<String, Zone>();
+			for (Map.Entry<String, ZoneLayer> entry : mLayers.entrySet()) {
 				String layerName = entry.getKey();
-				ZoneLayer<T> zoneLayer = entry.getValue();
+				ZoneLayer zoneLayer = entry.getValue();
 
-				Zone<T> zone = zoneLayer.fallbackGetZone(loc);
+				Zone zone = zoneLayer.fallbackGetZone(loc);
 				if (zone != null) {
 					result.put(layerName, zone);
 				}
@@ -365,15 +363,15 @@ public class ZoneManager {
 		}
 	}
 
-	private void applyFragmentChange(Player player, ZoneFragment<T> currentZoneFragment) {
-		ZoneFragment<T> lastZoneFragment = mLastPlayerZoneFragment.get(player);
+	private void applyFragmentChange(Player player, ZoneFragment currentZoneFragment) {
+		ZoneFragment lastZoneFragment = mLastPlayerZoneFragment.get(player);
 
-		Map<String, Zone<T>> lastZones = new HashMap<String, Zone<T>>();
+		Map<String, Zone> lastZones = new HashMap<String, Zone>();
 		if (lastZoneFragment != null) {
 			lastZones = lastZoneFragment.getParents();
 		}
 
-		Map<String, Zone<T>> currentZones = new HashMap<String, Zone<T>>();
+		Map<String, Zone> currentZones = new HashMap<String, Zone>();
 		if (currentZoneFragment != null) {
 			currentZones = currentZoneFragment.getParents();
 		}
@@ -394,21 +392,21 @@ public class ZoneManager {
 			mentionedLayerNames.addAll(currentZones.keySet());
 			for (String layerName : mentionedLayerNames) {
 				// Null zones are valid - indicates no zone.
-				Zone<T> currentZone = currentZones.get(layerName);
+				Zone currentZone = currentZones.get(layerName);
 				applyZoneChange(player, layerName, currentZone);
 			}
 		}
 	}
 
-	private void applyZoneChange(Player player, String layerName, Zone<T> currentZone) {
+	private void applyZoneChange(Player player, String layerName, Zone currentZone) {
 		// Null zones are valid - indicates no zone.
-		Map<String, Zone<T>> lastZones = mLastPlayerZones.get(player);
+		Map<String, Zone> lastZones = mLastPlayerZones.get(player);
 		if (lastZones == null) {
-			lastZones = new HashMap<String, Zone<T>>();
+			lastZones = new HashMap<String, Zone>();
 			mLastPlayerZones.put(player, lastZones);
 		}
 
-		Zone<T> lastZone = lastZones.get(layerName);
+		Zone lastZone = lastZones.get(layerName);
 		if (lastZone == currentZone) {
 			// Nothing to do!
 			return;
@@ -458,21 +456,21 @@ public class ZoneManager {
 	}
 
 	private void mergeLayers() {
-		List<ZoneLayer<T>> layers = new ArrayList<ZoneLayer<T>>(mLayers.values());
+		List<ZoneLayer> layers = new ArrayList<ZoneLayer>(mLayers.values());
 
 		int numLayers = layers.size();
 		for (int i = 0; i < numLayers; i++) {
-			ZoneLayer<T> outer = layers.get(i);
+			ZoneLayer outer = layers.get(i);
 			for (int j = i + 1; j < numLayers; j++) {
-				ZoneLayer<T> inner = layers.get(j);
+				ZoneLayer inner = layers.get(j);
 				mergeLayers(outer, inner);
 			}
 		}
 	}
 
-	private void mergeLayers(ZoneLayer<T> outerLayer, ZoneLayer<T> innerLayer) {
-		for (Zone<T> outerZone : outerLayer.getZones()) {
-			for (Zone<T> innerZone : innerLayer.getZones()) {
+	private void mergeLayers(ZoneLayer outerLayer, ZoneLayer innerLayer) {
+		for (Zone outerZone : outerLayer.getZones()) {
+			for (Zone innerZone : innerLayer.getZones()) {
 				BaseZone overlap = outerZone.overlappingZone(innerZone);
 				if (overlap == null) {
 					continue;
@@ -491,23 +489,23 @@ public class ZoneManager {
 
 		sender.sendMessage("Cached player info according to zone fragment tree:");
 
-		ZoneFragment<T> cachedFragment = mLastPlayerZoneFragment.get(player);
+		ZoneFragment cachedFragment = mLastPlayerZoneFragment.get(player);
 		if (cachedFragment == null) {
 			sender.sendMessage("Target is not in any zone.");
 		} else {
 			sender.sendMessage(cachedFragment.toString());
 
-			Map<String, Zone<T>> fragmentParents = cachedFragment.getParents();
+			Map<String, Zone> fragmentParents = cachedFragment.getParents();
 			if (fragmentParents.size() == 0) {
 				sender.sendMessage("Fragment has no parent zones! Where did it come from?");
 			}
 			sender.sendMessage("Fragment parents:");
-			for (Zone<T> zone : fragmentParents.values()) {
+			for (Zone zone : fragmentParents.values()) {
 				sender.sendMessage(zone.toString());
 			}
 			sender.sendMessage("Fragment parents and eclipsed:");
-			for (List<Zone<T>> zones : cachedFragment.getParentsAndEclipsed().values()) {
-				for (Zone<T> zone : zones) {
+			for (List<Zone> zones : cachedFragment.getParentsAndEclipsed().values()) {
+				for (Zone zone : zones) {
 					sender.sendMessage(zone.toString());
 				}
 			}
@@ -516,14 +514,14 @@ public class ZoneManager {
 		if (mPlugin.mFallbackZoneLookup) {
 			sender.sendMessage("Cached player info according to slow/reliable method:");
 
-			Map<String, Zone<T>> cachedZones = mLastPlayerZones.get(player);
+			Map<String, Zone> cachedZones = mLastPlayerZones.get(player);
 			if (cachedZones == null) {
 				sender.sendMessage("Target is not in any zone.");
 			} else {
 				if (cachedZones.size() == 0) {
 					sender.sendMessage("Target is not in any zone, but an empty map is left over.");
 				}
-				for (Zone<T> cachedZone : cachedZones.values()) {
+				for (Zone cachedZone : cachedZones.values()) {
 					sender.sendMessage(cachedZone.toString());
 				}
 			}
@@ -534,8 +532,8 @@ public class ZoneManager {
 	}
 
 	public void sendDebug(CommandSender sender, Vector loc) {
-		Map<String, Zone<T>> fallbackZones = getZonesInternal(loc, true);
-		Map<String, Zone<T>> fastZones = getZonesInternal(loc, false);
+		Map<String, Zone> fallbackZones = getZonesInternal(loc, true);
+		Map<String, Zone> fastZones = getZonesInternal(loc, false);
 		if (fallbackZones == null && fastZones == null) {
 			sender.sendMessage("Fast lookup matches slow/reliable lookup (both null)");
 		} else if (fallbackZones == null || fastZones == null || !fallbackZones.equals(fastZones)) {
@@ -548,7 +546,7 @@ public class ZoneManager {
 				if (fallbackZones.size() == 0) {
 					sender.sendMessage("Target is not in any zone, but an empty map is left over.");
 				}
-				for (Zone<T> fallbackZone : fallbackZones.values()) {
+				for (Zone fallbackZone : fallbackZones.values()) {
 					sender.sendMessage(fallbackZone.toString());
 				}
 			}
@@ -557,7 +555,7 @@ public class ZoneManager {
 		}
 
 		sender.sendMessage("Fast lookup version:");
-		ZoneFragment<T> fragment = getZoneFragment(loc);
+		ZoneFragment fragment = getZoneFragment(loc);
 		if (fragment == null) {
 			sender.sendMessage("Target is not in any zone.");
 			return;
@@ -568,17 +566,17 @@ public class ZoneManager {
 		}
 		sender.sendMessage(fragment.toString());
 
-		Map<String, Zone<T>> fragmentParents = fragment.getParents();
+		Map<String, Zone> fragmentParents = fragment.getParents();
 		if (fragmentParents.size() == 0) {
 			sender.sendMessage("Fragment has no parent zones! Where did it come from?");
 		}
 		sender.sendMessage("Fragment parents:");
-		for (Zone<T> zone : fragmentParents.values()) {
+		for (Zone zone : fragmentParents.values()) {
 			sender.sendMessage(zone.toString());
 		}
 		sender.sendMessage("Fragment parents and eclipsed:");
-		for (List<Zone<T>> zones : fragment.getParentsAndEclipsed().values()) {
-			for (Zone<T> zone : zones) {
+		for (List<Zone> zones : fragment.getParentsAndEclipsed().values()) {
+			for (Zone zone : zones) {
 				sender.sendMessage(zone.toString());
 			}
 		}

@@ -28,12 +28,12 @@ import com.playmonumenta.scriptedquests.zones.zonetree.BaseZoneTree;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
 
-public class ZoneLayer<T> {
+public class ZoneLayer {
 	public static final String DYNMAP_PREFIX = "SQZone";
 
 	private String mName;
 	private boolean mHidden = false;
-	private List<Zone<T>> mZones = new ArrayList<Zone<T>>();
+	private List<Zone> mZones = new ArrayList<Zone>();
 
 	/*
 	 * This should only be called by the ZoneManager.
@@ -131,7 +131,7 @@ public class ZoneLayer<T> {
 			if (zoneElement.getAsJsonObject() == null) {
 				throw new Exception("Failed to parse 'zones[" + Integer.toString(zoneIndex) + "]'");
 			}
-			mZones.add(Zone.constructFromJson(this, zoneElement.getAsJsonObject(), propertyGroups, (T)null));
+			mZones.add(Zone.constructFromJson(this, zoneElement.getAsJsonObject(), propertyGroups));
 			zoneIndex++;
 		}
 
@@ -162,25 +162,27 @@ public class ZoneLayer<T> {
 	 * pos1 and pos2 define the bounds of the zone, similar to /fill. Order doesn't matter.
 	 * name is the name of the zone.
 	 * properties is the set of properties for the zone.
-	 * tag is an object that the calling plugin would like to be associated
-	 *   with the zone for easy reference later
 	 *
 	 * Property group support is not provided for this method. Your plugin will need to
 	 * handle that on its own.
 	 */
-	public boolean addZone(Vector pos1, Vector pos2, String name, Set<String> properties, T tag) {
-		Zone<T> zone = null;
+	public boolean addZone(Vector pos1, Vector pos2, String name, Set<String> properties) {
+		Zone zone = null;
 
 		try {
-			zone = new Zone<T>(this, pos1, pos2, name, properties, tag);
+			zone = new Zone(this, pos1, pos2, name, properties);
 		} catch (Exception e) {
 			return false;
 		}
 
-		if (mZones.add(zone)) {
-			return true;
-		}
-		return false;
+		return addZone(zone);
+	}
+
+	/*
+	 * Interface to add a zone from external plugins. First zone added has the highest priority.
+	 */
+	public boolean addZone(Zone zone) {
+		return mZones.add(zone);
 	}
 
 	/*
@@ -193,12 +195,12 @@ public class ZoneLayer<T> {
 	 *
 	 * Returns a subclass of BaseZoneTree.
 	 */
-	public BaseZoneTree<T> createZoneTree(CommandSender sender) throws Exception {
+	public BaseZoneTree createZoneTree(CommandSender sender) throws Exception {
 		reloadFragments(sender);
 
 		// Create list of all zone fragments.
-		List<ZoneFragment<T>> zoneFragments = new ArrayList<ZoneFragment<T>>();
-		for (Zone<T> zone : mZones) {
+		List<ZoneFragment> zoneFragments = new ArrayList<ZoneFragment>();
+		for (Zone zone : mZones) {
 			zoneFragments.addAll(zone.getZoneFragments());
 		}
 
@@ -216,7 +218,7 @@ public class ZoneLayer<T> {
 	 * and the ZoneLayer constructor.
 	 */
 	public void reloadFragments(CommandSender sender) {
-		for (Zone<T> zone : mZones) {
+		for (Zone zone : mZones) {
 			zone.reloadFragments();
 		}
 
@@ -237,7 +239,7 @@ public class ZoneLayer<T> {
 	 * This should only be called by the ZoneManager.
 	 */
 	public void invalidate() {
-		for (Zone<T> zone : mZones) {
+		for (Zone zone : mZones) {
 			zone.invalidate();
 		}
 	}
@@ -246,8 +248,8 @@ public class ZoneLayer<T> {
 		return mName;
 	}
 
-	public List<Zone<T>> getZones() {
-		List<Zone<T>> result = new ArrayList<Zone<T>>();
+	public List<Zone> getZones() {
+		List<Zone> result = new ArrayList<Zone>();
 		result.addAll(mZones);
 		return result;
 	}
@@ -255,8 +257,8 @@ public class ZoneLayer<T> {
 	/*
 	 * Use this only as a fallback; it's slower than using a zone tree.
 	 */
-	public Zone<T> fallbackGetZone(Vector loc) {
-		for (Zone<T> zone : mZones) {
+	public Zone fallbackGetZone(Vector loc) {
+		for (Zone zone : mZones) {
 			if (zone.within(loc)) {
 				return zone;
 			}
@@ -265,10 +267,10 @@ public class ZoneLayer<T> {
 		return null;
 	}
 
-	private void removeOverlaps(CommandSender sender, List<Zone<T>> zones) {
+	private void removeOverlaps(CommandSender sender, List<Zone> zones) {
 		for (int i = 0; i < zones.size(); i++) {
-			Zone<T> outer = zones.get(i);
-			for (Zone<T> inner : zones.subList(i + 1, zones.size())) {
+			Zone outer = zones.get(i);
+			for (Zone inner : zones.subList(i + 1, zones.size())) {
 				BaseZone overlap = outer.overlappingZone(inner);
 				if (overlap == null) {
 					continue;
@@ -365,7 +367,7 @@ public class ZoneLayer<T> {
 		// This isn't 100% consistent either way, but it's more consistent like this without needing
 		// to render every zone fragment (which is also an option).
 		for (int zoneIndex = mZones.size() - 1; zoneIndex >= 0; zoneIndex--) {
-			Zone<T> zone = mZones.get(zoneIndex);
+			Zone zone = mZones.get(zoneIndex);
 
 			String zoneLabel = zone.getName();
 			int zoneColor = ZoneUtils.getColor(mName, zoneLabel);

@@ -11,7 +11,7 @@ import org.dynmap.markers.MarkerSet;
 import com.playmonumenta.scriptedquests.utils.ZoneUtils;
 import com.playmonumenta.scriptedquests.zones.zone.ZoneFragment;
 
-public class ParentZoneTree<T> extends BaseZoneTree<T> {
+public class ParentZoneTree extends BaseZoneTree {
 	// The axis this node is split over.
 	private Axis mAxis;
 	// The pivot for mMore/mLess
@@ -20,8 +20,8 @@ public class ParentZoneTree<T> extends BaseZoneTree<T> {
 	private double mMin;
 	private double mMax;
 	// Branch that is Less/More than pivot
-	private BaseZoneTree<T> mLess;
-	private BaseZoneTree<T> mMore;
+	private BaseZoneTree mLess;
+	private BaseZoneTree mMore;
 
 	// Some zones may overlap the pivot
 	// Min coordinate of middle zones
@@ -29,11 +29,11 @@ public class ParentZoneTree<T> extends BaseZoneTree<T> {
 	// Max coordinate of middle zones
 	private double mMidMax;
 	// Branch that contains the pivot
-	private BaseZoneTree<T> mMid;
+	private BaseZoneTree mMid;
 
 	private static final Axis[] AXIS_ORDER = {Axis.X, Axis.Z, Axis.Y};
 
-	public ParentZoneTree(List<ZoneFragment<T>> zones) throws Exception {
+	public ParentZoneTree(List<ZoneFragment> zones) throws Exception {
 		/*
 		 * Local class is used to get best balance without
 		 * exposing incomplete results or creating tree nodes.
@@ -45,9 +45,9 @@ public class ParentZoneTree<T> extends BaseZoneTree<T> {
 			public double mPivot;
 			public double mMidMin;
 			public double mMidMax;
-			public List<ZoneFragment<T>> mLess = new ArrayList<ZoneFragment<T>>();
-			public List<ZoneFragment<T>> mMid = new ArrayList<ZoneFragment<T>>();
-			public List<ZoneFragment<T>> mMore = new ArrayList<ZoneFragment<T>>();
+			public List<ZoneFragment> mLess = new ArrayList<ZoneFragment>();
+			public List<ZoneFragment> mMid = new ArrayList<ZoneFragment>();
+			public List<ZoneFragment> mMore = new ArrayList<ZoneFragment>();
 		}
 
 		mFragmentCount = zones.size();
@@ -59,7 +59,7 @@ public class ParentZoneTree<T> extends BaseZoneTree<T> {
 		ParentData bestSplit = new ParentData();
 		bestSplit.mPriority = mFragmentCount;
 
-		for (ZoneFragment<T> pivotZone : zones) {
+		for (ZoneFragment pivotZone : zones) {
 			minVector = Vector.getMinimum(minVector, pivotZone.minCorner());
 			maxVector = Vector.getMaximum(maxVector, pivotZone.maxCornerExclusive());
 
@@ -74,7 +74,7 @@ public class ParentZoneTree<T> extends BaseZoneTree<T> {
 					testSplit.mMidMin = pivot;
 					testSplit.mMidMax = pivot;
 
-					for (ZoneFragment<T> zone : zones) {
+					for (ZoneFragment zone : zones) {
 						if (pivot >= ZoneUtils.vectorAxis(zone.maxCornerExclusive(), axis)) {
 							testSplit.mLess.add(zone);
 						} else if (pivot >= ZoneUtils.vectorAxis(zone.minCorner(), axis)) {
@@ -115,7 +115,7 @@ public class ParentZoneTree<T> extends BaseZoneTree<T> {
 			 * or handled properly.
 			 */
 			StringBuilder message = new StringBuilder("A serious plugin error has occured. Zones involved:");
-			for (ZoneFragment<T> zone : zones) {
+			for (ZoneFragment zone : zones) {
 				message.append("\n- " + zone.toString());
 			}
 			throw new Exception(message.toString());
@@ -132,12 +132,12 @@ public class ParentZoneTree<T> extends BaseZoneTree<T> {
 		mMore.invalidate();
 	}
 
-	public ZoneFragment<T> getZoneFragment(Vector loc) {
+	public ZoneFragment getZoneFragment(Vector loc) {
 		if (loc == null) {
 			return null;
 		}
 
-		ZoneFragment<T> result = null;
+		ZoneFragment result = null;
 		double test = ZoneUtils.vectorAxis(loc, mAxis);
 
 		// If the test point is outside this node, return null immediately.
