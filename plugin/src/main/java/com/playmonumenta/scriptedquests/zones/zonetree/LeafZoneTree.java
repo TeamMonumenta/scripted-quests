@@ -8,10 +8,10 @@ import org.dynmap.markers.AreaMarker;
 
 import com.playmonumenta.scriptedquests.zones.zone.ZoneFragment;
 
-public class LeafZoneTree<T> extends BaseZoneTree<T> {
-	private ZoneFragment<T> mZone;
+public class LeafZoneTree extends BaseZoneTree {
+	private ZoneFragment mZone;
 
-	public LeafZoneTree(ZoneFragment<T> zone) {
+	public LeafZoneTree(ZoneFragment zone) {
 		mFragmentCount = 1;
 		mZone = zone;
 	}
@@ -20,7 +20,7 @@ public class LeafZoneTree<T> extends BaseZoneTree<T> {
 		mZone.invalidate();
 	}
 
-	public ZoneFragment<T> getZoneFragment(Vector loc) {
+	public ZoneFragment getZoneFragment(Vector loc) {
 		if (mZone.within(loc)) {
 			return mZone;
 		} else {

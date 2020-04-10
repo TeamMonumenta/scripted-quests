@@ -15,17 +15,17 @@ import com.playmonumenta.scriptedquests.zones.ZoneLayer;
 import com.playmonumenta.scriptedquests.zones.zone.Zone;
 import com.playmonumenta.scriptedquests.zones.zone.ZoneFragment;
 
-public abstract class BaseZoneTree<T> {
+public abstract class BaseZoneTree {
 	protected int mFragmentCount = 0;
 
-	public static <T> BaseZoneTree<T> createZoneTree(List<ZoneFragment<T>> zones) throws Exception {
-		BaseZoneTree<T> result;
+	public static BaseZoneTree createZoneTree(List<ZoneFragment> zones) throws Exception {
+		BaseZoneTree result;
 		if (zones.size() == 0) {
-			result = new EmptyZoneTree<T>();
+			result = new EmptyZoneTree();
 		} else if (zones.size() == 1) {
-			result = new LeafZoneTree<T>(zones.get(0));
+			result = new LeafZoneTree(zones.get(0));
 		} else {
-			result = new ParentZoneTree<T>(zones);
+			result = new ParentZoneTree(zones);
 		}
 
 		if (Plugin.getInstance().mShowZonesDynmap) {
@@ -45,16 +45,16 @@ public abstract class BaseZoneTree<T> {
 	 * For a given location, return the fragment that contains it.
 	 * Returns null if no fragment overlaps it.
 	 */
-	public abstract ZoneFragment<T> getZoneFragment(Vector loc);
+	public abstract ZoneFragment getZoneFragment(Vector loc);
 
 	/*
 	 * For a given location, return the zones that contain it.
 	 */
-	public Map<String, Zone<T>> getZones(Vector loc) {
-		ZoneFragment<T> fragment = getZoneFragment(loc);
+	public Map<String, Zone> getZones(Vector loc) {
+		ZoneFragment fragment = getZoneFragment(loc);
 
 		if (fragment == null) {
-			return new HashMap<String, Zone<T>>();
+			return new HashMap<String, Zone>();
 		}
 
 		return fragment.getParents();
@@ -64,8 +64,8 @@ public abstract class BaseZoneTree<T> {
 	 * For a given location and layer name, return the zone that contains it.
 	 * Returns null if no zone overlaps it on that layer.
 	 */
-	public Zone<T> getZone(Vector loc, String layer) {
-		ZoneFragment<T> fragment = getZoneFragment(loc);
+	public Zone getZone(Vector loc, String layer) {
+		ZoneFragment fragment = getZoneFragment(loc);
 
 		if (fragment == null) {
 			return null;
@@ -75,7 +75,7 @@ public abstract class BaseZoneTree<T> {
 	}
 
 	public boolean hasProperty(Vector loc, String layerName, String propertyName) {
-		ZoneFragment<T> fragment = getZoneFragment(loc);
+		ZoneFragment fragment = getZoneFragment(loc);
 		return fragment != null && fragment.hasProperty(layerName, propertyName);
 	}
 

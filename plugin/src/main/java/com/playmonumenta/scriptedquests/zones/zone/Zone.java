@@ -17,14 +17,13 @@ import com.playmonumenta.scriptedquests.zones.ZoneLayer;
  * A zone, to be split into fragments. This class holds the name and properties, and the fragments determine
  * if a point is inside the zone after overlaps are taken into account.
  */
-public class Zone<T> extends BaseZone {
-	private final ZoneLayer<T> mLayer;
+public class Zone extends BaseZone {
+	private final ZoneLayer mLayer;
 	private final String mName;
-	private List<ZoneFragment<T>> mFragments = new ArrayList<ZoneFragment<T>>();
+	private List<ZoneFragment> mFragments = new ArrayList<ZoneFragment>();
 	private final Set<String> mProperties = new LinkedHashSet<String>();
-	private final T mTag;
 
-	public static <T> Zone<T> constructFromJson(ZoneLayer<T> layer, JsonObject object, Map<String, List<String>> propertyGroups, T tag) throws Exception {
+	public static  Zone constructFromJson(ZoneLayer layer, JsonObject object, Map<String, List<String>> propertyGroups) throws Exception {
 		if (layer == null) {
 			throw new Exception("layer may not be null.");
 		}
@@ -99,7 +98,7 @@ public class Zone<T> extends BaseZone {
 			applyProperty(propertyGroups, properties, propertyName);
 		}
 
-		return new Zone<T>(layer, pos1, pos2, name, properties, tag);
+		return new Zone(layer, pos1, pos2, name, properties);
 	}
 
 	/*
@@ -107,12 +106,11 @@ public class Zone<T> extends BaseZone {
 	 * - Both are inclusive coordinates.
 	 * - The minimum/maximum are determined for you.
 	 */
-	public Zone(ZoneLayer<T> layer, Vector pos1, Vector pos2, String name, Set<String> properties, T tag) {
+	public Zone(ZoneLayer layer, Vector pos1, Vector pos2, String name, Set<String> properties) {
 		super(pos1, pos2);
 		mLayer = layer;
 		mName = name;
 		mProperties.addAll(properties);
-		mTag = tag;
 	}
 
 	/*
@@ -121,7 +119,7 @@ public class Zone<T> extends BaseZone {
 	 */
 	public void reloadFragments() {
 		mFragments.clear();
-		mFragments.add(new ZoneFragment<T>(this));
+		mFragments.add(new ZoneFragment(this));
 	}
 
 	/*
@@ -136,14 +134,10 @@ public class Zone<T> extends BaseZone {
 		mFragments.clear();
 	}
 
-	public T getTag() {
-		return mTag;
-	}
-
 	/*
 	 * Split all fragments of this zone by an overlapping zone, removing overlap.
 	 */
-	public boolean splitByOverlap(BaseZone overlap, Zone<T> otherZone) {
+	public boolean splitByOverlap(BaseZone overlap, Zone otherZone) {
 		return splitByOverlap(overlap, otherZone, false);
 	}
 
@@ -155,9 +149,9 @@ public class Zone<T> extends BaseZone {
 	 * Returns true if the zone being overlapped has been completely
 	 * eclipsed by the other zone.
 	 */
-	public boolean splitByOverlap(BaseZone overlap, Zone<T> otherZone, boolean includeOther) {
-		List<ZoneFragment<T>> newFragments = new ArrayList<ZoneFragment<T>>();
-		for (ZoneFragment<T> fragment : mFragments) {
+	public boolean splitByOverlap(BaseZone overlap, Zone otherZone, boolean includeOther) {
+		List<ZoneFragment> newFragments = new ArrayList<ZoneFragment>();
+		for (ZoneFragment fragment : mFragments) {
 			BaseZone subOverlap = fragment.overlappingZone(overlap);
 
 			if (subOverlap == null) {
@@ -184,7 +178,7 @@ public class Zone<T> extends BaseZone {
 		}
 
 		// Load current fragments into defragmenter
-		ZoneDefragmenter<T> defragmenter = new ZoneDefragmenter<T>(mFragments);
+		ZoneDefragmenter defragmenter = new ZoneDefragmenter(mFragments);
 
 		// Invalidate all current fragments.
 		invalidate();
@@ -193,7 +187,7 @@ public class Zone<T> extends BaseZone {
 		mFragments = defragmenter.optimalMerge();
 	}
 
-	public ZoneLayer<T> getLayer() {
+	public ZoneLayer getLayer() {
 		return mLayer;
 	}
 
@@ -205,8 +199,8 @@ public class Zone<T> extends BaseZone {
 		return mName;
 	}
 
-	public List<ZoneFragment<T>> getZoneFragments() {
-		return new ArrayList<ZoneFragment<T>>(mFragments);
+	public List<ZoneFragment> getZoneFragments() {
+		return new ArrayList<ZoneFragment>(mFragments);
 	}
 
 	public Set<String> getProperties() {
@@ -254,7 +248,7 @@ public class Zone<T> extends BaseZone {
 		}
 	}
 
-	public boolean equals(Zone<T> other) {
+	public boolean equals(Zone other) {
 		return (super.equals(other) &&
 		        getLayerName().equals(other.getLayerName()) &&
 		        getName().equals(other.getName()));
@@ -267,7 +261,7 @@ public class Zone<T> extends BaseZone {
 			return false;
 		}
 
-		Zone<T> other = (Zone<T>)o;
+		Zone other = (Zone)o;
 		return (super.equals(other) &&
 		        getLayerName().equals(other.getLayerName()) &&
 		        getName().equals(other.getName()));

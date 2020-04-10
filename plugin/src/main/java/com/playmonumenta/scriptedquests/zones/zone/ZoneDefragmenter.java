@@ -7,21 +7,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-class ZoneDefragmenter<T> {
-	class FragCombos<T> extends HashMap<Set<Integer>, ZoneFragment<T>> {}
+class ZoneDefragmenter {
+	class FragCombos extends HashMap<Set<Integer>, ZoneFragment> {}
 
-	private Map<Integer, FragCombos<T>> mMergedCombos = new HashMap<Integer, FragCombos<T>>();
+	private Map<Integer, FragCombos> mMergedCombos = new HashMap<Integer, FragCombos>();
 	private Set<Integer> mAllIds = new LinkedHashSet<Integer>();
 
-	public ZoneDefragmenter(List<ZoneFragment<T>> fragments) {
-		FragCombos<T> fragCombos = new FragCombos<T>();
+	public ZoneDefragmenter(List<ZoneFragment> fragments) {
+		FragCombos fragCombos = new FragCombos();
 		mMergedCombos.put(1, fragCombos);
 		Integer i = 0;
-		for (ZoneFragment<T> fragment : fragments) {
+		for (ZoneFragment fragment : fragments) {
 			// Individual fragments are groups of 1
 			Set<Integer> mergedIds = new LinkedHashSet<Integer>();
 			mergedIds.add(i);
-			fragCombos.put(mergedIds, new ZoneFragment<T>(fragment));
+			fragCombos.put(mergedIds, new ZoneFragment(fragment));
 
 			// We'll need a set of all IDs later.
 			mAllIds.add(i);
@@ -42,7 +42,7 @@ class ZoneDefragmenter<T> {
 	}
 
 	public void mergeAtLevel(Integer mergeLevel) {
-		FragCombos<T> fragCombos = new FragCombos<T>();
+		FragCombos fragCombos = new FragCombos();
 		mMergedCombos.put(mergeLevel, fragCombos);
 		for (Integer lowerLevel = 1; lowerLevel <= mergeLevel/2; lowerLevel++) {
 			Integer upperLevel = mergeLevel - lowerLevel;
@@ -50,16 +50,16 @@ class ZoneDefragmenter<T> {
 		}
 	}
 
-	public void mergeTwoLevels(FragCombos<T> fragCombos, Integer mergeLevel, Integer lowerLevel, Integer upperLevel) {
+	public void mergeTwoLevels(FragCombos fragCombos, Integer mergeLevel, Integer lowerLevel, Integer upperLevel) {
 		// Previous code ensures null will not appear.
-		FragCombos<T> upperGroup = mMergedCombos.get(upperLevel);
-		FragCombos<T> lowerGroup = mMergedCombos.get(lowerLevel);
-		for (Map.Entry<Set<Integer>, ZoneFragment<T>> upperEntry : upperGroup.entrySet()) {
+		FragCombos upperGroup = mMergedCombos.get(upperLevel);
+		FragCombos lowerGroup = mMergedCombos.get(lowerLevel);
+		for (Map.Entry<Set<Integer>, ZoneFragment> upperEntry : upperGroup.entrySet()) {
 			Set<Integer> upperIds = upperEntry.getKey();
-			ZoneFragment<T> upperZone = upperEntry.getValue();
-			for (Map.Entry<Set<Integer>, ZoneFragment<T>> lowerEntry : lowerGroup.entrySet()) {
+			ZoneFragment upperZone = upperEntry.getValue();
+			for (Map.Entry<Set<Integer>, ZoneFragment> lowerEntry : lowerGroup.entrySet()) {
 				Set<Integer> lowerIds = lowerEntry.getKey();
-				ZoneFragment<T> lowerZone = lowerEntry.getValue();
+				ZoneFragment lowerZone = lowerEntry.getValue();
 
 				Set<Integer> mergedIds = new LinkedHashSet<Integer>(lowerIds);
 				mergedIds.addAll(upperIds);
@@ -72,7 +72,7 @@ class ZoneDefragmenter<T> {
 					continue;
 				}
 
-				ZoneFragment<T> merged = upperZone.merge(lowerZone);
+				ZoneFragment merged = upperZone.merge(lowerZone);
 				if (merged == null) {
 					// Couldn't merge, skip
 					continue;
@@ -82,8 +82,8 @@ class ZoneDefragmenter<T> {
 		}
 	}
 
-	public List<ZoneFragment<T>> optimalMerge() {
-		List<ZoneFragment<T>> resultsSoFar = new ArrayList<ZoneFragment<T>>();
+	public List<ZoneFragment> optimalMerge() {
+		List<ZoneFragment> resultsSoFar = new ArrayList<ZoneFragment>();
 		return optimalMerge(resultsSoFar, mAllIds);
 	}
 
@@ -94,14 +94,14 @@ class ZoneDefragmenter<T> {
 		*
 		* Returns the best solution (list of zones), or null (to continue searching).
 		*/
-	public List<ZoneFragment<T>> optimalMerge(List<ZoneFragment<T>> resultsSoFar, Set<Integer> remainingIds) {
+	public List<ZoneFragment> optimalMerge(List<ZoneFragment> resultsSoFar, Set<Integer> remainingIds) {
 		for (Integer mergeLevel = remainingIds.size(); mergeLevel >= 0; mergeLevel--) {
-			FragCombos<T> fragCombos = mMergedCombos.get(mergeLevel);
-			for (Map.Entry<Set<Integer>, ZoneFragment<T>> entry : fragCombos.entrySet()) {
+			FragCombos fragCombos = mMergedCombos.get(mergeLevel);
+			for (Map.Entry<Set<Integer>, ZoneFragment> entry : fragCombos.entrySet()) {
 				Set<Integer> mergedIds = entry.getKey();
-				ZoneFragment<T> mergedZone = entry.getValue();
+				ZoneFragment mergedZone = entry.getValue();
 
-				List<ZoneFragment<T>> result = new ArrayList<ZoneFragment<T>>(resultsSoFar);
+				List<ZoneFragment> result = new ArrayList<ZoneFragment>(resultsSoFar);
 				result.add(mergedZone);
 
 				Set<Integer> overlappedIds = new LinkedHashSet<Integer>(mergedIds);
