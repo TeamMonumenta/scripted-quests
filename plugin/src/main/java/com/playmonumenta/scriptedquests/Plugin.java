@@ -16,6 +16,7 @@ import com.playmonumenta.scriptedquests.commands.Clickable;
 import com.playmonumenta.scriptedquests.commands.Code;
 import com.playmonumenta.scriptedquests.commands.DebugZones;
 import com.playmonumenta.scriptedquests.commands.GenerateCode;
+import com.playmonumenta.scriptedquests.commands.GetDate;
 import com.playmonumenta.scriptedquests.commands.GiveLootTable;
 import com.playmonumenta.scriptedquests.commands.HasPermission;
 import com.playmonumenta.scriptedquests.commands.InteractNpc;
@@ -88,6 +89,7 @@ public class Plugin extends JavaPlugin {
 		HasPermission.register();
 		TimerDebug.register(this);
 		GenerateCode.register(this);
+		GetDate.register();
 		Code.register(this);
 		SetVelocity.register();
 		DebugZones.register(this);
