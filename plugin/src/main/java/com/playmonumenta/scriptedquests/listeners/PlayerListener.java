@@ -89,7 +89,7 @@ public class PlayerListener implements Listener {
 		if (entity instanceof Villager) {
 			Villager villager = (Villager)entity;
 
-			if (event.isCancelled() || villager.hasMetadata(NpcTrader.TRADER_MODIFIED_METAKEY)) {
+			if (villager.hasMetadata(NpcTrader.TRADER_MODIFIED_METAKEY)) {
 				event.setCancelled(true);
 				return;
 			}
