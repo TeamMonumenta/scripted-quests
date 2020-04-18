@@ -32,7 +32,7 @@ Highlighted features:
 - Clickables: Let non-op players run pre-bundled commands via chat
 - Interactables: Create actions that run when players click with specific items
 - Timers: Efficient command block clocks with optional player nearby detection
-- Utility commands: `/randomnumber`, `/giveloottable`, `/schedule function`, `/set velocity`
+- Utility commands: `/randomnumber`, `/giveloottable`, `/schedule function`, `/set velocity`, `/getdate field`
 
 This plugin was developed for use with Monumenta, a Minecraft
 Complete-The-Monument MMORPG server. It has proven to be perhaps the most
@@ -117,6 +117,13 @@ pre-requisites are met, the actions are run. Every time a player interacts with
 an NPC, quest components are run in-order (more than one may be executed).
 
 ## <a name="commands"></a>List of Commands / Permissions
+### Player commands
+
+`/clickable <label>`
+- permission: `scriptedquests.clickable`
+- Runs the clickable with the specified label. This is useful for giving non-op players
+  access to pre-prepared command bundles
+
 `/interactNpc <npcName> [EntityType]`
 - permission: `scriptedquests.interactnpc`
 - EntityType is optional (default = VILLAGER) and can be chosen from this
@@ -130,6 +137,13 @@ an NPC, quest components are run in-order (more than one may be executed).
 - Note that running this command every tick is likely unnecessary for most
   use cases - instead, attach it to a slow clock instead.
 
+`/leaderboard <@a> <objective> <descending> <page>`
+- permission: `scriptedquests.leaderboard`
+- Shows the targeted players a leaderboard (sorted scoreboard) for the specified
+  objective. `descending` specifies order of results, page specifies which page to show.
+  **For players to be able to use the << >> arrows, they need to have this permission**.
+  This of course also lets them generate leaderboards for any scoreboard on the server.
+
 `/questTrigger`
 - permission: `scriptedquests.questtrigger`
 - **Players that interact with clickable text need to have this permission node.**
@@ -139,51 +153,10 @@ an NPC, quest components are run in-order (more than one may be executed).
   interacting with. They also will not be able to click on the same message
   twice.
 
-`/reloadQuests`
-- permission: `scriptedquests.reloadquests`
-- Reloads Quest NPCs and Quest Compass.
-- Provides helpful debugging to resolve problems with any files that fail to load.
-- Hover over the error messages in chat for more information.
-
-`/clickable <label>`
-- permission: `scriptedquests.clickable`
-- Runs the clickable with the specified label. This is useful for giving non-op players
-  access to pre-prepared command bundles
-
-`/timerdebug <enabledOnly>`
-- permission: `scriptedquests.timerdebug`
-- Shows a list of all the currently loaded timers. If `enabledOnly` is true, will only
-  show timers that are currently active due to players matching the range criteria
-
-`/setvelocity <@a> <x> <y> <z>`
-- permission: `scriptedquests.setvelocity`
-- Sets the velocity of the targeted entity to x y z.
-
-`/schedule function <namespace:path/to/function> <ticks>`
-- permission: `scriptedquests.schedulefunction`
-- Schedules a function to run #ticks later. This is the exact same function provided in
-  1.14+, except it also allows the same function to be scheduled more than once.
-
-`/execute store result score <scoreboardplayer> <objective> run randomnumber <min> <max>`
-- permission: `scriptedquests.randomnumber`
-- Used to store a random number into a scoreboard value. `min` and `max` are inclusive.
-
-`/leaderboard <@a> <objective> <descending> <page>`
-- permission: `scriptedquests.leaderboard`
-- Shows the targeted players a leaderboard (sorted scoreboard) for the specified
-  objective. `descending` specifies order of results, page specifies which page to show.
-  **For players to be able to use the << >> arrows, they need to have this permission**.
-  This of course also lets them generate leaderboards for any scoreboard on the server.
-
-`/haspermission <@a> <permission.node>`
-- permission: `scriptedquests.haspermission`
-- Utility function to tell the player that runs the command whether the target player(s)
-  have the specified permission node or not. Also returns success/fail so you can use
-  it with /execute store
-
-`/giveloottable <@a> "<namespace:path/to/table>" [count]`
-- permission: `scriptedquests.giveloottable`
-- Gives all the items from the specified loot table to the specified players `count` times
+`/race leaderboard <players> <raceLabel> <page>`
+- permission: `scriptedquests.race`
+- Send <players> page <page> of the leaderboard for <raceLabel>
+### Quest developer commands
 
 `/generatecode <@a> "<seed>"`
 - permission: `scriptedquests.generatecode`
@@ -191,15 +164,61 @@ an NPC, quest components are run in-order (more than one may be executed).
   player and the seed specified. Redeemed with `/code`. This is useful for building
   cross-map functionality
 
-`/code <word1> <word2> <word3>`
-- permission: `scriptedquests.code`
-- Redeems a code for the player running the command. Will only do something if there is a
-  code file with the same seed as the code was generated for, and the code was generated by
-  the player attempting to redeem it.
-  **For players to be able to redeem codes they need this permission!**
-  This is highly resistant to guessing - players would have to guess ~130k combinations
-  on average to brute force this.
+`/execute store result score <scoreboardplayer> <objective> run getdate <field>`
+- permission: `scriptedquests.getdate`
+- Get part of the current date as a score. <field> can be Year, Month, DayOfMonth, DayOfWeek, or IsDst.
 
+`/giveloottable <@a> "<namespace:path/to/table>" [count]`
+- permission: `scriptedquests.giveloottable`
+- Gives all the items from the specified loot table to the specified players `count` times
+
+`/haspermission <@a> <permission.node>`
+- permission: `scriptedquests.haspermission`
+- Utility function to tell the player that runs the command whether the target player(s)
+  have the specified permission node or not. Also returns success/fail so you can use
+  it with /execute store
+
+`/execute store result score <scoreboardplayer> <objective> run randomnumber <min> <max>`
+- permission: `scriptedquests.randomnumber`
+- Used to store a random number into a scoreboard value. `min` and `max` are inclusive.
+
+`/race start <players> <raceLabel>`
+- permission: `scriptedquests.race`
+- Start the race <raceLabel> for <players>
+
+`/race stop <players>`
+- permission: `scriptedquests.race`
+- Stop <players> from participating in their current race
+
+`/race win <players>`
+- permission: `scriptedquests.race`
+- Cause <players> to finish their current race; can be used for races that don't use rings
+
+`/reloadQuests`
+- permission: `scriptedquests.reloadquests`
+- Reloads Quest NPCs and Quest Compass.
+- Provides helpful debugging to resolve problems with any files that fail to load.
+- Hover over the error messages in chat for more information.
+
+`/schedule function <namespace:path/to/function> <ticks>`
+- permission: `scriptedquests.schedulefunction`
+- Schedules a function to run #ticks later. This is the exact same function provided in
+  1.14+, except it also allows the same function to be scheduled more than once.
+
+`/setvelocity <@a> <x> <y> <z>`
+- permission: `scriptedquests.setvelocity`
+- Sets the velocity of the targeted entity to x y z.
+### Debug commands
+
+`/debugzones <player>`
+`/debugzones <position>`
+- permission: `scriptedquests.debugzones`
+- Get debug information about which zone a player or position is.
+
+`/timerdebug <enabledOnly>`
+- permission: `scriptedquests.timerdebug`
+- Shows a list of all the currently loaded timers. If `enabledOnly` is true, will only
+  show timers that are currently active due to players matching the range criteria
 ## <a name="capabilities"></a>Current Capabilities:
 prerequisites:
 - check\_scores - Checks one or more scoreboard values for the player
