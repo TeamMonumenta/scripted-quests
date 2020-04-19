@@ -165,17 +165,15 @@ public class CommandTimer implements Listener {
 	//Put the new timer in a bucket
 	//Find smallest bucket and place new timer in it
 	private void scheduleTimer(UUID uniqueId, CommandTimerInstance timer) {
-		//mTickTimers.get(mScheduler).put(uniqueId, timer);
-		int min = mTickTimers.get(0).size();
+
 		LinkedHashMap<UUID, CommandTimerInstance> smallest = mTickTimers.get(0);
 
 		for (LinkedHashMap<UUID, CommandTimerInstance> map: mTickTimers) {
 			if (map.size() == 0) {
-				smallest.put(uniqueId, timer);
+				map.put(uniqueId, timer);
 				return;
 			}
-			if (map.size() < min) {
-				min = map.size();
+			if (map.size() < smallest.size()) {
 				smallest = map;
 			}
 		}
