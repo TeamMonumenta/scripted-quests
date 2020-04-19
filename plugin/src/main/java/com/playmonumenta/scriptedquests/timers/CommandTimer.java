@@ -39,7 +39,7 @@ public class CommandTimer implements Listener {
 		mTimers = new LinkedHashMap<UUID, CommandTimerInstance>();
 
 		//Generate the timer buckets
-		for(int i = 0; i < mPeriod; i++) {
+		for (int i = 0; i < mPeriod; i++) {
 			mTickTimers.add(new LinkedHashMap<UUID, CommandTimerInstance>());
 		}
 
