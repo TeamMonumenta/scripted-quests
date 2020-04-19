@@ -15,12 +15,14 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import com.playmonumenta.scriptedquests.Plugin;
 
 public class CommandTimerManager implements Listener {
 	private final Plugin mPlugin;
 	private final Map<Integer, CommandTimer> mCommandTimers;
+	private final BukkitRunnable mRunnable;
 
 	public CommandTimerManager(Plugin plugin) {
 		mPlugin = plugin;
@@ -32,8 +34,19 @@ public class CommandTimerManager implements Listener {
 				continue;
 			}
 
-			processEntity((ArmorStand)entity);
+			processEntity(entity);
 		}
+
+		mRunnable = new BukkitRunnable() {
+			@Override
+			public void run() {
+				for (CommandTimer timer : mCommandTimers.values()) {
+					timer.runTimers();
+				}
+			}
+		};
+
+		mRunnable.runTaskTimer(plugin, 0, 1);
 	}
 
 	/********************************************************************************
@@ -83,7 +96,7 @@ public class CommandTimerManager implements Listener {
 					mPlugin.getLogger().severe("Attempted to remove timer armor stand with non-tracked period " + period.toString());
 					return;
 				}
-				timer.unload((ArmorStand)entity);
+				timer.unload(entity);
 			}
 		}
 	}
