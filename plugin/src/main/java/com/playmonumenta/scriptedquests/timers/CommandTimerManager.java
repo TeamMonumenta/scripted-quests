@@ -40,7 +40,7 @@ public class CommandTimerManager implements Listener {
 		mRunnable = new BukkitRunnable() {
 			@Override
 			public void run() {
-				for(CommandTimer timer : mCommandTimers.values()) {
+				for (CommandTimer timer : mCommandTimers.values()) {
 					timer.runTimers();
 				}
 			}
