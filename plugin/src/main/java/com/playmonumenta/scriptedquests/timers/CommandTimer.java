@@ -169,12 +169,11 @@ public class CommandTimer implements Listener {
 		LinkedHashMap<UUID, CommandTimerInstance> smallest = mTickTimers.get(0);
 
 		for (LinkedHashMap<UUID, CommandTimerInstance> map: mTickTimers) {
-			if (map.size() == 0) {
-				map.put(uniqueId, timer);
-				return;
-			}
 			if (map.size() < smallest.size()) {
 				smallest = map;
+			}
+			if (map.size() == 0) {
+				break;
 			}
 		}
 
