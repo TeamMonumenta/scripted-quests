@@ -24,17 +24,16 @@ public class CommandTimer implements Listener {
 	private final Plugin mPlugin;
 	private final ArrayList<LinkedHashMap<UUID, CommandTimerInstance>> mTickTimers;
 	private final Map<UUID, CommandTimerInstance> mTimers;
-	private final BukkitRunnable mRunnable;
 	private final int mPeriod;
 	private final String mPeriodStr;
 	private int mCounter = 0;
-	private int mScheduler = 0;
+
 
 	public CommandTimer(Plugin plugin, int period) {
 		mPlugin = plugin;
 		mPeriod = period;
 		//List of timers sorted in their scheduled tick
-		mTickTimers = new ArrayList<LinkedHashMap<UUID, CommandTimerInstance>>();
+		mTickTimers = new ArrayList<LinkedHashMap<UUID, CommandTimerInstance>>(mPeriod);
 		//List of all timers with this period
 		mTimers = new LinkedHashMap<UUID, CommandTimerInstance>();
 
@@ -51,25 +50,7 @@ public class CommandTimer implements Listener {
 			mPeriodStr = ChatColor.BLUE + Integer.toString(mPeriod) + "t";
 		}
 
-		mRunnable = new BukkitRunnable() {
-			@Override
-			public void run() {
-				if (mTimers.size() <= 0) {
-					return;
-				}
 
-				for (CommandTimerInstance timer : mTickTimers.get(mCounter).values()) {
-					timer.tick(plugin);
-				}
-				mCounter++;
-				if (mCounter >= mPeriod) {
-					mCounter = 0;
-				}
-
-			}
-		};
-
-		mRunnable.runTaskTimer(plugin, 0, 1);
 	}
 
 	/********************************************************************************
@@ -97,7 +78,6 @@ public class CommandTimer implements Listener {
 		for (LinkedHashMap<UUID, CommandTimerInstance> map: mTickTimers) {
 			map.clear();
 		}
-		mRunnable.cancel();
 		mCoords.clear();
 	}
 
@@ -183,14 +163,24 @@ public class CommandTimer implements Listener {
 	}
 
 	//Put the new timer in a bucket
-	//This implementation can be improved, right now it just puts it in the one after the last one placed
+	//Find smallest bucket and place new timer in it
 	private void scheduleTimer(UUID uniqueId, CommandTimerInstance timer) {
-		mTickTimers.get(mScheduler).put(uniqueId, timer);
-		mScheduler++;
-		if (mScheduler >= mPeriod) {
-			mScheduler = 0;
+		//mTickTimers.get(mScheduler).put(uniqueId, timer);
+		int min = mTickTimers.get(0).size();
+		LinkedHashMap<UUID, CommandTimerInstance> smallest = mTickTimers.get(0);
+
+		for (LinkedHashMap<UUID, CommandTimerInstance> map: mTickTimers) {
+			if (map.size() == 0) {
+				smallest.put(uniqueId, timer);
+				return;
+			}
+			if (map.size() < min) {
+				min = map.size();
+				smallest = map;
+			}
 		}
 
+		smallest.put(uniqueId, timer);
 	}
 
 	public void tellTimers(CommandSender sender, boolean enabledOnly) {
@@ -198,6 +188,20 @@ public class CommandTimer implements Listener {
 			if (!enabledOnly || timer.canRun()) {
 				sender.sendMessage(timer.toString());
 			}
+		}
+	}
+
+	public void runTimers() {
+		if (mTimers.size() <= 0) {
+			return;
+		}
+
+		for (CommandTimerInstance timer : mTickTimers.get(mCounter).values()) {
+			timer.tick(mPlugin);
+		}
+		mCounter++;
+		if (mCounter >= mPeriod) {
+			mCounter = 0;
 		}
 	}
 }
