@@ -1,5 +1,6 @@
 package com.playmonumenta.scriptedquests.timers;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -21,15 +22,26 @@ public class CommandTimer implements Listener {
 	private final TreeMap<TimerCoords, ArmorStand> mCoords = new TreeMap<>();
 
 	private final Plugin mPlugin;
+	private final ArrayList<LinkedHashMap<UUID, CommandTimerInstance>> mTickTimers;
 	private final Map<UUID, CommandTimerInstance> mTimers;
 	private final BukkitRunnable mRunnable;
 	private final int mPeriod;
 	private final String mPeriodStr;
+	private int mCounter = 0;
+	private int mScheduler = 0;
 
 	public CommandTimer(Plugin plugin, int period) {
 		mPlugin = plugin;
 		mPeriod = period;
+		//List of timers sorted in their scheduled tick
+		mTickTimers = new ArrayList<LinkedHashMap<UUID, CommandTimerInstance>>();
+		//List of all timers with this period
 		mTimers = new LinkedHashMap<UUID, CommandTimerInstance>();
+
+		//Generate the timer buckets
+		for(int i = 0; i < mPeriod; i++) {
+			mTickTimers.add(new LinkedHashMap<UUID, CommandTimerInstance>());
+		}
 
 		if (mPeriod % 1200 == 0) {
 			mPeriodStr = ChatColor.BLUE + Integer.toString(mPeriod / 1200) + "m";
@@ -46,13 +58,18 @@ public class CommandTimer implements Listener {
 					return;
 				}
 
-				for (CommandTimerInstance timer : mTimers.values()) {
+				for (CommandTimerInstance timer : mTickTimers.get(mCounter).values()) {
 					timer.tick(plugin);
 				}
+				mCounter++;
+				if (mCounter >= mPeriod) {
+					mCounter = 0;
+				}
+
 			}
 		};
 
-		mRunnable.runTaskTimer(plugin, 0, period);
+		mRunnable.runTaskTimer(plugin, 0, 1);
 	}
 
 	/********************************************************************************
@@ -65,6 +82,10 @@ public class CommandTimer implements Listener {
 			timer.unload(mPlugin);
 			mCoords.remove(timer.getCoords());
 			mTimers.remove(entity.getUniqueId());
+
+			for (LinkedHashMap<UUID, CommandTimerInstance> map: mTickTimers) {
+				map.remove(entity.getUniqueId());
+			}
 		}
 	}
 
@@ -73,6 +94,9 @@ public class CommandTimer implements Listener {
 			timer.unload(mPlugin);
 		}
 		mTimers.clear();
+		for (LinkedHashMap<UUID, CommandTimerInstance> map: mTickTimers) {
+			map.clear();
+		}
 		mRunnable.cancel();
 		mCoords.clear();
 	}
@@ -142,6 +166,7 @@ public class CommandTimer implements Listener {
 		mCoords.put(coords, entity);
 
 		mTimers.put(entity.getUniqueId(), timer);
+		scheduleTimer(entity.getUniqueId(), timer);
 
 		entity.setInvulnerable(true);
 
@@ -155,6 +180,17 @@ public class CommandTimer implements Listener {
 		}
 
 		return true;
+	}
+
+	//Put the new timer in a bucket
+	//This implementation can be improved, right now it just puts it in the one after the last one placed
+	private void scheduleTimer(UUID uniqueId, CommandTimerInstance timer) {
+		mTickTimers.get(mScheduler).put(uniqueId, timer);
+		mScheduler++;
+		if (mScheduler >= mPeriod) {
+			mScheduler = 0;
+		}
+
 	}
 
 	public void tellTimers(CommandSender sender, boolean enabledOnly) {
