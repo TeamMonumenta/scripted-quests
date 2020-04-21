@@ -17,4 +17,4 @@ release.properties
 .project
 
 #Other
-upload.sh
+/upload*.sh
