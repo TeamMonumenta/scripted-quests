@@ -95,7 +95,7 @@ class ZoneDefragmenter {
 		* Returns the best solution (list of zones), or null (to continue searching).
 		*/
 	public List<ZoneFragment> optimalMerge(List<ZoneFragment> resultsSoFar, Set<Integer> remainingIds) {
-		for (Integer mergeLevel = remainingIds.size(); mergeLevel >= 0; mergeLevel--) {
+		for (Integer mergeLevel = remainingIds.size(); mergeLevel >= 1; mergeLevel--) {
 			FragCombos fragCombos = mMergedCombos.get(mergeLevel);
 			for (Map.Entry<Set<Integer>, ZoneFragment> entry : fragCombos.entrySet()) {
 				Set<Integer> mergedIds = entry.getKey();
