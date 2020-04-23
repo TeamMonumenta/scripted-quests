@@ -17,6 +17,7 @@ class ZoneDefragmenter {
 		FragCombos fragCombos = new FragCombos();
 		mMergedCombos.put(1, fragCombos);
 		Integer i = 0;
+		mAllIds.clear();
 		for (ZoneFragment fragment : fragments) {
 			// Individual fragments are groups of 1
 			Set<Integer> mergedIds = new LinkedHashSet<Integer>();
@@ -30,13 +31,13 @@ class ZoneDefragmenter {
 		}
 
 		/*
-			* Get all possible mMergedCombos of parts; start at 2 (having completed 1) and count to the max size
-			* mergeLevel is the number of fragments in a grouped zone.
-			* For example, if A and B are original fragments (level 1),
-			* and C = A + B, C is level 2 (contains 2 original fragments).
-			* If D = C + A, D is level 3 (upperLevel = 2, lowerLevel = 1, 2 + 1)
-			*/
-		for (Integer mergeLevel = 2; mergeLevel <= fragments.size(); mergeLevel++) {
+		 * Get all possible mMergedCombos of parts; start at 2 (having completed 1) and count to the max size
+		 * mergeLevel is the number of fragments in a grouped zone.
+		 * For example, if A and B are original fragments (level 1),
+		 * and C = A + B, C is level 2 (contains 2 original fragments).
+		 * If D = C + A, D is level 3 (upperLevel = 2, lowerLevel = 1, 2 + 1)
+		 */
+		for (Integer mergeLevel = 2; mergeLevel <= mAllIds.size(); mergeLevel++) {
 			mergeAtLevel(mergeLevel);
 		}
 	}
@@ -84,16 +85,19 @@ class ZoneDefragmenter {
 
 	public List<ZoneFragment> optimalMerge() {
 		List<ZoneFragment> resultsSoFar = new ArrayList<ZoneFragment>();
+		if (mAllIds.size() == 0) {
+			return resultsSoFar;
+		}
 		return optimalMerge(resultsSoFar, mAllIds);
 	}
 
 	/*
-		* Minimal zones are returned by searching for the largest merged zones first,
-		* and returning the first result to have exactly one of each part.
-		* In a worst case scenario, the original parts are returned.
-		*
-		* Returns the best solution (list of zones), or null (to continue searching).
-		*/
+	 * Minimal zones are returned by searching for the largest merged zones first,
+	 * and returning the first result to have exactly one of each part.
+	 * In a worst case scenario, the original parts are returned.
+	 *
+	 * Returns the best solution (list of zones), or null (to continue searching).
+	 */
 	public List<ZoneFragment> optimalMerge(List<ZoneFragment> resultsSoFar, Set<Integer> remainingIds) {
 		for (Integer mergeLevel = remainingIds.size(); mergeLevel >= 1; mergeLevel--) {
 			FragCombos fragCombos = mMergedCombos.get(mergeLevel);
