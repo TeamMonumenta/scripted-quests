@@ -1,4 +1,4 @@
-package com.playmonumenta.scriptedquests.zones.zone;
+package com.playmonumenta.scriptedquests.zones;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -11,13 +11,12 @@ import org.bukkit.util.Vector;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.playmonumenta.scriptedquests.zones.ZoneLayer;
 
 /*
  * A zone, to be split into fragments. This class holds the name and properties, and the fragments determine
  * if a point is inside the zone after overlaps are taken into account.
  */
-public class Zone extends BaseZone {
+public class Zone extends ZoneBase {
 	private final ZoneLayer mLayer;
 	private final String mName;
 	private List<ZoneFragment> mFragments = new ArrayList<ZoneFragment>();
@@ -117,7 +116,7 @@ public class Zone extends BaseZone {
 	 * Reset the fragments of this Zone so they can be recalculated without reloading this zone.
 	 * Used to handle ZoneLayers from other plugins. This should only be called by its ZoneLayer.
 	 */
-	public void reloadFragments() {
+	protected void reloadFragments() {
 		mFragments.clear();
 		mFragments.add(new ZoneFragment(this));
 	}
@@ -130,14 +129,14 @@ public class Zone extends BaseZone {
 	 *
 	 * Not strictly required, but speeds up garbage collection by eliminating loops.
 	 */
-	public void invalidate() {
+	protected void invalidate() {
 		mFragments.clear();
 	}
 
 	/*
 	 * Split all fragments of this zone by an overlapping zone, removing overlap.
 	 */
-	public boolean splitByOverlap(BaseZone overlap, Zone otherZone) {
+	protected boolean splitByOverlap(ZoneBase overlap, Zone otherZone) {
 		return splitByOverlap(overlap, otherZone, false);
 	}
 
@@ -149,10 +148,10 @@ public class Zone extends BaseZone {
 	 * Returns true if the zone being overlapped has been completely
 	 * eclipsed by the other zone.
 	 */
-	public boolean splitByOverlap(BaseZone overlap, Zone otherZone, boolean includeOther) {
+	protected boolean splitByOverlap(ZoneBase overlap, Zone otherZone, boolean includeOther) {
 		List<ZoneFragment> newFragments = new ArrayList<ZoneFragment>();
 		for (ZoneFragment fragment : mFragments) {
-			BaseZone subOverlap = fragment.overlappingZone(overlap);
+			ZoneBase subOverlap = fragment.overlappingZone(overlap);
 
 			if (subOverlap == null) {
 				newFragments.add(fragment);
@@ -172,7 +171,7 @@ public class Zone extends BaseZone {
 	 * This works with only one zone's fragments at a time, and doesn't
 	 * need to be run again. This reduces n significantly for runtime.
 	 */
-	public void defragment() {
+	protected void defragment() {
 		if (mFragments.size() < 2) {
 			return;
 		}

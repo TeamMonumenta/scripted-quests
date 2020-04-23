@@ -41,10 +41,10 @@ import com.playmonumenta.scriptedquests.managers.QuestLoginManager;
 import com.playmonumenta.scriptedquests.managers.QuestNpcManager;
 import com.playmonumenta.scriptedquests.managers.RaceManager;
 import com.playmonumenta.scriptedquests.managers.WaypointManager;
-import com.playmonumenta.scriptedquests.managers.ZoneManager;
 import com.playmonumenta.scriptedquests.managers.ZonePropertyManager;
 import com.playmonumenta.scriptedquests.timers.CommandTimerManager;
 import com.playmonumenta.scriptedquests.utils.MetadataUtils;
+import com.playmonumenta.scriptedquests.zones.ZoneManager;
 
 public class Plugin extends JavaPlugin {
 	private static Plugin INSTANCE = null;

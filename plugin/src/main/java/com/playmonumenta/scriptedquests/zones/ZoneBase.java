@@ -1,15 +1,15 @@
-package com.playmonumenta.scriptedquests.zones.zone;
+package com.playmonumenta.scriptedquests.zones;
 
 import org.bukkit.Axis;
 import org.bukkit.util.Vector;
 
 import com.playmonumenta.scriptedquests.utils.ZoneUtils;
 
-public class BaseZone {
+public class ZoneBase {
 	protected Vector mPosition;
 	protected Vector mSize;
 
-	public BaseZone(BaseZone other) {
+	public ZoneBase(ZoneBase other) {
 		mPosition = other.mPosition.clone();
 		mSize = other.mSize.clone();
 	}
@@ -19,7 +19,7 @@ public class BaseZone {
 	 * - Both are inclusive coordinates.
 	 * - The minimum/maximum are determined for you.
 	 */
-	public BaseZone(Vector pos1, Vector pos2) {
+	public ZoneBase(Vector pos1, Vector pos2) {
 		Vector posMin = Vector.getMinimum(pos1, pos2);
 		Vector posMax = Vector.getMaximum(pos1, pos2);
 
@@ -125,9 +125,9 @@ public class BaseZone {
 	}
 
 	/*
-	 * Returns a BaseZone that is inside this and the other zone.
+	 * Returns a ZoneBase that is inside this and the other zone.
 	 */
-	public BaseZone overlappingZone(BaseZone other) {
+	public ZoneBase overlappingZone(ZoneBase other) {
 		Vector selfMin = minCorner();
 		Vector selfMax = maxCorner();
 		Vector otherMin = other.minCorner();
@@ -143,7 +143,7 @@ public class BaseZone {
 		Vector resultMin = Vector.getMaximum(selfMin, otherMin);
 		Vector resultMax = Vector.getMinimum(selfMax, otherMax);
 
-		BaseZone result = new BaseZone(resultMin, resultMax);
+		ZoneBase result = new ZoneBase(resultMin, resultMax);
 
 		if (result.isValid()) {
 			return result;
@@ -154,11 +154,11 @@ public class BaseZone {
 
 	@Override
 	public boolean equals(Object o) {
-		if (!(o instanceof BaseZone)) {
+		if (!(o instanceof ZoneBase)) {
 			return false;
 		}
 
-		BaseZone other = (BaseZone)o;
+		ZoneBase other = (ZoneBase)o;
 		return (mPosition.equals(other.mPosition) &&
 		        mSize.equals(other.mSize));
 	}
@@ -169,6 +169,6 @@ public class BaseZone {
 	}
 
 	public String toString() {
-		return "BaseZone(" + minCorner().toString() + ", " + maxCorner().toString() + ")";
+		return "ZoneBase(" + minCorner().toString() + ", " + maxCorner().toString() + ")";
 	}
 }

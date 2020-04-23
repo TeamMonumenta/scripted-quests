@@ -1,4 +1,4 @@
-package com.playmonumenta.scriptedquests.zones.zonetree;
+package com.playmonumenta.scriptedquests.zones;
 
 import java.util.HashMap;
 import java.util.List;
@@ -11,21 +11,18 @@ import org.dynmap.markers.MarkerAPI;
 import org.dynmap.markers.MarkerSet;
 
 import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.zones.ZoneLayer;
-import com.playmonumenta.scriptedquests.zones.zone.Zone;
-import com.playmonumenta.scriptedquests.zones.zone.ZoneFragment;
 
-public abstract class BaseZoneTree {
+public abstract class ZoneTreeBase {
 	protected int mFragmentCount = 0;
 
-	public static BaseZoneTree createZoneTree(List<ZoneFragment> zones) throws Exception {
-		BaseZoneTree result;
+	protected static ZoneTreeBase createZoneTree(List<ZoneFragment> zones) throws Exception {
+		ZoneTreeBase result;
 		if (zones.size() == 0) {
-			result = new EmptyZoneTree();
+			result = new ZoneTreeEmpty();
 		} else if (zones.size() == 1) {
-			result = new LeafZoneTree(zones.get(0));
+			result = new ZoneTreeLeaf(zones.get(0));
 		} else {
-			result = new ParentZoneTree(zones);
+			result = new ZoneTreeParent(zones);
 		}
 
 		if (Plugin.getInstance().mShowZonesDynmap) {
@@ -39,7 +36,7 @@ public abstract class BaseZoneTree {
 	 * Invalidate all fragments in the tree, causing any players inside them to be
 	 * considered outside them. This updates them to the correct zone automagically.
 	 */
-	public abstract void invalidate();
+	protected abstract void invalidate();
 
 	/*
 	 * For a given location, return the fragment that contains it.
@@ -122,5 +119,5 @@ public abstract class BaseZoneTree {
 		refreshDynmapTree(markerSet, 0, 0, 0);
 	}
 
-	public abstract void refreshDynmapTree(MarkerSet markerSet, int parentR, int parentG, int parentB);
+	protected abstract void refreshDynmapTree(MarkerSet markerSet, int parentR, int parentG, int parentB);
 }

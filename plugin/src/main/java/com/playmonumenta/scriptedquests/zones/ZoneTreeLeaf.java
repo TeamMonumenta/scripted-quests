@@ -1,4 +1,4 @@
-package com.playmonumenta.scriptedquests.zones.zonetree;
+package com.playmonumenta.scriptedquests.zones;
 
 import org.bukkit.Bukkit;
 import org.bukkit.util.Vector;
@@ -6,17 +6,15 @@ import org.bukkit.util.Vector;
 import org.dynmap.markers.MarkerSet;
 import org.dynmap.markers.AreaMarker;
 
-import com.playmonumenta.scriptedquests.zones.zone.ZoneFragment;
-
-public class LeafZoneTree extends BaseZoneTree {
+public class ZoneTreeLeaf extends ZoneTreeBase {
 	private ZoneFragment mZone;
 
-	public LeafZoneTree(ZoneFragment zone) {
+	public ZoneTreeLeaf(ZoneFragment zone) {
 		mFragmentCount = 1;
 		mZone = zone;
 	}
 
-	public void invalidate() {
+	protected void invalidate() {
 		mZone.invalidate();
 	}
 
@@ -36,7 +34,7 @@ public class LeafZoneTree extends BaseZoneTree {
 		return 1;
 	}
 
-	public void refreshDynmapTree(MarkerSet markerSet, int parentR, int parentG, int parentB) {
+	protected void refreshDynmapTree(MarkerSet markerSet, int parentR, int parentG, int parentB) {
 		int r = parentR;
 		int g = parentG;
 		int b = parentB;
@@ -73,6 +71,6 @@ public class LeafZoneTree extends BaseZoneTree {
 	}
 
 	public String toString() {
-		return ("BaseZoneTree(" + mZone.toString() + ")");
+		return ("ZoneTreeBase(" + mZone.toString() + ")");
 	}
 }

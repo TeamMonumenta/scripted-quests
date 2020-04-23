@@ -1,4 +1,4 @@
-package com.playmonumenta.scriptedquests.zones.zone;
+package com.playmonumenta.scriptedquests.zones;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,7 +13,7 @@ class ZoneDefragmenter {
 	private Map<Integer, FragCombos> mMergedCombos = new HashMap<Integer, FragCombos>();
 	private Set<Integer> mAllIds = new LinkedHashSet<Integer>();
 
-	public ZoneDefragmenter(List<ZoneFragment> fragments) {
+	protected ZoneDefragmenter(List<ZoneFragment> fragments) {
 		FragCombos fragCombos = new FragCombos();
 		mMergedCombos.put(1, fragCombos);
 		Integer i = 0;
@@ -42,7 +42,7 @@ class ZoneDefragmenter {
 		}
 	}
 
-	public void mergeAtLevel(Integer mergeLevel) {
+	private void mergeAtLevel(Integer mergeLevel) {
 		FragCombos fragCombos = new FragCombos();
 		mMergedCombos.put(mergeLevel, fragCombos);
 		for (Integer lowerLevel = 1; lowerLevel <= mergeLevel/2; lowerLevel++) {
@@ -51,7 +51,7 @@ class ZoneDefragmenter {
 		}
 	}
 
-	public void mergeTwoLevels(FragCombos fragCombos, Integer mergeLevel, Integer lowerLevel, Integer upperLevel) {
+	private void mergeTwoLevels(FragCombos fragCombos, Integer mergeLevel, Integer lowerLevel, Integer upperLevel) {
 		// Previous code ensures null will not appear.
 		FragCombos upperGroup = mMergedCombos.get(upperLevel);
 		FragCombos lowerGroup = mMergedCombos.get(lowerLevel);
@@ -83,7 +83,7 @@ class ZoneDefragmenter {
 		}
 	}
 
-	public List<ZoneFragment> optimalMerge() {
+	protected List<ZoneFragment> optimalMerge() {
 		List<ZoneFragment> resultsSoFar = new ArrayList<ZoneFragment>();
 		if (mAllIds.size() == 0) {
 			return resultsSoFar;
@@ -98,7 +98,7 @@ class ZoneDefragmenter {
 	 *
 	 * Returns the best solution (list of zones), or null (to continue searching).
 	 */
-	public List<ZoneFragment> optimalMerge(List<ZoneFragment> resultsSoFar, Set<Integer> remainingIds) {
+	private List<ZoneFragment> optimalMerge(List<ZoneFragment> resultsSoFar, Set<Integer> remainingIds) {
 		for (Integer mergeLevel = remainingIds.size(); mergeLevel >= 1; mergeLevel--) {
 			FragCombos fragCombos = mMergedCombos.get(mergeLevel);
 			for (Map.Entry<Set<Integer>, ZoneFragment> entry : fragCombos.entrySet()) {

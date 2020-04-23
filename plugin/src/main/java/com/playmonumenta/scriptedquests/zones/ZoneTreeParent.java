@@ -1,4 +1,4 @@
-package com.playmonumenta.scriptedquests.zones.zonetree;
+package com.playmonumenta.scriptedquests.zones;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,9 +9,8 @@ import org.bukkit.util.Vector;
 import org.dynmap.markers.MarkerSet;
 
 import com.playmonumenta.scriptedquests.utils.ZoneUtils;
-import com.playmonumenta.scriptedquests.zones.zone.ZoneFragment;
 
-public class ParentZoneTree extends BaseZoneTree {
+public class ZoneTreeParent extends ZoneTreeBase {
 	// The axis this node is split over.
 	private Axis mAxis;
 	// The pivot for mMore/mLess
@@ -20,8 +19,8 @@ public class ParentZoneTree extends BaseZoneTree {
 	private double mMin;
 	private double mMax;
 	// Branch that is Less/More than pivot
-	private BaseZoneTree mLess;
-	private BaseZoneTree mMore;
+	private ZoneTreeBase mLess;
+	private ZoneTreeBase mMore;
 
 	// Some zones may overlap the pivot
 	// Min coordinate of middle zones
@@ -29,11 +28,11 @@ public class ParentZoneTree extends BaseZoneTree {
 	// Max coordinate of middle zones
 	private double mMidMax;
 	// Branch that contains the pivot
-	private BaseZoneTree mMid;
+	private ZoneTreeBase mMid;
 
 	private static final Axis[] AXIS_ORDER = {Axis.X, Axis.Z, Axis.Y};
 
-	public ParentZoneTree(List<ZoneFragment> zones) throws Exception {
+	public ZoneTreeParent(List<ZoneFragment> zones) throws Exception {
 		/*
 		 * Local class is used to get best balance without
 		 * exposing incomplete results or creating tree nodes.
@@ -126,7 +125,7 @@ public class ParentZoneTree extends BaseZoneTree {
 		}
 	}
 
-	public void invalidate() {
+	protected void invalidate() {
 		mLess.invalidate();
 		mMid.invalidate();
 		mMore.invalidate();
@@ -174,7 +173,7 @@ public class ParentZoneTree extends BaseZoneTree {
 		return result;
 	}
 
-	public void refreshDynmapTree(MarkerSet markerSet, int parentR, int parentG, int parentB) {
+	protected void refreshDynmapTree(MarkerSet markerSet, int parentR, int parentG, int parentB) {
 		mLess.refreshDynmapTree(markerSet,
 		                        (parentR + 255)/2,
 		                        parentG/2,
@@ -190,15 +189,15 @@ public class ParentZoneTree extends BaseZoneTree {
 	}
 
 	public String toString() {
-		return ("(ParentZoneTree(<List<ZoneFragment>>): "
+		return ("(ZoneTreeParent(<List<ZoneFragment>>): "
 		        + "mAxis=" + mAxis.toString() + ", "
 		        + "mPivot=" + Double.toString(mPivot) + ", "
 		        + "mMin=" + Double.toString(mMin) + ", "
 		        + "mMax=" + Double.toString(mMax) + ", "
-		        + "mLess=<BaseZoneTree>, "
-		        + "mMore=<BaseZoneTree>, "
+		        + "mLess=<ZoneTreeBase>, "
+		        + "mMore=<ZoneTreeBase>, "
 		        + "mMidMin=" + Double.toString(mMidMin) + ", "
 		        + "mMidMax=" + Double.toString(mMidMax) + ", "
-		        + "mMid=<BaseZoneTree>)");
+		        + "mMid=<ZoneTreeBase>)");
 	}
 }

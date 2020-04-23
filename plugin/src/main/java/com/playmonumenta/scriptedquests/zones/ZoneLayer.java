@@ -20,10 +20,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.utils.ZoneUtils;
-import com.playmonumenta.scriptedquests.zones.zone.BaseZone;
-import com.playmonumenta.scriptedquests.zones.zone.Zone;
-import com.playmonumenta.scriptedquests.zones.zone.ZoneFragment;
-import com.playmonumenta.scriptedquests.zones.zonetree.BaseZoneTree;
 
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -193,9 +189,9 @@ public class ZoneLayer {
 	 * the previous trees from that layer. This will not be detected
 	 * or handled automatically, so please be careful.
 	 *
-	 * Returns a subclass of BaseZoneTree.
+	 * Returns a subclass of ZoneTreeBase.
 	 */
-	public BaseZoneTree createZoneTree(CommandSender sender) throws Exception {
+	public ZoneTreeBase createZoneTree(CommandSender sender) throws Exception {
 		reloadFragments(sender);
 
 		// Create list of all zone fragments.
@@ -205,7 +201,7 @@ public class ZoneLayer {
 		}
 
 		// Create the new tree.
-		return BaseZoneTree.createZoneTree(zoneFragments);
+		return ZoneTreeBase.createZoneTree(zoneFragments);
 	}
 
 	/************************************************************************************
@@ -217,7 +213,7 @@ public class ZoneLayer {
 	 * Used to handle ZoneLayers from other plugins. This should only be called by the ZoneManager
 	 * and the ZoneLayer constructor.
 	 */
-	public void reloadFragments(CommandSender sender) {
+	protected void reloadFragments(CommandSender sender) {
 		for (Zone zone : mZones) {
 			zone.reloadFragments();
 		}
@@ -271,7 +267,7 @@ public class ZoneLayer {
 		for (int i = 0; i < zones.size(); i++) {
 			Zone outer = zones.get(i);
 			for (Zone inner : zones.subList(i + 1, zones.size())) {
-				BaseZone overlap = outer.overlappingZone(inner);
+				ZoneBase overlap = outer.overlappingZone(inner);
 				if (overlap == null) {
 					continue;
 				}
@@ -313,7 +309,7 @@ public class ZoneLayer {
 	/*
 	 * This should only be called by the ZoneManager.
 	 */
-	public static void clearDynmapLayers() {
+	protected static void clearDynmapLayers() {
 		DynmapCommonAPI dynmapHook = (DynmapCommonAPI) Bukkit.getServer().getPluginManager().getPlugin("dynmap");
 		if (dynmapHook == null) {
 			return;
