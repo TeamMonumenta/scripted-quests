@@ -15,6 +15,7 @@ jobs:
 
     - name: Setup reviewdog
       run: |
+        set -o pipefail
         mkdir -p $HOME/bin && curl -sfL https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh| sh -s -- -b $HOME/bin
         echo ::add-path::$HOME/bin
 
@@ -41,7 +42,9 @@ jobs:
     # Build & compiler warnings
     - name: Build with Maven
       working-directory: ./plugin
-      run: ./compile.sh | tee ../compile.log
+      run: |
+        set -o pipefail
+        ./compile.sh | tee ../compile.log
 
     - name: Run reviewdog to report deprecation warnings
       env:
