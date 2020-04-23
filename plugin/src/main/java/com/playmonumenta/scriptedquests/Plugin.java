@@ -25,6 +25,7 @@ import com.playmonumenta.scriptedquests.commands.QuestTrigger;
 import com.playmonumenta.scriptedquests.commands.Race;
 import com.playmonumenta.scriptedquests.commands.RandomNumber;
 import com.playmonumenta.scriptedquests.commands.ReloadQuests;
+import com.playmonumenta.scriptedquests.commands.ReloadZones;
 import com.playmonumenta.scriptedquests.commands.ScheduleFunction;
 import com.playmonumenta.scriptedquests.commands.SetVelocity;
 import com.playmonumenta.scriptedquests.commands.TimerDebug;
@@ -127,6 +128,7 @@ public class Plugin extends JavaPlugin {
 		manager.registerEvents(mZonePropertyManager, this);
 
 		getCommand("reloadQuests").setExecutor(new ReloadQuests(this));
+		getCommand("reloadZones").setExecutor(new ReloadZones(this));
 		getCommand("questTrigger").setExecutor(new QuestTrigger(this));
 
 		/* Load the config 1 tick later to let other plugins load */
@@ -134,6 +136,7 @@ public class Plugin extends JavaPlugin {
 			@Override
 			public void run() {
 				reloadConfig(null);
+				reloadZones(null);
 			}
 		}.runTaskLater(this, 1);
 	}
@@ -168,6 +171,9 @@ public class Plugin extends JavaPlugin {
 		mRaceManager.reload(this, sender);
 		mCodeManager.reload(this, sender);
 		mZonePropertyManager.reload(this, sender);
+	}
+
+	public void reloadZones(CommandSender sender) {
 		mZoneManager.reload(this, sender);
 	}
 

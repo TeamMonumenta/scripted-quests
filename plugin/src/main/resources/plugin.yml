@@ -13,3 +13,7 @@ commands:
     permission: scriptedquests.reloadquests
     description: Reloads quest config files
     usage: /reloadquests
+  reloadzones:
+    permission: scriptedquests.reloadquests
+    description: Reloads quest zone files
+    usage: /reloadzones
