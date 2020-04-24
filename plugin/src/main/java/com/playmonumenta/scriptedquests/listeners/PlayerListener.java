@@ -38,16 +38,12 @@ public class PlayerListener implements Listener {
 		mPlugin = plugin;
 	}
 
-	@EventHandler(priority = EventPriority.LOW)
+	@EventHandler(priority = EventPriority.LOWEST)
 	public void playerInteractEvent(PlayerInteractEvent event) {
 		Action action = event.getAction();
 		Player player = event.getPlayer();
 		ItemStack item = event.getItem();
 		Block block = event.getClickedBlock();
-
-		if (event.isCancelled()) {
-			return;
-		}
 
 		if (mPlugin.mInteractableManager.interactEvent(mPlugin, player, item, block, action)) {
 			// interactEvent returning true means this event should be canceled
@@ -77,19 +73,14 @@ public class PlayerListener implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.LOW)
+	@EventHandler(priority = EventPriority.LOWEST)
 	public void playerInteractEntityEvent(PlayerInteractEntityEvent event) {
 		Entity entity = event.getRightClicked();
 		Player player = event.getPlayer();
-
-		if (event.isCancelled()) {
-			return;
-		}
-
 		if (entity instanceof Villager) {
 			Villager villager = (Villager)entity;
 
-			if (villager.hasMetadata(NpcTrader.TRADER_MODIFIED_METAKEY)) {
+			if (event.isCancelled() || villager.hasMetadata(NpcTrader.TRADER_MODIFIED_METAKEY)) {
 				event.setCancelled(true);
 				return;
 			}
