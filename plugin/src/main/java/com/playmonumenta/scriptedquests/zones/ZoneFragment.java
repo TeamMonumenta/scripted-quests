@@ -1,4 +1,4 @@
-package com.playmonumenta.scriptedquests.zones.zone;
+package com.playmonumenta.scriptedquests.zones;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,12 +15,12 @@ import com.playmonumenta.scriptedquests.utils.ZoneUtils;
  * Instead, each fragment points to its parent, a zone with properties.
  * Each zone also keeps track of its fragments.
  */
-public class ZoneFragment extends BaseZone {
+public class ZoneFragment extends ZoneBase {
 	private Map<String, Zone> mParents = new HashMap<String, Zone>();
 	private Map<String, List<Zone>> mParentsAndEclipsed = new HashMap<String, List<Zone>>();
 	private boolean mValid;
 
-	public ZoneFragment(ZoneFragment other) {
+	protected ZoneFragment(ZoneFragment other) {
 		super(other);
 		mParents.putAll(other.mParents);
 		for (Map.Entry<String, List<Zone>> entry : other.mParentsAndEclipsed.entrySet()) {
@@ -29,7 +29,7 @@ public class ZoneFragment extends BaseZone {
 		mValid = other.mValid;
 	}
 
-	public ZoneFragment(Zone other) {
+	protected ZoneFragment(Zone other) {
 		super(other);
 		mParents.put(other.getLayerName(), other);
 		List<Zone> zones = new ArrayList<Zone>();
@@ -80,7 +80,7 @@ public class ZoneFragment extends BaseZone {
 	 * Returns a list of fragments of this zone, split by an overlapping zone.
 	 * Does not include overlap or register a new parent.
 	 */
-	public List<ZoneFragment> splitByOverlap(BaseZone overlap, Zone newParent) {
+	protected List<ZoneFragment> splitByOverlap(ZoneBase overlap, Zone newParent) {
 		return splitByOverlap(overlap, newParent, false);
 	}
 
@@ -92,7 +92,7 @@ public class ZoneFragment extends BaseZone {
 	 * The other parent zone should have the overlap removed as normal to avoid
 	 * overlapping fragments.
 	 */
-	public List<ZoneFragment> splitByOverlap(BaseZone overlap, Zone newParent, boolean includeOverlap) {
+	protected List<ZoneFragment> splitByOverlap(ZoneBase overlap, Zone newParent, boolean includeOverlap) {
 		ZoneFragment centerZone = new ZoneFragment(this);
 
 		Vector otherMin = overlap.minCorner();
@@ -176,7 +176,7 @@ public class ZoneFragment extends BaseZone {
 	 *
 	 * Returns the merged ZoneFragment or None.
 	 */
-	public ZoneFragment merge(ZoneFragment other) {
+	protected ZoneFragment merge(ZoneFragment other) {
 		if (mValid != other.mValid ||
 		    !mParents.equals(other.mParents) ||
 		    !mParentsAndEclipsed.equals(other.mParentsAndEclipsed)) {
@@ -279,7 +279,7 @@ public class ZoneFragment extends BaseZone {
 	 *
 	 * This means any code tracking previous fragments/zones will be forced to check again when reloading zones.
 	 */
-	public void invalidate() {
+	protected void invalidate() {
 		mValid = false;
 	}
 

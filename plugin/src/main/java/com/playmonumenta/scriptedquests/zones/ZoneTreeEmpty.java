@@ -1,13 +1,11 @@
-package com.playmonumenta.scriptedquests.zones.zonetree;
+package com.playmonumenta.scriptedquests.zones;
 
 import org.bukkit.util.Vector;
 
 import org.dynmap.markers.MarkerSet;
 
-import com.playmonumenta.scriptedquests.zones.zone.ZoneFragment;
-
-public class EmptyZoneTree extends BaseZoneTree {
-	public void invalidate() {
+public class ZoneTreeEmpty extends ZoneTreeBase {
+	protected void invalidate() {
 		// Nothing to do! Still needs to be a valid method, though.
 	}
 
@@ -28,6 +26,6 @@ public class EmptyZoneTree extends BaseZoneTree {
 	}
 
 	public String toString() {
-		return ("EmptyZoneTree()");
+		return ("ZoneTreeEmpty()");
 	}
 }

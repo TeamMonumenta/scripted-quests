@@ -1,4 +1,4 @@
-package com.playmonumenta.scriptedquests.managers;
+package com.playmonumenta.scriptedquests.zones;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,22 +18,14 @@ import org.bukkit.util.Vector;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
-import com.playmonumenta.scriptedquests.zones.ZoneChangeEvent;
-import com.playmonumenta.scriptedquests.zones.ZoneLayer;
-import com.playmonumenta.scriptedquests.zones.ZonePropertyChangeEvent;
-import com.playmonumenta.scriptedquests.zones.zone.BaseZone;
-import com.playmonumenta.scriptedquests.zones.zone.Zone;
-import com.playmonumenta.scriptedquests.zones.zone.ZoneFragment;
-import com.playmonumenta.scriptedquests.zones.zonetree.BaseZoneTree;
 
 public class ZoneManager {
-	/* Currently unused - the Zone Manager doesn't need to store any extra data on the Zone objects themselves */
 	private Plugin mPlugin;
 	static BukkitRunnable mPlayerTracker = null;
 
 	private Map<String, ZoneLayer> mLayers = new HashMap<String, ZoneLayer>();
 	private Map<String, ZoneLayer> mPluginLayers = new HashMap<String, ZoneLayer>();
-	private BaseZoneTree mZoneTree = null;
+	private ZoneTreeBase mZoneTree = null;
 	private Map<Player, ZoneFragment> mLastPlayerZoneFragment = new HashMap<Player, ZoneFragment>();
 	private Map<Player, Map<String, Zone>> mLastPlayerZones = new HashMap<Player, Map<String, Zone>>();
 
@@ -263,9 +255,9 @@ public class ZoneManager {
 		}
 
 		// Create the new tree. This could take a long time with enough fragments.
-		BaseZoneTree newTree;
+		ZoneTreeBase newTree;
 		try {
-			newTree = BaseZoneTree.createZoneTree(zoneFragments);
+			newTree = ZoneTreeBase.createZoneTree(zoneFragments);
 		} catch (Exception e) {
 			MessagingUtils.sendStackTrace(sender, e);
 			return;
@@ -285,7 +277,7 @@ public class ZoneManager {
 		}
 
 		// Swap the tree out; this is really fast!
-		BaseZoneTree oldTree = mZoneTree;
+		ZoneTreeBase oldTree = mZoneTree;
 		mZoneTree = newTree;
 		if (oldTree != null) {
 			// Force all fragments to consider all locations as outside themselves
@@ -471,7 +463,7 @@ public class ZoneManager {
 	private void mergeLayers(ZoneLayer outerLayer, ZoneLayer innerLayer) {
 		for (Zone outerZone : outerLayer.getZones()) {
 			for (Zone innerZone : innerLayer.getZones()) {
-				BaseZone overlap = outerZone.overlappingZone(innerZone);
+				ZoneBase overlap = outerZone.overlappingZone(innerZone);
 				if (overlap == null) {
 					continue;
 				}
