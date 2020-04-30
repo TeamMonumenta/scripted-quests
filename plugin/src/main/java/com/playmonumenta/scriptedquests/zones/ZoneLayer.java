@@ -384,9 +384,11 @@ public class ZoneLayer {
 			z[1] = maxCorner.getZ();
 
 			AreaMarker areaMarker = markerSet.createAreaMarker(zoneId, zoneLabel, false, world, x, z, false);
-			areaMarker.setRangeY(maxCorner.getY(), minCorner.getY());
-			areaMarker.setFillStyle(0.2, zoneColor);
-			areaMarker.setLineStyle(1, 0.3, zoneColor);
+			if (areaMarker != null) {
+				areaMarker.setRangeY(maxCorner.getY(), minCorner.getY());
+				areaMarker.setFillStyle(0.2, zoneColor);
+				areaMarker.setLineStyle(1, 0.3, zoneColor);
+			}
 		}
 	}
 }
