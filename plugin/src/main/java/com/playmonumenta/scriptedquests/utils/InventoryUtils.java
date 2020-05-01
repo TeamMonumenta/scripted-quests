@@ -1,5 +1,6 @@
 package com.playmonumenta.scriptedquests.utils;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
@@ -67,9 +68,13 @@ public class InventoryUtils {
 		NamespacedKey lootNamespace = getNamespacedKey(lootPath);
 		LootContext lootContext = new LootContext.Builder(player.getLocation()).build();
 
+		giveItems(player, Bukkit.getLootTable(lootNamespace).populateLoot(random, lootContext));
+	}
+
+	public static void giveItems(Player player, Collection<ItemStack> items) {
 		PlayerInventory inv = player.getInventory();
 		boolean itemsDropped = false;
-		for (ItemStack item : Bukkit.getLootTable(lootNamespace).populateLoot(random, lootContext)) {
+		for (ItemStack item : items) {
 			if (inv.firstEmpty() == -1) {
 				itemsDropped = true;
 				Location ploc = player.getLocation();

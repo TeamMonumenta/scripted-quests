@@ -17,6 +17,7 @@ import com.playmonumenta.scriptedquests.commands.Code;
 import com.playmonumenta.scriptedquests.commands.DebugZones;
 import com.playmonumenta.scriptedquests.commands.GenerateCode;
 import com.playmonumenta.scriptedquests.commands.GetDate;
+import com.playmonumenta.scriptedquests.commands.GiveItemWithLore;
 import com.playmonumenta.scriptedquests.commands.GiveLootTable;
 import com.playmonumenta.scriptedquests.commands.HasPermission;
 import com.playmonumenta.scriptedquests.commands.InteractNpc;
@@ -84,6 +85,7 @@ public class Plugin extends JavaPlugin {
 		InteractNpc.register(this);
 		Clickable.register(this);
 		GiveLootTable.register(mRandom);
+		GiveItemWithLore.register();
 		Race.register(this);
 		Leaderboard.register();
 		RandomNumber.register();
