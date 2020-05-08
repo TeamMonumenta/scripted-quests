@@ -228,7 +228,9 @@ public class WaypointManager {
 
 	public void cancelAll() {
 		mPlayers.clear();
-		mRunnable.cancel();
+		if (mRunnable != null && !mRunnable.isCancelled()) {
+			mRunnable.cancel();
+		}
 	}
 
 	public void setWaypoint(Player player, List<Location> waypoints) {
