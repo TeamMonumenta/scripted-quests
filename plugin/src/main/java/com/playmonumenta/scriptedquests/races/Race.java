@@ -21,6 +21,7 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 import org.bukkit.util.Vector;
 
+import com.playmonumenta.redissync.MonumentaRedisSyncAPI;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.managers.RaceManager;
 import com.playmonumenta.scriptedquests.quests.components.QuestActions;
@@ -304,6 +305,12 @@ public class Race {
 			Score score = mScoreboard.getScore(mPlayer.getName());
 			if (!score.isScoreSet() || score.getScore() == 0 || endTime < score.getScore()) {
 				score.setScore(endTime);
+
+				/* If the RedisSync plugin is also present, update the score in the leaderboard cache */
+				if (Bukkit.getServer().getPluginManager().getPlugin("MonumentaRedisSync") != null) {
+					MonumentaRedisSyncAPI.updateLeaderboardAsync(mScoreboard.getName(), mPlayer.getName(), endTime);
+				}
+
 				// handle new world record
 				if (mWRTime > endTime) {
 					String cmdStr = "broadcastcommand tellraw @a [\"\",{\"text\":\"" +
