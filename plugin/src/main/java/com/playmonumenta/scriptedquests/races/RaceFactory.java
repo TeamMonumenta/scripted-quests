@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -16,6 +17,7 @@ import org.bukkit.scoreboard.Score;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.playmonumenta.redissync.MonumentaRedisSyncAPI;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.managers.RaceManager;
 import com.playmonumenta.scriptedquests.quests.components.QuestActions;
@@ -220,19 +222,53 @@ public class RaceFactory {
 
 		List<LeaderboardEntry> entries = new ArrayList<LeaderboardEntry>();
 
-		for (String name : mObjective.getScoreboard().getEntries()) {
-			Score score = mObjective.getScore(name);
-			if (score.isScoreSet()) {
-				int value = score.getScore();
-				if (value != 0) {
-					entries.add(new LeaderboardEntry(name, "", value, RaceUtils.msToTimeString(value)));
+		if (Bukkit.getServer().getPluginManager().getPlugin("MonumentaRedisSync") == null) {
+			/* Redis sync plugin not found - need to loop over scoreboards to compute leaderboard */
+
+			for (String name : mObjective.getScoreboard().getEntries()) {
+				Score score = mObjective.getScore(name);
+				if (score.isScoreSet()) {
+					int value = score.getScore();
+					if (value != 0) {
+						entries.add(new LeaderboardEntry(name, "", value, RaceUtils.msToTimeString(value)));
+					}
 				}
 			}
+
+			// Sort descending
+			Collections.sort(entries);
+
+			colorizeEntries(entries, player.getName(), 0);
+
+			LeaderboardUtils.sendLeaderboard(player, mName, entries, page,
+			                                 "/race leaderboard @s " + mLabel);
+		} else {
+			/* Redis sync plugin is available - use it instead */
+
+			/* Get and process the data asynchronously using the redis database */
+			Bukkit.getScheduler().runTaskAsynchronously(mPlugin, () -> {
+				try {
+					/* TODO: Someday it'd be nice to just look up the appropriate range, and the player's value, rather than everything */
+					Map<String, Integer> values = MonumentaRedisSyncAPI.getLeaderboard(mObjective.getName(), 0, -1, false).get();
+					for (Map.Entry<String, Integer> entry : values.entrySet()) {
+						entries.add(new LeaderboardEntry(entry.getKey(), "", entry.getValue(), RaceUtils.msToTimeString(entry.getValue())));
+					}
+					colorizeEntries(entries, player.getName(), 0);
+
+					/* Send the leaderboard to the player back on the main thread */
+					Bukkit.getScheduler().runTask(mPlugin, () -> {
+						LeaderboardUtils.sendLeaderboard(player, mName, entries, page,
+						                                 "/race leaderboard @s " + mLabel);
+					});
+				} catch (Exception ex) {
+					mPlugin.getLogger().severe("Failed to generate leaderboard: " + ex.getMessage());
+					ex.printStackTrace();
+				}
+			});
 		}
+	}
 
-		// Sort descending
-		Collections.sort(entries);
-
+	private void colorizeEntries(List<LeaderboardEntry> entries, String playerName, int index) {
 		/*
 		 * As we iterate through the leaderboard entries (sorted),
 		 * also walk through this sorted list so we only traverse each
@@ -262,12 +298,9 @@ public class RaceFactory {
 				entry.setColor("" + ChatColor.GRAY + ChatColor.BOLD);
 			}
 
-			if (entry.getName().equals(player.getName())) {
+			if (entry.getName().equals(playerName)) {
 				entry.setColor("" + ChatColor.BLUE + ChatColor.BOLD);
 			}
 		}
-
-		LeaderboardUtils.sendLeaderboard(player, mName, entries, page,
-		                                 "/race leaderboard @s " + mLabel);
 	}
 }
