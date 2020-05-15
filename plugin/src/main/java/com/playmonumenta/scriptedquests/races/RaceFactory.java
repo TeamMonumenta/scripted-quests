@@ -238,7 +238,7 @@ public class RaceFactory {
 			// Sort descending
 			Collections.sort(entries);
 
-			colorizeEntries(entries, player.getName(), 0);
+			colorizeEntries(entries, player.getName());
 
 			LeaderboardUtils.sendLeaderboard(player, mName, entries, page,
 			                                 "/race leaderboard @s " + mLabel);
@@ -253,7 +253,7 @@ public class RaceFactory {
 					for (Map.Entry<String, Integer> entry : values.entrySet()) {
 						entries.add(new LeaderboardEntry(entry.getKey(), "", entry.getValue(), RaceUtils.msToTimeString(entry.getValue())));
 					}
-					colorizeEntries(entries, player.getName(), 0);
+					colorizeEntries(entries, player.getName());
 
 					/* Send the leaderboard to the player back on the main thread */
 					Bukkit.getScheduler().runTask(mPlugin, () -> {
@@ -268,7 +268,7 @@ public class RaceFactory {
 		}
 	}
 
-	private void colorizeEntries(List<LeaderboardEntry> entries, String playerName, int index) {
+	private void colorizeEntries(List<LeaderboardEntry> entries, String playerName) {
 		/*
 		 * As we iterate through the leaderboard entries (sorted),
 		 * also walk through this sorted list so we only traverse each

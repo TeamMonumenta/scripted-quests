@@ -18,7 +18,6 @@ import com.playmonumenta.scriptedquests.quests.components.DeathLocation;
 import com.playmonumenta.scriptedquests.quests.components.QuestLocation;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
-import com.playmonumenta.scriptedquests.utils.ScoreboardUtils;
 
 public class QuestCompassManager {
 	private static class ValidCompassEntry {
