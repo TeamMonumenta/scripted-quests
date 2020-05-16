@@ -110,7 +110,7 @@ public class Leaderboard {
 			colorizeEntries(entries, player.getName(), 0);
 
 			LeaderboardUtils.sendLeaderboard(player, displayName, entries, page,
-											 "/leaderboard @s " + objective + (descending ? " true" : " false"));
+			                                 "/leaderboard " + player.getName() + " " + objective + (descending ? " true" : " false"));
 		} else {
 			/* Redis sync plugin is available - use it instead */
 
@@ -127,7 +127,7 @@ public class Leaderboard {
 					/* Send the leaderboard to the player back on the main thread */
 					Bukkit.getScheduler().runTask(plugin, () -> {
 						LeaderboardUtils.sendLeaderboard(player, displayName, entries, page,
-						                                 "/leaderboard @s " + objective + (descending ? " true" : " false"));
+						                                 "/leaderboard " + player.getName() + " " + objective + (descending ? " true" : " false"));
 
 					});
 				} catch (Exception ex) {
