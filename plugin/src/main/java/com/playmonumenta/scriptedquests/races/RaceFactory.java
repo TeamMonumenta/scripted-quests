@@ -241,7 +241,7 @@ public class RaceFactory {
 			colorizeEntries(entries, player.getName());
 
 			LeaderboardUtils.sendLeaderboard(player, mName, entries, page,
-			                                 "/race leaderboard @s " + mLabel);
+			                                 "/race leaderboard " + player.getName() + " " + mLabel);
 		} else {
 			/* Redis sync plugin is available - use it instead */
 
