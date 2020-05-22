@@ -258,7 +258,7 @@ public class RaceFactory {
 					/* Send the leaderboard to the player back on the main thread */
 					Bukkit.getScheduler().runTask(mPlugin, () -> {
 						LeaderboardUtils.sendLeaderboard(player, mName, entries, page,
-						                                 "/race leaderboard @s " + mLabel);
+						                                 "/race leaderboard " + player.getName() + " " + mLabel);
 					});
 				} catch (Exception ex) {
 					mPlugin.getLogger().severe("Failed to generate leaderboard: " + ex.getMessage());
