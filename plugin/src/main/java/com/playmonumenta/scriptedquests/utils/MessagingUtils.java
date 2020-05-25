@@ -102,4 +102,36 @@ public class MessagingUtils {
 
 		sender.spigot().sendMessage(toDisplay);
 	}
+
+	public static void sendCommandSuccess(CommandSender sender, String msg) {
+		if (sender == null || msg == null) {
+			return;
+		}
+
+		msg = ChatColor.translateAlternateColorCodes('&', msg);
+
+		TextComponent formattedMessage = new TextComponent(TextComponent.fromLegacyText(msg));
+		formattedMessage.setColor(ChatColor.AQUA);
+
+		BaseComponent[] toDisplay = new BaseComponent[1];
+		toDisplay[0] = formattedMessage;
+
+		sender.spigot().sendMessage(toDisplay);
+	}
+
+	public static void sendCommandError(CommandSender sender, String msg) {
+		if (sender == null || msg == null) {
+			return;
+		}
+
+		msg = ChatColor.translateAlternateColorCodes('&', msg);
+
+		TextComponent formattedMessage = new TextComponent(TextComponent.fromLegacyText(msg));
+		formattedMessage.setColor(ChatColor.RED);
+
+		BaseComponent[] toDisplay = new BaseComponent[1];
+		toDisplay[0] = formattedMessage;
+
+		sender.spigot().sendMessage(toDisplay);
+	}
 }

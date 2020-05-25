@@ -13,12 +13,15 @@ import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import com.playmonumenta.scriptedquests.utils.ScoreboardUtils;
 
 public class ActionSetScore implements ActionBase {
+	public enum OperationType {
+		SET_EXACT,
+		SET_COPY,
+		SET_RANDOM;
+	}
+
 	private class SetScore {
 		// This should be an enum, but idk how to set those up. -Nick
-		private int mOperation;
-		private static final int SET_EXACT = 1;
-		private static final int SET_COPY = 2;
-		private static final int SET_RANDOM = 3;
+		private OperationType mOperation;
 
 		private String mSourceScore;
 		private int mValue;
@@ -27,18 +30,18 @@ public class ActionSetScore implements ActionBase {
 
 		SetScore(int value) {
 			mValue = value;
-			mOperation = SET_EXACT;
+			mOperation = OperationType.SET_EXACT;
 		}
 
 		SetScore(String sourceScore) {
 			mSourceScore = sourceScore;
-			mOperation = SET_COPY;
+			mOperation = OperationType.SET_COPY;
 		}
 
 		SetScore(int minValue, int maxValue) {
 			mValue = minValue;
 			mValueRange = maxValue - minValue + 1;
-			mOperation = SET_RANDOM;
+			mOperation = OperationType.SET_RANDOM;
 		}
 
 		void apply(Player player, String targetScore) {

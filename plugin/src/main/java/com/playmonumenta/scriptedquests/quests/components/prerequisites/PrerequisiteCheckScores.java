@@ -9,12 +9,15 @@ import com.google.gson.JsonElement;
 import com.playmonumenta.scriptedquests.utils.ScoreboardUtils;
 
 public class PrerequisiteCheckScores implements PrerequisiteBase {
+	public enum OperationType {
+		CHECK_EXACT,
+		CHECK_OTHER,
+		CHECK_RANGE;
+	}
+
 	private class CheckScore {
 		// This should be an enum, but idk how to set those up. -Nick
-		private int mOperation;
-		private static final int CHECK_EXACT = 1;
-		private static final int CHECK_OTHER = 2;
-		private static final int CHECK_RANGE = 3;
+		private OperationType mOperation;
 
 		String mOtherScore;
 		int mMin;
@@ -22,18 +25,18 @@ public class PrerequisiteCheckScores implements PrerequisiteBase {
 
 		CheckScore(int value) {
 			mMin = value;
-			mOperation = CHECK_EXACT;
+			mOperation = OperationType.CHECK_EXACT;
 		}
 
 		CheckScore(String value) {
 			mOtherScore = value;
-			mOperation = CHECK_OTHER;
+			mOperation = OperationType.CHECK_OTHER;
 		}
 
 		CheckScore(int min, int max) {
 			mMin = min;
 			mMax = max;
-			mOperation = CHECK_RANGE;
+			mOperation = OperationType.CHECK_RANGE;
 		}
 
 		boolean check(Entity entity, String scoreName) {

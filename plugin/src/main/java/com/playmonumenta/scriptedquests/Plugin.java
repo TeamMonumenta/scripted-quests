@@ -43,6 +43,7 @@ import com.playmonumenta.scriptedquests.managers.QuestNpcManager;
 import com.playmonumenta.scriptedquests.managers.RaceManager;
 import com.playmonumenta.scriptedquests.managers.WaypointManager;
 import com.playmonumenta.scriptedquests.managers.ZonePropertyManager;
+import com.playmonumenta.scriptedquests.plots.PlotManager;
 import com.playmonumenta.scriptedquests.timers.CommandTimerManager;
 import com.playmonumenta.scriptedquests.utils.MetadataUtils;
 import com.playmonumenta.scriptedquests.zones.ZoneManager;
@@ -64,6 +65,7 @@ public class Plugin extends JavaPlugin {
 	public QuestDeathManager mDeathManager;
 	public RaceManager mRaceManager;
 	public NpcTradeManager mTradeManager;
+	public PlotManager mPlotManager;
 	public CommandTimerManager mTimerManager;
 	public CodeManager mCodeManager;
 	public ZoneManager mZoneManager;
@@ -123,6 +125,7 @@ public class Plugin extends JavaPlugin {
 		mZonePropertyManager = new ZonePropertyManager(this);
 		mTimerManager = new CommandTimerManager(this);
 		mWaypointManager = new WaypointManager(this);
+		mPlotManager = PlotManager.getPlotManager(this);
 
 		manager.registerEvents(new EntityListener(this), this);
 		manager.registerEvents(new PlayerListener(this), this);
