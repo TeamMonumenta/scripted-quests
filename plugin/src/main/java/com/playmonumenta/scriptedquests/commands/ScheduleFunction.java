@@ -73,6 +73,14 @@ public class ScheduleFunction {
 		arguments.put("function", new FunctionArgument());
 		arguments.put("ticks", new IntegerArgument(0));
 
+		/* Unregister the default /schedule command */
+		try {
+			CommandAPI.getInstance().unregister("schedule");
+		} catch (Exception e) {
+			// Nothing to do here - there is nothing to unregister in 1.13
+			plugin.getLogger().info("Failed to unregister /schedule - this is only an error in 1.14+");
+		}
+
 		CommandAPI.getInstance().register("schedule",
 		                                  CommandPermission.fromString("scriptedquests.schedulefunction"),
 		                                  arguments,
@@ -80,6 +88,8 @@ public class ScheduleFunction {
 											  addDelayedFunction((FunctionWrapper[])args[0], (Integer)args[1]);
 		                                  }
 		);
+
+		/* TODO: Add the other /schedule variants (clear and replace/append variants) */
 	}
 
 	private void addDelayedFunction(FunctionWrapper[] function, int ticks) {

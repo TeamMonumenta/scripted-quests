@@ -89,7 +89,7 @@ public class Plugin extends JavaPlugin {
 		GiveLootTable.register(mRandom);
 		GiveItemWithLore.register();
 		Race.register(this);
-		Leaderboard.register();
+		Leaderboard.register(this);
 		RandomNumber.register();
 		HasPermission.register();
 		TimerDebug.register(this);

@@ -52,6 +52,7 @@ public class CommandTimerInstance {
 
 	public void tick(Plugin plugin) {
 		if (canRun()) {
+			setAutoState(plugin, mLoc, false);
 			setAutoState(plugin, mLoc, true);
 			mRepeaterEnabled = true;
 		} else if (mRepeat && mRepeaterEnabled) {

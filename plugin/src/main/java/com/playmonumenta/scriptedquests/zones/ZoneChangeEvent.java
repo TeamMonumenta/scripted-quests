@@ -17,20 +17,6 @@ public class ZoneChangeEvent extends Event {
 		mLayer = layer;
 		mFromZone = from;
 		mToZone = to;
-
-		String layerStr = "<unknown layer>";
-
-		String fromStr = "null";
-		if (from != null) {
-			layerStr = from.getLayerName();
-			fromStr = from.getName();
-		}
-
-		String toStr = "null";
-		if (to != null) {
-			layerStr = to.getLayerName();
-			toStr = to.getName();
-		}
 	}
 
 	public Player getPlayer() {
