@@ -3,6 +3,8 @@ package com.playmonumenta.scriptedquests;
 import java.io.File;
 import java.util.Random;
 
+import com.playmonumenta.scriptedquests.commands.Damage;
+import com.playmonumenta.scriptedquests.commands.Heal;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -96,6 +98,8 @@ public class Plugin extends JavaPlugin {
 		Code.register(this);
 		SetVelocity.register();
 		DebugZones.register(this);
+		Heal.register();
+		Damage.register();
 
 		mScheduledFunctionsManager = new ScheduleFunction(this);
 	}
