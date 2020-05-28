@@ -7,7 +7,6 @@ import io.github.jorelali.commandapi.api.arguments.BooleanArgument;
 import io.github.jorelali.commandapi.api.arguments.DoubleArgument;
 import io.github.jorelali.commandapi.api.arguments.EntitySelectorArgument;
 import org.bukkit.entity.Damageable;
-import org.bukkit.entity.Entity;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -24,9 +23,9 @@ public class Damage {
 			CommandPermission.fromString("scriptedquests.damage"),
 			arguments,
 			(sender, args) -> {
-				for (Entity e : (Collection<Entity>)args[0]) {
+				for (Object e : (Collection<?>)args[0]) {
 					if (e instanceof Damageable) {
-						if ((boolean)args[2] == false) {
+						if (!((boolean) args[2])) {
 							((Damageable) e).setHealth(((Damageable) e).getHealth() - (Double)args[1]);
 						} else {
 							((Damageable) e).damage((Double)args[1]);

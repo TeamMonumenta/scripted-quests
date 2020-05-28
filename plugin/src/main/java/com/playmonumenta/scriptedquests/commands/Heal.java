@@ -6,7 +6,6 @@ import io.github.jorelali.commandapi.api.arguments.Argument;
 import io.github.jorelali.commandapi.api.arguments.DoubleArgument;
 import io.github.jorelali.commandapi.api.arguments.EntitySelectorArgument;
 import org.bukkit.entity.Damageable;
-import org.bukkit.entity.Entity;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -22,7 +21,8 @@ public class Heal {
 			CommandPermission.fromString("scriptedquests.heal"),
 			arguments,
 			(sender, args) -> {
-				for (Entity e : (Collection<Entity>)args[0]) {
+				if (args[0] instanceof Collection<?>)
+				for (Object e : (Collection<?>)args[0]) {
 					if (e instanceof Damageable) {
 						((Damageable) e).setHealth(((Damageable) e).getHealth() + (Double)args[1]);
 					}
