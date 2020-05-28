@@ -21,10 +21,11 @@ public class Heal {
 			CommandPermission.fromString("scriptedquests.heal"),
 			arguments,
 			(sender, args) -> {
-				if (args[0] instanceof Collection<?>)
-				for (Object e : (Collection<?>)args[0]) {
-					if (e instanceof Damageable) {
-						((Damageable) e).setHealth(((Damageable) e).getHealth() + (Double)args[1]);
+				if (args[0] instanceof Collection<?>) {
+					for (Object e : (Collection<?>) args[0]) {
+						if (e instanceof Damageable) {
+							((Damageable) e).setHealth(((Damageable) e).getHealth() + (Double) args[1]);
+						}
 					}
 				}
 			}
