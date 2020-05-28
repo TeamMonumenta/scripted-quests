@@ -27,6 +27,7 @@ public class Damage {
 					if (e instanceof Damageable) {
 						if (!((boolean) args[2])) {
 							((Damageable) e).setHealth(((Damageable) e).getHealth() - (Double)args[1]);
+							((Damageable) e).damage(0); //fake damage animation
 						} else {
 							((Damageable) e).damage((Double)args[1]);
 						}
