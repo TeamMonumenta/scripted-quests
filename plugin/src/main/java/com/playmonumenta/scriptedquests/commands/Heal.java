@@ -7,7 +7,6 @@ import io.github.jorelali.commandapi.api.arguments.DoubleArgument;
 import io.github.jorelali.commandapi.api.arguments.EntitySelectorArgument;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
