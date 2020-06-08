@@ -10,7 +10,8 @@ import io.github.jorelali.commandapi.api.arguments.Argument;
 import io.github.jorelali.commandapi.api.arguments.TextArgument;
 
 public class GetDate {
-	private static final String[] FIELDS = new String[] {"Year", "Month", "DayOfMonth", "DayOfWeek", "IsDst"};
+	private static final String[] FIELDS = new String[] {"Year", "Month", "DayOfMonth", "DayOfWeek", "IsDst",
+	                                                     "IsPm", "HourOfDay", "HourOfTwelve", "Minute", "Second", "Ms"};
 
 	public static void register() {
 		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
@@ -27,17 +28,30 @@ public class GetDate {
 	}
 
 	private static int getField(String field) {
-		if (field.equals("Year")) {
+		switch (field) {
+		case "Year":
 			return DateUtils.getYear();
-		} else if (field.equals("Month")) {
+		case "Month":
 			return DateUtils.getMonth();
-		} else if (field.equals("DayOfMonth")) {
+		case "DayOfMonth":
 			return DateUtils.getDayOfMonth();
-		} else if (field.equals("DayOfWeek")) {
+		case "DayOfWeek":
 			return DateUtils.getDayOfWeek();
-		} else if (field.equals("IsDst")) {
+		case "IsDst":
 			return DateUtils.isDst() ? 1 : 0;
-		} else {
+		case "IsPm":
+			return DateUtils.getAmPm();
+		case "HourOfDay":
+			return DateUtils.getHourOfDay();
+		case "HourOfTwelve":
+			return DateUtils.getHourOfTwelve();
+		case "Minute":
+			return DateUtils.getMinute();
+		case "Second":
+			return DateUtils.getSecond();
+		case "Ms":
+			return DateUtils.getMs();
+		default:
 			return -1;
 		}
 	}
