@@ -19,9 +19,9 @@ public class DateUtils {
 	}
 
 	public static Calendar getCalendarFromTimestamp(Long timestamp) {
-		Calendar result = Calendar.getInstance();
-		result.setTimeInMillis(timestamp);
-		return result;
+		Calendar cal = Calendar.getInstance();
+		cal.setTimeInMillis(timestamp);
+		return cal;
 	}
 
 	public static int getYear() {
@@ -114,7 +114,6 @@ public class DateUtils {
 	}
 
 	public static String prettyDelta(int seconds) {
-		String result;
 		if (seconds < 0) {
 			return prettyDelta(-seconds);
 		}
