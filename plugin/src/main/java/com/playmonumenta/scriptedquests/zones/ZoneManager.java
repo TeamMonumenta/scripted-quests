@@ -477,6 +477,10 @@ public class ZoneManager {
 	 * sender recieves the debug info, player is the target and sees nothing
 	 */
 	public void sendDebug(CommandSender sender, Player player) {
+		if (sender == null) {
+			return;
+		}
+
 		Vector playerLocation = player.getLocation().toVector();
 
 		sender.sendMessage("Cached player info according to zone fragment tree:");
@@ -524,6 +528,10 @@ public class ZoneManager {
 	}
 
 	public void sendDebug(CommandSender sender, Vector loc) {
+		if (sender == null) {
+			return;
+		}
+
 		Map<String, Zone> fallbackZones = getZonesInternal(loc, true);
 		Map<String, Zone> fastZones = getZonesInternal(loc, false);
 		if (fallbackZones == null && fastZones == null) {

@@ -276,7 +276,9 @@ public class ZoneLayer {
 										+ ChatColor.BOLD + inner.getName()
 										+ ChatColor.RED + " by zone "
 										+ ChatColor.BOLD + outer.getName();
-					sender.spigot().sendMessage(TextComponent.fromLegacyText(errorMessage));
+					if (sender != null) {
+						sender.spigot().sendMessage(TextComponent.fromLegacyText(errorMessage));
+					}
 				}
 				outer.splitByOverlap(overlap, inner, true);
 			}
