@@ -25,11 +25,17 @@ public class Damage {
 			(sender, args) -> {
 				for (Object e : (Collection<?>)args[0]) {
 					if (e instanceof Damageable) {
+						Double amount = (Double)args[1];
+						Damageable entity = (Damageable)e;
 						if (!((boolean) args[2])) {
-							((Damageable) e).setHealth(((Damageable) e).getHealth() - (Double)args[1]);
-							((Damageable) e).damage(0); //fake damage animation
+							if (entity.getHealth() - amount <= 0.0) {
+								entity.setHealth(0);
+							} else {
+								entity.setHealth(entity.getHealth() - amount);
+							}
+							entity.damage(0); //fake damage animation
 						} else {
-							((Damageable) e).damage((Double)args[1]);
+							entity.damage(amount);
 						}
 					}
 				}
