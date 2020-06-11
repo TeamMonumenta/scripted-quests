@@ -1,12 +1,10 @@
 package com.playmonumenta.scriptedquests.commands;
 
-import java.util.Collection;
 import java.util.LinkedHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import io.github.jorelali.commandapi.api.CommandAPI;
 import io.github.jorelali.commandapi.api.CommandPermission;
@@ -34,11 +32,11 @@ public class Line {
 		);
 	}
 
-	private static int run(Location start, Location end, String matStr) {
+	private static int run(CommandSender sender, Location start, Location end, String matStr) {
 		Material mat = Material.getMaterial(matStr.toUpperCase());
 		if (mat == null || !mat.isBlock()) {
 			sender.sendMessage("Unknown block type " + matStr);
 		}
-		return BlockUtils.drawLine(sender, start, end, mat);
+		return BlockUtils.drawLine(start, end, mat);
 	}
 }

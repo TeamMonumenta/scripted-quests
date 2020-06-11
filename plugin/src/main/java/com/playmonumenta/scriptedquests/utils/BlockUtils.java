@@ -7,8 +7,6 @@ import org.bukkit.Axis;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
-import com.playmonumenta.scriptedquests.utils.VectorUtils;
-
 public class BlockUtils {
 	public static int drawLine(Location start, Location end, Material mat) {
 		if (start == null || end == null || mat == null) {
@@ -84,8 +82,8 @@ public class BlockUtils {
 		double midErrorDeltaStraight = 2 * deltaSizes.get(axisOrder[1]);
 		double minorErrorDeltaStraight = 2 * deltaSizes.get(axisOrder[2]);
 		// Amount to increment error when major axis increments and error > 0.0
-		double midErrorDeltaDiagonal = 2 * ( deltaSizes.get(axisOrder[1]) - deltaSizes.get(axisOrder[0]) );
-		double minorErrorDeltaDiagonal = 2 * ( deltaSizes.get(axisOrder[2]) - deltaSizes.get(axisOrder[0]) );
+		double midErrorDeltaDiagonal = 2 * (deltaSizes.get(axisOrder[1]) - deltaSizes.get(axisOrder[0]));
+		double minorErrorDeltaDiagonal = 2 * (deltaSizes.get(axisOrder[2]) - deltaSizes.get(axisOrder[0]));
 
 		// Loop over major axis
 		while (majorPos <= majorEnd) {
