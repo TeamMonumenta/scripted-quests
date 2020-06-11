@@ -3,7 +3,7 @@ package com.playmonumenta.scriptedquests.zones;
 import org.bukkit.Axis;
 import org.bukkit.util.Vector;
 
-import com.playmonumenta.scriptedquests.utils.ZoneUtils;
+import com.playmonumenta.scriptedquests.utils.VectorUtils;
 
 public class ZoneBase {
 	protected Vector mPosition;
@@ -134,8 +134,8 @@ public class ZoneBase {
 		Vector otherMax = other.maxCorner();
 
 		for (Axis axis : Axis.values()) {
-			if (ZoneUtils.vectorAxis(selfMax, axis) < ZoneUtils.vectorAxis(otherMin, axis) ||
-				ZoneUtils.vectorAxis(otherMax, axis) < ZoneUtils.vectorAxis(selfMin, axis)) {
+			if (VectorUtils.vectorAxis(selfMax, axis) < VectorUtils.vectorAxis(otherMin, axis) ||
+				VectorUtils.vectorAxis(otherMax, axis) < VectorUtils.vectorAxis(selfMin, axis)) {
 				return null;
 			}
 		}

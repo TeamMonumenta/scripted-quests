@@ -158,6 +158,10 @@ an NPC, quest components are run in-order (more than one may be executed).
 - Send <players> page <page> of the leaderboard for <raceLabel>
 ### Quest developer commands
 
+`/line <from> <to> <block>`
+- permission: `scriptedquests.line`
+- Sets a line of blocks between two locations, returning the number of blocks changed.
+
 `/generatecode <@a> "<seed>"`
 - permission: `scriptedquests.generatecode`
 - Generates a unique three-word code for that player. This code will only work for that
@@ -166,7 +170,9 @@ an NPC, quest components are run in-order (more than one may be executed).
 
 `/execute store result score <scoreboardplayer> <objective> run getdate <field>`
 - permission: `scriptedquests.getdate`
-- Get part of the current date as a score. <field> can be Year, Month, DayOfMonth, DayOfWeek, IsDst, IsPm, HourOfDay, HourOfTwelve, Minute, Second, or Ms.
+- Get part of the current date as a score. <field> can be:
+  Year, Month, DayOfMonth, DayOfWeek, IsDst,
+  IsPm, HourOfDay, HourOfTwelve, Minute, Second, or Ms.
 
 `/giveloottable <@a> "<namespace:path/to/table>" [count]`
 - permission: `scriptedquests.giveloottable`

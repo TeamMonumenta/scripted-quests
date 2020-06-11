@@ -2,34 +2,7 @@ package com.playmonumenta.scriptedquests.utils;
 
 import java.awt.Color;
 
-import org.bukkit.Axis;
-import org.bukkit.util.Vector;
-
 public class ZoneUtils {
-	public static double vectorAxis(Vector vector, Axis axis) {
-		switch (axis) {
-		case X:
-			return vector.getX();
-		case Z:
-			return vector.getZ();
-		default:
-			return vector.getY();
-		}
-	}
-
-	public static void vectorAxis(Vector vector, Axis axis, double value) {
-		switch (axis) {
-		case X:
-			vector.setX(value);
-			break;
-		case Z:
-			vector.setZ(value);
-			break;
-		default:
-			vector.setY(value);
-		}
-	}
-
 	public static float floatFloorMod(float x, float y) {
 		return x - ((float) Math.floor(x/y) * y);
 	}

@@ -8,7 +8,7 @@ import org.bukkit.util.Vector;
 
 import org.dynmap.markers.MarkerSet;
 
-import com.playmonumenta.scriptedquests.utils.ZoneUtils;
+import com.playmonumenta.scriptedquests.utils.VectorUtils;
 
 public class ZoneTreeParent extends ZoneTreeBase {
 	// The axis this node is split over.
@@ -64,8 +64,8 @@ public class ZoneTreeParent extends ZoneTreeBase {
 
 			for (Axis axis : AXIS_ORDER) {
 				double[] possiblePivots = new double[2];
-				possiblePivots[0] = ZoneUtils.vectorAxis(pivotZone.minCorner(), axis);
-				possiblePivots[1] = ZoneUtils.vectorAxis(pivotZone.maxCornerExclusive(), axis);
+				possiblePivots[0] = VectorUtils.vectorAxis(pivotZone.minCorner(), axis);
+				possiblePivots[1] = VectorUtils.vectorAxis(pivotZone.maxCornerExclusive(), axis);
 				for (double pivot : possiblePivots) {
 					ParentData testSplit = new ParentData();
 					testSplit.mAxis = axis;
@@ -74,13 +74,13 @@ public class ZoneTreeParent extends ZoneTreeBase {
 					testSplit.mMidMax = pivot;
 
 					for (ZoneFragment zone : zones) {
-						if (pivot >= ZoneUtils.vectorAxis(zone.maxCornerExclusive(), axis)) {
+						if (pivot >= VectorUtils.vectorAxis(zone.maxCornerExclusive(), axis)) {
 							testSplit.mLess.add(zone);
-						} else if (pivot >= ZoneUtils.vectorAxis(zone.minCorner(), axis)) {
+						} else if (pivot >= VectorUtils.vectorAxis(zone.minCorner(), axis)) {
 							testSplit.mMidMin = Math.min(testSplit.mMidMin,
-							                             ZoneUtils.vectorAxis(zone.minCorner(), axis));
+							                             VectorUtils.vectorAxis(zone.minCorner(), axis));
 							testSplit.mMidMax = Math.max(testSplit.mMidMax,
-							                             ZoneUtils.vectorAxis(zone.maxCornerExclusive(), axis));
+							                             VectorUtils.vectorAxis(zone.maxCornerExclusive(), axis));
 							testSplit.mMid.add(zone);
 						} else {
 							testSplit.mMore.add(zone);
@@ -99,8 +99,8 @@ public class ZoneTreeParent extends ZoneTreeBase {
 
 		// This is the answer we want. Copy values to self.
 		mAxis = bestSplit.mAxis;
-		mMin = ZoneUtils.vectorAxis(minVector, mAxis);
-		mMax = ZoneUtils.vectorAxis(maxVector, mAxis);
+		mMin = VectorUtils.vectorAxis(minVector, mAxis);
+		mMax = VectorUtils.vectorAxis(maxVector, mAxis);
 		mPivot = bestSplit.mPivot;
 		mMidMin = bestSplit.mMidMin;
 		mMidMax = bestSplit.mMidMax;
@@ -137,7 +137,7 @@ public class ZoneTreeParent extends ZoneTreeBase {
 		}
 
 		ZoneFragment result = null;
-		double test = ZoneUtils.vectorAxis(loc, mAxis);
+		double test = VectorUtils.vectorAxis(loc, mAxis);
 
 		// If the test point is outside this node, return null immediately.
 		if (test < mMin || test >= mMax) {

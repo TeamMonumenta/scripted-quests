@@ -8,7 +8,7 @@ import java.util.Map;
 import org.bukkit.Axis;
 import org.bukkit.util.Vector;
 
-import com.playmonumenta.scriptedquests.utils.ZoneUtils;
+import com.playmonumenta.scriptedquests.utils.VectorUtils;
 
 /*
  * A fragment of a zone; this is used to find zones quickly, but not hold their properties.
@@ -294,9 +294,9 @@ public class ZoneFragment extends ZoneBase {
 		}
 
 		for (Axis axis : Axis.values()) {
-			double test = ZoneUtils.vectorAxis(loc, axis);
-			double min = ZoneUtils.vectorAxis(minCorner(), axis);
-			double max = ZoneUtils.vectorAxis(maxCornerExclusive(), axis);
+			double test = VectorUtils.vectorAxis(loc, axis);
+			double min = VectorUtils.vectorAxis(minCorner(), axis);
+			double max = VectorUtils.vectorAxis(maxCornerExclusive(), axis);
 			if (test < min || test >= max) {
 				return false;
 			}

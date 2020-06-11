@@ -24,6 +24,7 @@ import com.playmonumenta.scriptedquests.commands.GiveLootTable;
 import com.playmonumenta.scriptedquests.commands.HasPermission;
 import com.playmonumenta.scriptedquests.commands.InteractNpc;
 import com.playmonumenta.scriptedquests.commands.Leaderboard;
+import com.playmonumenta.scriptedquests.commands.Line;
 import com.playmonumenta.scriptedquests.commands.QuestTrigger;
 import com.playmonumenta.scriptedquests.commands.Race;
 import com.playmonumenta.scriptedquests.commands.RandomNumber;
@@ -90,6 +91,7 @@ public class Plugin extends JavaPlugin {
 		GiveItemWithLore.register();
 		Race.register(this);
 		Leaderboard.register(this);
+		Line.register();
 		RandomNumber.register();
 		HasPermission.register();
 		TimerDebug.register(this);
