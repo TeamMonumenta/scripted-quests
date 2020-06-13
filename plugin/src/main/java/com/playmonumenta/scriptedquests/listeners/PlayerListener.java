@@ -80,7 +80,6 @@ public class PlayerListener implements Listener {
 			Villager villager = (Villager)entity;
 
 			if (event.isCancelled()) {
-				event.setCancelled(true);
 				return;
 			}
 
