@@ -12,8 +12,6 @@ import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.inventory.MerchantRecipe;
-import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -26,7 +24,6 @@ import com.playmonumenta.scriptedquests.quests.QuestNpc;
  * Only one NpcTrader object exists per NPC name
  */
 public class NpcTrader {
-	public static final String TRADER_MODIFIED_METAKEY = "ScriptedQuestsTraderModified";
 	private final ArrayList<NpcTrade> mTrades = new ArrayList<NpcTrade>();
 	private final String mNpcName;
 
@@ -83,10 +80,9 @@ public class NpcTrader {
 		return mNpcName;
 	}
 
-	public void setNpcTrades(Plugin plugin, Villager villager, Player player) {
-		// Get two copies of the current trades
-		List<MerchantRecipe> origRecipes = new ArrayList<MerchantRecipe>(villager.getRecipes());
-		List<MerchantRecipe> modifiedRecipes = new ArrayList<MerchantRecipe>(origRecipes);
+	public List<MerchantRecipe> getPlayerTrades(Plugin plugin, Villager villager, Player player) {
+		// Copy the current trades
+		List<MerchantRecipe> modifiedRecipes = new ArrayList<MerchantRecipe>(villager.getRecipes());
 
 		// Remove unmatched prereq trades
 		boolean modified = false;
@@ -108,28 +104,11 @@ public class NpcTrader {
 			}
 		}
 
-		if (modified) {
-			if (player.getGameMode() == GameMode.CREATIVE && player.isOp()) {
-				player.sendMessage(ChatColor.GOLD + "These trader slots were not shown to you: " + modifiedSlots);
-				player.sendMessage(ChatColor.GOLD + "This message only appears to operators in creative mode");
-			}
-
-			villager.setRecipes(modifiedRecipes);
-
-			villager.setMetadata(TRADER_MODIFIED_METAKEY, new FixedMetadataValue(plugin, 0));
-
-			new BukkitRunnable() {
-				@Override
-				public void run() {
-					if (!villager.isTrading()) {
-						villager.removeMetadata(TRADER_MODIFIED_METAKEY, plugin);
-						villager.setRecipes(origRecipes);
-						this.cancel();
-					} else if (!villager.isValid() || villager.isDead()) {
-						this.cancel();
-					}
-				}
-			}.runTaskTimer(plugin, 1, 1);
+		if (modified && player.getGameMode() == GameMode.CREATIVE && player.isOp()) {
+			player.sendMessage(ChatColor.GOLD + "These trader slots were not shown to you: " + modifiedSlots);
+			player.sendMessage(ChatColor.GOLD + "This message only appears to operators in creative mode");
 		}
+
+		return modifiedRecipes;
 	}
 }

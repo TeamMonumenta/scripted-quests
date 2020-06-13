@@ -1,10 +1,15 @@
 package com.playmonumenta.scriptedquests.managers;
 
 import java.util.HashMap;
+import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.inventory.Merchant;
+import org.bukkit.inventory.MerchantRecipe;
 
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.QuestNpc;
@@ -33,12 +38,28 @@ public class NpcTradeManager {
 		});
 	}
 
-	public void setNpcTrades(Plugin plugin, Villager villager, Player player) {
+	public void trade(Plugin plugin, Villager villager, Player player, PlayerInteractEntityEvent event) {
+		List<MerchantRecipe> trades = null;
 		if (villager.getCustomName() != null) {
 			NpcTrader trader = mTraders.get(QuestNpc.squashNpcName(villager.getCustomName()));
 			if (trader != null) {
-				trader.setNpcTrades(plugin, villager, player);
+				trades = trader.getPlayerTrades(plugin, villager, player);
 			}
+		}
+
+		if (trades == null) {
+			trades = villager.getRecipes();
+		}
+
+		/*
+		 * If this villager still has trades, create a temporary fake merchant to interact with the player
+		 * This allows multiple players to trade with the same NPC at the same time, and also gives score-limited trades
+		 */
+		if (trades.size() > 0) {
+			Merchant merchant = Bukkit.createMerchant(villager.getName());
+			merchant.setRecipes(trades);
+			player.openMerchant(merchant, true);
+			event.setCancelled(true);
 		}
 	}
 }
