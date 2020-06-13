@@ -10,6 +10,7 @@ import org.bukkit.entity.Villager;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.Merchant;
 import org.bukkit.inventory.MerchantRecipe;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.QuestNpc;
@@ -56,11 +57,17 @@ public class NpcTradeManager {
 		 * This allows multiple players to trade with the same NPC at the same time, and also gives score-limited trades
 		 */
 		if (trades.size() > 0) {
-			Merchant merchant = Bukkit.createMerchant(villager.getName());
-			merchant.setRecipes(trades);
-			player.openMerchant(merchant, true);
-			event.setCancelled(true);
+			List<MerchantRecipe> finalTrades = trades;
+			new BukkitRunnable() {
+				@Override
+				public void run() {
+					Merchant merchant = Bukkit.createMerchant(villager.getName());
+					merchant.setRecipes(finalTrades);
+					player.openMerchant(merchant, true);
+				}
+			}.runTaskLater(plugin, 1);
 		}
+		event.setCancelled(true);
 	}
 }
 
