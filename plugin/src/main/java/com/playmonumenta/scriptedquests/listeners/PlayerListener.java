@@ -28,7 +28,6 @@ import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.point.Point;
 import com.playmonumenta.scriptedquests.quests.QuestDeath.DeathActions;
 import com.playmonumenta.scriptedquests.quests.components.DeathLocation;
-import com.playmonumenta.scriptedquests.trades.NpcTrader;
 import com.playmonumenta.scriptedquests.utils.MetadataUtils;
 
 public class PlayerListener implements Listener {
@@ -80,13 +79,12 @@ public class PlayerListener implements Listener {
 		if (entity instanceof Villager) {
 			Villager villager = (Villager)entity;
 
-			if (event.isCancelled() || villager.hasMetadata(NpcTrader.TRADER_MODIFIED_METAKEY)) {
-				event.setCancelled(true);
+			if (event.isCancelled()) {
 				return;
 			}
 
 			if (!villager.isTrading() && MetadataUtils.checkOnceThisTick(mPlugin, player, "ScriptedQuestsTraderNonce")) {
-				mPlugin.mTradeManager.setNpcTrades(mPlugin, villager, player);
+				mPlugin.mTradeManager.trade(mPlugin, villager, player, event);
 			}
 		}
 		if (!event.isCancelled()) {
