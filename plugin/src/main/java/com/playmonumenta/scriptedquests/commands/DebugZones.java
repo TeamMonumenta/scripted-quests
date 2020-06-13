@@ -19,7 +19,6 @@ public class DebugZones {
 		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
 
 		arguments.put("player", new EntitySelectorArgument(EntitySelector.ONE_PLAYER));
-		//arguments.put("position", new LocationArgument());
 
 		CommandAPI.getInstance().register("debugzones",
 		                                  CommandPermission.fromString("scriptedquests.debugzones"),
