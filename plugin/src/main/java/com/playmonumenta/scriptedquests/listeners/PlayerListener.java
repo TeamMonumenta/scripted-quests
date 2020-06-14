@@ -8,6 +8,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -43,16 +44,19 @@ public class PlayerListener implements Listener {
 		Player player = event.getPlayer();
 		ItemStack item = event.getItem();
 		Block block = event.getClickedBlock();
+		Event.Result useItem = event.useItemInHand();
 
-		if (mPlugin.mInteractableManager.interactEvent(mPlugin, player, item, block, action)) {
+		if (useItem != Event.Result.DENY
+		    && !MetadataUtils.happenedThisTick(player, Constants.PLAYER_USED_INTERACTABLE_METAKEY, 0)
+		    && mPlugin.mInteractableManager.interactEvent(mPlugin, player, item, block, action)) {
 			// interactEvent returning true means this event should be canceled
 			event.setCancelled(true);
 			return;
 		}
 
 		// compass
-		if (item != null && item.getType() == Material.COMPASS &&
-		    player != null && !player.isSneaking()) {
+		if (useItem != Event.Result.DENY && item != null
+		    && item.getType() == Material.COMPASS && !player.isSneaking()) {
 			if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
 				mPlugin.mQuestCompassManager.showCurrentQuest(player);
 			} else if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
@@ -76,6 +80,8 @@ public class PlayerListener implements Listener {
 	public void playerInteractEntityEvent(PlayerInteractEntityEvent event) {
 		Entity entity = event.getRightClicked();
 		Player player = event.getPlayer();
+		ItemStack item = event.getHand() == EquipmentSlot.HAND ? player.getInventory().getItemInMainHand() : player.getInventory().getItemInOffHand();
+
 		if (entity instanceof Villager) {
 			Villager villager = (Villager)entity;
 
@@ -87,17 +93,11 @@ public class PlayerListener implements Listener {
 				mPlugin.mTradeManager.trade(mPlugin, villager, player, event);
 			}
 		}
-		if (!event.isCancelled()) {
-			ItemStack item;
-			if (event.getHand() == EquipmentSlot.HAND) {
-				item = player.getInventory().getItemInMainHand();
-			} else {
-				item = player.getInventory().getItemInOffHand();
-			}
-			if (mPlugin.mInteractableManager.interactEntityEvent(mPlugin, player, item, entity)) {
-				// interactEntityEvent returning true means this event should be canceled
-				event.setCancelled(true);
-			}
+		if (!event.isCancelled()
+		    && !MetadataUtils.happenedThisTick(player, Constants.PLAYER_USED_INTERACTABLE_METAKEY, 0)
+		    && mPlugin.mInteractableManager.interactEntityEvent(mPlugin, player, item, entity)) {
+			// interactEntityEvent returning true means this event should be canceled
+			event.setCancelled(true);
 		}
 	}
 
