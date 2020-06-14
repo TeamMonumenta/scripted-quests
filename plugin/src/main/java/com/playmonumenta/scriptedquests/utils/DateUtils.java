@@ -78,11 +78,13 @@ public class DateUtils {
 	}
 
 	public static int getHourOfTwelve() {
-		return Calendar.getInstance().get(Calendar.HOUR);
+		int hourOfTwelve = Calendar.getInstance().get(Calendar.HOUR);
+		return (hourOfTwelve == 0) ? 12 : hourOfTwelve;
 	}
 
 	public static int getHourOfTwelve(Calendar cal) {
-		return cal.get(Calendar.HOUR);
+		int hourOfTwelve = cal.get(Calendar.HOUR);
+		return (hourOfTwelve == 0) ? 12 : hourOfTwelve;
 	}
 
 	public static int getMinute() {
