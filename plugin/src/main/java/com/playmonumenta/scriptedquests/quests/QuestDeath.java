@@ -116,6 +116,7 @@ public class QuestDeath {
 			event.setKeepLevel(mKeepInv);
 			if (mKeepInv) {
 				event.setDroppedExp(0);
+				event.getDrops().clear();
 			}
 
 			if (mRespawnPt != null) {
