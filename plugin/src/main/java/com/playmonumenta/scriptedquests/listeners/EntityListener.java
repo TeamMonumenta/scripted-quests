@@ -55,7 +55,7 @@ public class EntityListener implements Listener {
 				}
 			} else {
 				if (!event.isCancelled()
-				    && !MetadataUtils.happenedThisTick(player, Constants.PLAYER_USED_INTERACTABLE_METAKEY, 0)
+				    && !MetadataUtils.happenedInRecentTicks(player, Constants.PLAYER_USED_INTERACTABLE_METAKEY, 3)
 				    && mPlugin.mInteractableManager.attackEntityEvent(mPlugin, player, item, damagee)) {
 					// interactEntityEvent returning true means this event should be canceled
 					event.setCancelled(true);

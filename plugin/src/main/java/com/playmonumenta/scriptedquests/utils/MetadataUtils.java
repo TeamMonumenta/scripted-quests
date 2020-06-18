@@ -44,9 +44,26 @@ public class MetadataUtils {
 	 * @param tickOffset Offsets the tick amount checked
 	 * @return A true/false. If true, this has been called already. If false, it has not been called.
 	 */
+	@SuppressWarnings({"unused","BooleanMethodIsAlwaysInverted"})
 	public static boolean happenedThisTick(Entity entity, String metakey, int tickOffset) {
 		return entity.hasMetadata(metakey)
 		       && entity.getMetadata(metakey).get(0).asInt() == entity.getTicksLived() + tickOffset;
+	}
+
+	/**
+	 * Yet another way to check if a metakey was called
+	 *
+	 * If #checkOnceThisTick was called with the same metakey within the past tickRange ticks, return true
+	 *
+	 * @param entity The entity being checked
+	 * @param metakey A unique key that will be checked
+	 * @param tickOffset Offsets the tick amount checked
+	 * @return A true/false. If true, this has been called already. If false, it has not been called.
+	 */
+	@SuppressWarnings({"unused","BooleanMethodIsAlwaysInverted"})
+	public static boolean happenedInRecentTicks(Entity entity, String metakey, int tickOffset) {
+		return entity.hasMetadata(metakey)
+			&& entity.getMetadata(metakey).get(0).asInt() + tickOffset >= entity.getTicksLived();
 	}
 
 	public static void removeAllMetadata(Plugin plugin) {
