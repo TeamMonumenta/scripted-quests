@@ -35,6 +35,7 @@ import com.playmonumenta.scriptedquests.commands.SetVelocity;
 import com.playmonumenta.scriptedquests.commands.TimerDebug;
 import com.playmonumenta.scriptedquests.listeners.EntityListener;
 import com.playmonumenta.scriptedquests.listeners.PlayerListener;
+import com.playmonumenta.scriptedquests.listeners.WorldListener;
 import com.playmonumenta.scriptedquests.managers.ClickableManager;
 import com.playmonumenta.scriptedquests.managers.CodeManager;
 import com.playmonumenta.scriptedquests.managers.InteractableManager;
@@ -132,6 +133,7 @@ public class Plugin extends JavaPlugin {
 
 		manager.registerEvents(new EntityListener(this), this);
 		manager.registerEvents(new PlayerListener(this), this);
+		manager.registerEvents(new WorldListener(this), this);
 		manager.registerEvents(mTimerManager, this);
 		manager.registerEvents(mZonePropertyManager, this);
 
