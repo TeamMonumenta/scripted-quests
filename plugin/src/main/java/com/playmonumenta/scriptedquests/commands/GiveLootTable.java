@@ -47,10 +47,11 @@ public class GiveLootTable {
 	}
 
 	private static void giveLoot(Collection<Player> players, String lootPath, int count, Random random) {
+		boolean alreadyDone = false;
 		for (Player player : players) {
 			try {
 				for (int i = 0; i < count; i++) {
-					InventoryUtils.giveLootTableContents(player, lootPath, random);
+					alreadyDone = InventoryUtils.giveLootTableContents(player, lootPath, random, alreadyDone);
 				}
 			} catch (Exception e) {
 				player.sendMessage(ChatColor.RED + "BUG! Server failed to give you loot from the table '" + lootPath + "'");

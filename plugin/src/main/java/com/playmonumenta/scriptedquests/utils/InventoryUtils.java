@@ -64,14 +64,15 @@ public class InventoryUtils {
 		return new NamespacedKey(str[0], str[1]);
 	}
 
-	public static void giveLootTableContents(Player player, String lootPath, Random random) throws Exception {
+	public static boolean giveLootTableContents(Player player, String lootPath, Random random, boolean alreadyDone) throws Exception {
 		NamespacedKey lootNamespace = getNamespacedKey(lootPath);
 		LootContext lootContext = new LootContext.Builder(player.getLocation()).build();
 
-		giveItems(player, Bukkit.getLootTable(lootNamespace).populateLoot(random, lootContext));
+		alreadyDone = giveItems(player, Bukkit.getLootTable(lootNamespace).populateLoot(random, lootContext), alreadyDone);
+		return alreadyDone;
 	}
 
-	public static void giveItems(Player player, Collection<ItemStack> items) {
+	public static boolean giveItems(Player player, Collection<ItemStack> items, boolean alreadyDone) {
 		PlayerInventory inv = player.getInventory();
 		boolean itemsDropped = false;
 		for (ItemStack item : items) {
@@ -84,8 +85,10 @@ public class InventoryUtils {
 			}
 		}
 
-		if (itemsDropped) {
+		if (itemsDropped && !alreadyDone) {
 			player.sendMessage(ChatColor.RED + "Your inventory is full! Some items were dropped on the ground!");
+			alreadyDone = true;
 		}
+		return alreadyDone;
 	}
 }
