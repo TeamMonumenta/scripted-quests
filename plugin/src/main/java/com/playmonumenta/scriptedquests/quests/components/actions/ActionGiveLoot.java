@@ -27,7 +27,7 @@ public class ActionGiveLoot implements ActionBase {
 	@Override
 	public void doAction(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
 		try {
-			InventoryUtils.giveLootTableContents(player, mLootPath, mRandom);
+			InventoryUtils.giveLootTableContents(player, mLootPath, mRandom, false);
 		} catch (Exception e) {
 			player.sendMessage(ChatColor.RED + "BUG! Server failed to give you loot from the table '" + mLootPath + "'");
 			player.sendMessage(ChatColor.RED + "Please hover over the following message, take a screenshot, and report this to a moderator");

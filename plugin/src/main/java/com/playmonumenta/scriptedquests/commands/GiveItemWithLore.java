@@ -67,7 +67,7 @@ public class GiveItemWithLore {
 		items.add(item);
 
 		for (Player player : players) {
-			InventoryUtils.giveItems(player, items);
+			InventoryUtils.giveItems(player, items, false);
 		}
 	}
 }
