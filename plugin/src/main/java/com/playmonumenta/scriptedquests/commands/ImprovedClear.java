@@ -129,7 +129,7 @@ public class ImprovedClear {
 	private static void iterateOverShulkerTypes(Player player, Iterator<Material> iterator, String itemString, int maxAmount, String shulkerLore, int count) {
 		Inventory inventory = player.getInventory();
 
-		while(iterator.hasNext()) {
+		while (iterator.hasNext()) {
 			Material mat = iterator.next();
 			if (inventory.contains(mat)) {
 				HashMap<Integer, ? extends ItemStack> invMap = inventory.all(mat);

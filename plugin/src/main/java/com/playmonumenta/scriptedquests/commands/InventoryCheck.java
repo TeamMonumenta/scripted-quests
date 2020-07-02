@@ -108,10 +108,10 @@ public class InventoryCheck {
 		}
 	}
 
-	private static int checkShulkerLogic (Iterator<Material> iterator, Player player, String itemName, String shulkerLore, int scoreValue) {
+	private static int checkShulkerLogic(Iterator<Material> iterator, Player player, String itemName, String shulkerLore, int scoreValue) {
 		Inventory inventory = player.getInventory();
 
-		while(iterator.hasNext()) {
+		while (iterator.hasNext()) {
 			Material mat = iterator.next();
 			if (inventory.contains(mat)) {
 				HashMap<Integer, ? extends ItemStack> invMap = inventory.all(mat);
