@@ -3,8 +3,6 @@ package com.playmonumenta.scriptedquests;
 import java.io.File;
 import java.util.Random;
 
-import com.playmonumenta.scriptedquests.commands.Damage;
-import com.playmonumenta.scriptedquests.commands.Heal;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -14,15 +12,19 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import com.playmonumenta.scriptedquests.commands.ImprovedClear;
 import com.playmonumenta.scriptedquests.commands.Clickable;
 import com.playmonumenta.scriptedquests.commands.Code;
+import com.playmonumenta.scriptedquests.commands.Damage;
 import com.playmonumenta.scriptedquests.commands.DebugZones;
 import com.playmonumenta.scriptedquests.commands.GenerateCode;
 import com.playmonumenta.scriptedquests.commands.GetDate;
 import com.playmonumenta.scriptedquests.commands.GiveItemWithLore;
 import com.playmonumenta.scriptedquests.commands.GiveLootTable;
 import com.playmonumenta.scriptedquests.commands.HasPermission;
+import com.playmonumenta.scriptedquests.commands.Heal;
 import com.playmonumenta.scriptedquests.commands.InteractNpc;
+import com.playmonumenta.scriptedquests.commands.InventoryCheck;
 import com.playmonumenta.scriptedquests.commands.Leaderboard;
 import com.playmonumenta.scriptedquests.commands.Line;
 import com.playmonumenta.scriptedquests.commands.QuestTrigger;
@@ -103,6 +105,8 @@ public class Plugin extends JavaPlugin {
 		DebugZones.register(this);
 		Heal.register();
 		Damage.register();
+		ImprovedClear.register();
+		InventoryCheck.register();
 
 		mScheduledFunctionsManager = new ScheduleFunction(this);
 	}
