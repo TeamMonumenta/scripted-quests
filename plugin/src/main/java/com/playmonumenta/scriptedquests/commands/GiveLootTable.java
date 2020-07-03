@@ -5,6 +5,8 @@ import java.util.LinkedHashMap;
 import java.util.Random;
 
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 
 import com.playmonumenta.scriptedquests.utils.InventoryUtils;
@@ -44,6 +46,31 @@ public class GiveLootTable {
 											  giveLoot((Collection<Player>)args[0], (String)args[1], (Integer)args[2], random);
 		                                  }
 		);
+
+		/* Rather than take a specified count, take an item entity - and give loot from the loot table once for each item in the stack */
+		arguments.clear();
+		arguments.put("players", new EntitySelectorArgument(EntitySelector.MANY_PLAYERS));
+		arguments.put("lootTablePath", new TextArgument());
+		arguments.put("countItems", new EntitySelectorArgument(EntitySelectorArgument.EntitySelector.ONE_ENTITY));
+
+		CommandAPI.getInstance().register("giveloottable",
+		                                  perms,
+		                                  arguments,
+		                                  (sender, args) -> {
+											  giveLootCountFromItemEntity((Collection<Player>)args[0], (String)args[1], (Entity)args[2], random);
+		                                  }
+		);
+	}
+
+	private static void giveLootCountFromItemEntity(Collection<Player> players, String lootPath, Entity entity, Random random) {
+		if ((entity instanceof Item) && ((Item)entity).getItemStack() != null) {
+			giveLoot(players, lootPath, ((Item)entity).getItemStack().getAmount(), random);
+		} else {
+			for (Player player : players) {
+				player.sendMessage(ChatColor.RED + "BUG! Server tried to give you loot based on an entity that wasn't an item from the table '" + lootPath + "'");
+				player.sendMessage(ChatColor.RED + "Please take a screenshot and report this bug");
+			}
+		}
 	}
 
 	private static void giveLoot(Collection<Player> players, String lootPath, int count, Random random) {
