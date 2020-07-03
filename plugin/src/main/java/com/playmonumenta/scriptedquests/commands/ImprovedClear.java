@@ -117,11 +117,14 @@ public class ImprovedClear {
 					 count += item.getAmount();
 				 }
 				 if (maxAmount > 0 && count >= maxAmount) {
+					 shulkerMeta.setBlockState(shulkerBox);
+	                 shulkerItem.setItemMeta(shulkerMeta);
 					 return maxAmount;
 				 }
 			 }
 		 }
-
+		 shulkerMeta.setBlockState(shulkerBox);
+         shulkerItem.setItemMeta(shulkerMeta);
          return count;
      }
  }
