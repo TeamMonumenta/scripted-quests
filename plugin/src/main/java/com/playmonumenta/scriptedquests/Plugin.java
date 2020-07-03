@@ -12,7 +12,6 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import com.playmonumenta.scriptedquests.commands.ImprovedClear;
 import com.playmonumenta.scriptedquests.commands.Clickable;
 import com.playmonumenta.scriptedquests.commands.Code;
 import com.playmonumenta.scriptedquests.commands.Damage;
@@ -23,8 +22,8 @@ import com.playmonumenta.scriptedquests.commands.GiveItemWithLore;
 import com.playmonumenta.scriptedquests.commands.GiveLootTable;
 import com.playmonumenta.scriptedquests.commands.HasPermission;
 import com.playmonumenta.scriptedquests.commands.Heal;
+import com.playmonumenta.scriptedquests.commands.ImprovedClear;
 import com.playmonumenta.scriptedquests.commands.InteractNpc;
-import com.playmonumenta.scriptedquests.commands.InventoryCheck;
 import com.playmonumenta.scriptedquests.commands.Leaderboard;
 import com.playmonumenta.scriptedquests.commands.Line;
 import com.playmonumenta.scriptedquests.commands.QuestTrigger;
@@ -106,7 +105,6 @@ public class Plugin extends JavaPlugin {
 		Heal.register();
 		Damage.register();
 		ImprovedClear.register();
-		InventoryCheck.register();
 
 		mScheduledFunctionsManager = new ScheduleFunction(this);
 	}

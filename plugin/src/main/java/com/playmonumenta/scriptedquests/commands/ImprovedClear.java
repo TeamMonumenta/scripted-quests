@@ -72,9 +72,9 @@ public class ImprovedClear {
                      // Not a shulker box
                      if (InventoryUtils.testForItemWithName(item, itemName)) {
                          // Item matches
-                         if (maxAmount != 0 && count < maxAmount) {
+                         if (maxAmount != 0 && (count < maxAmount || maxAmount == -1)) {
                              // Clear the item
-                        	 if (sInventory.getItem(i).getAmount() > maxAmount - count) {
+                        	 if (sInventory.getItem(i).getAmount() > maxAmount - count && maxAmount != -1) {
     							 item.setAmount(item.getAmount() - (maxAmount - count));
     						 } else {
     							 sInventory.clear(i);
@@ -106,9 +106,9 @@ public class ImprovedClear {
 				 //Is the item the one we are looking for?
 				 if (InventoryUtils.testForItemWithName(item, itemName)) {
 					 //Make sure you actually need to clear the items
-					 if (maxAmount != 0 && count < maxAmount) {
+					 if (maxAmount != 0 && (count < maxAmount || maxAmount == -1)) {
 						 //Check if the itemstack size is larger than needed, then set it to what it would be if you took away that many. Or just remove the stack if its not more than needed.
-						 if (sInventory.getItem(i).getAmount() > maxAmount - count) {
+						 if (sInventory.getItem(i).getAmount() > maxAmount - count && maxAmount != -1) {
 							 item.setAmount(item.getAmount() - (maxAmount - count));
 						 } else {
 							 sInventory.clear(i);
