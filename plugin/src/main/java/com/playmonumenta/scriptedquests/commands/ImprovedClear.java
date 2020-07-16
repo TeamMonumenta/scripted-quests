@@ -22,109 +22,109 @@ import io.github.jorelali.commandapi.api.arguments.StringArgument;
 import io.github.jorelali.commandapi.api.arguments.TextArgument;
 
 public class ImprovedClear {
-	 public static void register() {
-         CommandPermission perms = CommandPermission.fromString("scriptedquests.improvedclear");
-         LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
-         String[] aliases = {"iclear"};
+	public static void register() {
+		CommandPermission perms = CommandPermission.fromString("scriptedquests.improvedclear");
+		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
+		String[] aliases = {"iclear"};
 
-         arguments.put("target", new EntitySelectorArgument(EntitySelector.ONE_PLAYER));
-         arguments.put("name", new TextArgument());
+		arguments.put("target", new EntitySelectorArgument(EntitySelector.ONE_PLAYER));
+		arguments.put("name", new TextArgument());
 
-         CommandAPI.getInstance().register("improvedclear", perms, aliases, arguments, (sender, args) -> {
-             return clearInventory((Player)args[0], (String)args[1], -1, true, "");
-         });
+		CommandAPI.getInstance().register("improvedclear", perms, aliases, arguments, (sender, args) -> {
+			return clearInventory((Player)args[0], (String)args[1], -1, true, "");
+		});
 
-         arguments.put("maxAmount", new IntegerArgument());
+		arguments.put("maxAmount", new IntegerArgument());
 
-         CommandAPI.getInstance().register("improvedclear", perms, aliases, arguments, (sender, args) -> {
-             return clearInventory((Player)args[0], (String)args[1], (Integer)args[2], true, "");
-         });
+		CommandAPI.getInstance().register("improvedclear", perms, aliases, arguments, (sender, args) -> {
+			return clearInventory((Player)args[0], (String)args[1], (Integer)args[2], true, "");
+		});
 
-         arguments.put("clearShulkers", new BooleanArgument());
+		arguments.put("clearShulkers", new BooleanArgument());
 
-         CommandAPI.getInstance().register("improvedclear", perms, aliases, arguments, (sender, args) -> {
-             return clearInventory((Player)args[0], (String)args[1], (Integer)args[2], (boolean)args[3], "");
-         });
+		CommandAPI.getInstance().register("improvedclear", perms, aliases, arguments, (sender, args) -> {
+			return clearInventory((Player)args[0], (String)args[1], (Integer)args[2], (boolean)args[3], "");
+		});
 
-         arguments.put("shulkerLore", new StringArgument());
+		arguments.put("shulkerLore", new StringArgument());
 
-         CommandAPI.getInstance().register("improvedclear", perms, aliases, arguments, (sender, args) -> {
-             return clearInventory((Player)args[0], (String)args[1], (Integer)args[2], (boolean)args[3], (String)args[4]);
-         });
-     }
+		CommandAPI.getInstance().register("improvedclear", perms, aliases, arguments, (sender, args) -> {
+			return clearInventory((Player)args[0], (String)args[1], (Integer)args[2], (boolean)args[3], (String)args[4]);
+		});
+	}
 
 
-	 private static int clearInventory(Player player, String itemName, int maxAmount, boolean clearShulkers, String shulkerLore) {
-         int count = 0;
+	private static int clearInventory(Player player, String itemName, int maxAmount, boolean clearShulkers, String shulkerLore) {
+		int count = 0;
 
-         Inventory sInventory = player.getInventory();
-         for (int i = 0; i < sInventory.getSize(); i++) {
-             ItemStack item = sInventory.getItem(i);
-             if (item != null && item.hasItemMeta()) {
+		Inventory sInventory = player.getInventory();
+		for (int i = 0; i < sInventory.getSize(); i++) {
+			ItemStack item = sInventory.getItem(i);
+			if (item != null && item.hasItemMeta()) {
 
-                 if (MaterialUtils.shulkerTypes.contains(item.getType())) {
-                     // This is a shulker box
-                     if (clearShulkers && InventoryUtils.testForItemWithLore(item, shulkerLore)) {
-                         // We are clearing shulkers and this specific shulker matches the search lore text (or none was provided)
-                         count = clearItemsFromShulkerBox(item, itemName, maxAmount, count);
-                     }
-                 } else {
-                     // Not a shulker box
-                     if (InventoryUtils.testForItemWithName(item, itemName)) {
-                         // Item matches
-                         if (maxAmount != 0 && (count < maxAmount || maxAmount == -1)) {
-                             // Clear the item
-                        	 if (sInventory.getItem(i).getAmount() > maxAmount - count && maxAmount != -1) {
-    							 item.setAmount(item.getAmount() - (maxAmount - count));
-    						 } else {
-    							 sInventory.clear(i);
-    						 }
-                         }
-                         count += item.getAmount();
-                     }
-                 }
+				if (MaterialUtils.shulkerTypes.contains(item.getType())) {
+					// This is a shulker box
+					if (clearShulkers && InventoryUtils.testForItemWithLore(item, shulkerLore)) {
+						// We are clearing shulkers and this specific shulker matches the search lore text (or none was provided)
+						count = clearItemsFromShulkerBox(item, itemName, maxAmount, count);
+					}
+				} else {
+					// Not a shulker box
+					if (InventoryUtils.testForItemWithName(item, itemName)) {
+						// Item matches
+						if (maxAmount != 0 && (count < maxAmount || maxAmount == -1)) {
+							// Clear the item
+							if (sInventory.getItem(i).getAmount() > maxAmount - count && maxAmount != -1) {
+								item.setAmount(item.getAmount() - (maxAmount - count));
+							} else {
+								sInventory.clear(i);
+							}
+						}
+						count += item.getAmount();
+					}
+				}
 
-                 if (maxAmount > 0 && count >= maxAmount) {
-                     // Enough items have been cleared
-                     return maxAmount;
-                 }
-             }
-         }
+				if (maxAmount > 0 && count >= maxAmount) {
+					// Enough items have been cleared
+					return maxAmount;
+				}
+			}
+		}
 
-         return count;
-     }
+		return count;
+	}
 
-	 private static int clearItemsFromShulkerBox(ItemStack shulkerItem, String itemName, int maxAmount, int count) {
-		 BlockStateMeta shulkerMeta = (BlockStateMeta)shulkerItem.getItemMeta();
-		 ShulkerBox shulkerBox = (ShulkerBox)shulkerMeta.getBlockState();
-		 Inventory sInventory = shulkerBox.getInventory();
+	private static int clearItemsFromShulkerBox(ItemStack shulkerItem, String itemName, int maxAmount, int count) {
+		BlockStateMeta shulkerMeta = (BlockStateMeta)shulkerItem.getItemMeta();
+		ShulkerBox shulkerBox = (ShulkerBox)shulkerMeta.getBlockState();
+		Inventory sInventory = shulkerBox.getInventory();
 
-		 for (int i = 0; i < sInventory.getSize(); i++) {
-			 ItemStack item = sInventory.getItem(i);
+		for (int i = 0; i < sInventory.getSize(); i++) {
+			ItemStack item = sInventory.getItem(i);
 
-			 if (item != null && item.hasItemMeta()) {
-				 //Is the item the one we are looking for?
-				 if (InventoryUtils.testForItemWithName(item, itemName)) {
-					 //Make sure you actually need to clear the items
-					 if (maxAmount != 0 && (count < maxAmount || maxAmount == -1)) {
-						 //Check if the itemstack size is larger than needed, then set it to what it would be if you took away that many. Or just remove the stack if its not more than needed.
-						 if (sInventory.getItem(i).getAmount() > maxAmount - count && maxAmount != -1) {
-							 item.setAmount(item.getAmount() - (maxAmount - count));
-						 } else {
-							 sInventory.clear(i);
-						 }
-					 }
-					 count += item.getAmount();
-				 }
-				 if (maxAmount > 0 && count >= maxAmount) {
-					 shulkerMeta.setBlockState(shulkerBox);
-	                 shulkerItem.setItemMeta(shulkerMeta);
-					 return maxAmount;
-				 }
-			 }
-		 }
-		 shulkerMeta.setBlockState(shulkerBox);
-         shulkerItem.setItemMeta(shulkerMeta);
-         return count;
-     }
- }
+			if (item != null && item.hasItemMeta()) {
+				//Is the item the one we are looking for?
+				if (InventoryUtils.testForItemWithName(item, itemName)) {
+					//Make sure you actually need to clear the items
+					if (maxAmount != 0 && (count < maxAmount || maxAmount == -1)) {
+						//Check if the itemstack size is larger than needed, then set it to what it would be if you took away that many. Or just remove the stack if its not more than needed.
+						if (sInventory.getItem(i).getAmount() > maxAmount - count && maxAmount != -1) {
+							item.setAmount(item.getAmount() - (maxAmount - count));
+						} else {
+							sInventory.clear(i);
+						}
+					}
+					count += item.getAmount();
+				}
+				if (maxAmount > 0 && count >= maxAmount) {
+					shulkerMeta.setBlockState(shulkerBox);
+					shulkerItem.setItemMeta(shulkerMeta);
+					return maxAmount;
+				}
+			}
+		}
+		shulkerMeta.setBlockState(shulkerBox);
+		shulkerItem.setItemMeta(shulkerMeta);
+		return count;
+	}
+}
