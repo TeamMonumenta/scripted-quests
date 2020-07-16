@@ -31,7 +31,7 @@ public class QuestCompassManager {
 
 		private void directPlayer(WaypointManager mgr, Player player) {
 			MessagingUtils.sendRawMessage(player, mTitle + ": " + mLocation.getMessage());
-			mgr.setWaypoint(player, mLocation.getWaypoints());
+			mgr.setWaypoint(player, mLocation);
 		}
 	}
 

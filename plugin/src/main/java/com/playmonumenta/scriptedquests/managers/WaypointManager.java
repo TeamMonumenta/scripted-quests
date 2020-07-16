@@ -13,6 +13,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.quests.components.QuestLocation;
 
 public class WaypointManager {
 	/* Number of ticks between re-checking waypoint progress */
@@ -35,8 +36,8 @@ public class WaypointManager {
 	private static final Random RAND = new Random();
 
 	private final Plugin mPlugin;
-	private final Map<Player, List<Location>> mPlayers = new LinkedHashMap<Player, List<Location>>();
-	private final Map<Player, Location> mPlayerAverageLocs = new LinkedHashMap<Player, Location>();
+	private final Map<Player, QuestLocation> mPlayers = new LinkedHashMap<>();
+	private final Map<Player, Location> mPlayerAverageLocs = new LinkedHashMap<>();
 	private BukkitRunnable mRunnable = null;
 
 	private static double distance2D(Location loc1, Location loc2) {
@@ -106,6 +107,8 @@ public class WaypointManager {
 
 		mRunnable = new BukkitRunnable() {
 			double mHelixStart = 0;
+			/* Counts up to 7, then rolls back around to 0. Prereqs are only checked when it's 0 */
+			int mPrereqCounter = 0;
 
 			@Override
 			public void run() {
@@ -115,14 +118,17 @@ public class WaypointManager {
 					return;
 				}
 
-				Iterator<Map.Entry<Player, List<Location>>> iter = mPlayers.entrySet().iterator();
+				mPrereqCounter = (mPrereqCounter + 1) & 0x7;
+
+				Iterator<Map.Entry<Player, QuestLocation>> iter = mPlayers.entrySet().iterator();
 
 				while (iter.hasNext()) {
-					Map.Entry<Player, List<Location>> entry = iter.next();
+					Map.Entry<Player, QuestLocation> entry = iter.next();
 					Player player = entry.getKey();
-					List<Location> waypoints = entry.getValue();
+					QuestLocation questLoc = entry.getValue();
+					List<Location> waypoints = questLoc.getWaypoints();
 
-					if (!player.isValid() || player.isDead() || !player.isOnline()) {
+					if (!player.isValid() || player.isDead() || !player.isOnline() || (mPrereqCounter == 0 && !questLoc.prerequisiteMet(player))) {
 						iter.remove();
 						continue;
 					}
@@ -233,12 +239,12 @@ public class WaypointManager {
 		}
 	}
 
-	public void setWaypoint(Player player, List<Location> waypoints) {
-		if (waypoints == null || waypoints.isEmpty()) {
+	public void setWaypoint(Player player, QuestLocation questLoc) {
+		if (questLoc == null || questLoc.getWaypoints() == null || questLoc.getWaypoints().isEmpty()) {
 			mPlayers.remove(player);
 			return;
 		}
-		mPlayers.put(player, waypoints);
+		mPlayers.put(player, questLoc);
 		ensureTaskIsRunning();
 	}
 }

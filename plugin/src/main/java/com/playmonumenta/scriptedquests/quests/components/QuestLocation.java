@@ -3,6 +3,7 @@ package com.playmonumenta.scriptedquests.quests.components;
 import java.util.List;
 
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 public interface QuestLocation {
 	/*
@@ -18,4 +19,8 @@ public interface QuestLocation {
 	Location getLocation();
 
 	String getMessage();
+
+	default boolean prerequisiteMet(Player player) {
+		return true;
+	}
 }
