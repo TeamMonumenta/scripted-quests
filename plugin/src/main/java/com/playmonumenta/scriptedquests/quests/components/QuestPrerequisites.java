@@ -17,6 +17,7 @@ import com.playmonumenta.scriptedquests.quests.components.prerequisites.Prerequi
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteCheckAdvancements;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteCheckScores;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteCheckTags;
+import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteFacing;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteFullyHealed;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteSneaking;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteItemInHand;
@@ -155,6 +156,9 @@ public class QuestPrerequisites implements PrerequisiteBase {
 				break;
 			case "gamemode":
 				mPrerequisites.add(new PrerequisiteGamemode(value));
+				break;
+			case "facing":
+				mPrerequisites.add(new PrerequisiteFacing(value));
 				break;
 			default:
 				throw new Exception("Unknown prerequisites key: '" + key + "'");
