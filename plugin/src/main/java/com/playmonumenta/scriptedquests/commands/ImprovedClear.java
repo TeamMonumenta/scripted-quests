@@ -79,11 +79,11 @@ public class ImprovedClear {
 						if (maxAmount != 0 && (count < maxAmount || maxAmount == -1)) {
 							// Clear the item
 							if (inv.getItem(i).getAmount() > maxAmount - count && maxAmount != -1) {
-								count += (maxAmount - count);
 								item.setAmount(item.getAmount() - (maxAmount - count));
+								count += (maxAmount - count);
 							} else {
-								count += item.getAmount();
 								inv.clear(i);
+								count += item.getAmount();
 							}
 						} else {
 							count += item.getAmount();
