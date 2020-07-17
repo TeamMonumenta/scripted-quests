@@ -18,7 +18,6 @@ import io.github.jorelali.commandapi.api.arguments.BooleanArgument;
 import io.github.jorelali.commandapi.api.arguments.EntitySelectorArgument;
 import io.github.jorelali.commandapi.api.arguments.EntitySelectorArgument.EntitySelector;
 import io.github.jorelali.commandapi.api.arguments.IntegerArgument;
-import io.github.jorelali.commandapi.api.arguments.StringArgument;
 import io.github.jorelali.commandapi.api.arguments.TextArgument;
 
 public class ImprovedClear {
@@ -46,7 +45,7 @@ public class ImprovedClear {
 			return clearInventory(((Player)args[0]).getInventory(), (String)args[1], (Integer)args[2], (Boolean)args[3], "", 0);
 		});
 
-		arguments.put("shulkerLore", new StringArgument());
+		arguments.put("shulkerLore", new TextArgument());
 
 		CommandAPI.getInstance().register("improvedclear", perms, aliases, arguments, (sender, args) -> {
 			return clearInventory(((Player)args[0]).getInventory(), (String)args[1], (Integer)args[2], (Boolean)args[3], (String)args[4], 0);
