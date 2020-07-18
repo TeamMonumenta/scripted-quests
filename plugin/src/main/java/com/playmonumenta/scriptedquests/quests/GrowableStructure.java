@@ -12,6 +12,7 @@ import com.google.gson.JsonObject;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.TreeType;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -176,7 +177,7 @@ public class GrowableStructure {
 				for (Vector vec : ADJACENT_OFFSETS) {
 					Location tmpLoc = workLoc.clone().add(vec);
 					Block blk = tmpLoc.getBlock();
-					if (!blk.isEmpty() && !blk.hasMetadata(METAKEY)) {
+					if (!blk.getType().equals(Material.AIR) && !blk.getType().equals(Material.STRUCTURE_VOID) && !blk.hasMetadata(METAKEY)) {
 						/* Visit this location on the next iteration */
 						pending.add(tmpLoc);
 						/* Don't visit this block again later */
