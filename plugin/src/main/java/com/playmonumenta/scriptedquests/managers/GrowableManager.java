@@ -47,7 +47,7 @@ public class GrowableManager {
 		GrowableStructure growable = new GrowableStructure(mPlugin, origin, label, maxDepth);
 		mGrowables.put(label, growable);
 
-		String path = mPlugin.getDataFolder() + File.separator + "growables" + File.separator + label + ".json";
+		String path = mPlugin.getDataFolder() + File.separator + "growables" + File.separator + "common" + File.separator + label + ".json";
 		FileUtils.writeFile(path, new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create().toJson(growable.getAsJsonObject()));
 
 		return growable.getSize();
