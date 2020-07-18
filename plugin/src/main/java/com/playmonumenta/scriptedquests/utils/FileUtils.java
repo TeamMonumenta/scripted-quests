@@ -3,8 +3,10 @@ package com.playmonumenta.scriptedquests.utils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
@@ -47,6 +49,27 @@ public class FileUtils {
 
 		return content.toString();
 	}
+
+	public static void writeFile(String fileName, String contents) throws IOException {
+		// Do not attempt to catch exceptions here - let them propagate to the caller
+		File file = new File(fileName);
+
+		if (!file.exists()) {
+			file.getParentFile().mkdirs();
+			file.createNewFile();
+		}
+
+		OutputStreamWriter writer = null;
+		try {
+			writer = new OutputStreamWriter(new FileOutputStream(fileName), StandardCharsets.UTF_8);
+			writer.write(contents);
+		} finally {
+			if (writer != null) {
+				writer.close();
+			}
+		}
+	}
+
 
 	/**
 	 * Returns a list of all files in the directory that are both regular files

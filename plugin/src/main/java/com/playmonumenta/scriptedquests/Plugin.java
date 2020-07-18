@@ -21,6 +21,7 @@ import com.playmonumenta.scriptedquests.commands.GenerateCode;
 import com.playmonumenta.scriptedquests.commands.GetDate;
 import com.playmonumenta.scriptedquests.commands.GiveItemWithLore;
 import com.playmonumenta.scriptedquests.commands.GiveLootTable;
+import com.playmonumenta.scriptedquests.commands.Growable;
 import com.playmonumenta.scriptedquests.commands.HasPermission;
 import com.playmonumenta.scriptedquests.commands.InteractNpc;
 import com.playmonumenta.scriptedquests.commands.Leaderboard;
@@ -38,6 +39,7 @@ import com.playmonumenta.scriptedquests.listeners.PlayerListener;
 import com.playmonumenta.scriptedquests.listeners.WorldListener;
 import com.playmonumenta.scriptedquests.managers.ClickableManager;
 import com.playmonumenta.scriptedquests.managers.CodeManager;
+import com.playmonumenta.scriptedquests.managers.GrowableManager;
 import com.playmonumenta.scriptedquests.managers.InteractableManager;
 import com.playmonumenta.scriptedquests.managers.NpcTradeManager;
 import com.playmonumenta.scriptedquests.managers.QuestCompassManager;
@@ -73,6 +75,7 @@ public class Plugin extends JavaPlugin {
 	public ZoneManager mZoneManager;
 	public ZonePropertyManager mZonePropertyManager;
 	public WaypointManager mWaypointManager;
+	public GrowableManager mGrowableManager;
 
 	public World mWorld;
 	public Random mRandom = new Random();
@@ -105,6 +108,9 @@ public class Plugin extends JavaPlugin {
 		Damage.register();
 
 		mScheduledFunctionsManager = new ScheduleFunction(this);
+		mGrowableManager = new GrowableManager(this);
+
+		Growable.register(mGrowableManager);
 	}
 
 	@Override
@@ -181,6 +187,7 @@ public class Plugin extends JavaPlugin {
 		mRaceManager.reload(this, sender);
 		mCodeManager.reload(this, sender);
 		mZonePropertyManager.reload(this, sender);
+		mGrowableManager.reload(this, sender);
 	}
 
 	public void reloadZones(CommandSender sender) {
