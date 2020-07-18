@@ -53,7 +53,7 @@ public class GrowableManager {
 		return growable.getSize();
 	}
 
-	public String[] getLabels(){
+	public String[] getLabels() {
 		return mGrowables.keySet().toArray(new String[mGrowables.size()]);
 	}
 }
