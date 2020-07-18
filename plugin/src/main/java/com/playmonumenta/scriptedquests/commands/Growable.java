@@ -15,6 +15,7 @@ import io.github.jorelali.commandapi.api.arguments.IntegerArgument;
 import io.github.jorelali.commandapi.api.arguments.LiteralArgument;
 import io.github.jorelali.commandapi.api.arguments.LocationArgument;
 import io.github.jorelali.commandapi.api.arguments.StringArgument;
+import io.github.jorelali.commandapi.api.arguments.LocationArgument.LocationType;
 
 public class Growable {
 	public static void register(GrowableManager manager) {
@@ -22,7 +23,7 @@ public class Growable {
 
 		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
 		arguments.put("grow", new LiteralArgument("grow"));
-		arguments.put("location", new LocationArgument());
+		arguments.put("location", new LocationArgument(LocationType.BLOCK_POSITION));
 		arguments.put("label", new DynamicSuggestedStringArgument(() -> manager.getLabels()));
 		arguments.put("ticksPerStep", new IntegerArgument(1));
 		arguments.put("blocksPerStep", new IntegerArgument(1));
@@ -43,7 +44,7 @@ public class Growable {
 
 		arguments.clear();
 		arguments.put("add", new LiteralArgument("add"));
-		arguments.put("location", new LocationArgument());
+		arguments.put("location", new LocationArgument(LocationType.BLOCK_POSITION));
 		arguments.put("label", new StringArgument());
 		arguments.put("maxDepth", new IntegerArgument(1));
 
