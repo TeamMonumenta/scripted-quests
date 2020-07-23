@@ -30,24 +30,32 @@ public class ImprovedClear {
 		arguments.put("name", new TextArgument());
 
 		CommandAPI.getInstance().register("improvedclear", perms, aliases, arguments, (sender, args) -> {
+			// Make sure shulker boxes are closed so they can be clear'd
+			((Player)args[0]).closeInventory();
 			return clearInventory(((Player)args[0]).getInventory(), (String)args[1], -1, true, "", 0);
 		});
 
 		arguments.put("maxAmount", new IntegerArgument());
 
 		CommandAPI.getInstance().register("improvedclear", perms, aliases, arguments, (sender, args) -> {
+			// Make sure shulker boxes are closed so they can be clear'd
+			((Player)args[0]).closeInventory();
 			return clearInventory(((Player)args[0]).getInventory(), (String)args[1], (Integer)args[2], true, "", 0);
 		});
 
 		arguments.put("clearShulkers", new BooleanArgument());
 
 		CommandAPI.getInstance().register("improvedclear", perms, aliases, arguments, (sender, args) -> {
+			// Make sure shulker boxes are closed so they can be clear'd
+			((Player)args[0]).closeInventory();
 			return clearInventory(((Player)args[0]).getInventory(), (String)args[1], (Integer)args[2], (Boolean)args[3], "", 0);
 		});
 
 		arguments.put("shulkerLore", new TextArgument());
 
 		CommandAPI.getInstance().register("improvedclear", perms, aliases, arguments, (sender, args) -> {
+			// Make sure shulker boxes are closed so they can be clear'd
+			((Player)args[0]).closeInventory();
 			return clearInventory(((Player)args[0]).getInventory(), (String)args[1], (Integer)args[2], (Boolean)args[3], (String)args[4], 0);
 		});
 	}
@@ -81,8 +89,8 @@ public class ImprovedClear {
 								item.setAmount(item.getAmount() - (maxAmount - count));
 								count += (maxAmount - count);
 							} else {
-								inv.clear(i);
 								count += item.getAmount();
+								inv.clear(i);
 							}
 						} else {
 							count += item.getAmount();
@@ -92,7 +100,7 @@ public class ImprovedClear {
 
 				if (maxAmount > 0 && count >= maxAmount) {
 					// Enough items have been cleared
-					return maxAmount;
+					return count;
 				}
 			}
 		}
