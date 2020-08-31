@@ -159,6 +159,11 @@ public class GrowableStructure {
 			if (worklist.isEmpty()) {
 				depth += 1;
 				if (depth > maxDepth) {
+					for (GrowableElement element : result) {
+						/* Clean up the left-behind metadata */
+						element.getBlock(origin).removeMetadata(METAKEY, plugin);
+					}
+
 					throw new Exception("Maximum depth " + Integer.toString(maxDepth) + " exceeded");
 				}
 				worklist.addAll(pending);
