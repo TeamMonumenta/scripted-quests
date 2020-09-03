@@ -34,12 +34,10 @@ public class Heal {
 								AttributeInstance attr = a.getAttribute(Attribute.GENERIC_MAX_HEALTH);
 								if (attr != null && (d.getHealth() + (Double)args[1]) > attr.getValue()) {
 									d.setHealth(attr.getValue());
-								}
-								else {
+								} else {
 									d.setHealth(d.getHealth() + (Double)args[1]);
 								}
-							}
-							else {
+							} else {
 								d.setHealth(d.getHealth() + (Double)args[1]);
 							}
 						}
