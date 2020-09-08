@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
+import me.Novalescent.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -76,12 +77,13 @@ public class InventoryUtils {
 		PlayerInventory inv = player.getInventory();
 		boolean itemsDropped = false;
 		for (ItemStack item : items) {
+			ItemStack converted = Utils.convertItemToRPG(item);
 			if (inv.firstEmpty() == -1) {
 				itemsDropped = true;
 				Location ploc = player.getLocation();
-				ploc.getWorld().dropItem(ploc, item);
+				ploc.getWorld().dropItem(ploc, converted);
 			} else {
-				inv.addItem(item);
+				inv.addItem(converted);
 			}
 		}
 

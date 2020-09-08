@@ -5,24 +5,12 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteGamemode;
-import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteItemInEitherHand;
-import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteItemInOffHand;
+import com.playmonumenta.scriptedquests.quests.components.prerequisites.*;
 import org.bukkit.entity.Entity;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteBase;
-import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteCheckAdvancements;
-import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteCheckScores;
-import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteCheckTags;
-import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteFullyHealed;
-import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteSneaking;
-import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteItemInHand;
-import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteItemsInInventory;
-import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteLocation;
-import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteTestForBlock;
 
 public class QuestPrerequisites implements PrerequisiteBase {
 	private final ArrayList<PrerequisiteBase> mPrerequisites = new ArrayList<PrerequisiteBase>();
@@ -156,6 +144,17 @@ public class QuestPrerequisites implements PrerequisiteBase {
 			case "gamemode":
 				mPrerequisites.add(new PrerequisiteGamemode(value));
 				break;
+				case "check_questdata":
+					JsonArray array = value.getAsJsonArray();
+					if (array == null) {
+						throw new Exception("Prerequisites value for key '" + key + "' is not an array!");
+					}
+
+					Iterator<JsonElement> iter = array.iterator();
+					while (iter.hasNext()) {
+						mPrerequisites.add(new PrerequisiteCheckQuestData(iter.next()));
+					}
+					break;
 			default:
 				throw new Exception("Unknown prerequisites key: '" + key + "'");
 			}

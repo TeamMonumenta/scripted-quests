@@ -11,7 +11,7 @@
 		},
 		"stage": {
 			"propertyOrder": 2,
-			"title": "count",
+			"title": "stage",
 			"description": "The required stage that the player needs to be on the Quest",
 			"type": "integer",
 			"minimum": 0,
