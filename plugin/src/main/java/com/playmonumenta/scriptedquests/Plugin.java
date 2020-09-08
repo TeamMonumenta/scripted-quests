@@ -13,7 +13,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.playmonumenta.scriptedquests.commands.Clickable;
+import com.playmonumenta.scriptedquests.commands.Clock;
 import com.playmonumenta.scriptedquests.commands.Code;
+import com.playmonumenta.scriptedquests.commands.Cooldown;
 import com.playmonumenta.scriptedquests.commands.Damage;
 import com.playmonumenta.scriptedquests.commands.DebugZones;
 import com.playmonumenta.scriptedquests.commands.GenerateCode;
@@ -107,6 +109,8 @@ public class Plugin extends JavaPlugin {
 		DebugZones.register(this);
 		Heal.register();
 		Damage.register();
+		Cooldown.register();
+		Clock.register();
 		ImprovedClear.register();
 
 		mScheduledFunctionsManager = new ScheduleFunction(this);
