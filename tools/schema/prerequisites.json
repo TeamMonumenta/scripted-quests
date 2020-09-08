@@ -217,6 +217,18 @@
             "description": "Returns true if exactly one contained prerequisite is true, false otherwise",
             "type": "object",
             "$ref": "prerequisites.json"
-        }
+        },
+		"check_questdata": {
+		    "propertyOrder": 19,
+            "title": "check_questdata",
+            "description": "Returns true if the player's RPG Quest Data matches up with the Quest Datas",
+            "type": "array",
+            "minItems": 1,
+            "items": {
+                "title": "Quest Data",
+                "description": "Checks if the player has the following quest data parameters",
+                "$ref": "quest_data.json"
+            }
+		}
     }
 }

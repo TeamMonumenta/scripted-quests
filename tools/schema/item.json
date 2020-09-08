@@ -33,9 +33,7 @@
 			"propertyOrder": 5,
 			"title": "rpg item id",
 			"description": "Matches if the item is an RPG Item and its ID is equal to this string, ignoring upper/lowercasing",
-			"type": "string",
-			"minimum": 0,
-			"default": 1
+			"type": "string"
 		}
 	}
 }

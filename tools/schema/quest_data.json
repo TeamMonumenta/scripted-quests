@@ -1,0 +1,21 @@
+{
+	"type": "object",
+	"defaultProperties": [],
+	"additionalProperties": false,
+	"properties": {
+		"questId": {
+			"propertyOrder": 1,
+			"title": "questId",
+			"description": "Matches if the player has the Quest ID Name in their Questdata",
+			"type": "string"
+		},
+		"stage": {
+			"propertyOrder": 2,
+			"title": "count",
+			"description": "The required stage that the player needs to be on the Quest",
+			"type": "integer",
+			"minimum": 0,
+			"default": 1
+		}
+	}
+}

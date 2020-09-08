@@ -85,6 +85,13 @@
             <scope>provided</scope>
         </dependency>
 
+		<dependency>
+			<groupId>me.Novalescent</groupId>
+			<artifactId>SpellforgedRPG</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>provided</scope>
+		</dependency>
+
         <dependency>
             <groupId>dynmap</groupId>
             <artifactId>DynmapCoreAPI</artifactId>
@@ -101,7 +108,7 @@
     </dependencies>
 
     <build>
-        <finalName>ScriptedQuests_1.13.2_${project.version}_${maven.build.timestamp}</finalName>
+        <finalName>ScriptedQuests_1.16.2_${project.version}_${maven.build.timestamp}</finalName>
         <pluginManagement>
             <plugins>
                 <plugin>

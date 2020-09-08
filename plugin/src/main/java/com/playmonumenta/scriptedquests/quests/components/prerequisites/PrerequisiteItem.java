@@ -8,6 +8,8 @@ import com.playmonumenta.scriptedquests.utils.InventoryUtils;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import me.Novalescent.items.RPGItem;
+import me.Novalescent.utils.Utils;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.Material;
 
@@ -16,6 +18,7 @@ public class PrerequisiteItem {
 	private String mLore = "";
 	private Material mType = Material.AIR;
 	private int mCount = 1;
+	private String mRPGItemName = "";
 
 	public PrerequisiteItem(JsonElement element) throws Exception {
 		JsonObject object = element.getAsJsonObject();
@@ -56,6 +59,11 @@ public class PrerequisiteItem {
 					                    "' - it should be one of the values in this list: " +
 					                    "https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html");
 				}
+			} else if (key.equals("rpg_itemname")) {
+
+				if (mName == null) {
+					throw new Exception("rpg itemname entry is not a string!");
+				}
 			}
 		}
 	}
@@ -75,6 +83,11 @@ public class PrerequisiteItem {
 				    InventoryUtils.testForItemWithLore(item, mLore) &&
 				    (mType.equals(Material.AIR) || mType.equals(item.getType()))) {
 					matchCount += item.getAmount();
+				} else {
+					RPGItem rpgItem = Utils.getRPGItem(item);
+					if (rpgItem != null && rpgItem.mId.equalsIgnoreCase(mRPGItemName)) {
+						matchCount += item.getAmount();
+					}
 				}
 
 				if (mCount <= 0 && matchCount > 0) {
