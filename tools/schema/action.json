@@ -160,33 +160,9 @@
 						"patternProperties": {
 							".*": {
 								"headerTemplate": "{{i}}",
-								"options": {
-									"keep_oneof_values": false
-								},
-								"oneOf": [
-									{
-										"title": "Exactly",
-										"$ref": "score.json"
-									},
-									{
-										"title": "Increment",
-										"$ref": "score.json"
-									},
-									{
-										"title": "Random",
-										"type": "object",
-										"properties": {
-											"min": {
-												"title": "Minimum",
-												"$ref": "score.json"
-											},
-											"max": {
-												"title": "Maximum",
-												"$ref": "score.json"
-											}
-										}
-									}
-								]
+								"description": "Sets the Quest Data field for the Quest Data ID. Adding a + to the beginning will add to the score. Adding a - to the beginning will subtract from the score.",
+								"type": "string",
+								"default": "+1"
 							}
 						}
 					}
