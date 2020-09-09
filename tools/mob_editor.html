@@ -119,6 +119,13 @@
                     type: "integer",
 					default: 10
                 },
+				loottable: {
+                    propertyOrder: 7,
+                    title: "loottable",
+                    description: "The Loot Table that the mob uses to drop items.",
+                    type: "string",
+					default: "rpg:tier_1/currency_loottable"
+                },
 				defense_values: {
                     propertyOrder: 8,
                     title: "defense_values",
@@ -150,6 +157,37 @@
                             $ref: "schema/minmax_range.json",
                             propertyOrder: 2
                         }
+                    }
+                },
+				sounds: {
+                    propertyOrder: 10,
+                    title: "sound",
+                    description: "The sounds for the mob",
+                    properties: {
+                        soundAmbient: {
+                            title: "sound_ambient",
+							type: "array",
+							items: {
+							    $ref: "schema/sound.json"
+							},
+                            propertyOrder: 1
+                        },
+                        soundHurt: {
+                            title: "sound_hurt",
+							type: "array",
+							items: {
+							    $ref: "schema/sound.json"
+							},
+                            propertyOrder: 2
+                        },
+						soundDeath: {
+                            title: "sound_death",
+							type: "array",
+							items: {
+							    $ref: "schema/sound.json"
+							},
+                            propertyOrder: 2
+                        },
                     }
                 },
 				tags: {

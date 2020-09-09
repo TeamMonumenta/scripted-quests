@@ -1,0 +1,30 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "defense": {
+            "required": true,
+			"propertyOrder": 1,
+			"title": "sound",
+			"description": "The sound to use. Can be a minecraft formatted sound",
+			"type": "string",
+			"default": "block.stone.break"
+        },
+        "volume": {
+            "required": true,
+			"propertyOrder": 2,
+			"title": "volume",
+			"description": "The volume of the sound",
+			"type": "integer",
+			"default": 1
+        },
+        "pitch": {
+            "required": true,
+			"propertyOrder": 3,
+			"title": "pitch",
+			"description": "The pitch of the sound. 0.5-2",
+			"type": "integer",
+			"default": 1
+		}
+    }
+}
