@@ -93,6 +93,12 @@
                     type: "string",
                     default: "ZOMBIE"
                 },
+				chestLoc: {
+                    propertyOrder: 5,
+                    title: "chestLoc",
+                    description: "The location of the chest for the mob's equipment. format is 'world,x,y,z'",
+                    type: "string"
+                },
                 chestLoc: {
                     propertyOrder: 5,
                     title: "chestLoc",
@@ -136,12 +142,12 @@
 					properties: {
                         min: {
                             title: "Minimum",
-                            $ref: "minmax_range.json",
+                            $ref: "schema/minmax_range.json",
                             propertyOrder: 1
                         },
                         max: {
                             title: "Maximum",
-                            $ref: "minmax_range.json",
+                            $ref: "schema/minmax_range.json",
                             propertyOrder: 2
                         }
                     }
