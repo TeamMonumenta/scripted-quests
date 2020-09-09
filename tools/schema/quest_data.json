@@ -15,13 +15,13 @@
 		"questId": {
 			"propertyOrder": 1,
 			"title": "questId",
-			"description": "The Quest ID. Has to be a unique ID.",
+			"description": "t",
 			"type": "string"
 		},
 		"stage": {
 			"propertyOrder": 2,
 			"title": "stage",
-			"description": "The stage to s",
+			"description": "The required stage that the player needs to be on the Quest",
 			"type": "integer",
 			"minimum": 0,
 			"default": 1
