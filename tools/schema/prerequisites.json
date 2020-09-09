@@ -222,34 +222,46 @@
             "propertyOrder": 19,
             "title": "check_questdata",
             "description": "Checks that the player has the specified Quest Data value(s). Click Properties, then type in the scoreboard name in the input box and click the 'add' button. Quest Data ids are not case-sensitive",
-            "type": "object",
-            "patternProperties": {
-                ".*": {
-                    "headerTemplate": "{{i}}",
-                    "options": {
-                        "keep_oneof_values": false
-                    },
-                    "oneOf": [
-                        {
-                            "title": "Exactly",
-                            "$ref": "score.json"
-                        },
-                        {
-                            "title": "Range",
-                            "type": "object",
-                            "properties": {
-                                "min": {
-                                    "title": "Minimum",
-                                    "$ref": "score.json"
-                                },
-                                "max": {
-                                    "title": "Maximum",
-                                    "$ref": "score.json"
-                                }
-                            }
-                        }
-                    ]
-                }
+            "type": "array",
+			"items": {
+                "type": "object",
+				"properties": {
+				    "quest_id": {
+						"title": "Quest ID",
+						"type": "string"
+					},
+					"quest_data_fields": {
+					    "type": "object",
+						"patternProperties": {
+							".*": {
+								"headerTemplate": "{{i}}",
+								"options": {
+									"keep_oneof_values": false
+								},
+								"oneOf": [
+									{
+										"title": "Exactly",
+										"$ref": "score.json"
+									},
+									{
+										"title": "Range",
+										"type": "object",
+										"properties": {
+											"min": {
+												"title": "Minimum",
+												"$ref": "score.json"
+											},
+											"max": {
+												"title": "Maximum",
+												"$ref": "score.json"
+											}
+										}
+									}
+								]
+							}
+						}
+					}
+				}
             }
 		}
     }
