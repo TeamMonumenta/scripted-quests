@@ -107,21 +107,30 @@
 					default: 10
                 },
 				vision: {
-                    propertyOrder: 6,
+                    propertyOrder: 7,
                     title: "vision",
                     description: "The vision of a mob. This will determine how far their aggro distance is.",
                     type: "integer",
 					default: 10
                 },
 				defense_values: {
-                    propertyOrder: 7,
+                    propertyOrder: 8,
                     title: "defense_values",
                     description: "The defense values of each mob, regarding Defense, Armor, and Resistance",
                     $ref: "schema/defenses.json"
                 },
-				
-				tags: {
+				damage_values: {
                     propertyOrder: 9,
+                    title: "damage_ranges",
+                    description: "The damage values of each mob, regarding Physical Damage, and Magical Damage",
+					minItems: 1,
+					defaultProperties: [
+                        "physical_damage"
+                    ],
+                    $ref: "schema/damage_ranges.json"
+                },
+				tags: {
+                    propertyOrder: 10,
                     title: "tags",
                     description: "Tags for the mob. Can have multiple",
                     type: "array",
@@ -130,7 +139,7 @@
                     }
                 },
                 zones: {
-                    propertyOrder: 10,
+                    propertyOrder: 11,
                     title: "zones",
                     description: "A list of zones; if two zones overlap, the one higher up the list takes priority.",
                     type: "array",
