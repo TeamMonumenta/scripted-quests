@@ -120,20 +120,20 @@
 					default: 10
                 },
 				loottable: {
-                    propertyOrder: 7,
+                    propertyOrder: 8,
                     title: "loottable",
                     description: "The Loot Table that the mob uses to drop items.",
                     type: "string",
 					default: "rpg:tier_1/currency_loottable"
                 },
 				defense_values: {
-                    propertyOrder: 8,
+                    propertyOrder: 9,
                     title: "defense_values",
                     description: "The defense values of each mob, regarding Defense, Armor, and Resistance",
                     $ref: "schema/defenses.json"
                 },
 				damage_values: {
-                    propertyOrder: 9,
+                    propertyOrder: 10,
                     title: "damage_ranges",
                     description: "The damage values of each mob, regarding Physical Damage, and Magical Damage",
 					minItems: 1,
@@ -143,7 +143,7 @@
                     $ref: "schema/damage_ranges.json"
                 },
 				xp_values: {
-                    propertyOrder: 10,
+                    propertyOrder: 11,
                     title: "xp_ranges",
                     description: "The amount of XP that the mob gives. Has to be a range",
 					properties: {
@@ -160,7 +160,7 @@
                     }
                 },
 				sounds: {
-                    propertyOrder: 10,
+                    propertyOrder: 12,
                     title: "sound",
                     description: "The sounds for the mob",
                     properties: {
@@ -191,7 +191,7 @@
                     }
                 },
 				tags: {
-                    propertyOrder: 10,
+                    propertyOrder: 13,
                     title: "tags",
                     description: "Tags for the mob. Can have multiple",
                     type: "array",
@@ -200,7 +200,7 @@
                     }
                 },
                 zones: {
-                    propertyOrder: 11,
+                    propertyOrder: 14,
                     title: "zones",
                     description: "A list of zones; if two zones overlap, the one higher up the list takes priority.",
                     type: "array",
