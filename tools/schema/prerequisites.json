@@ -219,15 +219,37 @@
             "$ref": "prerequisites.json"
         },
 		"check_questdata": {
-		    "propertyOrder": 19,
+            "propertyOrder": 19,
             "title": "check_questdata",
-            "description": "Returns true if the player's RPG Quest Data matches up with the Quest Datas",
-            "type": "array",
-            "minItems": 1,
-            "items": {
-                "title": "Quest Data",
-                "description": "Checks if the player has the following quest data parameters",
-                "$ref": "quest_data.json"
+            "description": "Checks that the player has the specified Quest Data value(s). Click Properties, then type in the scoreboard name in the input box and click the 'add' button. Quest Data ids are not case-sensitive",
+            "type": "object",
+            "patternProperties": {
+                ".*": {
+                    "headerTemplate": "{{i}}",
+                    "options": {
+                        "keep_oneof_values": false
+                    },
+                    "oneOf": [
+                        {
+                            "title": "Exactly",
+                            "$ref": "score.json"
+                        },
+                        {
+                            "title": "Range",
+                            "type": "object",
+                            "properties": {
+                                "min": {
+                                    "title": "Minimum",
+                                    "$ref": "score.json"
+                                },
+                                "max": {
+                                    "title": "Maximum",
+                                    "$ref": "score.json"
+                                }
+                            }
+                        }
+                    ]
+                }
             }
 		}
     }

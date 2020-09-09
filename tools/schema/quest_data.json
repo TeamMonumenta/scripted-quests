@@ -1,18 +1,27 @@
 {
 	"type": "object",
-	"defaultProperties": [],
+    "defaultProperties": [
+        "questId",
+		"stage"
+    ],
 	"additionalProperties": false,
 	"properties": {
+	    "prerequisites": {
+            "propertyOrder": 1,
+            "required": false,
+			"description": "The prerequisites to perform actions according to the questId",
+            "$ref": "prerequisites.json"
+        },
 		"questId": {
 			"propertyOrder": 1,
 			"title": "questId",
-			"description": "Matches if the player has the Quest ID Name in their Questdata",
+			"description": "The Quest ID. Has to be a unique ID.",
 			"type": "string"
 		},
 		"stage": {
 			"propertyOrder": 2,
 			"title": "stage",
-			"description": "The required stage that the player needs to be on the Quest",
+			"description": "The stage to s",
 			"type": "integer",
 			"minimum": 0,
 			"default": 1
