@@ -151,35 +151,37 @@
             "patternProperties": {
                 ".*": {
                     "headerTemplate": "{{i}}",
-                    "options": {
-                        "keep_oneof_values": false
-                    },
+                   
 					"patternProperties": {
+					    "headerTemplate": "{{i}}",
                         ".*": {
-						"oneOf": [
-							{
-								"title": "Exactly",
-								"$ref": "score.json"
+							"options": {
+								"keep_oneof_values": false
 							},
-							{
-								"title": "Increment",
-								"$ref": "score.json"
-							},
-							{
-								"title": "Random",
-								"type": "object",
-								"properties": {
-									"min": {
-										"title": "Minimum",
-										"$ref": "score.json"
-									},
-									"max": {
-										"title": "Maximum",
-										"$ref": "score.json"
+							"oneOf": [
+								{
+									"title": "Exactly",
+									"$ref": "score.json"
+								},
+								{
+									"title": "Increment",
+									"$ref": "score.json"
+								},
+								{
+									"title": "Random",
+									"type": "object",
+									"properties": {
+										"min": {
+											"title": "Minimum",
+											"$ref": "score.json"
+										},
+										"max": {
+											"title": "Maximum",
+											"$ref": "score.json"
+										}
 									}
 								}
-							}
-						]
+							]
 						}
                     }
                 }
