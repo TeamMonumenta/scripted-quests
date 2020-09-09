@@ -129,6 +129,23 @@
                     ],
                     $ref: "schema/damage_ranges.json"
                 },
+				xp_values: {
+                    propertyOrder: 10,
+                    title: "xp_ranges",
+                    description: "The amount of XP that the mob gives. Has to be a range",
+					properties: {
+                        min: {
+                            title: "Minimum",
+                            $ref: "minmax_range.json",
+                            propertyOrder: 1
+                        },
+                        max: {
+                            title: "Maximum",
+                            $ref: "minmax_range.json",
+                            propertyOrder: 
+                        }
+                    }
+                },
 				tags: {
                     propertyOrder: 10,
                     title: "tags",
