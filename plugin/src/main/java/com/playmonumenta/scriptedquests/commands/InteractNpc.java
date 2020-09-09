@@ -3,6 +3,12 @@ package com.playmonumenta.scriptedquests.commands;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 
+import dev.jorel.commandapi.CommandAPICommand;
+import dev.jorel.commandapi.CommandPermission;
+import dev.jorel.commandapi.arguments.Argument;
+import dev.jorel.commandapi.arguments.EntitySelectorArgument;
+import dev.jorel.commandapi.arguments.EntityTypeArgument;
+import dev.jorel.commandapi.arguments.StringArgument;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
@@ -10,47 +16,40 @@ import org.bukkit.entity.Player;
 
 import com.playmonumenta.scriptedquests.Plugin;
 
-import io.github.jorelali.commandapi.api.CommandAPI;
-import io.github.jorelali.commandapi.api.CommandPermission;
-import io.github.jorelali.commandapi.api.arguments.Argument;
-import io.github.jorelali.commandapi.api.arguments.EntitySelectorArgument;
-import io.github.jorelali.commandapi.api.arguments.EntitySelectorArgument.EntitySelector;
-import io.github.jorelali.commandapi.api.arguments.EntityTypeArgument;
-import io.github.jorelali.commandapi.api.arguments.StringArgument;
-
 public class InteractNpc {
 	@SuppressWarnings("unchecked")
 	public static void register(Plugin plugin) {
 		/* First one of these has both required arguments */
 		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
 
-		arguments.put("players", new EntitySelectorArgument(EntitySelector.MANY_PLAYERS));
+		arguments.put("players", new EntitySelectorArgument(EntitySelectorArgument.EntitySelector.MANY_PLAYERS));
 		arguments.put("npcName", new StringArgument());
 		arguments.put("npcType", new EntityTypeArgument());
 
-		CommandAPI.getInstance().register("interactnpc",
-		                                  CommandPermission.fromString("scriptedquests.interactnpc"),
-		                                  arguments,
-		                                  (sender, args) -> {
-		                                      interact(plugin, sender, (Collection<Player>)args[0],
-		                                               (String)args[1], (EntityType)args[2]);
-		                                  }
-		);
+		new CommandAPICommand("interactnpc")
+			.withPermission(CommandPermission.fromString("scriptedquests.interactnpc"))
+			.withArguments(arguments)
+			.executes((sender, args) -> {
+				interact(plugin, sender, (Collection<Player>)args[0],
+					(String)args[1], (EntityType)args[2]);
+			})
+			.register();
 
 		/* Second one just has the npc name with VILLAGER as default */
 		arguments = new LinkedHashMap<>();
 
-		arguments.put("players", new EntitySelectorArgument(EntitySelector.MANY_PLAYERS));
+		arguments.put("players", new EntitySelectorArgument(EntitySelectorArgument.EntitySelector.MANY_PLAYERS));
 		arguments.put("npcName", new StringArgument());
 
-		CommandAPI.getInstance().register("interactnpc",
-		                                  CommandPermission.fromString("scriptedquests.interactnpc"),
-		                                  arguments,
-		                                  (sender, args) -> {
-		                                      interact(plugin, sender, (Collection<Player>)args[0],
-		                                               (String)args[1], EntityType.VILLAGER);
-		                                  }
-		);
+		new CommandAPICommand("interactnpc")
+			.withPermission(CommandPermission.fromString("scriptedquests.interactnpc"))
+			.withArguments(arguments)
+			.executes((sender, args) -> {
+				interact(plugin, sender, (Collection<Player>)args[0],
+					(String)args[1], EntityType.VILLAGER);
+			})
+			.register();
+
 	}
 
 	private static void interact(Plugin plugin, CommandSender sender, Collection<Player> players,

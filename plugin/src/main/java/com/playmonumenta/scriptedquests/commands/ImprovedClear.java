@@ -2,6 +2,11 @@ package com.playmonumenta.scriptedquests.commands;
 
 import java.util.LinkedHashMap;
 
+import dev.jorel.commandapi.CommandAPICommand;
+import dev.jorel.commandapi.CommandPermission;
+import dev.jorel.commandapi.arguments.*;
+import me.Novalescent.items.RPGItem;
+import me.Novalescent.utils.Utils;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -11,57 +16,75 @@ import org.bukkit.inventory.meta.BlockStateMeta;
 import com.playmonumenta.scriptedquests.utils.InventoryUtils;
 import com.playmonumenta.scriptedquests.utils.MaterialUtils;
 
-import io.github.jorelali.commandapi.api.CommandAPI;
-import io.github.jorelali.commandapi.api.CommandPermission;
-import io.github.jorelali.commandapi.api.arguments.Argument;
-import io.github.jorelali.commandapi.api.arguments.BooleanArgument;
-import io.github.jorelali.commandapi.api.arguments.EntitySelectorArgument;
-import io.github.jorelali.commandapi.api.arguments.EntitySelectorArgument.EntitySelector;
-import io.github.jorelali.commandapi.api.arguments.IntegerArgument;
-import io.github.jorelali.commandapi.api.arguments.TextArgument;
-
 public class ImprovedClear {
 	public static void register() {
 		CommandPermission perms = CommandPermission.fromString("scriptedquests.improvedclear");
 		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
 		String[] aliases = {"iclear"};
 
-		arguments.put("target", new EntitySelectorArgument(EntitySelector.ONE_PLAYER));
+		arguments.put("target", new EntitySelectorArgument(EntitySelectorArgument.EntitySelector.ONE_PLAYER));
 		arguments.put("name", new TextArgument());
-
-		CommandAPI.getInstance().register("improvedclear", perms, aliases, arguments, (sender, args) -> {
-			// Make sure shulker boxes are closed so they can be clear'd
-			((Player)args[0]).closeInventory();
-			return clearInventory(((Player)args[0]).getInventory(), (String)args[1], -1, true, "", 0);
-		});
+		arguments.put("rpgItem", new BooleanArgument());
+		new CommandAPICommand("improvedclear")
+			.withPermission(perms)
+			.withArguments(arguments)
+			.withAliases(aliases)
+			.executes((sender, args) -> {
+				// Make sure shulker boxes are closed so they can be clear'd
+				((Player)args[0]).closeInventory();
+				Utils.updateInventory((Player) args[0]);
+				return clearInventory(((Player)args[0]).getInventory(), (String)args[1], -1, true, "",  0, (boolean) args[2]);
+			})
+			.register();
 
 		arguments.put("maxAmount", new IntegerArgument());
 
-		CommandAPI.getInstance().register("improvedclear", perms, aliases, arguments, (sender, args) -> {
-			// Make sure shulker boxes are closed so they can be clear'd
-			((Player)args[0]).closeInventory();
-			return clearInventory(((Player)args[0]).getInventory(), (String)args[1], (Integer)args[2], true, "", 0);
-		});
+		new CommandAPICommand("improvedclear")
+			.withPermission(perms)
+			.withArguments(arguments)
+			.withAliases(aliases)
+			.executes((sender, args) -> {
+				// Make sure shulker boxes are closed so they can be clear'd
+				((Player)args[0]).closeInventory();
+				Utils.updateInventory((Player) args[0]);
+				return clearInventory(((Player)args[0]).getInventory(), (String)args[1], (Integer)args[3], true, "", 0, (boolean) args[2]);
+			})
+			.register();
 
 		arguments.put("clearShulkers", new BooleanArgument());
 
-		CommandAPI.getInstance().register("improvedclear", perms, aliases, arguments, (sender, args) -> {
-			// Make sure shulker boxes are closed so they can be clear'd
-			((Player)args[0]).closeInventory();
-			return clearInventory(((Player)args[0]).getInventory(), (String)args[1], (Integer)args[2], (Boolean)args[3], "", 0);
-		});
+		new CommandAPICommand("improvedclear")
+			.withPermission(perms)
+			.withArguments(arguments)
+			.withAliases(aliases)
+			.executes((sender, args) -> {
+				// Make sure shulker boxes are closed so they can be clear'd
+				((Player)args[0]).closeInventory();
+				Utils.updateInventory((Player) args[0]);
+				return clearInventory(((Player)args[0]).getInventory(), (String)args[1], (Integer)args[3], (Boolean)args[4], "", 0, (boolean) args[2]);
+			})
+			.register();
 
 		arguments.put("shulkerLore", new TextArgument());
 
-		CommandAPI.getInstance().register("improvedclear", perms, aliases, arguments, (sender, args) -> {
-			// Make sure shulker boxes are closed so they can be clear'd
-			((Player)args[0]).closeInventory();
-			return clearInventory(((Player)args[0]).getInventory(), (String)args[1], (Integer)args[2], (Boolean)args[3], (String)args[4], 0);
-		});
+		new CommandAPICommand("improvedclear")
+			.withPermission(perms)
+			.withArguments(arguments)
+			.withAliases(aliases)
+			.executes((sender, args) -> {
+				// Make sure shulker boxes are closed so they can be clear'd
+				((Player)args[0]).closeInventory();
+				Utils.updateInventory((Player) args[0]);
+				return clearInventory(((Player)args[0]).getInventory(), (String)args[1], (Integer)args[3], (Boolean)args[4], (String)args[5], 0, (boolean) args[2]);
+			})
+			.register();
+
+
+
 	}
 
 
-	private static int clearInventory(Inventory inv, String itemName, int maxAmount, boolean clearShulkers, String shulkerLore, int count) {
+	private static int clearInventory(Inventory inv, String itemName, int maxAmount, boolean clearShulkers, String shulkerLore, int count, boolean isRPG) {
 		for (int i = 0; i < inv.getSize(); i++) {
 			ItemStack item = inv.getItem(i);
 			if (item != null && item.hasItemMeta()) {
@@ -74,14 +97,16 @@ public class ImprovedClear {
 						ShulkerBox shulkerBox = (ShulkerBox)shulkerMeta.getBlockState();
 
 						// Recurse!
-						count = clearInventory(shulkerBox.getInventory(), itemName, maxAmount, clearShulkers, shulkerLore, count);
+						count = clearInventory(shulkerBox.getInventory(), itemName, maxAmount, clearShulkers, shulkerLore, count, isRPG);
 
 						shulkerMeta.setBlockState(shulkerBox);
 						item.setItemMeta(shulkerMeta);
 					}
 				} else {
 					// Not a shulker box
-					if (InventoryUtils.testForItemWithName(item, itemName)) {
+					RPGItem rpgItem = Utils.getRPGItem(item);
+					if ((!isRPG && InventoryUtils.testForItemWithName(item, itemName))
+					|| (isRPG && rpgItem != null && rpgItem.mId.equalsIgnoreCase(itemName))) {
 						// Item matches
 						if (maxAmount != 0 && (count < maxAmount || maxAmount == -1)) {
 							// Clear the item

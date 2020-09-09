@@ -2,15 +2,15 @@ package com.playmonumenta.scriptedquests.commands;
 
 import java.util.LinkedHashMap;
 
+import dev.jorel.commandapi.CommandAPICommand;
+import dev.jorel.commandapi.CommandPermission;
+import dev.jorel.commandapi.arguments.Argument;
+import dev.jorel.commandapi.arguments.StringArgument;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.playmonumenta.scriptedquests.Plugin;
-
-import io.github.jorelali.commandapi.api.CommandAPI;
-import io.github.jorelali.commandapi.api.CommandPermission;
-import io.github.jorelali.commandapi.api.arguments.Argument;
-import io.github.jorelali.commandapi.api.arguments.StringArgument;
 
 public class Clickable {
 	public static void register(Plugin plugin) {
@@ -19,13 +19,13 @@ public class Clickable {
 
 		arguments.put("label", new StringArgument());
 
-		CommandAPI.getInstance().register("clickable",
-		                                  CommandPermission.fromString("scriptedquests.clickable"),
-		                                  arguments,
-		                                  (sender, args) -> {
-		                                      return click(plugin, sender, (String)args[0]);
-		                                  }
-		);
+		new CommandAPICommand("clickable")
+			.withPermission(CommandPermission.fromString("scriptedquests.clickable"))
+			.withArguments(arguments)
+			.executes((sender, args) -> {
+				return click(plugin, sender, (String)args[0]);
+			})
+			.register();
 	}
 
 	private static int click(Plugin plugin, CommandSender sender, String label) {

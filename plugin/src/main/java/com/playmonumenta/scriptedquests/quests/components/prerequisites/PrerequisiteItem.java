@@ -31,7 +31,7 @@ public class PrerequisiteItem {
 			String key = ent.getKey();
 			JsonElement value = ent.getValue();
 
-			if (!key.equals("lore") && !key.equals("name") && !key.equals("count") && !key.equals("type")) {
+			if (!key.equals("lore") && !key.equals("name") && !key.equals("count") && !key.equals("type") && !key.equals("rpg_itemname")) {
 				throw new Exception("Unknown item key: " + key);
 			}
 
@@ -60,8 +60,8 @@ public class PrerequisiteItem {
 					                    "https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html");
 				}
 			} else if (key.equals("rpg_itemname")) {
-
-				if (mName == null) {
+				mRPGItemName = value.getAsString();
+				if (mRPGItemName == null) {
 					throw new Exception("rpg itemname entry is not a string!");
 				}
 			}

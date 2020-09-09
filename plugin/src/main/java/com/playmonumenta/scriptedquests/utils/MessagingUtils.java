@@ -44,8 +44,11 @@ public class MessagingUtils {
 
 	public static void sendNPCMessage(Player player, String displayName, String message) {
 		message = ChatColor.translateAlternateColorCodes('&',translatePlayerName(player, message));
-		TextComponent formattedMessage = new TextComponent(TextComponent.fromLegacyText("[" + displayName + "] "));
+		TextComponent formattedMessage = new TextComponent(TextComponent.fromLegacyText(displayName));
 		formattedMessage.setColor(ChatColor.GOLD);
+		TextComponent semiColon = new TextComponent(TextComponent.fromLegacyText(": "));
+		semiColon.setColor(ChatColor.YELLOW);
+		formattedMessage.addExtra(semiColon);
 		TextComponent tempText = new TextComponent(TextComponent.fromLegacyText(message));
 		tempText.setColor(ChatColor.WHITE);
 		formattedMessage.addExtra(tempText);
@@ -65,8 +68,8 @@ public class MessagingUtils {
 	public static void sendClickableNPCMessage(Plugin plugin, Player player, String message,
 	                                           String commandStr) {
 		message = translatePlayerName(player, message);
-		TextComponent formattedMessage = new TextComponent(TextComponent.fromLegacyText("[" + message + "]"));
-		formattedMessage.setColor(ChatColor.LIGHT_PURPLE);
+		TextComponent formattedMessage = new TextComponent(TextComponent.fromLegacyText(">> " + message));
+		formattedMessage.setColor(ChatColor.of("#6cc0eb"));
 		formattedMessage.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, commandStr));
 
 		BaseComponent[] toDisplay = new BaseComponent[1];

@@ -2,41 +2,42 @@ package com.playmonumenta.scriptedquests.commands;
 
 import java.util.LinkedHashMap;
 
+import dev.jorel.commandapi.CommandAPICommand;
+import dev.jorel.commandapi.CommandPermission;
+import dev.jorel.commandapi.arguments.Argument;
+import dev.jorel.commandapi.arguments.EntitySelectorArgument;
+import dev.jorel.commandapi.arguments.LocationArgument;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import com.playmonumenta.scriptedquests.Plugin;
 
-import io.github.jorelali.commandapi.api.CommandAPI;
-import io.github.jorelali.commandapi.api.CommandPermission;
-import io.github.jorelali.commandapi.api.arguments.Argument;
-import io.github.jorelali.commandapi.api.arguments.EntitySelectorArgument;
-import io.github.jorelali.commandapi.api.arguments.EntitySelectorArgument.EntitySelector;
-import io.github.jorelali.commandapi.api.arguments.LocationArgument;
-
 public class DebugZones {
 	public static void register(Plugin plugin) {
 		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
 
-		arguments.put("player", new EntitySelectorArgument(EntitySelector.ONE_PLAYER));
+		arguments.put("player", new EntitySelectorArgument(EntitySelectorArgument.EntitySelector.ONE_PLAYER));
 
-		CommandAPI.getInstance().register("debugzones",
-		                                  CommandPermission.fromString("scriptedquests.debugzones"),
-		                                  arguments,
-		                                  (sender, args) -> {
-		                                      plugin.mZoneManager.sendDebug(sender, (Player) args[0]);
-		                                  }
-		);
+		new CommandAPICommand("debugzones")
+			.withPermission(CommandPermission.fromString("scriptedquests.debugzones"))
+			.withArguments(arguments)
+			.executes((sender, args) -> {
+				plugin.mZoneManager.sendDebug(sender, (Player) args[0]);
+			})
+			.register();
+
+
 
 		arguments = new LinkedHashMap<>();
 		arguments.put("position", new LocationArgument());
 
-		CommandAPI.getInstance().register("debugzones",
-		                                  CommandPermission.fromString("scriptedquests.debugzones"),
-		                                  arguments,
-		                                  (sender, args) -> {
-		                                      plugin.mZoneManager.sendDebug(sender, ((Location) args[0]).toVector());
-		                                  }
-		);
+		new CommandAPICommand("debugzones")
+			.withPermission(CommandPermission.fromString("scriptedquests.debugzones"))
+			.withArguments(arguments)
+			.executes((sender, args) -> {
+				plugin.mZoneManager.sendDebug(sender, ((Location) args[0]).toVector());
+			})
+			.register();
+
 	}
 }

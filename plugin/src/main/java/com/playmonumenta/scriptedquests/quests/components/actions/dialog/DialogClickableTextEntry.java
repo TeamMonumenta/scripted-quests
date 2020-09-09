@@ -44,7 +44,7 @@ public class DialogClickableTextEntry implements DialogBase {
 				player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 0.7f, 0.3f);
 				player.sendMessage(ChatColor.RED + "You no longer meet the requirements for this option");
 			} else {
-				player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 0.7f, 0.9f);
+				player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 0.7f, 1);
 				mActions.doActions(plugin, player, mNpcEntity, mPrerequisites);
 			}
 		}

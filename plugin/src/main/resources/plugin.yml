@@ -1,9 +1,9 @@
 name: ScriptedQuests
 main: com.playmonumenta.scriptedquests.Plugin
-depend: [CommandAPI]
+depend: [CommandAPI, SpellforgedRPG]
 softdepend: [dynmap, MonumentaRedisSync]
 version: 1.9
-api-version: 1.13
+api-version: 1.16
 commands:
   questtrigger:
     permission: scriptedquests.questtrigger

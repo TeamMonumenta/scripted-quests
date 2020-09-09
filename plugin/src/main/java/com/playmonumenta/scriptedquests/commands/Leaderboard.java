@@ -7,6 +7,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import dev.jorel.commandapi.CommandAPICommand;
+import dev.jorel.commandapi.CommandPermission;
+import dev.jorel.commandapi.arguments.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -18,36 +21,26 @@ import com.playmonumenta.redissync.MonumentaRedisSyncAPI;
 import com.playmonumenta.scriptedquests.utils.LeaderboardUtils;
 import com.playmonumenta.scriptedquests.utils.LeaderboardUtils.LeaderboardEntry;
 
-import io.github.jorelali.commandapi.api.CommandAPI;
-import io.github.jorelali.commandapi.api.CommandPermission;
-import io.github.jorelali.commandapi.api.arguments.Argument;
-import io.github.jorelali.commandapi.api.arguments.BooleanArgument;
-import io.github.jorelali.commandapi.api.arguments.EntitySelectorArgument;
-import io.github.jorelali.commandapi.api.arguments.EntitySelectorArgument.EntitySelector;
-import io.github.jorelali.commandapi.api.arguments.IntegerArgument;
-import io.github.jorelali.commandapi.api.arguments.LiteralArgument;
-import io.github.jorelali.commandapi.api.arguments.StringArgument;
-
 public class Leaderboard {
 	@SuppressWarnings("unchecked")
 	public static void register(Plugin plugin) {
 		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
 
-		arguments.put("players", new EntitySelectorArgument(EntitySelector.MANY_PLAYERS));
+		arguments.put("players", new EntitySelectorArgument(EntitySelectorArgument.EntitySelector.MANY_PLAYERS));
 		arguments.put("objective", new StringArgument());
 		arguments.put("descending", new BooleanArgument());
 		arguments.put("page", new IntegerArgument(1)); // Min 1
 
-		CommandAPI.getInstance().register("leaderboard",
-		                                  CommandPermission.fromString("scriptedquests.leaderboard"),
-		                                  arguments,
-		                                  (sender, args) -> {
-		                                      for (Player player : (Collection<Player>)args[0]) {
-		                                          leaderboard(plugin, player, (String)args[1],
-		                                                      (Boolean)args[2], (Integer)args[3]);
-		                                      }
-		                                  }
-		);
+		new CommandAPICommand("leaderboard")
+			.withPermission(CommandPermission.fromString("scriptedquests.leaderboard"))
+			.withArguments(arguments)
+			.executes((sender, args) -> {
+				for (Player player : (Collection<Player>)args[0]) {
+					leaderboard(plugin, player, (String)args[1],
+						(Boolean)args[2], (Integer)args[3]);
+				}
+			})
+			.register();
 
 		/*
 		 * Add a command to copy a player's scoreboard to the Redis leaderboard if MonumentaRedisSync exists.
@@ -56,18 +49,19 @@ public class Leaderboard {
 		arguments = new LinkedHashMap<>();
 
 		arguments.put("update", new LiteralArgument("update"));
-		arguments.put("players", new EntitySelectorArgument(EntitySelector.MANY_PLAYERS));
+		arguments.put("players", new EntitySelectorArgument(EntitySelectorArgument.EntitySelector.MANY_PLAYERS));
 		arguments.put("objective", new StringArgument());
 
-		CommandAPI.getInstance().register("leaderboard",
-		                                  CommandPermission.fromString("scriptedquests.leaderboard"),
-		                                  arguments,
-		                                  (sender, args) -> {
-		                                      for (Player player : (Collection<Player>)args[0]) {
-		                                          leaderboardUpdate(player, (String)args[1]);
-		                                      }
-		                                  }
-		);
+		new CommandAPICommand("leaderboard")
+			.withPermission(CommandPermission.fromString("scriptedquests.leaderboard"))
+			.withArguments(arguments)
+			.executes((sender, args) -> {
+				for (Player player : (Collection<Player>)args[0]) {
+					leaderboardUpdate(player, (String)args[1]);
+				}
+			})
+			.register();
+
 	}
 
 	public static void leaderboard(Plugin plugin, Player player, String objective, boolean descending, int page) {

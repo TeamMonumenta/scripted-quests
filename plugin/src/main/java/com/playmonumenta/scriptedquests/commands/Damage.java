@@ -1,11 +1,11 @@
 package com.playmonumenta.scriptedquests.commands;
 
-import io.github.jorelali.commandapi.api.CommandAPI;
-import io.github.jorelali.commandapi.api.CommandPermission;
-import io.github.jorelali.commandapi.api.arguments.Argument;
-import io.github.jorelali.commandapi.api.arguments.BooleanArgument;
-import io.github.jorelali.commandapi.api.arguments.DoubleArgument;
-import io.github.jorelali.commandapi.api.arguments.EntitySelectorArgument;
+import dev.jorel.commandapi.CommandAPICommand;
+import dev.jorel.commandapi.CommandPermission;
+import dev.jorel.commandapi.arguments.Argument;
+import dev.jorel.commandapi.arguments.BooleanArgument;
+import dev.jorel.commandapi.arguments.DoubleArgument;
+import dev.jorel.commandapi.arguments.EntitySelectorArgument;
 import org.bukkit.entity.Damageable;
 
 import java.util.Collection;
@@ -19,10 +19,10 @@ public class Damage {
 		arguments.put("amount", new DoubleArgument());
 		arguments.put("respect_armor", new BooleanArgument());
 
-		CommandAPI.getInstance().register("damage",
-			CommandPermission.fromString("scriptedquests.damage"),
-			arguments,
-			(sender, args) -> {
+		new CommandAPICommand("damage")
+			.withPermission(CommandPermission.fromString("scriptedquests.damage"))
+			.withArguments(arguments)
+			.executes((sender, args) -> {
 				for (Object e : (Collection<?>)args[0]) {
 					if (e instanceof Damageable) {
 						Double amount = (Double)args[1];
@@ -39,7 +39,8 @@ public class Damage {
 						}
 					}
 				}
-			}
-		);
+			})
+			.register();
+
 	}
 }
