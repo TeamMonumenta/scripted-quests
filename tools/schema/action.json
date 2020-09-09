@@ -151,10 +151,13 @@
             "patternProperties": {
                 ".*": {
                     "headerTemplate": "{{i}}",
-                   
+                    "options": {
+                        "keep_oneof_values": false
+                    },
+					"type": "object",
 					"patternProperties": {
-					    "headerTemplate": "{{i}}",
-                        ".*": {
+						".*": {
+							"headerTemplate": "{{i}}",
 							"options": {
 								"keep_oneof_values": false
 							},
