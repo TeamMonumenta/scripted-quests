@@ -1,0 +1,27 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "defense": {
+            "required": true,
+			"propertyOrder": 1,
+			"title": "defense",
+			"description": "Global Damage Reduction. Protects against all damage",
+			"type": "integer"
+        },
+        "armor": {
+            "required": true,
+			"propertyOrder": 2,
+			"title": "defense",
+			"description": "Physical Defense. Protects against Physical Damage.",
+			"type": "integer"
+        },
+        "resistance": {
+            "required": true,
+			"propertyOrder": 3,
+			"title": "defense",
+			"description": "Resistance against Magicks. Protects against Magical Damage.",
+			"type": "integer"
+		}
+    }
+}

@@ -49,10 +49,12 @@
             defaultProperties: [
                 "id",
 				"name",
+				"level",
 				"entityType",
 				"chestLoc",
 				"tags",
-                "property_groups",
+				"health",
+				"defense_values",
                 "zones"
             ],
             additionalProperties:false,
@@ -71,24 +73,45 @@
                     title: "name",
                     description: "The name of the mob. This will be the displayed name.",
                     type: "string",
-                    default: "rpg_mob"
+                    default: "RPG Mob"
+                },
+				level: {
+                    required: true,
+                    propertyOrder: 3,
+                    title: "level",
+                    description: "The level of the mob.",
+                    type: "integer",
+                    default: 1
                 },
 				entityType: {
                     required: true,
-                    propertyOrder: 3,
+                    propertyOrder: 4,
                     title: "entityType",
                     description: "The EntityType of a mob. Head to this link to choose which EntityType: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html",
                     type: "string",
-                    default: "rpg_mob"
+                    default: "ZOMBIE"
                 },
                 chestLoc: {
-                    propertyOrder: 4,
+                    propertyOrder: 5,
                     title: "chestLoc",
                     description: "The location of the chest for the mob's equipment. format is 'world,x,y,z'",
                     type: "string"
                 },
-                tags: {
-                    propertyOrder: 5,
+                health: {
+                    propertyOrder: 6,
+                    title: "health",
+                    description: "The health of a mob.",
+                    type: "integer",
+					default: 10
+                },
+				defense_values: {
+                    propertyOrder: 7,
+                    title: "defense_values",
+                    description: "The defense values of each mob, regarding Defense, Armor, and Resistance",
+                    $ref: "schema/defenses.json"
+                },
+				tags: {
+                    propertyOrder: 8,
                     title: "tags",
                     description: "Tags for the mob. Can have multiple",
                     type: "array",
@@ -97,7 +120,7 @@
                     }
                 },
                 zones: {
-                    propertyOrder: 6,
+                    propertyOrder: 9,
                     title: "zones",
                     description: "A list of zones; if two zones overlap, the one higher up the list takes priority.",
                     type: "array",
