@@ -7,14 +7,17 @@
             "title": "physical_damage",
             "description": "The range of Physical Damage a mob deals. 0-29999984",
             "type": "object",
+			"additionalProperties": false,
             "properties": {
                 "min": {
                     "title": "Minimum",
-                    "$ref": "minmax_range.json"
+                    "$ref": "minmax_range.json",
+                    "propertyOrder": 1
                 },
                 "max": {
                     "title": "Maximum",
-                    "$ref": "minmax_range.json"
+                    "$ref": "minmax_range.json",
+                    "propertyOrder": 2
                 }
             }                
         },
@@ -22,14 +25,17 @@
             "title": "magical_damage",
             "description": "The range of Magical Damage a mob deals. 0-29999984",
             "type": "object",
+			"additionalProperties": false,
             "properties": {
                 "min": {
                     "title": "Minimum",
-                    "$ref": "minmax_range.json"
+                    "$ref": "minmax_range.json",
+					"propertyOrder": 1
                 },
                 "max": {
                     "title": "Maximum",
-                    "$ref": "minmax_range.json"
+                    "$ref": "minmax_range.json",
+					"propertyOrder": 2
                 }
             } 
         }
