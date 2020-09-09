@@ -147,44 +147,50 @@
 		"set_questdata": {
             "title": "set_questdata",
             "description": "Set the player's specified Quest Data values(s). Click Properties, then type in the Quest Data ID in the input box and click the 'add' button. Quest Data IDs are case-sensitive",
-            "type": "object",
-            "patternProperties": {
-                ".*": {
-                    "headerTemplate": "{{i}}",
-					"type": "object",
-					"patternProperties": {
-						".*": {
-							"headerTemplate": "{{i}}",
-							"options": {
-								"keep_oneof_values": false
-							},
-							"oneOf": [
-								{
-									"title": "Exactly",
-									"$ref": "score.json"
+            "type": "array",
+			"items": {
+                "type": "object",
+				"properties": {
+				    "quest_id": {
+						"title": "Quest ID",
+						"type": "string"
+					},
+					"quest_data_fields": {
+					    "type": "object",
+						"patternProperties": {
+							".*": {
+								"headerTemplate": "{{i}}",
+								"options": {
+									"keep_oneof_values": false
 								},
-								{
-									"title": "Increment",
-									"$ref": "score.json"
-								},
-								{
-									"title": "Random",
-									"type": "object",
-									"properties": {
-										"min": {
-											"title": "Minimum",
-											"$ref": "score.json"
-										},
-										"max": {
-											"title": "Maximum",
-											"$ref": "score.json"
+								"oneOf": [
+									{
+										"title": "Exactly",
+										"$ref": "score.json"
+									},
+									{
+										"title": "Increment",
+										"$ref": "score.json"
+									},
+									{
+										"title": "Random",
+										"type": "object",
+										"properties": {
+											"min": {
+												"title": "Minimum",
+												"$ref": "score.json"
+											},
+											"max": {
+												"title": "Maximum",
+												"$ref": "score.json"
+											}
 										}
 									}
-								}
-							]
+								]
+							}
 						}
-                    }
-                }
+					}
+				}
             }
         },
         "function": {
