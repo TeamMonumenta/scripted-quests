@@ -54,7 +54,9 @@
 				"chestLoc",
 				"tags",
 				"health",
+				"vision",
 				"defense_values",
+				"damage_values",
                 "zones"
             ],
             additionalProperties:false,
@@ -104,11 +106,24 @@
                     type: "integer",
 					default: 10
                 },
+				vision: {
+                    propertyOrder: 6,
+                    title: "vision",
+                    description: "The vision of a mob. This will determine how far their aggro distance is.",
+                    type: "integer",
+					default: 10
+                },
 				defense_values: {
                     propertyOrder: 7,
                     title: "defense_values",
                     description: "The defense values of each mob, regarding Defense, Armor, and Resistance",
                     $ref: "schema/defenses.json"
+                },
+				damage_values: {
+                    propertyOrder: 7,
+                    title: "damage_ranges",
+                    description: "The damage values of each mob, regarding Physical Damage, and Magical Damage",
+                    $ref: "schema/damage_ranges.json"
                 },
 				tags: {
                     propertyOrder: 8,

@@ -1,0 +1,17 @@
+{
+    "title": "Damage Ranges",
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "physical_damage": {
+            "title": "physical_damage",
+            "description": "The range of Physical Damage a mob deals. 0-29999984",
+            "$ref": "minmax_range.json"
+        },
+        "magical_damage": {
+            "title": "magical_damage",
+            "description": "The range of Magical Damage a mob deals. 0-29999984",
+            "$ref": "minmax_range.json"
+        }
+    }
+}

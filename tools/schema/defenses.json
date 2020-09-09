@@ -12,14 +12,14 @@
         "armor": {
             "required": true,
 			"propertyOrder": 2,
-			"title": "defense",
+			"title": "armor",
 			"description": "Physical Defense. Protects against Physical Damage.",
 			"type": "integer"
         },
         "resistance": {
             "required": true,
 			"propertyOrder": 3,
-			"title": "defense",
+			"title": "resistance",
 			"description": "Resistance against Magicks. Protects against Magical Damage.",
 			"type": "integer"
 		}
