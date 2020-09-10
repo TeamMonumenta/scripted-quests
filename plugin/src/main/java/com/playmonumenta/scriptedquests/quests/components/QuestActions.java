@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.playmonumenta.scriptedquests.quests.components.actions.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -13,15 +14,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.quests.components.actions.ActionBase;
-import com.playmonumenta.scriptedquests.quests.components.actions.ActionCommand;
-import com.playmonumenta.scriptedquests.quests.components.actions.ActionDialog;
-import com.playmonumenta.scriptedquests.quests.components.actions.ActionFunction;
-import com.playmonumenta.scriptedquests.quests.components.actions.ActionGiveLoot;
-import com.playmonumenta.scriptedquests.quests.components.actions.ActionInteractNpc;
-import com.playmonumenta.scriptedquests.quests.components.actions.ActionRerunComponents;
-import com.playmonumenta.scriptedquests.quests.components.actions.ActionSetScore;
-import com.playmonumenta.scriptedquests.quests.components.actions.ActionVoiceOver;
 
 public class QuestActions {
 	private ArrayList<ActionBase> mActions = new ArrayList<ActionBase>();
@@ -91,6 +83,19 @@ public class QuestActions {
 						mActions.add(new ActionRerunComponents(npcName, entityType));
 					}
 					break;
+
+					case "set_questdata":
+						JsonArray questArray = value.getAsJsonArray();
+
+						for (JsonElement questElement : questArray) {
+							JsonObject questObject = questElement.getAsJsonObject();
+
+							if (questObject == null) {
+								throw new Exception("set_questdata questObject value is not an object!");
+							}
+							mActions.add(new ActionSetQuestData(questObject));
+						}
+						break;
 				default:
 					throw new Exception("Unknown actions key: " + key);
 				}

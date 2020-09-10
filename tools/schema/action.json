@@ -169,6 +169,16 @@
 				}
             }
         },
+		"trade": {
+            "title": "trade",
+            "description": "Opens an RPG Trade for the player to use.",
+            "type": "string"
+        },
+		"menu": {
+            "title": "menu",
+            "description": "Opens a Menu for the player to use. Valid arguments: reforges.",
+            "type": "string"
+        },
         "function": {
             "title": "function",
             "description": "Runs a function via the console as the player (/execute as <playername> at @s run function <function>)",

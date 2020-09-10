@@ -60,7 +60,7 @@
 				"damage_values",
 				"xp_values",
 				"sounds",
-                "zones"
+                "quest_data"
             ],
             additionalProperties:false,
             properties: {
@@ -202,16 +202,17 @@
                         type: "string"
                     }
                 },
-                zones: {
-                    propertyOrder: 14,
-                    title: "zones",
-                    description: "A list of zones; if two zones overlap, the one higher up the list takes priority.",
+                quest_components: {
+                    required: true,
+                    propertyOrder: 4,
+                    title: "quest_components",
+                    description: "A list of actions with associated prerequisites to perform when the mob dies to a player.",
                     type: "array",
                     format: "tabs",
                     minItems: 1,
                     items: {
-                        headerTemplate: "{{i1}}: {{self.name}}",
-                        $ref: "schema/zone.json"
+                        title: "Quest component",
+                        $ref: "schema/quest_component.json",
                     }
                 }
             }
