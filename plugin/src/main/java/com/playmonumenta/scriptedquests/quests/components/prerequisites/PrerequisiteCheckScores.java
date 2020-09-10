@@ -51,7 +51,6 @@ public class PrerequisiteCheckScores implements PrerequisiteBase {
 			}
 		}
 
-
 	}
 
 	private String mScoreName;

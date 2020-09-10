@@ -144,17 +144,17 @@ public class QuestPrerequisites implements PrerequisiteBase {
 			case "gamemode":
 				mPrerequisites.add(new PrerequisiteGamemode(value));
 				break;
-				case "check_questdata":
-					JsonArray array = value.getAsJsonArray();
-					if (array == null) {
-						throw new Exception("Prerequisites value for key '" + key + "' is not an array!");
-					}
+			case "check_questdata":
+				JsonArray array = value.getAsJsonArray();
+				if (array == null) {
+					throw new Exception("Prerequisites value for key '" + key + "' is not an array!");
+				}
 
-					Iterator<JsonElement> iter = array.iterator();
-					while (iter.hasNext()) {
-						mPrerequisites.add(new PrerequisiteCheckQuestData(iter.next()));
-					}
-					break;
+				Iterator<JsonElement> iter = array.iterator();
+				while (iter.hasNext()) {
+					mPrerequisites.add(new PrerequisiteCheckQuestData(iter.next()));
+				}
+				break;
 			default:
 				throw new Exception("Unknown prerequisites key: '" + key + "'");
 			}
