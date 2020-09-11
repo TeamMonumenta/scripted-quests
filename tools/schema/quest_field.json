@@ -4,6 +4,8 @@
         "field_id",
 		"field_name",
 		"prerequisites",
+		"display_number",
+		"number_addon",
 		"completion"
     ],
 	"additionalProperties": false,
