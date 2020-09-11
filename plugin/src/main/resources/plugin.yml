@@ -1,6 +1,6 @@
 name: ScriptedQuests
 main: com.playmonumenta.scriptedquests.Plugin
-depend: [CommandAPI, SpellforgedRPG]
+depend: [CommandAPI]
 softdepend: [dynmap, MonumentaRedisSync]
 version: 1.9
 api-version: 1.16

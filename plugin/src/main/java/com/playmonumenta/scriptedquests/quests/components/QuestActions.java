@@ -78,6 +78,12 @@ public class QuestActions {
 				case "voice_over":
 					mActions.add(new ActionVoiceOver(entityType, npcName, value));
 					break;
+				case "trade":
+					mActions.add(new ActionTrade(value));
+					break;
+				case "menu":
+					mActions.add(new ActionMenu(value));
+					break;
 				case "rerun_components":
 					if (entityType != null) {
 						mActions.add(new ActionRerunComponents(npcName, entityType));
