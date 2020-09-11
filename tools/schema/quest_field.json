@@ -4,7 +4,7 @@
         "field_id",
 		"field_name",
 		"prerequisites",
-		"completion",
+		"completion"
     ],
 	"additionalProperties": false,
 	"properties": {
