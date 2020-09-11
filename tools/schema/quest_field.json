@@ -15,19 +15,31 @@
 			"type": "string"
 		},
 		"field_name": {
-			"propertyOrder": 1,
+			"propertyOrder": 2,
 			"title": "field_name",
 			"description": "The Field Display Name. For example: 'Forest Spiders Slain' or 'Find the Bartender'",
 			"type": "string"
 		},
+		"display_number": {
+			"propertyOrder": 3,
+			"title": "display_number",
+			"description": "True or false: Whether or not to display the field number at the end of the title.",
+			"type": "boolean"
+		},
+		"number_addon": {
+			"propertyOrder": 4,
+			"title": "number_addon",
+			"description": "If display_number is true, then this is the string that will be displayed on top of the number. Can be used to show number caps like 'Slay Zombies: 3/10'",
+			"type": "string"
+		},
 	    "prerequisites": {
-            "propertyOrder": 1,
+            "propertyOrder": 5,
             "required": false,
 			"description": "The prerequisites to display this objective in the quest book. Can be left blank.",
             "$ref": "prerequisites.json"
         },
 		"completion": {
-            "propertyOrder": 3,
+            "propertyOrder": 6,
             "required": true,
 			"description": "The actions done on completion. Can be left blank.",
             "$ref": "actions.json"
