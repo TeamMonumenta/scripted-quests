@@ -1,0 +1,36 @@
+{
+	"type": "object",
+    "defaultProperties": [
+        "field_id",
+		"field_name",
+		"prerequisites",
+		"completion",
+    ],
+	"additionalProperties": false,
+	"properties": {
+		"field_id": {
+			"propertyOrder": 1,
+			"title": "field_id",
+			"description": "The Field ID for the quest_data. This is unique.",
+			"type": "string"
+		},
+		"field_name": {
+			"propertyOrder": 1,
+			"title": "field_name",
+			"description": "The Field Display Name. For example: 'Forest Spiders Slain' or 'Find the Bartender'",
+			"type": "string"
+		},
+	    "prerequisites": {
+            "propertyOrder": 1,
+            "required": false,
+			"description": "The prerequisites to display this objective in the quest book. Can be left blank.",
+            "$ref": "prerequisites.json"
+        },
+		"completion": {
+            "propertyOrder": 3,
+            "required": true,
+			"description": "The actions done on completion. Can be left blank.",
+            "$ref": "actions.json"
+		}
+	}
+}
