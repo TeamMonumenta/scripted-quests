@@ -7,6 +7,7 @@
 		"visible",
 		"display_number",
 		"number_addon",
+		"max",
 		"completion"
     ],
 	"additionalProperties": false,
@@ -41,6 +42,13 @@
 			"title": "number_addon",
 			"description": "If display_number is true, then this is the string that will be displayed on top of the number. Can be used to show number caps like 'Slay Zombies: 3/10'",
 			"type": "string"
+		},
+		"max": {
+			"propertyOrder": 4,
+			"title": "max",
+			"description": "The max number that the field can go up to. Put -1 in here if there is no cap",
+			"type": "integer",
+			"default": 5,
 		},
 	    "prerequisites": {
             "propertyOrder": 5,
