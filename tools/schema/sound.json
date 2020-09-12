@@ -15,7 +15,7 @@
 			"propertyOrder": 2,
 			"title": "volume",
 			"description": "The volume of the sound",
-			"type": "integer",
+			"type": "number",
 			"default": 1
         },
         "pitch": {
@@ -23,7 +23,7 @@
 			"propertyOrder": 3,
 			"title": "pitch",
 			"description": "The pitch of the sound. 0.5-2",
-			"type": "integer",
+			"type": "number",
 			"default": 1
 		}
     }
