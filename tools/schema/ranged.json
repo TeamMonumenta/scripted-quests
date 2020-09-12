@@ -1,0 +1,62 @@
+{
+	"type": "object",
+    "defaultProperties": [
+        "ability",
+		"ability_parameters",
+		"damage_values",
+		"melee_radius",
+		"ranged_radius"
+    ],
+	"additionalProperties": false,
+	"properties": {
+	    "ability": {
+            "propertyOrder": 1,
+            "required": true,
+			"title": "ability",
+			"description": "The id of the Ranged Ability. Valid IDs: arrow_shoot",
+			"type": "string"
+        },
+		"ability_parameters": {
+			"propertyOrder": 2,
+			"title": "ability_parameters",
+			"type": "array",
+			"items": {
+                "type": "object",
+				"properties": {
+					"quest_data_fields": {
+					    "type": "object",
+						"patternProperties": {
+							".*": {
+								"headerTemplate": "{{i}}",
+								"description": "The field that you can fill in for the ability."
+							}
+						}
+					}
+				}
+            }
+		},
+		"damage_values": {
+			"propertyOrder": 3,
+			"title": "damage_values",
+			"defaultProperties": [
+				"physical_damage"
+			],
+			"minItems": 1,
+			"$ref": "damage_ranges.json"
+		},
+	    "melee_radius": {
+            "propertyOrder": 4,
+            "required": true,
+			"title": "melee_radius",
+			"description": "The id of the Ranged Ability. Valid IDs: arrow_shoot",
+			"type": "integer"
+        },
+		"ranged_radius": {
+            "propertyOrder": 5,
+            "required": true,
+			"title": "ranged_radius",
+			"description": "The id of the Ranged Ability. Valid IDs: arrow_shoot",
+			"type": "integer"
+        }
+	}
+}

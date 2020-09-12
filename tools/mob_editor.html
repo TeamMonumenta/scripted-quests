@@ -61,6 +61,7 @@
 				"damage_values",
 				"xp_values",
 				"sounds",
+				"ranged",
                 "quest_components"
             ],
             additionalProperties:false,
@@ -210,9 +211,15 @@
                         type: "string"
                     }
                 },
+				ranged: {
+				    title: "ranged",
+                    description: "Use if you want to give the mob a ranged property",
+                    $ref: "schema/ranged.json"
+					propertyOrder: 14
+				},
                 quest_components: {
                     required: true,
-                    propertyOrder: 14,
+                    propertyOrder: 15,
                     title: "quest_components",
                     description: "A list of actions with associated prerequisites to perform when the mob dies to a player.",
                     type: "array",
