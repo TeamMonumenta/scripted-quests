@@ -120,12 +120,18 @@ public class PrerequisiteCheckQuestData implements PrerequisiteBase {
 	public boolean prerequisiteMet(Entity entity, Entity npcEntity) {
 		if (entity instanceof Player) {
 			Player player = (Player) entity;
-			for (CheckField check : mChecks) {
-				if (!check.check(player, mId)) {
-					return false;
+			PlayerData data = Core.getInstance().mPlayerManager.getPlayerData(player.getUniqueId());
+			QuestData questData = data.getQuestData(mId);
+
+			if (questData != null) {
+				for (CheckField check : mChecks) {
+					if (!check.check(player, mId)) {
+						return false;
+					}
 				}
+				return true;
 			}
-			return true;
+			return false;
 		}
 		return false;
 	}

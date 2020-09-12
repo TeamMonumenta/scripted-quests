@@ -3,6 +3,7 @@ package com.playmonumenta.scriptedquests;
 import java.io.File;
 import java.util.Random;
 
+import com.playmonumenta.scriptedquests.managers.*;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -40,18 +41,6 @@ import com.playmonumenta.scriptedquests.commands.TimerDebug;
 import com.playmonumenta.scriptedquests.listeners.EntityListener;
 import com.playmonumenta.scriptedquests.listeners.PlayerListener;
 import com.playmonumenta.scriptedquests.listeners.WorldListener;
-import com.playmonumenta.scriptedquests.managers.ClickableManager;
-import com.playmonumenta.scriptedquests.managers.CodeManager;
-import com.playmonumenta.scriptedquests.managers.GrowableManager;
-import com.playmonumenta.scriptedquests.managers.InteractableManager;
-import com.playmonumenta.scriptedquests.managers.NpcTradeManager;
-import com.playmonumenta.scriptedquests.managers.QuestCompassManager;
-import com.playmonumenta.scriptedquests.managers.QuestDeathManager;
-import com.playmonumenta.scriptedquests.managers.QuestLoginManager;
-import com.playmonumenta.scriptedquests.managers.QuestNpcManager;
-import com.playmonumenta.scriptedquests.managers.RaceManager;
-import com.playmonumenta.scriptedquests.managers.WaypointManager;
-import com.playmonumenta.scriptedquests.managers.ZonePropertyManager;
 import com.playmonumenta.scriptedquests.timers.CommandTimerManager;
 import com.playmonumenta.scriptedquests.utils.MetadataUtils;
 import com.playmonumenta.scriptedquests.zones.ZoneManager;
@@ -79,6 +68,7 @@ public class Plugin extends JavaPlugin {
 	public ZonePropertyManager mZonePropertyManager;
 	public WaypointManager mWaypointManager;
 	public GrowableManager mGrowableManager;
+	public QuestDataLinkManager mQuestDataLinkManager;
 
 	public World mWorld;
 	public Random mRandom = new Random();
@@ -142,6 +132,7 @@ public class Plugin extends JavaPlugin {
 		mZonePropertyManager = new ZonePropertyManager(this);
 		mTimerManager = new CommandTimerManager(this);
 		mWaypointManager = new WaypointManager(this);
+		mQuestDataLinkManager = new QuestDataLinkManager(this);
 
 		manager.registerEvents(new EntityListener(this), this);
 		manager.registerEvents(new PlayerListener(this), this);
@@ -194,6 +185,7 @@ public class Plugin extends JavaPlugin {
 		mCodeManager.reload(this, sender);
 		mZonePropertyManager.reload(this, sender);
 		mGrowableManager.reload(this, sender);
+		mQuestDataLinkManager.reload(this, sender);
 	}
 
 	public void reloadZones(CommandSender sender) {
