@@ -11,6 +11,7 @@ public class QuestFieldLink {
 	public final String mFieldId;
 	public final String mDisplay;
 	public final Boolean mVisible;
+	public final Integer mMax;
 	public final Boolean mDisplayNumber;
 	public final String mAddon;
 
@@ -42,6 +43,11 @@ public class QuestFieldLink {
 		mVisible = object.get("visible").getAsBoolean();
 		if (mVisible == null) {
 			throw new Exception("visible value is not a boolean!");
+		}
+
+		mMax = object.get("max").getAsInt();
+		if (mMax == null) {
+			throw new Exception("max value is not a integer!");
 		}
 
 		mAddon = object.get("number_addon").getAsString();
