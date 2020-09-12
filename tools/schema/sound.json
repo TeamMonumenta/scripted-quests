@@ -2,7 +2,7 @@
     "type": "object",
     "additionalProperties": false,
     "properties": {
-        "defense": {
+        "sound": {
             "required": true,
 			"propertyOrder": 1,
 			"title": "sound",
