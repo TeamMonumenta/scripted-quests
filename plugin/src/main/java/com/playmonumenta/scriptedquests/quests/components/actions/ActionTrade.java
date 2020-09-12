@@ -26,7 +26,7 @@ public class ActionTrade implements ActionBase {
 		Trade trade = tradeManager.getTrade(mTrade);
 
 		if (trade != null) {
-			trade.openTradeMenu(player);
+			tradeManager.openTrade(player, trade);
 		} else {
 			player.sendMessage(ChatColor.RED + "The trade for this interaction was not found. Contact an admin!");
 		}
