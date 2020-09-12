@@ -19,21 +19,13 @@
 		"ability_parameters": {
 			"propertyOrder": 2,
 			"title": "ability_parameters",
-			"type": "array",
-			"items": {
-                "type": "object",
-				"properties": {
-					"quest_data_fields": {
-					    "type": "object",
-						"patternProperties": {
-							".*": {
-								"headerTemplate": "{{i}}",
-								"description": "The field that you can fill in for the ability."
-							}
-						}
-					}
+			"type": "object",
+			"patternProperties": {
+				".*": {
+					"headerTemplate": "{{i}}",
+					"description": "The field that you can fill in for the ability."
 				}
-            }
+			}
 		},
 		"damage_values": {
 			"propertyOrder": 3,
