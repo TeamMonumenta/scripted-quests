@@ -48,7 +48,7 @@
 			"title": "max",
 			"description": "The max number that the field can go up to. Put -1 in here if there is no cap",
 			"type": "integer",
-			"default": 5,
+			"default": 5
 		},
 	    "prerequisites": {
             "propertyOrder": 5,

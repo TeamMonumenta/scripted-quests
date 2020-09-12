@@ -3,6 +3,8 @@ package com.playmonumenta.scriptedquests.quests.components.actions;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.quests.QuestDataLink;
+import com.playmonumenta.scriptedquests.quests.components.QuestFieldLink;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import me.Novalescent.Core;
 import me.Novalescent.player.PlayerData;
@@ -40,7 +42,7 @@ public class ActionSetQuestData implements ActionBase {
 			value = Integer.parseInt(parameter);
 		}
 
-		void set(Player player, String questId) {
+		boolean set(Player player, String questId) {
 			PlayerData data = Core.getInstance().mPlayerManager.getPlayerData(player.getUniqueId());
 			QuestData questData = data.getQuestData(questId);
 
@@ -50,10 +52,11 @@ public class ActionSetQuestData implements ActionBase {
 			}
 
 			if (mOperation == SET_EXACT) {
-				questData.setEntry(mFieldName, value);
+				return questData.setEntry(mFieldName, value);
 			} else if (mOperation == INCREMENT) {
-				questData.changeEntry(mFieldName, value);
+				return questData.changeEntry(mFieldName, value);
 			}
+			return false;
 		}
 
 	}
@@ -102,7 +105,23 @@ public class ActionSetQuestData implements ActionBase {
 	@Override
 	public void doAction(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
 		for (SetField field : mFields) {
-			field.set(player, mId);
+			boolean maxed = field.set(player, mId);
+
+			if (maxed) {
+				PlayerData data = Core.getInstance().mPlayerManager.getPlayerData(player.getUniqueId());
+				QuestData questData = data.getQuestData(mId);
+				if (questData != null) {
+					QuestDataLink link = plugin.mQuestDataLinkManager.getQuestDataLink(questData.mId);
+
+					if (link != null) {
+						QuestFieldLink fieldLink = link.getFieldLink(field.mFieldName);
+
+						if (fieldLink != null) {
+							fieldLink.getActions().doActions(plugin, player, npcEntity, prereqs);
+						}
+					}
+				}
+			}
 		}
 	}
 }
