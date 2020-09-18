@@ -84,24 +84,27 @@ public class QuestActions {
 				case "menu":
 					mActions.add(new ActionMenu(value));
 					break;
+				case "give_xp":
+					mActions.add(new ActionGiveXP(value));
+					break;
 				case "rerun_components":
 					if (entityType != null) {
 						mActions.add(new ActionRerunComponents(npcName, entityType));
 					}
 					break;
 
-					case "set_questdata":
-						JsonArray questArray = value.getAsJsonArray();
+				case "set_questdata":
+					JsonArray questArray = value.getAsJsonArray();
 
-						for (JsonElement questElement : questArray) {
-							JsonObject questObject = questElement.getAsJsonObject();
+					for (JsonElement questElement : questArray) {
+						JsonObject questObject = questElement.getAsJsonObject();
 
-							if (questObject == null) {
-								throw new Exception("set_questdata questObject value is not an object!");
-							}
-							mActions.add(new ActionSetQuestData(questObject));
+						if (questObject == null) {
+							throw new Exception("set_questdata questObject value is not an object!");
 						}
-						break;
+						mActions.add(new ActionSetQuestData(questObject));
+					}
+					break;
 				default:
 					throw new Exception("Unknown actions key: " + key);
 				}

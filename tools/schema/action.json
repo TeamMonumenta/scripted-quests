@@ -194,6 +194,11 @@
             "description": "Gives the player all items from a loot table.",
             "type": "string"
         },
+		"give_xp": {
+            "title": "give_xp",
+            "description": "Gives the player the amount of XP specified.",
+            "type": "integer"
+        },
         "interact_npc": {
             "title": "interact_npc",
             "description": "Triggers a follow-on interaction with a different NPC.",
