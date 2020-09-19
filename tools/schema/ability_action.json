@@ -61,6 +61,23 @@
 			"title": "damage",
 			"description": "The damage to deal to the target",
 			"$ref": "damage_ranges.json"
+		},
+		"knockback": {
+			"title": "knockback",
+			"description": "The knockback to deal to the target",
+			"type": "object",
+			"properties": {
+				"magnitude": {
+					"title": "magnitude",
+					"description": "The horizontal magnitude of the knockback. Can be negative to pull in.",
+					"type": "number"
+				},
+				"y-magnitude": {
+					"title": "y-magnitude",
+					"description": "The vertical magnitude of the knockback. Can be negative to pull down",
+					"type": "number"
+				}
+			}
 		}
 	}
 }
