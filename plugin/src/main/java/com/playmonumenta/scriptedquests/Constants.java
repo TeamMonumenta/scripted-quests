@@ -10,4 +10,6 @@ public class Constants {
 	public static final String PLAYER_VOICE_OVER_METAKEY = "ScriptedQuestsPlayerVoiceOver";
 	public static final String PLAYER_USED_INTERACTABLE_METAKEY = "ScriptedQuestsPlayerUsedInteractable";
 	public static final String PART_MODEL_METAKEY = "ScriptedQuestsPartModelMetakey";
+
+	public static final String REMOVE_ONENABLE = "RemoveOnEnableTag";
 }

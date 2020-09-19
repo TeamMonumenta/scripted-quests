@@ -7,6 +7,7 @@ import com.playmonumenta.scriptedquests.Constants;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -28,6 +29,7 @@ public class Model {
 
 	public final Vector mCenter;
 
+	private List<Vector> mLocations = new ArrayList<>();
 	private List<ModelPart> mModelParts = new ArrayList<>();
 	private List<QuestComponent> mComponents = new ArrayList<>();
 	public Model(Plugin plugin, JsonObject object) throws Exception {
@@ -44,6 +46,7 @@ public class Model {
 			throw new Exception("world value is not a valid world!");
 		}
 
+		// Center
 		double x = 0;
 		double y = 0;
 		double z = 0;
@@ -76,6 +79,48 @@ public class Model {
 		}
 		mCenter = new Vector(x, y, z);
 
+		// Locations
+		if (object.get("locations") == null ||
+			object.get("locations").getAsJsonArray() == null) {
+			throw new Exception("Failed to parse 'locations'");
+		}
+
+		JsonArray array = object.get("locations").getAsJsonArray();
+		for (JsonElement element : array) {
+			JsonObject locObject = element.getAsJsonObject();
+
+			if (locObject == null) {
+				throw new Exception("locations array entry is not a valid location");
+			}
+
+			x = 0;
+			y = 0;
+			z = 0;
+			for (Map.Entry<String, JsonElement> ent : locObject.entrySet()) {
+				String key = ent.getKey();
+				JsonElement value = ent.getValue();
+
+				switch (key) {
+					case "x":
+						x = value.getAsDouble();
+						break;
+
+					case "y":
+						y = value.getAsDouble();
+						break;
+
+					case "z":
+						z = value.getAsDouble();
+						break;
+
+					default:
+						throw new Exception("Unknown locations key: '" + key + "'");
+				}
+			}
+			mLocations.add(new Vector(x, y, z));
+		}
+
+		// Region
 		Double[] corners = new Double[6];
 		// Load the zone location
 		if (object.get("region") == null ||
@@ -122,7 +167,6 @@ public class Model {
 			if (e instanceof ArmorStand) {
 				ArmorStand stand = (ArmorStand) e;
 				mModelParts.add(new ModelPart(stand, mCenter));
-				stand.setMetadata(Constants.PART_MODEL_METAKEY, new FixedMetadataValue(plugin, this));
 			}
 		}
 
@@ -131,6 +175,20 @@ public class Model {
 		for (JsonElement element : components) {
 			QuestComponent component = new QuestComponent("", "", EntityType.ARMOR_STAND, element);
 			mComponents.add(component);
+		}
+
+		// Spawn
+		for (Vector vec : mLocations) {
+			Location loc = vec.toLocation(mWorld);
+
+			for (ModelPart part : mModelParts) {
+				Location synced = loc.clone().add(part.getCenterOffset());
+				ArmorStand stand = loc.getWorld().spawn(synced, ArmorStand.class, (ArmorStand entity) -> {
+					part.cloneIntoStand(entity);
+				});
+				stand.setMetadata(Constants.PART_MODEL_METAKEY, new FixedMetadataValue(plugin, this));
+				stand.addScoreboardTag(Constants.REMOVE_ONENABLE);
+			}
 		}
 	}
 
