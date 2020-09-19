@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>SFRPG Mob Ability Editor</title>
+
+    <!-- Foundation CSS framework (Bootstrap and jQueryUI also supported) -->
+    <link rel='stylesheet' href='//cdn.jsdelivr.net/bootstrap/3.2.0/css/bootstrap.css'>
+    <!-- Font Awesome icons (Bootstrap, Foundation, and jQueryUI also supported) -->
+    <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.6.1/css/all.css'>
+
+    <script src="https://cdn.jsdelivr.net/npm/@json-editor/json-editor@1.3.5/dist/jsoneditor.min.js"></script>
+</head>
+<body>
+<div class='container'>
+    <div class='row' style='padding-bottom: 15px;'>
+        <div class='col-md-12'>
+            <h1>SFRPG Mob Ability Editor</h1>
+            <p>Allows for the creation of abilities for mobs via custom templates.</p>
+        </div>
+    </div>
+    <div class='row' style='padding-bottom: 15px;'>
+        <div class='col-md-12'>
+            <button id='restore' class='btn btn-info'>Restore to Default</button>
+            <span id='valid_indicator' class='label label-success'></span>
+        </div>
+    </div>
+    <div class='row'>
+        <div class='col-md-12'>
+            <div id='editor_holder'></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Initialize the editor
+    var editor = new JSONEditor(document.getElementById('editor_holder'),{
+        theme: 'bootstrap3',
+        iconlib: 'fontawesome5',
+
+		// Enable fetching schemas via ajax
+		ajax: true,
+
+        // The schema for the editor
+        schema: {
+            title: "Zone Property",
+            defaultProperties: [
+                "id",
+                "name",
+                "quest_components"
+            ],
+            additionalProperties:false,
+            properties: {
+                id: {
+                    required: true,
+                    propertyOrder: 1,
+                    title: "id",
+                    description: "The ID of the ability.",
+                    type: "string",
+                    default: "mob_ability"
+                },
+                template: {
+                    required: true,
+                    propertyOrder: 2,
+                    title: "name",
+                    description: "The ability template being used. Whatever template you choose will determine what properties you can add and edit.",
+                    options: {
+                        keep_oneof_values: false
+                    },
+                    oneOf: [
+                        {
+                            title: "Charge",
+                            type: "object",
+							properties: {
+								range: {
+									title: "range",
+									description: "The range that the charge has",
+									type: "integer",
+									default: 12
+								}, 
+								charge_up: {
+									title: "charge_up",
+									description: "The time it takes for the abiltiy to charge up in TICKS",
+									type: "integer",
+									default: 25
+								}, 
+								actions: {
+									title: "actions",
+									description: "The charge actions for each component of the charge",
+									type: "object",
+									properties: {
+										on_start: {
+											title: "on_start",
+											description: "The actions to play on the caster when starting the charge",
+											$ref: "schema/ability_actions.json"
+										},
+										path_line: {
+											title: "path_line",
+											description: "The actions played at each point on the charge line where the charge will go",
+											$ref: "schema/ability_actions.json"
+										},
+										on_charge: {
+											title: "on_charge",
+											description: "The actions to play on the caster at the beginning of the charger",
+											$ref: "schema/ability_actions.json"
+										},
+										attack_line: {
+											title: "attack_line",
+											description: "The actions played at each point on the charge line where the charge happened.",
+											$ref: "schema/ability_actions.json"
+										},
+										on_hit: {
+											title: "on_hit",
+											description: "The actions played on targets that are hit by the charge",
+											$ref: "schema/ability_actions.json"
+										},
+										on_end: {
+											title: "on_end",
+											description: "The actions played when the caster reaches the end of the charge",
+											$ref: "schema/ability_actions.json"
+										},
+									}
+								}, 
+							}
+                        },
+                        {
+                            title: "AoE",
+                            type: "array",
+                            minItems: 2,
+                            items" {
+                                title: "A line",
+                                type: "string"
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    });
+
+    // Hook up the Restore to Default button
+    document.getElementById('restore').addEventListener('click',function() {
+        editor.setValue(starting_value);
+    });
+
+    // Hook up the validation indicator to update its
+    // status whenever the editor changes
+    editor.on('change',function() {
+        // Get an array of errors from the validator
+        var errors = editor.validate();
+
+        var indicator = document.getElementById('valid_indicator');
+
+        // Not valid
+        if(errors.length) {
+            indicator.className = 'label label-danger'
+            indicator.textContent = "not valid";
+        }
+        // Valid
+        else {
+            indicator.className = 'label label-success'
+            indicator.textContent = "valid";
+        }
+    });
+</script>
+</body>
+</html>

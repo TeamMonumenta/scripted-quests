@@ -1,0 +1,66 @@
+{
+    "title": "Action",
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "particle": {
+			"title": "particle",
+			"description": "A particle object that will play particles at the location",
+			"type": "object",
+			"properties": {
+				"particle": {
+					"propertyOrder": 1,
+					"title": "particle",
+					"description": "The particle to play. Use the in-game particle names (ex. flame, cloud, instant_effect)",
+					"type": "string"
+				},
+				"xoffset": {
+					"propertyOrder": 2,
+					"title": "xoffset",
+					"description": "The x-offset (spread) of the particle",
+					"type": "number"
+				},
+				"yoffset": {
+					"propertyOrder": 3,
+					"title": "yoffset",
+					"description": "The y-offset (spread) of the particle",
+					"type": "number"
+				},
+				"zoffset": {
+					"propertyOrder": 4,
+					"title": "zoffset",
+					"description": "The z-offset (spread) of the particle",
+					"type": "number"
+				},
+				"speed": {
+					"propertyOrder": 5,
+					"title": "speed",
+					"description": "The speed of the particle",
+					"type": "number"
+				},
+				"amount": {
+					"propertyOrder": 6,
+					"title": "amount",
+					"description": "The amount of particles to spawn",
+					"type": "integer"
+				},
+				"item": {
+					"propertyOrder": 7,
+					"title": "item",
+					"description": "The item to use for block breaking particles. Can be left blank",
+					"type": "string"
+				},
+			}
+		},
+		"sound": {
+			"title": "sound",
+			"description": "The sound to play",
+			"$ref": "sound.json"
+		},
+		"damage": {
+			"title": "damage",
+			"description": "The damage to deal to the target",
+			"$ref": "damage_ranges.json"
+		}
+	}
+}
