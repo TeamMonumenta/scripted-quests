@@ -69,6 +69,7 @@ public class Plugin extends JavaPlugin {
 	public WaypointManager mWaypointManager;
 	public GrowableManager mGrowableManager;
 	public QuestDataLinkManager mQuestDataLinkManager;
+	public ModelManager mModelManager;
 
 	public World mWorld;
 	public Random mRandom = new Random();
@@ -133,6 +134,7 @@ public class Plugin extends JavaPlugin {
 		mTimerManager = new CommandTimerManager(this);
 		mWaypointManager = new WaypointManager(this);
 		mQuestDataLinkManager = new QuestDataLinkManager(this);
+		mModelManager = new ModelManager(this);
 
 		manager.registerEvents(new EntityListener(this), this);
 		manager.registerEvents(new PlayerListener(this), this);
@@ -186,6 +188,8 @@ public class Plugin extends JavaPlugin {
 		mZonePropertyManager.reload(this, sender);
 		mGrowableManager.reload(this, sender);
 		mQuestDataLinkManager.reload(this, sender);
+		mModelManager.reload(this, sender);
+
 	}
 
 	public void reloadZones(CommandSender sender) {

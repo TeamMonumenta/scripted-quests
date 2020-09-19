@@ -70,6 +70,21 @@
                     description: "The world where the model is located",
                     type: "string"
                 },
+				region: {
+                    propertyOrder: 3,
+                    title: "region",
+                    description: "The region that contains this model",
+                    $ref: "schema/location.json"
+                },
+				locations: {
+                    propertyOrder: 3,
+                    title: "locations",
+                    description: "The locations in the world where the model is located.",
+					type: "array",
+					items: {
+						$ref: "schema/location.json"
+					}
+                },
 				location: {
                     propertyOrder: 3,
                     title: "location",

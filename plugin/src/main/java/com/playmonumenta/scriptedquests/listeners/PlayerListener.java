@@ -3,8 +3,11 @@ package com.playmonumenta.scriptedquests.listeners;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.playmonumenta.scriptedquests.models.Model;
+import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
@@ -14,11 +17,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -101,6 +100,19 @@ public class PlayerListener implements Listener {
 		}
 	}
 
+	@EventHandler
+	public void armorStandManipulateEvent(PlayerArmorStandManipulateEvent event) {
+		ArmorStand stand = event.getRightClicked();
+		Player player = event.getPlayer();
+
+		Model model = mPlugin.mModelManager.getModel(stand);
+		if (model != null) {
+			event.setCancelled(true);
+			for (QuestComponent component : model.getComponents()) {
+				component.doActionsIfPrereqsMet(mPlugin, player, stand);
+			}
+		}
+	}
 
 	@SuppressWarnings("unchecked")
 	@EventHandler(priority = EventPriority.LOWEST)
