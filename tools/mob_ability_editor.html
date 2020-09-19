@@ -49,7 +49,7 @@
                 "name",
                 "quest_components"
             ],
-            additionalProperties:false,
+            additionalProperties: false,
             properties: {
                 id: {
                     required: true,
@@ -125,12 +125,58 @@
                         },
                         {
                             title: "AoE",
-                            type: "array",
-                            minItems: 2,
-                            items" {
-                                title: "A line",
-                                type: "string"
-                            }
+                            type: "object",
+                            properties: {
+								range: {
+									title: "range",
+									description: "The range that the charge has",
+									type: "integer",
+									default: 12
+								}, 
+								charge_up: {
+									title: "charge_up",
+									description: "The time it takes for the abiltiy to charge up in TICKS",
+									type: "integer",
+									default: 25
+								}, 
+								charge_sound: {
+									title: "charge_sound",
+									description: "The sound to play while the ability is charging up. The pitch of this sound naturally increases as the ability charges.",
+									type: "string"
+								},
+								actions: {
+									title: "actions",
+									description: "The charge actions for each component of the charge",
+									type: "object",
+									properties: {
+										charge_aura: {
+											title: "charge_aura",
+											description: "The actions to play at the casters location while the AoE charges up",
+											$ref: "schema/ability_actions.json"
+										},
+										charge_circle: {
+											title: "charge_circle",
+											description: "The actions to play at each point on the AoE circle as it charges up. The circle gradually goes inward to the caster. It's recommended to play particles here only because doing anything else here is dumb lol.",
+											$ref: "schema/ability_actions.json"
+										},
+										outburst_aura: {
+											title: "outburst_aura",
+											description: "The actions to play at the casters location when the AoE finishes charging and bursts out. You can use this to play single particles or sounds.",
+											$ref: "schema/ability_actions.json"
+										},
+										outburst_circle: {
+											title: "outburst_circle",
+											description: "The actions to play at each point on the AoE circle as it bursts out. The circle gradually goes outward It's recommended to play particles here only because doing anything else here is a bit of a :yikes:.",
+											$ref: "schema/ability_actions.json"
+										},
+										on_hit: {
+											title: "on_hit",
+											description: "The actions played on targets that are hit by the AoE",
+											$ref: "schema/ability_actions.json"
+										}
+									}
+								}, 
+							}
                         }
                     ]
                 }
