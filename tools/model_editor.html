@@ -47,11 +47,12 @@
 
         // The schema for the editor
         schema: {
-            title: "Questdata Linkage",
+            title: "Model",
             defaultProperties: [
                 "name",
 				"world",
 				"location",
+				"center",
                 "quest_components"
             ],
             additionalProperties:false,
@@ -75,6 +76,12 @@
                     description: "The region that contains this model",
                     $ref: "schema/location.json"
                 },
+				center: {
+					propertyOrder: 4,
+                    title: "center",
+                    description: "The center of this model",
+                    $ref: "schema/center.json"
+				},
                 quest_components: {
                     required: true,
                     propertyOrder: 4,
