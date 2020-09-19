@@ -1,11 +1,7 @@
 {
     "title": "actions",
     "type": "array",
-    "minItems": 1,
     "items": {
-        "defaultProperties": [
-            "dialog"
-        ],
         "$ref": "ability_action.json"
     }
 }
