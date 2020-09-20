@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
+import me.Novalescent.mobs.spells.scripted.actions.SpellActions;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -38,6 +39,11 @@ public class Model {
 	public boolean mUseDisable = false;
 	public int mUseDisableTime = 0;
 	public String mUseMessage = "Using...";
+	public int mOnUseTickRate = 1;
+	public SpellActions mOnStart;
+	public SpellActions mOnTick;
+	public SpellActions mOnEnd;
+
 	public Model(Plugin plugin, JsonObject object) throws Exception {
 
 		mId = object.get("name").getAsString();
@@ -75,6 +81,22 @@ public class Model {
 
 				case "use_disable_time":
 					mUseDisableTime = value.getAsInt();
+					break;
+
+				case "on_tick_rate":
+					mOnUseTickRate = value.getAsInt();
+					break;
+
+				case "on_start":
+					mOnStart = new SpellActions(null, null, value);
+					break;
+
+				case "on_tick":
+					mOnTick = new SpellActions(null, null, value);
+					break;
+
+				case "on_end":
+					mOnEnd = new SpellActions(null, null, value);
 					break;
 
 				default:

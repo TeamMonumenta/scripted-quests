@@ -136,12 +136,17 @@ public class ModelInstance {
 			}
 			mUsers.add(player.getUniqueId());
 
+			if (mModel.mOnStart != null) {
+				mModel.mOnStart.doActions(null, mLoc);
+			}
 			if (mModel.mUseTime <= 0) {
 				for (QuestComponent component : mModel.getComponents()) {
 					component.doActionsIfPrereqsMet(mPlugin, player, mStands.get(0));
 				}
 				mUsers.remove(player.getUniqueId());
-
+				if (mModel.mOnEnd != null) {
+					mModel.mOnEnd.doActions(null, mLoc);
+				}
 				disable(mModel.mUseDisableTime);
 			} else {
 				Location loc = mLoc.clone().add(0, mModel.getHeight(), 0);
@@ -167,6 +172,11 @@ public class ModelInstance {
 
 					@Override
 					public void run() {
+						if (t % mModel.mOnUseTickRate == 0) {
+							if (mModel.mOnTick != null) {
+								mModel.mOnTick.doActions(null, mLoc);
+							}
+						}
 						t++;
 						timeStand.setCustomName(ChatColor.DARK_GREEN + "[" + bar.getProgress(mModel.mUseMessage, t) + ChatColor.DARK_GREEN + "]");
 
