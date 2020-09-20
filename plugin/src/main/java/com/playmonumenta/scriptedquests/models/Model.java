@@ -3,7 +3,6 @@ package com.playmonumenta.scriptedquests.models;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.playmonumenta.scriptedquests.Constants;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
 import org.bukkit.Bukkit;
@@ -12,7 +11,6 @@ import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 
@@ -36,9 +34,9 @@ public class Model {
 	private List<QuestComponent> mComponents = new ArrayList<>();
 
 	// Use Info
-	private int mUseTime = 0;
-	private boolean mUseDisable = false;
-	private int mUseDiableTime = 0;
+	public int mUseTime = 0;
+	public boolean mUseDisable = false;
+	public int mUseDisableTime = 0;
 	public Model(Plugin plugin, JsonObject object) throws Exception {
 
 		mId = object.get("name").getAsString();
@@ -55,7 +53,33 @@ public class Model {
 
 		// Use Info
 		JsonElement useElement = object.get("use_info");
-		if (useElement == null || )
+		if (useElement == null || useElement.getAsJsonObject() == null) {
+			throw new Exception("Failed to parse 'use_info'");
+		}
+
+		JsonObject useInfo = useElement.getAsJsonObject();
+		for (Map.Entry<String, JsonElement> ent : useInfo.entrySet()) {
+			String key = ent.getKey();
+			JsonElement value = ent.getValue();
+
+			switch (key) {
+
+				case "use_time":
+					mUseTime = value.getAsInt();
+					break;
+
+				case "use_disable":
+					mUseDisable = value.getAsBoolean();
+					break;
+
+				case "use_disable_time":
+					mUseDisableTime = value.getAsInt();
+					break;
+
+				default:
+					throw new Exception("Unknown center key: '" + key + "'");
+			}
+		}
 
 		// Center
 		double x = 0;

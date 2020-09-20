@@ -22,9 +22,7 @@ public class ModelManager {
 	public void reload(Plugin plugin, CommandSender sender) {
 		for (Model model : mModels.values()) {
 			for (ModelInstance instance : model.getInstances()) {
-				if (instance.isToggled()) {
-					instance.toggle();
-				}
+				instance.destroy();
  			}
 		}
 		mModels.clear();
