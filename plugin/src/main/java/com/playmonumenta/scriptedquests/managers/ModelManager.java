@@ -3,6 +3,7 @@ package com.playmonumenta.scriptedquests.managers;
 import com.playmonumenta.scriptedquests.Constants;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.models.Model;
+import com.playmonumenta.scriptedquests.models.ModelInstance;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.ArmorStand;
@@ -19,6 +20,13 @@ public class ModelManager {
 	 * If sender is non-null, it will be sent debugging information
 	 */
 	public void reload(Plugin plugin, CommandSender sender) {
+		for (Model model : mModels.values()) {
+			for (ModelInstance instance : model.getInstances()) {
+				if (instance.isToggled()) {
+					instance.toggle();
+				}
+ 			}
+		}
 		mModels.clear();
 
 		QuestUtils.loadScriptedQuests(plugin, "models", sender, (object) -> {
@@ -35,9 +43,9 @@ public class ModelManager {
 		mPlugin = plugin;
 	}
 
-	public Model getModel(ArmorStand stand) {
+	public ModelInstance getModel(ArmorStand stand) {
 		if (stand.hasMetadata(Constants.PART_MODEL_METAKEY)) {
-			Model model = (Model) stand.getMetadata(Constants.PART_MODEL_METAKEY).get(0).value();
+			ModelInstance model = (ModelInstance) stand.getMetadata(Constants.PART_MODEL_METAKEY).get(0).value();
 
 			if (model != null) {
 				return model;

@@ -20,26 +20,29 @@ public class ModelPart {
 	}
 
 	public void cloneIntoStand(ArmorStand target) {
-		mStand.setSmall(mStand.isSmall());
-		mStand.setCustomName(mStand.getCustomName());
-		mStand.setCustomNameVisible(mStand.isCustomNameVisible());
-		mStand.setGravity(mStand.hasGravity());
-		mStand.setVisible(mStand.isVisible());
-		mStand.setArms(mStand.hasArms());
-		mStand.setBasePlate(mStand.hasBasePlate());
+		target.setSmall(mStand.isSmall());
+		target.setCustomName(mStand.getCustomName());
+		target.setCustomNameVisible(mStand.isCustomNameVisible());
+		target.setGravity(mStand.hasGravity());
+		target.setVisible(mStand.isVisible());
+		target.setArms(mStand.hasArms());
+		target.setBasePlate(mStand.hasBasePlate());
 
 		// Poses
-		mStand.setBodyPose(mStand.getBodyPose());
-		mStand.setHeadPose(mStand.getHeadPose());
-		mStand.setRightArmPose(mStand.getRightArmPose());
-		mStand.setLeftArmPose(mStand.getLeftArmPose());
-		mStand.setLeftLegPose(mStand.getLeftLegPose());
-		mStand.setRightLegPose(mStand.getRightLegPose());
+		target.setBodyPose(mStand.getBodyPose());
+		target.setHeadPose(mStand.getHeadPose());
+		target.setRightArmPose(mStand.getRightArmPose());
+		target.setLeftArmPose(mStand.getLeftArmPose());
+		target.setLeftLegPose(mStand.getLeftLegPose());
+		target.setRightLegPose(mStand.getRightLegPose());
+		Location loc = target.getLocation();
+		loc.setYaw(mStand.getLocation().getYaw());
+		target.teleport(loc);
 
 		// Equips
-		mStand.getEquipment().setArmorContents(mStand.getEquipment().getArmorContents());
-		mStand.getEquipment().setItemInMainHand(mStand.getEquipment().getItemInMainHand());
-		mStand.getEquipment().setItemInOffHand(mStand.getEquipment().getItemInOffHand());
+		target.getEquipment().setArmorContents(mStand.getEquipment().getArmorContents());
+		target.getEquipment().setItemInMainHand(mStand.getEquipment().getItemInMainHand());
+		target.getEquipment().setItemInOffHand(mStand.getEquipment().getItemInOffHand());
 	}
 
 }

@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.playmonumenta.scriptedquests.models.Model;
+import com.playmonumenta.scriptedquests.models.ModelInstance;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -105,10 +106,10 @@ public class PlayerListener implements Listener {
 		ArmorStand stand = event.getRightClicked();
 		Player player = event.getPlayer();
 
-		Model model = mPlugin.mModelManager.getModel(stand);
+		ModelInstance model = mPlugin.mModelManager.getModel(stand);
 		if (model != null) {
 			event.setCancelled(true);
-			for (QuestComponent component : model.getComponents()) {
+			for (QuestComponent component : model.getModel().getComponents()) {
 				component.doActionsIfPrereqsMet(mPlugin, player, stand);
 			}
 		}

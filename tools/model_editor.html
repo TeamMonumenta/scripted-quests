@@ -92,11 +92,37 @@
                     description: "The center of this model",
                     $ref: "schema/xyz.json"
 				},
+				use_info: {
+					propertyOrder: 4,
+                    title: "use_info",
+                    description: "Define the properties of what happens when you use the model",
+                    type: "object",
+					properties: {
+						use_time: {
+							title: "use_time",
+							description: "How long it takes to use this model",
+							type: "integer",
+							default: 0
+						},
+						use_disable: {
+							title: "use_disable",
+							description: "Whether or not to disable this model after the player uses it",
+							type: "boolean",
+							default: false
+						},
+						use_disable_time: {
+							title: "use_disable_time",
+							description: "How long the model is disabled after being used. use_disable must be true in order for this to function. This is in ticks.",
+							type: "integer",
+							default: 0
+						}
+					}
+				},
                 quest_components: {
                     required: true,
                     propertyOrder: 4,
                     title: "quest_components",
-                    description: "A list of actions to do whenever the player interacts with this model",
+                    description: "A list of actions to do whenever the player interacts with this model after the use time",
                     type: "array",
                     format: "tabs",
                     minItems: 1,

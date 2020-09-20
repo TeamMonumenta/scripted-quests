@@ -26,12 +26,19 @@ public class Model {
 	public final World mWorld;
 	public final Vector mPos1;
 	public final Vector mPos2;
+	public final BoundingBox mBox;
 
 	public final Vector mCenter;
 
+	private List<ModelInstance> mInstances = new ArrayList<>();
 	private List<Vector> mLocations = new ArrayList<>();
 	private List<ModelPart> mModelParts = new ArrayList<>();
 	private List<QuestComponent> mComponents = new ArrayList<>();
+
+	// Use Info
+	private int mUseTime = 0;
+	private boolean mUseDisable = false;
+	private int mUseDiableTime = 0;
 	public Model(Plugin plugin, JsonObject object) throws Exception {
 
 		mId = object.get("name").getAsString();
@@ -45,6 +52,10 @@ public class Model {
 		if (mWorld == null) {
 			throw new Exception("world value is not a valid world!");
 		}
+
+		// Use Info
+		JsonElement useElement = object.get("use_info");
+		if (useElement == null || )
 
 		// Center
 		double x = 0;
@@ -162,8 +173,8 @@ public class Model {
 		mPos1 = new Vector(corners[0], corners[1], corners[2]);
 		mPos2 = new Vector(corners[3], corners[4], corners[5]);
 
-		BoundingBox box = BoundingBox.of(mPos1, mPos2);
-		for (Entity e : mWorld.getNearbyEntities(box)) {
+		mBox = BoundingBox.of(mPos1, mPos2);
+		for (Entity e : mWorld.getNearbyEntities(mBox)) {
 			if (e instanceof ArmorStand) {
 				ArmorStand stand = (ArmorStand) e;
 				mModelParts.add(new ModelPart(stand, mCenter));
@@ -181,14 +192,9 @@ public class Model {
 		for (Vector vec : mLocations) {
 			Location loc = vec.toLocation(mWorld);
 
-			for (ModelPart part : mModelParts) {
-				Location synced = loc.clone().add(part.getCenterOffset());
-				ArmorStand stand = loc.getWorld().spawn(synced, ArmorStand.class, (ArmorStand entity) -> {
-					part.cloneIntoStand(entity);
-				});
-				stand.setMetadata(Constants.PART_MODEL_METAKEY, new FixedMetadataValue(plugin, this));
-				stand.addScoreboardTag(Constants.REMOVE_ONENABLE);
-			}
+			ModelInstance instance = new ModelInstance(plugin, this, loc);
+			instance.toggle();
+			mInstances.add(instance);
 		}
 	}
 
@@ -196,8 +202,16 @@ public class Model {
 		return mModelParts;
 	}
 
+	public List<ModelInstance> getInstances() {
+		return mInstances;
+	}
+
 	public List<QuestComponent> getComponents() {
 		return mComponents;
+	}
+
+	public double getHeight() {
+		return mBox.getHeight();
 	}
 
 }
