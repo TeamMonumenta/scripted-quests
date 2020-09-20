@@ -188,6 +188,9 @@ public class ModelInstance {
 							mRunnables.remove(this);
 							mUsers.remove(player.getUniqueId());
 							disable(mModel.mUseDisableTime);
+							if (mModel.mOnEnd != null) {
+								mModel.mOnEnd.doActions(null, mLoc);
+							}
 						}
 
 					}
