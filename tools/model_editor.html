@@ -54,6 +54,7 @@
 				"locations",
 				"center",
 				"region",
+				"use_info",
                 "quest_components"
             ],
             additionalProperties:false,
@@ -95,6 +96,11 @@
 				use_info: {
 					propertyOrder: 4,
                     title: "use_info",
+					defaultProperties: [
+						"use_time",
+						"use_message",
+						"use_disable_time"
+					],
                     description: "Define the properties of what happens when you use the model",
                     type: "object",
 					properties: {
