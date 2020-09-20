@@ -6,6 +6,7 @@ import java.util.List;
 import com.playmonumenta.scriptedquests.models.Model;
 import com.playmonumenta.scriptedquests.models.ModelInstance;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
@@ -109,8 +110,8 @@ public class PlayerListener implements Listener {
 		ModelInstance model = mPlugin.mModelManager.getModel(stand);
 		if (model != null) {
 			event.setCancelled(true);
-			for (QuestComponent component : model.getModel().getComponents()) {
-				component.doActionsIfPrereqsMet(mPlugin, player, stand);
+			if (!model.use(player)) {
+				player.sendMessage(ChatColor.RED + "Someone else is already interacting with this!");
 			}
 		}
 	}

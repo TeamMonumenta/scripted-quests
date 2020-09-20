@@ -37,6 +37,7 @@ public class Model {
 	public int mUseTime = 0;
 	public boolean mUseDisable = false;
 	public int mUseDisableTime = 0;
+	public String mUseMessage = "Using...";
 	public Model(Plugin plugin, JsonObject object) throws Exception {
 
 		mId = object.get("name").getAsString();
@@ -68,8 +69,8 @@ public class Model {
 					mUseTime = value.getAsInt();
 					break;
 
-				case "use_disable":
-					mUseDisable = value.getAsBoolean();
+				case "use_message":
+					mUseMessage = value.getAsString();
 					break;
 
 				case "use_disable_time":

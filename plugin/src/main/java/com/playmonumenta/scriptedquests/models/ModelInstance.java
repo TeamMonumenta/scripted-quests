@@ -28,7 +28,7 @@ public class ModelInstance {
 
 		public String getProgress(String message, int tick) {
 			int health_length = message.length();
-			char[] chars = ("|||||" + message + "|||||").toCharArray();
+			char[] chars = ("||||||" + message + "||||||").toCharArray();
 			double percentPerChar = 1D / (double) chars.length;
 			double percent = (double) tick / (double) mMaxTicks;
 
@@ -76,6 +76,7 @@ public class ModelInstance {
 			runnable.cancel();
 		}
 		mRunnables.clear();
+		mUsers.clear();
 	}
 
 	public Model getModel() {
@@ -105,17 +106,42 @@ public class ModelInstance {
 		}
 	}
 
+	public void disable(int ticks) {
+		if (isToggled() && ticks > 0) {
+			toggle();
+			BukkitRunnable runnable = new BukkitRunnable() {
+				int t = 0;
+				@Override
+				public void run() {
+					t++;
+
+					if (t >= ticks) {
+						toggle();
+					}
+
+				}
+
+			};
+			runnable.runTaskTimer(mPlugin, 0, 1);
+			mRunnables.add(runnable);
+		}
+	}
+
 	public boolean use(Player player) {
 		if (!mUsers.contains(player.getUniqueId())) {
 
-			if (mModel.mUseDisable && mUsers.size() > 0) {
+			if (mModel.mUseDisableTime > 0 && mUsers.size() > 0) {
 				return false;
 			}
 			mUsers.add(player.getUniqueId());
+
 			if (mModel.mUseTime <= 0) {
 				for (QuestComponent component : mModel.getComponents()) {
 					component.doActionsIfPrereqsMet(mPlugin, player, mStands.get(0));
 				}
+				mUsers.remove(player.getUniqueId());
+
+				disable(mModel.mUseDisableTime);
 			} else {
 				Location loc = mLoc.clone().add(0, mModel.getHeight(), 0);
 				ProgressBar bar = new ProgressBar(mModel.mUseTime);
@@ -125,7 +151,8 @@ public class ModelInstance {
 					stand.setGravity(false);
 					stand.setMarker(true);
 					stand.setCustomNameVisible(true);
-					stand.setCustomName(ChatColor.DARK_GREEN + "[" + bar.getProgress("Using...", 0) + ChatColor.DARK_GREEN + "]");
+					stand.setCustomName(ChatColor.DARK_GREEN + "[" + bar.getProgress(mModel.mUseMessage, 0) + ChatColor.DARK_GREEN + "]");
+					stand.addScoreboardTag(Constants.REMOVE_ONENABLE);
 					});
 
 				BukkitRunnable runnable = new BukkitRunnable() {
@@ -140,7 +167,7 @@ public class ModelInstance {
 					@Override
 					public void run() {
 						t++;
-						timeStand.setCustomName(ChatColor.DARK_GREEN + "[" + bar.getProgress("Using...", t) + ChatColor.DARK_GREEN + "]");
+						timeStand.setCustomName(ChatColor.DARK_GREEN + "[" + bar.getProgress(mModel.mUseMessage, t) + ChatColor.DARK_GREEN + "]");
 
 						if (t >= mModel.mUseTime) {
 							this.cancel();
@@ -148,6 +175,8 @@ public class ModelInstance {
 								component.doActionsIfPrereqsMet(mPlugin, player, mStands.get(0));
 							}
 							mRunnables.remove(this);
+							mUsers.remove(player.getUniqueId());
+							disable(mModel.mUseDisableTime);
 						}
 
 					}
