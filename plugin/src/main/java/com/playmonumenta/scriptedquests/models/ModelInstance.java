@@ -35,14 +35,14 @@ public class ModelInstance {
 			String str = "";
 			for (int i = 0; i < chars.length; i++) {
 				if (percent >= percentPerChar * (i)) {
-					if (i >= 5 && health_length > 0) {
+					if (i >= 6 && health_length > 0) {
 						health_length--;
 						str += ChatColor.DARK_GREEN + Character.toString(chars[i]);
 					} else {
 						str += ChatColor.GREEN + Character.toString(chars[i]);
 					}
 				} else {
-					if (i >= 5 && health_length > 0) {
+					if (i >= 6 && health_length > 0) {
 						health_length--;
 						str += ChatColor.GRAY + Character.toString(chars[i]);
 					} else {
@@ -116,6 +116,7 @@ public class ModelInstance {
 					t++;
 
 					if (t >= ticks) {
+						this.cancel();
 						toggle();
 					}
 

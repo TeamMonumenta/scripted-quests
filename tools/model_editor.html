@@ -99,7 +99,11 @@
 					defaultProperties: [
 						"use_time",
 						"use_message",
-						"use_disable_time"
+						"use_disable_time",
+						"on_tick_rate",
+						"on_start",
+						"on_tick",
+						"on_end"
 					],
                     description: "Define the properties of what happens when you use the model",
                     type: "object",
@@ -121,7 +125,28 @@
 							description: "How long the model is disabled after being used.",
 							type: "integer",
 							default: 0
+						},
+						on_tick_rate: {
+							title: "on_tick_rate",
+							description: "The rate at which on_tick triggers in ticks.",
+							type: "integer",
+							default: 1
 						}
+						on_start: {
+							title: "on_start",
+							description: "The actions to play on the model when the player first interacts with it",
+							$ref: "schema/ability_actions.json"
+						},
+						on_tick: {
+							title: "on_ticks",
+							description: "The actions to play on the model while the model is ticking in progress",
+							$ref: "schema/ability_actions.json"
+						},
+						on_end: {
+							title: "on_end",
+							description: "The actions to play on the model when the player finishes interacting with the model",
+							$ref: "schema/ability_actions.json"
+						},
 					}
 				},
                 quest_components: {

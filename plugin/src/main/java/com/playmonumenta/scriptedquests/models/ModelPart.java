@@ -20,6 +20,7 @@ public class ModelPart {
 	}
 
 	public void cloneIntoStand(ArmorStand target) {
+		target.setSilent(true);
 		target.setSmall(mStand.isSmall());
 		target.setCustomName(mStand.getCustomName());
 		target.setCustomNameVisible(mStand.isCustomNameVisible());
