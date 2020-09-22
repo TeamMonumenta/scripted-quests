@@ -42,7 +42,10 @@ hope others will find it useful too.
 ## <a name="download"></a>Download
 
 ScriptedQuests works on Minecraft 1.13 or higher. It also requires
-[CommandAPI](https://github.com/JorelAli/1.13-Command-API) version 1.8.x.
+[CommandAPI](https://github.com/JorelAli/1.13-Command-API) version 4.x. Other
+CommandAPI versions may also work, worth giving it a shot. It'll be immediately
+obvious as if the version is incompatible, the plugin won't load or no commands
+will work.
 
 You can download ScriptedQuests from [GitHub Packages](https://github.com/TeamMonumenta/scripted-quests/packages).
 This is automatically updated every time new changes are made. Click on the

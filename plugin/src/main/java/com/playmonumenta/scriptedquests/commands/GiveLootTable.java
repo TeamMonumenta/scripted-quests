@@ -4,21 +4,20 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Random;
 
+import com.playmonumenta.scriptedquests.utils.InventoryUtils;
+import com.playmonumenta.scriptedquests.utils.MessagingUtils;
+
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 
-import com.playmonumenta.scriptedquests.utils.InventoryUtils;
-import com.playmonumenta.scriptedquests.utils.MessagingUtils;
-
-import io.github.jorelali.commandapi.api.CommandAPI;
-import io.github.jorelali.commandapi.api.CommandPermission;
-import io.github.jorelali.commandapi.api.arguments.Argument;
-import io.github.jorelali.commandapi.api.arguments.EntitySelectorArgument;
-import io.github.jorelali.commandapi.api.arguments.EntitySelectorArgument.EntitySelector;
-import io.github.jorelali.commandapi.api.arguments.IntegerArgument;
-import io.github.jorelali.commandapi.api.arguments.TextArgument;
+import dev.jorel.commandapi.CommandAPICommand;
+import dev.jorel.commandapi.CommandPermission;
+import dev.jorel.commandapi.arguments.Argument;
+import dev.jorel.commandapi.arguments.EntitySelectorArgument;
+import dev.jorel.commandapi.arguments.IntegerArgument;
+import dev.jorel.commandapi.arguments.TextArgument;
 
 public class GiveLootTable {
 	@SuppressWarnings("unchecked")
@@ -26,40 +25,37 @@ public class GiveLootTable {
 		CommandPermission perms = CommandPermission.fromString("scriptedquests.giveloottable");
 		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
 
-		arguments.put("players", new EntitySelectorArgument(EntitySelector.MANY_PLAYERS));
+		arguments.put("players", new EntitySelectorArgument(EntitySelectorArgument.EntitySelector.MANY_PLAYERS));
 		arguments.put("lootTablePath", new TextArgument());
-
-		CommandAPI.getInstance().register("giveloottable",
-		                                  perms,
-		                                  arguments,
-		                                  (sender, args) -> {
-											  giveLoot((Collection<Player>)args[0], (String)args[1], 1, random);
-		                                  }
-		);
+		new CommandAPICommand("giveloottable")
+			.withPermission(perms)
+			.withArguments(arguments)
+			.executes((sender, args) -> {
+				giveLoot((Collection<Player>)args[0], (String)args[1], 1, random);
+			})
+			.register();
 
 		arguments.put("count", new IntegerArgument(1, 1000));
-
-		CommandAPI.getInstance().register("giveloottable",
-		                                  perms,
-		                                  arguments,
-		                                  (sender, args) -> {
-											  giveLoot((Collection<Player>)args[0], (String)args[1], (Integer)args[2], random);
-		                                  }
-		);
+		new CommandAPICommand("giveloottable")
+			.withPermission(perms)
+			.withArguments(arguments)
+			.executes((sender, args) -> {
+				giveLoot((Collection<Player>)args[0], (String)args[1], (Integer)args[2], random);
+			})
+			.register();
 
 		/* Rather than take a specified count, take an item entity - and give loot from the loot table once for each item in the stack */
 		arguments.clear();
-		arguments.put("players", new EntitySelectorArgument(EntitySelector.MANY_PLAYERS));
+		arguments.put("players", new EntitySelectorArgument(EntitySelectorArgument.EntitySelector.MANY_PLAYERS));
 		arguments.put("lootTablePath", new TextArgument());
 		arguments.put("countItems", new EntitySelectorArgument(EntitySelectorArgument.EntitySelector.ONE_ENTITY));
-
-		CommandAPI.getInstance().register("giveloottable",
-		                                  perms,
-		                                  arguments,
-		                                  (sender, args) -> {
-											  giveLootCountFromItemEntity((Collection<Player>)args[0], (String)args[1], (Entity)args[2], random);
-		                                  }
-		);
+		new CommandAPICommand("giveloottable")
+			.withPermission(perms)
+			.withArguments(arguments)
+			.executes((sender, args) -> {
+				giveLootCountFromItemEntity((Collection<Player>)args[0], (String)args[1], (Entity)args[2], random);
+			})
+			.register();
 	}
 
 	private static void giveLootCountFromItemEntity(Collection<Player> players, String lootPath, Entity entity, Random random) {

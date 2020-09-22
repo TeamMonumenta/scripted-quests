@@ -3,10 +3,10 @@ package com.playmonumenta.scriptedquests.commands;
 import java.util.LinkedHashMap;
 import java.util.SplittableRandom;
 
-import io.github.jorelali.commandapi.api.CommandAPI;
-import io.github.jorelali.commandapi.api.CommandPermission;
-import io.github.jorelali.commandapi.api.arguments.Argument;
-import io.github.jorelali.commandapi.api.arguments.IntegerArgument;
+import dev.jorel.commandapi.CommandAPICommand;
+import dev.jorel.commandapi.CommandPermission;
+import dev.jorel.commandapi.arguments.Argument;
+import dev.jorel.commandapi.arguments.IntegerArgument;
 
 public class RandomNumber {
 	private static final SplittableRandom mRandom = new SplittableRandom();
@@ -17,12 +17,12 @@ public class RandomNumber {
 		arguments.put("min", new IntegerArgument());
 		arguments.put("max", new IntegerArgument());
 
-		CommandAPI.getInstance().register("randomnumber",
-		                                  CommandPermission.fromString("scriptedquests.randomnumber"),
-		                                  arguments,
-		                                  (sender, args) -> {
-											  return mRandom.nextInt((Integer)args[0], (Integer)args[1] + 1);
-		                                  }
-		);
+		new CommandAPICommand("randomnumber")
+			.withPermission(CommandPermission.fromString("scriptedquests.randomnumber"))
+			.withArguments(arguments)
+			.executes((sender, args) -> {
+				return mRandom.nextInt((Integer)args[0], (Integer)args[1] + 1);
+			})
+			.register();
 	}
 }

@@ -6,15 +6,14 @@ import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 
-import io.github.jorelali.commandapi.api.CommandAPI;
-import io.github.jorelali.commandapi.api.CommandPermission;
-import io.github.jorelali.commandapi.api.arguments.Argument;
-import io.github.jorelali.commandapi.api.arguments.IntegerArgument;
-import io.github.jorelali.commandapi.api.arguments.LocationArgument;
-import io.github.jorelali.commandapi.api.arguments.LocationArgument.LocationType;
+import dev.jorel.commandapi.CommandAPICommand;
+import dev.jorel.commandapi.CommandPermission;
+import dev.jorel.commandapi.arguments.Argument;
+import dev.jorel.commandapi.arguments.IntegerArgument;
+import dev.jorel.commandapi.arguments.LocationArgument;
+import dev.jorel.commandapi.arguments.LocationType;
 
 public class Clock {
-	@SuppressWarnings("unchecked")
 	public static void register() {
 		CommandPermission perms = CommandPermission.fromString("scriptedquests.clock");
 		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
@@ -23,15 +22,19 @@ public class Clock {
 		arguments.put("range", new IntegerArgument());
 		arguments.put("period", new IntegerArgument());
 
-		CommandAPI.getInstance().register("clock", perms, arguments, (sender, args) -> {
-			if (sender instanceof Player) {
-				Player player = (Player)sender;
-				player.getWorld().spawn((Location)args[0], ArmorStand.class, (entity) -> {
-					entity.addScoreboardTag("timer");
-					entity.addScoreboardTag("range=" + args[1]);
-					entity.addScoreboardTag("period=" + args[2]);
-				});
-			}
-		});
+		new CommandAPICommand("clock")
+			.withPermission(perms)
+			.withArguments(arguments)
+			.executes((sender, args) -> {
+				if (sender instanceof Player) {
+					Player player = (Player) sender;
+					player.getWorld().spawn((Location) args[0], ArmorStand.class, (entity) -> {
+						entity.addScoreboardTag("timer");
+						entity.addScoreboardTag("range=" + (Integer)args[1]);
+						entity.addScoreboardTag("period=" + (Integer)args[2]);
+					});
+				}
+			})
+			.register();
 	}
 }

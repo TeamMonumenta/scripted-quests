@@ -2,23 +2,22 @@ package com.playmonumenta.scriptedquests.commands;
 
 import java.util.LinkedHashMap;
 
+import com.playmonumenta.scriptedquests.utils.InventoryUtils;
+import com.playmonumenta.scriptedquests.utils.MaterialUtils;
+
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
 
-import com.playmonumenta.scriptedquests.utils.InventoryUtils;
-import com.playmonumenta.scriptedquests.utils.MaterialUtils;
-
-import io.github.jorelali.commandapi.api.CommandAPI;
-import io.github.jorelali.commandapi.api.CommandPermission;
-import io.github.jorelali.commandapi.api.arguments.Argument;
-import io.github.jorelali.commandapi.api.arguments.BooleanArgument;
-import io.github.jorelali.commandapi.api.arguments.EntitySelectorArgument;
-import io.github.jorelali.commandapi.api.arguments.EntitySelectorArgument.EntitySelector;
-import io.github.jorelali.commandapi.api.arguments.IntegerArgument;
-import io.github.jorelali.commandapi.api.arguments.TextArgument;
+import dev.jorel.commandapi.CommandAPICommand;
+import dev.jorel.commandapi.CommandPermission;
+import dev.jorel.commandapi.arguments.Argument;
+import dev.jorel.commandapi.arguments.BooleanArgument;
+import dev.jorel.commandapi.arguments.EntitySelectorArgument;
+import dev.jorel.commandapi.arguments.IntegerArgument;
+import dev.jorel.commandapi.arguments.TextArgument;
 
 public class ImprovedClear {
 	public static void register() {
@@ -26,38 +25,54 @@ public class ImprovedClear {
 		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
 		String[] aliases = {"iclear"};
 
-		arguments.put("target", new EntitySelectorArgument(EntitySelector.ONE_PLAYER));
+		arguments.put("target", new EntitySelectorArgument(EntitySelectorArgument.EntitySelector.ONE_PLAYER));
 		arguments.put("name", new TextArgument());
-
-		CommandAPI.getInstance().register("improvedclear", perms, aliases, arguments, (sender, args) -> {
-			// Make sure shulker boxes are closed so they can be clear'd
-			((Player)args[0]).closeInventory();
-			return clearInventory(((Player)args[0]).getInventory(), (String)args[1], -1, true, "", 0);
-		});
+		new CommandAPICommand("improvedclear")
+			.withPermission(perms)
+			.withArguments(arguments)
+			.withAliases(aliases)
+			.executes((sender, args) -> {
+				// Make sure shulker boxes are closed so they can be clear'd
+				((Player)args[0]).closeInventory();
+				return clearInventory(((Player)args[0]).getInventory(), (String)args[1], -1, true, "", 0);
+			})
+			.register();
 
 		arguments.put("maxAmount", new IntegerArgument());
-
-		CommandAPI.getInstance().register("improvedclear", perms, aliases, arguments, (sender, args) -> {
-			// Make sure shulker boxes are closed so they can be clear'd
-			((Player)args[0]).closeInventory();
-			return clearInventory(((Player)args[0]).getInventory(), (String)args[1], (Integer)args[2], true, "", 0);
-		});
+		new CommandAPICommand("improvedclear")
+			.withPermission(perms)
+			.withArguments(arguments)
+			.withAliases(aliases)
+			.executes((sender, args) -> {
+				// Make sure shulker boxes are closed so they can be clear'd
+				((Player)args[0]).closeInventory();
+				return clearInventory(((Player)args[0]).getInventory(), (String)args[1], (Integer)args[2], true, "", 0);
+			})
+			.register();
 
 		arguments.put("clearShulkers", new BooleanArgument());
-
-		CommandAPI.getInstance().register("improvedclear", perms, aliases, arguments, (sender, args) -> {
-			// Make sure shulker boxes are closed so they can be clear'd
-			((Player)args[0]).closeInventory();
-			return clearInventory(((Player)args[0]).getInventory(), (String)args[1], (Integer)args[2], (Boolean)args[3], "", 0);
-		});
+		new CommandAPICommand("improvedclear")
+			.withPermission(perms)
+			.withArguments(arguments)
+			.withAliases(aliases)
+			.executes((sender, args) -> {
+				// Make sure shulker boxes are closed so they can be clear'd
+				((Player)args[0]).closeInventory();
+				return clearInventory(((Player)args[0]).getInventory(), (String)args[1], (Integer)args[2], (Boolean)args[3], "", 0);
+			})
+			.register();
 
 		arguments.put("shulkerLore", new TextArgument());
-
-		CommandAPI.getInstance().register("improvedclear", perms, aliases, arguments, (sender, args) -> {
-			// Make sure shulker boxes are closed so they can be clear'd
-			((Player)args[0]).closeInventory();
-			return clearInventory(((Player)args[0]).getInventory(), (String)args[1], (Integer)args[2], (Boolean)args[3], (String)args[4], 0);
-		});
+		new CommandAPICommand("improvedclear")
+			.withPermission(perms)
+			.withArguments(arguments)
+			.withAliases(aliases)
+			.executes((sender, args) -> {
+				// Make sure shulker boxes are closed so they can be clear'd
+				((Player)args[0]).closeInventory();
+				return clearInventory(((Player)args[0]).getInventory(), (String)args[1], (Integer)args[2], (Boolean)args[3], (String)args[4], 0);
+			})
+			.register();
 	}
 
 

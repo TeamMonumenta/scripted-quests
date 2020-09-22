@@ -2,20 +2,19 @@ package com.playmonumenta.scriptedquests.commands;
 
 import java.util.LinkedHashMap;
 
+import com.playmonumenta.scriptedquests.utils.BlockUtils;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 
-import io.github.jorelali.commandapi.api.CommandAPI;
-import io.github.jorelali.commandapi.api.CommandPermission;
-import io.github.jorelali.commandapi.api.arguments.Argument;
-import io.github.jorelali.commandapi.api.arguments.LocationArgument;
-import io.github.jorelali.commandapi.api.arguments.StringArgument;
-
-import com.playmonumenta.scriptedquests.utils.BlockUtils;
+import dev.jorel.commandapi.CommandAPICommand;
+import dev.jorel.commandapi.CommandPermission;
+import dev.jorel.commandapi.arguments.Argument;
+import dev.jorel.commandapi.arguments.LocationArgument;
+import dev.jorel.commandapi.arguments.StringArgument;
 
 public class Line {
-	@SuppressWarnings("unchecked")
 	public static void register() {
 		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
 
@@ -23,13 +22,13 @@ public class Line {
 		arguments.put("end", new LocationArgument());
 		arguments.put("material", new StringArgument());
 
-		CommandAPI.getInstance().register("line",
-		                                  CommandPermission.fromString("scriptedquests.line"),
-		                                  arguments,
-		                                  (sender, args) -> {
-		                                      return run(sender, (Location) args[0], (Location) args[1], (String) args[2]);
-		                                  }
-		);
+		new CommandAPICommand("line")
+			.withPermission(CommandPermission.fromString("scriptedquests.line"))
+			.withArguments(arguments)
+			.executes((sender, args) -> {
+				return run(sender, (Location) args[0], (Location) args[1], (String) args[2]);
+			})
+			.register();
 	}
 
 	private static int run(CommandSender sender, Location start, Location end, String matStr) {
