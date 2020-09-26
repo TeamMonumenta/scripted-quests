@@ -220,10 +220,11 @@ public class ZoneManager {
 	}
 
 	private void handleReloads(Plugin plugin) {
+		mReloadInProgress = true;
 		do {
-			mReloadInProgress = true;
 			doReload(plugin);
 		} while (!mQueuedReloadRequesters.isEmpty());
+		mReloadInProgress = false;
 	}
 
 	private void doReload(Plugin plugin) {
@@ -347,7 +348,6 @@ public class ZoneManager {
 		};
 
 		mPlayerTracker.runTaskTimer(plugin, 0, 5);
-		mReloadInProgress = false;
 	}
 
 	// For a given location, return the zones that contain it.
