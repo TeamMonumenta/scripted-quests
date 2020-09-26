@@ -199,6 +199,35 @@
             "description": "Gives the player all items from a loot table.",
             "type": "string"
         },
+		"give_reward": {
+            "title": "give_reward",
+            "description": "Rewards the player all of the items from given loot tables in a stylized UI.",
+            "type": "object",
+			"properties": {
+				"base_reward": {
+					"title": "base_reward",
+					"description": "The loot table that is given to the player as the base.",
+					"type": "string"
+				},
+				"pick_reward": {
+					"title": "pick_reward",
+					"description": "The loot table that contains the loot from which the player has to pick 1 item from. This can be left blank if not intended.",
+					"type": "string"
+				},
+				"xp": {
+					"title": "xp",
+					"description": "The amount of experience given to the player.",
+					"type": "integer",
+					"default": 0
+				},
+				"coins": {
+					"title": "coins",
+					"description": "The amount of coins given to the player.",
+					"type": "integer",
+					"default": 0
+				}
+			}
+        },
 		"give_xp": {
             "title": "give_xp",
             "description": "Gives the player the amount of XP specified.",
