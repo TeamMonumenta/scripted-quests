@@ -1,7 +1,9 @@
 package com.playmonumenta.scriptedquests.zones;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -22,6 +24,7 @@ import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.utils.ZoneUtils;
 
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 
 public class ZoneLayer {
@@ -35,6 +38,10 @@ public class ZoneLayer {
 	 * This should only be called by the ZoneManager.
 	 */
 	public ZoneLayer(CommandSender sender, JsonObject object) throws Exception {
+		this(new HashSet<CommandSender>(Arrays.asList(sender)), object);
+	}
+
+	public ZoneLayer(Set<CommandSender> senders, JsonObject object) throws Exception {
 		if (object == null) {
 			throw new Exception("object may not be null.");
 		}
@@ -131,7 +138,7 @@ public class ZoneLayer {
 			zoneIndex++;
 		}
 
-		reloadFragments(sender);
+		reloadFragments(senders);
 	}
 
 	/************************************************************************************
@@ -192,7 +199,13 @@ public class ZoneLayer {
 	 * Returns a subclass of ZoneTreeBase.
 	 */
 	public ZoneTreeBase createZoneTree(CommandSender sender) throws Exception {
-		reloadFragments(sender);
+		Set<CommandSender> senders = new HashSet<CommandSender>();
+		senders.add(sender);
+		return createZoneTree(senders);
+	}
+
+	public ZoneTreeBase createZoneTree(Set<CommandSender> senders) throws Exception {
+		reloadFragments(senders);
 
 		// Create list of all zone fragments.
 		List<ZoneFragment> zoneFragments = new ArrayList<ZoneFragment>();
@@ -214,12 +227,18 @@ public class ZoneLayer {
 	 * and the ZoneLayer constructor.
 	 */
 	protected void reloadFragments(CommandSender sender) {
+		Set<CommandSender> senders = new HashSet<CommandSender>();
+		senders.add(sender);
+		reloadFragments(senders);
+	}
+
+	protected void reloadFragments(Set<CommandSender> senders) {
 		for (Zone zone : mZones) {
 			zone.reloadFragments();
 		}
 
 		// Split the zones into non-overlapping fragments
-		removeOverlaps(sender, mZones);
+		removeOverlaps(senders, mZones);
 
 		if (Plugin.getInstance().mShowZonesDynmap) {
 			refreshDynmapLayer();
@@ -264,6 +283,12 @@ public class ZoneLayer {
 	}
 
 	private void removeOverlaps(CommandSender sender, List<Zone> zones) {
+		Set<CommandSender> senders = new HashSet<CommandSender>();
+		senders.add(sender);
+		removeOverlaps(senders, zones);
+	}
+
+	private void removeOverlaps(Set<CommandSender> senders, List<Zone> zones) {
 		for (int i = 0; i < zones.size(); i++) {
 			Zone outer = zones.get(i);
 			for (Zone inner : zones.subList(i + 1, zones.size())) {
@@ -272,12 +297,15 @@ public class ZoneLayer {
 					continue;
 				}
 				if (inner.splitByOverlap(overlap, outer)) {
-					String errorMessage = ChatColor.RED + "Total eclipse of zone "
+					String errorMessageLegacy = ChatColor.RED + "Total eclipse of zone "
 										+ ChatColor.BOLD + inner.getName()
 										+ ChatColor.RED + " by zone "
 										+ ChatColor.BOLD + outer.getName();
-					if (sender != null) {
-						sender.spigot().sendMessage(TextComponent.fromLegacyText(errorMessage));
+					if (senders != null) {
+						BaseComponent[] errorMessage = TextComponent.fromLegacyText(errorMessageLegacy);
+						for (CommandSender sender : senders) {
+							sender.spigot().sendMessage(errorMessage);
+						}
 					}
 				}
 				outer.splitByOverlap(overlap, inner, true);
