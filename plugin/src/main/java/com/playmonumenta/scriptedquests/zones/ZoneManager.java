@@ -217,7 +217,12 @@ public class ZoneManager {
 			BukkitRunnable reloadHandlerTask = new BukkitRunnable() {
 				@Override
 				public void run() {
-					handleReloads(plugin);
+					try {
+						handleReloads(plugin);
+					} catch (Exception e) {
+						MessagingUtils.sendStackTrace(mReloadRequesters, e);
+						return;
+					}
 				}
 			};
 
