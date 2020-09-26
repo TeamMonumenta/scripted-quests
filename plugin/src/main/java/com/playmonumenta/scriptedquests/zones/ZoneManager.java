@@ -23,6 +23,7 @@ import com.playmonumenta.scriptedquests.utils.QuestUtils;
 public class ZoneManager {
 	private Plugin mPlugin;
 	static BukkitRunnable mPlayerTracker = null;
+	static BukkitRunnable mAsyncReloadHandler = null;
 
 	private Map<String, ZoneLayer> mLayers = new HashMap<String, ZoneLayer>();
 	private Map<String, ZoneLayer> mPluginLayers = new HashMap<String, ZoneLayer>();
@@ -31,7 +32,6 @@ public class ZoneManager {
 	private Map<Player, Map<String, Zone>> mLastPlayerZones = new HashMap<Player, Map<String, Zone>>();
 	private Set<CommandSender> mReloadRequesters;
 	private Set<CommandSender> mQueuedReloadRequesters = new HashSet<CommandSender>();
-	private boolean mReloadInProgress = false;
 
 	public ZoneManager(Plugin plugin) {
 		mPlugin = plugin;
@@ -212,11 +212,13 @@ public class ZoneManager {
 	 */
 	public void reload(Plugin plugin, CommandSender sender) {
 		mQueuedReloadRequesters.add(sender);
-		if (mReloadInProgress) {
-			sender.sendMessage(ChatColor.GOLD + "Zones already reloading, and will run again when done.");
+		if (mAsyncReloadHandler != null) {
+			if (sender != null) {
+				sender.sendMessage(ChatColor.GOLD + "Zones already reloading, and will run again when done.");
+			}
 		} else {
 			// Start a new async task to handle reloads
-			BukkitRunnable reloadHandlerTask = new BukkitRunnable() {
+			mAsyncReloadHandler = new BukkitRunnable() {
 				@Override
 				public void run() {
 					try {
@@ -228,16 +230,15 @@ public class ZoneManager {
 				}
 			};
 
-			reloadHandlerTask.runTaskAsynchronously(plugin);
+			mAsyncReloadHandler.runTaskAsynchronously(plugin);
 		}
 	}
 
 	private void handleReloads(Plugin plugin) {
-		mReloadInProgress = true;
 		do {
 			doReload(plugin);
 		} while (!mQueuedReloadRequesters.isEmpty());
-		mReloadInProgress = false;
+		mAsyncReloadHandler = null;
 	}
 
 	private void doReload(Plugin plugin) {
@@ -311,7 +312,7 @@ public class ZoneManager {
 			MessagingUtils.sendStackTrace(mReloadRequesters, e);
 			return;
 		}
-		String message = ChatColor.GOLD + "Zone tree developer stats - fragments: "
+		String message = ChatColor.GOLD + "Zone tree dev stats - fragments: "
 		               + Integer.toString(newTree.fragmentCount())
 		               + ", max depth: "
 		               + Integer.toString(newTree.maxDepth())
