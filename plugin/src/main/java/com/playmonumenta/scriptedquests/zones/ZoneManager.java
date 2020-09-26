@@ -213,7 +213,15 @@ public class ZoneManager {
 	public void reload(Plugin plugin, CommandSender sender) {
 		mQueuedReloadRequesters.add(sender);
 		if (!mReloadInProgress) {
-			handleReloads(plugin);
+			// Start a new async task to handle reloads
+			BukkitRunnable reloadHandlerTask = new BukkitRunnable() {
+				@Override
+				public void run() {
+					handleReloads(plugin);
+				}
+			};
+
+			reloadHandlerTask.runTaskAsynchronously(plugin);
 		}
 	}
 

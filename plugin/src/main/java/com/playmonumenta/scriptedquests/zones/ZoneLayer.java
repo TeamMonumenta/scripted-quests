@@ -304,7 +304,9 @@ public class ZoneLayer {
 					if (senders != null) {
 						BaseComponent[] errorMessage = TextComponent.fromLegacyText(errorMessageLegacy);
 						for (CommandSender sender : senders) {
-							sender.spigot().sendMessage(errorMessage);
+							if (sender != null) {
+								sender.spigot().sendMessage(errorMessage);
+							}
 						}
 					}
 				}
