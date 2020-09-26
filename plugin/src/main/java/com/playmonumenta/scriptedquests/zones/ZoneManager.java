@@ -212,7 +212,9 @@ public class ZoneManager {
 	 */
 	public void reload(Plugin plugin, CommandSender sender) {
 		mQueuedReloadRequesters.add(sender);
-		if (!mReloadInProgress) {
+		if (mReloadInProgress) {
+			sender.sendMessage(ChatColor.GOLD + "Zones already reloading, and will run again when done.");
+		} else {
 			// Start a new async task to handle reloads
 			BukkitRunnable reloadHandlerTask = new BukkitRunnable() {
 				@Override
@@ -242,6 +244,12 @@ public class ZoneManager {
 		mReloadRequesters = mQueuedReloadRequesters;
 		mQueuedReloadRequesters = new HashSet<CommandSender>();
 
+		for (CommandSender sender : mReloadRequesters) {
+			if (sender != null) {
+				sender.sendMessage(ChatColor.GOLD + "Zones reload starting. Old zones will stay in effect until reloading succeeds.");
+			}
+		}
+
 		for (ZoneLayer layer : mLayers.values()) {
 			// Cause zones to stop tracking their fragments; speeds up garbage collection.
 			layer.invalidate();
@@ -268,6 +276,12 @@ public class ZoneManager {
 
 			return layerName + ":" + Integer.toString(layer.getZones().size());
 		});
+
+		for (CommandSender sender : mReloadRequesters) {
+			if (sender != null) {
+				sender.sendMessage(ChatColor.GOLD + "Zones have been read and verified. Optimizing for faster access, please wait.");
+			}
+		}
 
 		// Merge zone fragments within layers to prevent overlaps
 		mergeLayers();
@@ -297,7 +311,7 @@ public class ZoneManager {
 			MessagingUtils.sendStackTrace(mReloadRequesters, e);
 			return;
 		}
-		String message = ChatColor.GOLD + "Zone tree stats - fragments: "
+		String message = ChatColor.GOLD + "Zone tree developer stats - fragments: "
 		               + Integer.toString(newTree.fragmentCount())
 		               + ", max depth: "
 		               + Integer.toString(newTree.maxDepth())
@@ -361,6 +375,12 @@ public class ZoneManager {
 		};
 
 		mPlayerTracker.runTaskTimer(plugin, 0, 5);
+
+		for (CommandSender sender : mReloadRequesters) {
+			if (sender != null) {
+				sender.sendMessage(ChatColor.GOLD + "Zones reloaded successfully.");
+			}
+		}
 	}
 
 	// For a given location, return the zones that contain it.
