@@ -5,8 +5,6 @@ import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import me.Novalescent.Core;
 import me.Novalescent.items.reforges.ReforgeMenu;
-import me.Novalescent.items.trades.Trade;
-import me.Novalescent.items.trades.TradeManager;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;

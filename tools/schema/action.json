@@ -80,15 +80,20 @@
                                 "propertyOrder": 2,
                                 "$ref": "delay_actions_by_ticks.json"
                             },
+							"prerequisites": {
+								"description": "The prerequisites required for the player to SEE this option. If they do not meet them, this text will not be shown.",
+								"propertyOrder": 3,
+								"$ref": "prerequisites.json"
+							},
                             "actions": {
                                 "required": true,
-                                "propertyOrder": 3,
+                                "propertyOrder": 4,
                                 "$ref": "actions.json"
                             },
                             "player_valid_radius": {
                                 "description": "Range that the player is allowed to walk from the point where they were shown the message and still have the dialog work. Default is 4.0.",
                                 "required": false,
-                                "propertyOrder": 4,
+                                "propertyOrder": 5,
                                 "type": "number",
                                 "minimum": 3,
                                 "maximum": 29999984

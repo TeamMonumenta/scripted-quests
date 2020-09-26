@@ -52,6 +52,7 @@ public class DialogClickableTextEntry implements DialogBase {
 
 	private String mText;
 	private Double mRadius = 4.0;
+	private QuestPrerequisites mPrerequisites;
 	private QuestActions mActions;
 	private int mIdx;
 
@@ -75,7 +76,11 @@ public class DialogClickableTextEntry implements DialogBase {
 		for (Entry<String, JsonElement> ent : entries) {
 			String key = ent.getKey();
 
-			if (!key.equals("player_text") && !key.equals("player_valid_radius") && !key.equals("actions") && !key.equals("delay_actions_by_ticks")) {
+			if (!key.equals("player_text")
+				&& !key.equals("player_valid_radius")
+				&& !key.equals("actions")
+				&& !key.equals("delay_actions_by_ticks")
+				&& !key.equals("prerequisites")) {
 				throw new Exception("Unknown clickable_text key: " + key);
 			}
 
@@ -95,6 +100,8 @@ public class DialogClickableTextEntry implements DialogBase {
 				mRadius = value.getAsDouble();
 			} else if (key.equals("actions")) {
 				mActions = new QuestActions(npcName, displayName, entityType, delayTicks, value);
+			} else if (key.equals("prerequisites")) {
+				mPrerequisites = new QuestPrerequisites(value);
 			}
 		}
 
@@ -107,29 +114,31 @@ public class DialogClickableTextEntry implements DialogBase {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void sendDialog(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
-		MessagingUtils.sendClickableNPCMessage(plugin, player, mText,
-		                                       "/questtrigger " + Integer.toString(mIdx));
+		if (mPrerequisites == null || mPrerequisites.prerequisiteMet(player, npcEntity)) {
+			MessagingUtils.sendClickableNPCMessage(plugin, player, mText,
+				"/questtrigger " + Integer.toString(mIdx));
 
-		/* Create a new object describing the prereqs/actions/location for this clickable message */
-		PlayerClickableTextEntry newEntry = new PlayerClickableTextEntry(prereqs, mActions, npcEntity,
-		        new AreaBounds("", new Point(player.getLocation().subtract(mRadius, mRadius, mRadius)),
-		                       new Point(player.getLocation().add(mRadius, mRadius, mRadius))));
+			/* Create a new object describing the prereqs/actions/location for this clickable message */
+			PlayerClickableTextEntry newEntry = new PlayerClickableTextEntry(prereqs, mActions, npcEntity,
+				new AreaBounds("", new Point(player.getLocation().subtract(mRadius, mRadius, mRadius)),
+					new Point(player.getLocation().add(mRadius, mRadius, mRadius))));
 
-		/* Get the list of currently available clickable entries */
-		HashMap<Integer, PlayerClickableTextEntry> availTriggers;
-		if (player.hasMetadata(Constants.PLAYER_CLICKABLE_DIALOG_METAKEY)) {
-			availTriggers = (HashMap<Integer, PlayerClickableTextEntry>)player.getMetadata(
-			                    Constants.PLAYER_CLICKABLE_DIALOG_METAKEY).get(0).value();
-		} else {
-			availTriggers = new HashMap<Integer, PlayerClickableTextEntry>();
+			/* Get the list of currently available clickable entries */
+			HashMap<Integer, PlayerClickableTextEntry> availTriggers;
+			if (player.hasMetadata(Constants.PLAYER_CLICKABLE_DIALOG_METAKEY)) {
+				availTriggers = (HashMap<Integer, PlayerClickableTextEntry>)player.getMetadata(
+					Constants.PLAYER_CLICKABLE_DIALOG_METAKEY).get(0).value();
+			} else {
+				availTriggers = new HashMap<Integer, PlayerClickableTextEntry>();
+			}
+
+			/* Then we add this entry to the end of all available entries */
+			availTriggers.put(mIdx, newEntry);
+
+			/* Attach the new list of clickable options to the player */
+			player.setMetadata(Constants.PLAYER_CLICKABLE_DIALOG_METAKEY,
+				new FixedMetadataValue(plugin, availTriggers));
 		}
-
-		/* Then we add this entry to the end of all available entries */
-		availTriggers.put(mIdx, newEntry);
-
-		/* Attach the new list of clickable options to the player */
-		player.setMetadata(Constants.PLAYER_CLICKABLE_DIALOG_METAKEY,
-		                   new FixedMetadataValue(plugin, availTriggers));
 	}
 }
 
