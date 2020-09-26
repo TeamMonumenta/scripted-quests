@@ -225,8 +225,16 @@ public class ZoneManager {
 						handleReloads(plugin);
 					} catch (Exception e) {
 						MessagingUtils.sendStackTrace(mReloadRequesters, e);
+
+						for (CommandSender sender : mReloadRequesters) {
+							if (sender != null) {
+								sender.sendMessage(ChatColor.GOLD + "Zones Failed to reload.");
+							}
+						}
+
 						return;
 					}
+					mAsyncReloadHandler = null;
 				}
 			};
 
@@ -238,7 +246,6 @@ public class ZoneManager {
 		do {
 			doReload(plugin);
 		} while (!mQueuedReloadRequesters.isEmpty());
-		mAsyncReloadHandler = null;
 	}
 
 	private void doReload(Plugin plugin) {

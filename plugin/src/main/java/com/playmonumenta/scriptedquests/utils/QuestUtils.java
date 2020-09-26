@@ -14,6 +14,8 @@ import org.bukkit.plugin.Plugin;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
+import com.playmonumenta.scriptedquests.utils.MessagingUtils;
+
 public class QuestUtils {
 	@FunctionalInterface
 	public interface JsonLoadAction {
