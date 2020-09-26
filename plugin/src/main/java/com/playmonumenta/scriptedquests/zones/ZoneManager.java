@@ -211,9 +211,7 @@ public class ZoneManager {
 	 * clock speeds while the tree is loading. We have options.
 	 */
 	public void reload(Plugin plugin, CommandSender sender) {
-		if (sender != null) {
-			mQueuedReloadRequesters.add(sender);
-		}
+		mQueuedReloadRequesters.add(sender);
 		if (!mReloadInProgress) {
 			handleReloads(plugin);
 		}
@@ -293,7 +291,9 @@ public class ZoneManager {
 		               + ", ave depth: "
 		               + String.format("%.2f", newTree.averageDepth());
 		for (CommandSender sender : mReloadRequesters) {
-			sender.sendMessage(message);
+			if (sender != null) {
+				sender.sendMessage(message);
+			}
 		}
 
 		// Make sure only one player tracker runs at a time.
