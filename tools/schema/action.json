@@ -225,6 +225,16 @@
 					"description": "The amount of coins given to the player.",
 					"type": "integer",
 					"default": 0
+				},
+				"quest_components": {
+					"title": "quest_components",
+					"description": "The quest components to run whenever the player accepts the rewards",
+					"type": "array",
+					"format": "tabs",
+					"items": {
+						"title": "Quest Component",
+						"$ref": "quest_component.json"
+					}
 				}
 			}
         },

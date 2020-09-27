@@ -73,6 +73,13 @@ public class InventoryUtils {
 		return alreadyDone;
 	}
 
+	public static Collection<ItemStack> getLootTableContents(Player player, String lootPath, Random random) throws Exception {
+		NamespacedKey lootNamespace = getNamespacedKey(lootPath);
+		LootContext lootContext = new LootContext.Builder(player.getLocation()).build();
+
+		return Bukkit.getLootTable(lootNamespace).populateLoot(random, lootContext);
+	}
+
 	public static boolean giveItems(Player player, Collection<ItemStack> items, boolean alreadyDone) {
 		PlayerInventory inv = player.getInventory();
 		boolean itemsDropped = false;
