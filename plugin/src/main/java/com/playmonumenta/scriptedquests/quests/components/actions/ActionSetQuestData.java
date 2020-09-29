@@ -71,6 +71,7 @@ public class ActionSetQuestData implements ActionBase {
 	 */
 
 	private String mId;
+	private Boolean mCompleted = null;
 	private List<SetField> mFields;
 	public ActionSetQuestData(JsonElement value) throws Exception {
 		JsonObject object = value.getAsJsonObject();
@@ -85,6 +86,10 @@ public class ActionSetQuestData implements ActionBase {
 			throw new Exception("quest_id value is not a string!");
 		}
 
+		if (object.has("completed")) {
+			mCompleted = object.get("completed").getAsBoolean();
+		}
+		
 		JsonObject fields = object.get("quest_data_fields").getAsJsonObject();
 		if (fields == null) {
 			throw new Exception("quest_data_fields value is not an object!");
