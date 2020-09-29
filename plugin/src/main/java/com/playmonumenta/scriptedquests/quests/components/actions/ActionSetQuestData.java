@@ -89,7 +89,7 @@ public class ActionSetQuestData implements ActionBase {
 		if (object.has("completed")) {
 			mCompleted = object.get("completed").getAsBoolean();
 		}
-		
+
 		JsonObject fields = object.get("quest_data_fields").getAsJsonObject();
 		if (fields == null) {
 			throw new Exception("quest_data_fields value is not an object!");

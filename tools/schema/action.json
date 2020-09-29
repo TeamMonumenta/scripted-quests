@@ -153,12 +153,12 @@
             "title": "set_questdata",
             "description": "Set the player's specified Quest Data values(s). Click Properties, then type in the Quest Data ID in the input box and click the 'add' button. Quest Data IDs are case-sensitive",
             "type": "array",
-			"defaultProperties": [
-				"quest_id",
-				"quest_data_fields"
-			],
 			"items": {
                 "type": "object",
+				"defaultProperties": [
+					"quest_id",
+					"quest_data_fields"
+				],
 				"properties": {
 				    "quest_id": {
 						"title": "Quest ID",

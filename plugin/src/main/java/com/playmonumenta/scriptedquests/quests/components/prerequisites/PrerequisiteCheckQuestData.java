@@ -68,6 +68,7 @@ public class PrerequisiteCheckQuestData implements PrerequisiteBase {
 	}
 
 	private String mId;
+	private Integer mCompletedCheck = 0;
 	private List<CheckField> mChecks;
 	public PrerequisiteCheckQuestData(JsonElement value) throws Exception {
 		JsonObject object = value.getAsJsonObject();
@@ -80,6 +81,10 @@ public class PrerequisiteCheckQuestData implements PrerequisiteBase {
 		mId = object.get("quest_id").getAsString();
 		if (mId == null) {
 			throw new Exception("quest_id value is not a string!");
+		}
+
+		if (object.has("completed")) {
+			mCompletedCheck = object.get("completed").getAsInt();
 		}
 
 		JsonObject fields = object.get("quest_data_fields").getAsJsonObject();
@@ -124,6 +129,18 @@ public class PrerequisiteCheckQuestData implements PrerequisiteBase {
 			QuestData questData = data.getQuestData(mId);
 
 			if (questData != null) {
+
+				// Check for completion
+				if (mCompletedCheck == 1) { // Is it completed?
+					if (!questData.mCompleted) {
+						return false;
+					}
+ 				} else if (mCompletedCheck == 2) { // Is it NOT completed?
+					if (questData.mCompleted) {
+						return false;
+					}
+				}
+
 				for (CheckField check : mChecks) {
 					if (!check.check(player, mId)) {
 						return false;
