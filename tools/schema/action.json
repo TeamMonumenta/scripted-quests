@@ -177,7 +177,7 @@
 								"headerTemplate": "{{i}}",
 								"description": "Sets the Quest Data field for the Quest Data ID. Adding a + to the beginning will add to the score. Adding a - to the beginning will subtract from the score.",
 								"type": "string",
-								"default": "+1"
+								"default": "0"
 							}
 						}
 					}
