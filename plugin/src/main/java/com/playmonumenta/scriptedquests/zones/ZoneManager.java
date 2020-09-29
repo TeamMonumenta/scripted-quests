@@ -212,11 +212,9 @@ public class ZoneManager {
 	 */
 	public void reload(Plugin plugin, CommandSender sender) {
 		mQueuedReloadRequesters.add(sender);
-		if (mAsyncReloadHandler != null) {
-			if (sender != null) {
-				sender.sendMessage(ChatColor.GOLD + "Zones already reloading, and will run again when done.");
-			}
-		} else {
+
+		sender.sendMessage(ChatColor.GOLD + "Zone reload started in the background, you will be notified of progress.");
+		if (mAsyncReloadHandler == null) {
 			// Start a new async task to handle reloads
 			mAsyncReloadHandler = new BukkitRunnable() {
 				@Override
@@ -228,7 +226,7 @@ public class ZoneManager {
 
 						for (CommandSender sender : mReloadRequesters) {
 							if (sender != null) {
-								sender.sendMessage(ChatColor.GOLD + "Zones Failed to reload.");
+								sender.sendMessage(ChatColor.RED + "Zones failed to reload.");
 							}
 						}
 
@@ -251,12 +249,6 @@ public class ZoneManager {
 	private void doReload(Plugin plugin) {
 		mReloadRequesters = mQueuedReloadRequesters;
 		mQueuedReloadRequesters = new HashSet<CommandSender>();
-
-		for (CommandSender sender : mReloadRequesters) {
-			if (sender != null) {
-				sender.sendMessage(ChatColor.GOLD + "Zones reload starting. Old zones will stay in effect until reloading succeeds.");
-			}
-		}
 
 		for (ZoneLayer layer : mLayers.values()) {
 			// Cause zones to stop tracking their fragments; speeds up garbage collection.
@@ -287,7 +279,7 @@ public class ZoneManager {
 
 		for (CommandSender sender : mReloadRequesters) {
 			if (sender != null) {
-				sender.sendMessage(ChatColor.GOLD + "Zones have been read and verified. Optimizing for faster access, please wait.");
+				sender.sendMessage(ChatColor.GOLD + "Zone parsing successful, optimizing before enabling...");
 			}
 		}
 
