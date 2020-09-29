@@ -82,12 +82,18 @@ public class PrerequisiteItem {
 				if (InventoryUtils.testForItemWithName(item, mName) &&
 				    InventoryUtils.testForItemWithLore(item, mLore) &&
 				    (mType.equals(Material.AIR) || mType.equals(item.getType()))) {
-					matchCount += item.getAmount();
-				} else {
-					RPGItem rpgItem = Utils.getRPGItem(item);
-					if (rpgItem != null && rpgItem.mId.equalsIgnoreCase(mRPGItemName)) {
+
+					if (mRPGItemName == null || mRPGItemName.isEmpty()) {
 						matchCount += item.getAmount();
+						System.out.println("item found nonrpg");
+					} else {
+						RPGItem rpgItem = Utils.getRPGItem(item);
+						if (rpgItem != null && rpgItem.mId.equalsIgnoreCase(mRPGItemName)) {
+							matchCount += item.getAmount();
+							System.out.println("item found rpg");
+						}
 					}
+
 				}
 
 				if (mCount <= 0 && matchCount > 0) {

@@ -19,13 +19,14 @@ public class ModelPart {
 		return mStand.getLocation().subtract(mCenter);
 	}
 
-	public void cloneIntoStand(ArmorStand target) {
+	public void cloneIntoStand(ArmorStand target, float angle) {
 		target.setSilent(true);
+		target.setVisible(mStand.isVisible());
 		target.setSmall(mStand.isSmall());
 		target.setCustomName(mStand.getCustomName());
 		target.setCustomNameVisible(mStand.isCustomNameVisible());
 		target.setGravity(mStand.hasGravity());
-		target.setVisible(mStand.isVisible());
+
 		target.setArms(mStand.hasArms());
 		target.setBasePlate(mStand.hasBasePlate());
 
@@ -37,7 +38,7 @@ public class ModelPart {
 		target.setLeftLegPose(mStand.getLeftLegPose());
 		target.setRightLegPose(mStand.getRightLegPose());
 		Location loc = target.getLocation();
-		loc.setYaw(mStand.getLocation().getYaw());
+		loc.setYaw(mStand.getLocation().getYaw() + angle);
 		target.teleport(loc);
 
 		// Equips

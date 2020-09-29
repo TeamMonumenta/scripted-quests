@@ -61,6 +61,9 @@ public class QuestActions {
 				case "give_loot":
 					mActions.add(new ActionGiveLoot(value));
 					break;
+				case "give_reward":
+					mActions.add(new ActionGiveReward(npcName, displayName, entityType, value));
+					break;
 				case "interact_npc":
 					mActions.add(new ActionInteractNpc(value));
 					break;

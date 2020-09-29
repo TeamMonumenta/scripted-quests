@@ -1,6 +1,7 @@
 package com.playmonumenta.scriptedquests.utils;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 
@@ -66,6 +67,10 @@ public class InventoryUtils {
 	}
 
 	public static boolean giveLootTableContents(Player player, String lootPath, Random random, boolean alreadyDone) throws Exception {
+		if (lootPath == null || lootPath.isEmpty()) {
+			return true;
+		}
+
 		NamespacedKey lootNamespace = getNamespacedKey(lootPath);
 		LootContext lootContext = new LootContext.Builder(player.getLocation()).build();
 
@@ -74,6 +79,9 @@ public class InventoryUtils {
 	}
 
 	public static Collection<ItemStack> getLootTableContents(Player player, String lootPath, Random random) throws Exception {
+		if (lootPath == null || lootPath.isEmpty()) {
+			return new HashSet<>();
+		}
 		NamespacedKey lootNamespace = getNamespacedKey(lootPath);
 		LootContext lootContext = new LootContext.Builder(player.getLocation()).build();
 

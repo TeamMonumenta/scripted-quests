@@ -158,7 +158,13 @@
 				"properties": {
 				    "quest_id": {
 						"title": "Quest ID",
+						"description": "The ID of the questdata",
 						"type": "string"
+					},
+					"completed": {
+						"title": "completed",
+						"description": "Set this quest to be completed or not",
+						"type": "boolean"
 					},
 					"quest_data_fields": {
 					    "type": "object",

@@ -3,6 +3,7 @@ package com.playmonumenta.scriptedquests.models;
 import com.playmonumenta.scriptedquests.Constants;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
+import me.Novalescent.utils.VectorUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
@@ -11,6 +12,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,10 +91,13 @@ public class ModelInstance {
 
 	public void toggle() {
 		if (mStands.isEmpty()) {
+			double randomRotation = 360 * Math.random();
+
 			for (ModelPart part : mModel.getModelParts()) {
-				Location synced = mLoc.clone().add(part.getCenterOffset());
-				ArmorStand stand = mLoc.getWorld().spawn(synced, ArmorStand.class, (ArmorStand entity) -> {
-					part.cloneIntoStand(entity);
+				Vector vector = part.getCenterOffset().toVector();
+				vector = VectorUtils.rotateYAxis(vector, randomRotation);
+				ArmorStand stand = mLoc.getWorld().spawn(mLoc.clone().add(vector), ArmorStand.class, (ArmorStand entity) -> {
+					part.cloneIntoStand(entity, (float) randomRotation);
 				});
 				stand.setMetadata(Constants.PART_MODEL_METAKEY, new FixedMetadataValue(mPlugin, this));
 				stand.addScoreboardTag(Constants.REMOVE_ONENABLE);

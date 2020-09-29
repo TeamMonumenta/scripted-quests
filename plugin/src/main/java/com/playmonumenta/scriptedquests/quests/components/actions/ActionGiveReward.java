@@ -1,9 +1,11 @@
 package com.playmonumenta.scriptedquests.quests.components.actions;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestActions;
+import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import com.playmonumenta.scriptedquests.utils.InventoryUtils;
 import me.Novalescent.Core;
@@ -17,6 +19,7 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -41,7 +44,7 @@ public class ActionGiveReward implements ActionBase {
 			mAction = reward;
 		}
 
-		public void openMenu(Player player) {
+		public void openMenu(Plugin plugin, Entity npcEntity, Player player) {
 			MenuPage page = new MenuPage(player, "Claim Rewards", 54);
 
 			ItemStack filler = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
@@ -69,7 +72,7 @@ public class ActionGiveReward implements ActionBase {
 					(ItemStack item) -> {
 					mPicked = item;
 					player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 2);
-					openMenu(player);
+					openMenu(plugin, npcEntity, player);
 				});
 
 				// Exit
@@ -127,6 +130,11 @@ public class ActionGiveReward implements ActionBase {
 							}
 
 							data.giveXP(mAction.mXP);
+
+							// Actions to run whenever the player accepts
+							for (QuestComponent component : mAction.mComponents) {
+								component.doActionsIfPrereqsMet(plugin, player, npcEntity);
+							}
 						}
 
 					});
@@ -137,6 +145,59 @@ public class ActionGiveReward implements ActionBase {
 				e.printStackTrace();
 			}
 
+			// Coin
+			int coins = mAction.mCoin;
+			ItemStack whiteFiller = new ItemStack(Material.WHITE_STAINED_GLASS_PANE);
+			ItemMeta whiteFillerMeta = whiteFiller.getItemMeta();
+			whiteFillerMeta.setDisplayName(ChatColor.GRAY + "Empty Slot");
+			whiteFiller.setItemMeta(whiteFillerMeta);
+			if (coins > 0) {
+				int[] coinCounts = Utils.getCoinCounts(coins);
+				int platinumCoins = coinCounts[2];
+				int goldCoins = coinCounts[1];
+				int silverCoins = coinCounts[0];
+				ItemStack coinIcon = new ItemStack(Material.SUNFLOWER);
+				ItemMeta coinMeta = coinIcon.getItemMeta();
+				coinMeta.setDisplayName(Utils.getColor("#8bff85") + ChatColor.UNDERLINE + "Coin Reward");
+
+				List<String> lore = new ArrayList<>();
+				String costString = "";
+				if (platinumCoins > 0) {
+					costString += Utils.getColor("#c5dde6") + platinumCoins + "p, ";
+				}
+
+				if (goldCoins > 0) {
+					costString += Utils.getColor("#ffd633") + goldCoins + "g, ";
+				}
+
+				costString += Utils.getColor("#ffffff") + silverCoins + "s";
+
+				lore.add(ChatColor.WHITE + "Coins: " + costString);
+				coinMeta.setLore(lore);
+				coinIcon.setItemMeta(coinMeta);
+
+				MenuItem coinItem = new MenuItem(coinIcon);
+				page.setMenuElement(coinItem, 31);
+			} else {
+				MenuItem coinItem = new MenuItem(whiteFiller);
+				page.setMenuElement(coinItem, 31);
+			}
+
+			int xp = mAction.mXP;
+			if (xp > 0) {
+				ItemStack xpIcon = new ItemStack(Material.EXPERIENCE_BOTTLE);
+				ItemMeta xpMeta = xpIcon.getItemMeta();
+				xpMeta.setDisplayName(Utils.getColor("#4accff") + xp + " Experience Points");
+				xpIcon.setItemMeta(xpMeta);
+
+				MenuItem xpItem = new MenuItem(xpIcon);
+				page.setMenuElement(xpItem, 22);
+			} else {
+				MenuItem coinItem = new MenuItem(whiteFiller);
+				page.setMenuElement(coinItem, 22);
+			}
+
+
 			page.displayShop();
 		}
 
@@ -144,6 +205,7 @@ public class ActionGiveReward implements ActionBase {
 
 			int slot = startingSlot;
 			int moved = 0;
+			int row = 1;
 			ItemStack filler = new ItemStack(Material.WHITE_STAINED_GLASS_PANE);
 			ItemMeta fillerMeta = filler.getItemMeta();
 			fillerMeta.setDisplayName(ChatColor.GRAY + "Empty Slot");
@@ -154,7 +216,7 @@ public class ActionGiveReward implements ActionBase {
 				if (items.size() <= i) {
 					menuItem = new MenuItem(filler);
 				} else {
-					ItemStack item = ((ItemStack) items.toArray()[i]).clone();
+					ItemStack item = Utils.convertItemToRPG(((ItemStack) items.toArray()[i]).clone());
 					menuItem = new MenuItem(item);
 					if (onPick != null) {
 						ItemMeta meta = item.getItemMeta();
@@ -179,12 +241,11 @@ public class ActionGiveReward implements ActionBase {
 							public void run() {
 
 								// Returns the actual item
-								onPick.onPick((ItemStack) items.toArray()[finalI1]);
+								onPick.onPick(Utils.convertItemToRPG((ItemStack) items.toArray()[finalI1]));
 							}
 						});
 					}
 
-					page.setMenuElement(menuItem, slot);
 				}
 
 				if (mirror) {
@@ -197,7 +258,8 @@ public class ActionGiveReward implements ActionBase {
 				moved++;
 				if (moved > 1) {
 					moved = 0;
-					slot = startingSlot + 9;
+					slot = startingSlot + (row * 9);
+					row++;
 				}
 			}
 
@@ -211,7 +273,8 @@ public class ActionGiveReward implements ActionBase {
 	private Integer mCoin;
 
 	private Random mRandom;
-	public ActionGiveReward(JsonElement element) throws Exception {
+	private List<QuestComponent> mComponents = new ArrayList<>();
+	public ActionGiveReward(String npcName, String displayName, EntityType entityType, JsonElement element) throws Exception {
 		JsonObject object = element.getAsJsonObject();
 
 		if (object == null) {
@@ -225,7 +288,8 @@ public class ActionGiveReward implements ActionBase {
 			if (!key.equals("base_reward")
 				&& !key.equals("pick_reward")
 				&& !key.equals("xp")
-				&& !key.equals("coins")) {
+				&& !key.equals("coins")
+				&& !key.equals("quest_components")) {
 				throw new Exception("Unknown give_reward key: " + key);
 			}
 
@@ -256,6 +320,12 @@ public class ActionGiveReward implements ActionBase {
 				if (mCoin == null) {
 					throw new Exception("give_reward coins entry is not a integer!");
 				}
+			} else if (key.equals("quest_components")) {
+				JsonArray components = value.getAsJsonArray();
+				for (JsonElement ele : components) {
+					QuestComponent component = new QuestComponent(npcName, displayName, entityType, ele);
+					mComponents.add(component);
+				}
 			}
 		}
 
@@ -265,52 +335,8 @@ public class ActionGiveReward implements ActionBase {
 
 	@Override
 	public void doAction(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
-		MenuPage page = new MenuPage(player, "Claim Rewards", 54);
-
-		ItemStack filler = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
-		ItemMeta fillerMeta = filler.getItemMeta();
-		fillerMeta.setDisplayName(org.bukkit.ChatColor.RED + "");
-		filler.setItemMeta(fillerMeta);
-
-		page.setMenuElementDiagram(new MenuItem(filler), new Boolean[][]{
-			{true, true, true, true, true, true, true, true, true},
-			{true, false, false, true, true, true, false, false, true},
-			{true, false, false, true, false, true, false, false, true},
-			{true, false, false, true, false, true, false, false, true},
-			{true, false, false, true, true, true, false, false, true},
-			{true, true, true, true, true, true, true, true, true},
-		});
-
-		page.displayShop();
+		RewardMenu menu = new RewardMenu(this);
+		menu.openMenu(plugin, npcEntity, player);
 	}
 
-	private void populateItemBox(MenuPage page, List<ItemStack> items, int startingSlot, boolean mirror, OnPick onPick) {
-
-		int slot = startingSlot;
-		int moved = 0;
-		ItemStack filler = new ItemStack(Material.WHITE_STAINED_GLASS_PANE);
-		ItemMeta fillerMeta = filler.getItemMeta();
-		fillerMeta.setDisplayName(ChatColor.GRAY + "Empty Slot");
-		filler.setItemMeta(fillerMeta);
-		for (int i = 0; i < 8; i++) {
-
-			if (items.size() <= i) {
-				page.setMenuElement(new MenuItem(filler), slot);
-			} else {
-				ItemStack item = items.get(i);
-				MenuItem menuItem = new MenuItem(item);
-				if (onPick != null) {
-
-				}
-			}
-
-			slot++;
-			moved++;
-			if (moved > 1) {
-				moved = 0;
-				slot = startingSlot + 9;
-			}
-		}
-
-	}
 }
