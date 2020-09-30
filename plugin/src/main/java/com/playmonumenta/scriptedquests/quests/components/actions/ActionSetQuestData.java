@@ -11,6 +11,7 @@ import me.Novalescent.player.PlayerData;
 import me.Novalescent.player.quests.QuestData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Villager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -109,6 +110,17 @@ public class ActionSetQuestData implements ActionBase {
 
 	@Override
 	public void doAction(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
+		// Set completion first
+		{
+			PlayerData data = Core.getInstance().mPlayerManager.getPlayerData(player.getUniqueId());
+			QuestData questData = data.getQuestData(mId);
+			if (questData != null) {
+				if (mCompleted != null) {
+					questData.mCompleted = mCompleted;
+				}
+			}
+		}
+
 		for (SetField field : mFields) {
 			boolean maxed = field.set(player, mId);
 
