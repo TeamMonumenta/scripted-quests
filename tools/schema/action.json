@@ -76,6 +76,11 @@
                                 "description": "Player's response",
                                 "type": "string"
                             },
+							"click_type": {
+								"description": "The number state this is. This is mainly use to telegraph whether the NPC has a quest or not. 1 = Acceptable Quest, 2 = Turnin Quest",
+								"title": "click_type",
+								"type": "integer"
+							}
                             "delay_actions_by_ticks": {
                                 "propertyOrder": 2,
                                 "$ref": "delay_actions_by_ticks.json"
