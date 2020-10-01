@@ -1,6 +1,7 @@
 package com.playmonumenta.scriptedquests.quests.components.actions;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -44,6 +45,10 @@ public class ActionDialog implements ActionBase {
 				throw new Exception("Unknown dialog key: '" + key + "'");
 			}
 		}
+	}
+
+	public List<DialogBase> getDialog() {
+		return mDialogs;
 	}
 
 	@Override

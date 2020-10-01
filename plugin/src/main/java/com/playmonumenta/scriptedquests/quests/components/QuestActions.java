@@ -2,6 +2,7 @@ package com.playmonumenta.scriptedquests.quests.components;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -113,6 +114,10 @@ public class QuestActions {
 				}
 			}
 		}
+	}
+
+	public List<ActionBase> getActionBases() {
+		return mActions;
 	}
 
 	public void doActions(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {

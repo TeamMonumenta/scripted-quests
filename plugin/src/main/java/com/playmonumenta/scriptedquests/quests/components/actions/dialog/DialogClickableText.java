@@ -2,6 +2,7 @@ package com.playmonumenta.scriptedquests.quests.components.actions.dialog;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
 
 import org.bukkit.entity.Entity;
@@ -39,6 +40,10 @@ public class DialogClickableText implements DialogBase {
 		} else {
 			throw new Exception("clickable_text value is neither an object nor an array!");
 		}
+	}
+
+	public List<DialogClickableTextEntry> getEntries() {
+		return mEntries;
 	}
 
 	@Override

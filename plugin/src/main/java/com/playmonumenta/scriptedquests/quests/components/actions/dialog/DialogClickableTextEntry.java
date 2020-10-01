@@ -22,6 +22,7 @@ import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 
 public class DialogClickableTextEntry implements DialogBase {
+
 	public class PlayerClickableTextEntry {
 		private final QuestPrerequisites mPrerequisites;
 		private final QuestActions mActions;
@@ -55,6 +56,7 @@ public class DialogClickableTextEntry implements DialogBase {
 	private QuestPrerequisites mPrerequisites;
 	private QuestActions mActions;
 	private int mIdx;
+	public int mClickType = 0;
 
 	public DialogClickableTextEntry(String npcName, String displayName, EntityType entityType,
 	                                JsonElement element, int elementIdx) throws Exception {
@@ -80,7 +82,8 @@ public class DialogClickableTextEntry implements DialogBase {
 				&& !key.equals("player_valid_radius")
 				&& !key.equals("actions")
 				&& !key.equals("delay_actions_by_ticks")
-				&& !key.equals("prerequisites")) {
+				&& !key.equals("prerequisites")
+				&& !key.equals("click_type")) {
 				throw new Exception("Unknown clickable_text key: " + key);
 			}
 
@@ -102,6 +105,8 @@ public class DialogClickableTextEntry implements DialogBase {
 				mActions = new QuestActions(npcName, displayName, entityType, delayTicks, value);
 			} else if (key.equals("prerequisites")) {
 				mPrerequisites = new QuestPrerequisites(value);
+			} else if (key.equals("click_type")) {
+				mClickType = value.getAsInt();
 			}
 		}
 
@@ -110,6 +115,9 @@ public class DialogClickableTextEntry implements DialogBase {
 		}
 	}
 
+	public QuestPrerequisites getPrerequisites() {
+		return mPrerequisites;
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
