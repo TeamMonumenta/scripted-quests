@@ -213,7 +213,9 @@ public class ZoneManager {
 	public void reload(Plugin plugin, CommandSender sender) {
 		mQueuedReloadRequesters.add(sender);
 
-		sender.sendMessage(ChatColor.GOLD + "Zone reload started in the background, you will be notified of progress.");
+		if (sender != null) {
+			sender.sendMessage(ChatColor.GOLD + "Zone reload started in the background, you will be notified of progress.");
+		}
 		if (mAsyncReloadHandler == null) {
 			// Start a new async task to handle reloads
 			mAsyncReloadHandler = new BukkitRunnable() {
