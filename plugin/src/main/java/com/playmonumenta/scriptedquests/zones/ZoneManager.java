@@ -2,6 +2,7 @@ package com.playmonumenta.scriptedquests.zones;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -22,12 +23,15 @@ import com.playmonumenta.scriptedquests.utils.QuestUtils;
 public class ZoneManager {
 	private Plugin mPlugin;
 	static BukkitRunnable mPlayerTracker = null;
+	static BukkitRunnable mAsyncReloadHandler = null;
 
 	private Map<String, ZoneLayer> mLayers = new HashMap<String, ZoneLayer>();
 	private Map<String, ZoneLayer> mPluginLayers = new HashMap<String, ZoneLayer>();
 	private ZoneTreeBase mZoneTree = null;
 	private Map<Player, ZoneFragment> mLastPlayerZoneFragment = new HashMap<Player, ZoneFragment>();
 	private Map<Player, Map<String, Zone>> mLastPlayerZones = new HashMap<Player, Map<String, Zone>>();
+	private Set<CommandSender> mReloadRequesters;
+	private Set<CommandSender> mQueuedReloadRequesters = new HashSet<CommandSender>();
 
 	public ZoneManager(Plugin plugin) {
 		mPlugin = plugin;
@@ -207,6 +211,47 @@ public class ZoneManager {
 	 * clock speeds while the tree is loading. We have options.
 	 */
 	public void reload(Plugin plugin, CommandSender sender) {
+		mQueuedReloadRequesters.add(sender);
+
+		if (sender != null) {
+			sender.sendMessage(ChatColor.GOLD + "Zone reload started in the background, you will be notified of progress.");
+		}
+		if (mAsyncReloadHandler == null) {
+			// Start a new async task to handle reloads
+			mAsyncReloadHandler = new BukkitRunnable() {
+				@Override
+				public void run() {
+					try {
+						handleReloads(plugin);
+					} catch (Exception e) {
+						MessagingUtils.sendStackTrace(mReloadRequesters, e);
+
+						for (CommandSender sender : mReloadRequesters) {
+							if (sender != null) {
+								sender.sendMessage(ChatColor.RED + "Zones failed to reload.");
+							}
+						}
+
+						return;
+					}
+					mAsyncReloadHandler = null;
+				}
+			};
+
+			mAsyncReloadHandler.runTaskAsynchronously(plugin);
+		}
+	}
+
+	private void handleReloads(Plugin plugin) {
+		do {
+			doReload(plugin);
+		} while (!mQueuedReloadRequesters.isEmpty());
+	}
+
+	private void doReload(Plugin plugin) {
+		mReloadRequesters = mQueuedReloadRequesters;
+		mQueuedReloadRequesters = new HashSet<CommandSender>();
+
 		for (ZoneLayer layer : mLayers.values()) {
 			// Cause zones to stop tracking their fragments; speeds up garbage collection.
 			layer.invalidate();
@@ -216,13 +261,13 @@ public class ZoneManager {
 
 		// Refresh plugin layers
 		for (ZoneLayer layer : mPluginLayers.values()) {
-			layer.reloadFragments(sender);
+			layer.reloadFragments(mReloadRequesters);
 		}
 
 		mLayers.putAll(mPluginLayers);
-		QuestUtils.loadScriptedQuests(plugin, "zone_layers", sender, (object) -> {
+		QuestUtils.loadScriptedQuests(plugin, "zone_layers", mReloadRequesters, (object) -> {
 			// Load this file into a ZoneLayer object
-			ZoneLayer layer = new ZoneLayer(sender, object);
+			ZoneLayer layer = new ZoneLayer(mReloadRequesters, object);
 			String layerName = layer.getName();
 
 			if (mLayers.containsKey(layerName)) {
@@ -233,6 +278,12 @@ public class ZoneManager {
 
 			return layerName + ":" + Integer.toString(layer.getZones().size());
 		});
+
+		for (CommandSender sender : mReloadRequesters) {
+			if (sender != null) {
+				sender.sendMessage(ChatColor.GOLD + "Zone parsing successful, optimizing before enabling...");
+			}
+		}
 
 		// Merge zone fragments within layers to prevent overlaps
 		mergeLayers();
@@ -259,16 +310,19 @@ public class ZoneManager {
 		try {
 			newTree = ZoneTreeBase.createZoneTree(zoneFragments);
 		} catch (Exception e) {
-			MessagingUtils.sendStackTrace(sender, e);
+			MessagingUtils.sendStackTrace(mReloadRequesters, e);
 			return;
 		}
-		if (sender != null) {
-			sender.sendMessage(ChatColor.GOLD + "Zone tree stats - fragments: "
-			                + Integer.toString(newTree.fragmentCount())
-			                + ", max depth: "
-			                + Integer.toString(newTree.maxDepth())
-			                + ", ave depth: "
-			                + String.format("%.2f", newTree.averageDepth()));
+		String message = ChatColor.GOLD + "Zone tree dev stats - fragments: "
+		               + Integer.toString(newTree.fragmentCount())
+		               + ", max depth: "
+		               + Integer.toString(newTree.maxDepth())
+		               + ", ave depth: "
+		               + String.format("%.2f", newTree.averageDepth());
+		for (CommandSender sender : mReloadRequesters) {
+			if (sender != null) {
+				sender.sendMessage(message);
+			}
 		}
 
 		// Make sure only one player tracker runs at a time.
@@ -323,6 +377,12 @@ public class ZoneManager {
 		};
 
 		mPlayerTracker.runTaskTimer(plugin, 0, 5);
+
+		for (CommandSender sender : mReloadRequesters) {
+			if (sender != null) {
+				sender.sendMessage(ChatColor.GOLD + "Zones reloaded successfully.");
+			}
+		}
 	}
 
 	// For a given location, return the zones that contain it.
