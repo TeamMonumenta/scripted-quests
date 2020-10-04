@@ -61,9 +61,9 @@ public class ModelInstance {
 
 	private Plugin mPlugin;
 	private Model mModel;
-	private Location mLoc;
+	public Location mLoc;
 
-	private List<ArmorStand> mStands = new ArrayList<>();
+	public List<ArmorStand> mStands = new ArrayList<>();
 
 	private List<UUID> mUsers = new ArrayList<>();
 	private List<BukkitRunnable> mRunnables = new ArrayList<>();
@@ -135,6 +135,29 @@ public class ModelInstance {
 					stand.setSmall(true);
 					stand.addScoreboardTag(me.Novalescent.Constants.REMOVE_ONENABLE);
 				});
+
+				BukkitRunnable runnable = new BukkitRunnable() {
+
+					int rotation = 0;
+					double y = 0.5;
+					@Override
+					public void run() {
+						rotation += 5;
+						Location loc = mQuestAcceptStand.getLocation();
+						loc.setYaw(rotation);
+						loc.add(0, Math.sin(y) * 0.015, 0);
+						mQuestAcceptStand.teleport(loc);
+
+						loc = mQuestTurninStand.getLocation();
+						loc.setYaw(rotation);
+						loc.add(0, Math.sin(y) * 0.015, 0);
+						mQuestTurninStand.teleport(loc);
+
+						y += 0.0725;
+					}
+				};
+				runnable.runTaskTimer(mPlugin, 0, 1);
+				mRunnables.add(runnable);
 			}
 
 		} else {
@@ -170,7 +193,6 @@ public class ModelInstance {
 					}
 
 				}
-
 			};
 			runnable.runTaskTimer(mPlugin, 0, 1);
 			mRunnables.add(runnable);
@@ -188,6 +210,7 @@ public class ModelInstance {
 			if (mModel.mOnStart != null) {
 				mModel.mOnStart.doActions(null, mLoc);
 			}
+
 			if (mModel.mUseTime <= 0) {
 				for (QuestComponent component : mModel.getComponents()) {
 					component.doActionsIfPrereqsMet(mPlugin, player, mStands.get(0));

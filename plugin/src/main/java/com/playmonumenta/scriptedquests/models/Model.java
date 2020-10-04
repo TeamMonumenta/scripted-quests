@@ -246,6 +246,11 @@ public class Model {
 
 			ModelInstance instance = new ModelInstance(plugin, this, loc);
 			instance.toggle();
+
+			// We really only need to add it to the tree for quest markers
+			if (mQuestMarker) {
+				plugin.mModelManager.mQuadTree.addNode(new ModelTreeNode(instance));
+			}
 			mInstances.add(instance);
 		}
 	}
