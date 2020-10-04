@@ -57,6 +57,8 @@ public class QuestComponent {
 		}
 	}
 
+	public QuestPrerequisites getPrerequisites() { return mPrerequisites; }
+
 	public QuestActions getQuestActions() {
 		return mActions;
 	}

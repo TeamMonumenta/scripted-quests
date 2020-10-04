@@ -6,10 +6,13 @@ import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
 import me.Novalescent.utils.VectorUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
@@ -64,6 +67,10 @@ public class ModelInstance {
 
 	private List<UUID> mUsers = new ArrayList<>();
 	private List<BukkitRunnable> mRunnables = new ArrayList<>();
+
+	public ArmorStand mQuestAcceptStand;
+	public ArmorStand mQuestTurninStand;
+
 	public ModelInstance(Plugin plugin, Model model, Location loc) {
 		mPlugin = plugin;
 		mModel = model;
@@ -103,9 +110,46 @@ public class ModelInstance {
 				stand.addScoreboardTag(Constants.REMOVE_ONENABLE);
 				mStands.add(stand);
 			}
+
+			if (mModel.mQuestMarker) {
+				mQuestAcceptStand = mLoc.getWorld().spawn(mLoc.clone().add(0, mModel.getHeight() + 0.1, 0), ArmorStand.class, (ArmorStand stand) -> {
+					stand.setSilent(true);
+					stand.getEquipment().setHelmet(new ItemStack(Material.GOLD_BLOCK));
+					stand.setMarker(true);
+					stand.setInvulnerable(true);
+					stand.setVisible(false);
+					stand.setGravity(false);
+					stand.setSmall(true);
+					stand.addScoreboardTag(me.Novalescent.Constants.REMOVE_ONENABLE);
+				});
+
+				mQuestTurninStand = mLoc.getWorld().spawn(mLoc.clone().add(0, mModel.getHeight() + 0.1, 0), ArmorStand.class, (ArmorStand stand) -> {
+					stand.setSilent(true);
+					ItemStack item = new ItemStack(Material.EMERALD_BLOCK);
+					item.addUnsafeEnchantment(Enchantment.PROTECTION_FALL, 1);
+					stand.getEquipment().setHelmet(item);
+					stand.setMarker(true);
+					stand.setInvulnerable(true);
+					stand.setVisible(false);
+					stand.setGravity(false);
+					stand.setSmall(true);
+					stand.addScoreboardTag(me.Novalescent.Constants.REMOVE_ONENABLE);
+				});
+			}
+
 		} else {
 			for (ArmorStand stand : mStands) {
 				stand.remove();
+			}
+
+			if (mQuestAcceptStand != null) {
+				mQuestAcceptStand.remove();
+				mQuestAcceptStand = null;
+			}
+
+			if (mQuestTurninStand != null) {
+				mQuestTurninStand.remove();
+				mQuestTurninStand = null;
 			}
 			mStands.clear();
 		}

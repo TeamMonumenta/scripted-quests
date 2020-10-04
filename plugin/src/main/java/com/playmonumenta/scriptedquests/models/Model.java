@@ -40,6 +40,7 @@ public class Model {
 	public int mUseDisableTime = 0;
 	public String mUseMessage = "Using...";
 	public int mOnUseTickRate = 1;
+	public boolean mQuestMarker = false;
 	public SpellActions mOnStart;
 	public SpellActions mOnTick;
 	public SpellActions mOnEnd;
@@ -233,6 +234,10 @@ public class Model {
 		for (JsonElement element : components) {
 			QuestComponent component = new QuestComponent("", "", EntityType.ARMOR_STAND, element);
 			mComponents.add(component);
+		}
+
+		if (object.has("quest_marker")) {
+			mQuestMarker = object.get("quest_marker").getAsBoolean();
 		}
 
 		// Spawn

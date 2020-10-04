@@ -111,8 +111,8 @@ public class ActionSetQuestData implements ActionBase {
 	@Override
 	public void doAction(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
 		// Set completion first
+		PlayerData data = Core.getInstance().mPlayerManager.getPlayerData(player.getUniqueId());
 		{
-			PlayerData data = Core.getInstance().mPlayerManager.getPlayerData(player.getUniqueId());
 			QuestData questData = data.getQuestData(mId);
 			if (questData != null) {
 				if (mCompleted != null) {
@@ -125,7 +125,6 @@ public class ActionSetQuestData implements ActionBase {
 			boolean maxed = field.set(player, mId);
 
 			if (maxed) {
-				PlayerData data = Core.getInstance().mPlayerManager.getPlayerData(player.getUniqueId());
 				QuestData questData = data.getQuestData(mId);
 				if (questData != null) {
 					QuestDataLink link = plugin.mQuestDataLinkManager.getQuestDataLink(questData.mId);
@@ -140,5 +139,8 @@ public class ActionSetQuestData implements ActionBase {
 				}
 			}
 		}
+
+		// Update nearby quest visibility
+		data.updateQuestVisibility();
 	}
 }
