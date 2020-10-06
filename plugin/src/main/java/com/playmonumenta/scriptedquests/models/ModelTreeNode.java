@@ -10,6 +10,7 @@ public class ModelTreeNode extends QuadTreeNode {
 	public ModelTreeNode(ModelInstance model) {
 		super(model.mLoc);
 		mModel = model;
+		mDetectionRange = 48;
 	}
 
 	@Override

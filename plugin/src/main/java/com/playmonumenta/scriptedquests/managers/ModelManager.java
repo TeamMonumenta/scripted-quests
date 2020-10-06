@@ -31,7 +31,6 @@ public class ModelManager {
 		mModels.clear();
 
 		QuestUtils.loadScriptedQuests(plugin, "models", sender, (object) -> {
-			// Load this file into a QuestNpc object
 			Model model = new Model(plugin, object);
 
 			mModels.put(model.mId, model);
