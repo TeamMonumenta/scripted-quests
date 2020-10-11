@@ -1,5 +1,7 @@
 package com.playmonumenta.scriptedquests.utils;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 
 public class DateUtils {
@@ -55,6 +57,10 @@ public class DateUtils {
 
 	public static int getDayOfWeek(Calendar cal) {
 		return cal.get(Calendar.DAY_OF_WEEK);
+	}
+
+	public static long getDaysSinceEpoch() {
+		return ChronoUnit.DAYS.between(LocalDate.ofEpochDay(0), LocalDate.now());
 	}
 
 	public static boolean isDst() {
