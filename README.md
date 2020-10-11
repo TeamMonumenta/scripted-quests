@@ -128,9 +128,11 @@ an NPC, quest components are run in-order (more than one may be executed).
   access to pre-prepared command bundles
 
 `/interactNpc <npcName> [EntityType]`
+`/interactNpc <npc>`
 - permission: `scriptedquests.interactnpc`
 - EntityType is optional (default = VILLAGER) and can be chosen from this
   list: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html
+- When using the alternate syntax, npc is a selector, and acts identical to clicking that entity.
 - This command can be used to build location - based quests that don't
   involve clicking on an NPC. To do this, use a repeating command block with a
   command of this form: `execute as @p[r = 5] run interactnpc Aimee VILLAGER`
