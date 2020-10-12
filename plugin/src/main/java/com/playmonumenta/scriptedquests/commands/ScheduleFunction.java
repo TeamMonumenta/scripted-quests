@@ -38,8 +38,10 @@ public class ScheduleFunction {
 	private final List<DelayedFunction> mFunctions = new ArrayList<DelayedFunction>();
 	private final Plugin mPlugin;
 	private Integer mTaskId = null;
-	private final List<DelayedFunction> mFunctionsToRun = new ArrayList<DelayedFunction>();
 	private final Runnable mRunnable = new Runnable() {
+		// Re-use the same temporary list each iteration
+		private final List<DelayedFunction> mFunctionsToRun = new ArrayList<DelayedFunction>();
+
 		@Override
 		public void run() {
 			Iterator<DelayedFunction> it = mFunctions.iterator();
@@ -103,7 +105,8 @@ public class ScheduleFunction {
 
 	/* Run all the remaining commands now, even though they are scheduled for later */
 	public void cancel() {
-		for (DelayedFunction entry : mFunctions) {
+		for (DelayedFunction entry : new ArrayList<>(mFunctions)) {
+			// Note that these functions might add more functions... but there's nothing we can do about that
 			entry.run();
 		}
 		mFunctions.clear();
