@@ -10,8 +10,8 @@ import dev.jorel.commandapi.arguments.Argument;
 import dev.jorel.commandapi.arguments.TextArgument;
 
 public class GetDate {
-	private static final String[] FIELDS = new String[] {"Year", "Month", "DayOfMonth", "DayOfWeek", "IsDst",
-	                                                     "IsPm", "HourOfDay", "HourOfTwelve", "Minute", "Second", "Ms"};
+	private static final String[] FIELDS = new String[] {"Year", "Month", "DayOfMonth", "DayOfWeek", "DaysSinceEpoch", "IsDst",
+	                                                     "IsPm", "HourOfDay", "HourOfTwelve", "Minute", "Second", "Ms", };
 
 	public static void register() {
 		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
@@ -37,6 +37,8 @@ public class GetDate {
 			return DateUtils.getDayOfMonth();
 		case "DayOfWeek":
 			return DateUtils.getDayOfWeek();
+		case "DaysSinceEpoch":
+			return (int)DateUtils.getDaysSinceEpoch();
 		case "IsDst":
 			return DateUtils.isDst() ? 1 : 0;
 		case "IsPm":
