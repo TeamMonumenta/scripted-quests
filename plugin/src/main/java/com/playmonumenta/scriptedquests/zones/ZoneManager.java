@@ -35,6 +35,7 @@ public class ZoneManager {
 
 	public ZoneManager(Plugin plugin) {
 		mPlugin = plugin;
+		doReload(plugin);
 	}
 
 	/************************************************************************************
@@ -528,7 +529,9 @@ public class ZoneManager {
 					continue;
 				}
 				outerZone.splitByOverlap(overlap, innerZone, true);
+				outerZone.defragment();
 				innerZone.splitByOverlap(overlap, outerZone);
+				innerZone.defragment();
 			}
 		}
 	}
