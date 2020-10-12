@@ -158,7 +158,6 @@ public class Plugin extends JavaPlugin {
 			@Override
 			public void run() {
 				reloadConfig(null);
-				reloadZones(null);
 			}
 		}.runTaskLater(this, 1);
 	}
