@@ -47,7 +47,6 @@ public class PlayerListener implements Listener {
 		Event.Result useItem = event.useItemInHand();
 
 		if (useItem != Event.Result.DENY
-		    && !MetadataUtils.happenedInRecentTicks(player, Constants.PLAYER_USED_INTERACTABLE_METAKEY, 3)
 		    && mPlugin.mInteractableManager.interactEvent(mPlugin, player, item, block, action)) {
 			// interactEvent returning true means this event should be canceled
 			event.setCancelled(true);
@@ -94,7 +93,6 @@ public class PlayerListener implements Listener {
 			}
 		}
 		if (!event.isCancelled()
-		    && !MetadataUtils.happenedInRecentTicks(player, Constants.PLAYER_USED_INTERACTABLE_METAKEY, 3)
 		    && mPlugin.mInteractableManager.interactEntityEvent(mPlugin, player, item, entity)) {
 			// interactEntityEvent returning true means this event should be canceled
 			event.setCancelled(true);
