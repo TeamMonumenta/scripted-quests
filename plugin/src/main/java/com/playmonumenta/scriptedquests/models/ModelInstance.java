@@ -125,7 +125,7 @@ public class ModelInstance {
 
 				mQuestTurninStand = mLoc.getWorld().spawn(mLoc.clone().add(0, mModel.getHeight() + 0.1, 0), ArmorStand.class, (ArmorStand stand) -> {
 					stand.setSilent(true);
-					ItemStack item = new ItemStack(Material.EMERALD_BLOCK);
+					ItemStack item = new ItemStack(Material.DIAMOND_BLOCK);
 					item.addUnsafeEnchantment(Enchantment.PROTECTION_FALL, 1);
 					stand.getEquipment().setHelmet(item);
 					stand.setMarker(true);

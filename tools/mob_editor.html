@@ -57,6 +57,7 @@
 				"speed",
 				"loottable",
 				"vision",
+				"aggroRange",
 				"defense_values",
 				"damage_values",
 				"xp_values",
@@ -131,6 +132,13 @@
                     description: "The vision of a mob. This will determine how far their aggro distance is.",
                     type: "integer",
 					default: 10
+                },
+				aggroRange: {
+                    propertyOrder: 7,
+                    title: "vision",
+                    description: "The aggro range of a mob. This will determine how far a player can be before the mob loses aggro of the player.",
+                    type: "integer",
+					default: 16
                 },
 				loottable: {
                     propertyOrder: 8,
