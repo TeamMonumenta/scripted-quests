@@ -22,13 +22,7 @@ public class ModelManager {
 	 * If sender is non-null, it will be sent debugging information
 	 */
 	public void reload(Plugin plugin, CommandSender sender) {
-		mQuadTree.destroy();
-		for (Model model : mModels.values()) {
-			for (ModelInstance instance : model.getInstances()) {
-				instance.destroy();
- 			}
-		}
-		mModels.clear();
+		destroyModels();
 
 		QuestUtils.loadScriptedQuests(plugin, "models", sender, (object) -> {
 			Model model = new Model(plugin, object);
@@ -37,6 +31,17 @@ public class ModelManager {
 
 			return model.mId + ":" + model.getModelParts().size() + " parts";
 		});
+	}
+
+	public void destroyModels() {
+		mQuadTree.destroy();
+		for (Model model : mModels.values()) {
+			for (ModelInstance instance : model.getInstances()) {
+				instance.destroy();
+			}
+		}
+		mModels.clear();
+
 	}
 
 	public ModelManager(Plugin plugin) {

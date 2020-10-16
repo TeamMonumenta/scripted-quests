@@ -165,6 +165,7 @@ public class Plugin extends JavaPlugin {
 		mRaceManager.cancelAllRaces();
 		mTimerManager.unloadAll();
 		mWaypointManager.cancelAll();
+		mModelManager.destroyModels();
 
 		MetadataUtils.removeAllMetadata(this);
 
