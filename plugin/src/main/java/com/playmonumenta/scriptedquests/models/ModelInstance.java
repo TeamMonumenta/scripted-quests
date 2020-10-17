@@ -62,6 +62,7 @@ public class ModelInstance {
 	private Plugin mPlugin;
 	private Model mModel;
 	public Location mLoc;
+	private double mYaw;
 
 	public List<ArmorStand> mStands = new ArrayList<>();
 
@@ -71,10 +72,11 @@ public class ModelInstance {
 	public ArmorStand mQuestAcceptStand;
 	public ArmorStand mQuestTurninStand;
 
-	public ModelInstance(Plugin plugin, Model model, Location loc) {
+	public ModelInstance(Plugin plugin, Model model, Location loc, double yaw) {
 		mPlugin = plugin;
 		mModel = model;
 		mLoc = loc;
+		mYaw = yaw;
 	}
 
 	public void destroy() {
@@ -98,13 +100,18 @@ public class ModelInstance {
 
 	public void toggle() {
 		if (mStands.isEmpty()) {
-			double randomRotation = 360 * Math.random();
+			double rotation;
+			if (mYaw >= 0) {
+				rotation = mYaw;
+			} else {
+				rotation = 360 * Math.random();
+			}
 
 			for (ModelPart part : mModel.getModelParts()) {
 				Vector vector = part.getCenterOffset().toVector();
-				vector = VectorUtils.rotateYAxis(vector, randomRotation);
+				vector = VectorUtils.rotateYAxis(vector, rotation);
 				ArmorStand stand = mLoc.getWorld().spawn(mLoc.clone().add(vector), ArmorStand.class, (ArmorStand entity) -> {
-					part.cloneIntoStand(entity, (float) randomRotation);
+					part.cloneIntoStand(entity, (float) rotation);
 				});
 				stand.setMetadata(Constants.PART_MODEL_METAKEY, new FixedMetadataValue(mPlugin, this));
 				stand.addScoreboardTag(Constants.REMOVE_ONENABLE);

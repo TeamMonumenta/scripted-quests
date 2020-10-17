@@ -144,41 +144,6 @@ public class Model {
 			throw new Exception("Failed to parse 'locations'");
 		}
 
-		JsonArray array = object.get("locations").getAsJsonArray();
-		for (JsonElement element : array) {
-			JsonObject locObject = element.getAsJsonObject();
-
-			if (locObject == null) {
-				throw new Exception("locations array entry is not a valid location");
-			}
-
-			x = 0;
-			y = 0;
-			z = 0;
-			for (Map.Entry<String, JsonElement> ent : locObject.entrySet()) {
-				String key = ent.getKey();
-				JsonElement value = ent.getValue();
-
-				switch (key) {
-					case "x":
-						x = value.getAsDouble();
-						break;
-
-					case "y":
-						y = value.getAsDouble();
-						break;
-
-					case "z":
-						z = value.getAsDouble();
-						break;
-
-					default:
-						throw new Exception("Unknown locations key: '" + key + "'");
-				}
-			}
-			mLocations.add(new Vector(x, y, z));
-		}
-
 		// Region
 		Double[] corners = new Double[6];
 		// Load the zone location
@@ -240,11 +205,47 @@ public class Model {
 			mQuestMarker = object.get("quest_marker").getAsBoolean();
 		}
 
-		// Spawn
-		for (Vector vec : mLocations) {
-			Location loc = vec.toLocation(mWorld);
+		// Spawn @ Locations
+		JsonArray array = object.get("locations").getAsJsonArray();
+		for (JsonElement element : array) {
+			JsonObject locObject = element.getAsJsonObject();
 
-			ModelInstance instance = new ModelInstance(plugin, this, loc);
+			if (locObject == null) {
+				throw new Exception("locations array entry is not a valid location");
+			}
+
+			x = 0;
+			y = 0;
+			z = 0;
+			double yaw = -1;
+			for (Map.Entry<String, JsonElement> ent : locObject.entrySet()) {
+				String key = ent.getKey();
+				JsonElement value = ent.getValue();
+
+				switch (key) {
+					case "x":
+						x = value.getAsDouble();
+						break;
+
+					case "y":
+						y = value.getAsDouble();
+						break;
+
+					case "z":
+						z = value.getAsDouble();
+						break;
+
+					case "yaw":
+						yaw = value.getAsDouble();
+						break;
+
+					default:
+						throw new Exception("Unknown locations key: '" + key + "'");
+				}
+			}
+			Vector vec = new Vector(x, y, z);
+			Location loc = vec.toLocation(mWorld);
+			ModelInstance instance = new ModelInstance(plugin, this, loc, yaw);
 			instance.toggle();
 
 			// We really only need to add it to the tree for quest markers

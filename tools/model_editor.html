@@ -88,10 +88,10 @@
 				locations: {
                     propertyOrder: 3,
                     title: "locations",
-                    description: "The locations in the world where the model is located.",
+                    description: "The locations in the world where the model is located. You can set the yaw to a number less than 0 to give it a random yaw direction whenever it spawns.",
 					type: "array",
 					items: {
-						$ref: "schema/xyz.json"
+						$ref: "schema/xyz_yaw.json"
 					}
                 },
 				center: {
