@@ -30,6 +30,7 @@ public class ModelPart {
 		target.setArms(mStand.hasArms());
 		target.setBasePlate(mStand.hasBasePlate());
 
+
 		// Poses
 		target.setBodyPose(mStand.getBodyPose());
 		target.setHeadPose(mStand.getHeadPose());

@@ -155,6 +155,14 @@ public class QuestPrerequisites implements PrerequisiteBase {
 					mPrerequisites.add(new PrerequisiteCheckQuestData(iter.next()));
 				}
 				break;
+
+			case "check_level":
+				mPrerequisites.add(new PrerequisiteCheckLevel(value));
+				break;
+
+			case "check_class":
+				mPrerequisites.add(new PrerequisiteCheckClass(value));
+				break;
 			default:
 				throw new Exception("Unknown prerequisites key: '" + key + "'");
 			}

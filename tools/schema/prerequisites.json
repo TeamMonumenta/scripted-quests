@@ -112,6 +112,38 @@
                 "type": "string"
             }
         },
+		"check_level": {
+            "propertyOrder": 1,
+            "title": "check_level",
+            "description": "Checks if the player is a certain level",
+            "type": "object",
+			"oneOf": [
+				{
+					"title": "Exactly",
+					"$ref": "score.json"
+				},
+				{
+					"title": "Range",
+					"type": "object",
+					"properties": {
+						"min": {
+							"title": "Minimum",
+							"$ref": "score.json"
+						},
+						"max": {
+							"title": "Maximum",
+							"$ref": "score.json"
+						}
+					}
+				}
+			]
+        },
+		"check_class": {
+            "propertyOrder": 3,
+            "title": "check_level",
+            "description": "Check if the player is a certain class. Valid Class IDs: Warrior, Ranger, Caster, Rogue, Cleric",
+            "type": "string"
+        },
         "items_in_inventory": {
             "propertyOrder": 4,
             "title": "items_in_inventory",
