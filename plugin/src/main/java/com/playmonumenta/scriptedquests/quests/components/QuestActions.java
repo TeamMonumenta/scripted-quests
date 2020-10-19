@@ -109,6 +109,10 @@ public class QuestActions {
 						mActions.add(new ActionSetQuestData(questObject));
 					}
 					break;
+
+				case "drop_loot":
+					mActions.add(new ActionDropLoot(value));
+					break;
 				default:
 					throw new Exception("Unknown actions key: " + key);
 				}

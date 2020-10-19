@@ -246,12 +246,11 @@ public class Model {
 			Vector vec = new Vector(x, y, z);
 			Location loc = vec.toLocation(mWorld);
 			ModelInstance instance = new ModelInstance(plugin, this, loc, yaw);
-			instance.toggle();
+			// instance.toggle();
 
-			// We really only need to add it to the tree for quest markers
-			if (mQuestMarker) {
-				plugin.mModelManager.mQuadTree.addNode(new ModelTreeNode(instance));
-			}
+			ModelTreeNode node = new ModelTreeNode(instance);
+			node.mQuestMarkers = mQuestMarker;
+			plugin.mModelManager.mQuadTree.addNode(node);
 			mInstances.add(instance);
 		}
 	}

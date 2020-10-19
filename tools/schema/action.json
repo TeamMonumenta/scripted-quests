@@ -287,6 +287,11 @@
             "title": "rerun_components",
             "description": "Re-runs all quest components tied to this specific NPC (including those specified in other files). To prevent infinite loops, this action will not run itself, even if conditions indicate it should.",
             "type": "null"
+        },
+		"drop_loot": {
+            "title": "drop_loot",
+            "description": "Drops all items from a loot table for a player on a Quest NPC. If there is no Quest NPC, it defaults to the player instead.",
+            "type": "string"
         }
     }
 }

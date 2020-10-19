@@ -63,6 +63,7 @@ public class ModelInstance {
 	private Model mModel;
 	public Location mLoc;
 	private double mYaw;
+	public int mCDTicks = 0;
 
 	public List<ArmorStand> mStands = new ArrayList<>();
 
@@ -80,14 +81,33 @@ public class ModelInstance {
 	}
 
 	public void destroy() {
-		if (isToggled()) {
-			toggle();
-		}
+		remove();
 		for (BukkitRunnable runnable : mRunnables) {
 			runnable.cancel();
 		}
 		mRunnables.clear();
 		mUsers.clear();
+	}
+
+	public void remove() {
+		for (ArmorStand stand : mStands) {
+			stand.remove();
+		}
+
+		if (mQuestAcceptStand != null) {
+			mQuestAcceptStand.remove();
+			mQuestAcceptStand = null;
+		}
+
+		if (mQuestTurninStand != null) {
+			mQuestTurninStand.remove();
+			mQuestTurninStand = null;
+		}
+		for (BukkitRunnable runnable : mRunnables) {
+			runnable.cancel();
+		}
+		mRunnables.clear();
+		mStands.clear();
 	}
 
 	public Model getModel() {
@@ -99,6 +119,24 @@ public class ModelInstance {
 	}
 
 	public void toggle() {
+		if (mCDTicks > 0) {
+			BukkitRunnable runnable = new BukkitRunnable() {
+				@Override
+				public void run() {
+					mCDTicks--;
+
+					if (mCDTicks <= 0) {
+						this.cancel();
+						mRunnables.remove(this);
+						toggle();
+					}
+
+				}
+			};
+			runnable.runTaskTimer(mPlugin, 0, 1);
+			mRunnables.add(runnable);
+			return;
+		}
 		if (mStands.isEmpty()) {
 			double rotation;
 			if (mYaw >= 0) {
@@ -168,34 +206,22 @@ public class ModelInstance {
 			}
 
 		} else {
-			for (ArmorStand stand : mStands) {
-				stand.remove();
-			}
-
-			if (mQuestAcceptStand != null) {
-				mQuestAcceptStand.remove();
-				mQuestAcceptStand = null;
-			}
-
-			if (mQuestTurninStand != null) {
-				mQuestTurninStand.remove();
-				mQuestTurninStand = null;
-			}
-			mStands.clear();
+			remove();
 		}
 	}
 
 	public void disable(int ticks) {
 		if (isToggled() && ticks > 0) {
 			toggle();
+			mCDTicks = ticks;
 			BukkitRunnable runnable = new BukkitRunnable() {
-				int t = 0;
 				@Override
 				public void run() {
-					t++;
+					mCDTicks--;
 
-					if (t >= ticks) {
+					if (mCDTicks <= 0) {
 						this.cancel();
+						mRunnables.remove(this);
 						toggle();
 					}
 
@@ -258,6 +284,14 @@ public class ModelInstance {
 						}
 						t++;
 						timeStand.setCustomName(ChatColor.DARK_GREEN + "[" + bar.getProgress(mModel.mUseMessage, t) + ChatColor.DARK_GREEN + "]");
+
+						if (player.getLocation().distance(mLoc) > 4) {
+							player.sendMessage(ChatColor.RED + "You moved too far to continue using this...");
+							mRunnables.remove(this);
+							mUsers.remove(player.getUniqueId());
+							this.cancel();
+							return;
+						}
 
 						if (t >= mModel.mUseTime) {
 							this.cancel();

@@ -7,6 +7,7 @@ import org.bukkit.Location;
 public class ModelTreeNode extends QuadTreeNode {
 
 	public ModelInstance mModel;
+	public boolean mQuestMarkers;
 	public ModelTreeNode(ModelInstance model) {
 		super(model.mLoc);
 		mModel = model;
