@@ -10,6 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import com.playmonumenta.scriptedquests.Constants;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.races.Race;
 import com.playmonumenta.scriptedquests.races.RaceFactory;
@@ -65,12 +66,36 @@ public class RaceManager {
 		mRunnable.runTaskTimer(plugin, 0, 2);
 	}
 
-	public boolean isRacing(Player player) {
+	public boolean isNotRacingOrAllowsDialogClick(Player player) {
 		Race race = mActiveRaces.get(player.getUniqueId());
 		if (race != null) {
-			return true;
+			return race.allowsDialogClick();
 		}
-		return false;
+		return true;
+	}
+
+	public boolean isNotRacingOrAllowsCode(Player player) {
+		Race race = mActiveRaces.get(player.getUniqueId());
+		if (race != null) {
+			return race.allowsCode();
+		}
+		return true;
+	}
+
+	public boolean isNotRacingOrAllowsClickables(Player player) {
+		Race race = mActiveRaces.get(player.getUniqueId());
+		if (race != null) {
+			return race.allowsClickables();
+		}
+		return true;
+	}
+
+	public boolean isNotRacingOrAllowsNpcInteraction(Player player) {
+		Race race = mActiveRaces.get(player.getUniqueId());
+		if (race != null) {
+			return race.allowsNpcInteraction();
+		}
+		return true;
 	}
 
 	public void cancelRace(Player player) {
@@ -95,6 +120,9 @@ public class RaceManager {
 	}
 
 	public void restartRaceByClick(Player player) {
+		if (mActiveRaces.size() == 0) {
+			return;
+		}
 		Race race = mActiveRaces.get(player.getUniqueId());
 		if (race != null && !race.isRingless() && !race.isStatless()) {
 			race.restart();
@@ -102,6 +130,9 @@ public class RaceManager {
 	}
 
 	public void cancelRaceByClick(Player player) {
+		if (mActiveRaces.size() == 0) {
+			return;
+		}
 		Race race = mActiveRaces.get(player.getUniqueId());
 		if (race != null && !race.isRingless() && !race.isStatless()) {
 			race.lose();
@@ -134,6 +165,9 @@ public class RaceManager {
 			player.sendMessage(ChatColor.RED + "You are already in a race!");
 			return;
 		}
+
+		// Invalidate any active dialog for the player
+		player.removeMetadata(Constants.PLAYER_CLICKABLE_DIALOG_METAKEY, mPlugin);
 
 		RaceFactory raceFactory = mRaceFactories.get(raceLabel);
 		if (raceFactory == null) {

@@ -49,6 +49,10 @@ public class Race {
 	private final String mName;
 	private final Objective mScoreboard;
 	private final boolean mShowStats;
+	private final boolean mAllowDialogClick;
+	private final boolean mAllowCode;
+	private final boolean mAllowClickables;
+	private final boolean mAllowNpcInteraction;
 	private final boolean mRingless;
 	private final Location mStart;
 	private final QuestActions mStartActions;
@@ -73,13 +77,18 @@ public class Race {
 
 	public Race(Plugin plugin, RaceManager manager, Player player, String name,
 	            Objective scoreboard, boolean showStats, boolean ringless, Location start, QuestActions startActions,
-	            List<RaceWaypoint> waypoints, List<RaceTime> times, QuestActions loseActions) {
+	            List<RaceWaypoint> waypoints, List<RaceTime> times, QuestActions loseActions, boolean allowDialogClick,
+				boolean allowCode, boolean allowClickables, boolean allowNpcInteraction) {
 		mPlugin = plugin;
 		mManager = manager;
 		mPlayer = player;
 		mName = name;
 		mScoreboard = scoreboard;
 		mShowStats = showStats;
+		mAllowDialogClick = allowDialogClick;
+		mAllowCode = allowCode;
+		mAllowClickables = allowClickables;
+		mAllowNpcInteraction = allowNpcInteraction;
 		mRingless = ringless;
 		mStart = start;
 		mStartActions = startActions;
@@ -435,6 +444,22 @@ public class Race {
 
 	public boolean isRingless() {
 		return mRingless;
+	}
+
+	public boolean allowsDialogClick() {
+		return mAllowDialogClick;
+	}
+
+	public boolean allowsCode() {
+		return mAllowCode;
+	}
+
+	public boolean allowsClickables() {
+		return mAllowClickables;
+	}
+
+	public boolean allowsNpcInteraction() {
+		return mAllowNpcInteraction;
 	}
 
 	public boolean isStatless() {

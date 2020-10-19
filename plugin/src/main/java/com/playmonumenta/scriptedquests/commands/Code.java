@@ -36,8 +36,8 @@ public class Code {
 	private static void submitCode(Plugin plugin, CommandSender sender, String word1, String word2, String word3) throws WrapperCommandSyntaxException {
 		Player player = (Player)sender;
 
-		// Players who are racing can not interact with NPCs
-		if (plugin.mRaceManager.isRacing(player)) {
+		// Check if race allows this
+		if (!plugin.mRaceManager.isNotRacingOrAllowsCode(player)) {
 			CommandAPI.fail("You can not enter a code while you are racing");
 		}
 

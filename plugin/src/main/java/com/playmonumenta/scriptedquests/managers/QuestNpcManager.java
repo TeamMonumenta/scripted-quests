@@ -105,8 +105,8 @@ public class QuestNpcManager {
 			return false;
 		}
 
-		// Players who are racing can not interact with NPCs
-		if (plugin.mRaceManager.isRacing(player)) {
+		// Check if race allows this
+		if (!plugin.mRaceManager.isNotRacingOrAllowsNpcInteraction(player)) {
 			return false;
 		}
 

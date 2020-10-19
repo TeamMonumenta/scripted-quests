@@ -62,9 +62,45 @@
             "format": "checkbox",
             "default": "true"
         },
+        "allow_dialog_click": {
+            "required": false,
+            "propertyOrder": 7,
+            "title": "allow_dialog_click",
+            "description": "Allows player to click [chat options] while doing this race. Default false/unchecked",
+            "type": "boolean",
+            "format": "checkbox",
+            "default": "false"
+        },
+        "allow_code": {
+            "required": false,
+            "propertyOrder": 8,
+            "title": "allow_code",
+            "description": "Allows player to enter /code's while doing this race. Default false/unchecked",
+            "type": "boolean",
+            "format": "checkbox",
+            "default": "false"
+        },
+        "allow_clickables": {
+            "required": false,
+            "propertyOrder": 9,
+            "title": "allow_clickables",
+            "description": "Allows player to run /clickable <label> while doing this race. Default false/unchecked",
+            "type": "boolean",
+            "format": "checkbox",
+            "default": "false"
+        },
+        "allow_npc_interaction": {
+            "required": false,
+            "propertyOrder": 9,
+            "title": "allow_npc_interaction",
+            "description": "Allows player to hit-to-interact with NPCs while doing this race. Default false/unchecked",
+            "type": "boolean",
+            "format": "checkbox",
+            "default": "false"
+        },
         "waypoints": {
             "required": true,
-            "propertyOrder": 7,
+            "propertyOrder": 10,
             "title": "waypoints",
             "description": "A list of race waypoints",
             "type": "array",
@@ -106,7 +142,7 @@
         },
         "times": {
             "required": true,
-            "propertyOrder": 8,
+            "propertyOrder": 11,
             "title": "times",
             "description": "A list of goal times to beat. Copy/paste this into the 'times' element for a starting point:           [{\"label\":\"Master\",\"time\":1,\"color\":\"&a&l\"},{\"label\":\"Gold\",\"time\":1,\"color\":\"&6&l\"},{\"label\":\"Silver\",\"time\":1,\"color\":\"&f&l\"},{\"label\":\"Bronze\",\"time\":1,\"color\":\"&4&l\"},{\"label\":\"Complete\",\"time\":1,\"color\":\"&7&l\"}]",
             "type": "array",
@@ -154,7 +190,7 @@
         },
         "lose_actions": {
             "required": false,
-            "propertyOrder": 9,
+            "propertyOrder": 12,
             "description": "Actions to take when the player loses the race",
             "title": "lose_actions",
             "type": "array",
