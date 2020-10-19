@@ -65,12 +65,10 @@ public class PlayerListener implements Listener {
 
 		// race actions
 		if (player.isSneaking()) {
-			if (mPlugin.mRaceManager.isRacing(player)) {
-				if (action == Action.LEFT_CLICK_AIR) {
-					mPlugin.mRaceManager.cancelRaceByClick(player);
-				} else if (action == Action.RIGHT_CLICK_AIR) {
-					mPlugin.mRaceManager.restartRaceByClick(player);
-				}
+			if (action == Action.LEFT_CLICK_AIR) {
+				mPlugin.mRaceManager.cancelRaceByClick(player);
+			} else if (action == Action.RIGHT_CLICK_AIR) {
+				mPlugin.mRaceManager.restartRaceByClick(player);
 			}
 		}
 	}

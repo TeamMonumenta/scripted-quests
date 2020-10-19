@@ -165,6 +165,42 @@
                 ],
                 "$ref": "action.json"
             }
+        },
+        "allow_dialog_click": {
+            "required": false,
+            "propertyOrder": 10,
+            "title": "allow_dialog_click",
+            "description": "Allows player to click [chat options] while doing this race. Default false/unchecked",
+            "type": "boolean",
+            "format": "checkbox",
+            "default": "false"
+        },
+        "allow_code": {
+            "required": false,
+            "propertyOrder": 11,
+            "title": "allow_code",
+            "description": "Allows player to enter /code's while doing this race. Default false/unchecked",
+            "type": "boolean",
+            "format": "checkbox",
+            "default": "false"
+        },
+        "allow_clickables": {
+            "required": false,
+            "propertyOrder": 12,
+            "title": "allow_clickables",
+            "description": "Allows player to run /clickable <label> while doing this race. Default false/unchecked",
+            "type": "boolean",
+            "format": "checkbox",
+            "default": "false"
+        },
+        "allow_npc_interaction": {
+            "required": false,
+            "propertyOrder": 12,
+            "title": "allow_npc_interaction",
+            "description": "Allows player to hit-to-interact with NPCs while doing this race. Default false/unchecked",
+            "type": "boolean",
+            "format": "checkbox",
+            "default": "false"
         }
     }
 }
