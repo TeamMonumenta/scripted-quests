@@ -58,6 +58,7 @@
 				"loottable",
 				"vision",
 				"aggroRange",
+				"visible",
 				"defense_values",
 				"damage_values",
 				"xp_values",
@@ -135,10 +136,17 @@
                 },
 				aggroRange: {
                     propertyOrder: 7,
-                    title: "vision",
+                    title: "aggroRange",
                     description: "The aggro range of a mob. This will determine how far a player can be before the mob loses aggro of the player.",
                     type: "integer",
 					default: 16
+                },
+				visible: {
+                    propertyOrder: 7,
+                    title: "visible",
+                    description: "Whether the mob has the invisiblity effect on or not",
+                    type: "boolean",
+					default: false
                 },
 				loottable: {
                     propertyOrder: 8,
