@@ -85,12 +85,10 @@ public class PrerequisiteItem {
 
 					if (mRPGItemName == null || mRPGItemName.isEmpty()) {
 						matchCount += item.getAmount();
-						System.out.println("item found nonrpg");
 					} else {
 						RPGItem rpgItem = Utils.getRPGItem(item);
 						if (rpgItem != null && rpgItem.mId.equalsIgnoreCase(mRPGItemName)) {
 							matchCount += item.getAmount();
-							System.out.println("item found rpg");
 						}
 					}
 
