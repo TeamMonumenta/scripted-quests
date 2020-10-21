@@ -1,0 +1,21 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "enchantment": {
+            "required": true,
+			"propertyOrder": 1,
+			"title": "enchantment",
+			"description": "The Enchantment ID. Ask an admin for this",
+			"type": "string"
+        },
+        "level": {
+            "required": true,
+			"propertyOrder": 2,
+			"title": "level",
+			"description": "The level of the enchantment",
+			"type": "number",
+			"default": 1
+        }
+    }
+}
