@@ -88,6 +88,9 @@ public class QuestActions {
 				case "menu":
 					mActions.add(new ActionMenu(value));
 					break;
+				case "open_altar":
+					mActions.add(new ActionOpenAltar(value));
+					break;
 				case "give_xp":
 					mActions.add(new ActionGiveXP(value));
 					break;

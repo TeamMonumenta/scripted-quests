@@ -250,7 +250,7 @@ public class Model {
 
 			ModelTreeNode node = new ModelTreeNode(instance);
 			node.mQuestMarkers = mQuestMarker;
-			plugin.mModelManager.mQuadTree.addNode(node);
+			plugin.mModelManager.mQuadTree.add(node);
 			mInstances.add(instance);
 		}
 	}

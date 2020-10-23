@@ -1,30 +1,20 @@
 package com.playmonumenta.scriptedquests.models;
 
 import me.Novalescent.mobs.spawners.RPGSpawnerGroup;
-import me.Novalescent.utils.quadtree.QuadTreeNode;
+import me.Novalescent.utils.quadtree.reworked.QuadTreeValue;
 import org.bukkit.Location;
 
-public class ModelTreeNode extends QuadTreeNode {
+public class ModelTreeNode extends QuadTreeValue {
 
 	public ModelInstance mModel;
 	public boolean mQuestMarkers;
 	public ModelTreeNode(ModelInstance model) {
 		super(model.mLoc);
 		mModel = model;
-		mDetectionRange = 48;
 	}
 
 	@Override
 	public void destroy() {
 
-		if (mChildNodes != null) {
-			for (QuadTreeNode childNode : mChildNodes) {
-				if (childNode != null) {
-					childNode.destroy();
-				}
-			}
-		}
-
-		mChildNodes = null;
 	}
 }

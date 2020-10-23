@@ -6,7 +6,7 @@ import com.playmonumenta.scriptedquests.models.Model;
 import com.playmonumenta.scriptedquests.models.ModelInstance;
 import com.playmonumenta.scriptedquests.models.ModelTreeNode;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
-import me.Novalescent.utils.quadtree.QuadTree;
+import me.Novalescent.utils.quadtree.reworked.QuadTree;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.ArmorStand;
 
