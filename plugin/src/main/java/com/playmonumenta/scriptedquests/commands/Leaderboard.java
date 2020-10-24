@@ -3,7 +3,6 @@ package com.playmonumenta.scriptedquests.commands;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,7 +19,6 @@ import org.bukkit.scoreboard.Score;
 
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
-import dev.jorel.commandapi.arguments.Argument;
 import dev.jorel.commandapi.arguments.BooleanArgument;
 import dev.jorel.commandapi.arguments.EntitySelectorArgument;
 import dev.jorel.commandapi.arguments.IntegerArgument;
@@ -30,15 +28,12 @@ import dev.jorel.commandapi.arguments.StringArgument;
 public class Leaderboard {
 	@SuppressWarnings("unchecked")
 	public static void register(Plugin plugin) {
-		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
-
-		arguments.put("players", new EntitySelectorArgument(EntitySelectorArgument.EntitySelector.MANY_PLAYERS));
-		arguments.put("objective", new StringArgument());
-		arguments.put("descending", new BooleanArgument());
-		arguments.put("page", new IntegerArgument(1)); // Min 1
 		new CommandAPICommand("leaderboard")
 			.withPermission(CommandPermission.fromString("scriptedquests.leaderboard"))
-			.withArguments(arguments)
+			.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
+			.withArguments(new StringArgument("objective"))
+			.withArguments(new BooleanArgument("descending"))
+			.withArguments(new IntegerArgument("page", 1))
 			.executes((sender, args) -> {
 				for (Player player : (Collection<Player>)args[0]) {
 					leaderboard(plugin, player, (String)args[1],
@@ -51,13 +46,11 @@ public class Leaderboard {
 		 * Add a command to copy a player's scoreboard to the Redis leaderboard if MonumentaRedisSync exists.
 		 * If using scoreboards for leaderboards, this command does nothing
 		 */
-		arguments.clear();
-		arguments.put("update", new LiteralArgument("update"));
-		arguments.put("players", new EntitySelectorArgument(EntitySelectorArgument.EntitySelector.MANY_PLAYERS));
-		arguments.put("objective", new StringArgument());
 		new CommandAPICommand("leaderboard")
 			.withPermission(CommandPermission.fromString("scriptedquests.leaderboard"))
-			.withArguments(arguments)
+			.withArguments(new LiteralArgument("update").setListed(false))
+			.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
+			.withArguments(new StringArgument("objective"))
 			.executes((sender, args) -> {
 				for (Player player : (Collection<Player>)args[0]) {
 					leaderboardUpdate(player, (String)args[1]);

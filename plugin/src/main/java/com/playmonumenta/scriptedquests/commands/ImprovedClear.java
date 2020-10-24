@@ -1,7 +1,5 @@
 package com.playmonumenta.scriptedquests.commands;
 
-import java.util.LinkedHashMap;
-
 import com.playmonumenta.scriptedquests.utils.InventoryUtils;
 import com.playmonumenta.scriptedquests.utils.MaterialUtils;
 
@@ -13,7 +11,6 @@ import org.bukkit.inventory.meta.BlockStateMeta;
 
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
-import dev.jorel.commandapi.arguments.Argument;
 import dev.jorel.commandapi.arguments.BooleanArgument;
 import dev.jorel.commandapi.arguments.EntitySelectorArgument;
 import dev.jorel.commandapi.arguments.IntegerArgument;
@@ -22,14 +19,12 @@ import dev.jorel.commandapi.arguments.TextArgument;
 public class ImprovedClear {
 	public static void register() {
 		CommandPermission perms = CommandPermission.fromString("scriptedquests.improvedclear");
-		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
 		String[] aliases = {"iclear"};
 
-		arguments.put("target", new EntitySelectorArgument(EntitySelectorArgument.EntitySelector.ONE_PLAYER));
-		arguments.put("name", new TextArgument());
 		new CommandAPICommand("improvedclear")
 			.withPermission(perms)
-			.withArguments(arguments)
+			.withArguments(new EntitySelectorArgument("target", EntitySelectorArgument.EntitySelector.ONE_PLAYER))
+			.withArguments(new TextArgument("name"))
 			.withAliases(aliases)
 			.executes((sender, args) -> {
 				// Make sure shulker boxes are closed so they can be clear'd
@@ -38,10 +33,11 @@ public class ImprovedClear {
 			})
 			.register();
 
-		arguments.put("maxAmount", new IntegerArgument());
 		new CommandAPICommand("improvedclear")
 			.withPermission(perms)
-			.withArguments(arguments)
+			.withArguments(new EntitySelectorArgument("target", EntitySelectorArgument.EntitySelector.ONE_PLAYER))
+			.withArguments(new TextArgument("name"))
+			.withArguments(new IntegerArgument("maxAmount"))
 			.withAliases(aliases)
 			.executes((sender, args) -> {
 				// Make sure shulker boxes are closed so they can be clear'd
@@ -50,10 +46,12 @@ public class ImprovedClear {
 			})
 			.register();
 
-		arguments.put("clearShulkers", new BooleanArgument());
 		new CommandAPICommand("improvedclear")
 			.withPermission(perms)
-			.withArguments(arguments)
+			.withArguments(new EntitySelectorArgument("target", EntitySelectorArgument.EntitySelector.ONE_PLAYER))
+			.withArguments(new TextArgument("name"))
+			.withArguments(new IntegerArgument("maxAmount"))
+			.withArguments(new BooleanArgument("clearShulkers"))
 			.withAliases(aliases)
 			.executes((sender, args) -> {
 				// Make sure shulker boxes are closed so they can be clear'd
@@ -62,10 +60,13 @@ public class ImprovedClear {
 			})
 			.register();
 
-		arguments.put("shulkerLore", new TextArgument());
 		new CommandAPICommand("improvedclear")
 			.withPermission(perms)
-			.withArguments(arguments)
+			.withArguments(new EntitySelectorArgument("target", EntitySelectorArgument.EntitySelector.ONE_PLAYER))
+			.withArguments(new TextArgument("name"))
+			.withArguments(new IntegerArgument("maxAmount"))
+			.withArguments(new BooleanArgument("clearShulkers"))
+			.withArguments(new TextArgument("shulkerLore"))
 			.withAliases(aliases)
 			.executes((sender, args) -> {
 				// Make sure shulker boxes are closed so they can be clear'd
