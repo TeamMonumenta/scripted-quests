@@ -136,7 +136,7 @@ public class Plugin extends JavaPlugin {
 		mTradeManager = new NpcTradeManager();
 		mLoginManager = new QuestLoginManager();
 		mDeathManager = new QuestDeathManager();
-		mRaceManager = new RaceManager();
+		mRaceManager = new RaceManager(this);
 		mCodeManager = new CodeManager();
 		mZoneManager = new ZoneManager(this);
 		mZonePropertyManager = new ZonePropertyManager(this);
