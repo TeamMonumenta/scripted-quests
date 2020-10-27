@@ -113,13 +113,15 @@ public class ActionGiveReward implements ActionBase {
 						@Override
 						public void run() {
 							player.closeInventory();
-							InventoryUtils.giveItems(player, base, false);
 
 							if (mPicked != null) {
 								Collection<ItemStack> picked = new HashSet<>();
 								picked.add(mPicked);
 								InventoryUtils.giveItems(player, picked, false);
 							}
+
+							InventoryUtils.giveItems(player, base, false);
+
 							PlayerData data = Core.getInstance().mPlayerManager.getPlayerData(player.getUniqueId());
 
 							if (mAction.mCoin > 0) {

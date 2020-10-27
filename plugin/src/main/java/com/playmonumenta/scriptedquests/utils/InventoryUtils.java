@@ -72,7 +72,12 @@ public class InventoryUtils {
 		}
 
 		NamespacedKey lootNamespace = getNamespacedKey(lootPath);
-		LootContext lootContext = new LootContext.Builder(player.getLocation()).build();
+		LootContext lootContext = new LootContext.Builder(player.getLocation())
+			.luck(0)
+			.lootingModifier(0)
+			.killer(player)
+			.lootedEntity(null)
+			.build();
 
 		alreadyDone = giveItems(player, Bukkit.getLootTable(lootNamespace).populateLoot(random, lootContext), alreadyDone);
 		return alreadyDone;
@@ -83,7 +88,12 @@ public class InventoryUtils {
 			return new HashSet<>();
 		}
 		NamespacedKey lootNamespace = getNamespacedKey(lootPath);
-		LootContext lootContext = new LootContext.Builder(player.getLocation()).build();
+		LootContext lootContext = new LootContext.Builder(player.getLocation())
+			.luck(0)
+			.lootingModifier(0)
+			.killer(player)
+			.lootedEntity(null)
+			.build();
 
 		return Bukkit.getLootTable(lootNamespace).populateLoot(random, lootContext);
 	}
