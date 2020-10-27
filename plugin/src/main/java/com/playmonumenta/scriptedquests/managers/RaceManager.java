@@ -26,10 +26,6 @@ public class RaceManager {
 	private final HashMap<UUID, Race> mActiveRaces = new HashMap<UUID, Race>();
 	private BukkitRunnable mRunnable = null;
 
-	public RaceManager(Plugin plugin) {
-		mPlugin = plugin;
-	}
-
 	/*
 	 * If sender is non-null, it will be sent debugging information
 	 */
