@@ -137,6 +137,7 @@ public class ModelInstance {
 			mRunnables.add(runnable);
 			return;
 		}
+
 		if (mStands.isEmpty()) {
 			double rotation;
 			if (mYaw >= 0) {

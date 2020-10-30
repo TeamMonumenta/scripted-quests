@@ -233,7 +233,7 @@
 				"spell_actions": {
 					"title": "spell_actions",
 					"description": "The actions to run",
-					"$ref": "schema/ability_actions.json"
+					"$ref": "ability_actions.json"
 				}
 			}
         },
