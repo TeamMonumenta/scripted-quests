@@ -288,7 +288,9 @@ public class RaceFactory {
 					/* TODO: Someday it'd be nice to just look up the appropriate range, and the player's value, rather than everything */
 					Map<String, Integer> values = MonumentaRedisSyncAPI.getLeaderboard(mObjective.getName(), 0, -1, true).get();
 					for (Map.Entry<String, Integer> entry : values.entrySet()) {
-						entries.add(new LeaderboardEntry(entry.getKey(), "", entry.getValue(), RaceUtils.msToTimeString(entry.getValue())));
+						if (entry.getValue() != 0) {
+							entries.add(new LeaderboardEntry(entry.getKey(), "", entry.getValue(), RaceUtils.msToTimeString(entry.getValue())));
+						}
 					}
 					colorizeEntries(entries, player.getName());
 
