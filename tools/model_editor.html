@@ -79,6 +79,12 @@
                     type: "boolean",
 					default: false
                 },
+				prerequisites: {
+					propertyOrder: 2,
+                    title: "prerequisites",
+                    description: "The prerequisites to interact with this model",
+                    $ref: "prerequisites.json"				
+				},
 				region: {
                     propertyOrder: 3,
                     title: "region",
@@ -100,6 +106,7 @@
                     description: "The center of this model",
                     $ref: "schema/xyz.json"
 				},
+
 				use_info: {
 					propertyOrder: 4,
                     title: "use_info",
@@ -161,6 +168,19 @@
                     propertyOrder: 4,
                     title: "quest_components",
                     description: "A list of actions to do whenever the player interacts with this model after the use time",
+                    type: "array",
+                    format: "tabs",
+                    minItems: 1,
+                    items: {
+                        title: "Quest component",
+                        $ref: "schema/quest_component.json",
+                    }
+                },
+				on_fail_quest_components: {
+                    required: true,
+                    propertyOrder: 4,
+                    title: "on_fail_quest_components",
+                    description: "A list of actions to do whenever the player interacts with this model, but does not meet the prerequisites to do so",
                     type: "array",
                     format: "tabs",
                     minItems: 1,
