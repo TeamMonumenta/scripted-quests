@@ -98,9 +98,18 @@
             "format": "checkbox",
             "default": "false"
         },
+        "ringless": {
+            "required": false,
+            "propertyOrder": 10,
+            "title": "ringless",
+            "description": "If true/checked, the race will not display any rings",
+            "type": "boolean",
+            "format": "checkbox",
+            "default": "false"
+        },
         "waypoints": {
             "required": true,
-            "propertyOrder": 10,
+            "propertyOrder": 11,
             "title": "waypoints",
             "description": "A list of race waypoints",
             "type": "array",
@@ -142,7 +151,7 @@
         },
         "times": {
             "required": true,
-            "propertyOrder": 11,
+            "propertyOrder": 12,
             "title": "times",
             "description": "A list of goal times to beat. Copy/paste this into the 'times' element for a starting point:           [{\"label\":\"Master\",\"time\":1,\"color\":\"&a&l\"},{\"label\":\"Gold\",\"time\":1,\"color\":\"&6&l\"},{\"label\":\"Silver\",\"time\":1,\"color\":\"&f&l\"},{\"label\":\"Bronze\",\"time\":1,\"color\":\"&4&l\"},{\"label\":\"Complete\",\"time\":1,\"color\":\"&7&l\"}]",
             "type": "array",
@@ -190,7 +199,7 @@
         },
         "lose_actions": {
             "required": false,
-            "propertyOrder": 12,
+            "propertyOrder": 13,
             "description": "Actions to take when the player loses the race",
             "title": "lose_actions",
             "type": "array",
