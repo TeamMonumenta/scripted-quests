@@ -214,6 +214,29 @@
             "description": "Runs a command via the console. Any instance of '@S' (uppercase!) will be replaced with the player's name. Any instance of '@N' (uppercase!) will be replaced with the NPC's UUID, which can be used like @e to target a specific entity. The NPC must be selected by trading or punching to use the entity UUID, or the player will receive an error instead.",
             "type": "string"
         },
+		"run_actions": {
+            "title": "run_actions",
+            "description": "Runs the specified SpellActions on the player or NPC.",
+            "type": "object",
+			"properties": {
+				"on_player": {
+					"title": "on_player",
+					"description": "Whether these actions occur on the player or not",
+					"type": "boolean"
+				},
+				"y_offset": {
+					"title": "y_offset",
+					"description": "The y-offset for the location value for the actions",
+					"type": "number",
+					"default": 0
+				},
+				"spell_actions": {
+					"title": "spell_actions",
+					"description": "The actions to run",
+					"$ref": "schema/ability_actions.json"
+				}
+			}
+        },
         "give_loot": {
             "title": "give_loot",
             "description": "Gives the player all items from a loot table.",

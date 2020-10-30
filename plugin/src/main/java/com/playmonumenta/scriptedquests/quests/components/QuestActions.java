@@ -91,6 +91,11 @@ public class QuestActions {
 				case "open_altar":
 					mActions.add(new ActionOpenAltar(value));
 					break;
+
+				case "run_actions":
+					mActions.add(new ActionRunActions(value));
+					break;
+
 				case "give_xp":
 					mActions.add(new ActionGiveXP(value));
 					break;

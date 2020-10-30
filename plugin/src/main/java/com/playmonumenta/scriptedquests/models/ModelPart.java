@@ -28,7 +28,7 @@ public class ModelPart {
 		target.setCustomNameVisible(mStand.isCustomNameVisible());
 		target.setGravity(mStand.hasGravity());
 
-		target.setArms(mStand.hasArms());
+		target.setArms(true);
 		target.setBasePlate(mStand.hasBasePlate());
 
 
