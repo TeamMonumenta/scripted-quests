@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
+import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import me.Novalescent.mobs.spells.scripted.actions.SpellActions;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -33,6 +34,8 @@ public class Model {
 	private List<Vector> mLocations = new ArrayList<>();
 	private List<ModelPart> mModelParts = new ArrayList<>();
 	private List<QuestComponent> mComponents = new ArrayList<>();
+	private List<QuestComponent> mOnFailComponents = new ArrayList<>();
+	public QuestPrerequisites mPrerequisites;
 
 	// Use Info
 	public int mUseTime = 0;
@@ -201,6 +204,18 @@ public class Model {
 			mComponents.add(component);
 		}
 
+		if (object.has("on_fail_quest_components")) {
+			JsonArray onFail = object.get("on_fail_quest_components").getAsJsonArray();
+			for (JsonElement element : onFail) {
+				QuestComponent component = new QuestComponent("", "", EntityType.ARMOR_STAND, element);
+				mOnFailComponents.add(component);
+			}
+		}
+
+		if (object.has("prerequisites")) {
+			mPrerequisites = new QuestPrerequisites(object.get("prerequisites"));
+		}
+
 		if (object.has("quest_marker")) {
 			mQuestMarker = object.get("quest_marker").getAsBoolean();
 		}
@@ -266,6 +281,8 @@ public class Model {
 	public List<QuestComponent> getComponents() {
 		return mComponents;
 	}
+
+	public List<QuestComponent> getFailComponents() { return mOnFailComponents; }
 
 	public double getHeight() {
 		return mBox.getHeight();

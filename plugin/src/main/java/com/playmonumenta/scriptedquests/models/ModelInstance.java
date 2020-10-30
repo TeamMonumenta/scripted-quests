@@ -238,6 +238,14 @@ public class ModelInstance {
 			if (mModel.mUseDisableTime > 0 && mUsers.size() > 0) {
 				return false;
 			}
+
+			if (mModel.mPrerequisites != null && !mModel.mPrerequisites.prerequisiteMet(player, mStands.get(0))) {
+				for (QuestComponent component : mModel.getFailComponents()) {
+					component.doActionsIfPrereqsMet(mPlugin, player, mStands.get(0));
+				}
+				return true;
+			}
+
 			mUsers.add(player.getUniqueId());
 
 			if (mModel.mOnStart != null) {
