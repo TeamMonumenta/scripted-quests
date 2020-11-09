@@ -9,6 +9,8 @@ import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import me.Novalescent.Core;
 import me.Novalescent.player.PlayerData;
 import me.Novalescent.player.quests.QuestData;
+import me.Novalescent.player.quests.QuestTemplate;
+import me.Novalescent.player.scoreboards.PlayerScoreboard;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
@@ -52,12 +54,20 @@ public class ActionSetQuestData implements ActionBase {
 				data.getQuestDataList().add(questData);
 			}
 
+
+			boolean maxed = false;
 			if (mOperation == SET_EXACT) {
-				return questData.setEntry(mFieldName, value);
+				maxed = questData.setEntry(mFieldName, value);
 			} else if (mOperation == INCREMENT) {
-				return questData.changeEntry(mFieldName, value);
+				maxed = questData.changeEntry(mFieldName, value);
 			}
-			return false;
+
+			PlayerScoreboard scoreboard = data.mScoreboard;
+			if (scoreboard.mTemplate != null && scoreboard.mTemplate instanceof QuestTemplate) {
+				scoreboard.updateScoreboard();
+			}
+
+			return maxed;
 		}
 
 	}

@@ -242,6 +242,11 @@
             "description": "Gives the player all items from a loot table.",
             "type": "string"
         },
+		"give_ability": {
+            "title": "give_ability",
+            "description": "Gives the player the specified ability. This only works if the ability is able to be given. Talk to a Developer to ask which abilities are givable.",
+            "type": "string"
+        },
 		"give_reward": {
             "title": "give_reward",
             "description": "Rewards the player all of the items from given loot tables in a stylized UI.",
