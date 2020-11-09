@@ -107,11 +107,12 @@
                     description: "The location of the chest for the mob's equipment. format is 'world,x,y,z'",
                     type: "string"
                 },
-                chestLoc: {
+                knockbackResistance: {
                     propertyOrder: 5,
                     title: "chestLoc",
-                    description: "The location of the chest for the mob's equipment. format is 'world,x,y,z'",
-                    type: "string"
+                    description: "The amount of resistance to velocity-setting skills. 0 = 0%, 1 = 100% Resistance/",
+                    type: "double",
+					default: 0
                 },
                 health: {
                     propertyOrder: 6,

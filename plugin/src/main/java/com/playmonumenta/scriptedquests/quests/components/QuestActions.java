@@ -99,6 +99,9 @@ public class QuestActions {
 				case "give_xp":
 					mActions.add(new ActionGiveXP(value));
 					break;
+				case "give_ability":
+					mActions.add(new ActionGiveAbility(value));
+					break;
 				case "rerun_components":
 					if (entityType != null) {
 						mActions.add(new ActionRerunComponents(npcName, entityType));
