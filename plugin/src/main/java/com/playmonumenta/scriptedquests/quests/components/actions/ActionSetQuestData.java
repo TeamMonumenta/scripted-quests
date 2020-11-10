@@ -127,6 +127,11 @@ public class ActionSetQuestData implements ActionBase {
 			if (questData != null) {
 				if (mCompleted != null) {
 					questData.mCompleted = mCompleted;
+
+					PlayerScoreboard scoreboard = data.mScoreboard;
+					if (scoreboard.mTemplate != null && scoreboard.mTemplate instanceof QuestTemplate) {
+						scoreboard.updateScoreboard();
+					}
 				}
 			}
 		}
