@@ -124,6 +124,18 @@ public class QuestActions {
 				case "drop_loot":
 					mActions.add(new ActionDropLoot(value));
 					break;
+				case "spawn_mob":
+					JsonArray mobArray = value.getAsJsonArray();
+
+					for (JsonElement mobElement : mobArray) {
+						JsonObject mobObject = mobElement.getAsJsonObject();
+
+						if (mobObject == null) {
+							throw new Exception("spawn_mob mobObject value is not an object!");
+						}
+						mActions.add(new ActionSpawnMob(mobObject));
+					}
+					break;
 				default:
 					throw new Exception("Unknown actions key: " + key);
 				}

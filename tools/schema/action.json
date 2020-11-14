@@ -323,28 +323,31 @@
         },
 		"drop_loot": {
             "title": "drop_loot",
-            "description": "Drops all items from a loot table for a player on a Quest NPC. If there is no Quest NPC, it defaults to the player instead.",
+            "description": "Drops all items fro a loot table for a player on a Quest NPC. If there is no Quest NPC, it defaults to the player instead.",
             "type": "string"
         },
 		"spawn_mob": {
             "title": "spawn_mob",
-            "description": "Spawns a mob at the given location",
-            "type": "object",
-			"properties": {
-                "mob_id": {
-                    "title": "mob_id",
-                    "description": "The id of the mob to spawn",
-                    "type": "string"
-                },
-                "world": {
-                    "title": "world",
-                    "description": "The world that the mob will spawn in",
-                    "type": "string"
-                },
-				"location": {
-                    "title": "location",
-                    "description": "The location to spawn",
-                    "$ref": "schema/xyz.json"
+            "description": "Spawns mobs at the given locations",
+			"type": "array",
+			"items": {
+			    "type": "object",
+				"properties" {
+					"mob_id": {
+						"title": "mob_id",
+						"description": "The id of the mob to spawn",
+						"type": "string"
+					},
+					"world": {
+						"title": "world",
+						"description": "The world that the mob will spawn in",
+						"type": "string"
+					},
+					"location": {
+						"title": "location",
+						"description": "The location to spawn",
+						"$ref": "schema/xyz.json"
+					}
 				}
             }
         }
