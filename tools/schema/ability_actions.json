@@ -2,6 +2,7 @@
     "title": "actions",
     "type": "array",
     "items": {
+	    "defaultProperties": [],
         "$ref": "ability_action.json"
     }
 }
