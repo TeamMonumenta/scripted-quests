@@ -140,7 +140,7 @@
         },
 		"check_class": {
             "propertyOrder": 3,
-            "title": "check_level",
+            "title": "check_class",
             "description": "Check if the player is a certain class. Valid Class IDs: Warrior, Ranger, Caster, Rogue, Cleric",
             "type": "string"
         },
