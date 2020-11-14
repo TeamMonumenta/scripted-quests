@@ -21,7 +21,8 @@ public class ModelPart {
 
 	public void cloneIntoStand(ArmorStand target, float angle) {
 		target.setSilent(true);
-		target.setPersistent(true);
+		target.setPersistent(false);
+		target.setRemoveWhenFarAway(true);
 		target.setVisible(mStand.isVisible());
 		target.setSmall(mStand.isSmall());
 		target.setCustomName(mStand.getCustomName());

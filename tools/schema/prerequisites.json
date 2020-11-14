@@ -120,7 +120,7 @@
 			"oneOf": [
 				{
 					"title": "Exactly",
-					"$ref": "score.json"
+					"type": "integer"
 				},
 				{
 					"title": "Range",
