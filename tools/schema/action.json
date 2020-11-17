@@ -346,7 +346,7 @@
 					"location": {
 						"title": "location",
 						"description": "The location to spawn",
-						"$ref": "schema/xyz.json"
+						"$ref": "xyz.json"
 					}
 				}
             }
