@@ -332,7 +332,7 @@
 			"type": "array",
 			"items": {
 			    "type": "object",
-				"properties" {
+				"properties": {
 					"mob_id": {
 						"title": "mob_id",
 						"description": "The id of the mob to spawn",
