@@ -63,7 +63,7 @@ public class ModelInstance {
 	private Model mModel;
 	public Location mLoc;
 	private double mYaw;
-	public int mCDTicks = 0;
+	public double mCDTicks = 0;
 
 	public List<ArmorStand> mStands = new ArrayList<>();
 
@@ -123,7 +123,7 @@ public class ModelInstance {
 			BukkitRunnable runnable = new BukkitRunnable() {
 				@Override
 				public void run() {
-					mCDTicks--;
+					mCDTicks -= 1;
 
 					if (mCDTicks <= 0) {
 						this.cancel();
