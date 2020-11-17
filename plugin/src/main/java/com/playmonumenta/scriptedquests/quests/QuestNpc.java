@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -27,6 +28,7 @@ public class QuestNpc {
 	private final String mNpcName;
 	private final String mDisplayName;
 	private final EntityType mEntityType;
+	private QuestPrerequisites mPrerequisites;
 
 	public QuestNpc(JsonObject object) throws Exception {
 		// Read the npc's name first
@@ -61,7 +63,8 @@ public class QuestNpc {
 			String key = ent.getKey();
 
 			if (!key.equals("npc") && !key.equals("display_name")
-				&& !key.equals("quest_components") && !key.equals("entity_type")) {
+				&& !key.equals("quest_components") && !key.equals("entity_type")
+			&& !key.equals("visibility_prerequisites")) {
 				throw new Exception("Unknown quest key: " + key);
 			}
 
@@ -78,6 +81,8 @@ public class QuestNpc {
 
 					mComponents.add(new QuestComponent(mNpcName, mDisplayName, mEntityType, entry));
 				}
+			} else if (key.equals("visibility_prerequisites")) {
+				mPrerequisites = new QuestPrerequisites(ent.getValue());
 			}
 		}
 	}
@@ -99,6 +104,10 @@ public class QuestNpc {
 
 	public EntityType getEntityType() {
 		return mEntityType;
+	}
+
+	public QuestPrerequisites getVisbilityPrerequisites() {
+		return mPrerequisites;
 	}
 
 	// Combines another quest using the same NPC into this one

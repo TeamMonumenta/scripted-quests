@@ -69,6 +69,12 @@
                     description: "NPC's name as displayed in chat messages sent from the NPC. Can contain spaces and technically colors, though use of colors is discouraged here.",
                     type: "string"
                 },
+				visibility_prerequisites: {
+					propertyOrder: 2,
+                    title: "visibilityPrerequisites",
+                    description: "The prerequisites for a player to see this NPC",
+                    $ref: "schema/prerequisites.json"				
+				},
                 entity_type: {
                     propertyOrder: 3,
                     title: "entity_type",
