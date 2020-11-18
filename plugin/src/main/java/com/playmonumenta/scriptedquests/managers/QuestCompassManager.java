@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -16,6 +18,7 @@ import com.playmonumenta.scriptedquests.quests.QuestCompass;
 import com.playmonumenta.scriptedquests.quests.components.CompassLocation;
 import com.playmonumenta.scriptedquests.quests.components.DeathLocation;
 import com.playmonumenta.scriptedquests.quests.components.QuestLocation;
+import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
 
@@ -53,6 +56,9 @@ public class QuestCompassManager {
 	private final Map<UUID, CompassCacheEntry> mCompassCache = new HashMap<UUID, CompassCacheEntry>();
 	private final Map<Player, Integer> mCurrentIndex = new HashMap<>();
 	private final Plugin mPlugin;
+
+	/* One command-specified waypoint per player */
+	private final Map<UUID, ValidCompassEntry> mCommandWaypoints = new HashMap<UUID, ValidCompassEntry>();
 
 	public QuestCompassManager(Plugin plugin) {
 		mPlugin = plugin;
@@ -119,6 +125,12 @@ public class QuestCompassManager {
 			}
 		}
 
+		//Get command-based waypoint (limited to 1) for the player
+		ValidCompassEntry commandWaypoint = mCommandWaypoints.get(player.getUniqueId());
+		if (commandWaypoint != null) {
+			entries.add(commandWaypoint);
+		}
+
 		// Cache this result for later
 		mCompassCache.put(player.getUniqueId(), new CompassCacheEntry(player, entries));
 
@@ -160,5 +172,15 @@ public class QuestCompassManager {
 		index = showCurrentQuest(player, index);
 
 		mCurrentIndex.put(player, index);
+	}
+
+	/* One command-specified waypoint per player */
+	public void setCommandWaypoint(Player player, List<Location> steps, String title, String message) {
+		ValidCompassEntry entry = new ValidCompassEntry(new CompassLocation(new QuestPrerequisites(), message, steps), title);
+		Bukkit.broadcastMessage("one");
+		entry.directPlayer(mPlugin.mWaypointManager, player);
+		Bukkit.broadcastMessage("two");
+		mCommandWaypoints.put(player.getUniqueId(), entry);
+		Bukkit.broadcastMessage("three");
 	}
 }

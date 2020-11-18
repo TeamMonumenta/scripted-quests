@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -104,6 +105,15 @@ public class CompassLocation implements QuestLocation {
 		}
 	}
 
+	public CompassLocation(QuestPrerequisites questPrereq, String message, List<Location> waypoints) {
+		mPrerequisites = questPrereq;
+		Bukkit.broadcastMessage("compass prereq");
+		mMessage = message;
+		for (Location l : waypoints) {
+			mWaypoints.add(l);
+		}
+	}
+
 	@Override
 	public Location getLocation() {
 		return mWaypoints.get(mWaypoints.size() - 1);
@@ -119,7 +129,12 @@ public class CompassLocation implements QuestLocation {
 		return mMessage;
 	}
 
+	@Override
 	public boolean prerequisiteMet(Player player) {
-		return mPrerequisites.prerequisiteMet(player, null);
+		if (mPrerequisites == null) {
+			return true;
+		} else {
+			return mPrerequisites.prerequisiteMet(player, null);
+		}
 	}
 }
