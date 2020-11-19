@@ -25,43 +25,23 @@ public class Waypoint {
 	public static void register(Plugin plugin) {
 		CommandPermission perm = CommandPermission.fromString("scriptedquests.waypoint");
 
-		//Sets command waypoint with default title
 		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
-		arguments.put("set", new LiteralArgument("set"));
-		arguments.put("player", new EntitySelectorArgument(EntitySelector.ONE_PLAYER));
-		arguments.put("label",  new TextArgument());
-		arguments.put("location", new LocationArgument(LocationType.BLOCK_POSITION));
 
-		new CommandAPICommand("waypoint")
-			.withPermission(perm)
-			.withArguments(arguments)
-			.executes((sender, args) -> {
-				if (plugin.mQuestCompassManager != null) {
-					List<Location> waypoint = new ArrayList<>();
-					waypoint.add((Location)args[2]);
-					plugin.mQuestCompassManager.setCommandWaypoint((Player)args[0], waypoint, ChatColor.GREEN + "" + ChatColor.BOLD + "Next Quest Location" + ChatColor.RESET, (String)args[1]);
-				} else {
-					CommandAPI.fail("Quest Compass Manager does not exist!");
-				}
-			})
-			.register();
-
-		//Sets command waypoint with custom title
+		//Sets command waypoint
 		arguments.clear();
 		arguments.put("set", new LiteralArgument("set"));
 		arguments.put("player", new EntitySelectorArgument(EntitySelector.ONE_PLAYER));
+		arguments.put("title", new TextArgument());
 		arguments.put("label",  new TextArgument());
 		arguments.put("location", new LocationArgument(LocationType.BLOCK_POSITION));
-		arguments.put("optionalTitle", new TextArgument());
-
 		new CommandAPICommand("waypoint")
 			.withPermission(perm)
 			.withArguments(arguments)
 			.executes((sender, args) -> {
 				if (plugin.mQuestCompassManager != null) {
 					List<Location> waypoint = new ArrayList<>();
-					waypoint.add((Location)args[2]);
-					plugin.mQuestCompassManager.setCommandWaypoint((Player)args[0], waypoint, (String)args[3] + ChatColor.RESET, (String)args[1]);
+					waypoint.add((Location)args[3]);
+					plugin.mQuestCompassManager.setCommandWaypoint((Player)args[0], waypoint, (String)args[1] + ChatColor.RESET, (String)args[2]);
 				} else {
 					CommandAPI.fail("Quest Compass Manager does not exist!");
 				}

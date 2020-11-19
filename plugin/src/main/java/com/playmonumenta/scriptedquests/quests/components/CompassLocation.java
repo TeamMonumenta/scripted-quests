@@ -108,9 +108,7 @@ public class CompassLocation implements QuestLocation {
 	public CompassLocation(QuestPrerequisites questPrereq, String message, List<Location> waypoints) {
 		mPrerequisites = questPrereq;
 		mMessage = message;
-		for (Location l : waypoints) {
-			mWaypoints.add(l);
-		}
+		mWaypoints.addAll(waypoints);
 	}
 
 	@Override
