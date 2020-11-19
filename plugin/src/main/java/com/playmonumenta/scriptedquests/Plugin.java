@@ -118,7 +118,7 @@ public class Plugin extends JavaPlugin {
 		mGrowableManager = new GrowableManager(this);
 
 		Growable.register(mGrowableManager);
-		Waypoint.register(mQuestCompassManager);
+		Waypoint.register(this);
 	}
 
 	@Override

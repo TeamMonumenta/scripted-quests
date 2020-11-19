@@ -4,73 +4,61 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import com.playmonumenta.scriptedquests.managers.QuestCompassManager;
+import com.playmonumenta.scriptedquests.Plugin;
 
+import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.Argument;
 import dev.jorel.commandapi.arguments.EntitySelectorArgument;
 import dev.jorel.commandapi.arguments.EntitySelectorArgument.EntitySelector;
+import dev.jorel.commandapi.arguments.LiteralArgument;
 import dev.jorel.commandapi.arguments.LocationArgument;
 import dev.jorel.commandapi.arguments.LocationType;
-import dev.jorel.commandapi.arguments.StringArgument;
+import dev.jorel.commandapi.arguments.TextArgument;
+import net.md_5.bungee.api.ChatColor;
 
 public class Waypoint {
-	public static void register(QuestCompassManager manager) {
+	public static void register(Plugin plugin) {
 		CommandPermission perm = CommandPermission.fromString("scriptedquests.waypoint");
 
 		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
-//		arguments.put("grow", new LiteralArgument("grow"));
+		arguments.put("set", new LiteralArgument("set"));
 		arguments.put("player", new EntitySelectorArgument(EntitySelector.ONE_PLAYER));
-		arguments.put("label", new StringArgument());
+		arguments.put("label",  new TextArgument());
 		arguments.put("location", new LocationArgument(LocationType.BLOCK_POSITION));
-
-//		arguments.put("location", new LocationArgument(LocationType.BLOCK_POSITION));
-//		arguments.put("label", new StringArgument().overrideSuggestions(manager.getLabels()));
-//		arguments.put("ticksPerStep", new IntegerArgument(1));
-//		arguments.put("blocksPerStep", new IntegerArgument(1));
-//		arguments.put("callStructureGrowEvent", new BooleanArgument());
 
 		new CommandAPICommand("waypoint")
 			.withPermission(perm)
 			.withArguments(arguments)
 			.executes((sender, args) -> {
-//				try {
+				if (plugin.mQuestCompassManager != null) {
 					List<Location> waypoint = new ArrayList<>();
 					waypoint.add((Location)args[2]);
-					Bukkit.broadcastMessage(args[2] + " " + args[0] + " " + args[1]);
-					manager.setCommandWaypoint((Player)args[0], waypoint, "Next Quest Location", (String)args[1]);
-					Bukkit.broadcastMessage("success!");
-//					int loaded = manager.grow((String)args[1], (Location)args[0], (Integer)args[2], (Integer)args[3], (Boolean)args[4]);
-//					sender.sendMessage("Successfully grew '" + (String)args[1] + "' placing " + Integer.toString(loaded) + " blocks");
-//				} catch (Exception e) {
-//					CommandAPI.fail(e.getMessage());
-//					e.printStackTrace();
-//				}
+					plugin.mQuestCompassManager.setCommandWaypoint((Player)args[0], waypoint, ChatColor.AQUA + "" + ChatColor.BOLD + "Next Quest Location" + ChatColor.RESET, (String)args[1]);
+				} else {
+					CommandAPI.fail("Quest Compass Manager does not exist!");
+				}
 			})
 			.register();
 
-//		arguments.clear();
-//		arguments.put("add", new LiteralArgument("add"));
-//		arguments.put("location", new LocationArgument(LocationType.BLOCK_POSITION));
-//		arguments.put("label", new StringArgument());
-//		arguments.put("maxDepth", new IntegerArgument(1));
-//
-//		new CommandAPICommand("growable")
-//			.withPermission(perm)
-//			.withArguments(arguments)
-//			.executes((sender, args) -> {
-//				try {
-//					int size = manager.add((String)args[1], (Location)args[0], (Integer)args[2]);
-//					sender.sendMessage("Successfully saved '" + (String)args[1] + "' containing " + Integer.toString(size) + " blocks");
-//				} catch (Exception e) {
-//					CommandAPI.fail(e.getMessage());
-//				}
-//			})
-//			.register();
+		arguments.clear();
+		arguments.put("remove", new LiteralArgument("remove"));
+		arguments.put("player", new EntitySelectorArgument(EntitySelector.ONE_PLAYER));
+
+		new CommandAPICommand("waypoint")
+			.withPermission(perm)
+			.withArguments(arguments)
+			.executes((sender, args) -> {
+				if (plugin.mQuestCompassManager != null) {
+					plugin.mQuestCompassManager.removeCommandWaypoint((Player)args[0]);
+				} else {
+					CommandAPI.fail("Quest Compass Manager does not exist!");
+				}
+			})
+			.register();
 	}
 }

@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -18,7 +17,6 @@ import com.playmonumenta.scriptedquests.quests.QuestCompass;
 import com.playmonumenta.scriptedquests.quests.components.CompassLocation;
 import com.playmonumenta.scriptedquests.quests.components.DeathLocation;
 import com.playmonumenta.scriptedquests.quests.components.QuestLocation;
-import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
 
@@ -176,11 +174,17 @@ public class QuestCompassManager {
 
 	/* One command-specified waypoint per player */
 	public void setCommandWaypoint(Player player, List<Location> steps, String title, String message) {
-		ValidCompassEntry entry = new ValidCompassEntry(new CompassLocation(new QuestPrerequisites(), message, steps), title);
-		Bukkit.broadcastMessage("one");
-		entry.directPlayer(mPlugin.mWaypointManager, player);
-		Bukkit.broadcastMessage("two");
+		ValidCompassEntry entry = new ValidCompassEntry(new CompassLocation(null, message, steps), title);
 		mCommandWaypoints.put(player.getUniqueId(), entry);
-		Bukkit.broadcastMessage("three");
+		getCurrentMarkerTitles(player);
+		entry.directPlayer(mPlugin.mWaypointManager, player);
+	}
+
+	public void removeCommandWaypoint(Player player) {
+		if (mCommandWaypoints.containsKey(player.getUniqueId())) {
+			mCommandWaypoints.remove(player.getUniqueId());
+			getCurrentMarkerTitles(player);
+			mPlugin.mWaypointManager.setWaypoint(player, null);
+		}
 	}
 }

@@ -5,13 +5,11 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteAlwaysTrue;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteBase;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteCheckAdvancements;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteCheckScores;
@@ -162,13 +160,6 @@ public class QuestPrerequisites implements PrerequisiteBase {
 				throw new Exception("Unknown prerequisites key: '" + key + "'");
 			}
 		}
-	}
-
-	public QuestPrerequisites() {
-		mPrerequisites.add(new PrerequisiteAlwaysTrue());
-		mOperator = "and";
-		mUseNpcForPrereqs = false;
-		Bukkit.broadcastMessage("prereq");
 	}
 
 	@Override
