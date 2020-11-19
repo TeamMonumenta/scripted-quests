@@ -180,6 +180,7 @@ public class QuestCompassManager {
 		entry.directPlayer(mPlugin.mWaypointManager, player);
 	}
 
+	//Remove command-specified waypoint on a player
 	public void removeCommandWaypoint(Player player) {
 		if (mCommandWaypoints.containsKey(player.getUniqueId())) {
 			mCommandWaypoints.remove(player.getUniqueId());

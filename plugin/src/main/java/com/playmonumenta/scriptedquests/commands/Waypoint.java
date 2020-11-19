@@ -25,6 +25,7 @@ public class Waypoint {
 	public static void register(Plugin plugin) {
 		CommandPermission perm = CommandPermission.fromString("scriptedquests.waypoint");
 
+		//Sets command waypoint with default title
 		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
 		arguments.put("set", new LiteralArgument("set"));
 		arguments.put("player", new EntitySelectorArgument(EntitySelector.ONE_PLAYER));
@@ -45,6 +46,7 @@ public class Waypoint {
 			})
 			.register();
 
+		//Sets command waypoint with custom title
 		arguments.clear();
 		arguments.put("set", new LiteralArgument("set"));
 		arguments.put("player", new EntitySelectorArgument(EntitySelector.ONE_PLAYER));
@@ -66,6 +68,7 @@ public class Waypoint {
 			})
 			.register();
 
+		//Remove the waypoint from a player
 		arguments.clear();
 		arguments.put("remove", new LiteralArgument("remove"));
 		arguments.put("player", new EntitySelectorArgument(EntitySelector.ONE_PLAYER));

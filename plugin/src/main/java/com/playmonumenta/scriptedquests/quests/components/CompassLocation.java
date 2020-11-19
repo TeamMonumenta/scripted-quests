@@ -104,6 +104,7 @@ public class CompassLocation implements QuestLocation {
 		}
 	}
 
+	//If QuestPrerequisites is null, prerequisites always met
 	public CompassLocation(QuestPrerequisites questPrereq, String message, List<Location> waypoints) {
 		mPrerequisites = questPrereq;
 		mMessage = message;
