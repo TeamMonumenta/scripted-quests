@@ -38,7 +38,28 @@ public class Waypoint {
 				if (plugin.mQuestCompassManager != null) {
 					List<Location> waypoint = new ArrayList<>();
 					waypoint.add((Location)args[2]);
-					plugin.mQuestCompassManager.setCommandWaypoint((Player)args[0], waypoint, ChatColor.AQUA + "" + ChatColor.BOLD + "Next Quest Location" + ChatColor.RESET, (String)args[1]);
+					plugin.mQuestCompassManager.setCommandWaypoint((Player)args[0], waypoint, ChatColor.GREEN + "" + ChatColor.BOLD + "Next Quest Location" + ChatColor.RESET, (String)args[1]);
+				} else {
+					CommandAPI.fail("Quest Compass Manager does not exist!");
+				}
+			})
+			.register();
+
+		arguments.clear();
+		arguments.put("set", new LiteralArgument("set"));
+		arguments.put("player", new EntitySelectorArgument(EntitySelector.ONE_PLAYER));
+		arguments.put("label",  new TextArgument());
+		arguments.put("location", new LocationArgument(LocationType.BLOCK_POSITION));
+		arguments.put("optionalTitle", new TextArgument());
+
+		new CommandAPICommand("waypoint")
+			.withPermission(perm)
+			.withArguments(arguments)
+			.executes((sender, args) -> {
+				if (plugin.mQuestCompassManager != null) {
+					List<Location> waypoint = new ArrayList<>();
+					waypoint.add((Location)args[2]);
+					plugin.mQuestCompassManager.setCommandWaypoint((Player)args[0], waypoint, (String)args[3] + ChatColor.RESET, (String)args[1]);
 				} else {
 					CommandAPI.fail("Quest Compass Manager does not exist!");
 				}
