@@ -37,6 +37,7 @@ import com.playmonumenta.scriptedquests.commands.ReloadZones;
 import com.playmonumenta.scriptedquests.commands.ScheduleFunction;
 import com.playmonumenta.scriptedquests.commands.SetVelocity;
 import com.playmonumenta.scriptedquests.commands.TimerDebug;
+import com.playmonumenta.scriptedquests.commands.Waypoint;
 import com.playmonumenta.scriptedquests.listeners.EntityListener;
 import com.playmonumenta.scriptedquests.listeners.PlayerListener;
 import com.playmonumenta.scriptedquests.listeners.WorldListener;
@@ -117,6 +118,7 @@ public class Plugin extends JavaPlugin {
 		mGrowableManager = new GrowableManager(this);
 
 		Growable.register(mGrowableManager);
+		Waypoint.register(this);
 	}
 
 	@Override

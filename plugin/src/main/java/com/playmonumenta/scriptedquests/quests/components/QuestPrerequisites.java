@@ -5,9 +5,6 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteGamemode;
-import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteItemInEitherHand;
-import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteItemInOffHand;
 import org.bukkit.entity.Entity;
 
 import com.google.gson.JsonArray;
@@ -18,10 +15,13 @@ import com.playmonumenta.scriptedquests.quests.components.prerequisites.Prerequi
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteCheckScores;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteCheckTags;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteFullyHealed;
-import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteSneaking;
+import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteGamemode;
+import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteItemInEitherHand;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteItemInHand;
+import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteItemInOffHand;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteItemsInInventory;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteLocation;
+import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteSneaking;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteTestForBlock;
 
 public class QuestPrerequisites implements PrerequisiteBase {

@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -53,6 +54,9 @@ public class QuestCompassManager {
 	private final Map<UUID, CompassCacheEntry> mCompassCache = new HashMap<UUID, CompassCacheEntry>();
 	private final Map<Player, Integer> mCurrentIndex = new HashMap<>();
 	private final Plugin mPlugin;
+
+	/* One command-specified waypoint per player */
+	private final Map<UUID, ValidCompassEntry> mCommandWaypoints = new HashMap<UUID, ValidCompassEntry>();
 
 	public QuestCompassManager(Plugin plugin) {
 		mPlugin = plugin;
@@ -119,6 +123,12 @@ public class QuestCompassManager {
 			}
 		}
 
+		//Get command-based waypoint (limited to 1) for the player
+		ValidCompassEntry commandWaypoint = mCommandWaypoints.get(player.getUniqueId());
+		if (commandWaypoint != null) {
+			entries.add(commandWaypoint);
+		}
+
 		// Cache this result for later
 		mCompassCache.put(player.getUniqueId(), new CompassCacheEntry(player, entries));
 
@@ -160,5 +170,22 @@ public class QuestCompassManager {
 		index = showCurrentQuest(player, index);
 
 		mCurrentIndex.put(player, index);
+	}
+
+	/* One command-specified waypoint per player */
+	public void setCommandWaypoint(Player player, List<Location> steps, String title, String message) {
+		ValidCompassEntry entry = new ValidCompassEntry(new CompassLocation(null, message, steps), title);
+		mCommandWaypoints.put(player.getUniqueId(), entry);
+		getCurrentMarkerTitles(player);
+		entry.directPlayer(mPlugin.mWaypointManager, player);
+	}
+
+	//Remove command-specified waypoint on a player
+	public void removeCommandWaypoint(Player player) {
+		if (mCommandWaypoints.containsKey(player.getUniqueId())) {
+			mCommandWaypoints.remove(player.getUniqueId());
+			getCurrentMarkerTitles(player);
+			mPlugin.mWaypointManager.setWaypoint(player, null);
+		}
 	}
 }
