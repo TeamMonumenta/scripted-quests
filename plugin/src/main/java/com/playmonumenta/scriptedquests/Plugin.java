@@ -3,8 +3,6 @@ package com.playmonumenta.scriptedquests;
 import java.io.File;
 import java.util.Random;
 
-import com.playmonumenta.scriptedquests.commands.Damage;
-import com.playmonumenta.scriptedquests.commands.Heal;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -15,13 +13,19 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.playmonumenta.scriptedquests.commands.Clickable;
+import com.playmonumenta.scriptedquests.commands.Clock;
 import com.playmonumenta.scriptedquests.commands.Code;
+import com.playmonumenta.scriptedquests.commands.Cooldown;
+import com.playmonumenta.scriptedquests.commands.Damage;
 import com.playmonumenta.scriptedquests.commands.DebugZones;
 import com.playmonumenta.scriptedquests.commands.GenerateCode;
 import com.playmonumenta.scriptedquests.commands.GetDate;
 import com.playmonumenta.scriptedquests.commands.GiveItemWithLore;
 import com.playmonumenta.scriptedquests.commands.GiveLootTable;
+import com.playmonumenta.scriptedquests.commands.Growable;
 import com.playmonumenta.scriptedquests.commands.HasPermission;
+import com.playmonumenta.scriptedquests.commands.Heal;
+import com.playmonumenta.scriptedquests.commands.ImprovedClear;
 import com.playmonumenta.scriptedquests.commands.InteractNpc;
 import com.playmonumenta.scriptedquests.commands.Leaderboard;
 import com.playmonumenta.scriptedquests.commands.Line;
@@ -33,11 +37,13 @@ import com.playmonumenta.scriptedquests.commands.ReloadZones;
 import com.playmonumenta.scriptedquests.commands.ScheduleFunction;
 import com.playmonumenta.scriptedquests.commands.SetVelocity;
 import com.playmonumenta.scriptedquests.commands.TimerDebug;
+import com.playmonumenta.scriptedquests.commands.Waypoint;
 import com.playmonumenta.scriptedquests.listeners.EntityListener;
 import com.playmonumenta.scriptedquests.listeners.PlayerListener;
 import com.playmonumenta.scriptedquests.listeners.WorldListener;
 import com.playmonumenta.scriptedquests.managers.ClickableManager;
 import com.playmonumenta.scriptedquests.managers.CodeManager;
+import com.playmonumenta.scriptedquests.managers.GrowableManager;
 import com.playmonumenta.scriptedquests.managers.InteractableManager;
 import com.playmonumenta.scriptedquests.managers.NpcTradeManager;
 import com.playmonumenta.scriptedquests.managers.QuestCompassManager;
@@ -73,6 +79,7 @@ public class Plugin extends JavaPlugin {
 	public ZoneManager mZoneManager;
 	public ZonePropertyManager mZonePropertyManager;
 	public WaypointManager mWaypointManager;
+	public GrowableManager mGrowableManager;
 
 	public World mWorld;
 	public Random mRandom = new Random();
@@ -103,8 +110,15 @@ public class Plugin extends JavaPlugin {
 		DebugZones.register(this);
 		Heal.register();
 		Damage.register();
+		Cooldown.register();
+		Clock.register();
+		ImprovedClear.register();
 
 		mScheduledFunctionsManager = new ScheduleFunction(this);
+		mGrowableManager = new GrowableManager(this);
+
+		Growable.register(mGrowableManager);
+		Waypoint.register(this);
 	}
 
 	@Override
@@ -124,7 +138,7 @@ public class Plugin extends JavaPlugin {
 		mTradeManager = new NpcTradeManager();
 		mLoginManager = new QuestLoginManager();
 		mDeathManager = new QuestDeathManager();
-		mRaceManager = new RaceManager();
+		mRaceManager = new RaceManager(this);
 		mCodeManager = new CodeManager();
 		mZoneManager = new ZoneManager(this);
 		mZonePropertyManager = new ZonePropertyManager(this);
@@ -146,7 +160,6 @@ public class Plugin extends JavaPlugin {
 			@Override
 			public void run() {
 				reloadConfig(null);
-				reloadZones(null);
 			}
 		}.runTaskLater(this, 1);
 	}
@@ -181,6 +194,7 @@ public class Plugin extends JavaPlugin {
 		mRaceManager.reload(this, sender);
 		mCodeManager.reload(this, sender);
 		mZonePropertyManager.reload(this, sender);
+		mGrowableManager.reload(this, sender);
 	}
 
 	public void reloadZones(CommandSender sender) {

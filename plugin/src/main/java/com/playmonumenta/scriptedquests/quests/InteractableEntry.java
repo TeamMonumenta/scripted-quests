@@ -16,7 +16,6 @@ import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Constants;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
-import com.playmonumenta.scriptedquests.utils.MetadataUtils;
 
 public class InteractableEntry {
 	public enum InteractType {
@@ -125,7 +124,6 @@ public class InteractableEntry {
 		if (mInteractTypes.contains(interactType)) {
 			for (QuestComponent component : mComponents) {
 				if (component.doActionsIfPrereqsMet(plugin, player, entity)) {
-					MetadataUtils.checkOnceThisTick(plugin, player, Constants.PLAYER_USED_INTERACTABLE_METAKEY);
 					cancelEvent = mCancelEvent;
 				}
 			}

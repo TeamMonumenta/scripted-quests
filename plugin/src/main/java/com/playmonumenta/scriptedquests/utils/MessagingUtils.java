@@ -2,6 +2,8 @@ package com.playmonumenta.scriptedquests.utils;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -76,6 +78,12 @@ public class MessagingUtils {
 	}
 
 	public static void sendStackTrace(CommandSender sender, Exception e) {
+		Set<CommandSender> senders = new HashSet<CommandSender>();
+		senders.add(sender);
+		sendStackTrace(senders, e);
+	}
+
+	public static void sendStackTrace(Set<CommandSender> senders, Exception e) {
 		TextComponent formattedMessage;
 		String errorMessage = e.getLocalizedMessage();
 		if (errorMessage != null) {
@@ -100,6 +108,13 @@ public class MessagingUtils {
 		BaseComponent[] toDisplay = new BaseComponent[1];
 		toDisplay[0] = formattedMessage;
 
-		sender.spigot().sendMessage(toDisplay);
+		if (senders != null) {
+			for (CommandSender sender : senders) {
+				if (sender != null &&
+					sender.spigot() != null) {
+					sender.spigot().sendMessage(toDisplay);
+				}
+			}
+		}
 	}
 }

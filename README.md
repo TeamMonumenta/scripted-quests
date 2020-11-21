@@ -42,7 +42,10 @@ hope others will find it useful too.
 ## <a name="download"></a>Download
 
 ScriptedQuests works on Minecraft 1.13 or higher. It also requires
-[CommandAPI](https://github.com/JorelAli/1.13-Command-API) version 1.8.x.
+[CommandAPI](https://github.com/JorelAli/1.13-Command-API) version 4.x. Other
+CommandAPI versions may also work, worth giving it a shot. It'll be immediately
+obvious as if the version is incompatible, the plugin won't load or no commands
+will work.
 
 You can download ScriptedQuests from [GitHub Packages](https://github.com/TeamMonumenta/scripted-quests/packages).
 This is automatically updated every time new changes are made. Click on the
@@ -125,9 +128,11 @@ an NPC, quest components are run in-order (more than one may be executed).
   access to pre-prepared command bundles
 
 `/interactNpc <npcName> [EntityType]`
+`/interactNpc <npc>`
 - permission: `scriptedquests.interactnpc`
 - EntityType is optional (default = VILLAGER) and can be chosen from this
   list: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html
+- When using the alternate syntax, npc is a selector, and acts identical to clicking that entity.
 - This command can be used to build location - based quests that don't
   involve clicking on an NPC. To do this, use a repeating command block with a
   command of this form: `execute as @p[r = 5] run interactnpc Aimee VILLAGER`

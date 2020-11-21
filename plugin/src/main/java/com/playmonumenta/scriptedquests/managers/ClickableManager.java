@@ -35,8 +35,8 @@ public class ClickableManager {
 	}
 
 	public boolean clickEvent(Plugin plugin, Player player, String label) {
-		// Players who are racing can not click things
-		if (plugin.mRaceManager.isRacing(player)) {
+		// Check if race allows this
+		if (!plugin.mRaceManager.isNotRacingOrAllowsClickables(player)) {
 			player.sendMessage(ChatColor.RED + "Can not do this while racing!");
 			return false;
 		}

@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -23,6 +25,12 @@ public class QuestUtils {
 	}
 
 	public static void loadScriptedQuests(Plugin plugin, String folderName, CommandSender sender, JsonLoadAction action) {
+		Set<CommandSender> senders = new HashSet<CommandSender>();
+		senders.add(sender);
+		loadScriptedQuests(plugin, folderName, senders, action);
+	}
+
+	public static void loadScriptedQuests(Plugin plugin, String folderName, Set<CommandSender> senders, JsonLoadAction action) {
 		String folderLocation = plugin.getDataFolder() + File.separator + folderName;
 		ArrayList<File> listOfFiles;
 		ArrayList<String> listOfLabels = new ArrayList<String>();
@@ -38,8 +46,12 @@ public class QuestUtils {
 			listOfFiles = FileUtils.getFilesInDirectory(folderLocation, ".json");
 		} catch (IOException e) {
 			plugin.getLogger().severe("Caught exception trying to reload " + folderName + ": " + e);
-			if (sender != null) {
-				sender.sendMessage(ChatColor.RED + "Caught exception trying to reload " + folderName + ": " + e);
+			if (senders != null) {
+				for (CommandSender sender : senders) {
+					if (sender != null) {
+						sender.sendMessage(ChatColor.RED + "Caught exception trying to reload " + folderName + ": " + e);
+					}
+				}
 			}
 			return;
 		}
@@ -67,15 +79,23 @@ public class QuestUtils {
 				plugin.getLogger().severe("Caught exception: " + e);
 				e.printStackTrace();
 
-				if (sender != null) {
-					sender.sendMessage(ChatColor.RED + "Failed to load quest file '" + file.getPath() + "'");
-					MessagingUtils.sendStackTrace(sender, e);
+				if (senders != null) {
+					for (CommandSender sender : senders) {
+						if (sender != null) {
+							sender.sendMessage(ChatColor.RED + "Failed to load quest file '" + file.getPath() + "'");
+							MessagingUtils.sendStackTrace(sender, e);
+						}
+					}
 				}
 			}
 		}
 
-		if (sender != null) {
-			sender.sendMessage(ChatColor.GOLD + "Loaded " + Integer.toString(numFiles) + " " + folderName + " files");
+		if (senders != null) {
+			for (CommandSender sender : senders) {
+				if (sender != null) {
+					sender.sendMessage(ChatColor.GOLD + "Loaded " + Integer.toString(numFiles) + " " + folderName + " files");
+				}
+			}
 
 			if (numFiles <= 20) {
 				Collections.sort(listOfLabels);
@@ -88,13 +108,21 @@ public class QuestUtils {
 					}
 
 					if (outMsg.length() > 1000) {
-						sender.sendMessage(ChatColor.GOLD + outMsg);
+						for (CommandSender sender : senders) {
+							if (sender != null) {
+								sender.sendMessage(ChatColor.GOLD + outMsg);
+							}
+						}
 						outMsg = "";
 					}
 				}
 
 				if (!outMsg.isEmpty()) {
-					sender.sendMessage(ChatColor.GOLD + outMsg);
+					for (CommandSender sender : senders) {
+						if (sender != null) {
+							sender.sendMessage(ChatColor.GOLD + outMsg);
+						}
+					}
 				}
 			}
 		}

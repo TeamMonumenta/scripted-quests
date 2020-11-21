@@ -19,7 +19,6 @@ import org.bukkit.potion.PotionEffectType;
 import com.playmonumenta.scriptedquests.Constants;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.QuestNpc;
-import com.playmonumenta.scriptedquests.utils.MetadataUtils;
 
 public class EntityListener implements Listener {
 	private Plugin mPlugin;
@@ -55,7 +54,6 @@ public class EntityListener implements Listener {
 				}
 			} else {
 				if (!event.isCancelled()
-				    && !MetadataUtils.happenedInRecentTicks(player, Constants.PLAYER_USED_INTERACTABLE_METAKEY, 3)
 				    && mPlugin.mInteractableManager.attackEntityEvent(mPlugin, player, item, damagee)) {
 					// interactEntityEvent returning true means this event should be canceled
 					event.setCancelled(true);

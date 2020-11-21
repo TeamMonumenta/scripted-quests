@@ -5,17 +5,18 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import org.bukkit.Bukkit;
-
 import com.playmonumenta.scriptedquests.Plugin;
 
-import io.github.jorelali.commandapi.api.CommandAPI;
-import io.github.jorelali.commandapi.api.CommandPermission;
-import io.github.jorelali.commandapi.api.FunctionWrapper;
-import io.github.jorelali.commandapi.api.arguments.Argument;
-import io.github.jorelali.commandapi.api.arguments.FunctionArgument;
-import io.github.jorelali.commandapi.api.arguments.IntegerArgument;
-import io.github.jorelali.commandapi.api.arguments.LiteralArgument;
+import org.bukkit.Bukkit;
+
+import dev.jorel.commandapi.CommandAPI;
+import dev.jorel.commandapi.CommandAPICommand;
+import dev.jorel.commandapi.CommandPermission;
+import dev.jorel.commandapi.arguments.Argument;
+import dev.jorel.commandapi.arguments.FunctionArgument;
+import dev.jorel.commandapi.arguments.IntegerArgument;
+import dev.jorel.commandapi.arguments.LiteralArgument;
+import dev.jorel.commandapi.wrappers.FunctionWrapper;
 
 public class ScheduleFunction {
 	private class DelayedFunction {
@@ -37,8 +38,10 @@ public class ScheduleFunction {
 	private final List<DelayedFunction> mFunctions = new ArrayList<DelayedFunction>();
 	private final Plugin mPlugin;
 	private Integer mTaskId = null;
-	private final List<DelayedFunction> mFunctionsToRun = new ArrayList<DelayedFunction>();
 	private final Runnable mRunnable = new Runnable() {
+		// Re-use the same temporary list each iteration
+		private final List<DelayedFunction> mFunctionsToRun = new ArrayList<DelayedFunction>();
+
 		@Override
 		public void run() {
 			Iterator<DelayedFunction> it = mFunctions.iterator();
@@ -75,19 +78,19 @@ public class ScheduleFunction {
 
 		/* Unregister the default /schedule command */
 		try {
-			CommandAPI.getInstance().unregister("schedule");
+			CommandAPI.unregister("schedule");
 		} catch (Exception e) {
 			// Nothing to do here - there is nothing to unregister in 1.13
 			plugin.getLogger().info("Failed to unregister /schedule - this is only an error in 1.14+");
 		}
 
-		CommandAPI.getInstance().register("schedule",
-		                                  CommandPermission.fromString("scriptedquests.schedulefunction"),
-		                                  arguments,
-		                                  (sender, args) -> {
-											  addDelayedFunction((FunctionWrapper[])args[0], (Integer)args[1]);
-		                                  }
-		);
+		new CommandAPICommand("schedule")
+			.withPermission(CommandPermission.fromString("scriptedquests.schedulefunction"))
+			.withArguments(arguments)
+			.executes((sender, args) -> {
+				addDelayedFunction((FunctionWrapper[])args[0], (Integer)args[1]);
+			})
+			.register();
 
 		/* TODO: Add the other /schedule variants (clear and replace/append variants) */
 	}
@@ -102,7 +105,8 @@ public class ScheduleFunction {
 
 	/* Run all the remaining commands now, even though they are scheduled for later */
 	public void cancel() {
-		for (DelayedFunction entry : mFunctions) {
+		for (DelayedFunction entry : new ArrayList<>(mFunctions)) {
+			// Note that these functions might add more functions... but there's nothing we can do about that
 			entry.run();
 		}
 		mFunctions.clear();

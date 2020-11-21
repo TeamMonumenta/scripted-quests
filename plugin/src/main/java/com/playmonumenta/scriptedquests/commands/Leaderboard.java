@@ -7,6 +7,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.playmonumenta.redissync.MonumentaRedisSyncAPI;
+import com.playmonumenta.scriptedquests.utils.LeaderboardUtils;
+import com.playmonumenta.scriptedquests.utils.LeaderboardUtils.LeaderboardEntry;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -14,60 +18,52 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 
-import com.playmonumenta.redissync.MonumentaRedisSyncAPI;
-import com.playmonumenta.scriptedquests.utils.LeaderboardUtils;
-import com.playmonumenta.scriptedquests.utils.LeaderboardUtils.LeaderboardEntry;
-
-import io.github.jorelali.commandapi.api.CommandAPI;
-import io.github.jorelali.commandapi.api.CommandPermission;
-import io.github.jorelali.commandapi.api.arguments.Argument;
-import io.github.jorelali.commandapi.api.arguments.BooleanArgument;
-import io.github.jorelali.commandapi.api.arguments.EntitySelectorArgument;
-import io.github.jorelali.commandapi.api.arguments.EntitySelectorArgument.EntitySelector;
-import io.github.jorelali.commandapi.api.arguments.IntegerArgument;
-import io.github.jorelali.commandapi.api.arguments.LiteralArgument;
-import io.github.jorelali.commandapi.api.arguments.StringArgument;
+import dev.jorel.commandapi.CommandAPICommand;
+import dev.jorel.commandapi.CommandPermission;
+import dev.jorel.commandapi.arguments.Argument;
+import dev.jorel.commandapi.arguments.BooleanArgument;
+import dev.jorel.commandapi.arguments.EntitySelectorArgument;
+import dev.jorel.commandapi.arguments.IntegerArgument;
+import dev.jorel.commandapi.arguments.LiteralArgument;
+import dev.jorel.commandapi.arguments.StringArgument;
 
 public class Leaderboard {
 	@SuppressWarnings("unchecked")
 	public static void register(Plugin plugin) {
 		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
 
-		arguments.put("players", new EntitySelectorArgument(EntitySelector.MANY_PLAYERS));
+		arguments.put("players", new EntitySelectorArgument(EntitySelectorArgument.EntitySelector.MANY_PLAYERS));
 		arguments.put("objective", new StringArgument());
 		arguments.put("descending", new BooleanArgument());
 		arguments.put("page", new IntegerArgument(1)); // Min 1
-
-		CommandAPI.getInstance().register("leaderboard",
-		                                  CommandPermission.fromString("scriptedquests.leaderboard"),
-		                                  arguments,
-		                                  (sender, args) -> {
-		                                      for (Player player : (Collection<Player>)args[0]) {
-		                                          leaderboard(plugin, player, (String)args[1],
-		                                                      (Boolean)args[2], (Integer)args[3]);
-		                                      }
-		                                  }
-		);
+		new CommandAPICommand("leaderboard")
+			.withPermission(CommandPermission.fromString("scriptedquests.leaderboard"))
+			.withArguments(arguments)
+			.executes((sender, args) -> {
+				for (Player player : (Collection<Player>)args[0]) {
+					leaderboard(plugin, player, (String)args[1],
+						(Boolean)args[2], (Integer)args[3]);
+				}
+			})
+			.register();
 
 		/*
 		 * Add a command to copy a player's scoreboard to the Redis leaderboard if MonumentaRedisSync exists.
 		 * If using scoreboards for leaderboards, this command does nothing
 		 */
-		arguments = new LinkedHashMap<>();
-
+		arguments.clear();
 		arguments.put("update", new LiteralArgument("update"));
-		arguments.put("players", new EntitySelectorArgument(EntitySelector.MANY_PLAYERS));
+		arguments.put("players", new EntitySelectorArgument(EntitySelectorArgument.EntitySelector.MANY_PLAYERS));
 		arguments.put("objective", new StringArgument());
-
-		CommandAPI.getInstance().register("leaderboard",
-		                                  CommandPermission.fromString("scriptedquests.leaderboard"),
-		                                  arguments,
-		                                  (sender, args) -> {
-		                                      for (Player player : (Collection<Player>)args[0]) {
-		                                          leaderboardUpdate(player, (String)args[1]);
-		                                      }
-		                                  }
-		);
+		new CommandAPICommand("leaderboard")
+			.withPermission(CommandPermission.fromString("scriptedquests.leaderboard"))
+			.withArguments(arguments)
+			.executes((sender, args) -> {
+				for (Player player : (Collection<Player>)args[0]) {
+					leaderboardUpdate(player, (String)args[1]);
+				}
+			})
+			.register();
 	}
 
 	public static void leaderboard(Plugin plugin, Player player, String objective, boolean descending, int page) {
@@ -153,7 +149,6 @@ public class Leaderboard {
 			}
 		}
 	}
-
 
 	private static void colorizeEntries(List<LeaderboardEntry> entries, String playerName, int index) {
 		for (LeaderboardEntry entry : entries) {

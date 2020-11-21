@@ -44,8 +44,8 @@ public class QuestTrigger implements CommandExecutor {
 		Player player = (Player)sender;
 		int triggerIndex;
 
-		// Players who are racing can not interact with NPCs
-		if (mPlugin.mRaceManager.isRacing(player)) {
+		// Check if race allows this
+		if (!mPlugin.mRaceManager.isNotRacingOrAllowsDialogClick(player)) {
 			return false;
 		}
 

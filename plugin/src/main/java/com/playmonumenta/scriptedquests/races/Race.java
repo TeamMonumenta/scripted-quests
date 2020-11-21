@@ -4,6 +4,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
+import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -49,6 +50,10 @@ public class Race {
 	private final String mName;
 	private final Objective mScoreboard;
 	private final boolean mShowStats;
+	private final boolean mAllowDialogClick;
+	private final boolean mAllowCode;
+	private final boolean mAllowClickables;
+	private final boolean mAllowNpcInteraction;
 	private final boolean mRingless;
 	private final Location mStart;
 	private final QuestActions mStartActions;
@@ -69,17 +74,22 @@ public class Race {
 	private int mFrame = 0;
 	private TimeBar mTimeBar = null;
 	private boolean mCountdownActive = false;
-	private int mWRTime;
+	private int mWRTime = Integer.MAX_VALUE;
 
 	public Race(Plugin plugin, RaceManager manager, Player player, String name,
 	            Objective scoreboard, boolean showStats, boolean ringless, Location start, QuestActions startActions,
-	            List<RaceWaypoint> waypoints, List<RaceTime> times, QuestActions loseActions) {
+	            List<RaceWaypoint> waypoints, List<RaceTime> times, QuestActions loseActions, boolean allowDialogClick,
+				boolean allowCode, boolean allowClickables, boolean allowNpcInteraction) {
 		mPlugin = plugin;
 		mManager = manager;
 		mPlayer = player;
 		mName = name;
 		mScoreboard = scoreboard;
 		mShowStats = showStats;
+		mAllowDialogClick = allowDialogClick;
+		mAllowCode = allowCode;
+		mAllowClickables = allowClickables;
+		mAllowNpcInteraction = allowNpcInteraction;
 		mRingless = ringless;
 		mStart = start;
 		mStartActions = startActions;
@@ -89,7 +99,8 @@ public class Race {
 
 		mWorld = player.getWorld();
 		mStopLoc = player.getLocation();
-		mWRTime = getWRTime();
+
+		updateWRTime();
 
 		// Create the ring entities in the right shape
 		Location baseLoc = mWaypoints.get(0).getPosition().toLocation(mWorld);
@@ -417,24 +428,62 @@ public class Race {
 		}
 	}
 
-	private int getWRTime() {
-		int top = Integer.MAX_VALUE;
-		int score;
+	private void updateWRTime() {
 		if (mScoreboard == null || mScoreboard.getScoreboard() == null) {
-			// no scoreboard = statless race, return a dummy world record
-			return 1;
+			// no scoreboard = statless race
+			return;
 		}
-		for (String name : mScoreboard.getScoreboard().getEntries()) {
-			score = mScoreboard.getScore(name).getScore();
-			if (score < top && score > 0) {
-				top = score;
+
+		/* If the RedisSync plugin is also present, update the score in the leaderboard cache */
+		if (Bukkit.getServer().getPluginManager().getPlugin("MonumentaRedisSync") != null) {
+			/* Get the lowest value from the redis leaderboard that's not zero */
+			Bukkit.getScheduler().runTaskAsynchronously(mPlugin, () -> {
+				try {
+					Map<String, Integer> values = MonumentaRedisSyncAPI.getLeaderboard(mScoreboard.getName(), 0, -1, true).get();
+					for (Map.Entry<String, Integer> entry : values.entrySet()) {
+						// These are already in sorted order - stop at the first non-zero one
+						if (entry.getValue() > 0) {
+							mWRTime = entry.getValue();
+							return;
+						}
+					}
+				} catch (Exception ex) {
+					mPlugin.getLogger().severe("Failed to get world record time for leaderboard " + mScoreboard.getName() + ": " + ex.getMessage());
+					ex.printStackTrace();
+				}
+			});
+		} else {
+			/* Get the lowest value from the scoreboard that's not zero */
+			int top = Integer.MAX_VALUE;
+			int score;
+			for (String name : mScoreboard.getScoreboard().getEntries()) {
+				score = mScoreboard.getScore(name).getScore();
+				if (score < top && score > 0) {
+					top = score;
+				}
 			}
+			mWRTime = top;
 		}
-		return top;
 	}
 
 	public boolean isRingless() {
 		return mRingless;
+	}
+
+	public boolean allowsDialogClick() {
+		return mAllowDialogClick;
+	}
+
+	public boolean allowsCode() {
+		return mAllowCode;
+	}
+
+	public boolean allowsClickables() {
+		return mAllowClickables;
+	}
+
+	public boolean allowsNpcInteraction() {
+		return mAllowNpcInteraction;
 	}
 
 	public boolean isStatless() {

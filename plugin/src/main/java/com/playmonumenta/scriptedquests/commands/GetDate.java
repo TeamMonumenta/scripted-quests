@@ -4,27 +4,27 @@ import java.util.LinkedHashMap;
 
 import com.playmonumenta.scriptedquests.utils.DateUtils;
 
-import io.github.jorelali.commandapi.api.CommandAPI;
-import io.github.jorelali.commandapi.api.CommandPermission;
-import io.github.jorelali.commandapi.api.arguments.Argument;
-import io.github.jorelali.commandapi.api.arguments.TextArgument;
+import dev.jorel.commandapi.CommandAPICommand;
+import dev.jorel.commandapi.CommandPermission;
+import dev.jorel.commandapi.arguments.Argument;
+import dev.jorel.commandapi.arguments.TextArgument;
 
 public class GetDate {
-	private static final String[] FIELDS = new String[] {"Year", "Month", "DayOfMonth", "DayOfWeek", "IsDst",
-	                                                     "IsPm", "HourOfDay", "HourOfTwelve", "Minute", "Second", "Ms"};
+	private static final String[] FIELDS = new String[] {"Year", "Month", "DayOfMonth", "DayOfWeek", "DaysSinceEpoch", "IsDst",
+	                                                     "IsPm", "HourOfDay", "HourOfTwelve", "Minute", "Second", "Ms", };
 
 	public static void register() {
 		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
 
 		arguments.put("field", new TextArgument().overrideSuggestions(FIELDS));
 
-		CommandAPI.getInstance().register("getdate",
-		                                  CommandPermission.fromString("scriptedquests.getdate"),
-		                                  arguments,
-		                                  (sender, args) -> {
-		                                      return getField((String)args[0]);
-		                                  }
-		);
+		new CommandAPICommand("getdate")
+			.withPermission(CommandPermission.fromString("scriptedquests.getdate"))
+			.withArguments(arguments)
+			.executes((sender, args) -> {
+					return getField((String)args[0]);
+				})
+			.register();
 	}
 
 	private static int getField(String field) {
@@ -37,6 +37,8 @@ public class GetDate {
 			return DateUtils.getDayOfMonth();
 		case "DayOfWeek":
 			return DateUtils.getDayOfWeek();
+		case "DaysSinceEpoch":
+			return (int)DateUtils.getDaysSinceEpoch();
 		case "IsDst":
 			return DateUtils.isDst() ? 1 : 0;
 		case "IsPm":

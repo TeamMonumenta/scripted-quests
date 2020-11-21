@@ -34,6 +34,10 @@ public class RaceFactory {
 	private final String mLabel;
 	private final Objective mObjective;
 	private final boolean mShowStats;
+	private final boolean mAllowDialogClick;
+	private final boolean mAllowCode;
+	private final boolean mAllowClickables;
+	private final boolean mAllowNpcInteraction;
 	private final boolean mRingless;
 	private final Location mStart;
 	private final QuestActions mStartActions;
@@ -85,6 +89,38 @@ public class RaceFactory {
 			throw new Exception("'show_stats' entry is required");
 		}
 		mShowStats = showStats.getAsBoolean();
+
+		// allow_dialog_click
+		JsonElement allowDialogClick = object.get("allow_dialog_click");
+		if (allowDialogClick == null) {
+			mAllowDialogClick = false;
+		} else {
+			mAllowDialogClick = allowDialogClick.getAsBoolean();
+		}
+
+		// allow_code
+		JsonElement allowCode = object.get("allow_code");
+		if (allowCode == null) {
+			mAllowCode = false;
+		} else {
+			mAllowCode = allowCode.getAsBoolean();
+		}
+
+		// allow_clickables
+		JsonElement allowClickables = object.get("allow_clickables");
+		if (allowClickables == null) {
+			mAllowClickables = false;
+		} else {
+			mAllowClickables = allowClickables.getAsBoolean();
+		}
+
+		// allow_npc_interaction
+		JsonElement allowNpcInteraction = object.get("allow_npc_interaction");
+		if (allowNpcInteraction == null) {
+			mAllowNpcInteraction = false;
+		} else {
+			mAllowNpcInteraction = allowNpcInteraction.getAsBoolean();
+		}
 
 		// ringless
 		JsonElement ringless = object.get("ringless");
@@ -211,7 +247,8 @@ public class RaceFactory {
 
 	public Race createRace(Player player) {
 		return new Race(mPlugin, mManager, player, mName, mObjective,
-		                mShowStats, mRingless, mStart, mStartActions, mWaypoints, mTimes, mLoseActions);
+		                mShowStats, mRingless, mStart, mStartActions, mWaypoints, mTimes, mLoseActions,
+						mAllowDialogClick, mAllowCode, mAllowClickables, mAllowNpcInteraction);
 	}
 
 	public void sendLeaderboard(Player player, int page) {
@@ -251,7 +288,9 @@ public class RaceFactory {
 					/* TODO: Someday it'd be nice to just look up the appropriate range, and the player's value, rather than everything */
 					Map<String, Integer> values = MonumentaRedisSyncAPI.getLeaderboard(mObjective.getName(), 0, -1, true).get();
 					for (Map.Entry<String, Integer> entry : values.entrySet()) {
-						entries.add(new LeaderboardEntry(entry.getKey(), "", entry.getValue(), RaceUtils.msToTimeString(entry.getValue())));
+						if (entry.getValue() != 0) {
+							entries.add(new LeaderboardEntry(entry.getKey(), "", entry.getValue(), RaceUtils.msToTimeString(entry.getValue())));
+						}
 					}
 					colorizeEntries(entries, player.getName());
 
