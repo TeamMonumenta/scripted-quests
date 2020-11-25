@@ -33,7 +33,7 @@ public class Waypoint {
 		arguments.put("player", new EntitySelectorArgument(EntitySelector.ONE_PLAYER));
 		arguments.put("title", new TextArgument());
 		arguments.put("label",  new TextArgument());
-		arguments.put("location", new LocationArgument(LocationType.BLOCK_POSITION));
+		arguments.put("location", new LocationArgument(LocationType.PRECISE_POSITION));
 		new CommandAPICommand("waypoint")
 			.withPermission(perm)
 			.withArguments(arguments)
