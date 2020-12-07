@@ -65,6 +65,13 @@
                     title: "groups",
                     description: "Spawner groups.",
                     type: "array",
+					defaultProperties: [
+                         "mob",
+				         "loc",
+						 "amount",
+						 "radius",
+						 "spawnRate"
+                    ],
                     items: {
                         type: "object",
 						properties: {
@@ -86,14 +93,40 @@
 						      title: "radius",
 						      type: "integer",
 							  description: "This can be 0 if you want the mob to spawn in the exact location",
-                              default: "0"
+                              default: 0
                            },
 						   spawnRate: {
 						      title: "spawnRate",
 						      type: "integer",
 							  description: "This is in SECONDS. Group spawnrates are independent of each other.",
-                              default: "10"
-                           }
+                              default: 10
+                           },
+						   wanderSpeed: {
+						      title: "wanderSpeed",
+						      type: "number",
+							  description: "Number = the speed multiplier of the mob while wandering",
+                              default: 0.7
+						   },
+						   wanderRadius: {
+						      title: "wanderRadius",
+						      type: "integer",
+                              default: 5
+						   },
+						   path: {
+						      title: "path",
+							  description: "Used to make mobs walk in a certain path. Good for patrol packs.",
+						      type: "array",
+							  items: [
+							    type: "string",
+								default: "0,0,0"
+							  ]
+						   },
+						   pathSpeed: {
+						      title: "pathSpeed",
+						      type: "number",
+							  description: "Number = the speed multiplier of the mob while walking the path",
+                              default: 0.7
+						   }
 						}
                     }
                 }
