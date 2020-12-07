@@ -65,15 +65,15 @@
                     title: "groups",
                     description: "Spawner groups.",
                     type: "array",
-					defaultProperties: [
+                    items: {
+                        type: "object",
+						defaultProperties: [
                          "mob",
 				         "loc",
 						 "amount",
 						 "radius",
 						 "spawnRate"
-                    ],
-                    items: {
-                        type: "object",
+                        ],
 						properties: {
 						   mob: {
 						      title: "mob_id",
