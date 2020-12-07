@@ -8,9 +8,11 @@ import com.playmonumenta.scriptedquests.quests.components.QuestFieldLink;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import me.Novalescent.Core;
 import me.Novalescent.player.PlayerData;
+import me.Novalescent.player.options.RPGOption;
 import me.Novalescent.player.quests.QuestData;
 import me.Novalescent.player.quests.QuestTemplate;
 import me.Novalescent.player.scoreboards.PlayerScoreboard;
+import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
@@ -54,6 +56,12 @@ public class ActionSetQuestData implements ActionBase {
 				data.getQuestDataList().add(questData);
 			}
 
+			QuestData tracked = data.getTrackedQuest();
+			if ((boolean) data.mOptions.getOptionValue(RPGOption.AUTOTRACK_QUESTS) &&
+				!questData.mTracked && tracked == null) {
+				questData.mTracked = true;
+				tracked = questData;
+			}
 
 			boolean maxed = false;
 			if (mOperation == SET_EXACT) {
@@ -63,8 +71,14 @@ public class ActionSetQuestData implements ActionBase {
 			}
 
 			PlayerScoreboard scoreboard = data.mScoreboard;
-			if (scoreboard.mTemplate != null && scoreboard.mTemplate instanceof QuestTemplate) {
+			if (scoreboard.mTemplate != null) {
+				if (scoreboard.mTemplate instanceof QuestTemplate) {
+					scoreboard.updateScoreboard();
+				}
+			} else if (tracked != null) {
+				scoreboard.mTemplate = new QuestTemplate();
 				scoreboard.updateScoreboard();
+				player.playSound(player.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 1, 1.25f);
 			}
 
 			return maxed;
