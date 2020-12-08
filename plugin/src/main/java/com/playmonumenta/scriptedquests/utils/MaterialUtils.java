@@ -12,6 +12,8 @@ public class MaterialUtils {
 		Material.ACACIA_FENCE_GATE,
 		Material.ACACIA_TRAPDOOR,
 		Material.ANVIL,
+		Material.CHIPPED_ANVIL,
+		Material.DAMAGED_ANVIL,
 		Material.BEACON,
 		Material.BIRCH_BUTTON,
 		Material.BIRCH_DOOR,
@@ -114,7 +116,18 @@ public class MaterialUtils {
 		Material.WHITE_BED,
 		Material.WHITE_SHULKER_BOX,
 		Material.YELLOW_BED,
-		Material.YELLOW_SHULKER_BOX
+		Material.YELLOW_SHULKER_BOX,
+		Material.LOOM,
+		Material.BARREL,
+		Material.SMOKER,
+		Material.BLAST_FURNACE,
+		Material.CARTOGRAPHY_TABLE,
+		Material.FLETCHING_TABLE,
+		Material.GRINDSTONE,
+		Material.SMITHING_TABLE,
+		Material.STONECUTTER,
+		Material.BELL,
+		Material.COMPOSTER
 	);
 
 	public static final EnumSet<Material> shulkerTypes = EnumSet.of(
