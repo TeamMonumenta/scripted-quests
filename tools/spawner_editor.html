@@ -45,97 +45,107 @@
 
         // The schema for the editor
         schema: {
-            title: "RPG Spawner Nodes",
-			type: "array",
-			items: {
-			  type: "object",
-			  title: "RPG Spawner",
-			  defaultProperties: [
-                "loc",
-				"groups"
-				],
-				additionalProperties:false,
-				properties: {
-					loc: {
-						required: true,
-						propertyOrder: 1,
-						title: "loc",
-						description: "The location of where the spawner group is. This is the location that is used for detection of players nearby.",
-						type: "string",
-						default: "world,0,0,0"
-					},
-					groups: {
-						propertyOrder: 13,
-						title: "groups",
-						description: "Spawner groups.",
-						type: "array",
-						items: {
-							type: "object",
-							defaultProperties: [
-							 "mob",
-							 "loc",
-							 "amount",
-							 "radius",
-							 "spawnRate"
-							],
-							properties: {
-							   mob: {
-								  title: "mob_id",
-								  type: "string"
-							   },
-							   loc: {
-								  title: "loc",
-								  type: "string",
-								  default: "0,0,0"
-							   },
-							   amount: {
-								  title: "amount",
-								  type: "integer",
-								  default: 1
-							   },
-							   radius: {
-								  title: "radius",
-								  type: "integer",
-								  description: "This can be 0 if you want the mob to spawn in the exact location",
-								  default: 0
-							   },
-							   spawnRate: {
-								  title: "spawnRate",
-								  type: "integer",
-								  description: "This is in SECONDS. Group spawnrates are independent of each other.",
-								  default: 10
-							   },
-							   wanderSpeed: {
-								  title: "wanderSpeed",
-								  type: "number",
-								  description: "Number = the speed multiplier of the mob while wandering",
-								  default: 0.7
-							   },
-							   wanderRadius: {
-								  title: "wanderRadius",
-								  type: "integer",
-								  default: 5
-							   },
-							   path: {
-								  title: "path",
-								  description: "Used to make mobs walk in a certain path. Good for patrol packs.",
-								  type: "array",
-								  items: {
-									type: "string",
-									default: "0,0,0"
-								  }
-							   },
-							   pathSpeed: {
-								  title: "pathSpeed",
-								  type: "number",
-								  description: "Number = the speed multiplier of the mob while walking the path",
-								  default: 0.7
-							   }
+            title: "RPG Spawner",
+            defaultProperties: [
+                "spawners"
+            ],
+            additionalProperties:false,
+            properties: {
+			    spawners: {
+				    required: true,
+                    propertyOrder: 1,
+					type: "array",
+					items: {
+					    type: "object",
+					    title: "RPG Spawner",
+						defaultProperties: [
+							"loc",
+							"groups"
+						],
+						additionalProperties:false,
+						properties: {
+							loc: {
+								required: true,
+								propertyOrder: 1,
+								title: "loc",
+								description: "The location of where the spawner group is. This is the location that is used for detection of players nearby.",
+								type: "string",
+								default: "world,0,0,0"
+							},
+							groups: {
+								propertyOrder: 13,
+								title: "groups",
+								description: "Spawner groups.",
+								type: "array",
+								items: {
+									type: "object",
+									defaultProperties: [
+									 "mob",
+									 "loc",
+									 "amount",
+									 "radius",
+									 "spawnRate"
+									],
+									properties: {
+									   mob: {
+										  title: "mob_id",
+										  type: "string"
+									   },
+									   loc: {
+										  title: "loc",
+										  type: "string",
+										  default: "0,0,0"
+									   },
+									   amount: {
+										  title: "amount",
+										  type: "integer",
+										  default: 1
+									   },
+									   radius: {
+										  title: "radius",
+										  type: "integer",
+										  description: "This can be 0 if you want the mob to spawn in the exact location",
+										  default: 0
+									   },
+									   spawnRate: {
+										  title: "spawnRate",
+										  type: "integer",
+										  description: "This is in SECONDS. Group spawnrates are independent of each other.",
+										  default: 10
+									   },
+									   wanderSpeed: {
+										  title: "wanderSpeed",
+										  type: "number",
+										  description: "Number = the speed multiplier of the mob while wandering",
+										  default: 0.7
+									   },
+									   wanderRadius: {
+										  title: "wanderRadius",
+										  type: "integer",
+										  default: 5
+									   },
+									   path: {
+										  title: "path",
+										  description: "Used to make mobs walk in a certain path. Good for patrol packs.",
+										  type: "array",
+										  items: {
+											type: "string",
+											default: "0,0,0"
+										  }
+									   },
+									   pathSpeed: {
+										  title: "pathSpeed",
+										  type: "number",
+										  description: "Number = the speed multiplier of the mob while walking the path",
+										  default: 0.7
+									   }
+									}
+								}
 							}
 						}
 					}
 				}
-			}
+            }
         }
     });
 
