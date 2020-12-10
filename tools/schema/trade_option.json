@@ -1,0 +1,34 @@
+{
+    "type": "object",
+    "patternProperties": {
+		".*": {
+			"headerTemplate": "{{i}}",
+			"options": {
+				"keep_oneof_values": false
+			},
+			"oneOf": [
+				{
+					"title": "Item",
+					"type": "object",
+					"properties": {
+						"item_id": {
+							"title": "item_id",
+							"type": "string"
+						}
+					}
+				},
+				{
+					"title": "Coin",
+					"type": "object",
+					"properties": {
+						"coin_cost": {
+							"title": "coin_cost",
+							"description": "This is in SILVER COINS",
+							"type": "integer"
+						}
+					}
+				}
+			]
+		}
+	}
+}
