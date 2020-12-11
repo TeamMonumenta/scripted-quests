@@ -4,21 +4,60 @@
     "properties": {
         "item_1": {
 		    "title": "item_1",
+			"description": "The first item needed to be traded. This can be left blank if no trade",
             "required": true,
-            "$ref": "trade_option.json",
-            "propertyOrder": 1
+            "options": {
+				"keep_oneof_values": false
+			},
+			"oneOf": [
+				{
+					"title": "Item",
+					"type": "string"
+				},
+				{
+					"title": "Coin",
+					"description": "This is in SILVER COINS",
+					"type": "integer"
+				}
+			]
         },
-        "item_1": {
-		    "title": "item_1",
+        "item_2": {
+		    "title": "item_2",
+			"description": "The second item needed to be traded. This can be left blank if no trade",
             "required": true,
-            "$ref": "trade_option.json",
-            "propertyOrder": 2
+            "options": {
+				"keep_oneof_values": false
+			},
+			"oneOf": [
+				{
+					"title": "Item",
+					"type": "string"
+				},
+				{
+					"title": "Coin",
+					"description": "This is in SILVER COINS",
+					"type": "integer"
+				}
+			]
         },
         "result": {
-		    "title": "result", 
+		    "title": "result",
             "required": true,
-            "$ref": "trade_option.json",
-            "propertyOrder": 3
-		}
+			"description": "The result of the trade.",
+            "options": {
+				"keep_oneof_values": false
+			},
+			"oneOf": [
+				{
+					"title": "Item",
+					"type": "string"
+				},
+				{
+					"title": "Coin",
+					"description": "This is in SILVER COINS",
+					"type": "integer"
+				}
+			]
+        }
     }
 }
