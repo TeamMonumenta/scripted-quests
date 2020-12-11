@@ -2,14 +2,14 @@
     "type": "object",
     "additionalProperties": false,
     "properties": {
-        "trade_1": {
-		    "title": "trade_1",
+        "item_1": {
+		    "title": "item_1",
             "required": true,
             "$ref": "trade_option.json",
             "propertyOrder": 1
         },
-        "trade_2": {
-		    "title": "trade_2",
+        "item_1": {
+		    "title": "item_1",
             "required": true,
             "$ref": "trade_option.json",
             "propertyOrder": 2
