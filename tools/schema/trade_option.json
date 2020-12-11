@@ -1,19 +1,16 @@
 {
-    "type": "object",
-    "patternProperties": {
-            "options": {
-				"keep_oneof_values": false
-			},
-			"oneOf": [
-				{
-					"title": "Item",
-					"type": "string"
-				},
-				{
-					"title": "Coin",
-					"description": "This is in SILVER COINS",
-					"type": "integer"
-				}
-			]
-	}
+    "options": {
+		"keep_oneof_values": false
+	},
+	"oneOf": [
+		{
+			"title": "Item",
+			"type": "string"
+		},
+		{
+			"title": "Coin",
+			"description": "This is in SILVER COINS",
+			"type": "integer"
+		}
+	]
 }
