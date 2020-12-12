@@ -36,6 +36,7 @@ import com.playmonumenta.scriptedquests.commands.ReloadQuests;
 import com.playmonumenta.scriptedquests.commands.ReloadZones;
 import com.playmonumenta.scriptedquests.commands.ScheduleFunction;
 import com.playmonumenta.scriptedquests.commands.SetVelocity;
+import com.playmonumenta.scriptedquests.commands.TestZone;
 import com.playmonumenta.scriptedquests.commands.TimerDebug;
 import com.playmonumenta.scriptedquests.commands.Waypoint;
 import com.playmonumenta.scriptedquests.listeners.EntityListener;
@@ -108,6 +109,7 @@ public class Plugin extends JavaPlugin {
 		Code.register(this);
 		SetVelocity.register();
 		DebugZones.register(this);
+		TestZone.register(this);
 		Heal.register();
 		Damage.register();
 		Cooldown.register();
