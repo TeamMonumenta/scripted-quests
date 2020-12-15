@@ -214,6 +214,7 @@
             "title": "zone_properties",
             "description": "Checks that the player is in a zone with the specified properties. Properties may be inverted by starting them with `!`. Click Properties, then type in the layer name in the input box and click the 'add' button. Layer and property names are case sensitive.",
             "type": "object",
+            "defaultProperties": ["default"],
             "patternProperties": {
                 ".*": {
                     "headerTemplate": "Layer {{i}}",
