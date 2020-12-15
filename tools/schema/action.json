@@ -114,6 +114,15 @@
                         "title": "A random line",
                         "type": "string"
                     }
+                },
+                "random_raw_text": {
+                    "title": "random_raw_text",
+                    "type": "array",
+                    "minItems": 2,
+                    "items": {
+                        "title": "A raw random line",
+                        "type": "string"
+                    }
                 }
             }
         },

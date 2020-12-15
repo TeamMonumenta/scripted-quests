@@ -146,6 +146,16 @@ public class ModelInstance {
 				rotation = 360 * Math.random();
 			}
 
+			mStands.add(mLoc.getWorld().spawn(mLoc, ArmorStand.class, (ArmorStand entity) -> {
+				entity.setVisible(false);
+				entity.setGravity(false);
+				entity.setMarker(true);
+				entity.setArms(true);
+				entity.setInvulnerable(true);
+				entity.setSilent(true);
+				entity.addScoreboardTag(me.Novalescent.Constants.REMOVE_ONENABLE);
+			}));
+
 			for (ModelPart part : mModel.getModelParts()) {
 				Vector vector = part.getCenterOffset().toVector();
 				vector = VectorUtils.rotateYAxis(vector, rotation);
