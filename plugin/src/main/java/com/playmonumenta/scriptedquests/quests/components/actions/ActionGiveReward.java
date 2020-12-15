@@ -44,6 +44,10 @@ public class ActionGiveReward implements ActionBase {
 			mAction = reward;
 		}
 
+		private String bracketText(String str) {
+			return ChatColor.DARK_GRAY + "[" + str + ChatColor.DARK_GRAY + "]";
+		}
+
 		public void openMenu(Plugin plugin, Entity npcEntity, Player player) {
 			MenuPage page = new MenuPage(player, "Claim Rewards", 54);
 
@@ -102,9 +106,9 @@ public class ActionGiveReward implements ActionBase {
 				} else {
 
 					// Accept
-					ItemStack claim = new ItemStack(Material.GREEN_CONCRETE);
+					ItemStack claim = new ItemStack(Material.LIME_CONCRETE);
 					ItemMeta claimMeta = claim.getItemMeta();
-					claimMeta.setDisplayName(ChatColor.GREEN + "Claim items");
+					claimMeta.setDisplayName(ChatColor.GREEN + "Claim Rewards");
 					claim.setItemMeta(claimMeta);
 
 					MenuItem claimItem = new MenuItem(claim);
@@ -114,29 +118,64 @@ public class ActionGiveReward implements ActionBase {
 						public void run() {
 							player.closeInventory();
 
-							if (mPicked != null) {
-								Collection<ItemStack> picked = new HashSet<>();
-								picked.add(mPicked);
-								InventoryUtils.giveItems(player, picked, false);
+							player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1.15f);
+							// Actions to run whenever the player accepts
+							for (QuestComponent component : mAction.mComponents) {
+								component.doActionsIfPrereqsMet(plugin, player, npcEntity);
 							}
-
-							InventoryUtils.giveItems(player, base, false);
-
 							PlayerData data = Core.getInstance().mPlayerManager.getPlayerData(player.getUniqueId());
+
+							data.giveXP(mAction.mXP);
+							player.sendMessage(bracketText(Utils.getColor("#73deff") + "+"
+								+ mAction.mXP + " " + Utils.getColor("#93ff73") + "Experience Points"));
 
 							if (mAction.mCoin > 0) {
 								data.mCoins += mAction.mCoin;
 								data.updateCoinPurse();
 								player.playSound(player.getLocation(), Sound.ITEM_ARMOR_EQUIP_DIAMOND, 1, 2);
 								player.playSound(player.getLocation(), Sound.ITEM_ARMOR_EQUIP_LEATHER, 1, 1.5f);
+
+								int[] coins = Utils.getCoinCounts(mAction.mCoin);
+								String coinCounts = "";
+
+								List<String> toJoin = new ArrayList<>();
+
+								if (coins[2] > 0) {
+									toJoin.add(Utils.getColor("#c5dde6") + "+" + coins[2] + " Platinum Coins");
+								}
+
+								if (coins[1] > 0) {
+									toJoin.add(Utils.getColor("#ffd633") + "+" + coins[1] + " Gold Coins");
+								}
+
+								if (coins[0] > 0) {
+									toJoin.add(Utils.getColor("#ffffff") + "+" + coins[0] + " Silver Coins");
+								}
+
+								coinCounts += String.join(", ", toJoin);
+								player.sendMessage(bracketText(coinCounts));
 							}
 
-							data.giveXP(mAction.mXP);
+							if (base.size() > 0) {
+								InventoryUtils.giveItems(player, base, false);
 
-							// Actions to run whenever the player accepts
-							for (QuestComponent component : mAction.mComponents) {
-								component.doActionsIfPrereqsMet(plugin, player, npcEntity);
+								for (ItemStack item : base) {
+									ItemMeta meta = item.getItemMeta();
+									player.sendMessage(bracketText(ChatColor.AQUA + "+" + item.getAmount() +
+										" " + meta.getDisplayName()));
+								}
 							}
+
+							if (mPicked != null) {
+								Collection<ItemStack> picked = new HashSet<>();
+								picked.add(mPicked);
+								InventoryUtils.giveItems(player, picked, false);
+
+								ItemMeta meta = mPicked.getItemMeta();
+								player.sendMessage(bracketText(ChatColor.AQUA + "+" + mPicked.getAmount()
+									+ " " + meta.getDisplayName()));
+							}
+
 						}
 
 					});

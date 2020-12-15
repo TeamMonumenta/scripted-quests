@@ -78,6 +78,28 @@
 					"type": "number"
 				}
 			}
+		},
+		"summon": {
+			"title": "summon",
+			"description": "Use this to summon mobs at the target's location",
+			"type": "object",
+			"properties": {
+				"mob_id": {
+					"title": "mob_id",
+					"description": "The mob to spawn. Specify the mob's ID",
+					"type": "string"
+				},
+				"amount": {
+					"title": "amount",
+					"description": "The amount of mobs to spawn",
+					"type": "integer"
+				},
+				"radius": {
+					"title": "radius",
+					"description": "The radius of which to spawn the mobs in. Does not check for block collisions",
+					"type": "number"
+				}
+			}
 		}
 	}
 }
