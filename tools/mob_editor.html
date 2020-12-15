@@ -67,6 +67,7 @@
 				"sounds",
 				"ranged",
 				"abilities",
+				"on_spawn",
                 "quest_components"
             ],
             additionalProperties:false,
@@ -260,6 +261,11 @@
                     description: "Use if you want to give the mob a ranged property",
                     $ref: "schema/ranged.json",
 					propertyOrder: 14
+				},
+				on_spawn: {
+					title: "on_spawn",
+					description: "The actions to play on the mob whenever they first spawn. This can be left blank.",
+					$ref: "schema/ability_actions.json"
 				},
                 quest_components: {
                     required: true,
