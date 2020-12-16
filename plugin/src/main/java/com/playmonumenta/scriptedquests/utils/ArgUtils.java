@@ -2,7 +2,6 @@ package com.playmonumenta.scriptedquests.utils;
 
 import java.util.Collection;
 import java.util.ArrayList;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ArgUtils {
