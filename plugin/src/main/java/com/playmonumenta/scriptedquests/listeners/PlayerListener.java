@@ -1,8 +1,10 @@
 package com.playmonumenta.scriptedquests.listeners;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -14,6 +16,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerAnimationEvent;
+import org.bukkit.event.player.PlayerAnimationType;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -34,22 +38,45 @@ import com.playmonumenta.scriptedquests.utils.MetadataUtils;
 public class PlayerListener implements Listener {
 	private Plugin mPlugin = null;
 
+	private List<Player> mLeftClickUnavailable;
+
 	public PlayerListener(Plugin plugin) {
 		mPlugin = plugin;
+		mLeftClickUnavailable = new ArrayList<Player>();
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void playerInteractEvent(PlayerInteractEvent event) {
 		Action action = event.getAction();
 		Player player = event.getPlayer();
+
+
+		//In case this gets fixed, force adventure mode left click block to go through playerAnimationEvent
+		if (player.getGameMode() == GameMode.ADVENTURE && action == Action.LEFT_CLICK_BLOCK) {
+			return;
+		}
+
+		player.sendMessage("Interact event");
+
+		//Disable left click events for the player for the next two ticks
+		mLeftClickUnavailable.add(player);
+		//Enable them again two ticks later
+		EnableLeftClick enable = new EnableLeftClick();
+		enable.mPlayer = player;
+		enable.runTaskLater(mPlugin, 2);
+
 		ItemStack item = event.getItem();
 		Block block = event.getClickedBlock();
 		Event.Result useItem = event.useItemInHand();
+
+
+
 
 		if (useItem != Event.Result.DENY
 		    && mPlugin.mInteractableManager.interactEvent(mPlugin, player, item, block, action)) {
 			// interactEvent returning true means this event should be canceled
 			event.setCancelled(true);
+
 			return;
 		}
 
@@ -71,7 +98,45 @@ public class PlayerListener implements Listener {
 				mPlugin.mRaceManager.restartRaceByClick(player);
 			}
 		}
+
+
 	}
+
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void playerAnimationEvent(PlayerAnimationEvent event) {
+
+		Player player = event.getPlayer();
+		//This only applies to players in adventure mode looking at blocks (not air)
+		if (player.getGameMode() != GameMode.ADVENTURE || player.getTargetBlock(null, 4).getType() == Material.AIR || event.getAnimationType() != PlayerAnimationType.ARM_SWING) {
+			return;
+		}
+		player.sendMessage("Delaying animation event");
+
+		DelayLeftClick delay = new DelayLeftClick();
+		delay.mEvent = event;
+		delay.runTaskLater(mPlugin, 1);
+
+
+	}
+
+	private void delayedAnimationEvent(PlayerAnimationEvent event) {
+		//Now we have definitely left clicked a block in adventure mode
+		Player player = event.getPlayer();
+
+		player.sendMessage("Animation event");
+		ItemStack item = player.getInventory().getItemInMainHand();
+
+		if (mPlugin.mInteractableManager.interactEvent(mPlugin, player, item, player.getTargetBlock(null, 4), Action.LEFT_CLICK_BLOCK)) {
+			event.setCancelled(true);
+			return;
+		}
+
+		//Compass
+		if (item.getType() == Material.COMPASS && !player.isSneaking()) {
+			mPlugin.mQuestCompassManager.showCurrentQuest(player);
+		}
+	}
+
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void playerInteractEntityEvent(PlayerInteractEntityEvent event) {
@@ -180,4 +245,34 @@ public class PlayerListener implements Listener {
 		// Remove all zone properties from the player
 		mPlugin.mZoneManager.unregisterPlayer(event.getPlayer());
 	}
+
+	private class EnableLeftClick extends BukkitRunnable {
+
+		private Player mPlayer;
+
+		@Override
+		public void run() {
+			mLeftClickUnavailable.remove(mPlayer);
+		}
+
+	}
+
+	private class DelayLeftClick extends BukkitRunnable {
+
+		private PlayerAnimationEvent mEvent;
+
+		@Override
+		public void run() {
+
+			mEvent.getPlayer().sendMessage("" + mLeftClickUnavailable.size());
+			if (mLeftClickUnavailable.contains(mEvent.getPlayer())) {
+				mEvent.setCancelled(true);
+			} else {
+				delayedAnimationEvent(mEvent);
+			}
+		}
+
+	}
+
+
 }
