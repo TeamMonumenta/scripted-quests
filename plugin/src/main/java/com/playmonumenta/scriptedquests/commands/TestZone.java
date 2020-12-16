@@ -17,7 +17,9 @@ public class TestZone {
 		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
 
 		arguments.put("location", new LocationArgument());
-		arguments.put("layer", new TextArgument());
+		arguments.put("layer", new TextArgument().overrideSuggestions((sender) -> {
+			return plugin.mZoneManager.getLayerNameSuggestions();
+		}));
 		new CommandAPICommand("testzones")
 			.withPermission(CommandPermission.fromString("scriptedquests.testzones"))
 			.withArguments(arguments)
@@ -28,8 +30,12 @@ public class TestZone {
 		arguments.clear();
 
 		arguments.put("location", new LocationArgument());
-		arguments.put("layer", new TextArgument());
-		arguments.put("property", new TextArgument());
+		arguments.put("layer", new TextArgument().overrideSuggestions((sender) -> {
+			return plugin.mZoneManager.getLayerNameSuggestions();
+		}));
+		arguments.put("property", new TextArgument().overrideSuggestions((sender, args) -> {
+			return plugin.mZoneManager.getLoadedPropertySuggestions((String) args[1]);
+		}));
 		new CommandAPICommand("testzones")
 			.withPermission(CommandPermission.fromString("scriptedquests.testzones"))
 			.withArguments(arguments)
@@ -47,7 +53,11 @@ public class TestZone {
 	}
 
 	private static int hasProperty(Plugin plugin, Location loc, String layer, String property) {
-		if (plugin.mZoneManager.hasProperty(loc, layer, property)) {
+		boolean negated = property.startsWith("!");
+		if (negated) {
+			property = property.substring(1);
+		}
+		if (negated ^ plugin.mZoneManager.hasProperty(loc, layer, property)) {
 			return 1;
 		}
 		return 0;

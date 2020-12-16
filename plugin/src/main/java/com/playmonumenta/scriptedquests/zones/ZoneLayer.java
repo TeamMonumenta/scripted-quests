@@ -33,6 +33,7 @@ public class ZoneLayer {
 	private String mName;
 	private boolean mHidden = false;
 	private List<Zone> mZones = new ArrayList<Zone>();
+	private Set<String> mLoadedProperties = new HashSet<String>();
 
 	/*
 	 * This should only be called by the ZoneManager.
@@ -134,7 +135,9 @@ public class ZoneLayer {
 			if (zoneElement.getAsJsonObject() == null) {
 				throw new Exception("Failed to parse 'zones[" + Integer.toString(zoneIndex) + "]'");
 			}
-			mZones.add(Zone.constructFromJson(this, zoneElement.getAsJsonObject(), propertyGroups));
+			Zone zone = Zone.constructFromJson(this, zoneElement.getAsJsonObject(), propertyGroups);
+			mLoadedProperties.addAll(zone.getProperties());
+			mZones.add(zone);
 			zoneIndex++;
 		}
 
@@ -215,6 +218,13 @@ public class ZoneLayer {
 
 		// Create the new tree.
 		return ZoneTreeBase.createZoneTree(zoneFragments);
+	}
+
+	/*
+	 * Return the list of properties found in this zone layer.
+	 */
+	public Set<String> getLoadedProperties() {
+		return new HashSet<String>(mLoadedProperties);
 	}
 
 	/************************************************************************************
