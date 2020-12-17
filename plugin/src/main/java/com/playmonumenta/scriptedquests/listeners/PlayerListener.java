@@ -35,6 +35,9 @@ import com.playmonumenta.scriptedquests.quests.components.DeathLocation;
 import com.playmonumenta.scriptedquests.utils.MetadataUtils;
 
 public class PlayerListener implements Listener {
+
+	private static final String ADVENTURE_INTERACT_METAKEY = "ScriptedQuestsInteractable";
+
 	private Plugin mPlugin = null;
 
 	public PlayerListener(Plugin plugin) {
@@ -52,7 +55,7 @@ public class PlayerListener implements Listener {
 		}
 		//Disable left click events for the player for the next few ticks
 		//Enable them again a few ticks later
-		MetadataUtils.checkOnceThisTick(mPlugin, player, "usedinteractable");
+		MetadataUtils.checkOnceThisTick(mPlugin, player, ADVENTURE_INTERACT_METAKEY);
 
 		ItemStack item = event.getItem();
 		Block block = event.getClickedBlock();
@@ -96,8 +99,7 @@ public class PlayerListener implements Listener {
 		}
 
 		//If the player recently used a right click or left click air
-		if (MetadataUtils.happenedInRecentTicks(player, "usedinteractable", 4)) {
-			event.setCancelled(true);
+		if (MetadataUtils.happenedInRecentTicks(player, ADVENTURE_INTERACT_METAKEY, 4)) {
 			return;
 		}
 
