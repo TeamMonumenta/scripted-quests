@@ -24,6 +24,7 @@ import com.playmonumenta.scriptedquests.quests.components.prerequisites.Prerequi
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteLocation;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteSneaking;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteTestForBlock;
+import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteZoneProperties;
 
 public class QuestPrerequisites implements PrerequisiteBase {
 	private final ArrayList<PrerequisiteBase> mPrerequisites = new ArrayList<PrerequisiteBase>();
@@ -159,6 +160,9 @@ public class QuestPrerequisites implements PrerequisiteBase {
 				break;
 			case "facing":
 				mPrerequisites.add(new PrerequisiteFacing(value));
+				break;
+			case "zone_properties":
+				mPrerequisites.add(new PrerequisiteZoneProperties(value));
 				break;
 			default:
 				throw new Exception("Unknown prerequisites key: '" + key + "'");

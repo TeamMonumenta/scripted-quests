@@ -7,6 +7,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -17,6 +18,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.utils.ArgUtils;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
 
@@ -28,8 +30,10 @@ public class ZoneManager {
 	private Map<String, ZoneLayer> mLayers = new HashMap<String, ZoneLayer>();
 	private Map<String, ZoneLayer> mPluginLayers = new HashMap<String, ZoneLayer>();
 	private ZoneTreeBase mZoneTree = null;
+
 	private Map<Player, ZoneFragment> mLastPlayerZoneFragment = new HashMap<Player, ZoneFragment>();
 	private Map<Player, Map<String, Zone>> mLastPlayerZones = new HashMap<Player, Map<String, Zone>>();
+
 	private Set<CommandSender> mReloadRequesters;
 	private Set<CommandSender> mQueuedReloadRequesters = new HashSet<CommandSender>();
 
@@ -195,6 +199,31 @@ public class ZoneManager {
 
 			return lastFragment.hasProperty(layerName, propertyName);
 		}
+	}
+
+	public Set<String> getLayerNames() {
+		return new HashSet<String>(mLayers.keySet());
+	}
+
+	public String[] getLayerNameSuggestions() {
+		return ArgUtils.quoteIfNeeded(new TreeSet<String>(getLayerNames()));
+	}
+
+	public Set<String> getLoadedProperties(String layerName) {
+		ZoneLayer layer = mLayers.get(layerName);
+		if (layer == null) {
+			return new HashSet<String>();
+		}
+		return layer.getLoadedProperties();
+	}
+
+	public String[] getLoadedPropertySuggestions(String layerName) {
+		Set<String> properties = getLoadedProperties(layerName);
+		Set<String> suggestions = new TreeSet<String>(properties);
+		for (String property : properties) {
+			suggestions.add("!" + property);
+		}
+		return ArgUtils.quoteIfNeeded(suggestions);
 	}
 
 	/************************************************************************************
