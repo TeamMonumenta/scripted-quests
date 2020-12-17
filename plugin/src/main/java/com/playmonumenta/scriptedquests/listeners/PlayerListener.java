@@ -1,6 +1,5 @@
 package com.playmonumenta.scriptedquests.listeners;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -38,11 +37,8 @@ import com.playmonumenta.scriptedquests.utils.MetadataUtils;
 public class PlayerListener implements Listener {
 	private Plugin mPlugin = null;
 
-	private List<Player> mLeftClickUnavailable;
-
 	public PlayerListener(Plugin plugin) {
 		mPlugin = plugin;
-		mLeftClickUnavailable = new ArrayList<Player>();
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
@@ -56,21 +52,16 @@ public class PlayerListener implements Listener {
 			return;
 		}
 
-		player.sendMessage("Interact event");
-
-		//Disable left click events for the player for the next two ticks
-		mLeftClickUnavailable.add(player);
-		//Enable them again two ticks later
+		//Disable left click events for the player for the next few ticks
+		player.addScoreboardTag("usedinteractable");
+		//Enable them again a few ticks later
 		EnableLeftClick enable = new EnableLeftClick();
 		enable.mPlayer = player;
-		enable.runTaskLater(mPlugin, 2);
+		enable.runTaskLater(mPlugin, 4);
 
 		ItemStack item = event.getItem();
 		Block block = event.getClickedBlock();
 		Event.Result useItem = event.useItemInHand();
-
-
-
 
 		if (useItem != Event.Result.DENY
 		    && mPlugin.mInteractableManager.interactEvent(mPlugin, player, item, block, action)) {
@@ -110,8 +101,8 @@ public class PlayerListener implements Listener {
 		if (player.getGameMode() != GameMode.ADVENTURE || player.getTargetBlock(null, 4).getType() == Material.AIR || event.getAnimationType() != PlayerAnimationType.ARM_SWING) {
 			return;
 		}
-		player.sendMessage("Delaying animation event");
 
+		//Delay this method to see if right click also happened to know if this is truly a left click
 		DelayLeftClick delay = new DelayLeftClick();
 		delay.mEvent = event;
 		delay.runTaskLater(mPlugin, 1);
@@ -122,8 +113,6 @@ public class PlayerListener implements Listener {
 	private void delayedAnimationEvent(PlayerAnimationEvent event) {
 		//Now we have definitely left clicked a block in adventure mode
 		Player player = event.getPlayer();
-
-		player.sendMessage("Animation event");
 		ItemStack item = player.getInventory().getItemInMainHand();
 
 		if (mPlugin.mInteractableManager.interactEvent(mPlugin, player, item, player.getTargetBlock(null, 4), Action.LEFT_CLICK_BLOCK)) {
@@ -252,7 +241,7 @@ public class PlayerListener implements Listener {
 
 		@Override
 		public void run() {
-			mLeftClickUnavailable.remove(mPlayer);
+			mPlayer.removeScoreboardTag("usedinteractable");
 		}
 
 	}
@@ -264,10 +253,11 @@ public class PlayerListener implements Listener {
 		@Override
 		public void run() {
 
-			mEvent.getPlayer().sendMessage("" + mLeftClickUnavailable.size());
-			if (mLeftClickUnavailable.contains(mEvent.getPlayer())) {
+			//If the player recently used a right click or left click air
+			if (mEvent.getPlayer().getScoreboardTags().contains("usedinteractable")) {
 				mEvent.setCancelled(true);
 			} else {
+				//If not, must be a left click block. Run that function
 				delayedAnimationEvent(mEvent);
 			}
 		}
