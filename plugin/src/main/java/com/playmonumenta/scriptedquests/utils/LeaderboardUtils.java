@@ -59,6 +59,10 @@ public class LeaderboardUtils {
 	}
 
 	public static void sendLeaderboard(Player player, String title, List<LeaderboardEntry> values, int page, String baseCommand) {
+		sendLeaderboard(player, title, values, page, baseCommand, true);
+	}
+
+	public static void sendLeaderboard(Player player, String title, List<LeaderboardEntry> values, int page, String baseCommand, boolean allowChangePages) {
 		// Page starts at 1
 		if (page < 1) {
 			page = 1;
@@ -85,6 +89,10 @@ public class LeaderboardUtils {
 				player.sendMessage(String.format("%s%-3s - %-15s -    %s", "" + ChatColor.BLUE + ChatColor.BOLD, i, entry.getName(), entry.getValueStr()));
 				break;
 			}
+		}
+
+		if (!allowChangePages) {
+			return;
 		}
 
 		int pageCount = ((values.size() - 1) / 10) + 1;
