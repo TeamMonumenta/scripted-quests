@@ -54,6 +54,7 @@
 				"chestLoc",
 				"knockbackResistance",
 				"unpushable",
+				"ai",
 				"tags",
 				"health",
 				"speed",
@@ -66,6 +67,7 @@
 				"xp_values",
 				"sounds",
 				"ranged",
+				"targetTags",
 				"abilities",
 				"on_spawn",
                 "quest_components"
@@ -131,6 +133,13 @@
                     type: "boolean",
 					default: false
                 },
+				ai: {
+                    propertyOrder: 5,
+                    title: "ai",
+                    description: "The Mob AI Type. Valid types: FRIENDLY, HOSTILE",
+                    type: "string",
+					default: "HOSTILE"				
+				},
                 health: {
                     propertyOrder: 6,
                     title: "health",
@@ -246,6 +255,15 @@
                         type: "string"
                     }
                 },
+				targetTags: {
+                    propertyOrder: 13,
+                    title: "targetTags",
+                    description: "The tags that will cause the mob to target a nearby entity. Can have multiple",
+                    type: "array",
+                    items: {
+                        type: "string"
+                    }				
+				},
 				
 				abilities: {
                     propertyOrder: 13,

@@ -125,9 +125,11 @@ public class ActionGiveReward implements ActionBase {
 							}
 							PlayerData data = Core.getInstance().mPlayerManager.getPlayerData(player.getUniqueId());
 
-							data.giveXP(mAction.mXP);
-							player.sendMessage(bracketText(Utils.getColor("#73deff") + "+"
-								+ mAction.mXP + " " + Utils.getColor("#93ff73") + "Experience Points"));
+							if (mAction.mXP > 0) {
+								data.giveXP(mAction.mXP);
+								player.sendMessage(bracketText(Utils.getColor("#73deff") + "+"
+									+ mAction.mXP + " " + Utils.getColor("#93ff73") + "Experience Points"));
+							}
 
 							if (mAction.mCoin > 0) {
 								data.mCoins += mAction.mCoin;
@@ -160,8 +162,10 @@ public class ActionGiveReward implements ActionBase {
 								InventoryUtils.giveItems(player, base, false);
 
 								for (ItemStack item : base) {
-									ItemMeta meta = item.getItemMeta();
-									player.sendMessage(bracketText(ChatColor.AQUA + "+" + item.getAmount() +
+
+									ItemStack converted = Utils.convertItemToRPG(item);
+									ItemMeta meta = converted.getItemMeta();
+									player.sendMessage(bracketText(ChatColor.AQUA + "+" + converted.getAmount() +
 										" " + meta.getDisplayName()));
 								}
 							}

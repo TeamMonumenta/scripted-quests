@@ -186,6 +186,10 @@ public class Model {
 				throw new Exception("region must have x1 x2 y1 y2 z1 and z2");
 			}
 		}
+
+		Location centerWorld = mCenter.toLocation(mWorld);
+		mWorld.getChunkAt(centerWorld).load();
+
 		mPos1 = new Vector(corners[0], corners[1], corners[2]);
 		mPos2 = new Vector(corners[3], corners[4], corners[5]);
 

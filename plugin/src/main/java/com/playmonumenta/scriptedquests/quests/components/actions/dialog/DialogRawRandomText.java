@@ -32,7 +32,12 @@ public class DialogRawRandomText implements DialogBase {
 	@Override
 	public void sendDialog(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
 		int idx = mRandom.nextInt(mText.size());
-		MessagingUtils.sendRawMessage(player, mText.get(idx));
+		String text = mText.get(idx);
+
+		if (!text.isEmpty()) {
+			MessagingUtils.sendRawMessage(player, text);
+		}
+
 	}
 }
 
