@@ -63,6 +63,10 @@ public class DateUtils {
 		return ChronoUnit.DAYS.between(LocalDate.ofEpochDay(0), LocalDate.now());
 	}
 
+	public static long getSecondsSinceEpoch() {
+		return java.time.Instant.now().getEpochSecond();
+	}
+
 	public static boolean isDst() {
 		return Calendar.getInstance().get(Calendar.DST_OFFSET) != 0;
 	}
