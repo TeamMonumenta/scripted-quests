@@ -100,6 +100,30 @@
 					"type": "number"
 				}
 			}
+		},
+		"status_effect": {
+			"title": "status_effect",
+			"description": "Applies a Status Effect to the target",
+			"type": "object",
+			"properties": {
+				"name": {
+					"title": "name",
+					"description": "The internal name of the Status Effect. This is NOT the Display Name.",
+					"type": "string"
+				},
+				"duration": {
+					"title": "duration",
+					"description": "The duration of the Status Effect in TICKS.",
+					"type": "integer",
+					"default": 20
+				},
+				"level": {
+					"title": "level",
+					"description": "The level of the Status Effect.",
+					"type": "integer",
+					"default": 1
+				}
+			}
 		}
 	}
 }
