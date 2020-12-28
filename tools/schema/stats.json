@@ -1,0 +1,11 @@
+{
+  "type": "object",
+  "patternProperties": {
+    ".*" {
+		"headerTemplate": "{{i}}",
+		"description": "The amount of the stat to give",
+		"type": "number",
+		"default": 0
+	}
+  }
+}
