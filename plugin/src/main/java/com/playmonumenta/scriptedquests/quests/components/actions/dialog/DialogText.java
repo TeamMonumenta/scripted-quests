@@ -41,7 +41,9 @@ public class DialogText implements DialogBase {
 			name = ChatColor.stripColor(npc.mNameStand.getCustomName());
 		}
 		for (String text : mText) {
-			MessagingUtils.sendNPCMessage(player, name, text);
+			if (!text.trim().isEmpty()) {
+				MessagingUtils.sendNPCMessage(player, name, text);
+			}
 		}
 	}
 }
