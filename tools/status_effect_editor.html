@@ -50,6 +50,7 @@
                 "name",
 				"displayName",
 				"stats",
+				"absorption",
 				"on_apply",
 				"on_tick",
 				"on_expire"
@@ -71,6 +72,13 @@
                     description: "The display name of the Status Effect. Leave this blank if you would like to use the same name as the name parameter.",
                     type: "string"
                 },
+				absorption: {
+                    propertyOrder: 2,
+                    title: "absorption",
+                    description: "The amount of absorption to give to the player. This multiplies based on the level of the status effect.",
+                    type: "integer",
+					default: 0
+				},
 				stats: {
                     propertyOrder: 3,
                     title: "stats",
