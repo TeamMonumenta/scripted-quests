@@ -16,6 +16,34 @@
 			"description": "The level of the enchantment",
 			"type": "number",
 			"default": 1
+        },
+		"ingredients": {
+            "required": true,
+			"propertyOrder": 2,
+			"title": "ingredients",
+			"description": "The ingredients required for the enchantment. Up to 3 ingredients maximum",
+			"type": "array",
+			"items": {
+			    "type": "object",
+				"properties": {
+				    "item_name": {
+						"required": true,
+						"propertyOrder": 2,
+						"title": "item_name",
+						"description": "The RPG Item ID Name of the Item to offer",
+						"type": "string",
+						"default": "Item ID Name"
+					},
+					"amount": {
+						"required": true,
+						"propertyOrder": 2,
+						"title": "amount",
+						"description": "The amount of the item.",
+						"type": "integer",
+						"default": 1
+					}
+				}
+			}
         }
     }
 }
