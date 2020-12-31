@@ -21,6 +21,7 @@ public class Zone extends ZoneBase {
 	private final String mName;
 	private List<ZoneFragment> mFragments = new ArrayList<ZoneFragment>();
 	private final Set<String> mProperties = new LinkedHashSet<String>();
+	private ZoneInfo mZoneInfo;
 
 	public static  Zone constructFromJson(ZoneLayer layer, JsonObject object, Map<String, List<String>> propertyGroups) throws Exception {
 		if (layer == null) {
@@ -97,7 +98,14 @@ public class Zone extends ZoneBase {
 			applyProperty(propertyGroups, properties, propertyName);
 		}
 
-		return new Zone(layer, pos1, pos2, name, properties);
+		ZoneInfo zoneInfo = null;
+		if (object.has("zone_info")) {
+			JsonObject zoneObject = object.get("zone_info").getAsJsonObject();
+			zoneInfo = new ZoneInfo(zoneObject.get("zone_id").getAsString(), zoneObject.get("zone_name").getAsString());
+			zoneInfo.mXP = zoneObject.get("xp").getAsInt();
+		}
+
+		return new Zone(layer, pos1, pos2, name, properties, zoneInfo);
 	}
 
 	/*
@@ -106,10 +114,19 @@ public class Zone extends ZoneBase {
 	 * - The minimum/maximum are determined for you.
 	 */
 	public Zone(ZoneLayer layer, Vector pos1, Vector pos2, String name, Set<String> properties) {
+		this(layer, pos1, pos2, name, properties, null);
+	}
+
+	public Zone(ZoneLayer layer, Vector pos1, Vector pos2, String name, Set<String> properties, ZoneInfo zoneInfo) {
 		super(pos1, pos2);
 		mLayer = layer;
 		mName = name;
 		mProperties.addAll(properties);
+		mZoneInfo = zoneInfo;
+	}
+
+	public ZoneInfo getZoneInfo() {
+		return mZoneInfo;
 	}
 
 	/*

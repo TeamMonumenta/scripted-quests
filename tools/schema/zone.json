@@ -44,6 +44,22 @@
 					"type": "integer",
 					"title": "xp",
 					"description": "The amount of Experience Points earned on first discovery of the zone."
+				},
+				"discovery_sounds": {
+					"type": "boolean",
+					"title": "discovery_sounds",
+					"description": "Toggles on/off the default discovery sounds for this zone. Useful for if you need to use quest_components for custom discoveries.",
+					"default": true
+				},
+				"quest_components": {
+					"type": "array",
+					"title": "quest_components",
+					"description": "The quest components ran on the player whenever the player discovers this zone.",
+					"format": "tabs"
+					"items": {
+					    "$ref": "quest_component.json",
+						"title": "Quest Component"
+					}
 				}
 			}
 		}
