@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.gson.JsonArray;
+import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
+import org.bukkit.entity.EntityType;
 import org.bukkit.util.Vector;
 
 import com.google.gson.JsonElement;
@@ -103,6 +106,18 @@ public class Zone extends ZoneBase {
 			JsonObject zoneObject = object.get("zone_info").getAsJsonObject();
 			zoneInfo = new ZoneInfo(zoneObject.get("zone_id").getAsString(), zoneObject.get("zone_name").getAsString());
 			zoneInfo.mXP = zoneObject.get("xp").getAsInt();
+
+			if (zoneObject.has("discovery_sounds")) {
+				zoneInfo.mDiscoverySounds = zoneObject.get("discovery_sounds").getAsBoolean();
+			}
+
+			if (zoneObject.has("quest_components")) {
+				JsonArray questComponents = zoneObject.get("quest_components").getAsJsonArray();
+
+				for (JsonElement element : questComponents) {
+					zoneInfo.mComponents.add(new QuestComponent("", "", EntityType.VILLAGER, element));
+				}
+			}
 		}
 
 		return new Zone(layer, pos1, pos2, name, properties, zoneInfo);
