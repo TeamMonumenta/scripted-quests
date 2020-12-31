@@ -7,6 +7,7 @@ import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import me.Novalescent.Core;
 import me.Novalescent.mobs.spells.scripted.actions.SpellActions;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 public class ActionRunActions implements ActionBase {
@@ -26,9 +27,16 @@ public class ActionRunActions implements ActionBase {
 	@Override
 	public void doAction(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
 		try {
-			SpellActions actions = new SpellActions(Core.getInstance(), null, mActionsJson);
+
+			SpellActions actions;
+			if (npcEntity instanceof LivingEntity) {
+				actions = new SpellActions(Core.getInstance(), (LivingEntity) npcEntity, mActionsJson);
+			} else {
+				actions = new SpellActions(Core.getInstance(), null, mActionsJson);
+			}
+
 			if (mOnPlayer) {
-				actions.doActions(player, player.getLocation().add(0, mYOffset, 0));
+				actions.doActions(player, npcEntity.getLocation().add(0, mYOffset, 0));
 			} else {
 				if (npcEntity != null) {
 					actions.doActions(npcEntity, npcEntity.getLocation().add(0, mYOffset, 0));

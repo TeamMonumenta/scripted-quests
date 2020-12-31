@@ -26,6 +26,26 @@
         "location": {
             "propertyOrder": 3,
             "$ref": "location.json"
-        }
+        },
+		"zone_info": {
+		    "type": "object",
+			"properties": {
+				"zone_id": {
+					"type": "string",
+					"title": "zone_id",
+					"description": "The Unique ID for the Zone Info."
+				},
+				"zone_name": {
+					"type": "string",
+					"title": "zone_name",
+					"description": "The name of the Zone."
+				},
+				"xp": {
+					"type": "integer",
+					"title": "xp",
+					"description": "The amount of Experience Points earned on first discovery of the zone."
+				}
+			}
+		}
     }
 }

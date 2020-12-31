@@ -35,7 +35,7 @@ public class Zone extends ZoneBase {
 
 		Double[] corners = new Double[6];
 		String name;
-		Set<String> properties = new LinkedHashSet<String>();
+		Set<String> properties = new LinkedHashSet<>();
 
 		// Load the zone name
 		if (object.get("name") == null ||

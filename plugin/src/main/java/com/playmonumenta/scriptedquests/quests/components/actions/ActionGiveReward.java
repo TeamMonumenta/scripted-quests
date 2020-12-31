@@ -9,6 +9,8 @@ import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import com.playmonumenta.scriptedquests.utils.InventoryUtils;
 import me.Novalescent.Core;
+import me.Novalescent.items.ItemTier;
+import me.Novalescent.items.RPGItem;
 import me.Novalescent.player.PlayerData;
 import me.Novalescent.utils.CodeSnip;
 import me.Novalescent.utils.Utils;
@@ -109,6 +111,23 @@ public class ActionGiveReward implements ActionBase {
 					ItemStack claim = new ItemStack(Material.LIME_CONCRETE);
 					ItemMeta claimMeta = claim.getItemMeta();
 					claimMeta.setDisplayName(ChatColor.GREEN + "Claim Rewards");
+
+					if (mPicked != null) {
+						List<String> lore = new ArrayList<>();
+						lore.add(ChatColor.WHITE + "Selected Item:");
+
+						RPGItem rpgItem = Utils.getRPGItem(mPicked);
+						if (rpgItem != null) {
+							ItemTier tier = rpgItem.mTier;
+							lore.add(tier.getSubColor() + " - x" + mPicked.getAmount() + " " + tier.getColor() + "[" + tier.getSubColor()
+								+ rpgItem.mDisplayName + tier.getSubColor() + "]");
+						} else {
+							ItemMeta pickedMeta = mPicked.getItemMeta();
+							lore.add(ChatColor.WHITE + " - x" + mPicked.getAmount() + " " + pickedMeta.getDisplayName());
+						}
+						claimMeta.setLore(lore);
+					}
+
 					claim.setItemMeta(claimMeta);
 
 					MenuItem claimItem = new MenuItem(claim);
