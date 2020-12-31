@@ -55,7 +55,7 @@
 					"type": "array",
 					"title": "quest_components",
 					"description": "The quest components ran on the player whenever the player discovers this zone.",
-					"format": "tabs"
+					"format": "tabs",
 					"items": {
 					    "$ref": "quest_component.json",
 						"title": "Quest Component"
