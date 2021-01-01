@@ -3,7 +3,7 @@
   "patternProperties": {
     ".*": {
 		"headerTemplate": "{{i}}",
-		"description": "The amount of the stat to give",
+		"description": "The amount of the identification to give",
 		"type": "number",
 		"default": 0
 	}
