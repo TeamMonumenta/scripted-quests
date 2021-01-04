@@ -123,7 +123,28 @@
                         "title": "A raw random line",
                         "type": "string"
                     }
-                }
+                },
+				"scrolling_text": {
+					"title": "scrolling_text",
+					"type": "object",
+					"properties": {
+						"text": {
+							"title": "text",
+							"description": "The text lines sent to the player",
+							"type": "array",
+							"minItems": 1,
+							"items": {
+								"title": "A NPC Dialogue line",
+								"type": "string"
+							}
+						},
+						"actions": {
+							"title": "actions",
+							"description": "The actions to perform whenever the dialog is finished",
+							"$ref": "actions.json"
+						}
+					}
+				}
             }
         },
         "set_scores": {
