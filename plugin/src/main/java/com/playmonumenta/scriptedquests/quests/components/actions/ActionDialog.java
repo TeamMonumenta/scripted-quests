@@ -39,7 +39,9 @@ public class ActionDialog implements ActionBase {
 				mDialogs.add(new DialogRandomText(displayName, ent.getValue()));
 			} else if (key.equals("raw_random_text")) {
 				mDialogs.add(new DialogRawRandomText(ent.getValue()));
-			} else {
+			} else if (key.equals("scrolling_text")) {
+				mDialogs.add(new DialogScrollingText(displayName, ent.getValue()));
+			}  else {
 				throw new Exception("Unknown dialog key: '" + key + "'");
 			}
 		}

@@ -59,6 +59,28 @@ public class MessagingUtils {
 		player.spigot().sendMessage(ChatMessageType.SYSTEM,toDisplay);
 	}
 
+	public static void sendScrollableNPCMessage(Player player, String displayName, String message) {
+		message = ChatColor.translateAlternateColorCodes('&',translatePlayerName(player, message));
+		TextComponent formattedMessage = new TextComponent(TextComponent.fromLegacyText(displayName));
+		formattedMessage.setColor(ChatColor.GOLD);
+		TextComponent semiColon = new TextComponent(TextComponent.fromLegacyText(": "));
+		semiColon.setColor(ChatColor.YELLOW);
+		formattedMessage.addExtra(semiColon);
+		TextComponent tempText = new TextComponent(TextComponent.fromLegacyText(message + " "));
+		tempText.setColor(ChatColor.WHITE);
+		formattedMessage.addExtra(tempText);
+
+		TextComponent skip = new TextComponent(TextComponent.fromLegacyText("[>>>]"));
+		skip.setColor(ChatColor.of("#6cc0eb"));
+		skip.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/scrolltext"));
+		formattedMessage.addExtra(skip);
+
+		BaseComponent[] toDisplay = new BaseComponent[1];
+		toDisplay[0] = formattedMessage;
+
+		player.spigot().sendMessage(ChatMessageType.SYSTEM,toDisplay);
+	}
+
 	public static void sendRawMessage(Player player, String message) {
 		message = translatePlayerName(player, message);
 		String noAlternateColorCodes = ChatColor.translateAlternateColorCodes('&',message);
