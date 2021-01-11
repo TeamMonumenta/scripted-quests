@@ -10,7 +10,7 @@ import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import com.playmonumenta.scriptedquests.utils.InventoryUtils;
 import me.Novalescent.Core;
 import me.Novalescent.items.ItemTier;
-import me.Novalescent.items.RPGItem;
+import me.Novalescent.items.types.RPGItem;
 import me.Novalescent.player.PlayerData;
 import me.Novalescent.utils.CodeSnip;
 import me.Novalescent.utils.Utils;

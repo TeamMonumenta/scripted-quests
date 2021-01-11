@@ -5,7 +5,7 @@ import java.util.LinkedHashMap;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.*;
-import me.Novalescent.items.RPGItem;
+import me.Novalescent.items.types.RPGItem;
 import me.Novalescent.utils.Utils;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;

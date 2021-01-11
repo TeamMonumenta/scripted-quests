@@ -3,6 +3,7 @@ package com.playmonumenta.scriptedquests;
 import java.io.File;
 import java.util.Random;
 
+import com.playmonumenta.scriptedquests.commands.*;
 import com.playmonumenta.scriptedquests.managers.*;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -13,31 +14,6 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import com.playmonumenta.scriptedquests.commands.Clickable;
-import com.playmonumenta.scriptedquests.commands.Clock;
-import com.playmonumenta.scriptedquests.commands.Code;
-import com.playmonumenta.scriptedquests.commands.Cooldown;
-import com.playmonumenta.scriptedquests.commands.Damage;
-import com.playmonumenta.scriptedquests.commands.DebugZones;
-import com.playmonumenta.scriptedquests.commands.GenerateCode;
-import com.playmonumenta.scriptedquests.commands.GetDate;
-import com.playmonumenta.scriptedquests.commands.GiveItemWithLore;
-import com.playmonumenta.scriptedquests.commands.GiveLootTable;
-import com.playmonumenta.scriptedquests.commands.Growable;
-import com.playmonumenta.scriptedquests.commands.HasPermission;
-import com.playmonumenta.scriptedquests.commands.Heal;
-import com.playmonumenta.scriptedquests.commands.ImprovedClear;
-import com.playmonumenta.scriptedquests.commands.InteractNpc;
-import com.playmonumenta.scriptedquests.commands.Leaderboard;
-import com.playmonumenta.scriptedquests.commands.Line;
-import com.playmonumenta.scriptedquests.commands.QuestTrigger;
-import com.playmonumenta.scriptedquests.commands.Race;
-import com.playmonumenta.scriptedquests.commands.RandomNumber;
-import com.playmonumenta.scriptedquests.commands.ReloadQuests;
-import com.playmonumenta.scriptedquests.commands.ReloadZones;
-import com.playmonumenta.scriptedquests.commands.ScheduleFunction;
-import com.playmonumenta.scriptedquests.commands.SetVelocity;
-import com.playmonumenta.scriptedquests.commands.TimerDebug;
 import com.playmonumenta.scriptedquests.listeners.EntityListener;
 import com.playmonumenta.scriptedquests.listeners.PlayerListener;
 import com.playmonumenta.scriptedquests.listeners.WorldListener;
@@ -145,7 +121,7 @@ public class Plugin extends JavaPlugin {
 		getCommand("reloadQuests").setExecutor(new ReloadQuests(this));
 		getCommand("reloadZones").setExecutor(new ReloadZones(this));
 		getCommand("questTrigger").setExecutor(new QuestTrigger(this));
-
+		getCommand("scrolltext").setExecutor(new ScrollText(this));
 		/* Load the config 1 tick later to let other plugins load */
 		new BukkitRunnable() {
 			@Override

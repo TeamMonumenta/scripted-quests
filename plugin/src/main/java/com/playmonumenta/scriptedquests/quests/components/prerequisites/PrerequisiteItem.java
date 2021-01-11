@@ -8,7 +8,7 @@ import com.playmonumenta.scriptedquests.utils.InventoryUtils;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import me.Novalescent.items.RPGItem;
+import me.Novalescent.items.types.RPGItem;
 import me.Novalescent.utils.Utils;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.Material;

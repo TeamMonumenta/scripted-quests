@@ -32,6 +32,7 @@ public class DialogScrollingText implements DialogBase {
 		private Entity mEntity;
 		private QuestActions mActions;
 		private QuestPrerequisites mPrerequisites;
+
 		public ScrollingTextRunnable(Plugin plugin, Player player, Entity npcEntity, List<String> text, QuestActions actions, QuestPrerequisites prerequisites) {
 			mPlugin = plugin;
 			mPlayer = player;
@@ -58,7 +59,7 @@ public class DialogScrollingText implements DialogBase {
 				}
 			}
 
-			if (mIndex >= mText.size()) {
+			if (mIndex + 1 >= mText.size()) {
 				this.cancel();
 				mActions.doActions(mPlugin, mPlayer, mEntity, mPrerequisites);
 				mPlayer.removeMetadata(com.playmonumenta.scriptedquests.Constants.PLAYER_SCROLLING_DIALOG_METAKEY, mPlugin);
@@ -81,6 +82,7 @@ public class DialogScrollingText implements DialogBase {
 	private String mDisplayName;
 	private ArrayList<String> mText = new ArrayList<String>();
 	private QuestActions mActions;
+	public int mClickType = 0;
 
 	public DialogScrollingText(String displayName, JsonElement element)  throws Exception {
 		mDisplayName = displayName;
@@ -96,6 +98,10 @@ public class DialogScrollingText implements DialogBase {
 		}
 
 		mActions = new QuestActions("", displayName, EntityType.VILLAGER, 0, jsonObject.get("actions"));
+
+		if (jsonObject.has("click_type")) {
+			mClickType = jsonObject.get("click_type").getAsInt();
+		}
 	}
 
 	@Override
