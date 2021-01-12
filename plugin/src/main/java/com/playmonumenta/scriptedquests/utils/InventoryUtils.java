@@ -56,6 +56,7 @@ public class InventoryUtils {
 		return false;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static NamespacedKey getNamespacedKey(String path) throws Exception {
 		String[] str = path.split(":", 2);
 		if (str[1].contains(":")) {
