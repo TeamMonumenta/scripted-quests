@@ -31,7 +31,7 @@ public class DateUtils {
 	}
 
 	public static long getSecondsSinceEpoch() {
-		return LocalDateTime.now(mTz).toEpochSecond();
+		return ChronoUnit.SECONDS.between(LocalDate.ofEpochDay(0), LocalDateTime.now(mTz));
 	}
 
 	public static int getAmPm() {
