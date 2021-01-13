@@ -176,7 +176,7 @@ an NPC, quest components are run in-order (more than one may be executed).
 `/execute store result score <scoreboardplayer> <objective> run getdate <field>`
 - permission: `scriptedquests.getdate`
 - Get part of the current date as a score. <field> can be:
-  Year, Month, DayOfMonth, DayOfWeek, IsDst,
+  Year, Month, DayOfMonth, DayOfWeek, DaysSinceEpoch, SecondsSinceEpoch,
   IsPm, HourOfDay, HourOfTwelve, Minute, Second, or Ms.
 
 `/giveloottable <@a> "<namespace:path/to/table>" [count]`

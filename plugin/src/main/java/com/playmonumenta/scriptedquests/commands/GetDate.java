@@ -10,7 +10,7 @@ import dev.jorel.commandapi.arguments.Argument;
 import dev.jorel.commandapi.arguments.TextArgument;
 
 public class GetDate {
-	private static final String[] FIELDS = new String[] {"Year", "Month", "DayOfMonth", "DayOfWeek", "DaysSinceEpoch", "SecondsSinceEpoch", "IsDst",
+	private static final String[] FIELDS = new String[] {"Year", "Month", "DayOfMonth", "DayOfWeek", "DaysSinceEpoch", "SecondsSinceEpoch",
 	                                                     "IsPm", "HourOfDay", "HourOfTwelve", "Minute", "Second", "Ms", };
 
 	public static void register() {
@@ -41,8 +41,6 @@ public class GetDate {
 			return (int)DateUtils.getDaysSinceEpoch();
 		case "SecondsSinceEpoch":
 			return (int)DateUtils.getSecondsSinceEpoch();
-		case "IsDst":
-			return DateUtils.isDst() ? 1 : 0;
 		case "IsPm":
 			return DateUtils.getAmPm();
 		case "HourOfDay":
