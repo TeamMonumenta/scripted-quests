@@ -3,16 +3,20 @@ package com.playmonumenta.scriptedquests.trades;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.quests.components.QuestActions;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
+
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 
 public class NpcTrade implements Comparable<NpcTrade> {
 	private final int mIndex;
 	private final QuestPrerequisites mPrerequisites;
+	private QuestActions mActions = null;
 
 	public NpcTrade(JsonElement element) throws Exception {
 		JsonObject object = element.getAsJsonObject();
@@ -36,12 +40,18 @@ public class NpcTrade implements Comparable<NpcTrade> {
 			throw new Exception("trade entry missing mPrerequisites value!");
 		}
 
+		// actions (optional)
+		JsonElement actionsElement = object.get("actions");
+		if (actionsElement != null) {
+			mActions = new QuestActions("", "", EntityType.VILLAGER, 0, actionsElement);
+		}
+
 		// Iterate through the remaining keys and throw an error if any are found
 		Set<Entry<String, JsonElement>> entries = object.entrySet();
 		for (Entry<String, JsonElement> ent : entries) {
 			String key = ent.getKey();
 
-			if (!key.equals("index") && !key.equals("prerequisites")) {
+			if (!key.equals("index") && !key.equals("prerequisites") && !key.equals("actions")) {
 				throw new Exception("Unknown trade key: " + key);
 			}
 		}
@@ -53,6 +63,10 @@ public class NpcTrade implements Comparable<NpcTrade> {
 
 	public boolean prerequisiteMet(Player player, Entity npc) {
 		return mPrerequisites.prerequisiteMet(player, npc);
+	}
+
+	public void doActions(Plugin plugin, Player player, Entity npcEntity) {
+		mActions.doActions(plugin, player, npcEntity, null);
 	}
 
 	@Override

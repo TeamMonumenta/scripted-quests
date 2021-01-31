@@ -3,6 +3,14 @@ package com.playmonumenta.scriptedquests.managers;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.quests.QuestNpc;
+import com.playmonumenta.scriptedquests.trades.NpcTrade;
+import com.playmonumenta.scriptedquests.trades.NpcTrader;
+import com.playmonumenta.scriptedquests.utils.QuestUtils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -11,20 +19,53 @@ import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
+import org.bukkit.event.Event;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Merchant;
+import org.bukkit.inventory.MerchantInventory;
 import org.bukkit.inventory.MerchantRecipe;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.quests.QuestNpc;
-import com.playmonumenta.scriptedquests.trades.NpcTrade;
-import com.playmonumenta.scriptedquests.trades.NpcTrader;
-import com.playmonumenta.scriptedquests.utils.QuestUtils;
-
-public class NpcTradeManager {
+public class NpcTradeManager implements Listener {
 	private final HashMap<String, NpcTrader> mTraders = new HashMap<>();
+
+	private static class PlayerTradeContext {
+		private final Map<Integer, NpcTrade> mSlotProperties;
+		private final Villager mVillager;
+		private final Merchant mMerchant;
+
+		private PlayerTradeContext(Map<Integer, NpcTrade> slotProperties, Villager villager, Merchant merchant) {
+			mSlotProperties = slotProperties;
+			mVillager = villager;
+			mMerchant = merchant;
+		}
+
+		public Map<Integer, NpcTrade> getSlotProperties() {
+			return mSlotProperties;
+		}
+
+		public Villager getVillager() {
+			return mVillager;
+		}
+
+		public Merchant getMerchant() {
+			return mMerchant;
+		}
+	}
+
+	/*
+	 * This tracks open trader windows for all players.
+	 * A player can not interact with a Merchant-type inventory unless they are on this map
+	 * The value map for each player tracks what special Trader specifications are for each slot, if any
+	 */
+	public final HashMap<UUID, PlayerTradeContext> mOpenTrades = new HashMap<>();
 
 	/*
 	 * If sender is non-null, it will be sent debugging information
@@ -68,22 +109,13 @@ public class NpcTradeManager {
 		// This is fine for now, but if we ever want interactables to work on villagers, we need to change this
 		event.setCancelled(true);
 
+		Map<Integer, NpcTrade> slotProperties = new HashMap<>();
+
 		// Iterate over the villager recipes and filter out what shouldn't be there
 		// We need to tag the outer loop so inner loops can continue it
 		recipes: for (int i = 0; i < villager.getRecipeCount(); i++) {
 			MerchantRecipe recipe = villager.getRecipe(i);
-			// Remove unmatched prereq trades
-			if (trader != null) {
-				NpcTrade trade = trader.getTrade(i);
-				if (trade != null && !trade.prerequisiteMet(player, villager)) {
-					if (lockedSlots.length() != 0) {
-						lockedSlots.append(", ");
-					}
-					lockedSlots.append(i);
-					modified = true;
-					continue;
-				}
-			}
+
 			// Remove vanilla trades (those with a regular emerald in any slot)
 			List<ItemStack> items = recipe.getIngredients();
 			items.add(recipe.getResult());
@@ -98,6 +130,23 @@ public class NpcTradeManager {
 					vanillaSlots.append(i);
 					modified = true;
 					continue recipes;
+				}
+			}
+
+			// Remove unmatched prereq trades
+			if (trader != null) {
+				NpcTrade trade = trader.getTrade(i);
+				if (trade != null) {
+					if (!trade.prerequisiteMet(player, villager)) {
+						if (lockedSlots.length() != 0) {
+							lockedSlots.append(", ");
+						}
+						lockedSlots.append(i);
+						modified = true;
+						continue;
+					} else {
+						slotProperties.put(trades.size(), trade);
+					}
 				}
 			}
 			// This trade was not filtered by any of the above checks. Add to the fake merchant
@@ -125,9 +174,69 @@ public class NpcTradeManager {
 				public void run() {
 					Merchant merchant = Bukkit.createMerchant(villager.getName());
 					merchant.setRecipes(trades);
+					mOpenTrades.put(player.getUniqueId(), new PlayerTradeContext(slotProperties, villager, merchant));
 					player.openMerchant(merchant, true);
 				}
 			}.runTaskLater(plugin, 1);
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void inventoryCloseEvent(InventoryCloseEvent event) {
+		if (!event.getInventory().getType().equals(InventoryType.MERCHANT)) {
+			return;
+		}
+
+		mOpenTrades.remove(event.getPlayer().getUniqueId());
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void inventoryClickEvent(InventoryClickEvent event) {
+		if (event.isCancelled() || event.getResult().equals(Event.Result.DENY) || !event.getInventory().getType().equals(InventoryType.MERCHANT) || !(event.getWhoClicked() instanceof Player)) {
+			/* Already cancelled, or not a merchant inventory, or not a click by a player */
+			return;
+		}
+
+		Player player = (Player)event.getWhoClicked();
+		MerchantInventory merchInv = (MerchantInventory)event.getInventory();
+		PlayerTradeContext context = mOpenTrades.get(player.getUniqueId());
+
+		if (context == null || !merchInv.getMerchant().equals(context.getMerchant())) {
+			player.sendMessage(ChatColor.RED + "DENIED: You should not have been able to view this interface. If this is a bug, please report it, and try trading with the villager again.");
+			event.setCancelled(true);
+			event.setResult(Event.Result.DENY);
+			Bukkit.getScheduler().runTask(Plugin.getInstance(), () -> player.closeInventory());
+			return;
+		}
+
+		if (event.getSlot() != 2) {
+			/*
+			 * The player is interacting with a valid merchant inventory but not yet clicking on the resulting item slot
+			 * Ignore the click
+			 */
+			return;
+		}
+
+		ItemStack clickedItem = event.getInventory().getItem(event.getSlot());
+		if ((event.getCursor() == null || event.getCursor().getType().isAir()) && clickedItem != null && !clickedItem.getType().isAir()) {
+			/* This is a successful trade - clicking with an empty cursor on a valid result item */
+
+			/*
+			 * Have to manually compute which slot this was because merchInv.getSelectedIndex returns the wrong index
+			 * if the player leaves the trade on the first slot but puts in materials for one of the other trades
+			 */
+			MerchantRecipe recipe = merchInv.getSelectedRecipe();
+			List<MerchantRecipe> recipes = merchInv.getMerchant().getRecipes();
+			int selectedIndex = recipes.indexOf(recipe);
+
+			if (selectedIndex < 0) {
+				player.sendMessage(ChatColor.YELLOW + "BUG! Somehow the recipe you selected couldn't be found. Please report this, and include which villager and what you were trading for");
+			} else {
+				NpcTrade trade = context.getSlotProperties().get(selectedIndex);
+				if (trade != null) {
+					trade.doActions(Plugin.getInstance(), player, context.getVillager());
+				}
+			}
 		}
 	}
 }

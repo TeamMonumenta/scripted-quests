@@ -39,6 +39,11 @@
 						"required": true,
 						"propertyOrder": 2,
 						"$ref": "prerequisites.json"
+					},
+					"actions": {
+						"required": false,
+						"propertyOrder": 3,
+						"$ref": "actions.json"
 					}
 				}
             }

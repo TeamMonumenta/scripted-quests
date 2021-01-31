@@ -152,6 +152,7 @@ public class Plugin extends JavaPlugin {
 		manager.registerEvents(new WorldListener(this), this);
 		manager.registerEvents(mTimerManager, this);
 		manager.registerEvents(mZonePropertyManager, this);
+		manager.registerEvents(mTradeManager, this);
 
 		getCommand("reloadQuests").setExecutor(new ReloadQuests(this));
 		getCommand("reloadZones").setExecutor(new ReloadZones(this));
