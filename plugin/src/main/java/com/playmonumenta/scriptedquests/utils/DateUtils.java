@@ -32,7 +32,7 @@ public class DateUtils {
 	}
 
 	public static long getSecondsSinceEpoch() {
-		return ChronoUnit.SECONDS.between(LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC), LocalDateTime.now(mTz));
+		return ChronoUnit.SECONDS.between(LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC), LocalDateTime.now(ZoneOffset.UTC));
 	}
 
 	public static int getAmPm() {
