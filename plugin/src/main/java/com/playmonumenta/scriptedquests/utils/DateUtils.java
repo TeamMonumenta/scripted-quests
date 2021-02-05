@@ -3,6 +3,7 @@ package com.playmonumenta.scriptedquests.utils;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 
 public class DateUtils {
@@ -31,7 +32,7 @@ public class DateUtils {
 	}
 
 	public static long getSecondsSinceEpoch() {
-		return ChronoUnit.SECONDS.between(LocalDate.ofEpochDay(0), LocalDateTime.now(mTz));
+		return ChronoUnit.SECONDS.between(LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC), LocalDateTime.now(mTz));
 	}
 
 	public static int getAmPm() {
