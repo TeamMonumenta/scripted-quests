@@ -66,7 +66,9 @@ public class NpcTrade implements Comparable<NpcTrade> {
 	}
 
 	public void doActions(Plugin plugin, Player player, Entity npcEntity) {
-		mActions.doActions(plugin, player, npcEntity, null);
+		if (mActions != null) {
+			mActions.doActions(plugin, player, npcEntity, null);
+		}
 	}
 
 	@Override
