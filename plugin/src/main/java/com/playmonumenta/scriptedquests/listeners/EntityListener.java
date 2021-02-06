@@ -78,14 +78,16 @@ public class EntityListener implements Listener {
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void entityDamageEvent(EntityDamageEvent event) {
-		if (!event.isCancelled() && event.getCause() != DamageCause.CUSTOM && event.getCause() != DamageCause.VOID) {
+		if (!event.isCancelled()
+			&& event.getCause() != DamageCause.CUSTOM && event.getCause() != DamageCause.VOID) {
 			cancelIfNpc(event.getEntity(), event);
 		}
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void entityPotionEffectEvent(EntityPotionEffectEvent event) {
-		if (!event.isCancelled() && event.getAction().equals(EntityPotionEffectEvent.Action.ADDED) && !event.getNewEffect().getType().equals(PotionEffectType.HEAL)) {
+		if (!event.isCancelled() && event.getAction().equals(EntityPotionEffectEvent.Action.ADDED)
+			&& !event.getNewEffect().getType().equals(PotionEffectType.HEAL)) {
 			cancelIfNpc(event.getEntity(), event);
 		}
 	}
