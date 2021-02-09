@@ -22,7 +22,7 @@ import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.BooleanArgument;
 import dev.jorel.commandapi.arguments.EntitySelectorArgument;
 import dev.jorel.commandapi.arguments.IntegerArgument;
-import dev.jorel.commandapi.arguments.LiteralArgument;
+import dev.jorel.commandapi.arguments.MultiLiteralArgument;
 import dev.jorel.commandapi.arguments.StringArgument;
 
 public class Leaderboard {
@@ -42,14 +42,12 @@ public class Leaderboard {
 			})
 			.register();
 
-		arguments.clear();
-		arguments.put("players", new EntitySelectorArgument(EntitySelectorArgument.EntitySelector.MANY_PLAYERS));
-		arguments.put("objective", new StringArgument());
-		arguments.put("descending", new BooleanArgument());
-		arguments.put("filterPlayers", new EntitySelectorArgument(EntitySelectorArgument.EntitySelector.MANY_PLAYERS));
 		new CommandAPICommand("leaderboard")
 			.withPermission(CommandPermission.fromString("scriptedquests.leaderboard"))
-			.withArguments(arguments)
+			.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
+			.withArguments(new StringArgument("objective"))
+			.withArguments(new BooleanArgument("descending"))
+			.withArguments(new EntitySelectorArgument("filterPlayers", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
 			.executes((sender, args) -> {
 				for (Player player : (Collection<Player>)args[0]) {
 					leaderboard(plugin, player, (String)args[1],
@@ -64,12 +62,12 @@ public class Leaderboard {
 		 */
 		new CommandAPICommand("leaderboard")
 			.withPermission(CommandPermission.fromString("scriptedquests.leaderboard"))
-			.withArguments(new LiteralArgument("update").setListed(false))
+			.withArguments(new MultiLiteralArgument("update"))
 			.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
 			.withArguments(new StringArgument("objective"))
 			.executes((sender, args) -> {
-				for (Player player : (Collection<Player>)args[0]) {
-					leaderboardUpdate(player, (String)args[1]);
+				for (Player player : (Collection<Player>)args[1]) {
+					leaderboardUpdate(player, (String)args[2]);
 				}
 			})
 			.register();
