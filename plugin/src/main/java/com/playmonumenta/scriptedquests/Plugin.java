@@ -36,7 +36,9 @@ import com.playmonumenta.scriptedquests.commands.ReloadQuests;
 import com.playmonumenta.scriptedquests.commands.ReloadZones;
 import com.playmonumenta.scriptedquests.commands.ScheduleFunction;
 import com.playmonumenta.scriptedquests.commands.SetVelocity;
+import com.playmonumenta.scriptedquests.commands.TestZone;
 import com.playmonumenta.scriptedquests.commands.TimerDebug;
+import com.playmonumenta.scriptedquests.commands.Waypoint;
 import com.playmonumenta.scriptedquests.listeners.EntityListener;
 import com.playmonumenta.scriptedquests.listeners.PlayerListener;
 import com.playmonumenta.scriptedquests.listeners.WorldListener;
@@ -107,6 +109,7 @@ public class Plugin extends JavaPlugin {
 		Code.register(this);
 		SetVelocity.register();
 		DebugZones.register(this);
+		TestZone.register(this);
 		Heal.register();
 		Damage.register();
 		Cooldown.register();
@@ -117,6 +120,7 @@ public class Plugin extends JavaPlugin {
 		mGrowableManager = new GrowableManager(this);
 
 		Growable.register(mGrowableManager);
+		Waypoint.register(this);
 	}
 
 	@Override
@@ -136,7 +140,7 @@ public class Plugin extends JavaPlugin {
 		mTradeManager = new NpcTradeManager();
 		mLoginManager = new QuestLoginManager();
 		mDeathManager = new QuestDeathManager();
-		mRaceManager = new RaceManager();
+		mRaceManager = new RaceManager(this);
 		mCodeManager = new CodeManager();
 		mZoneManager = new ZoneManager(this);
 		mZonePropertyManager = new ZonePropertyManager(this);
@@ -148,6 +152,7 @@ public class Plugin extends JavaPlugin {
 		manager.registerEvents(new WorldListener(this), this);
 		manager.registerEvents(mTimerManager, this);
 		manager.registerEvents(mZonePropertyManager, this);
+		manager.registerEvents(mTradeManager, this);
 
 		getCommand("reloadQuests").setExecutor(new ReloadQuests(this));
 		getCommand("reloadZones").setExecutor(new ReloadZones(this));

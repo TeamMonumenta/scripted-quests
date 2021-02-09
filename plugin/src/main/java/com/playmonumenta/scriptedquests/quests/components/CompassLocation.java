@@ -104,6 +104,13 @@ public class CompassLocation implements QuestLocation {
 		}
 	}
 
+	//If QuestPrerequisites is null, prerequisites always met
+	public CompassLocation(QuestPrerequisites questPrereq, String message, List<Location> waypoints) {
+		mPrerequisites = questPrereq;
+		mMessage = message;
+		mWaypoints.addAll(waypoints);
+	}
+
 	@Override
 	public Location getLocation() {
 		return mWaypoints.get(mWaypoints.size() - 1);
@@ -119,7 +126,12 @@ public class CompassLocation implements QuestLocation {
 		return mMessage;
 	}
 
+	@Override
 	public boolean prerequisiteMet(Player player) {
-		return mPrerequisites.prerequisiteMet(player, null);
+		if (mPrerequisites == null) {
+			return true;
+		} else {
+			return mPrerequisites.prerequisiteMet(player, null);
+		}
 	}
 }

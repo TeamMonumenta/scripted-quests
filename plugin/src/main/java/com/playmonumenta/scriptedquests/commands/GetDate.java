@@ -7,7 +7,7 @@ import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.TextArgument;
 
 public class GetDate {
-	private static final String[] FIELDS = new String[] {"Year", "Month", "DayOfMonth", "DayOfWeek", "DaysSinceEpoch", "IsDst",
+	private static final String[] FIELDS = new String[] {"Year", "Month", "DayOfMonth", "DayOfWeek", "DaysSinceEpoch", "SecondsSinceEpoch",
 	                                                     "IsPm", "HourOfDay", "HourOfTwelve", "Minute", "Second", "Ms", };
 
 	public static void register() {
@@ -32,8 +32,8 @@ public class GetDate {
 			return DateUtils.getDayOfWeek();
 		case "DaysSinceEpoch":
 			return (int)DateUtils.getDaysSinceEpoch();
-		case "IsDst":
-			return DateUtils.isDst() ? 1 : 0;
+		case "SecondsSinceEpoch":
+			return (int)DateUtils.getSecondsSinceEpoch();
 		case "IsPm":
 			return DateUtils.getAmPm();
 		case "HourOfDay":

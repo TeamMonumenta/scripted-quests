@@ -37,7 +37,23 @@ public class Leaderboard {
 			.executes((sender, args) -> {
 				for (Player player : (Collection<Player>)args[0]) {
 					leaderboard(plugin, player, (String)args[1],
-						(Boolean)args[2], (Integer)args[3]);
+						(Boolean)args[2], (Integer)args[3], null);
+				}
+			})
+			.register();
+
+		arguments.clear();
+		arguments.put("players", new EntitySelectorArgument(EntitySelectorArgument.EntitySelector.MANY_PLAYERS));
+		arguments.put("objective", new StringArgument());
+		arguments.put("descending", new BooleanArgument());
+		arguments.put("filterPlayers", new EntitySelectorArgument(EntitySelectorArgument.EntitySelector.MANY_PLAYERS));
+		new CommandAPICommand("leaderboard")
+			.withPermission(CommandPermission.fromString("scriptedquests.leaderboard"))
+			.withArguments(arguments)
+			.executes((sender, args) -> {
+				for (Player player : (Collection<Player>)args[0]) {
+					leaderboard(plugin, player, (String)args[1],
+						(Boolean)args[2], 1, (Collection<Player>)args[3]);
 				}
 			})
 			.register();
@@ -59,7 +75,7 @@ public class Leaderboard {
 			.register();
 	}
 
-	public static void leaderboard(Plugin plugin, Player player, String objective, boolean descending, int page) {
+	public static void leaderboard(Plugin plugin, Player player, String objective, boolean descending, int page, Collection<Player> filterPlayers) {
 		List<LeaderboardEntry> entries = new ArrayList<LeaderboardEntry>();
 
 		/* Get the scoreboard objective (might be null) */
@@ -73,21 +89,37 @@ public class Leaderboard {
 			 displayName = objective;
 		}
 
-		if (Bukkit.getServer().getPluginManager().getPlugin("MonumentaRedisSync") == null) {
+		if (filterPlayers != null || Bukkit.getServer().getPluginManager().getPlugin("MonumentaRedisSync") == null) {
 			/* Redis sync plugin not found - need to loop over scoreboards to compute leaderboard */
 
 			if (obj == null) {
 				player.sendMessage(ChatColor.RED + "The scoreboard objective '" + objective + "' does not exist");
 				return;
 			}
-			for (String name : obj.getScoreboard().getEntries()) {
-				Score score = obj.getScore(name);
-				if (score.isScoreSet()) {
-					int value = score.getScore();
-					if (value != 0) {
-						entries.add(new LeaderboardEntry(name, "", value));
+			if (filterPlayers == null) {
+				/* Not filtering by players, get everyone on the scoreboard */
+				for (String name : obj.getScoreboard().getEntries()) {
+					Score score = obj.getScore(name);
+					if (score.isScoreSet()) {
+						int value = score.getScore();
+						if (value != 0) {
+							entries.add(new LeaderboardEntry(name, "", value));
+						}
 					}
 				}
+			} else {
+				/* Filtering to specific players, only get their scores */
+				for (Player filterPlayer : filterPlayers) {
+					String name = filterPlayer.getName();
+					Score score = obj.getScore(name);
+					if (score.isScoreSet()) {
+						int value = score.getScore();
+						if (value != 0) {
+							entries.add(new LeaderboardEntry(name, "", value));
+						}
+					}
+				}
+
 			}
 
 			if (descending) {
@@ -99,7 +131,8 @@ public class Leaderboard {
 			colorizeEntries(entries, player.getName(), 0);
 
 			LeaderboardUtils.sendLeaderboard(player, displayName, entries, page,
-			                                 "/leaderboard " + player.getName() + " " + objective + (descending ? " true" : " false"));
+			                                 "/leaderboard " + player.getName() + " " + objective + (descending ? " true" : " false"),
+											 filterPlayers == null /* Don't show pages for this variant */);
 		} else {
 			/* Redis sync plugin is available - use it instead */
 

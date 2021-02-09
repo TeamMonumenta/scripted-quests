@@ -176,43 +176,92 @@
                 ]
             }
         },
-        "use_npc_for_prereqs": {
+        "facing": {
             "propertyOrder": 13,
+            "title": "facing",
+            "description": "Succeeds if a player is facing the specified location. ",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "x": {
+                    "required": true,
+                    "$ref": "coordinate.json",
+                    "propertyOrder": 1
+                },
+                "y": {
+                    "required": true,
+                    "$ref": "coordinate.json",
+                    "propertyOrder": 2
+                },
+                "z": {
+                    "required": true,
+                    "$ref": "coordinate.json",
+                    "propertyOrder": 3
+                },
+                "min_alignment": {
+                    "required": true,
+                    "title": "min_alignment",
+                    "description": "Smaller value of min_alignment requires player to be looking less precisely at that spot. For example, 0.2 is something like 'the location is on screen' whereas 0.95 is 'looking almost exactly at that spot'",
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "propertyOrder": 4
+                }
+            }
+        },
+        "zone_properties": {
+            "propertyOrder": 1,
+            "title": "zone_properties",
+            "description": "Checks that the player is in a zone with the specified properties. Properties may be inverted by starting them with `!`. Click Properties, then type in the layer name in the input box and click the 'add' button. Layer and property names are case sensitive.",
+            "type": "object",
+            "defaultProperties": ["default"],
+            "patternProperties": {
+                ".*": {
+                    "headerTemplate": "Layer {{i}}",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "use_npc_for_prereqs": {
+            "propertyOrder": 14,
             "title": "use_npc_for_prereqs",
             "description": "All nested items use the NPC (instead of the player) for prereq checks. Use this to check if the NPC itself has scores, tags, etc. This only works when the NPC actually exists - such as when trading with an NPC or interacting with one directly by hitting them. This will NOT work when this interaction was started by /interactnpc commands or actions. Also does NOT work with inventory-related things such as item in hand/inventory.",
             "type": "object",
             "$ref": "prerequisites.json"
         },
         "and": {
-            "propertyOrder": 14,
+            "propertyOrder": 15,
             "title": "and",
             "description": "Returns true if all contained prerequisites are true, false otherwise",
             "type": "object",
             "$ref": "prerequisites.json"
         },
         "or": {
-            "propertyOrder": 15,
+            "propertyOrder": 16,
             "title": "or",
             "description": "Returns true if any contained prerequisite is true, false otherwise",
             "type": "object",
             "$ref": "prerequisites.json"
         },
         "not_and": {
-            "propertyOrder": 16,
+            "propertyOrder": 17,
             "title": "not_and",
             "description": "Returns true if any contained prerequisite is false, false otherwise",
             "type": "object",
             "$ref": "prerequisites.json"
         },
         "not_or": {
-            "propertyOrder": 17,
+            "propertyOrder": 18,
             "title": "not_or",
             "description": "Returns true if all contained prerequisites are false, false otherwise",
             "type": "object",
             "$ref": "prerequisites.json"
         },
         "only_one_of": {
-            "propertyOrder": 18,
+            "propertyOrder": 19,
             "title": "only_one_of",
             "description": "Returns true if exactly one contained prerequisite is true, false otherwise",
             "type": "object",

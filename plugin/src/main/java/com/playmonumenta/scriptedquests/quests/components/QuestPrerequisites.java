@@ -5,9 +5,6 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteGamemode;
-import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteItemInEitherHand;
-import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteItemInOffHand;
 import org.bukkit.entity.Entity;
 
 import com.google.gson.JsonArray;
@@ -17,12 +14,17 @@ import com.playmonumenta.scriptedquests.quests.components.prerequisites.Prerequi
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteCheckAdvancements;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteCheckScores;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteCheckTags;
+import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteFacing;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteFullyHealed;
-import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteSneaking;
+import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteGamemode;
+import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteItemInEitherHand;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteItemInHand;
+import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteItemInOffHand;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteItemsInInventory;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteLocation;
+import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteSneaking;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteTestForBlock;
+import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteZoneProperties;
 
 public class QuestPrerequisites implements PrerequisiteBase {
 	private final ArrayList<PrerequisiteBase> mPrerequisites = new ArrayList<PrerequisiteBase>();
@@ -155,6 +157,12 @@ public class QuestPrerequisites implements PrerequisiteBase {
 				break;
 			case "gamemode":
 				mPrerequisites.add(new PrerequisiteGamemode(value));
+				break;
+			case "facing":
+				mPrerequisites.add(new PrerequisiteFacing(value));
+				break;
+			case "zone_properties":
+				mPrerequisites.add(new PrerequisiteZoneProperties(value));
 				break;
 			default:
 				throw new Exception("Unknown prerequisites key: '" + key + "'");

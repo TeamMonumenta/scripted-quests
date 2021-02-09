@@ -3,6 +3,7 @@ package com.playmonumenta.scriptedquests.listeners;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -14,6 +15,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerAnimationEvent;
+import org.bukkit.event.player.PlayerAnimationType;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -32,6 +35,9 @@ import com.playmonumenta.scriptedquests.quests.components.DeathLocation;
 import com.playmonumenta.scriptedquests.utils.MetadataUtils;
 
 public class PlayerListener implements Listener {
+
+	private static final String ADVENTURE_INTERACT_METAKEY = "ScriptedQuestsInteractable";
+
 	private Plugin mPlugin = null;
 
 	public PlayerListener(Plugin plugin) {
@@ -42,6 +48,15 @@ public class PlayerListener implements Listener {
 	public void playerInteractEvent(PlayerInteractEvent event) {
 		Action action = event.getAction();
 		Player player = event.getPlayer();
+
+		//In case this gets fixed, force adventure mode left click block to go through playerAnimationEvent
+		if (player.getGameMode() == GameMode.ADVENTURE && action == Action.LEFT_CLICK_BLOCK) {
+			return;
+		}
+		//Disable left click events for the player for the next few ticks
+		//Enable them again a few ticks later
+		MetadataUtils.checkOnceThisTick(mPlugin, player, ADVENTURE_INTERACT_METAKEY);
+
 		ItemStack item = event.getItem();
 		Block block = event.getClickedBlock();
 		Event.Result useItem = event.useItemInHand();
@@ -50,6 +65,7 @@ public class PlayerListener implements Listener {
 		    && mPlugin.mInteractableManager.interactEvent(mPlugin, player, item, block, action)) {
 			// interactEvent returning true means this event should be canceled
 			event.setCancelled(true);
+
 			return;
 		}
 
@@ -70,6 +86,34 @@ public class PlayerListener implements Listener {
 			} else if (action == Action.RIGHT_CLICK_AIR) {
 				mPlugin.mRaceManager.restartRaceByClick(player);
 			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void playerAnimationEvent(PlayerAnimationEvent event) {
+
+		Player player = event.getPlayer();
+		//This only applies to players in adventure mode looking at blocks (not air)
+		if (player.getGameMode() != GameMode.ADVENTURE || event.getAnimationType() != PlayerAnimationType.ARM_SWING || player.getTargetBlock(null, 4).getType() == Material.AIR) {
+			return;
+		}
+
+		//If the player recently used a right click or left click air
+		if (MetadataUtils.happenedInRecentTicks(player, ADVENTURE_INTERACT_METAKEY, 4)) {
+			return;
+		}
+
+		//Now we have definitely left clicked a block in adventure mode
+		ItemStack item = player.getInventory().getItemInMainHand();
+
+		if (mPlugin.mInteractableManager.interactEvent(mPlugin, player, item, player.getTargetBlock(null, 4), Action.LEFT_CLICK_BLOCK)) {
+			event.setCancelled(true);
+			return;
+		}
+
+		//Compass
+		if (item.getType() == Material.COMPASS && !player.isSneaking()) {
+			mPlugin.mQuestCompassManager.showCurrentQuest(player);
 		}
 	}
 
@@ -180,4 +224,5 @@ public class PlayerListener implements Listener {
 		// Remove all zone properties from the player
 		mPlugin.mZoneManager.unregisterPlayer(event.getPlayer());
 	}
+
 }

@@ -7,6 +7,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -17,6 +19,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.utils.ArgUtils;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
 
@@ -28,8 +31,10 @@ public class ZoneManager {
 	private Map<String, ZoneLayer> mLayers = new HashMap<String, ZoneLayer>();
 	private Map<String, ZoneLayer> mPluginLayers = new HashMap<String, ZoneLayer>();
 	private ZoneTreeBase mZoneTree = null;
-	private Map<Player, ZoneFragment> mLastPlayerZoneFragment = new HashMap<Player, ZoneFragment>();
-	private Map<Player, Map<String, Zone>> mLastPlayerZones = new HashMap<Player, Map<String, Zone>>();
+
+	private Map<UUID, ZoneFragment> mLastPlayerZoneFragment = new HashMap<UUID, ZoneFragment>();
+	private Map<UUID, Map<String, Zone>> mLastPlayerZones = new HashMap<UUID, Map<String, Zone>>();
+
 	private Set<CommandSender> mReloadRequesters;
 	private Set<CommandSender> mQueuedReloadRequesters = new HashSet<CommandSender>();
 
@@ -171,12 +176,13 @@ public class ZoneManager {
 
 	// Passing a player is optimized to use the last known location
 	public boolean hasProperty(Player player, String layerName, String propertyName) {
-		if (mPlugin.mFallbackZoneLookup) {
-			if (player == null) {
-				return false;
-			}
+		if (player == null) {
+			return false;
+		}
+		UUID playerUuid = player.getUniqueId();
 
-			Map<String, Zone> zones = mLastPlayerZones.get(player);
+		if (mPlugin.mFallbackZoneLookup) {
+			Map<String, Zone> zones = mLastPlayerZones.get(playerUuid);
 			if (zones == null) {
 				return false;
 			}
@@ -188,13 +194,38 @@ public class ZoneManager {
 
 			return zone.hasProperty(propertyName);
 		} else {
-			ZoneFragment lastFragment = mLastPlayerZoneFragment.get(player);
+			ZoneFragment lastFragment = mLastPlayerZoneFragment.get(playerUuid);
 			if (lastFragment == null) {
 				return false;
 			}
 
 			return lastFragment.hasProperty(layerName, propertyName);
 		}
+	}
+
+	public Set<String> getLayerNames() {
+		return new HashSet<String>(mLayers.keySet());
+	}
+
+	public String[] getLayerNameSuggestions() {
+		return ArgUtils.quoteIfNeeded(new TreeSet<String>(getLayerNames()));
+	}
+
+	public Set<String> getLoadedProperties(String layerName) {
+		ZoneLayer layer = mLayers.get(layerName);
+		if (layer == null) {
+			return new HashSet<String>();
+		}
+		return layer.getLoadedProperties();
+	}
+
+	public String[] getLoadedPropertySuggestions(String layerName) {
+		Set<String> properties = getLoadedProperties(layerName);
+		Set<String> suggestions = new TreeSet<String>(properties);
+		for (String property : properties) {
+			suggestions.add("!" + property);
+		}
+		return ArgUtils.quoteIfNeeded(suggestions);
 	}
 
 	/************************************************************************************
@@ -344,6 +375,7 @@ public class ZoneManager {
 			@Override
 			public void run() {
 				for (Player player : Bukkit.getOnlinePlayers()) {
+					UUID playerUuid = player.getUniqueId();
 					Location playerLocation = player.getLocation();
 					Vector playerVector = playerLocation.toVector();
 
@@ -358,7 +390,7 @@ public class ZoneManager {
 						}
 					}
 
-					ZoneFragment lastZoneFragment = mLastPlayerZoneFragment.get(player);
+					ZoneFragment lastZoneFragment = mLastPlayerZoneFragment.get(playerUuid);
 					if (lastZoneFragment != null && lastZoneFragment.within(playerVector)) {
 						// Player has not left their previous zone fragment; no zone change.
 						// Note that reloading invalidates previous zones, causing within() to
@@ -406,18 +438,22 @@ public class ZoneManager {
 	}
 
 	public void unregisterPlayer(Player player) {
+		UUID playerUuid = player.getUniqueId();
 		applyFragmentChange(player, null);
-		if (mPlugin.mFallbackZoneLookup && mLastPlayerZones.get(player) != null) {
+		if (mPlugin.mFallbackZoneLookup && mLastPlayerZones.get(playerUuid) != null) {
 			// Copy key set, as we are modifying the map during iteration
-			Set<String> layerNames = new LinkedHashSet<String>(mLastPlayerZones.get(player).keySet());
+			Set<String> layerNames = new LinkedHashSet<String>(mLastPlayerZones.get(playerUuid).keySet());
 			for (String layerName : layerNames) {
 				applyZoneChange(player, layerName, null);
 			}
 		}
+		mLastPlayerZoneFragment.remove(playerUuid);
+		mLastPlayerZones.remove(playerUuid);
 	}
 
 	private void applyFragmentChange(Player player, ZoneFragment currentZoneFragment) {
-		ZoneFragment lastZoneFragment = mLastPlayerZoneFragment.get(player);
+		UUID playerUuid = player.getUniqueId();
+		ZoneFragment lastZoneFragment = mLastPlayerZoneFragment.get(playerUuid);
 
 		Map<String, Zone> lastZones = new HashMap<String, Zone>();
 		if (lastZoneFragment != null) {
@@ -430,7 +466,7 @@ public class ZoneManager {
 		}
 
 		// We've already confirmed the player changed zone fragments; null is valid.
-		mLastPlayerZoneFragment.put(player, currentZoneFragment);
+		mLastPlayerZoneFragment.put(playerUuid, currentZoneFragment);
 
 		if ((currentZones == null && lastZones == null) ||
 		    (currentZones != null && lastZones != null && currentZones.equals(lastZones))) {
@@ -452,11 +488,12 @@ public class ZoneManager {
 	}
 
 	private void applyZoneChange(Player player, String layerName, Zone currentZone) {
+		UUID playerUuid = player.getUniqueId();
 		// Null zones are valid - indicates no zone.
-		Map<String, Zone> lastZones = mLastPlayerZones.get(player);
+		Map<String, Zone> lastZones = mLastPlayerZones.get(playerUuid);
 		if (lastZones == null) {
 			lastZones = new HashMap<String, Zone>();
-			mLastPlayerZones.put(player, lastZones);
+			mLastPlayerZones.put(playerUuid, lastZones);
 		}
 
 		Zone lastZone = lastZones.get(layerName);
@@ -501,7 +538,7 @@ public class ZoneManager {
 		if (currentZone == null) {
 			lastZones.remove(layerName);
 			if (lastZones.size() == 0) {
-				mLastPlayerZones.remove(player);
+				mLastPlayerZones.remove(playerUuid);
 			}
 		} else {
 			lastZones.put(layerName, currentZone);
@@ -544,11 +581,12 @@ public class ZoneManager {
 			return;
 		}
 
+		UUID playerUuid = player.getUniqueId();
 		Vector playerLocation = player.getLocation().toVector();
 
 		sender.sendMessage("Cached player info according to zone fragment tree:");
 
-		ZoneFragment cachedFragment = mLastPlayerZoneFragment.get(player);
+		ZoneFragment cachedFragment = mLastPlayerZoneFragment.get(playerUuid);
 		if (cachedFragment == null) {
 			sender.sendMessage("Target is not in any zone.");
 		} else {
@@ -573,7 +611,7 @@ public class ZoneManager {
 		if (mPlugin.mFallbackZoneLookup) {
 			sender.sendMessage("Cached player info according to slow/reliable method:");
 
-			Map<String, Zone> cachedZones = mLastPlayerZones.get(player);
+			Map<String, Zone> cachedZones = mLastPlayerZones.get(playerUuid);
 			if (cachedZones == null) {
 				sender.sendMessage("Target is not in any zone.");
 			} else {

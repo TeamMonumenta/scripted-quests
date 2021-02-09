@@ -176,7 +176,7 @@ an NPC, quest components are run in-order (more than one may be executed).
 `/execute store result score <scoreboardplayer> <objective> run getdate <field>`
 - permission: `scriptedquests.getdate`
 - Get part of the current date as a score. <field> can be:
-  Year, Month, DayOfMonth, DayOfWeek, IsDst,
+  Year, Month, DayOfMonth, DayOfWeek, DaysSinceEpoch, SecondsSinceEpoch,
   IsPm, HourOfDay, HourOfTwelve, Minute, Second, or Ms.
 
 `/giveloottable <@a> "<namespace:path/to/table>" [count]`
@@ -219,6 +219,13 @@ an NPC, quest components are run in-order (more than one may be executed).
 `/setvelocity <@a> <x> <y> <z>`
 - permission: `scriptedquests.setvelocity`
 - Sets the velocity of the targeted entity to x y z.
+
+`/testzone <x> <y> <z> <layerName> [propertyName]`
+- permission: `scriptedquests.testzone`
+- Checks if the coordinates specified are in a zone of layerName, optionally with a
+  given property name, which may be inverted with the prefix `!`. If layerName or
+  propertyName have spaces, quotes, or other characters that may cause issues,
+  put them in quotes similar to json.
 ### Debug commands
 
 `/debugzones <player>`

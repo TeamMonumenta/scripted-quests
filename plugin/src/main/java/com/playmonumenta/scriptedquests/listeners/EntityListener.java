@@ -1,7 +1,11 @@
 package com.playmonumenta.scriptedquests.listeners;
 
+import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.quests.QuestNpc;
+
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -15,10 +19,6 @@ import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
-
-import com.playmonumenta.scriptedquests.Constants;
-import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.quests.QuestNpc;
 
 public class EntityListener implements Listener {
 	private Plugin mPlugin;
@@ -65,58 +65,37 @@ public class EntityListener implements Listener {
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void entityCombustByBlockEvent(EntityCombustByBlockEvent event) {
 		if (!event.isCancelled()) {
-			Entity damagee = event.getEntity();
-
-			QuestNpc npc = mPlugin.mNpcManager.getInteractNPC(damagee.getCustomName(), damagee.getType());
-			if (npc != null) {
-				/* This is a quest NPC - refuse to damage it */
-				event.setCancelled(true);
-			}
+			cancelIfNpc(event.getEntity(), event);
 		}
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void entityCombustByEntityEvent(EntityCombustByEntityEvent event) {
 		if (!event.isCancelled()) {
-			Entity damagee = event.getEntity();
-
-			QuestNpc npc = mPlugin.mNpcManager.getInteractNPC(damagee.getCustomName(), damagee.getType());
-			if (npc != null) {
-				/* This is a quest NPC - refuse to damage it */
-				event.setCancelled(true);
-			}
+			cancelIfNpc(event.getEntity(), event);
 		}
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void entityDamageEvent(EntityDamageEvent event) {
-		if (!event.isCancelled()) {
-			Entity damagee = event.getEntity();
-
-			QuestNpc npc = mPlugin.mNpcManager.getInteractNPC(damagee.getCustomName(), damagee.getType());
-			if (npc != null) {
-				DamageCause cause = event.getCause();
-				if (cause != DamageCause.CUSTOM && cause != DamageCause.VOID) {
-					/* This is a quest NPC - refuse to damage it */
-					event.setCancelled(true);
-				}
-			}
+		if (!event.isCancelled()
+			&& event.getCause() != DamageCause.CUSTOM && event.getCause() != DamageCause.VOID) {
+			cancelIfNpc(event.getEntity(), event);
 		}
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void entityPotionEffectEvent(EntityPotionEffectEvent event) {
-		if (!event.isCancelled()) {
-			Entity damagee = event.getEntity();
+		if (!event.isCancelled() && event.getAction().equals(EntityPotionEffectEvent.Action.ADDED)
+			&& !event.getNewEffect().getType().equals(PotionEffectType.HEAL)) {
+			cancelIfNpc(event.getEntity(), event);
+		}
+	}
 
-			QuestNpc npc = mPlugin.mNpcManager.getInteractNPC(damagee.getCustomName(), damagee.getType());
-			if (npc != null) {
-				if (event.getAction().equals(EntityPotionEffectEvent.Action.ADDED) &&
-					!event.getNewEffect().getType().equals(PotionEffectType.HEAL)) {
-					/* Can not apply potion effects to NPCs */
-					event.setCancelled(true);
-				}
-			}
+	private void cancelIfNpc(Entity damagee, Cancellable event) {
+		QuestNpc npc = mPlugin.mNpcManager.getInteractNPC(damagee.getCustomName(), damagee.getType());
+		if (npc != null) {
+			event.setCancelled(true);
 		}
 	}
 
