@@ -17,4 +17,12 @@ public class ModelTreeNode extends QuadTreeValue {
 	public void destroy() {
 
 	}
+
+	@Override
+	public ModelTreeNode clone() {
+		ModelTreeNode clone = new ModelTreeNode(mModel.clone());
+		clone.mQuestMarkers = mQuestMarkers;
+
+		return clone;
+	}
 }

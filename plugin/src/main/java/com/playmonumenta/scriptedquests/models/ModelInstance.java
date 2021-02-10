@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class ModelInstance {
+public class ModelInstance implements Cloneable {
 
 	private class ProgressBar {
 
@@ -335,6 +335,13 @@ public class ModelInstance {
 		}
 
 		return false;
+	}
+
+	@Override
+	public ModelInstance clone() {
+		ModelInstance clone = new ModelInstance(mPlugin, mModel, mLoc.clone(), mYaw);
+
+		return clone;
 	}
 
 }

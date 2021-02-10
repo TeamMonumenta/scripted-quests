@@ -12,12 +12,13 @@ import org.bukkit.entity.ArmorStand;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class ModelManager {
 
 	private final Plugin mPlugin;
 	private Map<String, Model> mModels = new HashMap<>();
-	public QuadTree<ModelTreeNode> mQuadTree = new QuadTree<>();
+	public Map<UUID, QuadTree<ModelTreeNode>> mQuadTrees = new HashMap<>();
 	/*
 	 * If sender is non-null, it will be sent debugging information
 	 */
@@ -34,7 +35,11 @@ public class ModelManager {
 	}
 
 	public void destroyModels() {
-		mQuadTree.destroy();
+		for (QuadTree quadTree : mQuadTrees.values()) {
+			quadTree.destroy();
+		}
+
+		mQuadTrees.clear();
 		for (Model model : mModels.values()) {
 			for (ModelInstance instance : model.getInstances()) {
 				instance.destroy();

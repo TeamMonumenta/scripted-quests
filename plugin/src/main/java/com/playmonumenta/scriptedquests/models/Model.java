@@ -7,6 +7,7 @@ import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import me.Novalescent.mobs.spells.scripted.actions.SpellActions;
+import me.Novalescent.utils.quadtree.reworked.QuadTree;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -269,7 +270,14 @@ public class Model {
 
 			ModelTreeNode node = new ModelTreeNode(instance);
 			node.mQuestMarkers = mQuestMarker;
-			plugin.mModelManager.mQuadTree.add(node);
+			QuadTree<ModelTreeNode> quadTree = plugin.mModelManager.mQuadTrees.get(mWorld.getUID());
+			if (quadTree == null) {
+				quadTree = new QuadTree<>();
+			}
+
+			quadTree.add(node);
+			plugin.mModelManager.mQuadTrees.put(mWorld.getUID(), quadTree);
+
 			mInstances.add(instance);
 		}
 	}

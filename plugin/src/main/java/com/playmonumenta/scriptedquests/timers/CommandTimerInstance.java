@@ -43,7 +43,7 @@ public class CommandTimerInstance {
 		}
 
 		for (Player player : Bukkit.getOnlinePlayers()) {
-			if (mLoc.distance(player.getLocation()) <= mPlayerRange && player.getGameMode() != GameMode.SPECTATOR) {
+			if (mLoc.getWorld().equals(player.getWorld()) && mLoc.distance(player.getLocation()) <= mPlayerRange && player.getGameMode() != GameMode.SPECTATOR) {
 				return true;
 			}
 		}

@@ -122,6 +122,12 @@
 					"description": "The level of the Status Effect.",
 					"type": "integer",
 					"default": 1
+				},
+				"stacks": {
+					"title": "stacks",
+					"description": "Whether or not multiple of this status effect can be applied to the target at the same time. If not, the duration of the current effect is refreshed.",
+					"type": "boolean",
+					"default": false
 				}
 			}
 		}
