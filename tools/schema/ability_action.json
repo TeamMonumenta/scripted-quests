@@ -130,6 +130,33 @@
 					"default": false
 				}
 			}
+		},
+		"setblock": {
+			"title": "setblock",
+			"description": "Sets a block at a given location to the new block type.",
+			"type": "object",
+			"properties": {
+				"x": {
+					"title": "x",
+					"description": "X-Coordinate",
+					"type": "integer"
+				},
+				"y": {
+					"title": "y",
+					"description": "Y-Coordinate",
+					"type": "integer"
+				},
+				"z": {
+					"title": "z",
+					"description": "Z-Coordinate",
+					"type": "integer"
+				},
+				"type": {
+					"title": "type",
+					"description": "The block type/material to use",
+					"type": "string"
+				}
+			}
 		}
 	}
 }
