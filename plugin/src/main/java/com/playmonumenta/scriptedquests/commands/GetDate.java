@@ -1,12 +1,9 @@
 package com.playmonumenta.scriptedquests.commands;
 
-import java.util.LinkedHashMap;
-
 import com.playmonumenta.scriptedquests.utils.DateUtils;
 
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
-import dev.jorel.commandapi.arguments.Argument;
 import dev.jorel.commandapi.arguments.TextArgument;
 
 public class GetDate {
@@ -14,13 +11,9 @@ public class GetDate {
 	                                                     "IsPm", "HourOfDay", "HourOfTwelve", "Minute", "Second", "Ms", };
 
 	public static void register() {
-		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
-
-		arguments.put("field", new TextArgument().overrideSuggestions(FIELDS));
-
 		new CommandAPICommand("getdate")
 			.withPermission(CommandPermission.fromString("scriptedquests.getdate"))
-			.withArguments(arguments)
+			.withArguments(new TextArgument("field").overrideSuggestions(FIELDS))
 			.executes((sender, args) -> {
 					return getField((String)args[0]);
 				})

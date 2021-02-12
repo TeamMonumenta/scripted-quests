@@ -1,28 +1,22 @@
 package com.playmonumenta.scriptedquests.commands;
 
 import java.util.Collection;
-import java.util.LinkedHashMap;
 
 import org.bukkit.entity.Damageable;
 
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
-import dev.jorel.commandapi.arguments.Argument;
 import dev.jorel.commandapi.arguments.BooleanArgument;
 import dev.jorel.commandapi.arguments.DoubleArgument;
 import dev.jorel.commandapi.arguments.EntitySelectorArgument;
 
 public class Damage {
 	public static void register() {
-		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
-
-		arguments.put("entities", new EntitySelectorArgument(EntitySelectorArgument.EntitySelector.MANY_ENTITIES));
-		arguments.put("amount", new DoubleArgument());
-		arguments.put("respect_armor", new BooleanArgument());
-
 		new CommandAPICommand("damage")
 			.withPermission(CommandPermission.fromString("scriptedquests.damage"))
-			.withArguments(arguments)
+			.withArguments(new EntitySelectorArgument("entities", EntitySelectorArgument.EntitySelector.MANY_ENTITIES))
+			.withArguments(new DoubleArgument("amount"))
+			.withArguments(new BooleanArgument("respect_armor"))
 			.executes((sender, args) -> {
 				for (Object e : (Collection<?>)args[0]) {
 					if (e instanceof Damageable) {

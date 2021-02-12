@@ -1,25 +1,18 @@
 package com.playmonumenta.scriptedquests.commands;
 
-import java.util.LinkedHashMap;
-
 import org.bukkit.entity.Player;
 
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
-import dev.jorel.commandapi.arguments.Argument;
 import dev.jorel.commandapi.arguments.EntitySelectorArgument;
 import dev.jorel.commandapi.arguments.TextArgument;
 
 public class HasPermission {
 	public static void register() {
-		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
-
-		arguments.put("players", new EntitySelectorArgument(EntitySelectorArgument.EntitySelector.ONE_PLAYER));
-		arguments.put("permission", new TextArgument());
-
 		new CommandAPICommand("haspermission")
 			.withPermission(CommandPermission.fromString("scriptedquests.haspermission"))
-			.withArguments(arguments)
+			.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.ONE_PLAYER))
+			.withArguments(new TextArgument("permission"))
 			.executes((sender, args) -> {
 				Player player = (Player)args[0];
 				String perm = (String)args[1];

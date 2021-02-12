@@ -1,7 +1,5 @@
 package com.playmonumenta.scriptedquests.commands;
 
-import java.util.LinkedHashMap;
-
 import com.playmonumenta.scriptedquests.utils.BlockUtils;
 
 import org.bukkit.Location;
@@ -10,21 +8,16 @@ import org.bukkit.command.CommandSender;
 
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
-import dev.jorel.commandapi.arguments.Argument;
 import dev.jorel.commandapi.arguments.LocationArgument;
 import dev.jorel.commandapi.arguments.StringArgument;
 
 public class Line {
 	public static void register() {
-		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
-
-		arguments.put("start", new LocationArgument());
-		arguments.put("end", new LocationArgument());
-		arguments.put("material", new StringArgument());
-
 		new CommandAPICommand("line")
 			.withPermission(CommandPermission.fromString("scriptedquests.line"))
-			.withArguments(arguments)
+			.withArguments(new LocationArgument("start"))
+			.withArguments(new LocationArgument("end"))
+			.withArguments(new StringArgument("material"))
 			.executes((sender, args) -> {
 				return run(sender, (Location) args[0], (Location) args[1], (String) args[2]);
 			})

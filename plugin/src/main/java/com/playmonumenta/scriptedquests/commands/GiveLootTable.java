@@ -1,7 +1,6 @@
 package com.playmonumenta.scriptedquests.commands;
 
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.Random;
 
 import com.playmonumenta.scriptedquests.utils.InventoryUtils;
@@ -14,7 +13,6 @@ import org.bukkit.entity.Player;
 
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
-import dev.jorel.commandapi.arguments.Argument;
 import dev.jorel.commandapi.arguments.EntitySelectorArgument;
 import dev.jorel.commandapi.arguments.IntegerArgument;
 import dev.jorel.commandapi.arguments.TextArgument;
@@ -23,35 +21,32 @@ public class GiveLootTable {
 	@SuppressWarnings("unchecked")
 	public static void register(Random random) {
 		CommandPermission perms = CommandPermission.fromString("scriptedquests.giveloottable");
-		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
 
-		arguments.put("players", new EntitySelectorArgument(EntitySelectorArgument.EntitySelector.MANY_PLAYERS));
-		arguments.put("lootTablePath", new TextArgument());
 		new CommandAPICommand("giveloottable")
 			.withPermission(perms)
-			.withArguments(arguments)
+			.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
+			.withArguments(new TextArgument("lootTablePath"))
 			.executes((sender, args) -> {
 				giveLoot((Collection<Player>)args[0], (String)args[1], 1, random);
 			})
 			.register();
 
-		arguments.put("count", new IntegerArgument(1, 1000));
 		new CommandAPICommand("giveloottable")
 			.withPermission(perms)
-			.withArguments(arguments)
+			.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
+			.withArguments(new TextArgument("lootTablePath"))
+			.withArguments(new IntegerArgument("count", 1, 1000))
 			.executes((sender, args) -> {
 				giveLoot((Collection<Player>)args[0], (String)args[1], (Integer)args[2], random);
 			})
 			.register();
 
 		/* Rather than take a specified count, take an item entity - and give loot from the loot table once for each item in the stack */
-		arguments.clear();
-		arguments.put("players", new EntitySelectorArgument(EntitySelectorArgument.EntitySelector.MANY_PLAYERS));
-		arguments.put("lootTablePath", new TextArgument());
-		arguments.put("countItems", new EntitySelectorArgument(EntitySelectorArgument.EntitySelector.ONE_ENTITY));
 		new CommandAPICommand("giveloottable")
 			.withPermission(perms)
-			.withArguments(arguments)
+			.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
+			.withArguments(new TextArgument("lootTablePath"))
+			.withArguments(new EntitySelectorArgument("countItems", EntitySelectorArgument.EntitySelector.ONE_ENTITY))
 			.executes((sender, args) -> {
 				giveLootCountFromItemEntity((Collection<Player>)args[0], (String)args[1], (Entity)args[2], random);
 			})

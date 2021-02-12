@@ -1,7 +1,6 @@
 package com.playmonumenta.scriptedquests.commands;
 
 import java.util.Collection;
-import java.util.LinkedHashMap;
 
 import com.playmonumenta.scriptedquests.Plugin;
 
@@ -9,22 +8,16 @@ import org.bukkit.entity.Player;
 
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
-import dev.jorel.commandapi.arguments.Argument;
 import dev.jorel.commandapi.arguments.EntitySelectorArgument;
 import dev.jorel.commandapi.arguments.TextArgument;
 
 public class GenerateCode {
 	@SuppressWarnings("unchecked")
 	public static void register(Plugin plugin) {
-		CommandPermission perms = CommandPermission.fromString("scriptedquests.generatecode");
-		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
-
-		arguments.put("players", new EntitySelectorArgument(EntitySelectorArgument.EntitySelector.MANY_PLAYERS));
-		arguments.put("seed", new TextArgument());
-
 		new CommandAPICommand("generatecode")
-			.withPermission(perms)
-			.withArguments(arguments)
+			.withPermission(CommandPermission.fromString("scriptedquests.generatecode"))
+			.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
+			.withArguments(new TextArgument("seed"))
 			.executes((sender, args) -> {
 				generateCode(plugin, (Collection<Player>)args[0], (String)args[1]);
 			})

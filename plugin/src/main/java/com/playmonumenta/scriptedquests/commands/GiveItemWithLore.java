@@ -2,7 +2,6 @@ package com.playmonumenta.scriptedquests.commands;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import com.playmonumenta.scriptedquests.utils.InventoryUtils;
@@ -15,7 +14,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
-import dev.jorel.commandapi.arguments.Argument;
 import dev.jorel.commandapi.arguments.EntitySelectorArgument;
 import dev.jorel.commandapi.arguments.IntegerArgument;
 import dev.jorel.commandapi.arguments.ItemStackArgument;
@@ -25,17 +23,12 @@ import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 public class GiveItemWithLore {
 	@SuppressWarnings("unchecked")
 	public static void register() {
-		CommandPermission perms = CommandPermission.fromString("scriptedquests.giveitemwithlore");
-		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
-
-		arguments.put("players", new EntitySelectorArgument(EntitySelectorArgument.EntitySelector.MANY_PLAYERS));
-		arguments.put("item", new ItemStackArgument());
-		arguments.put("count", new IntegerArgument(1, 64));
-		arguments.put("lore", new TextArgument());
-
 		new CommandAPICommand("giveitemwithlore")
-			.withPermission(perms)
-			.withArguments(arguments)
+			.withPermission(CommandPermission.fromString("scriptedquests.giveitemwithlore"))
+			.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
+			.withArguments(new ItemStackArgument("item"))
+			.withArguments(new IntegerArgument("count", 1, 64))
+			.withArguments(new TextArgument("lore"))
 			.executes((sender, args) -> {
 				giveLoot((Collection<Player>)args[0], (ItemStack)args[1], (Integer)args[2], (String)args[3]);
 			})

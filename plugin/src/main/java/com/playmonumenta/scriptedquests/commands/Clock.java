@@ -1,30 +1,22 @@
 package com.playmonumenta.scriptedquests.commands;
 
-import java.util.LinkedHashMap;
-
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
-import dev.jorel.commandapi.arguments.Argument;
 import dev.jorel.commandapi.arguments.IntegerArgument;
 import dev.jorel.commandapi.arguments.LocationArgument;
 import dev.jorel.commandapi.arguments.LocationType;
 
 public class Clock {
 	public static void register() {
-		CommandPermission perms = CommandPermission.fromString("scriptedquests.clock");
-		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
-
-		arguments.put("location", new LocationArgument(LocationType.PRECISE_POSITION));
-		arguments.put("range", new IntegerArgument());
-		arguments.put("period", new IntegerArgument());
-
 		new CommandAPICommand("clock")
-			.withPermission(perms)
-			.withArguments(arguments)
+			.withPermission(CommandPermission.fromString("scriptedquests.clock"))
+			.withArguments(new LocationArgument("location", LocationType.PRECISE_POSITION))
+			.withArguments(new IntegerArgument("range"))
+			.withArguments(new IntegerArgument("period"))
 			.executes((sender, args) -> {
 				if (sender instanceof Player) {
 					Player player = (Player) sender;
