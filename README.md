@@ -258,4 +258,4 @@ actions:
 - command - Runs a command using the console
 - give\_loot - Generates loot from a loot table and gives it to the player
 - interact\_npc - Triggers a follow-on interaction with a different NPC
-- rerun-components - Re-runs all components for this NPC from the beginning
+- rerun\_components - Re-runs all components for this NPC from the beginning
