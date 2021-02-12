@@ -107,6 +107,10 @@ public class Zone extends ZoneBase {
 			zoneInfo = new ZoneInfo(zoneObject.get("zone_id").getAsString(), zoneObject.get("zone_name").getAsString());
 			zoneInfo.mXP = zoneObject.get("xp").getAsInt();
 
+			if (zoneObject.has("song")) {
+				zoneInfo.mSong = zoneObject.get("song").getAsString();
+			}
+
 			if (zoneObject.has("discovery_sounds")) {
 				zoneInfo.mDiscoverySounds = zoneObject.get("discovery_sounds").getAsBoolean();
 			}

@@ -13,6 +13,7 @@ public class ZoneInfo {
 
 	public boolean mDiscoverySounds = true;
 	public List<QuestComponent> mComponents = new ArrayList<>();
+	public String mSong = null;
 	public ZoneInfo(String id, String name) {
 		mId = id;
 		mName = name;

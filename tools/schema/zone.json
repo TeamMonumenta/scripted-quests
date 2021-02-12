@@ -51,6 +51,12 @@
 					"description": "Toggles on/off the default discovery sounds for this zone. Useful for if you need to use quest_components for custom discoveries.",
 					"default": true
 				},
+				"song": {
+					"type": "string",
+					"title": "song",
+					"description": "The song that will be played while the player is in this zone. This can be left blank if there is none.",
+					"default": ""
+				},
 				"quest_components": {
 					"type": "array",
 					"title": "quest_components",
