@@ -64,4 +64,13 @@ public class ModelManager {
 		return null;
 	}
 
+	public Model getModel(String id) {
+		for (Model model : mModels.values()) {
+			if (model.mId.equalsIgnoreCase(id)) {
+				return model;
+			}
+		}
+		return null;
+	}
+
 }

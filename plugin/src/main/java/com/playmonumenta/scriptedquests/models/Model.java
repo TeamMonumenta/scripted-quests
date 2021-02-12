@@ -32,7 +32,7 @@ public class Model {
 	public final Vector mCenter;
 
 	private List<ModelInstance> mInstances = new ArrayList<>();
-	private List<Vector> mLocations = new ArrayList<>();
+
 	private List<ModelPart> mModelParts = new ArrayList<>();
 	private List<QuestComponent> mComponents = new ArrayList<>();
 	private List<QuestComponent> mOnFailComponents = new ArrayList<>();
@@ -276,6 +276,7 @@ public class Model {
 			}
 
 			quadTree.add(node);
+			quadTree.getValues().add(node);
 			plugin.mModelManager.mQuadTrees.put(mWorld.getUID(), quadTree);
 
 			mInstances.add(instance);
