@@ -398,6 +398,15 @@ public class ZoneManager {
 			mLastPlayerZones.put(player, lastZones);
 		}
 
+		// Turn currentZone to null if the player's current world doesn't contain the worldname.
+		// Prevents the zone they're in for the layer from transitioning
+		String worldname = mLayers.get(layerName).getWorld();
+		if (worldname != null) {
+			if (!player.getWorld().getName().contains(worldname)) {
+				currentZone = null;
+			}
+		}
+
 		Zone lastZone = lastZones.get(layerName);
 		if (lastZone == currentZone) {
 			// Nothing to do!

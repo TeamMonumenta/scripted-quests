@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.util.Vector;
 import org.dynmap.DynmapCommonAPI;
@@ -29,6 +30,7 @@ public class ZoneLayer {
 
 	private String mName;
 	private boolean mHidden = false;
+	private String mWorld = null;
 	private List<Zone> mZones = new ArrayList<Zone>();
 
 	/*
@@ -51,6 +53,11 @@ public class ZoneLayer {
 		if (object.get("hidden") != null &&
 		    object.get("hidden").getAsBoolean()) {
 			mHidden = object.get("hidden").getAsBoolean();
+		}
+
+		// Load whether this layer needs to match a world or not
+		if (object.has("world")) {
+			mWorld = object.get("world").getAsString();
 		}
 
 		// Load the property groups - why yes, this section is rather long.
@@ -392,5 +399,12 @@ public class ZoneLayer {
 				areaMarker.setLineStyle(1, 0.3, zoneColor);
 			}
 		}
+	}
+
+	/*
+	 * Returns the World name that this layer is supposed to be attached to.
+	 */
+	public String getWorld() {
+		return mWorld;
 	}
 }
