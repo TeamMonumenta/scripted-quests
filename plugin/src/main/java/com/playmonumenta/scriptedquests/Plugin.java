@@ -38,7 +38,7 @@ public class Plugin extends JavaPlugin {
 	public QuestDeathManager mDeathManager;
 	public RaceManager mRaceManager;
 	public NpcTradeManager mTradeManager;
-	public CommandTimerManager mTimerManager;
+	public CommandTimerManager mCommandTimerManager;
 	public CodeManager mCodeManager;
 	public ZoneManager mZoneManager;
 	public ZonePropertyManager mZonePropertyManager;
@@ -46,6 +46,7 @@ public class Plugin extends JavaPlugin {
 	public GrowableManager mGrowableManager;
 	public QuestDataLinkManager mQuestDataLinkManager;
 	public ModelManager mModelManager;
+	public TimerManager mTimerManager;
 
 	public World mWorld;
 	public Random mRandom = new Random();
@@ -107,15 +108,16 @@ public class Plugin extends JavaPlugin {
 		mCodeManager = new CodeManager();
 		mZoneManager = new ZoneManager(this);
 		mZonePropertyManager = new ZonePropertyManager(this);
-		mTimerManager = new CommandTimerManager(this);
+		mCommandTimerManager = new CommandTimerManager(this);
 		mWaypointManager = new WaypointManager(this);
 		mQuestDataLinkManager = new QuestDataLinkManager(this);
 		mModelManager = new ModelManager(this);
+		mTimerManager = new TimerManager(this);
 
 		manager.registerEvents(new EntityListener(this), this);
 		manager.registerEvents(new PlayerListener(this), this);
 		manager.registerEvents(new WorldListener(this), this);
-		manager.registerEvents(mTimerManager, this);
+		manager.registerEvents(mCommandTimerManager, this);
 		manager.registerEvents(mZonePropertyManager, this);
 
 		getCommand("reloadQuests").setExecutor(new ReloadQuests(this));
@@ -139,9 +141,10 @@ public class Plugin extends JavaPlugin {
 		getServer().getScheduler().cancelTasks(this);
 
 		mRaceManager.cancelAllRaces();
-		mTimerManager.unloadAll();
+		mCommandTimerManager.unloadAll();
 		mWaypointManager.cancelAll();
 		mModelManager.destroyModels();
+		mTimerManager.saveTimers();
 
 		MetadataUtils.removeAllMetadata(this);
 
@@ -166,7 +169,7 @@ public class Plugin extends JavaPlugin {
 		mGrowableManager.reload(this, sender);
 		mQuestDataLinkManager.reload(this, sender);
 		mModelManager.reload(this, sender);
-
+		mTimerManager.reload(this, sender);
 	}
 
 	public void reloadZones(CommandSender sender) {

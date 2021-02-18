@@ -27,14 +27,14 @@ public class TimerDebug {
 	}
 
 	private static void debug(Plugin plugin, CommandSender sender, boolean enabledOnly) {
-		if (plugin.mTimerManager != null) {
+		if (plugin.mCommandTimerManager != null) {
 			sender.sendMessage("");
 			if (enabledOnly) {
 				sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "Currently active timers:");
 			} else {
 				sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "All timers:");
 			}
-			plugin.mTimerManager.tellTimers(sender, enabledOnly);
+			plugin.mCommandTimerManager.tellTimers(sender, enabledOnly);
 		}
 	}
 }

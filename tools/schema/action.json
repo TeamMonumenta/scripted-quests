@@ -224,6 +224,16 @@
             "description": "Opens an RPG Trade for the player to use.",
             "type": "string"
         },
+	    "timer_cooldown": {
+            "title": "timer_cooldown",
+            "description": "Puts the player on cooldown with the specified timer. This will cause the pre-requisite 'timer_cooldown' to return true.",
+            "type": "string"
+        },
+	    "timer_reset": {
+            "title": "timer_reset",
+            "description": "Removes the player from the timer cooldown. This will cause the pre-requisite 'timer_cooldown' to return false.",
+            "type": "string"
+        },
 		"menu": {
             "title": "menu",
             "description": "Opens a Menu for the player to use. Valid arguments: reforges.",

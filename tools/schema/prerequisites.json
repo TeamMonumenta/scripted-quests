@@ -192,6 +192,12 @@
                 "$ref": "item.json"
             }
         },
+		"timer_cooldown": {
+            "propertyOrder": 8,
+            "title": "timer_cooldown",
+            "description": "Checks that the player is on cooldown with the specified Timer.",
+			"type": "string"
+        },
         "location": {
             "propertyOrder": 8,
             "$ref": "location.json"
