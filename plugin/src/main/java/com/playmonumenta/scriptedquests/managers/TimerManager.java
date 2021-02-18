@@ -1,8 +1,12 @@
 package com.playmonumenta.scriptedquests.managers;
 
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.models.ModelTreeNode;
 import com.playmonumenta.scriptedquests.scriptedtimer.Timer;
+import com.playmonumenta.scriptedquests.scriptedtimer.TimerTreeNode;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
+import me.Novalescent.utils.quadtree.reworked.QuadTree;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -13,6 +17,7 @@ public class TimerManager {
 	private static BukkitRunnable mTimerRunnable = null;
 	private final Plugin mPlugin;
 	private List<Timer> mTimers = new ArrayList<>();
+	public Map<UUID, QuadTree<TimerTreeNode>> mQuadTrees = new HashMap<>();
 
 	/*
 	 * If sender is non-null, it will be sent debugging information
@@ -57,6 +62,10 @@ public class TimerManager {
 
 	public TimerManager(Plugin plugin) {
 		mPlugin = plugin;
+	}
+
+	public QuadTree<TimerTreeNode> getQuadTree(World world) {
+		return mQuadTrees.get(world.getUID());
 	}
 
 	public void updateTimers() {

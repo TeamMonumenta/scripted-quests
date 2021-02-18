@@ -1,17 +1,20 @@
 package com.playmonumenta.scriptedquests.scriptedtimer;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
+import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.utils.FileUtils;
+import me.Novalescent.utils.quadtree.reworked.QuadTree;
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
+import org.bukkit.Location;
+import org.bukkit.World;
+
+import org.bukkit.util.Vector;
 
 import java.io.File;
 import java.io.IOException;
 import java.time.DayOfWeek;
 import java.util.Calendar;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class Timer {
@@ -38,6 +41,74 @@ public class Timer {
 
 		mDayOfWeek = DayOfWeek.valueOf(json.get("dayOfTheWeek").getAsString());
 		mHours = json.get("resetHours").getAsDouble();
+
+		if (json.has("timerCounters")) {
+			double x, y, z = 0;
+			// Spawn @ Locations
+			JsonArray array = json.get("timerCounters").getAsJsonArray();
+			for (JsonElement element : array) {
+				JsonObject locObject = element.getAsJsonObject();
+
+				if (locObject == null) {
+					throw new Exception("locations array entry is not a valid location");
+				}
+
+				x = 0;
+				y = 0;
+				z = 0;
+
+				World world = null;
+				String message = "@T";
+				double yaw = -1;
+				for (Map.Entry<String, JsonElement> ent : locObject.entrySet()) {
+					String key = ent.getKey();
+					JsonElement v = ent.getValue();
+
+					switch (key) {
+
+						case "world":
+							world = Bukkit.getWorld(v.getAsString());
+							break;
+
+						case "x":
+							x = v.getAsDouble();
+							break;
+
+						case "y":
+							y = v.getAsDouble();
+							break;
+
+						case "z":
+							z = v.getAsDouble();
+							break;
+
+						case "message":
+							message = v.getAsString();
+							break;
+
+						default:
+							throw new Exception("Unknown locations key: '" + key + "'");
+					}
+				}
+
+				if (world != null) {
+					Vector vec = new Vector(x, y, z);
+					Location loc = vec.toLocation(world);
+
+					TimerTreeNode node = new TimerTreeNode(loc, this, message);
+					QuadTree<TimerTreeNode> quadTree = mPlugin.mTimerManager.getQuadTree(world);
+
+					if (quadTree == null) {
+						quadTree = new QuadTree<>();
+						mPlugin.mTimerManager.mQuadTrees.put(world.getUID(), quadTree);
+					}
+					quadTree.add(node);
+					quadTree.getValues().add(node);
+				}
+
+
+			}
+		}
 
 		// Read Data File
 		File dataFolder = new File(plugin.getDataFolder() + File.separator + "timer_data");
@@ -66,6 +137,10 @@ public class Timer {
 
 	public int getResetCounter() {
 		return mTimerData.mResetCounter;
+	}
+
+	public long getTimeUntilReset() {
+		return TimeUnit.MILLISECONDS.toSeconds(mTimerData.mResetInterval - (System.currentTimeMillis() - mTimerData.mLastReset));
 	}
 
 	public void updateTimer(long currentTime) {

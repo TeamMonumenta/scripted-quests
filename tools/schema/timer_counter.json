@@ -2,6 +2,13 @@
     "type": "object",
     "additionalProperties": false,
     "properties": {
+	    "world": {
+		    "required": true,
+			"description": "The world for the counter to appear in.",
+            "type": "string",
+            "propertyOrder": 4,
+			"default": "world"
+		},
         "x": {
             "required": true,
             "$ref": "coordinate.json",
