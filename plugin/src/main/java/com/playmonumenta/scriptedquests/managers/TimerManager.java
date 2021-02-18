@@ -24,7 +24,11 @@ public class TimerManager {
 	 */
 	public void reload(Plugin plugin, CommandSender sender) {
 		saveTimers();
+		for (QuadTree quadTree : mQuadTrees.values()) {
+			quadTree.destroy();
+		}
 
+		mQuadTrees.clear();
 		mTimers.clear();
 
 		QuestUtils.loadScriptedQuests(plugin, "timers", sender, (object) -> {

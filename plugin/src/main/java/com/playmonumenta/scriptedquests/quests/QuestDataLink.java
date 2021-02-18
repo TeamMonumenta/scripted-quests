@@ -14,6 +14,8 @@ public class QuestDataLink {
 	public final String mDisplayName;
 	public final Integer mLevel;
 
+	public final Boolean mVisible = true;
+
 	private Map<String, QuestFieldLink> mLinks = new HashMap<>();
 	public QuestDataLink(JsonObject object) throws Exception {
 

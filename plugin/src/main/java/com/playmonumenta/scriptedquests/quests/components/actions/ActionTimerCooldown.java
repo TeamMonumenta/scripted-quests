@@ -42,6 +42,7 @@ public class ActionTimerCooldown implements ActionBase {
 			}
 
 			timerData.mResetCounter = timer.getResetCounter();
+			data.updateQuestVisibility();
 		}
 	}
 }

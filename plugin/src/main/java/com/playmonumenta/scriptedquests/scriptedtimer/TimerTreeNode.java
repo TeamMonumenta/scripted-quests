@@ -6,15 +6,19 @@ import me.Novalescent.utils.quadtree.reworked.QuadTreeValue;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.scheduler.BukkitRunnable;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 public class TimerTreeNode extends QuadTreeValue {
 
 	private String mMessage;
-	private Timer mTimer;
+	public final Timer mTimer;
 
 	private ArmorStand mStand;
+	private BukkitRunnable mRunnable;
 	public TimerTreeNode(Location loc, Timer timer, String message) {
 		super(loc);
 		mMessage = message;
@@ -25,6 +29,8 @@ public class TimerTreeNode extends QuadTreeValue {
 		if (mStand != null) {
 			mStand.remove();
 			mStand = null;
+			mRunnable.cancel();
+			mRunnable = null;
 		}
 
 		mStand = getLocation().getWorld().spawn(getLocation(), ArmorStand.class, (ArmorStand stand) -> {
@@ -34,28 +40,62 @@ public class TimerTreeNode extends QuadTreeValue {
 			stand.setGravity(false);
 			stand.addScoreboardTag(Constants.REMOVE_ONENABLE);
 
-			long[] times = Utils.convertTicksIntoTime(mTimer.getTimeUntilReset() * 20);
-
-			long days = times[3];
-			long hours = times[2] + (days * 24);
-			long minutes = times[1];
-			long seconds = times[0];
+			Date date = new Date((long) (mTimer.getTimeUntilReset() * 1000));
+			String formattedDate = new SimpleDateFormat("HH:mm:ss").format(date);
 
 			stand.setCustomName(ChatColor.translateAlternateColorCodes('&',
-				mMessage.replaceAll("@T", ChatColor.of("#75c8ff") + "" + hours + ":" + minutes + ":" + seconds)));
+				mMessage.replaceAll("@T", ChatColor.of("#75c8ff") + formattedDate)));
 			stand.setCustomNameVisible(true);
 		});
+
+		mRunnable = new BukkitRunnable() {
+
+			@Override
+			public void run() {
+				if (mStand == null || !mStand.isValid()) {
+					 despawn();
+					 return;
+				}
+
+				Date date = new Date((long) (mTimer.getTimeUntilReset() * 1000));
+				String formattedDate = new SimpleDateFormat("HH:mm:ss").format(date);
+				mStand.setCustomName(ChatColor.translateAlternateColorCodes('&',
+					mMessage.replaceAll("@T", ChatColor.of("#75c8ff") + "" + formattedDate )));
+			}
+
+		};
+		mRunnable.runTaskTimer(mTimer.mPlugin, 0, 20);
 	}
 
 	public void despawn() {
 		if (mStand != null) {
 			mStand.remove();
 			mStand = null;
+			mRunnable.cancel();
+			mRunnable = null;
 		}
+	}
+
+	public boolean isSpawned() {
+		return mStand != null && mStand.isValid();
+	}
+
+	public ArmorStand getStand() {
+		return mStand;
+	}
+
+	public String withLeading(long number) {
+		String num = "" + number;
+		while (num.length() <= 1) {
+			num = "0" + num;
+		}
+
+		return num;
 	}
 
 	@Override
 	public void destroy() {
+		super.destroy();
 		despawn();
 	}
 }
