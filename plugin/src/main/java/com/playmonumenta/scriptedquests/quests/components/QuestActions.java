@@ -88,6 +88,12 @@ public class QuestActions {
 				case "menu":
 					mActions.add(new ActionMenu(value));
 					break;
+				case "timer_cooldown":
+					mActions.add(new ActionTimerCooldown(value));
+					break;
+				case "timer_reset":
+					mActions.add(new ActionTimerReset(value));
+					break;
 				case "open_altar":
 					mActions.add(new ActionOpenAltar(value));
 					break;

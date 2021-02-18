@@ -135,6 +135,9 @@ public class QuestPrerequisites implements PrerequisiteBase {
 			case "location":
 				mPrerequisites.add(new PrerequisiteLocation(value));
 				break;
+			case "timer_cooldown":
+				mPrerequisites.add(new PrerequisiteTimerCooldown(value));
+				break;
 			case "is_fully_healed":
 				mPrerequisites.add(new PrerequisiteFullyHealed(value));
 				break;

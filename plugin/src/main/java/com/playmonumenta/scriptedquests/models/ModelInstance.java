@@ -257,6 +257,11 @@ public class ModelInstance implements Cloneable {
 				return true;
 			}
 
+			if (mModel.mVisibilityPrerequisites != null && !mModel.mVisibilityPrerequisites.prerequisiteMet(player, mStands.get(0))) {
+				player.sendMessage(ChatColor.RED + "You cannot interact with this...");
+				return true;
+			}
+
 			mUsers.add(player.getUniqueId());
 
 			if (mModel.mOnStart != null) {

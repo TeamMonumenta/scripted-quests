@@ -5,12 +5,14 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.utils.FileUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
 import java.time.DayOfWeek;
 import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
 
 public class Timer {
 
@@ -38,12 +40,12 @@ public class Timer {
 		mHours = json.get("resetHours").getAsDouble();
 
 		// Read Data File
-		File dataFolder = new File(plugin.getDataFolder() + File.separator + "timers" + File.separator + "data");
+		File dataFolder = new File(plugin.getDataFolder() + File.separator + "timer_data");
 		if (!dataFolder.exists()) {
 			dataFolder.mkdirs();
 		}
 
-		File dataFile = new File(plugin.getDataFolder() + File.separator + "timers" + File.separator + "data", mId + ".json");
+		File dataFile = new File(plugin.getDataFolder() + File.separator + "timer_data", mId + ".json");
 		if (dataFile.exists()) {
 			String content = FileUtils.readFile(dataFile.getPath());
 			if (content == null || content.isEmpty()) {
@@ -67,7 +69,9 @@ public class Timer {
 	}
 
 	public void updateTimer(long currentTime) {
-		if (currentTime - mTimerData.mLastReset >= mTimerData.mResetInterval) {
+		long timeUntil = mTimerData.mResetInterval - (currentTime - mTimerData.mLastReset);
+		//Bukkit.broadcastMessage(mId + ": " + TimeUnit.MILLISECONDS.toMinutes(timeUntil));
+		if (timeUntil <= 0) {
 			mTimerData.mLastReset += mTimerData.mResetInterval;
 			mTimerData.mResetCounter++;
 
@@ -78,7 +82,7 @@ public class Timer {
 
 	public void saveTimerData() {
 		try {
-			String path = mPlugin.getDataFolder() + File.separator + "timers" + File.separator + "data" + File.separator + mId + ".json";
+			String path = mPlugin.getDataFolder() + File.separator + "timer_data" + File.separator + mId + ".json";
 			FileUtils.writeFile(path, new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create().toJson(mTimerData.getAsJsonObject()));
 		} catch (IOException e) {
 			e.printStackTrace();

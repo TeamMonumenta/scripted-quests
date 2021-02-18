@@ -1,0 +1,27 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "x": {
+            "required": true,
+            "$ref": "coordinate.json",
+            "propertyOrder": 1
+        },
+        "y": {
+            "required": true,
+            "$ref": "coordinate.json",
+            "propertyOrder": 2
+        },
+        "z": {
+            "required": true,
+            "$ref": "coordinate.json",
+            "propertyOrder": 3
+		},
+        "message": {
+            "required": true,
+			"description": "The message to display on the counter. Use @T within the message to display the time.",
+            "type": "string",
+            "propertyOrder": 4
+		}
+    }
+}
