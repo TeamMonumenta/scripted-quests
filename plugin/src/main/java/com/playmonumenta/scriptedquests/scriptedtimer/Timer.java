@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.time.DayOfWeek;
+import java.util.Calendar;
 
 public class Timer {
 
@@ -24,6 +25,14 @@ public class Timer {
 
 		mDayOfWeek = DayOfWeek.valueOf(json.get("dayOfTheWeek").getAsString());
 		mHours = json.get("resetHours").getAsDouble();
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTimeInMillis(System.currentTimeMillis());
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+		calendar.set(Calendar.DAY_OF_WEEK, mDayOfWeek.getValue());
 	}
 
 }

@@ -48,7 +48,7 @@
             title: "Timer Editor",
             defaultProperties: [
                 "id",
-				"basedDate",
+				"dayOfTheWeek",
 				"resetHours"
             ],
             additionalProperties:false,
@@ -61,13 +61,13 @@
                     type: "string",
                     default: "timer"
                 },
-				basedDate: {
+				dayOfTheWeek: {
                     required: true,
                     propertyOrder: 2,
-                    title: "basedDate",
-                    description: "The date for the Timer to be based on for its reset hours. Use this if needed to define a day of the week. This will always have a time of 00:00/12:00 AM.",
+                    title: "dayOfTheWeek",
+                    description: "The Day of the Week on the Calendar to base the timer on. Will be used to construct the days that the timer resets. Valid values: SUNDAY, MONDAY, TUESDAY, WEDENSDAY, THURSDAY, FRIDAY, SATURDAY",
                     type: "string",
-                    default: "1/1/1970"
+                    default: "SUNDAY"
                 },
 				resetHours: {
                     required: true,
