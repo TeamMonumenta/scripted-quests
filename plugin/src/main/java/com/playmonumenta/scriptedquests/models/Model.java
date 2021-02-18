@@ -37,6 +37,7 @@ public class Model {
 	private List<QuestComponent> mComponents = new ArrayList<>();
 	private List<QuestComponent> mOnFailComponents = new ArrayList<>();
 	public QuestPrerequisites mPrerequisites;
+	public QuestPrerequisites mVisibilityPrerequisites;
 
 	// Use Info
 	public int mUseTime = 0;
@@ -220,6 +221,11 @@ public class Model {
 		if (object.has("prerequisites")) {
 			mPrerequisites = new QuestPrerequisites(object.get("prerequisites"));
 		}
+
+		if (object.has("visibilityPrerequisites")) {
+			mVisibilityPrerequisites = new QuestPrerequisites(object.get("visibilityPrerequisites"));
+		}
+
 
 		if (object.has("quest_marker")) {
 			mQuestMarker = object.get("quest_marker").getAsBoolean();
