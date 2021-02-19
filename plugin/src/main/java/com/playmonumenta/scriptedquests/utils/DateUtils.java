@@ -40,12 +40,8 @@ public class DateUtils {
 	}
 
 	public static long getSecondsSinceEpoch() {
-		// In our specified timezone, how many seconds we perceive it is since our 1 Jan 1970.
-		// LocalDateTime "does not store or represent a time-zone",
-		// "It cannot represent an instant on the time-line".
-		// It does not actually compare to the fixed point in time, unix epoch.
-		// Different timezones will yield different seconds for the same point in time
-		return LocalDateTime.now(TIMEZONE).toEpochSecond(ZoneOffset.UTC); // No further offset applied to our number of seconds
+		// Note: This method is intentionally UTC-only.
+		return LocalDateTime.now(ZoneOffset.UTC).toEpochSecond(ZoneOffset.UTC);
 	}
 
 	public static int getAmPm() {
