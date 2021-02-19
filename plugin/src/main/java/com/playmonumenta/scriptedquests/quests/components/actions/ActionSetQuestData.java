@@ -47,7 +47,7 @@ public class ActionSetQuestData implements ActionBase {
 			value = Integer.parseInt(parameter);
 		}
 
-		boolean set(Player player, String questId) {
+		boolean set(Plugin plugin, Player player, String questId) {
 			PlayerData data = Core.getInstance().mPlayerManager.getPlayerData(player.getUniqueId());
 			QuestData questData = data.getQuestData(questId);
 
@@ -57,10 +57,16 @@ public class ActionSetQuestData implements ActionBase {
 			}
 
 			QuestData tracked = data.getTrackedQuest();
-			if ((boolean) data.mOptions.getOptionValue(RPGOption.AUTOTRACK_QUESTS) &&
-				!questData.mTracked && tracked == null) {
-				questData.mTracked = true;
-				tracked = questData;
+
+			QuestDataLink link = plugin.mQuestDataLinkManager.getQuestDataLink(questData.mId);
+			if (link != null) {
+				if (link.mVisible) {
+					if ((boolean) data.mOptions.getOptionValue(RPGOption.AUTOTRACK_QUESTS) &&
+						!questData.mTracked && tracked == null) {
+						questData.mTracked = true;
+						tracked = questData;
+					}
+				}
 			}
 
 			boolean maxed = false;
@@ -151,7 +157,7 @@ public class ActionSetQuestData implements ActionBase {
 		}
 
 		for (SetField field : mFields) {
-			boolean maxed = field.set(player, mId);
+			boolean maxed = field.set(plugin, player, mId);
 
 			if (maxed) {
 				QuestData questData = data.getQuestData(mId);

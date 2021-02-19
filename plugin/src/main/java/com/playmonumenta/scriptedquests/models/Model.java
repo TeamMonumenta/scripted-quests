@@ -46,6 +46,7 @@ public class Model {
 	public String mUseMessage = "Using...";
 	public int mOnUseTickRate = 1;
 	public boolean mQuestMarker = false;
+	public int mMarkerPriority = 0;
 	public SpellActions mOnStart;
 	public SpellActions mOnTick;
 	public SpellActions mOnEnd;
