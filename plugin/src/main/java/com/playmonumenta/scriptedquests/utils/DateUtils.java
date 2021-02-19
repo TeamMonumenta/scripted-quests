@@ -4,35 +4,44 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.time.temporal.ChronoUnit;
 
 public class DateUtils {
-	// TODO Read from config, default to system time zone ala ZoneId.systemDefault()
-	public static ZoneId mTz = ZoneId.of("America/New_York");
+	//TODO Read from config, default to system time zone aka ZoneId.systemDefault() - Tim
+
+	// Offset server time to UTC-9 to change when the new day arrives.
+	// getDaysSinceEpoch() uses its own perceived epoch
+	// so it should sync up nicely with changes in getDayOfWeek().
+	// With this, quest stuff should match play's daily resets & daily reboots at 9am UTC
+	public static ZoneId TIMEZONE = ZoneOffset.of("-9");
 
 	public static int getYear() {
-		return LocalDateTime.now(mTz).getYear();
+		return LocalDateTime.now(TIMEZONE).getYear();
 	}
 
 	public static int getMonth() {
-		return LocalDateTime.now(mTz).getMonthValue();
+		return LocalDateTime.now(TIMEZONE).getMonthValue();
 	}
 
 	public static int getDayOfMonth() {
-		return LocalDateTime.now(mTz).getDayOfMonth();
+		return LocalDateTime.now(TIMEZONE).getDayOfMonth();
 	}
 
 	// 1 is Sunday, 7 is Saturday
 	public static int getDayOfWeek() {
-		return LocalDateTime.now(mTz).getDayOfWeek().getValue() % 7 + 1;
+		// .getValue() gives 1 for Monday, 7 for Sunday, so we cycle the numbers
+		return LocalDateTime.now(TIMEZONE).getDayOfWeek().getValue() % 7 + 1;
 	}
 
 	public static long getDaysSinceEpoch() {
-		return ChronoUnit.DAYS.between(LocalDate.ofEpochDay(0), LocalDateTime.now(mTz));
+		// In our specified timezone, how many days we perceive it is since our 1 Jan 1970.
+		// Different timezones have different dates for the same point in time,
+		// so this simple comparison will yield different numbers of days for them
+		return LocalDate.now(TIMEZONE).toEpochDay();
 	}
 
 	public static long getSecondsSinceEpoch() {
-		return ChronoUnit.SECONDS.between(LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC), LocalDateTime.now(ZoneOffset.UTC));
+		// Note: This method is intentionally UTC-only.
+		return LocalDateTime.now(ZoneOffset.UTC).toEpochSecond(ZoneOffset.UTC);
 	}
 
 	public static int getAmPm() {
@@ -40,7 +49,7 @@ public class DateUtils {
 	}
 
 	public static int getHourOfDay() {
-		return LocalDateTime.now(mTz).getHour();
+		return LocalDateTime.now(TIMEZONE).getHour();
 	}
 
 	public static int getHourOfTwelve() {
@@ -49,14 +58,14 @@ public class DateUtils {
 	}
 
 	public static int getMinute() {
-		return LocalDateTime.now(mTz).getMinute();
+		return LocalDateTime.now(TIMEZONE).getMinute();
 	}
 
 	public static int getSecond() {
-		return LocalDateTime.now(mTz).getSecond();
+		return LocalDateTime.now(TIMEZONE).getSecond();
 	}
 
 	public static int getMs() {
-		return LocalDateTime.now(mTz).getNano() / 1000000;
+		return LocalDateTime.now(TIMEZONE).getNano() / 1000000;
 	}
 }
