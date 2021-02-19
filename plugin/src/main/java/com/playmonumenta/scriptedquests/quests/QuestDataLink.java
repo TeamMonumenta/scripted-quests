@@ -14,7 +14,7 @@ public class QuestDataLink {
 	public final String mDisplayName;
 	public final Integer mLevel;
 
-	public final Boolean mVisible = true;
+	public Boolean mVisible = true;
 
 	private Map<String, QuestFieldLink> mLinks = new HashMap<>();
 	public QuestDataLink(JsonObject object) throws Exception {
@@ -32,6 +32,10 @@ public class QuestDataLink {
 		mLevel = object.get("level").getAsInt();
 		if (mLevel == null) {
 			throw new Exception("level value is not a string!");
+		}
+
+		if (object.has("visible")) {
+			mVisible = object.get("visible").getAsBoolean();
 		}
 
 		JsonArray fields = object.get("quest_fields").getAsJsonArray();
