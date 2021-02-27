@@ -232,6 +232,10 @@ public class Model {
 			mQuestMarker = object.get("quest_marker").getAsBoolean();
 		}
 
+		if (object.has("marker_priority")) {
+			mMarkerPriority = object.get("marker_priority").getAsInt();
+		}
+
 		// Spawn @ Locations
 		JsonArray array = object.get("locations").getAsJsonArray();
 		for (JsonElement element : array) {
