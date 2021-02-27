@@ -287,6 +287,11 @@
             "description": "Gives the player the specified ability. This only works if the ability is able to be given. Talk to a Developer to ask which abilities are givable.",
             "type": "string"
         },
+		"give_handbook_entry": {
+            "title": "give_handbook_entry",
+            "description": "Gives the player the specified Handbook Entry to add to their Player Handbook. If the player already has the handbook entry, this will not do anything.",
+            "type": "string"
+        },
 		"give_reward": {
             "title": "give_reward",
             "description": "Rewards the player all of the items from given loot tables in a stylized UI.",
