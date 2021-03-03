@@ -189,6 +189,37 @@
                     type: "string",
 					default: ""				
 				},
+				strafe_settings: {
+                    propertyOrder: 11,
+                    title: "strafe_settings",
+                    description: "Giving monsters the ability to strafe their targets. Leave this off if you don't wish to have this.",
+					properties: {
+                        distance: {
+                            title: "distance",
+                            description: "The distance at which the mob starts to strafe the target",
+							type: "number",
+							default: 16
+                        },
+                        spacing: {
+                            title: "spacing",
+                            description: "The amount of spacing that must be retained between the target and the mob. When the mob reaches this distance from the target, they will stop approaching them.",
+							type: "number",
+							default: 2
+                        },
+                        switch_frequency: {
+                            title: "switch_frequency",
+                            description: "The frequency at which the mobs changes strafing directions (left or right). Between 0 - 1",
+							type: "number",
+							default: 0.3
+                        },
+                        speed: {
+                            title: "speed",
+                            description: "The speed at which the mob strafes its target. Typically keep this the same value as the mob's actual speed.",
+							type: "number",
+							default: 0.3
+                        }
+                    }
+                },
 				defense_values: {
                     propertyOrder: 9,
                     title: "defense_values",
