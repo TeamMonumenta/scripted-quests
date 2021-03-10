@@ -157,6 +157,33 @@
 					"type": "string"
 				}
 			}
+		},
+		"cast_ability": {
+			"title": "cast_ability",
+			"description": "Causes the mob to cast an ability.",
+			"type": "object",
+			"properties": {
+				"x": {
+					"title": "x",
+					"description": "X-Coordinate",
+					"type": "integer"
+				},
+				"y": {
+					"title": "y",
+					"description": "Y-Coordinate",
+					"type": "integer"
+				},
+				"z": {
+					"title": "z",
+					"description": "Z-Coordinate",
+					"type": "integer"
+				},
+				"material": {
+					"title": "material",
+					"description": "The block type/material to use",
+					"type": "string"
+				}
+			}
 		}
 	}
 }

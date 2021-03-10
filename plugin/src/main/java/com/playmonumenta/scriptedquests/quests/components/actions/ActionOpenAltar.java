@@ -6,7 +6,6 @@ import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import me.Novalescent.Core;
 import me.Novalescent.items.enchantments.core.EnchantAltar;
 import me.Novalescent.items.enchantments.core.EnchantmentManager;
-import me.Novalescent.items.reforges.ReforgeMenu;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
