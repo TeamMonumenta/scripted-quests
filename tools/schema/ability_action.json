@@ -191,18 +191,6 @@
 					"type": "string"
 				}
 			}
-		},
-		"cast_ability": {
-			"title": "cast_ability",
-			"description": "Causes the mob to cast an ability.",
-			"type": "object",
-			"properties": {
-				"ability": {
-					"title": "ability",
-					"description": "The ability to cast",
-					"type": "string"
-				}
-			}
 		}
 	}
 }
