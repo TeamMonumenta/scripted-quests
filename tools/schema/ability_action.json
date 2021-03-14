@@ -67,7 +67,7 @@
 				},
 				"color": {
 					"propertyOrder": 9,
-					"title": "size",
+					"title": "color",
 					"description": "The hex color of the particle. This option ONLY works for Redstone dust particles",
 					"type": "string",
 					"default": "#FFFFFF"
