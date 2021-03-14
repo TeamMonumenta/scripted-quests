@@ -353,7 +353,28 @@
 					title: "on_death",
 					description: "The actions to play whenever the mob dies",
 					$ref: "schema/ability_actions.json"
-				},				
+				},	
+				on_tick: {
+					title: "on_tick",
+					description: "The actions to play each amount of ticks",
+					type: "array",
+					items: {
+						type: "object",
+						properties: {
+							tickRate: {
+								title: "tickRate",
+								description: "The rate at which these actions tick.",
+								type: "integer",
+								default: 1
+							},
+							actions: {
+								title: "actions",
+								description: "The actions to perform",
+								$ref: "schema/ability_actions.json"
+							}
+						}
+					}
+				},					
                 quest_components: {
                     required: true,
                     propertyOrder: 15,
