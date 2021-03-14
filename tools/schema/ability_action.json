@@ -62,7 +62,7 @@
 					"propertyOrder": 8,
 					"title": "size",
 					"description": "The size of the particle. This option ONLY works for Redstone dust particles",
-					"type": "double",
+					"type": "number",
 					"default": 1
 				},
 				"color": {
