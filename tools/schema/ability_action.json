@@ -10,7 +10,7 @@
 			"defaultProperties": [
 				"particle",
 				"xoffset",
-				"yoffset"
+				"yoffset",
 				"zoffset",
 				"speed",
 				"amount"
