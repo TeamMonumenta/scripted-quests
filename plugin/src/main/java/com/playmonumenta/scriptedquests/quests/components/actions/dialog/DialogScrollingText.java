@@ -4,12 +4,17 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.point.AreaBounds;
+import com.playmonumenta.scriptedquests.point.Point;
 import com.playmonumenta.scriptedquests.quests.components.QuestActions;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 import me.Novalescent.Constants;
 import me.Novalescent.mobs.npcs.RPGNPC;
+import me.Novalescent.utils.FormattedMessage;
+import me.Novalescent.utils.MessageFormat;
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -22,27 +27,42 @@ import java.util.List;
 
 public class DialogScrollingText implements DialogBase {
 
-	public class ScrollingTextRunnable extends BukkitRunnable {
+	public class ScrollingTextActive {
 
 		private Plugin mPlugin;
 		private int mIndex = -1;
-		private int mTimer = 20 * 4;
 		private List<String> mText;
 		private Player mPlayer;
 		private Entity mEntity;
 		private QuestActions mActions;
 		private QuestPrerequisites mPrerequisites;
+		private final AreaBounds mValidArea;
 
-		public ScrollingTextRunnable(Plugin plugin, Player player, Entity npcEntity, List<String> text, QuestActions actions, QuestPrerequisites prerequisites) {
+		public ScrollingTextActive(Plugin plugin, Player player, Entity npcEntity,
+								   List<String> text, QuestActions actions, QuestPrerequisites prerequisites, AreaBounds validArea) {
 			mPlugin = plugin;
 			mPlayer = player;
 			mEntity = npcEntity;
 			mText = text;
 			mActions = actions;
 			mPrerequisites = prerequisites;
+			mValidArea = validArea;
 		}
 
 		public void next() {
+
+			if (!mValidArea.within(mPlayer.getLocation())) {
+				mPlayer.playSound(mPlayer.getLocation(), Sound.UI_BUTTON_CLICK, 0.7f, 0.3f);
+				FormattedMessage.sendMessage(mPlayer, MessageFormat.NOTICE, ChatColor.RED + "You moved too far away to hear the dialogue...");
+				mPlayer.removeMetadata(com.playmonumenta.scriptedquests.Constants.PLAYER_SCROLLING_DIALOG_METAKEY, mPlugin);
+				return;
+			} else if (mPrerequisites != null && !mPrerequisites.prerequisiteMet(mPlayer, mEntity)) {
+				mPlayer.playSound(mPlayer.getLocation(), Sound.UI_BUTTON_CLICK, 0.7f, 0.3f);
+				FormattedMessage.sendMessage(mPlayer, MessageFormat.NOTICE, ChatColor.RED + "You no longer meet the requirements to listen to this dialogue...");
+				mPlayer.removeMetadata(com.playmonumenta.scriptedquests.Constants.PLAYER_SCROLLING_DIALOG_METAKEY, mPlugin);
+				return;
+			}
+
 			String name = "";
 			if (mEntity != null && mEntity.hasMetadata(Constants.NPC_METAKEY)) {
 				RPGNPC npc = (RPGNPC) mEntity.getMetadata(Constants.NPC_METAKEY).get(0).value();
@@ -57,28 +77,17 @@ public class DialogScrollingText implements DialogBase {
 					next();
 					return;
 				}
-			}
-
-			if (mIndex + 1 >= mText.size()) {
-				this.cancel();
+			} else {
 				mActions.doActions(mPlugin, mPlayer, mEntity, mPrerequisites);
 				mPlayer.removeMetadata(com.playmonumenta.scriptedquests.Constants.PLAYER_SCROLLING_DIALOG_METAKEY, mPlugin);
+				return;
 			}
 
-			mTimer = 0;
 		}
 
-		@Override
-		public void run() {
-
-			if (mTimer >= 20 * 4) {
-				next();
-			}
-			mTimer++;
-
-		}
 	}
 
+	private Double mRadius = 4.0;
 	private String mDisplayName;
 	private ArrayList<String> mText = new ArrayList<String>();
 	private QuestActions mActions;
@@ -106,17 +115,13 @@ public class DialogScrollingText implements DialogBase {
 
 	@Override
 	public void sendDialog(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
-		ScrollingTextRunnable runnable = new ScrollingTextRunnable(plugin, player, npcEntity, mText, mActions, prereqs);
+		ScrollingTextActive active = new ScrollingTextActive(plugin, player, npcEntity, mText, mActions, prereqs,
+			new AreaBounds("", new Point(player.getLocation().subtract(mRadius, mRadius, mRadius)),
+				new Point(player.getLocation().add(mRadius, mRadius, mRadius))));
 
 		String metakey = com.playmonumenta.scriptedquests.Constants.PLAYER_SCROLLING_DIALOG_METAKEY;
+		player.setMetadata(metakey, new FixedMetadataValue(plugin, active));
 
-		if (player.hasMetadata(metakey)) {
-			ScrollingTextRunnable currentRunnable = (ScrollingTextRunnable) player.getMetadata(metakey).get(0).value();
-			currentRunnable.cancel();
-		}
-
-		player.setMetadata(metakey, new FixedMetadataValue(plugin, runnable));
-
-		runnable.runTaskTimer(plugin, 0, 1);
+		active.next();
 	}
 }

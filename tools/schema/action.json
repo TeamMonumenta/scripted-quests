@@ -292,6 +292,15 @@
             "description": "Gives the player the specified Handbook Entry to add to their Player Handbook. If the player already has the handbook entry, this will not do anything.",
             "type": "string"
         },
+		"give_handbook_entries": {
+            "title": "give_handbook_entries",
+            "description": "Gives the player the specified Handbook Entries to add to their Player Handbook. If the player already has the handbook entries, this will not do anything. USE THIS WHEN ADDING MULTIPLE ENTRIES",
+            "type": "array",
+			"items": {
+			    "title": "handbook entry id",
+				"type": "string"
+			}
+        },
 		"give_reward": {
             "title": "give_reward",
             "description": "Rewards the player all of the items from given loot tables in a stylized UI.",

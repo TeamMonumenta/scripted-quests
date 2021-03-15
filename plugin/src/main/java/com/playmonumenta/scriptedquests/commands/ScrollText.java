@@ -39,9 +39,9 @@ public class ScrollText implements CommandExecutor {
 
 		Player player = (Player)sender;
 		if (player.hasMetadata(Constants.PLAYER_SCROLLING_DIALOG_METAKEY)) {
-			DialogScrollingText.ScrollingTextRunnable runnable = (DialogScrollingText.ScrollingTextRunnable)
+			DialogScrollingText.ScrollingTextActive active = (DialogScrollingText.ScrollingTextActive)
 				player.getMetadata(Constants.PLAYER_SCROLLING_DIALOG_METAKEY).get(0).value();
-			runnable.next();
+			active.next();
 			player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
 		}
 

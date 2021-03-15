@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import me.Novalescent.utils.FormattedMessage;
+import me.Novalescent.utils.MessageFormat;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
@@ -40,10 +42,10 @@ public class DialogClickableTextEntry implements DialogBase {
 		public void doActionsIfConditionsMatch(Plugin plugin, Player player) {
 			if (!mValidArea.within(player.getLocation())) {
 				player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 0.7f, 0.3f);
-				player.sendMessage(ChatColor.RED + "You moved too far away to be heard");
+				FormattedMessage.sendMessage(player, MessageFormat.NOTICE, ChatColor.RED + "You moved too far away to be heard...");
 			} else if (mPrerequisites != null && !mPrerequisites.prerequisiteMet(player, mNpcEntity)) {
 				player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 0.7f, 0.3f);
-				player.sendMessage(ChatColor.RED + "You no longer meet the requirements for this option");
+				FormattedMessage.sendMessage(player, MessageFormat.NOTICE, ChatColor.RED + "You no longer meet the requirements for this option...");
 			} else {
 				player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 0.7f, 1);
 				mActions.doActions(plugin, player, mNpcEntity, mPrerequisites);
