@@ -76,7 +76,7 @@ public class Plugin extends JavaPlugin {
 		SetVelocity.register();
 		DebugZones.register(this);
 		Heal.register();
-		Damage.register();
+		// Damage.register();
 		Cooldown.register();
 		Clock.register();
 		ImprovedClear.register();

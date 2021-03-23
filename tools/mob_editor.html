@@ -217,6 +217,23 @@
                     type: "string",
 					default: ""				
 				},
+				skin: {
+                    propertyOrder: 8,
+                    title: "skin",
+                    description: "The Skin Information for the mob. For this to work, the mob has to be an entity type of PLAYER. To generate skin data, use https://mineskin.org/",
+					properties: {
+                        skin_data: {
+                            title: "skin_data",
+                            description: "The skin data for the skin .png",
+							type: "string",
+                        },
+                        skin_signature: {
+                            title: "skin_signature",
+                            description: "The skin signature for the skin .png",
+							type: "string",
+                        },
+                    }
+                },
 				strafe_settings: {
                     propertyOrder: 11,
                     title: "strafe_settings",
