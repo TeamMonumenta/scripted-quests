@@ -17,6 +17,7 @@ import com.playmonumenta.scriptedquests.quests.components.prerequisites.Prerequi
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteFacing;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteFullyHealed;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteGamemode;
+import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteInventorySlotsEmpty;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteItemInEitherHand;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteItemInHand;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteItemInOffHand;
@@ -143,6 +144,8 @@ public class QuestPrerequisites implements PrerequisiteBase {
 				}
 				break;
 			}
+			case "min_empty_inventory_slots":
+				mPrerequisites.add(new PrerequisiteInventorySlotsEmpty(value));
 			case "test_for_block":
 				mPrerequisites.add(new PrerequisiteTestForBlock(value));
 				break;
