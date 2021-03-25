@@ -209,6 +209,15 @@
                 }
             }
         },
+        "min_empty_inventory_slots": {
+            "propertyOrder": 14,
+            "title": "min_empty_inventory_slots",
+            "description": "Checks that at least the specified amount of slots in a player's inventory are empty.",
+            "type": "number",
+            "minimum": 0,
+            "maximum": 41,
+            "default": 1
+        },
         "zone_properties": {
             "propertyOrder": 1,
             "title": "zone_properties",

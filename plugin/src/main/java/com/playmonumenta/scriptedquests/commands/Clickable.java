@@ -1,9 +1,10 @@
 package com.playmonumenta.scriptedquests.commands;
 
-import com.playmonumenta.scriptedquests.Plugin;
-
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ProxiedCommandSender;
 import org.bukkit.entity.Player;
+
+import com.playmonumenta.scriptedquests.Plugin;
 
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
@@ -21,6 +22,10 @@ public class Clickable {
 	}
 
 	private static int click(Plugin plugin, CommandSender sender, String label) {
+		if (sender instanceof ProxiedCommandSender) {
+			ProxiedCommandSender target = (ProxiedCommandSender)sender;
+			sender = target.getCallee();
+		}
 		if (!(sender instanceof Player)) {
 			sender.sendMessage("This command can only be run by players");
 		}
