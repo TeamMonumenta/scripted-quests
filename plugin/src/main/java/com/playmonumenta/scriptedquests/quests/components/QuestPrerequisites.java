@@ -146,6 +146,7 @@ public class QuestPrerequisites implements PrerequisiteBase {
 			}
 			case "min_empty_inventory_slots":
 				mPrerequisites.add(new PrerequisiteInventorySlotsEmpty(value));
+				break;
 			case "test_for_block":
 				mPrerequisites.add(new PrerequisiteTestForBlock(value));
 				break;

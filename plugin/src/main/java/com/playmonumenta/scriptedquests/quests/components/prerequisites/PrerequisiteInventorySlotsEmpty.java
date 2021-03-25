@@ -3,8 +3,8 @@ package com.playmonumenta.scriptedquests.quests.components.prerequisites;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
 import com.google.gson.JsonElement;
 
@@ -23,9 +23,10 @@ public class PrerequisiteInventorySlotsEmpty implements PrerequisiteBase {
 	@Override
 	public boolean prerequisiteMet(Entity entity, Entity npcEntity) {
 		if (entity instanceof Player) {
-			Inventory inventory = ((Player)entity).getInventory();
+			PlayerInventory inventory = ((Player)entity).getInventory();
 			int emptySlots = 0;
-			for (ItemStack item : inventory) {
+			for (int i = 0; i < 36; i++) {
+				ItemStack item = inventory.getItem(i);
 				if (item == null || item.getType() == Material.AIR) {
 					emptySlots++;
 				}
