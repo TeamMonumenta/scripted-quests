@@ -215,7 +215,8 @@
             "description": "Checks that at least the specified amount of slots in a player's inventory are empty.",
             "type": "number",
             "minimum": 0,
-            "maximum": 41
+            "maximum": 41,
+            "default": 1
         },
         "zone_properties": {
             "propertyOrder": 1,
