@@ -1,5 +1,5 @@
 # Scripted Quests
-JSON-driven Minecraft Spigot plugin for creating quests
+JSON-driven Minecraft Paper plugin for creating quests
 
 # Table of Contents
 
@@ -41,8 +41,8 @@ hope others will find it useful too.
 
 ## <a name="download"></a>Download
 
-ScriptedQuests works on Minecraft 1.13 or higher. It also requires
-[CommandAPI](https://github.com/JorelAli/1.13-Command-API) version 4.x. Other
+ScriptedQuests works on Paper 1.16.5 or higher. It also requires
+[CommandAPI](https://github.com/JorelAli/1.13-Command-API) version 5.x. Other
 CommandAPI versions may also work, worth giving it a shot. It'll be immediately
 obvious as if the version is incompatible, the plugin won't load or no commands
 will work.
@@ -76,8 +76,7 @@ pre-requisites. This can involve keeping the player's inventory, respawning at
 a different location than normal, etc.
 
 ## <a name="get-started"></a>Getting Started / Tutorial
-This plugin only currently has compiled versions for Spigot 1.12.2. It will
-probably work with older versions but you must compile it yourself.
+This plugin requires Paper 1.16.5+.
 
 - Install it like all spigot/paper plugins by placing it in your plugins folder.
 - Start your server. This should create some folders under
