@@ -3,10 +3,11 @@
   <groupId>com.playmonumenta</groupId>
   <artifactId>scripted-quests</artifactId>
   <versioning>
-    <release>2.1</release>
+    <release>4.0</release>
     <versions>
       <version>2.1</version>
+      <version>4.0</version>
     </versions>
-    <lastUpdated>20210127031910</lastUpdated>
+    <lastUpdated>20210326223301</lastUpdated>
   </versioning>
 </metadata>
