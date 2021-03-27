@@ -56,6 +56,23 @@
 					"title": "Coin",
 					"description": "This is in SILVER COINS",
 					"type": "integer"
+				},
+				{
+					"title": "quest_component",
+					"description": "Runs a Quest Component as the result.",
+					"properties": {
+						"item_icon": {
+							"title": "item_icon",
+							"description": "The Item ID of the item icon",
+							"type": "string"
+						},
+						"quest_components": {
+							"title": "quest_components",
+							"description": "The Quest Components to run",
+							"$ref": "quest_component.json"
+						}
+					},
+					"type": "object"
 				}
 			]
         }

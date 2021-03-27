@@ -256,7 +256,7 @@
 				},
 				"location": {
 					"title": "location",
-					"description": "The Location of the profession workstation. Format is <world>,<x>,<y>,<z>",
+					"description": "The Location of the profession workstation. Format is world,x,y,z",
 					"type": "string",
 					"default": "world,0,0,0"
 				}
