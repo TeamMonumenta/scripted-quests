@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 public class ActionOpenAltar implements ActionBase {
 
 	private String mAltar;
+
 	public ActionOpenAltar(JsonElement value) throws Exception {
 		mAltar = value.getAsString();
 		if (mAltar == null) {

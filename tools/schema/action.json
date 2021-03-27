@@ -244,6 +244,24 @@
             "description": "Opens an Enchantment Altar for the player to use. Use the ID",
             "type": "string"
         },
+		"open_profession": {
+            "title": "open_profession",
+            "description": "Opens a player's Profession Menu for a specific profession",
+			"properties": {
+				"professionType": {
+					"title": "professionType",
+					"description": "The profession type to open. Valid IDs: BLACKSMITH, ARTISAN, ALCHEMY, COOKING, JEWELER, HERBALISM, MINING, FISHING, SKINNING",
+					"type": "string",
+					"default": "BLACKSMITH"
+				},
+				"location": {
+					"title": "location",
+					"description": "The Location of the profession workstation. Format is <world>,<x>,<y>,<z>",
+					"type": "string",
+					"default": "world,0,0,0"
+				}
+			}
+        },
         "function": {
             "title": "function",
             "description": "Runs a function via the console as the player (/execute as <playername> at @s run function <function>)",

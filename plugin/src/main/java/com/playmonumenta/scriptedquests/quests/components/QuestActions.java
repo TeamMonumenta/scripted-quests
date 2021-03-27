@@ -97,7 +97,9 @@ public class QuestActions {
 				case "open_altar":
 					mActions.add(new ActionOpenAltar(value));
 					break;
-
+				case "open_profession":
+					mActions.add(new ActionOpenProfession(value));
+					break;
 				case "run_actions":
 					mActions.add(new ActionRunActions(value));
 					break;
