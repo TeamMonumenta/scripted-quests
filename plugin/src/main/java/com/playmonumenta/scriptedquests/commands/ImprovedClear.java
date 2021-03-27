@@ -19,15 +19,15 @@ import com.playmonumenta.scriptedquests.utils.MaterialUtils;
 public class ImprovedClear {
 	public static void register() {
 		CommandPermission perms = CommandPermission.fromString("scriptedquests.improvedclear");
-		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
 		String[] aliases = {"iclear"};
 
-		arguments.put("target", new EntitySelectorArgument(EntitySelectorArgument.EntitySelector.ONE_PLAYER));
-		arguments.put("name", new TextArgument());
-		arguments.put("rpgItem", new BooleanArgument());
 		new CommandAPICommand("improvedclear")
 			.withPermission(perms)
-			.withArguments(arguments)
+			.withArguments(
+				new EntitySelectorArgument("target", EntitySelectorArgument.EntitySelector.ONE_PLAYER),
+				new TextArgument("name"),
+				new BooleanArgument("rpgItem")
+			)
 			.withAliases(aliases)
 			.executes((sender, args) -> {
 				// Make sure shulker boxes are closed so they can be clear'd
@@ -37,11 +37,14 @@ public class ImprovedClear {
 			})
 			.register();
 
-		arguments.put("maxAmount", new IntegerArgument());
-
 		new CommandAPICommand("improvedclear")
 			.withPermission(perms)
-			.withArguments(arguments)
+			.withArguments(
+				new EntitySelectorArgument("target", EntitySelectorArgument.EntitySelector.ONE_PLAYER),
+				new TextArgument("name"),
+				new BooleanArgument("rpgItem"),
+				new IntegerArgument("maxAmount")
+			)
 			.withAliases(aliases)
 			.executes((sender, args) -> {
 				// Make sure shulker boxes are closed so they can be clear'd
@@ -51,11 +54,15 @@ public class ImprovedClear {
 			})
 			.register();
 
-		arguments.put("clearShulkers", new BooleanArgument());
-
 		new CommandAPICommand("improvedclear")
 			.withPermission(perms)
-			.withArguments(arguments)
+			.withArguments(
+				new EntitySelectorArgument("target", EntitySelectorArgument.EntitySelector.ONE_PLAYER),
+				new TextArgument("name"),
+				new BooleanArgument("rpgItem"),
+				new IntegerArgument("maxAmount"),
+				new BooleanArgument("clearShulkers")
+			)
 			.withAliases(aliases)
 			.executes((sender, args) -> {
 				// Make sure shulker boxes are closed so they can be clear'd
@@ -65,11 +72,16 @@ public class ImprovedClear {
 			})
 			.register();
 
-		arguments.put("shulkerLore", new TextArgument());
-
 		new CommandAPICommand("improvedclear")
 			.withPermission(perms)
-			.withArguments(arguments)
+			.withArguments(
+				new EntitySelectorArgument("target", EntitySelectorArgument.EntitySelector.ONE_PLAYER),
+				new TextArgument("name"),
+				new BooleanArgument("rpgItem"),
+				new IntegerArgument("maxAmount"),
+				new BooleanArgument("clearShulkers"),
+				new TextArgument("shulkerLore")
+			)
 			.withAliases(aliases)
 			.executes((sender, args) -> {
 				// Make sure shulker boxes are closed so they can be clear'd

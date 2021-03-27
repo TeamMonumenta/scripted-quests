@@ -11,14 +11,13 @@ import org.bukkit.entity.Player;
 
 public class HasPermission {
 	public static void register() {
-		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
-
-		arguments.put("players", new EntitySelectorArgument(EntitySelectorArgument.EntitySelector.ONE_PLAYER));
-		arguments.put("permission", new TextArgument());
 
 		new CommandAPICommand("haspermission")
 			.withPermission(CommandPermission.fromString("scriptedquests.haspermission"))
-			.withArguments(arguments)
+			.withArguments(
+				new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.ONE_PLAYER),
+				new TextArgument("permission")
+			)
 			.executes((sender, args) -> {
 				Player player = (Player)args[0];
 				String perm = (String)args[1];

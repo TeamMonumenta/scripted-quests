@@ -16,14 +16,13 @@ public class GenerateCode {
 	@SuppressWarnings("unchecked")
 	public static void register(Plugin plugin) {
 		CommandPermission perms = CommandPermission.fromString("scriptedquests.generatecode");
-		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
-
-		arguments.put("players", new EntitySelectorArgument(EntitySelectorArgument.EntitySelector.MANY_PLAYERS));
-		arguments.put("seed", new TextArgument());
 
 		new CommandAPICommand("generatecode")
 			.withPermission(perms)
-			.withArguments(arguments)
+			.withArguments(
+				new EntitySelectorArgument("players",EntitySelectorArgument.EntitySelector.MANY_PLAYERS),
+				new TextArgument("seed")
+			)
 			.executes((sender, args) -> {
 				generateCode(plugin, (Collection<Player>)args[0], (String)args[1]);
 			})

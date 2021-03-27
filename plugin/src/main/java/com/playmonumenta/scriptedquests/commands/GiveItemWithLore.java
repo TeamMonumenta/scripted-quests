@@ -21,16 +21,15 @@ public class GiveItemWithLore {
 	@SuppressWarnings("unchecked")
 	public static void register() {
 		CommandPermission perms = CommandPermission.fromString("scriptedquests.giveitemwithlore");
-		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
-
-		arguments.put("players", new EntitySelectorArgument(EntitySelectorArgument.EntitySelector.MANY_PLAYERS));
-		arguments.put("item", new ItemStackArgument());
-		arguments.put("count", new IntegerArgument(1, 64));
-		arguments.put("lore", new TextArgument());
 
 		new CommandAPICommand("giveitemwithlore")
 			.withPermission(perms)
-			.withArguments(arguments)
+			.withArguments(
+				new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS),
+				new ItemStackArgument("item"),
+				new IntegerArgument("count"),
+				new TextArgument("lore")
+			)
 			.executes((sender, args) -> {
 				giveLoot((Collection<Player>)args[0], (ItemStack)args[1], (Integer)args[2], (String)args[3]);
 			})

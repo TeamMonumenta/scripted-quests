@@ -17,15 +17,14 @@ import com.playmonumenta.scriptedquests.quests.CodeEntry;
 public class Code {
 	public static void register(Plugin plugin) {
 		CommandPermission perms = CommandPermission.fromString("scriptedquests.code");
-		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
-
-		arguments.put("word1", new TextArgument().overrideSuggestions(CodeEntry.words));
-		arguments.put("word2", new TextArgument().overrideSuggestions(CodeEntry.words));
-		arguments.put("word3", new TextArgument().overrideSuggestions(CodeEntry.words));
 
 		new CommandAPICommand("code")
 			.withPermission(perms)
-			.withArguments(arguments)
+			.withArguments(
+				new TextArgument("word1").overrideSuggestions(CodeEntry.words),
+				new TextArgument("word2").overrideSuggestions(CodeEntry.words),
+				new TextArgument("word3").overrideSuggestions(CodeEntry.words)
+			)
 			.executes((sender, args) -> {
 				submitCode(plugin, sender, (String)args[0], (String)args[1], (String)args[2]);
 			})

@@ -20,15 +20,14 @@ public class InteractNpc {
 	@SuppressWarnings("unchecked")
 	public static void register(Plugin plugin) {
 		/* First one of these has both required arguments */
-		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
-
-		arguments.put("players", new EntitySelectorArgument(EntitySelectorArgument.EntitySelector.MANY_PLAYERS));
-		arguments.put("npcName", new StringArgument());
-		arguments.put("npcType", new EntityTypeArgument());
 
 		new CommandAPICommand("interactnpc")
 			.withPermission(CommandPermission.fromString("scriptedquests.interactnpc"))
-			.withArguments(arguments)
+			.withArguments(
+				new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS),
+				new StringArgument("npcName"),
+				new EntityTypeArgument("npcType")
+			)
 			.executes((sender, args) -> {
 				interact(plugin, sender, (Collection<Player>)args[0],
 					(String)args[1], (EntityType)args[2]);
@@ -36,14 +35,13 @@ public class InteractNpc {
 			.register();
 
 		/* Second one just has the npc name with VILLAGER as default */
-		arguments = new LinkedHashMap<>();
-
-		arguments.put("players", new EntitySelectorArgument(EntitySelectorArgument.EntitySelector.MANY_PLAYERS));
-		arguments.put("npcName", new StringArgument());
 
 		new CommandAPICommand("interactnpc")
 			.withPermission(CommandPermission.fromString("scriptedquests.interactnpc"))
-			.withArguments(arguments)
+			.withArguments(
+				new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS),
+				new StringArgument("npcName")
+			)
 			.executes((sender, args) -> {
 				interact(plugin, sender, (Collection<Player>)args[0],
 					(String)args[1], EntityType.VILLAGER);

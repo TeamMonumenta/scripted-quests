@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>PROJECT Spellforged Profession Recipe Editor</title>
+
+    <!-- Foundation CSS framework (Bootstrap and jQueryUI also supported) -->
+    <link rel='stylesheet' href='//cdn.jsdelivr.net/bootstrap/3.2.0/css/bootstrap.css'>
+    <!-- Font Awesome icons (Bootstrap, Foundation, and jQueryUI also supported) -->
+    <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.6.1/css/all.css'>
+
+    <script src="https://cdn.jsdelivr.net/npm/@json-editor/json-editor@1.3.5/dist/jsoneditor.min.js"></script>
+</head>
+<body>
+<div class='container'>
+    <div class='row' style='padding-bottom: 15px;'>
+        <div class='col-md-12'>
+            <h1>ScriptedQuests Profession Recipe Editor</h1>
+            <p>For the SFRPG Project, by Nova/Fire.</p>
+			<br>
+			<p>Used for creating Profession Recipes</p>
+        </div>
+    </div>
+    <div class='row' style='padding-bottom: 15px;'>
+        <div class='col-md-12'>
+            <button id='restore' class='btn btn-info'>Restore to Default</button>
+            <span id='valid_indicator' class='label label-success'></span>
+        </div>
+    </div>
+    <div class='row'>
+        <div class='col-md-12'>
+            <div id='editor_holder'></div>
+        </div>
+    </div>
+</div>
+
+<script>
+       // Initialize the editor
+    var editor = new JSONEditor(document.getElementById('editor_holder'),{
+        theme: 'bootstrap3',
+        iconlib: 'fontawesome5',
+
+        // Enable fetching schemas via ajax
+        ajax: true,
+
+        // The schema for the editor
+        schema: {
+            title: "Profession Recipe Editor",
+            defaultProperties: [
+                "id",
+				"professionType",
+				"professionLevel",
+				"result",
+				"resultAmount",
+				"ingredients"
+            ],
+            additionalProperties:false,
+            properties: {
+                 id: {
+                    required: true,
+                    propertyOrder: 1,
+                    title: "id",
+                    description: "The ID of the Guidebook Entry. Needs to be unique.",
+                    type: "string",
+                    default: "guidebook_entry"
+                },
+				professionType: {
+                    propertyOrder: 2,
+                    title: "professionType",
+                    description: "The type of professsion this recipe belongs to. Valid IDs: BLACKSMITH, ARTISAN, ALCHEMY, COOKING, JEWELER, HERBALISM, MINING, FISHING, SKINNING",
+					type: "string",
+					default: "BLACKSMITH"
+                }
+				professionLevel: {
+                    required: true,
+                    propertyOrder: 3,
+                    title: "professionLevel",
+                    description: "The Profession Level of this Recipe",
+                    type: "integer",
+                    default: 1
+                },
+				result: {
+                    required: true,
+                    propertyOrder: 4,
+                    title: "result",
+                    description: "The RPG Item ID for the result of the recipe.",
+                    type: "string"
+                },
+				resultAmount: {
+                    required: true,
+                    propertyOrder: 5,
+                    title: "resultAmount",
+                    description: "The amount of the result to give in the recipe",
+                    type: "integer",
+                    default: 1
+                },
+				ingredients: {
+                    propertyOrder: 4,
+                    title: "ingredients",
+                    description: "The description for this Guidebook Entry. Can have multiple lines. Lines will autowrap.",
+					type: "array",
+					items: {
+					    title: "Ingredient",
+						type: "object",
+						additionalProperties: false,
+						properties: {
+							ingredient_id: {
+								required: true,
+								propertyOrder: 3,
+								title: "ingredient_id",
+								description: "The RPG Item ID of the ingredient to use",
+								type: "string",
+								default: ""
+							},
+							ingredientAmount: {
+								required: true,
+								propertyOrder: 4,
+								title: "ingredientAmount",
+								description: "The amount to use of this ingredient",
+								type: "integer",
+								default: 1
+							}
+						}
+					}
+                }
+            }
+        }
+    });
+
+    // Hook up the Restore to Default button
+    document.getElementById('restore').addEventListener('click',function() {
+        editor.setValue(starting_value);
+    });
+
+    // Hook up the validation indicator to update its
+    // status whenever the editor changes
+    editor.on('change',function() {
+        // Get an array of errors from the validator
+        var errors = editor.validate();
+
+        var indicator = document.getElementById('valid_indicator');
+
+        // Not valid
+        if(errors.length) {
+            indicator.className = 'label label-danger'
+            indicator.textContent = "not valid";
+        }
+        // Valid
+        else {
+            indicator.className = 'label label-success'
+            indicator.textContent = "valid";
+        }
+    });
+</script>
+</body>
+</html>

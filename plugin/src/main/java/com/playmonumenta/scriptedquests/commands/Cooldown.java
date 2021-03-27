@@ -17,15 +17,14 @@ public class Cooldown {
 	@SuppressWarnings("unchecked")
 	public static void register() {
 		CommandPermission perms = CommandPermission.fromString("scriptedquests.cooldown");
-		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
-
-		arguments.put("player", new EntitySelectorArgument(EntitySelectorArgument.EntitySelector.MANY_PLAYERS));
-		arguments.put("material", new ItemStackArgument());
-		arguments.put("ticks", new IntegerArgument());
 
 		new CommandAPICommand("cooldown")
 			.withPermission(perms)
-			.withArguments(arguments)
+			.withArguments(
+				new EntitySelectorArgument("player", EntitySelectorArgument.EntitySelector.MANY_PLAYERS),
+				new ItemStackArgument("material"),
+				new IntegerArgument("ticks")
+			)
 			.executes((sender, args) -> {
 				for (Player player : (Collection<Player>)args[0]) {
 					player.setCooldown(((ItemStack)args[1]).getType(), (Integer)args[2]);

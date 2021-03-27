@@ -15,14 +15,13 @@ import org.bukkit.entity.Damageable;
 
 public class Heal {
 	public static void register() {
-		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
-
-		arguments.put("entities", new EntitySelectorArgument(EntitySelectorArgument.EntitySelector.MANY_ENTITIES));
-		arguments.put("amount", new DoubleArgument());
 
 		new CommandAPICommand("heal")
 			.withPermission(CommandPermission.fromString("scriptedquests.heal"))
-			.withArguments(arguments)
+			.withArguments(
+				new EntitySelectorArgument("entities", EntitySelectorArgument.EntitySelector.MANY_ENTITIES),
+				new DoubleArgument("amount")
+			)
 			.executes((sender, args) -> {
 				if (args[0] instanceof Collection<?>) {
 					for (Object e : (Collection<?>) args[0]) {

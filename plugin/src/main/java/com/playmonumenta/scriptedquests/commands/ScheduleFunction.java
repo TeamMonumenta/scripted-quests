@@ -68,11 +68,6 @@ public class ScheduleFunction {
 
 	public ScheduleFunction(Plugin plugin) {
 		mPlugin = plugin;
-		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
-
-		arguments.put("literal", new LiteralArgument("function"));
-		arguments.put("function", new FunctionArgument());
-		arguments.put("ticks", new IntegerArgument(0));
 
 		/* Unregister the default /schedule command */
 		try {
@@ -84,7 +79,9 @@ public class ScheduleFunction {
 
 		new CommandAPICommand("schedule")
 			.withPermission(CommandPermission.fromString("scriptedquests.schedulefunction"))
-			.withArguments(arguments)
+			.withArguments(new LiteralArgument("function").setListed(false))
+			.withArguments(new FunctionArgument("function"))
+			.withArguments(new IntegerArgument("ticks", 0))
 			.executes((sender, args) -> {
 				addDelayedFunction((FunctionWrapper[])args[0], (Integer)args[1]);
 			})

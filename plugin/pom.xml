@@ -41,10 +41,10 @@
             <id>spigotmc-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
-        <repository>
-            <id>commandapi</id>
-            <url>https://raw.githubusercontent.com/JorelAli/CommandAPI/mvn-repo/</url>
-        </repository>
+		<repository>
+			<id>commandapi</id>
+			<url>https://raw.githubusercontent.com/JorelAli/CommandAPI/mvn-repo/</url>
+		</repository>
         <repository>
             <id>dynmap-repo</id>
             <url>http://repo.mikeprimm.com/org/</url>
@@ -64,12 +64,12 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
+		<dependency>
 			<groupId>dev.jorel</groupId>
-			<artifactId>commandapi</artifactId>
-			<version>3.0</version>
+			<artifactId>commandapi-core</artifactId>
+			<version>5.6</version>
 			<scope>provided</scope>
-        </dependency>
+		</dependency>
 
         <dependency>
             <groupId>com.mojang</groupId>

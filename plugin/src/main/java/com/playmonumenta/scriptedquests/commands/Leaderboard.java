@@ -24,20 +24,30 @@ import com.playmonumenta.scriptedquests.utils.LeaderboardUtils.LeaderboardEntry;
 public class Leaderboard {
 	@SuppressWarnings("unchecked")
 	public static void register(Plugin plugin) {
-		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
-
-		arguments.put("players", new EntitySelectorArgument(EntitySelectorArgument.EntitySelector.MANY_PLAYERS));
-		arguments.put("objective", new StringArgument());
-		arguments.put("descending", new BooleanArgument());
-		arguments.put("page", new IntegerArgument(1)); // Min 1
-
 		new CommandAPICommand("leaderboard")
 			.withPermission(CommandPermission.fromString("scriptedquests.leaderboard"))
-			.withArguments(arguments)
+			.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
+			.withArguments(new StringArgument("objective"))
+			.withArguments(new BooleanArgument("descending"))
+			.withArguments(new IntegerArgument("page", 1))
 			.executes((sender, args) -> {
 				for (Player player : (Collection<Player>)args[0]) {
 					leaderboard(plugin, player, (String)args[1],
-						(Boolean)args[2], (Integer)args[3]);
+						(Boolean)args[2], (Integer)args[3], null);
+				}
+			})
+			.register();
+
+		new CommandAPICommand("leaderboard")
+			.withPermission(CommandPermission.fromString("scriptedquests.leaderboard"))
+			.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
+			.withArguments(new StringArgument("objective"))
+			.withArguments(new BooleanArgument("descending"))
+			.withArguments(new EntitySelectorArgument("filterPlayers", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
+			.executes((sender, args) -> {
+				for (Player player : (Collection<Player>)args[0]) {
+					leaderboard(plugin, player, (String)args[1],
+						(Boolean)args[2], 1, (Collection<Player>)args[3]);
 				}
 			})
 			.register();
@@ -46,25 +56,21 @@ public class Leaderboard {
 		 * Add a command to copy a player's scoreboard to the Redis leaderboard if MonumentaRedisSync exists.
 		 * If using scoreboards for leaderboards, this command does nothing
 		 */
-		arguments = new LinkedHashMap<>();
-
-		arguments.put("update", new LiteralArgument("update"));
-		arguments.put("players", new EntitySelectorArgument(EntitySelectorArgument.EntitySelector.MANY_PLAYERS));
-		arguments.put("objective", new StringArgument());
-
 		new CommandAPICommand("leaderboard")
 			.withPermission(CommandPermission.fromString("scriptedquests.leaderboard"))
-			.withArguments(arguments)
+			.withArguments(new MultiLiteralArgument("update"))
+			.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
+			.withArguments(new StringArgument("objective"))
 			.executes((sender, args) -> {
-				for (Player player : (Collection<Player>)args[0]) {
-					leaderboardUpdate(player, (String)args[1]);
+				for (Player player : (Collection<Player>)args[1]) {
+					leaderboardUpdate(player, (String)args[2]);
 				}
 			})
 			.register();
 
 	}
 
-	public static void leaderboard(Plugin plugin, Player player, String objective, boolean descending, int page) {
+	public static void leaderboard(Plugin plugin, Player player, String objective, boolean descending, int page, Collection<Player> filterPlayers) {
 		List<LeaderboardEntry> entries = new ArrayList<LeaderboardEntry>();
 
 		/* Get the scoreboard objective (might be null) */
@@ -73,26 +79,42 @@ public class Leaderboard {
 		/* If the scoreboard objective exists, use its display name */
 		final String displayName;
 		if (obj != null) {
-			 displayName = obj.getDisplayName();
+			displayName = obj.getDisplayName();
 		} else {
-			 displayName = objective;
+			displayName = objective;
 		}
 
-		if (Bukkit.getServer().getPluginManager().getPlugin("MonumentaRedisSync") == null) {
+		if (filterPlayers != null || Bukkit.getServer().getPluginManager().getPlugin("MonumentaRedisSync") == null) {
 			/* Redis sync plugin not found - need to loop over scoreboards to compute leaderboard */
 
 			if (obj == null) {
 				player.sendMessage(ChatColor.RED + "The scoreboard objective '" + objective + "' does not exist");
 				return;
 			}
-			for (String name : obj.getScoreboard().getEntries()) {
-				Score score = obj.getScore(name);
-				if (score.isScoreSet()) {
-					int value = score.getScore();
-					if (value != 0) {
-						entries.add(new LeaderboardEntry(name, "", value));
+			if (filterPlayers == null) {
+				/* Not filtering by players, get everyone on the scoreboard */
+				for (String name : obj.getScoreboard().getEntries()) {
+					Score score = obj.getScore(name);
+					if (score.isScoreSet()) {
+						int value = score.getScore();
+						if (value != 0) {
+							entries.add(new LeaderboardEntry(name, "", value));
+						}
 					}
 				}
+			} else {
+				/* Filtering to specific players, only get their scores */
+				for (Player filterPlayer : filterPlayers) {
+					String name = filterPlayer.getName();
+					Score score = obj.getScore(name);
+					if (score.isScoreSet()) {
+						int value = score.getScore();
+						if (value != 0) {
+							entries.add(new LeaderboardEntry(name, "", value));
+						}
+					}
+				}
+
 			}
 
 			if (descending) {
@@ -104,7 +126,8 @@ public class Leaderboard {
 			colorizeEntries(entries, player.getName(), 0);
 
 			LeaderboardUtils.sendLeaderboard(player, displayName, entries, page,
-			                                 "/leaderboard " + player.getName() + " " + objective + (descending ? " true" : " false"));
+				"/leaderboard " + player.getName() + " " + objective + (descending ? " true" : " false"),
+				filterPlayers == null /* Don't show pages for this variant */);
 		} else {
 			/* Redis sync plugin is available - use it instead */
 
@@ -121,7 +144,7 @@ public class Leaderboard {
 					/* Send the leaderboard to the player back on the main thread */
 					Bukkit.getScheduler().runTask(plugin, () -> {
 						LeaderboardUtils.sendLeaderboard(player, displayName, entries, page,
-						                                 "/leaderboard " + player.getName() + " " + objective + (descending ? " true" : " false"));
+							"/leaderboard " + player.getName() + " " + objective + (descending ? " true" : " false"));
 
 					});
 				} catch (Exception ex) {
@@ -148,22 +171,21 @@ public class Leaderboard {
 		}
 	}
 
-
 	private static void colorizeEntries(List<LeaderboardEntry> entries, String playerName, int index) {
 		for (LeaderboardEntry entry : entries) {
 			String color;
 			switch (index) {
-			case (0):
-				color = "" + ChatColor.GOLD + ChatColor.BOLD;
-				break;
-			case (1):
-				color = "" + ChatColor.WHITE + ChatColor.BOLD;
-				break;
-			case (2):
-				color = "" + ChatColor.DARK_RED + ChatColor.BOLD;
-				break;
-			default:
-				color = "" + ChatColor.GRAY + ChatColor.BOLD;
+				case (0):
+					color = "" + ChatColor.GOLD + ChatColor.BOLD;
+					break;
+				case (1):
+					color = "" + ChatColor.WHITE + ChatColor.BOLD;
+					break;
+				case (2):
+					color = "" + ChatColor.DARK_RED + ChatColor.BOLD;
+					break;
+				default:
+					color = "" + ChatColor.GRAY + ChatColor.BOLD;
 			}
 			if (entry.getName().equals(playerName)) {
 				color = "" + ChatColor.BLUE + ChatColor.BOLD;

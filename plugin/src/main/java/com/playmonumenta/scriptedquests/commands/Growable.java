@@ -14,17 +14,16 @@ public class Growable {
 	public static void register(GrowableManager manager) {
 		CommandPermission perm = CommandPermission.fromString("monumenta.growstructure");
 
-		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
-		arguments.put("grow", new LiteralArgument("grow"));
-		arguments.put("location", new LocationArgument(LocationType.BLOCK_POSITION));
-		arguments.put("label", new StringArgument().overrideSuggestions(manager.getLabels()));
-		arguments.put("ticksPerStep", new IntegerArgument(1));
-		arguments.put("blocksPerStep", new IntegerArgument(1));
-		arguments.put("callStructureGrowEvent", new BooleanArgument());
-
 		new CommandAPICommand("growable")
 			.withPermission(perm)
-			.withArguments(arguments)
+			.withArguments(
+				new LiteralArgument("grow"),
+				new LocationArgument("location", LocationType.BLOCK_POSITION),
+				new StringArgument("label").overrideSuggestions(manager.getLabels()),
+				new IntegerArgument("ticksPerStep", 1),
+				new IntegerArgument("blocksPerStep", 1),
+				new BooleanArgument("callStructureGrowEvent")
+			)
 			.executes((sender, args) -> {
 				try {
 					int loaded = manager.grow((String)args[1], (Location)args[0], (Integer)args[2], (Integer)args[3], (Boolean)args[4]);
@@ -35,15 +34,14 @@ public class Growable {
 			})
 			.register();
 
-		arguments.clear();
-		arguments.put("add", new LiteralArgument("add"));
-		arguments.put("location", new LocationArgument(LocationType.BLOCK_POSITION));
-		arguments.put("label", new StringArgument());
-		arguments.put("maxDepth", new IntegerArgument(1));
-
 		new CommandAPICommand("growable")
 			.withPermission(perm)
-			.withArguments(arguments)
+			.withArguments(
+				new LiteralArgument("add"),
+				new LocationArgument("location", LocationType.BLOCK_POSITION),
+				new StringArgument("label"),
+				new IntegerArgument("maxDepth", 1)
+			)
 			.executes((sender, args) -> {
 				try {
 					int size = manager.add((String)args[1], (Location)args[0], (Integer)args[2]);

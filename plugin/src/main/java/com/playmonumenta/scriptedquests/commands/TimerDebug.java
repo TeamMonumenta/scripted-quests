@@ -13,12 +13,9 @@ import com.playmonumenta.scriptedquests.Plugin;
 
 public class TimerDebug {
 	public static void register(Plugin plugin) {
-		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
-		arguments.put("enabledOnly", new BooleanArgument());
-
 		new CommandAPICommand("timerdebug")
 			.withPermission(CommandPermission.fromString("scriptedquests.timerdebug"))
-			.withArguments(arguments)
+			.withArguments(new BooleanArgument("enabledOnly"))
 			.executes((sender, args) -> {
 				debug(plugin, sender, (Boolean)args[0]);
 			})

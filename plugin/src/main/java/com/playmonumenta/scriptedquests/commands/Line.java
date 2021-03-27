@@ -16,20 +16,15 @@ import com.playmonumenta.scriptedquests.utils.BlockUtils;
 public class Line {
 	@SuppressWarnings("unchecked")
 	public static void register() {
-		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
-
-		arguments.put("start", new LocationArgument());
-		arguments.put("end", new LocationArgument());
-		arguments.put("material", new StringArgument());
-
 		new CommandAPICommand("line")
 			.withPermission(CommandPermission.fromString("scriptedquests.line"))
-			.withArguments(arguments)
+			.withArguments(new LocationArgument("start"))
+			.withArguments(new LocationArgument("end"))
+			.withArguments(new StringArgument("material"))
 			.executes((sender, args) -> {
 				return run(sender, (Location) args[0], (Location) args[1], (String) args[2]);
 			})
 			.register();
-
 	}
 
 	private static int run(CommandSender sender, Location start, Location end, String matStr) {

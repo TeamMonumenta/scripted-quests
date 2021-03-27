@@ -15,11 +15,9 @@ public class GetDate {
 	public static void register() {
 		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
 
-		arguments.put("field", new TextArgument().overrideSuggestions(FIELDS));
-
 		new CommandAPICommand("getdate")
 			.withPermission(CommandPermission.fromString("scriptedquests.getdate"))
-			.withArguments(arguments)
+			.withArguments(new TextArgument("field").overrideSuggestions(FIELDS))
 			.executes((sender, args) -> {
 					return getField((String)args[0]);
 				})

@@ -16,15 +16,14 @@ public class Clock {
 	@SuppressWarnings("unchecked")
 	public static void register() {
 		CommandPermission perms = CommandPermission.fromString("scriptedquests.clock");
-		LinkedHashMap<String, Argument> arguments = new LinkedHashMap<>();
-
-		arguments.put("location", new LocationArgument(LocationType.PRECISE_POSITION));
-		arguments.put("range", new IntegerArgument());
-		arguments.put("period", new IntegerArgument());
 
 		new CommandAPICommand("clock")
 			.withPermission(perms)
-			.withArguments(arguments)
+			.withArguments(
+				new LocationArgument("location", LocationType.PRECISE_POSITION),
+				new IntegerArgument("range"),
+				new IntegerArgument("period")
+			)
 			.executes((sender, args) -> {
 					if (sender instanceof Player) {
 						Player player = (Player) sender;
