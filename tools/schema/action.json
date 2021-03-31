@@ -262,6 +262,11 @@
 				}
 			}
         },
+		"learn_profession": {
+            "title": "learn_profession",
+			"description": "Opens the menu for a player to learn the specified profession. This will not open if they have 2 Professions already. Valid IDs: BLACKSMITH, ARTISAN, ALCHEMY, COOKING, JEWELER, HERBALISM, MINING, FISHING, SKINNING",
+            "type": "string"
+        },
         "function": {
             "title": "function",
             "description": "Runs a function via the console as the player (/execute as <playername> at @s run function <function>)",

@@ -100,6 +100,9 @@ public class QuestActions {
 				case "open_profession":
 					mActions.add(new ActionOpenProfession(value));
 					break;
+				case "learn_profession":
+					mActions.add(new ActionLearnProfession(value));
+					break;
 				case "run_actions":
 					mActions.add(new ActionRunActions(value));
 					break;

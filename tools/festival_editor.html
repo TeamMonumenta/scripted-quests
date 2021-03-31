@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Wynncon Festival Editor</title>
+
+    <!-- Foundation CSS framework (Bootstrap and jQueryUI also supported) -->
+    <link rel='stylesheet' href='//cdn.jsdelivr.net/bootstrap/3.2.0/css/bootstrap.css'>
+    <!-- Font Awesome icons (Bootstrap, Foundation, and jQueryUI also supported) -->
+    <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.6.1/css/all.css'>
+
+    <script src="https://cdn.jsdelivr.net/npm/@json-editor/json-editor@1.3.5/dist/jsoneditor.min.js"></script>
+</head>
+<body>
+<div class='container'>
+    <div class='row' style='padding-bottom: 15px;'>
+        <div class='col-md-12'>
+            <h1>Wynncon Festival Editor</h1>
+            <p>For Wynncon, by Nova/Fire.</p>
+			<br>
+			<p>Used for Festivals.</p>
+        </div>
+    </div>
+    <div class='row' style='padding-bottom: 15px;'>
+        <div class='col-md-12'>
+            <button id='restore' class='btn btn-info'>Restore to Default</button>
+            <span id='valid_indicator' class='label label-success'></span>
+        </div>
+    </div>
+    <div class='row'>
+        <div class='col-md-12'>
+            <div id='editor_holder'></div>
+        </div>
+    </div>
+</div>
+
+<script>
+       // Initialize the editor
+    var editor = new JSONEditor(document.getElementById('editor_holder'),{
+        theme: 'bootstrap3',
+        iconlib: 'fontawesome5',
+
+        // Enable fetching schemas via ajax
+        ajax: true,
+
+        // The schema for the editor
+        schema: {
+            title: "Festival Editor",
+            defaultProperties: [
+                "id",
+				"name",
+				"material",
+				"description"
+            ],
+            additionalProperties:false,
+            properties: {
+                 id: {
+                    required: true,
+                    propertyOrder: 1,
+                    title: "id",
+                    description: "The ID of the Festival. Needs to be unique.",
+                    type: "string",
+                    default: "festival_2021"
+                },
+				name: {
+                    required: true,
+                    propertyOrder: 2,
+                    title: "name",
+                    description: "The name of the Festival.",
+                    type: "string",
+                    default: "Festival 2021"
+                },
+				world: {
+                    required: true,
+                    propertyOrder: 3,
+                    title: "world",
+                    description: "The world that the festival builds are contained in for use",
+                    type: "string",
+                    default: "world"
+                },
+				games: {
+                    propertyOrder: 4,
+                    title: "games",
+                    description: "The games for this festival.",
+					properties: {
+						elemental_balloons: {
+							title: "elemental_balloons",
+							description: "Players undertake the Archer class and fire and pop as many Elemental balloons as they can. Players will have “Fast Attack Speed” and no access to spells in this game. Different types of Elemental balloons will incur different effects.",
+							type: "object",
+							properties: {
+								spawn: {
+								    required: true,
+									title: "spawn",
+									description: "The vector location where the players spawn",
+									type: "string",
+									default: "0,0,0"
+								},
+								regions: {
+								    required: true,
+									title: "regions",
+									description: "The regions where the balloons will spawn",
+									type: "array",
+									items: {
+										title: "region",
+										properties: {
+											center: {
+												required: true,
+												title: "center",
+												description: "The vector location of the region",
+												type: "string",
+												default: "0,0,0"
+											},
+											x: {
+												title: "x",
+												description: "The X region radius",
+												type: "number",
+												default: 1
+											},
+											y: {
+												title: "y",
+												description: "The Y region radius",
+												type: "number",
+												default: 1
+											},
+											z: {
+												title: "z",
+												description: "The Z region radius",
+												type: "number",
+												default: 1
+											}
+										},
+										type: "object"
+									}
+								}
+							}
+						}
+					},
+					type: "object",
+                }
+            }
+        }
+    });
+
+    // Hook up the Restore to Default button
+    document.getElementById('restore').addEventListener('click',function() {
+        editor.setValue(starting_value);
+    });
+
+    // Hook up the validation indicator to update its
+    // status whenever the editor changes
+    editor.on('change',function() {
+        // Get an array of errors from the validator
+        var errors = editor.validate();
+
+        var indicator = document.getElementById('valid_indicator');
+
+        // Not valid
+        if(errors.length) {
+            indicator.className = 'label label-danger'
+            indicator.textContent = "not valid";
+        }
+        // Valid
+        else {
+            indicator.className = 'label label-success'
+            indicator.textContent = "valid";
+        }
+    });
+</script>
+</body>
+</html>
