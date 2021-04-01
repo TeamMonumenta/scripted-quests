@@ -140,20 +140,32 @@
                                 "description": "Text that will display upon hovering over the actual text",
                                 "type": "string"
                             },
-                            "click_command": {
-                                "required": false,
-                                "propertyOrder": 4,
-                                "title": "click_command",
-                                "description": "An on click command. Must be formatted properly, and be something the player can execute.",
-                                "type": "string"
-                            },
-                            "click_url": {
-                                "required": false,
-                                "propertyOrder": 5,
-                                "title": "click_url",
-                                "description": "A url to be visted when players click on the text.",
-                                "type": "string"
-                            }
+                            "oneOf": [
+                                {
+                                    "required": true,
+                                    "propertyOrder": 4,
+                                    "title": "click_command",
+                                    "description": "A command to be executed on click. Must be executable by the player and also not relative since players can move",
+                                    "type": "object",
+                                    "properties": {
+                                        "click_command": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                {
+                                    "required": true,
+                                    "propertyOrder": 4,
+                                    "title": "click_url",
+                                    "description": "A url to be visted upon click.",
+                                    "type": "object",
+                                    "properties": {
+                                        "click_url": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
