@@ -133,6 +133,20 @@
 									}
 								}
 							}
+						},
+						laser_tag: {
+							title: "laser_tag",
+							description: "In this FFA, players have 3 minutes to go head-to-head to try and tag as many players using infinity-ranged lasers. During this time, all spells and movement speed effects are canceled.",
+							type: "object",
+							properties: {
+								spawn: {
+								    required: true,
+									title: "spawn",
+									description: "The vector location where the players spawn",
+									type: "string",
+									default: "0,0,0"
+								}
+							}
 						}
 					},
 					type: "object",
