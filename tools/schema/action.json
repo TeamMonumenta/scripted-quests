@@ -142,15 +142,33 @@
                             },
                             "click_action": {
                                 "title": "click_action",
-                                "description": "Either a command to be executed on click, must be executable by the player and also not relative since players can move, or a url to be visted upon click.",
+                                "description": "Something to be done on click",
                                 "oneOf": [
                                     {
                                         "title": "click_command",
-                                        "type": "string"
+                                        "type": "object",
+                                        "properties": {
+                                            "click_command": {
+                                                "required": true,
+                                                "propertyOrder": 1,
+                                                "title": "click_command",
+                                                "description": "A command to be executed on click. Must be executable by the player and also not relative since players can move.",
+                                                "type": "string"
+                                            }
+                                        }
                                     },
                                     {
                                         "title": "click_url",
-                                        "type": "string"
+                                        "type": "object",
+                                        "properties": {
+                                            "click_url": {
+                                                "required": true,
+                                                "propertyOrder": 1,
+                                                "title": "click_url",
+                                                "description": "A url to be visted upon click.",
+                                                "type": "string"
+                                            }
+                                        }
                                     }
                                 ]
                             }
