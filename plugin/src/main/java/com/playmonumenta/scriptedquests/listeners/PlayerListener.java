@@ -158,6 +158,11 @@ public class PlayerListener implements Listener {
 			deathEntries = new LinkedList<DeathLocation>();
 		}
 
+		// Prevent safe deaths from being counted
+		if (event.isCancelled()) {
+			return;
+		}
+
 		// Add this death location to the beginning of the list
 		deathEntries.add(0, new DeathLocation(event.getEntity().getLocation(), System.currentTimeMillis()));
 		if (deathEntries.size() > 3) {
