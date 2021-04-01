@@ -146,24 +146,13 @@
                                     "propertyOrder": 4,
                                     "title": "click_command",
                                     "description": "A command to be executed on click. Must be executable by the player and also not relative since players can move",
-                                    "type": "object",
-                                    "properties": {
-                                        "click_command": {
-                                            "type": "string"
-                                        }
-                                    }
+                                    "type": "string",
                                 },
                                 {
-                                    "required": true,
                                     "propertyOrder": 4,
                                     "title": "click_url",
                                     "description": "A url to be visted upon click.",
-                                    "type": "object",
-                                    "properties": {
-                                        "click_url": {
-                                            "type": "string"
-                                        }
-                                    }
+                                    "type": "string",
                                 }
                             ]
                         }
