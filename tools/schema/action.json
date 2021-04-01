@@ -104,6 +104,56 @@
                         "title": "A random line",
                         "type": "string"
                     }
+                },
+                "all_in_one_text" {
+                    "title": "all_in_one_text",
+                    "type": "array",
+                    "format": "tabs",
+                    "minItems": 1,
+                    "items": {
+                        "headerTemplate": "All In One Text",
+                        "type": "object",
+                        "defaultProperties": [
+                            "player_text",
+                            "actual_text",
+                            "hover_text"
+                        ]
+                        "actual_text": {
+                            "required": true,
+                            "propertyOrder": 1,
+                            "title": "actual_text",
+                            "description": "The text that all the events and such go on top of",
+                            "type": "String"
+                        },
+                        "player_text": {
+                            "required": false,
+                            "propertyOrder": 2,
+                            "title": "player_text",
+                            "description": "The text that can go before the actual text, if needed",
+                            "type": "String"
+                        },
+                        "hover_text": {
+                            "required": false,
+                            "propertyOrder": 3,
+                            "title": "hover_text",
+                            "description": "Text that will display upon hovering over the actual text",
+                            "type": "String"
+                        },
+                        "click_command": {
+                            "required": false,
+                            "propertyOrder": 4,
+                            "title": "click_command",
+                            "description": "An on click command. Must be formatted properly, and be something the player can execute.",
+                            "type": "String",
+                        },
+                        "click_url": {
+                            "required": false,
+                            "propertyOrder": 5,
+                            "title": "click_url",
+                            "description": "A url to be visted when players click on the text.",
+                            "type": "String"
+                        }
+                    }
                 }
             }
         },
