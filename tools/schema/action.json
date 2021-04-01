@@ -117,7 +117,7 @@
                             "player_text",
                             "actual_text",
                             "hover_text"
-                        ]
+                        ],
                         "properties" {
                             "actual_text": {
                                 "required": true,
@@ -145,7 +145,7 @@
                                 "propertyOrder": 4,
                                 "title": "click_command",
                                 "description": "An on click command. Must be formatted properly, and be something the player can execute.",
-                                "type": "string",
+                                "type": "string"
                             },
                             "click_url": {
                                 "required": false,
