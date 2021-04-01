@@ -147,6 +147,60 @@
 									default: "0,0,0"
 								}
 							}
+						},
+						cc_sumo: {
+							title: "cc_sumo",
+							description: "Players need to fight to stay on top of a platform. They can use any and all spells, but they cannot damage or kill other players. Each second that the player stands on the platform will gain a point. The player with the most points after 90 seconds wins.",
+							type: "object",
+							properties: {
+								spawn: {
+								    required: true,
+									title: "spawn",
+									description: "The vector location where the players spawn",
+									type: "string",
+									default: "0,0,0"
+								},
+								spawns: {
+								    required: true,
+									title: "spawns",
+									description: "The spawnpoints where players will spawn whenever the game starts",
+									type: "array",
+									items: {
+										type: "string",
+										title: "loc",
+										default: "0,0,0:
+									}
+								},
+								sumo_spot: {
+								    required: true,
+									title: "spawns",
+									description: "The spot where the players need to fight to get on top of. Needs a center and radius. The hitbox behaves like a flat circle.",
+									properties: {
+										center: {
+											required: true,
+											title: "center",
+											description: "The vector location of the spot",
+											type: "string",
+											default: "0,0,0"
+										},
+										radius: {
+											required: true,
+											title: "radius",
+											description: "The radius of the circle",
+											type: "number",
+											default: 1
+										},
+										height: {
+											required: true,
+											title: "height",
+											description: "The height of the circle",
+											type: "number",
+											default: 1
+										}
+									},
+									type: "object"
+								}
+							}
 						}
 					},
 					type: "object",
