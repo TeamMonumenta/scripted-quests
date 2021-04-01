@@ -118,7 +118,7 @@
                             "actual_text",
                             "hover_text"
                         ],
-                        "properties" {
+                        "properties": {
                             "actual_text": {
                                 "required": true,
                                 "propertyOrder": 1,
