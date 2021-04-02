@@ -201,6 +201,27 @@
 									type: "object"
 								}
 							}
+						},
+						meteor_spleef: {
+							title: "meteor_spleef",
+							description: "Players undertake the Mage class and use Meteor to spleef the platform under other players. There are 3 platform layers in total, and players can rain down meteors on the platforms below them and above them. If a player goes under all 3 platforms, they are eliminated. Last player standing wins!",
+							type: "object",
+							properties: {
+								spawn: {
+								    required: true,
+									title: "spawn",
+									description: "The vector location where the players spawn",
+									type: "string",
+									default: "0,0,0"
+								},
+								spectator: {
+								    required: true,
+									title: "spectator",
+									description: "The vector location where the players will go to spectate whenever they're eliminated",
+									type: "string",
+									default: "0,0,0"
+								}
+							}
 						}
 					},
 					type: "object",
