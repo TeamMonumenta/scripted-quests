@@ -16,7 +16,7 @@ public class DialogHoverText implements DialogBase {
 
 	public DialogHoverText(String npcName, String displayName, EntityType entityType, JsonElement element) throws Exception {
 		if (element.isJsonObject()) {
-			mEntries.add(new DialogAllInOneEntry(npcName, displayName, entityType, element);
+			mEntries.add(new DialogAllInOneEntry(npcName, displayName, entityType, element));
 		} else if (element.isJsonArray()) {
 			Iterator<JsonElement> iter = element.getAsJsonArray().iterator();
 			while (iter.hasNext()) {

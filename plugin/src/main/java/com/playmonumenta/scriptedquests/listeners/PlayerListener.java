@@ -159,7 +159,7 @@ public class PlayerListener implements Listener {
 		}
 
 		// Prevent safe deaths from being counted
-		if (event.isCancelled()) {
+		if (event.getKeepInventory()) {
 			return;
 		}
 

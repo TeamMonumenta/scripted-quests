@@ -38,7 +38,12 @@ public class DialogAllInOneEntry implements DialogBase {
 		for (Entry<String, JsonElement> ent : entries) {
 			String key = ent.getKey();
 
-			if (!key.equals("hover_text") && !key.equals("click_command") && !key.equals("player_text") && !key.equals("click_url") && !key.equals("actual_text")) {
+			JsonElement value = object.get(key);
+			if (value == null) {
+				throw new Exception("clickable_text value for key '" + key + "' is not parseable!");
+			}
+
+			if (!key.equals("hover_text") && !key.equals("click_action") && !key.equals("player_text") && !key.equals("actual_text")) {
 				throw new Exception("Unknown clickable_text key: " + key);
 			}
 
@@ -46,12 +51,29 @@ public class DialogAllInOneEntry implements DialogBase {
 				mText = ent.getValue().getAsString();
 			}
 
-			if (key.equals("click_command")) {
+			if (key.equals("click_action")) {
 				if (mComponent.clickEvent() != null) {
 					throw new Exception("There can only be one on click event!");
 				}
-				ClickEvent event = ClickEvent.runCommand(ent.getValue().getAsString());
-				mComponent.clickEvent(event);
+				JsonObject clickObject = ent.getValue().getAsJsonObject();
+				for (Entry<String, JsonElement> clickEnt : clickObject.entrySet()) {
+					if (!clickEnt.getKey().equals("click_command") && !clickEnt.getKey().equals("click_url")) {
+						throw new Exception("The click action is not a command or a url!");
+					}
+					if (mComponent.clickEvent() != null) {
+						throw new Exception("There may only be one click action per dialogue string!");
+					}
+
+					if (clickEnt.getKey().equals("click_command")) {
+						ClickEvent event = ClickEvent.runCommand(clickEnt.getValue().getAsString());
+						mComponent.clickEvent(event);
+					}
+
+					if (clickEnt.getKey().equals("click_url")) {
+						ClickEvent event = ClickEvent.openUrl(clickEnt.getValue().getAsString());
+						mComponent.clickEvent(event);
+					}
+				}
 			}
 
 			if (key.equals("hover_text")) {
@@ -59,12 +81,12 @@ public class DialogAllInOneEntry implements DialogBase {
 				mComponent.hoverEvent(event);
 			}
 
-			if (key.equals("click_url")) {
-				if (mComponent.clickEvent() != null) {
-					throw new Exception("There can only be one on click event!");
+			if (key.equals("actual_text")) {
+				if (mComponent != null) {
+					mComponent = Component.text(ent.getValue().toString()).append(mComponent);
+				} else {
+					mComponent.append(Component.text(ent.getValue().toString()));
 				}
-				ClickEvent event = ClickEvent.openUrl(ent.getValue().getAsString());
-				mComponent.clickEvent(event);
 			}
 		}
 	}
