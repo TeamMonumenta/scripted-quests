@@ -222,7 +222,21 @@
 									default: "0,0,0"
 								}
 							}
-						}
+						},
+						charged_potato: {
+							title: "charged_potato",
+							description: "Players undertake the Warrior class to play hot potato! A random player is selected to carry the hot potato. After 10 seconds, the potato will explode on the carrier and eliminate them. Then, another random player will be selected. Players can pass the hot potato by hitting other players with Charges and Melee attacks. The last player standing wins!",
+							type: "object",
+							properties: {
+								spawn: {
+								    required: true,
+									title: "spawn",
+									description: "The vector location where the players spawn",
+									type: "string",
+									default: "0,0,0"
+								}
+							}
+						},
 					},
 					type: "object",
                 }
