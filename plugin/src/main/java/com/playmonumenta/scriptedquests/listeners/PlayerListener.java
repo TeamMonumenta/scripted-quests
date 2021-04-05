@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
@@ -38,7 +37,7 @@ public class PlayerListener implements Listener {
 
 	private static final String ADVENTURE_INTERACT_METAKEY = "ScriptedQuestsInteractable";
 
-	private Plugin mPlugin = null;
+	private Plugin mPlugin;
 
 	public PlayerListener(Plugin plugin) {
 		mPlugin = plugin;
@@ -58,16 +57,7 @@ public class PlayerListener implements Listener {
 		MetadataUtils.checkOnceThisTick(mPlugin, player, ADVENTURE_INTERACT_METAKEY);
 
 		ItemStack item = event.getItem();
-		Block block = event.getClickedBlock();
 		Event.Result useItem = event.useItemInHand();
-
-		if (useItem != Event.Result.DENY
-		    && mPlugin.mInteractableManager.interactEvent(mPlugin, player, item, block, action)) {
-			// interactEvent returning true means this event should be canceled
-			event.setCancelled(true);
-
-			return;
-		}
 
 		// compass
 		if (useItem != Event.Result.DENY && item != null
@@ -105,11 +95,6 @@ public class PlayerListener implements Listener {
 
 		//Now we have definitely left clicked a block in adventure mode
 		ItemStack item = player.getInventory().getItemInMainHand();
-
-		if (mPlugin.mInteractableManager.interactEvent(mPlugin, player, item, player.getTargetBlock(null, 4), Action.LEFT_CLICK_BLOCK)) {
-			event.setCancelled(true);
-			return;
-		}
 
 		//Compass
 		if (item.getType() == Material.COMPASS && !player.isSneaking()) {

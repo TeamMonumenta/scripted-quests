@@ -40,6 +40,7 @@ import com.playmonumenta.scriptedquests.commands.TestZone;
 import com.playmonumenta.scriptedquests.commands.TimerDebug;
 import com.playmonumenta.scriptedquests.commands.Waypoint;
 import com.playmonumenta.scriptedquests.listeners.EntityListener;
+import com.playmonumenta.scriptedquests.listeners.InteractablesListener;
 import com.playmonumenta.scriptedquests.listeners.PlayerListener;
 import com.playmonumenta.scriptedquests.listeners.WorldListener;
 import com.playmonumenta.scriptedquests.managers.ClickableManager;
@@ -148,6 +149,7 @@ public class Plugin extends JavaPlugin {
 		mWaypointManager = new WaypointManager(this);
 
 		manager.registerEvents(new EntityListener(this), this);
+		manager.registerEvents(new InteractablesListener(this), this);
 		manager.registerEvents(new PlayerListener(this), this);
 		manager.registerEvents(new WorldListener(this), this);
 		manager.registerEvents(mTimerManager, this);
