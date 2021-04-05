@@ -24,6 +24,7 @@ import com.playmonumenta.scriptedquests.utils.MetadataUtils;
 public class InteractablesListener implements Listener {
 	private static final String ADVENTURE_INTERACT_METAKEY = "ScriptedQuestsInteractable";
 	private final Plugin mPlugin;
+	
 	public InteractablesListener(Plugin plugin) {
 		mPlugin = plugin;
 	}
