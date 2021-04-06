@@ -58,10 +58,10 @@ public class MessagingUtils {
 	public static void sendNPCMessage(Player player, String displayName, String message) {
 		message = ChatColor.translateAlternateColorCodes('&',translatePlayerName(player, message));
 		TextComponent formattedMessage = LEGACY_SERIALIZER.deserialize("[" + displayName + "] ");
-		formattedMessage.color(NamedTextColor.GOLD);
+		formattedMessage = formattedMessage.color(NamedTextColor.GOLD);
 		TextComponent tempText =  LEGACY_SERIALIZER.deserialize(message);
-		tempText.color(NamedTextColor.WHITE);
-		formattedMessage.append(tempText);
+		tempText = tempText.color(NamedTextColor.WHITE);
+		formattedMessage = formattedMessage.append(tempText);
 
 		player.sendMessage(formattedMessage);
 	}
