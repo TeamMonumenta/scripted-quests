@@ -237,6 +237,57 @@
 								}
 							}
 						},
+						airborne_hunt: {
+							title: "airborne_hunt",
+							description: "Players undertake the Elytrian class and fly around small sky islands to collect Air Spirits and gain points. Players will be able to use Windburst (RLL) to knock other players out of the sky temporarily, and steal up to 50% of their points. The player with the most points after 90 seconds wins!",
+							type: "object",
+							properties: {
+								spawn: {
+								    required: true,
+									title: "spawn",
+									description: "The vector location where the players spawn",
+									type: "string",
+									default: "0,0,0"
+								},
+								regions: {
+								    required: true,
+									title: "regions",
+									description: "The regions where the spirits will spawn",
+									type: "array",
+									items: {
+										title: "region",
+										properties: {
+											center: {
+												required: true,
+												title: "center",
+												description: "The vector location of the region",
+												type: "string",
+												default: "0,0,0"
+											},
+											x: {
+												title: "x",
+												description: "The X region radius",
+												type: "number",
+												default: 1
+											},
+											y: {
+												title: "y",
+												description: "The Y region radius",
+												type: "number",
+												default: 1
+											},
+											z: {
+												title: "z",
+												description: "The Z region radius",
+												type: "number",
+												default: 1
+											}
+										},
+										type: "object"
+									}
+								}
+							}
+						}
 					},
 					type: "object",
                 }
