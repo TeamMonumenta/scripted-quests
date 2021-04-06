@@ -52,12 +52,6 @@ public class EntityListener implements Listener {
 					mPlugin.mNpcManager.interactEvent(mPlugin, player, damagee.getCustomName(),
 					                                  damagee.getType(), damagee, npc, false);
 				}
-			} else {
-				if (!event.isCancelled()
-				    && mPlugin.mInteractableManager.attackEntityEvent(mPlugin, player, item, damagee)) {
-					// interactEntityEvent returning true means this event should be canceled
-					event.setCancelled(true);
-				}
 			}
 		}
 	}
