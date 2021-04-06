@@ -76,19 +76,26 @@
                                 "description": "Player's response",
                                 "type": "string"
                             },
-                            "delay_actions_by_ticks": {
+                            "hover_text": {
+                                "required": false,
                                 "propertyOrder": 2,
+                                "title": "hover_text",
+                                "description": "Hover text to put over a player's response",
+                                "type": "string"
+                            },
+                            "delay_actions_by_ticks": {
+                                "propertyOrder": 3,
                                 "$ref": "delay_actions_by_ticks.json"
                             },
                             "actions": {
                                 "required": true,
-                                "propertyOrder": 3,
+                                "propertyOrder": 4,
                                 "$ref": "actions.json"
                             },
                             "player_valid_radius": {
                                 "description": "Range that the player is allowed to walk from the point where they were shown the message and still have the dialog work. Default is 4.0.",
                                 "required": false,
-                                "propertyOrder": 4,
+                                "propertyOrder": 5,
                                 "type": "number",
                                 "minimum": 3,
                                 "maximum": 29999984
