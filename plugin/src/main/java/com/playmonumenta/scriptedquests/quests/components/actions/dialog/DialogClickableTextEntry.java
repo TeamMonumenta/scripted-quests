@@ -100,7 +100,7 @@ public class DialogClickableTextEntry implements DialogBase {
 			} else if (key.equals("actions")) {
 				mActions = new QuestActions(npcName, displayName, entityType, delayTicks, value);
 			} else if (key.equals("hover_text")) {
-				mHoverEvent = HoverEvent.showText(Component.text(value.toString().substring(1, value.toString().length() - 1)));
+				mHoverEvent = HoverEvent.showText(MessagingUtils.LEGACY_SERIALIZER.deserialize(value.getAsString().replace("&", "§")));
 			}
 		}
 

@@ -79,12 +79,12 @@ public class DialogAllInOneEntry implements DialogBase {
 			}
 
 			if (key.equals("hover_text")) {
-				HoverEvent<Component> event = HoverEvent.showText(Component.text(ent.getValue().getAsString()));
+				HoverEvent<Component> event = HoverEvent.showText(MessagingUtils.LEGACY_SERIALIZER.deserialize(((ent.getValue().getAsString().replace("&", "§")))));
 				mComponent = mComponent.hoverEvent(event);
 			}
 
 			if (key.equals("actual_text")) {
-				mComponent = Component.text(ent.getValue().toString().substring(1, ent.getValue().toString().length() - 1));
+				mComponent = MessagingUtils.LEGACY_SERIALIZER.deserialize((ent.getValue().getAsString().replace("&", "§")));
 			}
 		}
 	}
@@ -95,7 +95,7 @@ public class DialogAllInOneEntry implements DialogBase {
 			if (mNpcName != null || !mNpcName.equals("")) {
 				MessagingUtils.sendNPCMessage(player, mNpcName, mText);
 			} else {
-				player.sendMessage(mText);
+				player.sendMessage(mText.replace("&", "§"));
 			}
 		}
 		player.sendMessage(Identity.identity(player.getUniqueId()), mComponent);
