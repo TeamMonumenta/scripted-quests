@@ -5,7 +5,6 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
-import com.playmonumenta.scriptedquests.utils.MaterialUtils;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
@@ -17,6 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.InteractableEntry;
 import com.playmonumenta.scriptedquests.quests.InteractableEntry.InteractType;
+import com.playmonumenta.scriptedquests.utils.MaterialUtils;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
 
 public class InteractableManager {

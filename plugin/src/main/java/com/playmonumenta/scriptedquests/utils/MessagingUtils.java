@@ -10,8 +10,15 @@ import org.bukkit.entity.Player;
 
 import com.playmonumenta.scriptedquests.Plugin;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.ChatMessageType;
 /*
 ChatMessageType contains the following:
 ACTION_BAR
@@ -20,61 +27,65 @@ SYSTEM
 
 https://ci.md-5.net/job/BungeeCord/ws/chat/target/apidocs/net/md_5/bungee/api/ChatMessageType.html
 */
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
 // https://www.spigotmc.org/wiki/the-chat-component-api/
 
 public class MessagingUtils {
+	public static final LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.legacySection();
+	public static final PlainComponentSerializer PLAIN_SERIALIZER = PlainComponentSerializer.plain();
+
 	public static String translatePlayerName(Player player, String message) {
-		return message.replaceAll("@S", player.getName());
+		return (message.replaceAll("@S", player.getName()));
 	}
 
 	public static void sendActionBarMessage(Player player, String message) {
-		sendActionBarMessage(player, ChatColor.YELLOW, false, message);
+		message = translatePlayerName(player, message);
+		TextComponent formattedMessage = LEGACY_SERIALIZER.deserialize(message);
+		formattedMessage = formattedMessage.color(NamedTextColor.YELLOW);
+		player.sendActionBar(formattedMessage);
 	}
 
-	public static void sendActionBarMessage(Player player, ChatColor color, boolean bold, String message) {
+	public static void sendActionBarMessage(Player player, NamedTextColor color, boolean bold, String message) {
 		message = translatePlayerName(player, message);
-		TextComponent formattedMessage = new TextComponent(TextComponent.fromLegacyText(message));
-		formattedMessage.setColor(color);
-		formattedMessage.setBold(bold);
-		player.spigot().sendMessage(ChatMessageType.ACTION_BAR, formattedMessage);
+		Component formattedMessage = LEGACY_SERIALIZER.deserialize(message);
+		formattedMessage = formattedMessage.color(color);
+		if (bold) {
+			formattedMessage = formattedMessage.decorate(TextDecoration.BOLD);
+		}
+
+		player.sendMessage(formattedMessage);
 	}
 
 	public static void sendNPCMessage(Player player, String displayName, String message) {
 		message = ChatColor.translateAlternateColorCodes('&',translatePlayerName(player, message));
-		TextComponent formattedMessage = new TextComponent(TextComponent.fromLegacyText("[" + displayName + "] "));
-		formattedMessage.setColor(ChatColor.GOLD);
-		TextComponent tempText = new TextComponent(TextComponent.fromLegacyText(message));
-		tempText.setColor(ChatColor.WHITE);
-		formattedMessage.addExtra(tempText);
+		TextComponent formattedMessage = LEGACY_SERIALIZER.deserialize("[" + displayName + "] ");
+		formattedMessage.color(NamedTextColor.GOLD);
+		TextComponent tempText =  LEGACY_SERIALIZER.deserialize(message);
+		tempText.color(NamedTextColor.WHITE);
+		formattedMessage.append(tempText);
 
-		BaseComponent[] toDisplay = new BaseComponent[1];
-		toDisplay[0] = formattedMessage;
-
-		player.spigot().sendMessage(ChatMessageType.SYSTEM,toDisplay);
+		player.sendMessage(formattedMessage);
 	}
 
 	public static void sendRawMessage(Player player, String message) {
 		message = translatePlayerName(player, message);
-		String noAlternateColorCodes = ChatColor.translateAlternateColorCodes('&',message);
-		player.spigot().sendMessage(ChatMessageType.SYSTEM, TextComponent.fromLegacyText(noAlternateColorCodes));
+		message = message.replace('&', '§');
+		TextComponent formattedMessage = LEGACY_SERIALIZER.deserialize(message);
+		player.sendMessage(formattedMessage);
 	}
 
 	public static void sendClickableNPCMessage(Plugin plugin, Player player, String message,
-	                                           String commandStr) {
+	                                           String commandStr, HoverEvent hoverEvent) {
 		message = translatePlayerName(player, message);
-		TextComponent formattedMessage = new TextComponent(TextComponent.fromLegacyText("[" + message + "]"));
-		formattedMessage.setColor(ChatColor.LIGHT_PURPLE);
-		formattedMessage.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, commandStr));
+		Component formattedMessage = LEGACY_SERIALIZER.deserialize("[" + message + "]");
+		formattedMessage = formattedMessage.color(NamedTextColor.LIGHT_PURPLE)
+			.clickEvent(ClickEvent.runCommand(commandStr));
 
-		BaseComponent[] toDisplay = new BaseComponent[1];
-		toDisplay[0] = formattedMessage;
+		if (hoverEvent != null) {
+			formattedMessage = formattedMessage.hoverEvent(hoverEvent);
+		}
 
-		player.spigot().sendMessage(ChatMessageType.SYSTEM,toDisplay);
+
+		player.sendMessage(formattedMessage);
 	}
 
 	public static void sendStackTrace(CommandSender sender, Exception e) {
@@ -87,12 +98,11 @@ public class MessagingUtils {
 		TextComponent formattedMessage;
 		String errorMessage = e.getLocalizedMessage();
 		if (errorMessage != null) {
-			formattedMessage = new TextComponent(TextComponent.fromLegacyText(errorMessage));
+			formattedMessage = LEGACY_SERIALIZER.deserialize(errorMessage);
 		} else {
-			formattedMessage = new
-			TextComponent("An error occured without a set message. Hover for stack trace.");
+			formattedMessage = Component.text("An error occured without a set message. Hover for stack trace.");
 		}
-		formattedMessage.setColor(ChatColor.RED);
+		formattedMessage.color(NamedTextColor.RED);
 
 		// Get the first 300 characters of the stacktrace and send them to the player
 		StringWriter sw = new StringWriter();
@@ -101,20 +111,12 @@ public class MessagingUtils {
 		String sStackTrace = sw.toString();
 		sStackTrace = sStackTrace.substring(0, Math.min(sStackTrace.length(), 300));
 
-		BaseComponent[] textStackTrace = new ComponentBuilder(sStackTrace.replace("\t",
-		                                                      "  ")).color(ChatColor.RED).create();
-		formattedMessage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, textStackTrace));
-
-		BaseComponent[] toDisplay = new BaseComponent[1];
-		toDisplay[0] = formattedMessage;
-
-		if (senders != null) {
-			for (CommandSender sender : senders) {
-				if (sender != null &&
-					sender.spigot() != null) {
-					sender.spigot().sendMessage(toDisplay);
-				}
-			}
+		TextComponent textStackTrace = Component.text(sStackTrace.replace("\t", "  "), NamedTextColor.RED);
+		formattedMessage.hoverEvent(textStackTrace);
+		for (CommandSender sender : senders) {
+			sender.sendMessage(formattedMessage);
 		}
+
+		e.printStackTrace();
 	}
 }

@@ -13,6 +13,7 @@ import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 
+import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -20,6 +21,7 @@ import net.kyori.adventure.text.event.HoverEvent;
 public class DialogAllInOneEntry implements DialogBase {
 
 	private String mText = null;
+	// It needs an initialized value
 	private Component mComponent;
 	private String mNpcName = null;
 
@@ -66,27 +68,23 @@ public class DialogAllInOneEntry implements DialogBase {
 
 					if (clickEnt.getKey().equals("click_command")) {
 						ClickEvent event = ClickEvent.runCommand(clickEnt.getValue().getAsString());
-						mComponent.clickEvent(event);
+						mComponent = mComponent.clickEvent(event);
 					}
 
 					if (clickEnt.getKey().equals("click_url")) {
 						ClickEvent event = ClickEvent.openUrl(clickEnt.getValue().getAsString());
-						mComponent.clickEvent(event);
+						mComponent = mComponent.clickEvent(event);
 					}
 				}
 			}
 
 			if (key.equals("hover_text")) {
 				HoverEvent<Component> event = HoverEvent.showText(Component.text(ent.getValue().getAsString()));
-				mComponent.hoverEvent(event);
+				mComponent = mComponent.hoverEvent(event);
 			}
 
 			if (key.equals("actual_text")) {
-				if (mComponent != null) {
-					mComponent = Component.text(ent.getValue().toString()).append(mComponent);
-				} else {
-					mComponent.append(Component.text(ent.getValue().toString()));
-				}
+				mComponent = Component.text(ent.getValue().toString().substring(1, ent.getValue().toString().length() - 1));
 			}
 		}
 	}
@@ -100,6 +98,6 @@ public class DialogAllInOneEntry implements DialogBase {
 				player.sendMessage(mText);
 			}
 		}
-		player.sendMessage(mComponent);
+		player.sendMessage(Identity.identity(player.getUniqueId()), mComponent);
 	}
 }
