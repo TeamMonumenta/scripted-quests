@@ -18,14 +18,14 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 
-public class DialogAllInOneEntry implements DialogBase {
+public class DialogHoverTextEntry implements DialogBase {
 
 	private String mText = null;
 	// It needs an initialized value
 	private Component mComponent;
 	private String mNpcName = null;
 
-	public DialogAllInOneEntry(String npcName, String displayName, EntityType entityType, JsonElement element) throws Exception {
+	public DialogHoverTextEntry(String npcName, String displayName, EntityType entityType, JsonElement element) throws Exception {
 
 		JsonObject object = element.getAsJsonObject();
 		if (object == null) {
@@ -91,8 +91,8 @@ public class DialogAllInOneEntry implements DialogBase {
 
 	@Override
 	public void sendDialog(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
-		if (mText != null || !mText.equals("")) {
-			if (mNpcName != null || !mNpcName.equals("")) {
+		if (mText != null && !mText.equals("")) {
+			if (mNpcName != null && !mNpcName.equals("")) {
 				MessagingUtils.sendNPCMessage(player, mNpcName, mText);
 			} else {
 				player.sendMessage(mText.replace("&", "§"));

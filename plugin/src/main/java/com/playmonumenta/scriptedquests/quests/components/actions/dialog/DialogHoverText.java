@@ -12,15 +12,15 @@ import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 
 public class DialogHoverText implements DialogBase {
-	private ArrayList<DialogAllInOneEntry> mEntries = new ArrayList<DialogAllInOneEntry>();
+	private ArrayList<DialogHoverTextEntry> mEntries = new ArrayList<DialogHoverTextEntry>();
 
 	public DialogHoverText(String npcName, String displayName, EntityType entityType, JsonElement element) throws Exception {
 		if (element.isJsonObject()) {
-			mEntries.add(new DialogAllInOneEntry(npcName, displayName, entityType, element));
+			mEntries.add(new DialogHoverTextEntry(npcName, displayName, entityType, element));
 		} else if (element.isJsonArray()) {
 			Iterator<JsonElement> iter = element.getAsJsonArray().iterator();
 			while (iter.hasNext()) {
-				mEntries.add(new DialogAllInOneEntry(npcName, displayName, entityType, iter.next()));
+				mEntries.add(new DialogHoverTextEntry(npcName, displayName, entityType, iter.next()));
 			}
 		} else {
 			throw new Exception("all_text value is neither an object nor an array!");
@@ -29,7 +29,7 @@ public class DialogHoverText implements DialogBase {
 
 	@Override
 	public void sendDialog(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
-		for (DialogAllInOneEntry ent : mEntries) {
+		for (DialogHoverTextEntry ent : mEntries) {
 			ent.sendDialog(plugin, player, npcEntity, prereqs);
 		}
 	}
