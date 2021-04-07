@@ -41,7 +41,7 @@ public class ActionDialog implements ActionBase {
 				mDialogs.add(new DialogClickableText(npcName, displayName, entityType, ent.getValue()));
 			} else if (key.equals("random_text")) {
 				mDialogs.add(new DialogRandomText(displayName, ent.getValue()));
-			} else if (key.equals("all_in_one_text")) {
+			} else if (key.equals("hover_text")) {
 				mDialogs.add(new DialogHoverText(npcName, displayName, entityType, ent.getValue()));
 			} else {
 				throw new Exception("Unknown dialog key: '" + key + "'");
