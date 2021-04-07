@@ -150,6 +150,9 @@
                             "click_action": {
                                 "title": "click_action",
                                 "description": "Something to be done on click",
+                                "options": {
+                                    "keep_oneof_values": false
+                                },
                                 "oneOf": [
                                     {
                                         "title": "click_command",
