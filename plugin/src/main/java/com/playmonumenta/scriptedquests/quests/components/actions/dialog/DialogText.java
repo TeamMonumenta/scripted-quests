@@ -33,7 +33,7 @@ public class DialogText implements DialogBase {
 	@Override
 	public void sendDialog(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
 		for (String text : mText) {
-			if (mDisplayName != null && !mDisplayName.equals("")) {
+			if (mDisplayName != null && !mDisplayName.isEmpty()) {
 				MessagingUtils.sendNPCMessage(player, mDisplayName, text);
 			} else {
 				MessagingUtils.sendRawMessage(player, text);

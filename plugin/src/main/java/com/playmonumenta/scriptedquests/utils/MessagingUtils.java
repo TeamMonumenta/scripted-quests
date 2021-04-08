@@ -18,23 +18,14 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
-import net.md_5.bungee.api.ChatColor;
-/*
-ChatMessageType contains the following:
-ACTION_BAR
-CHAT
-SYSTEM
-
-https://ci.md-5.net/job/BungeeCord/ws/chat/target/apidocs/net/md_5/bungee/api/ChatMessageType.html
-*/
-// https://www.spigotmc.org/wiki/the-chat-component-api/
 
 public class MessagingUtils {
 	public static final LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.legacySection();
+	public static final LegacyComponentSerializer AMPERSAND_SERIALIZER = LegacyComponentSerializer.legacyAmpersand();
 	public static final PlainComponentSerializer PLAIN_SERIALIZER = PlainComponentSerializer.plain();
 
 	public static String translatePlayerName(Player player, String message) {
-		return (message.replaceAll("@S", player.getName()));
+		return message.replaceAll("@S", player.getName());
 	}
 
 	public static void sendActionBarMessage(Player player, String message) {
@@ -56,7 +47,7 @@ public class MessagingUtils {
 	}
 
 	public static void sendNPCMessage(Player player, String displayName, String message) {
-		message = ChatColor.translateAlternateColorCodes('&',translatePlayerName(player, message));
+		message = translatePlayerName(player, message);
 		TextComponent formattedMessage = LEGACY_SERIALIZER.deserialize("[" + displayName + "] ");
 		formattedMessage = formattedMessage.color(NamedTextColor.GOLD);
 		TextComponent tempText =  LEGACY_SERIALIZER.deserialize(message);
@@ -68,8 +59,8 @@ public class MessagingUtils {
 
 	public static void sendRawMessage(Player player, String message) {
 		message = translatePlayerName(player, message);
-		message = message.replace('&', '§');
-		TextComponent formattedMessage = LEGACY_SERIALIZER.deserialize(message);
+		message = message.replace('§', '&');
+		TextComponent formattedMessage = AMPERSAND_SERIALIZER.deserialize(message);
 		player.sendMessage(formattedMessage);
 	}
 

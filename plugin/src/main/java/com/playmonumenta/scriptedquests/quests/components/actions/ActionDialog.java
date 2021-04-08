@@ -12,9 +12,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
+import com.playmonumenta.scriptedquests.quests.components.actions.dialog.DialogAllInOneText;
 import com.playmonumenta.scriptedquests.quests.components.actions.dialog.DialogBase;
 import com.playmonumenta.scriptedquests.quests.components.actions.dialog.DialogClickableText;
-import com.playmonumenta.scriptedquests.quests.components.actions.dialog.DialogHoverText;
 import com.playmonumenta.scriptedquests.quests.components.actions.dialog.DialogRandomText;
 import com.playmonumenta.scriptedquests.quests.components.actions.dialog.DialogRawText;
 import com.playmonumenta.scriptedquests.quests.components.actions.dialog.DialogText;
@@ -41,8 +41,8 @@ public class ActionDialog implements ActionBase {
 				mDialogs.add(new DialogClickableText(npcName, displayName, entityType, ent.getValue()));
 			} else if (key.equals("random_text")) {
 				mDialogs.add(new DialogRandomText(displayName, ent.getValue()));
-			} else if (key.equals("hover_text")) {
-				mDialogs.add(new DialogHoverText(npcName, displayName, entityType, ent.getValue()));
+			} else if (key.equals("all_in_one_text")) {
+				mDialogs.add(new DialogAllInOneText(npcName, displayName, entityType, ent.getValue()));
 			} else {
 				throw new Exception("Unknown dialog key: '" + key + "'");
 			}
