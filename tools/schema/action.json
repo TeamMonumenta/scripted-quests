@@ -121,7 +121,6 @@
                         "headerTemplate": "All In One Text",
                         "type": "object",
                         "defaultProperties": [
-                            "player_text",
                             "actual_text",
                             "hover_text"
                         ],
