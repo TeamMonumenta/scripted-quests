@@ -57,6 +57,15 @@ public class MessagingUtils {
 		player.sendMessage(formattedMessage);
 	}
 
+	public static void sendNPCMessage(Player player, String displayName, Component message) {
+		TextComponent formattedMessage = LEGACY_SERIALIZER.deserialize("[" + displayName + "] ");
+		formattedMessage = formattedMessage.color(NamedTextColor.GOLD);
+		message = message.color(NamedTextColor.WHITE);
+		formattedMessage = formattedMessage.append(message);
+
+		player.sendMessage(formattedMessage);
+	}
+
 	public static void sendRawMessage(Player player, String message) {
 		message = translatePlayerName(player, message);
 		message = message.replace('§', '&');

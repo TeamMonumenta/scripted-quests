@@ -12,7 +12,6 @@ import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 
-import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -22,6 +21,7 @@ public class DialogAllInOneEntry implements DialogBase {
 
 	// It needs an initialized value
 	private Component mComponent;
+	private String mNPCName;
 
 	public DialogAllInOneEntry(String npcName, JsonElement element) throws Exception {
 
@@ -29,6 +29,8 @@ public class DialogAllInOneEntry implements DialogBase {
 		if (object == null) {
 			throw new Exception("dialog value is not an object!");
 		}
+
+		mNPCName = npcName;
 
 		Set<Entry<String, JsonElement>> entries = object.entrySet();
 		for (Entry<String, JsonElement> ent : entries) {
@@ -82,6 +84,6 @@ public class DialogAllInOneEntry implements DialogBase {
 
 	@Override
 	public void sendDialog(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
-		player.sendMessage(Identity.identity(player.getUniqueId()), mComponent.replaceText(TextReplacementConfig.builder().match("@S").replacement(player.getName()).build()));
+		MessagingUtils.sendNPCMessage(player, mNPCName, mComponent.replaceText(TextReplacementConfig.builder().match("@S").replacement(player.getName()).build()));
 	}
 }

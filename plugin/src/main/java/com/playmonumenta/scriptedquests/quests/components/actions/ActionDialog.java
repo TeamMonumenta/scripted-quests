@@ -42,7 +42,7 @@ public class ActionDialog implements ActionBase {
 			} else if (key.equals("random_text")) {
 				mDialogs.add(new DialogRandomText(displayName, ent.getValue()));
 			} else if (key.equals("all_in_one_text")) {
-				mDialogs.add(new DialogAllInOneText(npcName, displayName, entityType, ent.getValue()));
+				mDialogs.add(new DialogAllInOneText(npcName, ent.getValue()));
 			} else {
 				throw new Exception("Unknown dialog key: '" + key + "'");
 			}

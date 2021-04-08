@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import com.google.gson.JsonElement;
@@ -14,7 +13,7 @@ import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 public class DialogAllInOneText implements DialogBase {
 	private ArrayList<DialogAllInOneEntry> mEntries = new ArrayList<DialogAllInOneEntry>();
 
-	public DialogAllInOneText(String npcName, String displayName, EntityType entityType, JsonElement element) throws Exception {
+	public DialogAllInOneText(String npcName, JsonElement element) throws Exception {
 		if (element.isJsonObject()) {
 			mEntries.add(new DialogAllInOneEntry(npcName, element));
 		} else if (element.isJsonArray()) {
