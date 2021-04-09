@@ -80,7 +80,7 @@
                                 "required": false,
                                 "propertyOrder": 2,
                                 "title": "hover_text",
-                                "description": "Hover text to put over a player's response",
+                                "description": "Text that will display upon hovering over the actual text",
                                 "type": "string"
                             },
                             "delay_actions_by_ticks": {
