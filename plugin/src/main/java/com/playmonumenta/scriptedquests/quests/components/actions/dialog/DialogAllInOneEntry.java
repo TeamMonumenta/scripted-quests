@@ -32,11 +32,13 @@ public class DialogAllInOneEntry implements DialogBase {
 
 		mNPCName = npcName;
 
+		mComponent = MessagingUtils.AMPERSAND_SERIALIZER.deserialize(object.get("actual_text").getAsString().replace("§", "&"));
+
 		Set<Entry<String, JsonElement>> entries = object.entrySet();
 		for (Entry<String, JsonElement> ent : entries) {
 			String key = ent.getKey();
 
-			JsonElement value = object.get(key);
+			JsonElement value = ent.getValue();
 			if (value == null) {
 				throw new Exception("clickable_text value for key '" + key + "' is not parseable!");
 			}
@@ -55,29 +57,22 @@ public class DialogAllInOneEntry implements DialogBase {
 					if (!clickEnt.getKey().equals("click_command") && !clickEnt.getKey().equals("click_url")) {
 						throw new Exception("The click action is not a command or a url!");
 					}
-					if (mComponent.clickEvent() != null) {
-						throw new Exception("There may only be one click action per dialogue string!");
-					}
 
 					if (clickEnt.getKey().equals("click_command")) {
-						ClickEvent event = ClickEvent.runCommand(clickEnt.getValue().getAsString());
+						ClickEvent event = ClickEvent.runCommand(value.getAsString());
 						mComponent = mComponent.clickEvent(event);
 					}
 
 					if (clickEnt.getKey().equals("click_url")) {
-						ClickEvent event = ClickEvent.openUrl(clickEnt.getValue().getAsString());
+						ClickEvent event = ClickEvent.openUrl(value.getAsString());
 						mComponent = mComponent.clickEvent(event);
 					}
 				}
 			}
 
 			if (key.equals("hover_text")) {
-				HoverEvent<Component> event = HoverEvent.showText(MessagingUtils.AMPERSAND_SERIALIZER.deserialize(ent.getValue().getAsString().replace("§", "&")));
+				HoverEvent<Component> event = HoverEvent.showText(MessagingUtils.AMPERSAND_SERIALIZER.deserialize(value.getAsString().replace("§", "&")));
 				mComponent = mComponent.hoverEvent(event);
-			}
-
-			if (key.equals("actual_text")) {
-				mComponent = MessagingUtils.AMPERSAND_SERIALIZER.deserialize(ent.getValue().getAsString().replace("§", "&"));
 			}
 		}
 	}
