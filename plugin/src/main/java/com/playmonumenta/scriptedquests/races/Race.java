@@ -29,6 +29,8 @@ import com.playmonumenta.scriptedquests.quests.components.QuestActions;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 import com.playmonumenta.scriptedquests.utils.RaceUtils;
 
+import net.kyori.adventure.text.format.NamedTextColor;
+
 /*
  * A Race is a currently active race a player is doing
  */
@@ -240,7 +242,7 @@ public class Race {
 				// Run the actions for reaching this ring
 				mNextWaypoint.doActions(mPlugin, mPlayer);
 
-				MessagingUtils.sendActionBarMessage(mPlayer, net.md_5.bungee.api.ChatColor.BLUE, true, RaceUtils.msToTimeString(timeElapsed));
+				MessagingUtils.sendActionBarMessage(mPlayer, NamedTextColor.BLUE, true, RaceUtils.msToTimeString(timeElapsed));
 				mWorld.playSound(mPlayer.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1, 1.5f);
 
 				if (mRemainingWaypoints.size() == 0) {

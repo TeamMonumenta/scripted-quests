@@ -21,6 +21,9 @@ import com.playmonumenta.scriptedquests.quests.components.QuestActions;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.HoverEvent;
+
 public class DialogClickableTextEntry implements DialogBase {
 	public class PlayerClickableTextEntry {
 		private final QuestPrerequisites mPrerequisites;
@@ -54,6 +57,7 @@ public class DialogClickableTextEntry implements DialogBase {
 	private Double mRadius = 4.0;
 	private QuestActions mActions;
 	private int mIdx;
+	private HoverEvent<Component> mHoverEvent = null;
 
 	public DialogClickableTextEntry(String npcName, String displayName, EntityType entityType,
 	                                JsonElement element, int elementIdx) throws Exception {
@@ -75,7 +79,7 @@ public class DialogClickableTextEntry implements DialogBase {
 		for (Entry<String, JsonElement> ent : entries) {
 			String key = ent.getKey();
 
-			if (!key.equals("player_text") && !key.equals("player_valid_radius") && !key.equals("actions") && !key.equals("delay_actions_by_ticks")) {
+			if (!key.equals("player_text") && !key.equals("player_valid_radius") && !key.equals("actions") && !key.equals("delay_actions_by_ticks") && !key.equals("hover_text")) {
 				throw new Exception("Unknown clickable_text key: " + key);
 			}
 
@@ -95,6 +99,8 @@ public class DialogClickableTextEntry implements DialogBase {
 				mRadius = value.getAsDouble();
 			} else if (key.equals("actions")) {
 				mActions = new QuestActions(npcName, displayName, entityType, delayTicks, value);
+			} else if (key.equals("hover_text")) {
+				mHoverEvent = HoverEvent.showText(MessagingUtils.AMPERSAND_SERIALIZER.deserialize(value.getAsString().replace("§", "&")));
 			}
 		}
 
@@ -108,7 +114,7 @@ public class DialogClickableTextEntry implements DialogBase {
 	@Override
 	public void sendDialog(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
 		MessagingUtils.sendClickableNPCMessage(plugin, player, mText,
-		                                       "/questtrigger " + Integer.toString(mIdx));
+		                                       "/questtrigger " + Integer.toString(mIdx), mHoverEvent);
 
 		/* Create a new object describing the prereqs/actions/location for this clickable message */
 		PlayerClickableTextEntry newEntry = new PlayerClickableTextEntry(prereqs, mActions, npcEntity,
