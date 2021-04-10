@@ -1,16 +1,17 @@
 package com.playmonumenta.scriptedquests.quests.components.actions;
 
 import java.lang.reflect.Method;
-
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
+import java.util.UUID;
 
 import com.google.gson.JsonElement;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.ParseResults;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
+
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -42,7 +43,7 @@ public class ActionCommand implements ActionBase {
 			Class<?> commandDispatcherClass = Class.forName(packageName + "." + "CommandDispatcher");
 			Object brigadierCmdDispatcher = commandDispatcherClass.getDeclaredMethod("a").invoke(commandDispatcher);
 
-			String testCommandStr = mCommand.replaceAll("@S", "testuser").replaceAll("@N", "testnpc");
+			String testCommandStr = mCommand.replaceAll("@S", "testuser").replaceAll("@N", "testnpc").replaceAll("@U", UUID.randomUUID().toString().toLowerCase());
 			Method parse = CommandDispatcher.class.getDeclaredMethod("parse", String.class, Object.class);
 			pr = (ParseResults<?>) parse.invoke(brigadierCmdDispatcher, testCommandStr, clw);
 		} catch (Exception e) {
@@ -70,7 +71,7 @@ public class ActionCommand implements ActionBase {
 		} else {
 			commandStr = commandStr.replaceAll("@N", npcEntity.getUniqueId().toString());
 		}
-		commandStr = commandStr.replaceAll("@S", player.getName());
+		commandStr = commandStr.replaceAll("@S", player.getName()).replaceAll("@U", player.getUniqueId().toString().toLowerCase());
 		plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), commandStr);
 	}
 }

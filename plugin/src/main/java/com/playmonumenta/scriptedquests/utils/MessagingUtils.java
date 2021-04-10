@@ -29,7 +29,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 
 public class MessagingUtils {
 	public static String translatePlayerName(Player player, String message) {
-		return message.replaceAll("@S", player.getName());
+		return message.replaceAll("@S", player.getName()).replaceAll("@U", player.getUniqueId().toString().toLowerCase());
 	}
 
 	public static void sendActionBarMessage(Player player, String message) {
