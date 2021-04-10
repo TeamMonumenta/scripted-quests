@@ -338,6 +338,31 @@
 									}
 								}
 							}
+						},
+						elytra_wars: {
+							title: "elytra_wars",
+							description: "Players undertake the Elytrian Class and duke it out on the Sky Islands for 90s. The player with the most kills wins!",
+							type: "object",
+							properties: {
+								spawn: {
+								    required: true,
+									title: "spawn",
+									description: "The vector location where the players spawn",
+									type: "string",
+									default: "0,0,0"
+								},
+								spawns: {
+								    required: true,
+									title: "spawns",
+									description: "The spawnpoints where players will respawn",
+									type: "array",
+									items: {
+										type: "string",
+										title: "loc",
+										default: "0,0,0"
+									}
+								}
+							}
 						}
 					},
 					type: "object",
