@@ -363,6 +363,20 @@
 									}
 								}
 							}
+						},
+						vanish_and_spin: {
+							title: "vanish_and_spin",
+							description: "Players undertake the Assassin class to play Hide n' Seek, but with Vanish. The goal is to kill other players by 1-shotting them, but players can vanish to hide in plain sight. Vanish, Spin Attack, and Smoke Bomb have increased mana costs. The last player standing win!",
+							type: "object",
+							properties: {
+								spawn: {
+								    required: true,
+									title: "spawn",
+									description: "The vector location where the players spawn",
+									type: "string",
+									default: "0,0,0"
+								}
+							}
 						}
 					},
 					type: "object",
