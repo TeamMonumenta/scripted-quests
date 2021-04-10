@@ -287,6 +287,57 @@
 									}
 								}
 							}
+						},
+						totem_munchers: {
+							title: "totem_munchers",
+							description: "Players undertake the Shaman class and use Aura and Totem to pull as many mobs towards their totem as possible. Mobs that come near the player’s totem will instantly die and give the player points.",
+							type: "object",
+							properties: {
+								spawn: {
+								    required: true,
+									title: "spawn",
+									description: "The vector location where the players spawn",
+									type: "string",
+									default: "0,0,0"
+								},
+								regions: {
+								    required: true,
+									title: "regions",
+									description: "The regions where the mobs will spawn",
+									type: "array",
+									items: {
+										title: "region",
+										properties: {
+											center: {
+												required: true,
+												title: "center",
+												description: "The vector location of the region",
+												type: "string",
+												default: "0,0,0"
+											},
+											x: {
+												title: "x",
+												description: "The X region radius",
+												type: "number",
+												default: 1
+											},
+											y: {
+												title: "y",
+												description: "The Y region radius",
+												type: "number",
+												default: 1
+											},
+											z: {
+												title: "z",
+												description: "The Z region radius",
+												type: "number",
+												default: 1
+											}
+										},
+										type: "object"
+									}
+								}
+							}
 						}
 					},
 					type: "object",
