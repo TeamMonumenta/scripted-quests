@@ -377,6 +377,34 @@
 									default: "0,0,0"
 								}
 							}
+						},
+						paintwar_of_the_realms: {
+							title: "paintwar_of_the_realms",
+							description: "Players are randomly assigned to 2 teams, Light or Dark, and are given paintballs to throw. The goal is to eliminate the other team. When a paintball lands however, it creates a splatter of light/dark that will harm the opposing team, dealing 25% of their absorption shield. This splatter lasts for 10 seconds. 3 rounds of this are played. The team that has the most wins gains game points!",
+							type: "object",
+							properties: {
+								spawn: {
+								    required: true,
+									title: "spawn",
+									description: "The vector location where the players spawn",
+									type: "string",
+									default: "0,0,0"
+								},
+								spawnLight: {
+								    required: true,
+									title: "spawnLight",
+									description: "The vector location where the Light team will spawn",
+									type: "string",
+									default: "0,0,0"
+								},
+								spawnDark: {
+								    required: true,
+									title: "spawnDark",
+									description: "The vector location where the Dark team will spawn",
+									type: "string",
+									default: "0,0,0"
+								}
+							}
 						}
 					},
 					type: "object",
