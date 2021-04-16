@@ -3,6 +3,8 @@ package com.playmonumenta.scriptedquests;
 import java.io.File;
 import java.util.Random;
 
+import com.playmonumenta.scriptedquests.commands.ReloadTranslations;
+import com.playmonumenta.scriptedquests.managers.TranslationsManager;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -82,6 +84,7 @@ public class Plugin extends JavaPlugin {
 	public ZonePropertyManager mZonePropertyManager;
 	public WaypointManager mWaypointManager;
 	public GrowableManager mGrowableManager;
+	public TranslationsManager mTranslationManager;
 
 	public World mWorld;
 	public Random mRandom = new Random();
@@ -122,6 +125,7 @@ public class Plugin extends JavaPlugin {
 
 		Growable.register(mGrowableManager);
 		Waypoint.register(this);
+		ReloadTranslations.register(this);
 	}
 
 	@Override
@@ -147,6 +151,7 @@ public class Plugin extends JavaPlugin {
 		mZonePropertyManager = new ZonePropertyManager(this);
 		mTimerManager = new CommandTimerManager(this);
 		mWaypointManager = new WaypointManager(this);
+		mTranslationManager = new TranslationsManager(this);
 
 		manager.registerEvents(new EntityListener(this), this);
 		manager.registerEvents(new InteractablesListener(this), this);
@@ -200,6 +205,7 @@ public class Plugin extends JavaPlugin {
 		mCodeManager.reload(this, sender);
 		mZonePropertyManager.reload(this, sender);
 		mGrowableManager.reload(this, sender);
+		mTranslationManager.reload(this, sender);
 	}
 
 	public void reloadZones(CommandSender sender) {
