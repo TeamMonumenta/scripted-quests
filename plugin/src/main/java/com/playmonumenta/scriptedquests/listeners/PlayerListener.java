@@ -204,6 +204,9 @@ public class PlayerListener implements Listener {
 				mPlugin.mLoginManager.loginEvent(mPlugin, event);
 			}
 		}.runTaskLater(mPlugin, 3);
+
+		// Handle translation language
+		mPlugin.mTranslationManager.loginEvent(event);
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
@@ -213,6 +216,9 @@ public class PlayerListener implements Listener {
 
 		// Remove all zone properties from the player
 		mPlugin.mZoneManager.unregisterPlayer(event.getPlayer());
+
+		// Handle translation language
+		mPlugin.mTranslationManager.quitEvent(event);
 	}
 
 }

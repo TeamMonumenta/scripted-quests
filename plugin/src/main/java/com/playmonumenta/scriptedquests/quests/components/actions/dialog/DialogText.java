@@ -34,9 +34,9 @@ public class DialogText implements DialogBase {
 	public void sendDialog(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
 		for (String text : mText) {
 			if (mDisplayName != null && !mDisplayName.isEmpty()) {
-				MessagingUtils.sendNPCMessage(player, mDisplayName, text);
+				MessagingUtils.sendNPCMessage(plugin, player, mDisplayName, text);
 			} else {
-				MessagingUtils.sendRawMessage(player, text);
+				MessagingUtils.sendRawMessage(plugin, player, text);
 			}
 
 		}
