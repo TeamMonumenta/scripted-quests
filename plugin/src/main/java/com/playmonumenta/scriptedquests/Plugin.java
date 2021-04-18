@@ -53,7 +53,6 @@ import com.playmonumenta.scriptedquests.managers.QuestDeathManager;
 import com.playmonumenta.scriptedquests.managers.QuestLoginManager;
 import com.playmonumenta.scriptedquests.managers.QuestNpcManager;
 import com.playmonumenta.scriptedquests.managers.RaceManager;
-import com.playmonumenta.scriptedquests.managers.TranslationsManager;
 import com.playmonumenta.scriptedquests.managers.WaypointManager;
 import com.playmonumenta.scriptedquests.managers.ZonePropertyManager;
 import com.playmonumenta.scriptedquests.timers.CommandTimerManager;
