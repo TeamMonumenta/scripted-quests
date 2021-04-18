@@ -3,7 +3,7 @@ package com.playmonumenta.scriptedquests;
 import java.io.File;
 import java.util.Random;
 
-import com.playmonumenta.scriptedquests.commands.ReloadTranslations;
+import com.playmonumenta.scriptedquests.commands.Translations;
 import com.playmonumenta.scriptedquests.managers.TranslationsManager;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -125,7 +125,7 @@ public class Plugin extends JavaPlugin {
 
 		Growable.register(mGrowableManager);
 		Waypoint.register(this);
-		ReloadTranslations.register(this);
+		Translations.register(this);
 	}
 
 	@Override

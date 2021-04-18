@@ -14,7 +14,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class FileUtils {
-	public static String readFile(String fileName) throws Exception, FileNotFoundException {
+	public static String readFile(String fileName) throws Exception {
 		// Do not attempt to catch exceptions here - let them propagate to the caller
 		File file;
 

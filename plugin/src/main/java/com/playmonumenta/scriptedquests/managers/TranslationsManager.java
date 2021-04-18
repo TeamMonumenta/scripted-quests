@@ -14,8 +14,12 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.UUID;
 
 public class TranslationsManager {
@@ -35,33 +39,40 @@ public class TranslationsManager {
 	public void reload(Plugin plugin, CommandSender sender) {
 		mTranslationsMap.clear();
 
-		QuestUtils.loadScriptedQuests(plugin, "translations", sender, (object) -> {
+		Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
 
-			int messageAmount = 0;
-			int translationAmount = 0;
+			TreeMap<String, TreeMap<String, String>> newTranslations = new TreeMap<>();
 
-			for (Map.Entry<String, JsonElement> entry : object.entrySet()) {
+			QuestUtils.loadScriptedQuests(plugin, "translations", sender, (object) -> {
 
-				String message = entry.getKey();
+				int messageAmount = 0;
+				int translationAmount = 0;
 
-				TreeMap<String, String> langMap = new TreeMap<>();
+				for (Map.Entry<String, JsonElement> entry : object.entrySet()) {
 
-				for (Map.Entry<String, JsonElement> entry2 : entry.getValue().getAsJsonObject().entrySet()) {
+					String message = entry.getKey();
 
-					String lang = entry2.getKey();
-					String translated = entry2.getValue().getAsString();
+					TreeMap<String, String> langMap = new TreeMap<>();
 
-					langMap.put(lang, translated);
-					translationAmount++;
+					for (Map.Entry<String, JsonElement> entry2 : entry.getValue().getAsJsonObject().entrySet()) {
+
+						String lang = entry2.getKey();
+						String translated = entry2.getValue().getAsString();
+
+						langMap.put(lang, translated);
+						translationAmount++;
+
+					}
+
+					newTranslations.put(message, langMap);
+					messageAmount++;
 
 				}
 
-				mTranslationsMap.put(message, langMap);
-				messageAmount++;
+				return messageAmount + " messages loaded into " + translationAmount + " translations";
+			});
 
-			}
-
-			return messageAmount + " messages loaded into " + translationAmount + " translations";
+			Bukkit.getScheduler().runTask(plugin, () -> mTranslationsMap = newTranslations);
 		});
 
 		for (Player p : Bukkit.getOnlinePlayers()) {
@@ -98,6 +109,10 @@ public class TranslationsManager {
 		// update the loaded translation map
 		mTranslationsMap.put(message, new TreeMap<>());
 
+		writeTranslationFileAndReloadShards();
+	}
+
+	private void writeTranslationFileAndReloadShards() {
 		// write the map into the file
 		String content = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create().toJson(mTranslationsMap);
 		System.out.println(content);
@@ -131,5 +146,103 @@ public class TranslationsManager {
 
 	public void quitEvent(PlayerQuitEvent event) {
 		mPlayerLanguageMap.remove(event.getPlayer().getUniqueId());
+	}
+
+	public void loadAndUpdateCSV(CommandSender sender) {
+
+		String fileName = mPlugin.getDataFolder() + File.separator + "translations" + File.separator + "common" + File.separator + "translations.csv";
+
+		// load the values of the csv
+		loadCSV(sender, fileName);
+
+		// update the base translation file with the potential new values
+		writeTranslationFileAndReloadShards();
+
+		// write the translationMap into the csv (update the csv)
+		writeCSV(fileName);
+
+		sender.sendMessage("csv values loaded into translations. csv updated.");
+
+	}
+
+	private void writeCSV(String fileName) {
+
+		// first, go through the map once to get the list of all languages
+		TreeSet<String> languagesSet = new TreeSet<>();
+		for (Map.Entry<String, TreeMap<String, String>> entry : mTranslationsMap.entrySet()) {
+			languagesSet.addAll(entry.getValue().keySet());
+		}
+		// from that, create the first line of csv, which will act as index
+		int valuesSize = languagesSet.size() + 1;
+		String[] languages = new String[valuesSize];
+		languages[0] = "en-US (base)";
+		int i = 1;
+		// make the map to get the index from the language (inverse of array)
+		HashMap<String, Integer> langMap = new HashMap<>();
+		for (String s : languagesSet) {
+			languages[i] = s;
+			langMap.put(s, i);
+			i++;
+		}
+
+
+
+		ArrayList<String> out = new ArrayList<>();
+		out.add(String.join(",", languages));
+
+		// go through all lines
+		for (Map.Entry<String, TreeMap<String, String>> entry : mTranslationsMap.entrySet()) {
+			String[] line = new String[valuesSize];
+			Arrays.fill(line, "");
+			String baseMessage = entry.getKey().replace(",", "&C").replace("\"", "&Q");
+			line[0] = baseMessage;
+
+			for (Map.Entry<String, String> entry2 : entry.getValue().entrySet()) {
+				String translation = entry2.getValue().replace(",", "&C").replace("\"", "&Q");
+				line[langMap.get(entry2.getKey())] = translation;
+			}
+			out.add(String.join(",", line));
+		}
+
+		// join lines together
+		String finl = String.join("\n", out.toArray(new String[0]));
+
+		try {
+			FileUtils.writeFile(fileName, finl);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	private void loadCSV(CommandSender sender, String fileName) {
+		String content = "";
+		try {
+			content = FileUtils.readFile(fileName);
+		} catch (Exception exception) {
+			exception.printStackTrace();
+		}
+		String[] lines = content.split("\n");
+
+		// store first line as list of languages
+		String[] languages = lines[0].split(",");
+
+		// parse each line
+		for (int i = 1; i < lines.length; i++) {
+			String[] values = lines[i].split(",");
+			// first value is the english version, use this to get the already loaded map
+			// the loaded translationMap should always exist.
+			String message = values[0].replace("&C", ",").replace("&Q", "\"");
+			TreeMap<String, String> translationMap = mTranslationsMap.get(message);
+			// parse and store each value
+			for (int j = 1; j < values.length; j++) {
+				String translation = values[j].replace("&C", ",").replace("&Q", "\"");
+				try {
+					translationMap.put(languages[j], translation);
+				} catch (NullPointerException e) {
+					sender.sendMessage("Error while parsing message translations for '" + message + "' does it contains any unexcaped commas or quotes?");
+				}
+			}
+		}
 	}
 }
