@@ -17,10 +17,10 @@ public class Translations {
 			.register();
 
 		// updatetranslationscsv
-		new CommandAPICommand("updatetranslationcsv")
+		new CommandAPICommand("updatetranslationtsv")
 			.withPermission(perm)
 			.executes((sender, args) -> {
-				plugin.mTranslationManager.loadAndUpdateCSV(sender);
+				plugin.mTranslationManager.loadAndUpdateTSV(sender);
 			})
 			.register();
 	}

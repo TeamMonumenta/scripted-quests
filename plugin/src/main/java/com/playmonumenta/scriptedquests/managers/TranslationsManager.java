@@ -7,6 +7,7 @@ import com.playmonumenta.scriptedquests.utils.FileUtils;
 import com.playmonumenta.scriptedquests.utils.TranslationUtils;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -151,24 +152,24 @@ public class TranslationsManager {
 		mPlayerLanguageMap.remove(event.getPlayer().getUniqueId());
 	}
 
-	public void loadAndUpdateCSV(CommandSender sender) {
+	public void loadAndUpdateTSV(CommandSender sender) {
 
-		String fileName = mPlugin.getDataFolder() + File.separator + "translations" + File.separator + "common" + File.separator + "translations.csv";
+		String fileName = mPlugin.getDataFolder() + File.separator + "translations" + File.separator + "common" + File.separator + "translations.tsv";
 
 		// load the values of the csv
-		loadCSV(sender, fileName);
+		loadTSV(sender, fileName);
 
 		// update the base translation file with the potential new values
 		writeTranslationFileAndReloadShards();
 
 		// write the translationMap into the csv (update the csv)
-		writeCSV(fileName);
+		writeTSV(fileName);
 
-		sender.sendMessage("csv values loaded into translations. csv updated.");
+		sender.sendMessage("tsv values loaded into translations. tsv updated.");
 
 	}
 
-	private void writeCSV(String fileName) {
+	private void writeTSV(String fileName) {
 
 		// first, go through the map once to get the list of all languages
 		TreeSet<String> languagesSet = new TreeSet<>();
@@ -188,23 +189,21 @@ public class TranslationsManager {
 			i++;
 		}
 
-
-
 		ArrayList<String> out = new ArrayList<>();
-		out.add(String.join(",", languages));
+		out.add(String.join("\t", languages));
 
 		// go through all lines
 		for (Map.Entry<String, TreeMap<String, String>> entry : mTranslationsMap.entrySet()) {
 			String[] line = new String[valuesSize];
 			Arrays.fill(line, "");
-			String baseMessage = entry.getKey().replace(",", "&C").replace("\"", "&Q");
+			String baseMessage = entry.getKey();
 			line[0] = baseMessage;
 
 			for (Map.Entry<String, String> entry2 : entry.getValue().entrySet()) {
-				String translation = entry2.getValue().replace(",", "&C").replace("\"", "&Q");
+				String translation = entry2.getValue();
 				line[langMap.get(entry2.getKey())] = translation;
 			}
-			out.add(String.join(",", line));
+			out.add(String.join("\t", line));
 		}
 
 		// join lines together
@@ -218,7 +217,7 @@ public class TranslationsManager {
 
 	}
 
-	private void loadCSV(CommandSender sender, String fileName) {
+	private void loadTSV(CommandSender sender, String fileName) {
 		String content = "";
 		try {
 			content = FileUtils.readFile(fileName);
@@ -228,22 +227,36 @@ public class TranslationsManager {
 		String[] lines = content.split("\n");
 
 		// store first line as list of languages
-		String[] languages = lines[0].split(",");
+		String[] languages = lines[0].split("\t");
 
 		// parse each line
 		for (int i = 1; i < lines.length; i++) {
-			String[] values = lines[i].split(",");
+			String[] values = lines[i].split("\t");
 			// first value is the english version, use this to get the already loaded map
 			// the loaded translationMap should always exist.
-			String message = values[0].replace("&C", ",").replace("&Q", "\"");
+			String message = values[0];
 			TreeMap<String, String> translationMap = mTranslationsMap.get(message);
+			if (translationMap == null) {
+				String errMessage = ChatColor.GOLD + "Could not find a entry for ' " + message + " ' make sure it is properly typed. it should NOT be a new value";
+				sender.sendMessage(errMessage);
+				System.out.println(errMessage);
+			}
 			// parse and store each value
 			for (int j = 1; j < values.length; j++) {
-				String translation = values[j].replace("&C", ",").replace("&Q", "\"");
+				String translation = values[j];
 				try {
-					translationMap.put(languages[j], translation);
+					if (!translation.equals("")) {
+						translationMap.put(languages[j], translation);
+					}
 				} catch (NullPointerException e) {
-					sender.sendMessage("Error while parsing message translations for '" + message + "' does it contains any unexcaped commas or quotes?");
+					String errMessage = ChatColor.GOLD + "parsing error on line: " + ChatColor.RESET +
+						lines[i].replace("\t", ChatColor.RED + "TAB" + ChatColor.RESET) +
+						ChatColor.GOLD + " Could not match with language list: " + ChatColor.RESET +
+						lines[0].replace("\t", ChatColor.RED + "TAB" + ChatColor.RESET) +
+						ChatColor.GOLD + " Match sizes: " + languages.length + ":" + values.length + ChatColor.RESET;
+					sender.sendMessage(errMessage);
+					System.out.println(errMessage);
+					throw e;
 				}
 			}
 		}
