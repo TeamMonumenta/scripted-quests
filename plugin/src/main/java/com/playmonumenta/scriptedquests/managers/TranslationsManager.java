@@ -99,9 +99,12 @@ public class TranslationsManager {
 		}
 
 		// translate the message. if there is no entry for the player language, default fallback to the base message
-		String translatedMessage = translations.getOrDefault(lang, message);
+		String translated = translations.get(lang);
+		if (translated == null || translated.equals("")) {
+			translated = message;
+		}
 
-		return translatedMessage;
+		return translated;
 	}
 
 	private void addNewEntry(String message) {
