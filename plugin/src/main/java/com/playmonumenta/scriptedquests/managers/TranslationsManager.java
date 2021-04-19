@@ -197,11 +197,11 @@ public class TranslationsManager {
 		for (Map.Entry<String, TreeMap<String, String>> entry : mTranslationsMap.entrySet()) {
 			String[] line = new String[valuesSize];
 			Arrays.fill(line, "");
-			String baseMessage = entry.getKey();
+			String baseMessage = entry.getKey().replace("\n", "\\n");
 			line[0] = baseMessage;
 
 			for (Map.Entry<String, String> entry2 : entry.getValue().entrySet()) {
-				String translation = entry2.getValue();
+				String translation = entry2.getValue().replace("\n", "\\n");
 				line[langMap.get(entry2.getKey())] = translation;
 			}
 			out.add(String.join("\t", line));
@@ -235,19 +235,14 @@ public class TranslationsManager {
 			String[] values = lines[i].split("\t");
 			// first value is the english version, use this to get the already loaded map
 			// the loaded translationMap should always exist.
-			String message = values[0];
-			TreeMap<String, String> translationMap = mTranslationsMap.get(message);
-			if (translationMap == null) {
-				String errMessage = ChatColor.GOLD + "Could not find a entry for ' " + message + " ' make sure it is properly typed. it should NOT be a new value";
-				sender.sendMessage(errMessage);
-				System.out.println(errMessage);
-			}
+			String message = values[0].replace("\\n", "\n");
+			TreeMap<String, String> translationMap = mTranslationsMap.getOrDefault(message, new TreeMap<>());
 			// parse and store each value
 			for (int j = 1; j < values.length; j++) {
 				String translation = values[j];
 				try {
 					if (!translation.equals("")) {
-						translationMap.put(languages[j], translation);
+						translationMap.put(languages[j], translation.replace("\\n", "\n"));
 					}
 				} catch (NullPointerException e) {
 					String errMessage = ChatColor.GOLD + "parsing error on line: " + ChatColor.RESET +
@@ -260,6 +255,7 @@ public class TranslationsManager {
 					throw e;
 				}
 			}
+			mTranslationsMap.put(message, translationMap);
 		}
 	}
 }
