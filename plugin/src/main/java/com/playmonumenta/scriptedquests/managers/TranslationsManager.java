@@ -113,6 +113,8 @@ public class TranslationsManager {
 		// update the loaded translation map
 		mTranslationsMap.put(message, new TreeMap<>());
 
+		System.out.println(ChatColor.GOLD+"Added new entry for translations: "+ ChatColor.AQUA + message + ChatColor.RESET);
+
 		writeTranslationFileAndReloadShards();
 	}
 
