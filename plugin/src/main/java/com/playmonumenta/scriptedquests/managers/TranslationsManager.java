@@ -113,7 +113,7 @@ public class TranslationsManager {
 		// update the loaded translation map
 		mTranslationsMap.put(message, new TreeMap<>());
 
-		System.out.println(ChatColor.GOLD+"Added new entry for translations: "+ ChatColor.AQUA + message + ChatColor.RESET);
+		System.out.println(ChatColor.GOLD + "Added new entry for translations: " + ChatColor.AQUA + message + ChatColor.RESET);
 
 		writeTranslationFileAndReloadShards();
 	}
@@ -197,11 +197,11 @@ public class TranslationsManager {
 		for (Map.Entry<String, TreeMap<String, String>> entry : mTranslationsMap.entrySet()) {
 			String[] line = new String[valuesSize];
 			Arrays.fill(line, "");
-			String baseMessage = entry.getKey().replace("\n", "\\n");
+			String baseMessage = entry.getKey().replace("\n", "\\n").replace("\"", "@Q");
 			line[0] = baseMessage;
 
 			for (Map.Entry<String, String> entry2 : entry.getValue().entrySet()) {
-				String translation = entry2.getValue().replace("\n", "\\n");
+				String translation = entry2.getValue().replace("\n", "\\n").replace("\"", "@Q");
 				line[langMap.get(entry2.getKey())] = translation;
 			}
 			out.add(String.join("\t", line));
@@ -235,14 +235,14 @@ public class TranslationsManager {
 			String[] values = lines[i].split("\t");
 			// first value is the english version, use this to get the already loaded map
 			// the loaded translationMap should always exist.
-			String message = values[0].replace("\\n", "\n");
+			String message = values[0].replace("\\n", "\n").replace("@Q", "\"");
 			TreeMap<String, String> translationMap = mTranslationsMap.getOrDefault(message, new TreeMap<>());
 			// parse and store each value
 			for (int j = 1; j < values.length; j++) {
 				String translation = values[j];
 				try {
 					if (!translation.equals("")) {
-						translationMap.put(languages[j], translation.replace("\\n", "\n"));
+						translationMap.put(languages[j], translation.replace("\\n", "\n").replace("@Q", "\""));
 					}
 				} catch (NullPointerException e) {
 					String errMessage = ChatColor.GOLD + "parsing error on line: " + ChatColor.RESET +
