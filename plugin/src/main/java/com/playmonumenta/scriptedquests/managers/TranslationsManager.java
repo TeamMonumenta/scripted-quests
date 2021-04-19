@@ -119,7 +119,6 @@ public class TranslationsManager {
 	private void writeTranslationFileAndReloadShards() {
 		// write the map into the file
 		String content = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create().toJson(mTranslationsMap);
-		System.out.println(content);
 		String filename = mPlugin.getDataFolder() + File.separator + "translations" + File.separator + "common" + File.separator + "translations.json";
 		try {
 			FileUtils.writeFile(filename, content);
