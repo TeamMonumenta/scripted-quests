@@ -229,8 +229,24 @@
                             <shadedPattern>com.playmonumenta.scriptedquests.internal.com.fasterxml</shadedPattern>
                         </relocation>
                         <relocation>
-                            <pattern>com.google</pattern>
-                            <shadedPattern>com.playmonumenta.scriptedquests.internal.com.google</shadedPattern>
+                            <pattern>com.google.api</pattern>
+                            <shadedPattern>com.playmonumenta.scriptedquests.internal.com.google.api</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com.google.common</pattern>
+                            <shadedPattern>com.playmonumenta.scriptedquests.internal.com.google.common</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com.google.gdata</pattern>
+                            <shadedPattern>com.playmonumenta.scriptedquests.internal.com.google.gdata</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com.google.j2objc</pattern>
+                            <shadedPattern>com.playmonumenta.scriptedquests.internal.com.google.j2objc</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com.google.thirdparty</pattern>
+                            <shadedPattern>com.playmonumenta.scriptedquests.internal.com.google.thirdparty</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>io.grpc</pattern>
