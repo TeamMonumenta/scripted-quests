@@ -3,6 +3,7 @@ package com.playmonumenta.scriptedquests.managers;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.translations.Translations;
 import com.playmonumenta.scriptedquests.utils.FileUtils;
 import com.playmonumenta.scriptedquests.utils.TranslationUtils;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
@@ -15,8 +16,10 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -26,13 +29,13 @@ import java.util.UUID;
 public class TranslationsManager {
 
 	private final Plugin mPlugin;
-
-	private TreeMap<UUID, String> mPlayerLanguageMap;
+	private final Translations mTranslations;
+	private final TreeMap<UUID, String> mPlayerLanguageMap;
 	private TreeMap<String, TreeMap<String, String>> mTranslationsMap;
 
 	public TranslationsManager(Plugin mPlugin) {
 		this.mPlugin = mPlugin;
-
+		mTranslations = new Translations(this);
 		mPlayerLanguageMap = new TreeMap<>();
 		mTranslationsMap = new TreeMap<>();
 	}
@@ -257,5 +260,9 @@ public class TranslationsManager {
 			}
 			mTranslationsMap.put(message, translationMap);
 		}
+	}
+
+	public void syncTranslationSheet(CommandSender sender) {
+		mTranslations.syncTranslationSheet(sender);
 	}
 }

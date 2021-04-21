@@ -23,5 +23,13 @@ public class Translations {
 				plugin.mTranslationManager.loadAndUpdateTSV(sender);
 			})
 			.register();
+
+		// synctranslationsheet
+		new CommandAPICommand("synctranslationsheet")
+			.withPermission(perm)
+			.executes((sender, args) -> {
+				plugin.mTranslationManager.syncTranslationSheet(sender);
+			})
+			.register();
 	}
 }
