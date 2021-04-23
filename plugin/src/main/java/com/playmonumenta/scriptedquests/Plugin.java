@@ -3,8 +3,6 @@ package com.playmonumenta.scriptedquests;
 import java.io.File;
 import java.util.Random;
 
-import com.playmonumenta.scriptedquests.commands.Translations;
-import com.playmonumenta.scriptedquests.managers.TranslationsManager;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -55,6 +53,7 @@ import com.playmonumenta.scriptedquests.managers.QuestDeathManager;
 import com.playmonumenta.scriptedquests.managers.QuestLoginManager;
 import com.playmonumenta.scriptedquests.managers.QuestNpcManager;
 import com.playmonumenta.scriptedquests.managers.RaceManager;
+import com.playmonumenta.scriptedquests.managers.TranslationsManager;
 import com.playmonumenta.scriptedquests.managers.WaypointManager;
 import com.playmonumenta.scriptedquests.managers.ZonePropertyManager;
 import com.playmonumenta.scriptedquests.timers.CommandTimerManager;
@@ -84,7 +83,6 @@ public class Plugin extends JavaPlugin {
 	public ZonePropertyManager mZonePropertyManager;
 	public WaypointManager mWaypointManager;
 	public GrowableManager mGrowableManager;
-	public TranslationsManager mTranslationManager;
 
 	public World mWorld;
 	public Random mRandom = new Random();
@@ -125,7 +123,7 @@ public class Plugin extends JavaPlugin {
 
 		Growable.register(mGrowableManager);
 		Waypoint.register(this);
-		Translations.register(this);
+		TranslationsManager.registerCommands();
 	}
 
 	@Override
@@ -151,12 +149,12 @@ public class Plugin extends JavaPlugin {
 		mZonePropertyManager = new ZonePropertyManager(this);
 		mTimerManager = new CommandTimerManager(this);
 		mWaypointManager = new WaypointManager(this);
-		mTranslationManager = new TranslationsManager(this);
 
 		manager.registerEvents(new EntityListener(this), this);
 		manager.registerEvents(new InteractablesListener(this), this);
 		manager.registerEvents(new PlayerListener(this), this);
 		manager.registerEvents(new WorldListener(this), this);
+		manager.registerEvents(new TranslationsManager(this), this);
 		manager.registerEvents(mTimerManager, this);
 		manager.registerEvents(mZonePropertyManager, this);
 		manager.registerEvents(mTradeManager, this);
@@ -205,7 +203,7 @@ public class Plugin extends JavaPlugin {
 		mCodeManager.reload(this, sender);
 		mZonePropertyManager.reload(this, sender);
 		mGrowableManager.reload(this, sender);
-		mTranslationManager.reload(sender);
+		TranslationsManager.reload(sender);
 	}
 
 	public void reloadZones(CommandSender sender) {

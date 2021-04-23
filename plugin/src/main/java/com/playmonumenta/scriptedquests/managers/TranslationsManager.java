@@ -1,18 +1,5 @@
 package com.playmonumenta.scriptedquests.managers;
 
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.utils.FileUtils;
-import com.playmonumenta.scriptedquests.utils.TranslationUtils;
-import com.playmonumenta.scriptedquests.utils.QuestUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,9 +10,28 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.UUID;
 
-public class TranslationsManager {
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.utils.FileUtils;
+import com.playmonumenta.scriptedquests.utils.QuestUtils;
 
-	private static TranslationsManager mINSTANCE;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+
+import dev.jorel.commandapi.CommandAPICommand;
+import dev.jorel.commandapi.CommandPermission;
+
+public class TranslationsManager implements Listener {
+
+	private static TranslationsManager INSTANCE = null;
 
 	private final Plugin mPlugin;
 
@@ -33,7 +39,7 @@ public class TranslationsManager {
 	private TreeMap<String, TreeMap<String, String>> mTranslationsMap;
 
 	public TranslationsManager(Plugin mPlugin) {
-		mINSTANCE = this;
+		INSTANCE = this;
 		this.mPlugin = mPlugin;
 
 		mPlayerLanguageMap = new TreeMap<>();
@@ -41,18 +47,55 @@ public class TranslationsManager {
 	}
 
 	public static String translate(Player player, String message) {
-		if (mINSTANCE == null) {
+		if (INSTANCE == null) {
 			return message;
 		}
-		return mINSTANCE.translatePriv(message, player);
+		return INSTANCE.translatePriv(message, player);
 	}
 
-	public void reload(CommandSender sender) {
-		Bukkit.getScheduler().runTaskAsynchronously(mPlugin, () -> {
+	public static String getLanguageOfPlayer(Player player) {
+		for (String s : player.getScoreboardTags()) {
+			if (s.startsWith("language_") && s.length() > "language_".length()) {
+				return s.split("_")[1];
+			}
+		}
+		return "en-US";
+	}
+
+	public static void registerCommands() {
+		CommandPermission perm = CommandPermission.fromString("monumenta.translations");
+
+		// reloadtranslations
+		new CommandAPICommand("reloadtranslations")
+			.withPermission(perm)
+			.executes((sender, args) -> {
+				if (INSTANCE != null) {
+					reload(sender);
+				}
+			})
+			.register();
+
+		// updatetranslationscsv
+		new CommandAPICommand("updatetranslationtsv")
+			.withPermission(perm)
+			.executes((sender, args) -> {
+				if (INSTANCE != null) {
+					INSTANCE.loadAndUpdateTSV(sender);
+				}
+			})
+			.register();
+	}
+
+	public static void reload(CommandSender sender) {
+		if (INSTANCE == null) {
+			return;
+		}
+
+		Bukkit.getScheduler().runTaskAsynchronously(Plugin.getInstance(), () -> {
 
 			TreeMap<String, TreeMap<String, String>> newTranslations = new TreeMap<>();
 
-			QuestUtils.loadScriptedQuests(mPlugin, "translations", sender, (object) -> {
+			QuestUtils.loadScriptedQuests(Plugin.getInstance(), "translations", sender, (object) -> {
 
 				int messageAmount = 0;
 				int translationAmount = 0;
@@ -79,14 +122,14 @@ public class TranslationsManager {
 				return messageAmount + " messages loaded into " + translationAmount + " translations from";
 			});
 
-			Bukkit.getScheduler().runTask(mPlugin, () -> {
-				mTranslationsMap.clear();
-				mTranslationsMap = newTranslations;
+			Bukkit.getScheduler().runTask(Plugin.getInstance(), () -> {
+				INSTANCE.mTranslationsMap.clear();
+				INSTANCE.mTranslationsMap = newTranslations;
 			});
 		});
 
 		for (Player p : Bukkit.getOnlinePlayers()) {
-			playerLogin(p, false);
+			INSTANCE.playerJoin(p, false);
 		}
 
 	}
@@ -122,7 +165,7 @@ public class TranslationsManager {
 		// update the loaded translation map
 		mTranslationsMap.put(message, new TreeMap<>());
 
-		System.out.println(ChatColor.GOLD + "Added new entry for translations: " + ChatColor.AQUA + message + ChatColor.RESET);
+		mPlugin.getLogger().info("Added new entry for translations: " + message);
 
 		writeTranslationFileAndReloadShards();
 	}
@@ -135,26 +178,25 @@ public class TranslationsManager {
 			try {
 				FileUtils.writeFile(filename, content);
 			} catch (IOException e) {
-				System.out.println(e.getMessage());
-				for (StackTraceElement s : e.getStackTrace()) {
-					System.out.println(s.toString());
-				}
+				mPlugin.getLogger().severe("Caught error writing translations: " + e.getMessage());
+				e.printStackTrace();
 			}
 
 			// reload the translations on all shards
+			// TODO: If the network relay isn't present, this won't do anything and will print an error in the logs
 			Bukkit.getScheduler().runTask(mPlugin, () -> {
 				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "broadcastcommand reloadtranslations");
 			});
 		});
 	}
 
-	// launched when a player joins the game
-	public void loginEvent(PlayerJoinEvent event) {
-		playerLogin(event.getPlayer(), true);
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void playerJoinEvent(PlayerJoinEvent event) {
+		playerJoin(event.getPlayer(), true);
 	}
 
-	public void playerLogin(Player player, boolean display) {
-		String lang = TranslationUtils.getLanguageOfPlayer(player);
+	public void playerJoin(Player player, boolean display) {
+		String lang = getLanguageOfPlayer(player);
 		mPlayerLanguageMap.put(player.getUniqueId(), lang);
 
 		if (display && !lang.equals("en-US")) {
@@ -162,7 +204,8 @@ public class TranslationsManager {
 		}
 	}
 
-	public void quitEvent(PlayerQuitEvent event) {
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void playerQuitEvent(PlayerQuitEvent event) {
 		mPlayerLanguageMap.remove(event.getPlayer().getUniqueId());
 	}
 

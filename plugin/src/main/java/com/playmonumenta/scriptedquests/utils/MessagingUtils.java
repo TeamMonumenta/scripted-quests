@@ -9,6 +9,8 @@ import com.playmonumenta.scriptedquests.managers.TranslationsManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import com.playmonumenta.scriptedquests.Plugin;
+
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -62,6 +64,7 @@ public class MessagingUtils {
 	public static void sendNPCMessage(Player player, String displayName, Component message) {
 		displayName = TranslationsManager.translate(player, displayName);
 		if (message instanceof TextComponent) {
+			/* TODO: This should probably loop over all the text in the component - hover, etc. */
 			String contentStr = ((TextComponent) message).content();
 			contentStr = TranslationsManager.translate(player, contentStr);
 			message = ((TextComponent) message).content(contentStr);
@@ -82,7 +85,7 @@ public class MessagingUtils {
 		player.sendMessage(formattedMessage);
 	}
 
-	public static void sendClickableNPCMessage(Player player, String message,
+	public static void sendClickableNPCMessage(Plugin plugin, Player player, String message,
 	                                           String commandStr, HoverEvent hoverEvent) {
 		message = TranslationsManager.translate(player, message);
 		message = translatePlayerName(player, message);
