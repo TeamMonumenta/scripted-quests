@@ -132,7 +132,13 @@ public class CommandTimerManager implements Listener {
 		if (tags != null && tags.contains("timer")) {
 			for (String tag : tags) {
 				if (tag.startsWith("period=")) {
-					Integer period = Integer.parseInt(tag.substring(7));
+					Integer period;
+					try {
+						period = Integer.parseInt(tag.substring(7));
+					} catch (Exception e) {
+						mPlugin.getLogger().severe("Timer armor stand has invalid period '" + tag + "' at " + entity.getLocation().toString());
+						return null;
+					}
 					if (period == null || period <= 0 || period > 72000) {
 						/* Out of range */
 						mPlugin.getLogger().severe("Timer armor stand has invalid period '" + tag + "' at " + entity.getLocation().toString());
