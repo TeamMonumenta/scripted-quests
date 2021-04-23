@@ -44,7 +44,7 @@ public class TranslationsManager {
 		if (mINSTANCE == null) {
 			return message;
 		}
-		return mINSTANCE.translate(message, player);
+		return mINSTANCE.translatePriv(message, player);
 	}
 
 	public void reload(CommandSender sender) {
@@ -91,7 +91,7 @@ public class TranslationsManager {
 
 	}
 
-	public String translate(String message, Player player) {
+	private String translatePriv(String message, Player player) {
 
 		String lang = mPlayerLanguageMap.get(player.getUniqueId());
 
@@ -167,7 +167,6 @@ public class TranslationsManager {
 	}
 
 	// wont be used once gsheet is up
-	@Deprecated
 	public void loadAndUpdateTSV(CommandSender sender) {
 
 		String fileName = mPlugin.getDataFolder() + File.separator + "translations" + File.separator + "common" + File.separator + "translations.tsv";
@@ -186,7 +185,6 @@ public class TranslationsManager {
 	}
 
 	// wont be used once gsheet is up
-	@Deprecated
 	private void writeTSV(String fileName) {
 
 		// first, go through the map once to get the list of all languages
@@ -236,7 +234,6 @@ public class TranslationsManager {
 	}
 
 	// wont be used once gsheet is up
-	@Deprecated
 	private void loadTSV(CommandSender sender, String fileName) {
 		String content = "";
 		try {
