@@ -113,7 +113,8 @@ public class DialogClickableTextEntry implements DialogBase {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void sendDialog(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
-		MessagingUtils.sendClickableNPCMessage(player, mText, "/questtrigger " + mIdx, mHoverEvent);
+		MessagingUtils.sendClickableNPCMessage(plugin, player, mText,
+		                                       "/questtrigger " + Integer.toString(mIdx), mHoverEvent);
 
 		/* Create a new object describing the prereqs/actions/location for this clickable message */
 		PlayerClickableTextEntry newEntry = new PlayerClickableTextEntry(prereqs, mActions, npcEntity,
