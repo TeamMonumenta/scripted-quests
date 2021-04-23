@@ -3,6 +3,7 @@ package com.playmonumenta.scriptedquests.commands;
 import com.playmonumenta.scriptedquests.Plugin;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
+import dev.jorel.commandapi.arguments.TextArgument;
 
 public class Translations {
 	public static void register(Plugin plugin) {
@@ -28,8 +29,15 @@ public class Translations {
 		new CommandAPICommand("synctranslationsheet")
 			.withPermission(perm)
 			.executes((sender, args) -> {
-				plugin.mTranslationManager.syncTranslationSheet(sender);
+				plugin.mTranslationManager.syncTranslationSheet(sender, null);
 			})
 			.register();
+
+		new CommandAPICommand("synctranslationsheet")
+			.withPermission(perm)
+			.withArguments(new TextArgument("callbackKey"))
+			.executes((sender, args) -> {
+				plugin.mTranslationManager.syncTranslationSheet(sender, (String)args[0]);
+			}).register();
 	}
 }
