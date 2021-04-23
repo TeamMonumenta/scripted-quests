@@ -38,8 +38,6 @@ public class TranslationsManager {
 	}
 
 	public void reload(Plugin plugin, CommandSender sender) {
-		mTranslationsMap.clear();
-
 		Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
 
 			TreeMap<String, TreeMap<String, String>> newTranslations = new TreeMap<>();
@@ -62,18 +60,19 @@ public class TranslationsManager {
 
 						langMap.put(lang, translated);
 						translationAmount++;
-
 					}
 
 					newTranslations.put(message, langMap);
 					messageAmount++;
-
 				}
 
 				return messageAmount + " messages loaded into " + translationAmount + " translations";
 			});
 
-			Bukkit.getScheduler().runTask(plugin, () -> mTranslationsMap = newTranslations);
+			Bukkit.getScheduler().runTask(plugin, () -> {
+				mTranslationsMap.clear();
+				mTranslationsMap = newTranslations;
+			});
 		});
 
 		for (Player p : Bukkit.getOnlinePlayers()) {
@@ -86,7 +85,7 @@ public class TranslationsManager {
 
 		String lang = mPlayerLanguageMap.get(player.getUniqueId());
 
-		if (lang.equals("en.US")) {
+		if (lang == null || lang.equals("en.US")) {
 			// base language, no need to translate
 			return message;
 		}
@@ -101,7 +100,7 @@ public class TranslationsManager {
 
 		// translate the message. if there is no entry for the player language, default fallback to the base message
 		String translated = translations.get(lang);
-		if (translated == null || translated.equals("")) {
+		if (translated == null || translated.isEmpty()) {
 			translated = message;
 		}
 
