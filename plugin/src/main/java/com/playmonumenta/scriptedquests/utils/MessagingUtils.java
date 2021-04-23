@@ -85,7 +85,7 @@ public class MessagingUtils {
 		player.sendMessage(formattedMessage);
 	}
 
-	public static void sendClickableNPCMessage(Plugin plugin, Player player, String message,
+	public static void sendClickableNPCMessage(Player player, String message,
 	                                           String commandStr, HoverEvent hoverEvent) {
 		message = TranslationsManager.translate(player, message);
 		message = translatePlayerName(player, message);

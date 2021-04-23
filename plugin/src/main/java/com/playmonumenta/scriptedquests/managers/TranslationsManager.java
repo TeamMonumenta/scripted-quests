@@ -174,7 +174,7 @@ public class TranslationsManager implements Listener {
 		Bukkit.getScheduler().runTaskAsynchronously(mPlugin, () -> {
 			// write the map into the file
 			String content = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create().toJson(mTranslationsMap);
-			String filename = mPlugin.getDataFolder() + File.separator + "translations" + File.separator + "common" + File.separator + "translations.json";
+			String filename = mPlugin.getDataFolder() + File.separator + "translations" + File.separator + "translations.json";
 			try {
 				FileUtils.writeFile(filename, content);
 			} catch (IOException e) {
