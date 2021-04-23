@@ -25,24 +25,34 @@ import java.util.UUID;
 
 public class TranslationsManager {
 
+	private static TranslationsManager mINSTANCE;
+
 	private final Plugin mPlugin;
 
 	private TreeMap<UUID, String> mPlayerLanguageMap;
 	private TreeMap<String, TreeMap<String, String>> mTranslationsMap;
 
 	public TranslationsManager(Plugin mPlugin) {
+		mINSTANCE = this;
 		this.mPlugin = mPlugin;
 
 		mPlayerLanguageMap = new TreeMap<>();
 		mTranslationsMap = new TreeMap<>();
 	}
 
-	public void reload(Plugin plugin, CommandSender sender) {
-		Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+	public static String translate(Player player, String message) {
+		if (mINSTANCE == null) {
+			return message;
+		}
+		return mINSTANCE.translate(message, player);
+	}
+
+	public void reload(CommandSender sender) {
+		Bukkit.getScheduler().runTaskAsynchronously(mPlugin, () -> {
 
 			TreeMap<String, TreeMap<String, String>> newTranslations = new TreeMap<>();
 
-			QuestUtils.loadScriptedQuests(plugin, "translations", sender, (object) -> {
+			QuestUtils.loadScriptedQuests(mPlugin, "translations", sender, (object) -> {
 
 				int messageAmount = 0;
 				int translationAmount = 0;
@@ -66,10 +76,10 @@ public class TranslationsManager {
 					messageAmount++;
 				}
 
-				return messageAmount + " messages loaded into " + translationAmount + " translations";
+				return messageAmount + " messages loaded into " + translationAmount + " translations from";
 			});
 
-			Bukkit.getScheduler().runTask(plugin, () -> {
+			Bukkit.getScheduler().runTask(mPlugin, () -> {
 				mTranslationsMap.clear();
 				mTranslationsMap = newTranslations;
 			});
@@ -118,20 +128,24 @@ public class TranslationsManager {
 	}
 
 	private void writeTranslationFileAndReloadShards() {
-		// write the map into the file
-		String content = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create().toJson(mTranslationsMap);
-		String filename = mPlugin.getDataFolder() + File.separator + "translations" + File.separator + "common" + File.separator + "translations.json";
-		try {
-			FileUtils.writeFile(filename, content);
-		} catch (IOException e) {
-			System.out.println(e.getMessage());
-			for (StackTraceElement s : e.getStackTrace()) {
-				System.out.println(s.toString());
+		Bukkit.getScheduler().runTaskAsynchronously(mPlugin, () -> {
+			// write the map into the file
+			String content = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create().toJson(mTranslationsMap);
+			String filename = mPlugin.getDataFolder() + File.separator + "translations" + File.separator + "common" + File.separator + "translations.json";
+			try {
+				FileUtils.writeFile(filename, content);
+			} catch (IOException e) {
+				System.out.println(e.getMessage());
+				for (StackTraceElement s : e.getStackTrace()) {
+					System.out.println(s.toString());
+				}
 			}
-		}
 
-		// reload the translations on all shards
-		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "broadcastcommand reloadtranslations");
+			// reload the translations on all shards
+			Bukkit.getScheduler().runTask(mPlugin, () -> {
+				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "broadcastcommand reloadtranslations");
+			});
+		});
 	}
 
 	// launched when a player joins the game
@@ -152,6 +166,8 @@ public class TranslationsManager {
 		mPlayerLanguageMap.remove(event.getPlayer().getUniqueId());
 	}
 
+	// wont be used once gsheet is up
+	@Deprecated
 	public void loadAndUpdateTSV(CommandSender sender) {
 
 		String fileName = mPlugin.getDataFolder() + File.separator + "translations" + File.separator + "common" + File.separator + "translations.tsv";
@@ -169,6 +185,8 @@ public class TranslationsManager {
 
 	}
 
+	// wont be used once gsheet is up
+	@Deprecated
 	private void writeTSV(String fileName) {
 
 		// first, go through the map once to get the list of all languages
@@ -217,6 +235,8 @@ public class TranslationsManager {
 
 	}
 
+	// wont be used once gsheet is up
+	@Deprecated
 	private void loadTSV(CommandSender sender, String fileName) {
 		String content = "";
 		try {

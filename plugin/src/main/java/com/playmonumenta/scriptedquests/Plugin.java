@@ -205,7 +205,7 @@ public class Plugin extends JavaPlugin {
 		mCodeManager.reload(this, sender);
 		mZonePropertyManager.reload(this, sender);
 		mGrowableManager.reload(this, sender);
-		mTranslationManager.reload(this, sender);
+		mTranslationManager.reload(sender);
 	}
 
 	public void reloadZones(CommandSender sender) {

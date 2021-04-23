@@ -5,10 +5,9 @@ import java.io.StringWriter;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.playmonumenta.scriptedquests.managers.TranslationsManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import com.playmonumenta.scriptedquests.Plugin;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -28,16 +27,16 @@ public class MessagingUtils {
 		return message.replaceAll("@S", player.getName()).replaceAll("@U", player.getUniqueId().toString().toLowerCase());
 	}
 
-	public static void sendActionBarMessage(Plugin plugin, Player player, String message) {
-		message = plugin.mTranslationManager.translate(message, player);
+	public static void sendActionBarMessage(Player player, String message) {
+		message = TranslationsManager.translate(player, message);
 		message = translatePlayerName(player, message);
 		TextComponent formattedMessage = LEGACY_SERIALIZER.deserialize(message);
 		formattedMessage = formattedMessage.color(NamedTextColor.YELLOW);
 		player.sendActionBar(formattedMessage);
 	}
 
-	public static void sendActionBarMessage(Plugin plugin, Player player, NamedTextColor color, boolean bold, String message) {
-		message = plugin.mTranslationManager.translate(message, player);
+	public static void sendActionBarMessage(Player player, NamedTextColor color, boolean bold, String message) {
+		message = TranslationsManager.translate(player, message);
 		message = translatePlayerName(player, message);
 		Component formattedMessage = LEGACY_SERIALIZER.deserialize(message);
 		formattedMessage = formattedMessage.color(color);
@@ -48,8 +47,8 @@ public class MessagingUtils {
 		player.sendMessage(formattedMessage);
 	}
 
-	public static void sendNPCMessage(Plugin plugin, Player player, String displayName, String message) {
-		message = plugin.mTranslationManager.translate(message, player);
+	public static void sendNPCMessage(Player player, String displayName, String message) {
+		message = TranslationsManager.translate(player, message);
 		message = translatePlayerName(player, message);
 		TextComponent formattedMessage = LEGACY_SERIALIZER.deserialize("[" + displayName + "] ");
 		formattedMessage = formattedMessage.color(NamedTextColor.GOLD);
@@ -61,6 +60,12 @@ public class MessagingUtils {
 	}
 
 	public static void sendNPCMessage(Player player, String displayName, Component message) {
+		displayName = TranslationsManager.translate(player, displayName);
+		if (message instanceof TextComponent) {
+			String contentStr = ((TextComponent) message).content();
+			contentStr = TranslationsManager.translate(player, contentStr);
+			message = ((TextComponent) message).content(contentStr);
+		}
 		TextComponent formattedMessage = LEGACY_SERIALIZER.deserialize("[" + displayName + "] ");
 		formattedMessage = formattedMessage.color(NamedTextColor.GOLD);
 		message = message.color(NamedTextColor.WHITE);
@@ -69,17 +74,17 @@ public class MessagingUtils {
 		player.sendMessage(formattedMessage);
 	}
 
-	public static void sendRawMessage(Plugin plugin, Player player, String message) {
-		message = plugin.mTranslationManager.translate(message, player);
+	public static void sendRawMessage(Player player, String message) {
+		message = TranslationsManager.translate(player, message);
 		message = translatePlayerName(player, message);
 		message = message.replace('§', '&');
 		TextComponent formattedMessage = AMPERSAND_SERIALIZER.deserialize(message);
 		player.sendMessage(formattedMessage);
 	}
 
-	public static void sendClickableNPCMessage(Plugin plugin, Player player, String message,
+	public static void sendClickableNPCMessage(Player player, String message,
 	                                           String commandStr, HoverEvent hoverEvent) {
-		message = plugin.mTranslationManager.translate(message, player);
+		message = TranslationsManager.translate(player, message);
 		message = translatePlayerName(player, message);
 		Component formattedMessage = LEGACY_SERIALIZER.deserialize("[" + message + "]");
 		formattedMessage = formattedMessage.color(NamedTextColor.LIGHT_PURPLE)

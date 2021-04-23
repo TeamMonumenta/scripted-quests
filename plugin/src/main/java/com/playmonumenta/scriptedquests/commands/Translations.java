@@ -12,7 +12,7 @@ public class Translations {
 		new CommandAPICommand("reloadtranslations")
 			.withPermission(perm)
 			.executes((sender, args) -> {
-				plugin.mTranslationManager.reload(plugin, sender);
+				plugin.mTranslationManager.reload(sender);
 			})
 			.register();
 
