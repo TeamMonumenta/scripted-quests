@@ -62,7 +62,10 @@ public class ActionSpawnMob implements ActionBase {
 			}
 		}
 
-		mActions = new SpellActions(null, null, json.get("spell_actions"));
+		if (json.has("spell_actions")) {
+			mActions = new SpellActions(null, null, json.get("spell_actions"));
+		}
+
 	}
 
 	@Override
@@ -72,7 +75,11 @@ public class ActionSpawnMob implements ActionBase {
 		if (mob != null) {
 			Location loc = new Location(mWorld != null ? mWorld : player.getWorld(), mX, mY, mZ);
 			LivingEntity entity = mob.spawnMob(loc);
-			mActions.doActions(entity, loc.clone().add(0, 1, 0));
+
+			if (mActions != null) {
+				mActions.doActions(entity, loc.clone().add(0, 1, 0));
+			}
+
 		}
 	}
 }

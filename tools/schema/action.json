@@ -432,6 +432,17 @@
 					}
 				}
             }
+        },
+		"enter_shard": {
+            "title": "enter_shard",
+            "description": "Creates and teleports the player into a Shard Instance given the Shard ID",
+            "type": "string"
+        },
+		"leave_shard": {
+            "title": "leave_shard",
+            "description": "Leaves the current shard that the player is in. Leave as 'false' if the player 'exits' the shard, or true if the player 'abandons' the shard.",
+            "type": "boolean",
+			"default": false
         }
     }
 }

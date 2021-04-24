@@ -107,6 +107,12 @@ public class QuestActions {
 					mActions.add(new ActionRunActions(value));
 					break;
 
+				case "enter_shard":
+					mActions.add(new ActionEnterShard(value));
+					break;
+				case "leave_shard":
+					mActions.add(new ActionLeaveShard(value));
+					break;
 				case "give_xp":
 					mActions.add(new ActionGiveXP(value));
 					break;
