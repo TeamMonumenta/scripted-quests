@@ -37,6 +37,8 @@ public class TranslationsManager implements Listener {
 
 	private TreeMap<UUID, String> mPlayerLanguageMap;
 	private TreeMap<String, TreeMap<String, String>> mTranslationsMap;
+	private boolean mWriting = false;
+	private boolean mReading = false;
 
 	public TranslationsManager(Plugin mPlugin) {
 		INSTANCE = this;
@@ -91,6 +93,12 @@ public class TranslationsManager implements Listener {
 			return;
 		}
 
+		if (INSTANCE.mWriting || INSTANCE.mReading) {
+			/* Only allow one read/write task at a time. Better to lose translations than cause problems here */
+			return;
+		}
+
+		INSTANCE.mReading = true;
 		Bukkit.getScheduler().runTaskAsynchronously(Plugin.getInstance(), () -> {
 
 			TreeMap<String, TreeMap<String, String>> newTranslations = new TreeMap<>();
@@ -125,13 +133,13 @@ public class TranslationsManager implements Listener {
 			Bukkit.getScheduler().runTask(Plugin.getInstance(), () -> {
 				INSTANCE.mTranslationsMap.clear();
 				INSTANCE.mTranslationsMap = newTranslations;
+				INSTANCE.mReading = false;
 			});
 		});
 
 		for (Player p : Bukkit.getOnlinePlayers()) {
 			INSTANCE.playerJoin(p, false);
 		}
-
 	}
 
 	private String translatePriv(String message, Player player) {
@@ -171,6 +179,12 @@ public class TranslationsManager implements Listener {
 	}
 
 	private void writeTranslationFileAndReloadShards() {
+		if (mWriting || mReading) {
+			/* Only allow one read/write task at a time. Better to lose translations than cause problems here */
+			return;
+		}
+
+		mWriting = true;
 		Bukkit.getScheduler().runTaskAsynchronously(mPlugin, () -> {
 			// write the map into the file
 			String content = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create().toJson(mTranslationsMap);
@@ -186,6 +200,7 @@ public class TranslationsManager implements Listener {
 			// TODO: If the network relay isn't present, this won't do anything and will print an error in the logs
 			Bukkit.getScheduler().runTask(mPlugin, () -> {
 				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "broadcastcommand reloadtranslations");
+				mWriting = false;
 			});
 		});
 	}
