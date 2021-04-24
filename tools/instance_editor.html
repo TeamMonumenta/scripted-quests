@@ -95,7 +95,6 @@
                     description: "The Quest Components to run whenever a player enters this instance. Quest Components ran will take place in the instance world.",
                     type: "array",
                     format: "tabs",
-                    minItems: 1,
                     items: {
                         title: "Quest component",
                         $ref: "schema/quest_component.json",
@@ -107,7 +106,6 @@
                     description: "The Quest Components to run whenever a player exits this instance. Exiting an instance is usually done whenever a player finishes an instance legitimately.",
                     type: "array",
                     format: "tabs",
-                    minItems: 1,
                     items: {
                         title: "Quest component",
                         $ref: "schema/quest_component.json",
@@ -119,7 +117,6 @@
                     description: "The Quest Components to run whenever a player abandons this instance. Abandoning an instance involves logging out, teleporting out of the instance, or abandoning it manually. This will usually signify a player failing to complete the instance.",
                     type: "array",
                     format: "tabs",
-                    minItems: 1,
                     items: {
                         title: "Quest component",
                         $ref: "schema/quest_component.json",
