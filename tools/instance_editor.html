@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>ScriptedQuests Instance Editor</title>
+
+    <!-- Foundation CSS framework (Bootstrap and jQueryUI also supported) -->
+    <link rel='stylesheet' href='//cdn.jsdelivr.net/bootstrap/3.2.0/css/bootstrap.css'>
+    <!-- Font Awesome icons (Bootstrap, Foundation, and jQueryUI also supported) -->
+    <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.6.1/css/all.css'>
+
+    <script src="https://cdn.jsdelivr.net/npm/@json-editor/json-editor@1.3.5/dist/jsoneditor.min.js"></script>
+</head>
+<body>
+<div class='container'>
+    <div class='row' style='padding-bottom: 15px;'>
+        <div class='col-md-12'>
+            <h1>ScriptedQuests Instance Editor</h1>
+            <p>For the SFRPG Project, by Nova/Fire.</p>
+			<br>
+			<p>Allows for the creation of non-persistent world instances.</p>
+        </div>
+    </div>
+    <div class='row' style='padding-bottom: 15px;'>
+        <div class='col-md-12'>
+            <button id='restore' class='btn btn-info'>Restore to Default</button>
+            <span id='valid_indicator' class='label label-success'></span>
+        </div>
+    </div>
+    <div class='row'>
+        <div class='col-md-12'>
+            <div id='editor_holder'></div>
+        </div>
+    </div>
+</div>
+
+<script>
+       // Initialize the editor
+    var editor = new JSONEditor(document.getElementById('editor_holder'),{
+        theme: 'bootstrap3',
+        iconlib: 'fontawesome5',
+
+        // Enable fetching schemas via ajax
+        ajax: true,
+
+        // The schema for the editor
+        schema: {
+            title: "Instance",
+            defaultProperties: [
+			    "id",
+                "world",
+				"spawnpoint",
+				"exitpoint",
+				"onEnter",
+				"onExit",
+				"onAbandon"
+            ],
+            additionalProperties:false,
+            properties: {
+                id: {
+                    required: true,
+                    propertyOrder: 1,
+                    title: "id",
+                    description: "The ID of the Instance. This should be unique.",
+                    type: "string",
+                    default: "quest_instance"
+                },
+				world: {
+                    required: true,
+                    propertyOrder: 2,
+                    title: "world",
+                    description: "The world to use when generating instances. This is the 'master' world.",
+                    type: "string",
+                    default: "world"
+                },
+				spawnpoint: {
+                    required: true,
+                    propertyOrder: 3,
+                    title: "spawnpoint",
+                    description: "The place where players will spawn and also respawn if they die.",
+                    type: "string",
+                    default: "0,0,0"
+                },
+				exitpoint: {
+                    required: true,
+                    propertyOrder: 4,
+                    title: "exitpoint",
+                    description: "The exit point whenever the player exits this dungeon. Leave this empty if the player will exit at their previous location.",
+                    type: "string",
+                    default: "0,0,0"
+                },
+				onEnter: {
+                    propertyOrder: 5,
+                    title: "onEnter",
+                    description: "The Quest Components to run whenever a player enters this instance. Quest Components ran will take place in the instance world.",
+                    type: "array",
+                    format: "tabs",
+                    minItems: 1,
+                    items: {
+                        title: "Quest component",
+                        $ref: "schema/quest_component.json",
+                    }
+                },
+                onExit: {
+                    propertyOrder: 6,
+                    title: "onEnter",
+                    description: "The Quest Components to run whenever a player exits this instance. Exiting an instance is usually done whenever a player finishes an instance legitimately.",
+                    type: "array",
+                    format: "tabs",
+                    minItems: 1,
+                    items: {
+                        title: "Quest component",
+                        $ref: "schema/quest_component.json",
+                    }
+                },
+                onAbandon: {
+                    propertyOrder: 7,
+                    title: "onAbandon",
+                    description: "The Quest Components to run whenever a player abandons this instance. Abandoning an instance involves logging out, teleporting out of the instance, or abandoning it manually. This will usually signify a player failing to complete the instance.",
+                    type: "array",
+                    format: "tabs",
+                    minItems: 1,
+                    items: {
+                        title: "Quest component",
+                        $ref: "schema/quest_component.json",
+                    }
+                }
+            }
+        }
+    });
+
+    // Hook up the Restore to Default button
+    document.getElementById('restore').addEventListener('click',function() {
+        editor.setValue(starting_value);
+    });
+
+    // Hook up the validation indicator to update its
+    // status whenever the editor changes
+    editor.on('change',function() {
+        // Get an array of errors from the validator
+        var errors = editor.validate();
+
+        var indicator = document.getElementById('valid_indicator');
+
+        // Not valid
+        if(errors.length) {
+            indicator.className = 'label label-danger'
+            indicator.textContent = "not valid";
+        }
+        // Valid
+        else {
+            indicator.className = 'label label-success'
+            indicator.textContent = "valid";
+        }
+    });
+</script>
+</body>
+</html>
