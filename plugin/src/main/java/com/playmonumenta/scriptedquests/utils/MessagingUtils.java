@@ -5,6 +5,7 @@ import java.io.StringWriter;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.playmonumenta.scriptedquests.managers.TranslationsManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -29,6 +30,7 @@ public class MessagingUtils {
 	}
 
 	public static void sendActionBarMessage(Player player, String message) {
+		message = TranslationsManager.translate(player, message);
 		message = translatePlayerName(player, message);
 		TextComponent formattedMessage = LEGACY_SERIALIZER.deserialize(message);
 		formattedMessage = formattedMessage.color(NamedTextColor.YELLOW);
@@ -36,6 +38,7 @@ public class MessagingUtils {
 	}
 
 	public static void sendActionBarMessage(Player player, NamedTextColor color, boolean bold, String message) {
+		message = TranslationsManager.translate(player, message);
 		message = translatePlayerName(player, message);
 		Component formattedMessage = LEGACY_SERIALIZER.deserialize(message);
 		formattedMessage = formattedMessage.color(color);
@@ -47,6 +50,7 @@ public class MessagingUtils {
 	}
 
 	public static void sendNPCMessage(Player player, String displayName, String message) {
+		message = TranslationsManager.translate(player, message);
 		message = translatePlayerName(player, message);
 		TextComponent formattedMessage = LEGACY_SERIALIZER.deserialize("[" + displayName + "] ");
 		formattedMessage = formattedMessage.color(NamedTextColor.GOLD);
@@ -58,6 +62,13 @@ public class MessagingUtils {
 	}
 
 	public static void sendNPCMessage(Player player, String displayName, Component message) {
+		displayName = TranslationsManager.translate(player, displayName);
+		if (message instanceof TextComponent) {
+			/* TODO: This should probably loop over all the text in the component - hover, etc. */
+			String contentStr = ((TextComponent) message).content();
+			contentStr = TranslationsManager.translate(player, contentStr);
+			message = ((TextComponent) message).content(contentStr);
+		}
 		TextComponent formattedMessage = LEGACY_SERIALIZER.deserialize("[" + displayName + "] ");
 		formattedMessage = formattedMessage.color(NamedTextColor.GOLD);
 		message = message.color(NamedTextColor.WHITE);
@@ -67,6 +78,7 @@ public class MessagingUtils {
 	}
 
 	public static void sendRawMessage(Player player, String message) {
+		message = TranslationsManager.translate(player, message);
 		message = translatePlayerName(player, message);
 		message = message.replace('§', '&');
 		TextComponent formattedMessage = AMPERSAND_SERIALIZER.deserialize(message);
@@ -75,6 +87,7 @@ public class MessagingUtils {
 
 	public static void sendClickableNPCMessage(Plugin plugin, Player player, String message,
 	                                           String commandStr, HoverEvent hoverEvent) {
+		message = TranslationsManager.translate(player, message);
 		message = translatePlayerName(player, message);
 		Component formattedMessage = LEGACY_SERIALIZER.deserialize("[" + message + "]");
 		formattedMessage = formattedMessage.color(NamedTextColor.LIGHT_PURPLE)

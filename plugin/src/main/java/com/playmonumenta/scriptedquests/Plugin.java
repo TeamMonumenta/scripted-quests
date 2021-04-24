@@ -53,6 +53,7 @@ import com.playmonumenta.scriptedquests.managers.QuestDeathManager;
 import com.playmonumenta.scriptedquests.managers.QuestLoginManager;
 import com.playmonumenta.scriptedquests.managers.QuestNpcManager;
 import com.playmonumenta.scriptedquests.managers.RaceManager;
+import com.playmonumenta.scriptedquests.managers.TranslationsManager;
 import com.playmonumenta.scriptedquests.managers.WaypointManager;
 import com.playmonumenta.scriptedquests.managers.ZonePropertyManager;
 import com.playmonumenta.scriptedquests.timers.CommandTimerManager;
@@ -122,6 +123,7 @@ public class Plugin extends JavaPlugin {
 
 		Growable.register(mGrowableManager);
 		Waypoint.register(this);
+		TranslationsManager.registerCommands();
 	}
 
 	@Override
@@ -152,6 +154,7 @@ public class Plugin extends JavaPlugin {
 		manager.registerEvents(new InteractablesListener(this), this);
 		manager.registerEvents(new PlayerListener(this), this);
 		manager.registerEvents(new WorldListener(this), this);
+		manager.registerEvents(new TranslationsManager(this), this);
 		manager.registerEvents(mTimerManager, this);
 		manager.registerEvents(mZonePropertyManager, this);
 		manager.registerEvents(mTradeManager, this);
@@ -200,6 +203,7 @@ public class Plugin extends JavaPlugin {
 		mCodeManager.reload(this, sender);
 		mZonePropertyManager.reload(this, sender);
 		mGrowableManager.reload(this, sender);
+		TranslationsManager.reload(sender);
 	}
 
 	public void reloadZones(CommandSender sender) {

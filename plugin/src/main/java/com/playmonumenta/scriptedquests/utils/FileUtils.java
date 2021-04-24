@@ -11,10 +11,11 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 
 public class FileUtils {
-	public static String readFile(String fileName) throws Exception, FileNotFoundException {
+	public static String readFile(String fileName) throws Exception {
 		// Do not attempt to catch exceptions here - let them propagate to the caller
 		File file;
 
@@ -56,18 +57,23 @@ public class FileUtils {
 
 		if (!file.exists()) {
 			file.getParentFile().mkdirs();
-			file.createNewFile();
 		}
+
+		/* Write the data to a temporary file in the same directory as the file */
+		File tempFile = File.createTempFile(file.getName(), null, file.getParentFile());
 
 		OutputStreamWriter writer = null;
 		try {
-			writer = new OutputStreamWriter(new FileOutputStream(fileName), StandardCharsets.UTF_8);
+			writer = new OutputStreamWriter(new FileOutputStream(tempFile), StandardCharsets.UTF_8);
 			writer.write(contents);
 		} finally {
 			if (writer != null) {
 				writer.close();
 			}
 		}
+
+		Files.move(tempFile.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+		tempFile.renameTo(file);
 	}
 
 
