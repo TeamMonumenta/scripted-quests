@@ -25,11 +25,13 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
 
 public class TranslationsManager implements Listener {
+	private static final int WRITE_DELAY_TICKS = 100;
 
 	private static TranslationsManager INSTANCE = null;
 
@@ -39,6 +41,8 @@ public class TranslationsManager implements Listener {
 	private TreeMap<String, TreeMap<String, String>> mTranslationsMap;
 	private boolean mWriting = false;
 	private boolean mReading = false;
+	private BukkitRunnable mWriteAndReloadRunnable = null;
+	private int mWriteDelayTicks = 0;
 
 	public TranslationsManager(Plugin mPlugin) {
 		INSTANCE = this;
@@ -95,7 +99,15 @@ public class TranslationsManager implements Listener {
 
 		if (INSTANCE.mWriting || INSTANCE.mReading) {
 			/* Only allow one read/write task at a time. Better to lose translations than cause problems here */
+			INSTANCE.mPlugin.getLogger().info("Read was cancelled by existing read/write task");
 			return;
+		}
+
+		if (INSTANCE.mWriteAndReloadRunnable != null && !INSTANCE.mWriteAndReloadRunnable.isCancelled()) {
+			/* This will overwrite the data that would be written - so cancel the pending write task */
+			INSTANCE.mPlugin.getLogger().info("Write was cancelled by new reload");
+			INSTANCE.mWriteAndReloadRunnable.cancel();
+			INSTANCE.mWriteAndReloadRunnable = null;
 		}
 
 		INSTANCE.mReading = true;
@@ -179,33 +191,70 @@ public class TranslationsManager implements Listener {
 	}
 
 	private void writeTranslationFileAndReloadShards() {
-		if (mWriting || mReading) {
-			/* Only allow one read/write task at a time. Better to lose translations than cause problems here */
+		/* Refresh the write delay since a new write request came in */
+		mWriteDelayTicks = WRITE_DELAY_TICKS;
+
+		if (mWriteAndReloadRunnable != null && !mWriteAndReloadRunnable.isCancelled()) {
+			/* A write is already scheduled, don't need to do anything */
 			return;
 		}
 
-		mWriting = true;
+		mWriteAndReloadRunnable = new BukkitRunnable() {
+			@Override
+			public void run() {
+				if (mWriteDelayTicks > 0) {
+					/* Still waiting for time to elapse before writing */
+					mWriteDelayTicks--;
+					return;
+				}
 
-		/* Serialize the content on the main thread so there's no risk that a translation added at the wrong time will cause corruption */
-		String content = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create().toJson(mTranslationsMap);
+				if (mReading) {
+					/* Whatever was going to be written is being overwritten by read anyway, so cancel the write */
+					mPlugin.getLogger().info("Write was cancelled by pending read");
+					this.cancel();
+					mWriteAndReloadRunnable = null;
+					return;
+				}
 
-		Bukkit.getScheduler().runTaskAsynchronously(mPlugin, () -> {
-			// write the map into the file
-			String filename = mPlugin.getDataFolder() + File.separator + "translations" + File.separator + "translations.json";
-			try {
-				FileUtils.writeFile(filename, content);
-			} catch (IOException e) {
-				mPlugin.getLogger().severe("Caught error writing translations: " + e.getMessage());
-				e.printStackTrace();
+				if (mWriting) {
+					/*
+					 * Only allow one write task at a time. Better to lose translations than cause problems here.
+					 * This will try again next time it ticks until writing is complete
+					 */
+					mPlugin.getLogger().info("Write was blocked by existing ongoing write, waiting a tick");
+					return;
+				}
+
+				mWriting = true;
+
+				/* Start writing. There's no longer a need for this runnable */
+				this.cancel();
+				mWriteAndReloadRunnable = null;
+
+				/* Serialize the content on the main thread so there's no risk that a translation added at the wrong time will cause corruption */
+				String content = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create().toJson(mTranslationsMap);
+
+				Bukkit.getScheduler().runTaskAsynchronously(mPlugin, () -> {
+					// write the map into the file
+					String filename = mPlugin.getDataFolder() + File.separator + "translations" + File.separator + "translations.json";
+					try {
+						FileUtils.writeFile(filename, content);
+					} catch (IOException e) {
+						mPlugin.getLogger().severe("Caught error writing translations: " + e.getMessage());
+						e.printStackTrace();
+					}
+
+					// reload the translations on all shards
+					// TODO: If the network relay isn't present, this won't do anything and will print an error in the logs
+					Bukkit.getScheduler().runTask(mPlugin, () -> {
+						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "broadcastcommand reloadtranslations");
+						mWriting = false;
+					});
+				});
 			}
+		};
 
-			// reload the translations on all shards
-			// TODO: If the network relay isn't present, this won't do anything and will print an error in the logs
-			Bukkit.getScheduler().runTask(mPlugin, () -> {
-				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "broadcastcommand reloadtranslations");
-				mWriting = false;
-			});
-		});
+		mWriteAndReloadRunnable.runTaskTimer(mPlugin, 1, 1);
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
