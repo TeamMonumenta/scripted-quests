@@ -417,13 +417,18 @@
 					},
 					"world": {
 						"title": "world",
-						"description": "The world that the mob will spawn in",
+						"description": "The world that the mob will spawn in. Leave blank to use the world of the player receiving the quest component.",
 						"type": "string"
 					},
 					"location": {
 						"title": "location",
 						"description": "The location to spawn",
 						"$ref": "xyz.json"
+					},
+					"spell_actions": {
+						"title": "spell_actions",
+						"description": "The actions to run when the mob spawns",
+						"$ref": "ability_actions.json"
 					}
 				}
             }

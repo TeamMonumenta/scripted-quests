@@ -22,7 +22,9 @@ public class ActionSpawnMob implements ActionBase {
 	private String mMobId;
 	public SpellActions mActions;
 	public final World mWorld;
-	public final Location mLocation;
+	public double mX = 0;
+	public double mY = 0;
+	public double mZ = 0;
 
 	public ActionSpawnMob(JsonElement value) throws Exception {
 		JsonObject json = value.getAsJsonObject();
@@ -31,14 +33,7 @@ public class ActionSpawnMob implements ActionBase {
 		String worldname = json.get("world").getAsString();
 		mWorld = Bukkit.getWorld(worldname);
 
-		if (mWorld == null) {
-			throw new Exception("world value is not a valid world!");
-		}
-
 		// Center
-		double x = 0;
-		double y = 0;
-		double z = 0;
 		if (json.get("location") == null ||
 			json.get("location").getAsJsonObject() == null) {
 			throw new Exception("Failed to parse 'center'");
@@ -51,23 +46,21 @@ public class ActionSpawnMob implements ActionBase {
 
 			switch (key) {
 				case "x":
-					x = v.getAsDouble();
+					mX = v.getAsDouble();
 					break;
 
 				case "y":
-					y = v.getAsDouble();
+					mY = v.getAsDouble();
 					break;
 
 				case "z":
-					z = v.getAsDouble();
+					mZ = v.getAsDouble();
 					break;
 
 				default:
 					throw new Exception("Unknown center key: '" + key + "'");
 			}
 		}
-
-		mLocation = new Location(mWorld, x, y, z);
 
 		mActions = new SpellActions(null, null, json.get("spell_actions"));
 	}
@@ -77,8 +70,9 @@ public class ActionSpawnMob implements ActionBase {
 		RPGMob mob = Core.getInstance().mMobManager.getMob(mMobId);
 
 		if (mob != null) {
-			LivingEntity entity = mob.spawnMob(mLocation);
-			mActions.doActions(entity, mLocation.clone().add(0, 1, 0));
+			Location loc = new Location(mWorld != null ? mWorld : player.getWorld(), mX, mY, mZ);
+			LivingEntity entity = mob.spawnMob(loc);
+			mActions.doActions(entity, loc.clone().add(0, 1, 0));
 		}
 	}
 }
