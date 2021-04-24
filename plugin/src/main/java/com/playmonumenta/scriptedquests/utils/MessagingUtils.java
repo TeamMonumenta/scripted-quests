@@ -45,7 +45,16 @@ public class MessagingUtils {
 		if (bold) {
 			formattedMessage = formattedMessage.decorate(TextDecoration.BOLD);
 		}
+		player.sendMessage(formattedMessage);
+	}
 
+	public static void sendUntranslatedActionBarMessage(Player player, NamedTextColor color, boolean bold, String message) {
+		message = translatePlayerName(player, message);
+		Component formattedMessage = LEGACY_SERIALIZER.deserialize(message);
+		formattedMessage = formattedMessage.color(color);
+		if (bold) {
+			formattedMessage = formattedMessage.decorate(TextDecoration.BOLD);
+		}
 		player.sendMessage(formattedMessage);
 	}
 
@@ -79,7 +88,10 @@ public class MessagingUtils {
 
 	public static void sendRawMessage(Player player, String message) {
 		message = TranslationsManager.translate(player, message);
-		sendUntranslatedRawMessage(player, message);
+		message = translatePlayerName(player, message);
+		message = message.replace('§', '&');
+		TextComponent formattedMessage = AMPERSAND_SERIALIZER.deserialize(message);
+		player.sendMessage(formattedMessage);
 	}
 
 	public static void sendUntranslatedRawMessage(Player player, String message) {
@@ -136,4 +148,6 @@ public class MessagingUtils {
 
 		e.printStackTrace();
 	}
+
+
 }
