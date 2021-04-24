@@ -62,94 +62,7 @@ public class TranslationsManager implements Listener {
 
 		mPlayerLanguageMap = new TreeMap<>();
 		mTranslationsMap = new TreeMap<>();
-		mGSheet = new TranslationGSheet();
-	}
-
-	public static class TranslationGSheet {
-
-		Sheets mSheets;
-		final String mSpreadsheetId = "1w7KZZOa8I9J8e6FeHFjTR7u7A35EbpVF11KqMwvfFdM";
-		final String mClientID = "136451119023-6mjv73r6047am1kkg86pd06j2621ic6h.apps.googleusercontent.com";
-		final String mClientSecret = "q07gjmrfLAJHFN06kPi3wZt9";
-		final String mRedirectURI = "urn:ietf:wg:oauth:2.0:oob";
-		final List<String> mScopes = Collections.singletonList(SheetsScopes.SPREADSHEETS);
-
-		String mLastUsedKey;
-
-		TranslationGSheet() {
-		}
-
-		public List<List<Object>> readTranslationsSheet(String sheetName) throws IOException {
-			ValueRange result = mSheets.spreadsheets().values().get(mSpreadsheetId, sheetName + "!A1:Z9999").execute();
-			return result.getValues();
-		}
-
-		public void writeTranslationsSheet(String sheetName, List<List<Object>> data) throws IOException {
-			ValueRange values = new ValueRange();
-			values.setValues(data);
-			mSheets.spreadsheets().values().update(mSpreadsheetId, sheetName + "!A1", values)
-				.setValueInputOption("RAW").execute();
-		}
-
-		boolean init(CommandSender sender, String key) {
-
-			if (key == null) {
-				key = mLastUsedKey;
-			} else {
-				sender.sendMessage("attempting auth with given key");
-			}
-
-			GoogleTokenResponse response = exchangeAuthKeys(key);
-
-			if (response == null) {
-				// key exchange failed. ask for a new auth
-				sender.sendMessage("Could not create a valid auth with the given token.");
-				String authURL = new GoogleAuthorizationCodeRequestUrl(mClientID, mRedirectURI, mScopes).build();
-				sender.sendMessage("To create a new one, go to the following link:");
-				sender.sendMessage(authURL);
-				sender.sendMessage("And relaunch the command with the toekn code as argument");
-				return true;
-			}
-
-			mLastUsedKey = key;
-			sender.sendMessage("Valid token. Auth given. gsheet sync starting");
-
-			GoogleCredential credential = new GoogleCredential.Builder()
-				.setClientSecrets(mClientID, mClientSecret)
-				.setTransport(new NetHttpTransport())
-				.setJsonFactory(new JacksonFactory())
-				.build()
-				.setAccessToken(response.getAccessToken())
-				.setRefreshToken(response.getRefreshToken());
-
-			try {
-				mSheets = new Sheets.Builder(GoogleNetHttpTransport.newTrustedTransport(), credential.getJsonFactory(), credential)
-					.setApplicationName("Monumenta Translations").build();
-			} catch (GeneralSecurityException | IOException e) {
-				e.printStackTrace();
-			}
-
-			return false;
-		}
-
-
-		private GoogleTokenResponse exchangeAuthKeys(String key) {
-			if (key == null) {
-				return null;
-			}
-			GoogleTokenResponse response;
-			try {
-				response = new GoogleAuthorizationCodeTokenRequest(new NetHttpTransport(), new JacksonFactory(),
-					mClientID, mClientSecret, key, mRedirectURI)
-					.execute();
-			} catch (IOException e) {
-				e.printStackTrace();
-				return null;
-			}
-			return response;
-		}
-
-
+		mGSheet = new TranslationGSheet(mPlugin);
 	}
 
 	public static String translate(Player player, String message) {
@@ -391,6 +304,117 @@ public class TranslationsManager implements Listener {
 		mPlayerLanguageMap.remove(event.getPlayer().getUniqueId());
 	}
 
+	/**
+	 *
+	 * GSHEET STUFF
+	 *
+	 */
+
+
+	public static class TranslationGSheet {
+
+		Sheets mSheets;
+		String mLastUsedKey;
+		final String mSpreadsheetId = "1w7KZZOa8I9J8e6FeHFjTR7u7A35EbpVF11KqMwvfFdM";
+		final String mRedirectURI = "urn:ietf:wg:oauth:2.0:oob";
+		final List<String> mScopes = Collections.singletonList(SheetsScopes.SPREADSHEETS);
+		Plugin mPlugin;
+
+		public List<List<Object>> readSheet(String sheetName) throws IOException {
+			ValueRange result = mSheets.spreadsheets().values().get(mSpreadsheetId, sheetName + "!A1:Z9999").execute();
+			return result.getValues();
+		}
+
+		TranslationGSheet(Plugin plugin) {
+			mPlugin = plugin;
+		}
+
+		private String[] getClientKeysFromCredsFile() {
+			String[] keys = new String[2];
+			// load the config file for client keys
+			String filename = mPlugin.getDataFolder() + File.separator + "translations" + File.separator + "credentials.txt";
+			String contents = "failed::toload";
+			try {
+				contents = FileUtils.readFile(filename);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			String[] split = contents.split("::");
+			keys[0] = split[0];
+			keys[1] = split[1].replace("\n", "");
+			return keys;
+		}
+
+		public void writeSheet(String sheetName, List<List<Object>> data) throws IOException {
+			ValueRange values = new ValueRange();
+			values.setValues(data);
+			mSheets.spreadsheets().values().update(mSpreadsheetId, sheetName + "!A1", values)
+				.setValueInputOption("RAW").execute();
+		}
+
+		boolean init(CommandSender sender, String key) {
+
+			if (key == null) {
+				key = mLastUsedKey;
+			} else {
+				sender.sendMessage("attempting auth with given key");
+			}
+
+			String[] clientKeys = getClientKeysFromCredsFile();
+			sender.sendMessage("\"" + clientKeys[0] + "\"");
+			sender.sendMessage("\"" + clientKeys[1] + "\"");
+
+			GoogleTokenResponse response = exchangeAuthKeys(key, clientKeys);
+
+			if (response == null) {
+				// key exchange failed. ask for a new auth
+				sender.sendMessage("Could not create a valid auth with the given token.");
+				String authURL = new GoogleAuthorizationCodeRequestUrl(clientKeys[0], mRedirectURI, mScopes).build();
+				sender.sendMessage("To create a new one, go to the following link:");
+				sender.sendMessage(authURL);
+				sender.sendMessage("And relaunch the command with the toekn code as argument");
+				return true;
+			}
+
+			mLastUsedKey = key;
+			sender.sendMessage("Valid token. Auth given. gsheet sync starting");
+
+			// deprecated, but could not find an alternative.
+			GoogleCredential credential = new GoogleCredential.Builder()
+				.setClientSecrets(clientKeys[0], clientKeys[1])
+				.setTransport(new NetHttpTransport())
+				.setJsonFactory(new JacksonFactory())
+				.build()
+				.setAccessToken(response.getAccessToken())
+				.setRefreshToken(response.getRefreshToken());
+
+			try {
+				mSheets = new Sheets.Builder(GoogleNetHttpTransport.newTrustedTransport(), credential.getJsonFactory(), credential)
+					.setApplicationName("Monumenta Translations").build();
+			} catch (GeneralSecurityException | IOException e) {
+				e.printStackTrace();
+			}
+
+			return false;
+		}
+
+		private GoogleTokenResponse exchangeAuthKeys(String key, String[] clientKeys) {
+			if (key == null) {
+				return null;
+			}
+			GoogleTokenResponse response;
+			try {
+				response = new GoogleAuthorizationCodeTokenRequest(new NetHttpTransport(), new JacksonFactory(),
+					clientKeys[0], clientKeys[1], key, mRedirectURI)
+					.execute();
+			} catch (IOException e) {
+				e.printStackTrace();
+				return null;
+			}
+			return response;
+		}
+	}
+
 	TranslationGSheet mGSheet;
 
 	public void syncTranslationSheet(CommandSender sender, String key) {
@@ -405,7 +429,7 @@ public class TranslationsManager implements Listener {
 			sender.sendMessage("Reading values");
 
 			try {
-				List<List<Object>> rows = mGSheet.readTranslationsSheet("Translations");
+				List<List<Object>> rows = mGSheet.readSheet("Translations");
 				readSheetValues(rows);
 			} catch (IOException e) {
 				sender.sendMessage("Failed to read values from sheet. Abort. error: " + e.getMessage());
@@ -419,15 +443,14 @@ public class TranslationsManager implements Listener {
 			sender.sendMessage("Writing values");
 			List<List<Object>> data = convertDataToSheetList();
 			try {
-				mGSheet.writeTranslationsSheet("Translations", data);
+				mGSheet.writeSheet("Translations", data);
 			} catch (IOException e) {
 				sender.sendMessage("Failed to write values into sheet. error: " + e.getMessage());
 				e.printStackTrace();
+				return;
 			}
 			sender.sendMessage("Done!");
-
 		});
-
 	}
 
 	private List<List<Object>> convertDataToSheetList() {
