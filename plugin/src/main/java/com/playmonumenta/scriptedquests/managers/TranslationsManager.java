@@ -4,13 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.UUID;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeRequestUrl;
@@ -31,7 +30,6 @@ import com.playmonumenta.scriptedquests.utils.QuestUtils;
 
 import dev.jorel.commandapi.arguments.TextArgument;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -67,7 +65,7 @@ public class TranslationsManager implements Listener {
 		mGSheet = new TranslationGSheet();
 	}
 
-	public class TranslationGSheet {
+	public static class TranslationGSheet {
 
 		Sheets mSheets;
 		final String mSpreadsheetId = "1w7KZZOa8I9J8e6FeHFjTR7u7A35EbpVF11KqMwvfFdM";
@@ -84,6 +82,13 @@ public class TranslationsManager implements Listener {
 		public List<List<Object>> readTranslationsSheet(String sheetName) throws IOException {
 			ValueRange result = mSheets.spreadsheets().values().get(mSpreadsheetId, sheetName + "!A1:Z9999").execute();
 			return result.getValues();
+		}
+
+		public void writeTranslationsSheet(String sheetName, List<List<Object>> data) throws IOException {
+			ValueRange values = new ValueRange();
+			values.setValues(data);
+			mSheets.spreadsheets().values().update(mSpreadsheetId, sheetName + "!A1", values)
+				.setValueInputOption("RAW").execute();
 		}
 
 		boolean init(CommandSender sender, String key) {
@@ -107,7 +112,7 @@ public class TranslationsManager implements Listener {
 			}
 
 			mLastUsedKey = key;
-			sender.sendMessage("Valid token. exprires in " + response.getExpiresInSeconds() + " seconds");
+			sender.sendMessage("Valid token. Auth given. gsheet sync starting");
 
 			GoogleCredential credential = new GoogleCredential.Builder()
 				.setClientSecrets(mClientID, mClientSecret)
@@ -144,6 +149,7 @@ public class TranslationsManager implements Listener {
 			return response;
 		}
 
+
 	}
 
 	public static String translate(Player player, String message) {
@@ -171,16 +177,6 @@ public class TranslationsManager implements Listener {
 			.executes((sender, args) -> {
 				if (INSTANCE != null) {
 					reload(sender);
-				}
-			})
-			.register();
-
-		// updatetranslationscsv
-		new CommandAPICommand("updatetranslationtsv")
-			.withPermission(perm)
-			.executes((sender, args) -> {
-				if (INSTANCE != null) {
-					INSTANCE.loadAndUpdateTSV(sender);
 				}
 			})
 			.register();
@@ -395,122 +391,7 @@ public class TranslationsManager implements Listener {
 		mPlayerLanguageMap.remove(event.getPlayer().getUniqueId());
 	}
 
-	// wont be used once gsheet is up
-	public void loadAndUpdateTSV(CommandSender sender) {
-
-		String fileName = mPlugin.getDataFolder() + File.separator + "translations" + File.separator + "common" + File.separator + "translations.tsv";
-
-		// load the values of the csv
-		loadTSV(sender, fileName);
-
-		// update the base translation file with the potential new values
-		writeTranslationFileAndReloadShards();
-
-		// write the translationMap into the csv (update the csv)
-		writeTSV(fileName);
-
-		sender.sendMessage("tsv values loaded into translations. tsv updated.");
-
-	}
-
-	// wont be used once gsheet is up
-	private void writeTSV(String fileName) {
-
-		// first, go through the map once to get the list of all languages
-		TreeSet<String> languagesSet = new TreeSet<>();
-		for (Map.Entry<String, TreeMap<String, String>> entry : mTranslationsMap.entrySet()) {
-			languagesSet.addAll(entry.getValue().keySet());
-		}
-		// from that, create the first line of csv, which will act as index
-		int valuesSize = languagesSet.size() + 1;
-		String[] languages = new String[valuesSize];
-		languages[0] = "en-US (base)";
-		int i = 1;
-		// make the map to get the index from the language (inverse of array)
-		HashMap<String, Integer> langMap = new HashMap<>();
-		for (String s : languagesSet) {
-			languages[i] = s;
-			langMap.put(s, i);
-			i++;
-		}
-
-		ArrayList<String> out = new ArrayList<>();
-		out.add(String.join("\t", languages));
-
-		// go through all lines
-		for (Map.Entry<String, TreeMap<String, String>> entry : mTranslationsMap.entrySet()) {
-			String[] line = new String[valuesSize];
-			Arrays.fill(line, "");
-			String baseMessage = entry.getKey().replace("\n", "\\n").replace("\"", "@Q");
-			line[0] = baseMessage;
-
-			for (Map.Entry<String, String> entry2 : entry.getValue().entrySet()) {
-				String translation = entry2.getValue().replace("\n", "\\n").replace("\"", "@Q");
-				line[langMap.get(entry2.getKey())] = translation;
-			}
-			out.add(String.join("\t", line));
-		}
-
-		// join lines together
-		String finl = String.join("\n", out.toArray(new String[0]));
-
-		try {
-			FileUtils.writeFile(fileName, finl);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-	}
-
-	// wont be used once gsheet is up
-	private void loadTSV(CommandSender sender, String fileName) {
-		String content = "";
-		try {
-			content = FileUtils.readFile(fileName);
-		} catch (Exception exception) {
-			exception.printStackTrace();
-		}
-		String[] lines = content.split("\n");
-
-		// store first line as list of languages
-		String[] languages = lines[0].split("\t");
-
-		// parse each line
-		for (int i = 1; i < lines.length; i++) {
-			String[] values = lines[i].split("\t");
-			// first value is the english version, use this to get the already loaded map
-			// the loaded translationMap should always exist.
-			String message = values[0].replace("\\n", "\n").replace("@Q", "\"");
-			TreeMap<String, String> translationMap = mTranslationsMap.getOrDefault(message, new TreeMap<>());
-			// parse and store each value
-			for (int j = 1; j < values.length; j++) {
-				String translation = values[j];
-				try {
-					if (!translation.equals("")) {
-						translationMap.put(languages[j], translation.replace("\\n", "\n").replace("@Q", "\""));
-					}
-				} catch (NullPointerException e) {
-					String errMessage = ChatColor.GOLD + "parsing error on line: " + ChatColor.RESET +
-						lines[i].replace("\t", ChatColor.RED + "TAB" + ChatColor.RESET) +
-						ChatColor.GOLD + " Could not match with language list: " + ChatColor.RESET +
-						lines[0].replace("\t", ChatColor.RED + "TAB" + ChatColor.RESET) +
-						ChatColor.GOLD + " Match sizes: " + languages.length + ":" + values.length + ChatColor.RESET;
-					sender.sendMessage(errMessage);
-					System.out.println(errMessage);
-					throw e;
-				}
-			}
-			mTranslationsMap.put(message, translationMap);
-		}
-	}
-
 	TranslationGSheet mGSheet;
-
-	// stats for sync
-	private int mMessageRows;
-	private int mDeletedRows;
-	private int mLoadedRows;
-	private int mLoadedTranslations;
 
 	public void syncTranslationSheet(CommandSender sender, String key) {
 
@@ -521,13 +402,10 @@ public class TranslationsManager implements Listener {
 				return;
 			}
 
-			mMessageRows = 0;
-			mDeletedRows = 0;
-			mLoadedRows = 0;
-			mLoadedTranslations = 0;
+			sender.sendMessage("Reading values");
 
 			try {
-				List<List<Object>> rows = mGSheet.readTranslationsSheet("TEST_DO_NOT_TOUCH");
+				List<List<Object>> rows = mGSheet.readTranslationsSheet("Translations");
 				readSheetValues(rows);
 			} catch (IOException e) {
 				sender.sendMessage("Failed to read values from sheet. Abort. error: " + e.getMessage());
@@ -535,14 +413,71 @@ public class TranslationsManager implements Listener {
 				return;
 			}
 
+			sender.sendMessage("Reloading shards");
 			writeAndReloadNow();
+
+			sender.sendMessage("Writing values");
+			List<List<Object>> data = convertDataToSheetList();
+			try {
+				mGSheet.writeTranslationsSheet("Translations", data);
+			} catch (IOException e) {
+				sender.sendMessage("Failed to write values into sheet. error: " + e.getMessage());
+				e.printStackTrace();
+			}
+			sender.sendMessage("Done!");
 
 		});
 
 	}
 
-	private void readSheetValues(List<List<Object>> rows) {
+	private List<List<Object>> convertDataToSheetList() {
+		List<List<Object>> rows = new ArrayList<>();
 
+		TreeMap<String, String> languages = getListOfAvailableLanguages();
+		Set<String> langSet = languages.keySet();
+		// it is expected that the languages map contains all languages that have at least 1 translation
+
+		// create and populate the first row
+		List<Object> row = new ArrayList<>();
+		row.add("English");
+		row.add("S | Status");
+		for (String s : langSet) {
+			row.add(s + " | " + languages.get(s));
+		}
+		rows.add(row);
+
+		// for every message
+		for (String message : mTranslationsMap.keySet()) {
+			Map<String, String> translations = mTranslationsMap.get(message);
+			row = new ArrayList<>();
+			// first column, the english message
+			row.add(message);
+			// second column, its translation status
+			row.add(translations.getOrDefault("S", "WIP"));
+			// following colums, translations
+			for (String s : langSet) {
+				row.add(translations.getOrDefault(s, ""));
+			}
+
+			rows.add(row);
+		}
+
+		return rows;
+	}
+
+	private TreeMap<String, String> getListOfAvailableLanguages() {
+		// if null, a lot of things will break. its good that nullpointers will show up then.
+		TreeMap<String, String> out = new TreeMap<>();
+
+		for (Map.Entry<String, String> entry : mTranslationsMap.get(" @ @ LANGUAGES @ @ ").entrySet()) {
+			if (!entry.getKey().equals("S")) {
+				out.put(entry.getKey(), entry.getValue());
+			}
+		}
+		return out;
+	}
+
+	private void readSheetValues(List<List<Object>> rows) {
 		HashMap<Integer, String> indexToLanguageMap = new HashMap<>();
 
 		// for every row
@@ -556,22 +491,18 @@ public class TranslationsManager implements Listener {
 
 			readDataRow(row, indexToLanguageMap);
 		}
-
 	}
 
 
 	private void readDataRow(List<Object> row, HashMap<Integer, String> indexToLanguageMap) {
 
-		mMessageRows++;
 
 		String message = (String)row.get(0);
 		String status = (String)row.get(1);
 
 		if (status.equals("DEL")) {
 			// line is notified as to be deleted from the system.
-			// do that
 			mTranslationsMap.remove(message);
-			mDeletedRows++;
 			return;
 		}
 
@@ -590,12 +521,9 @@ public class TranslationsManager implements Listener {
 	}
 
 	private void readLanguageRow(List<Object> row, HashMap<Integer, String> indexToLanguageMap) {
-
 		// first cell is english. ignore
 		for (int i = 1; i < row.size(); i++) {
 			indexToLanguageMap.put(i, ((String)row.get(i)).split(" \\| ")[0]);
 		}
-
-		System.out.println(new GsonBuilder().setPrettyPrinting().create().toJson(indexToLanguageMap));
 	}
 }
