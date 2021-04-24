@@ -10,6 +10,7 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
@@ -53,7 +54,7 @@ public class FileUtils {
 
 	public static void writeFile(String fileName, String contents) throws IOException {
 		// Do not attempt to catch exceptions here - let them propagate to the caller
-		File file = new File(fileName);
+		File file = Path.of(fileName).toRealPath().toFile();
 
 		if (!file.exists()) {
 			file.getParentFile().mkdirs();
