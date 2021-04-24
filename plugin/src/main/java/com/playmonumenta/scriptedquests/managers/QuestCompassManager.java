@@ -33,7 +33,9 @@ public class QuestCompassManager {
 		}
 
 		private void directPlayer(WaypointManager mgr, Player player) {
-			MessagingUtils.sendRawMessage(mPlugin, player, mTitle + ": " + mLocation.getMessage());
+			// until logic is changed to have a printf-like MessagingUtils, this needs to stay untranslated
+			// as to not populate the translation message pool with unique death message strings
+			MessagingUtils.sendUntranslatedRawMessage(player, mTitle + ": " + mLocation.getMessage());
 			mgr.setWaypoint(player, mLocation);
 		}
 	}
@@ -145,7 +147,7 @@ public class QuestCompassManager {
 		}
 
 		if (entries.size() == 0) {
-			MessagingUtils.sendActionBarMessage(mPlugin, player, "You have no active quest.");
+			MessagingUtils.sendActionBarMessage(player, "You have no active quest.");
 		} else {
 			entries.get(index).directPlayer(mPlugin.mWaypointManager, player);
 		}

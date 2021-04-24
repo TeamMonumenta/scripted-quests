@@ -79,6 +79,10 @@ public class MessagingUtils {
 
 	public static void sendRawMessage(Player player, String message) {
 		message = TranslationsManager.translate(player, message);
+		sendUntranslatedRawMessage(player, message);
+	}
+
+	public static void sendUntranslatedRawMessage(Player player, String message) {
 		message = translatePlayerName(player, message);
 		message = message.replace('§', '&');
 		TextComponent formattedMessage = AMPERSAND_SERIALIZER.deserialize(message);

@@ -3,6 +3,7 @@ package com.playmonumenta.scriptedquests;
 import java.io.File;
 import java.util.Random;
 
+import com.playmonumenta.scriptedquests.managers.TranslationsManager;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;

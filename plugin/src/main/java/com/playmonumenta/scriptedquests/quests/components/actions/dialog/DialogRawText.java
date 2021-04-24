@@ -30,7 +30,7 @@ public class DialogRawText implements DialogBase {
 	@Override
 	public void sendDialog(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
 		for (String text : mText) {
-			MessagingUtils.sendRawMessage(plugin, player, text);
+			MessagingUtils.sendRawMessage(player, text);
 		}
 	}
 }

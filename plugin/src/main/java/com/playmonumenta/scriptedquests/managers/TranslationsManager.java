@@ -2,20 +2,34 @@ package com.playmonumenta.scriptedquests.managers;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.UUID;
 
+import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeRequestUrl;
+import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest;
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
+import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.services.sheets.v4.Sheets;
+import com.google.api.services.sheets.v4.SheetsScopes;
+import com.google.api.services.sheets.v4.model.ValueRange;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.utils.FileUtils;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
 
+import dev.jorel.commandapi.arguments.TextArgument;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -50,6 +64,86 @@ public class TranslationsManager implements Listener {
 
 		mPlayerLanguageMap = new TreeMap<>();
 		mTranslationsMap = new TreeMap<>();
+		mGSheet = new TranslationGSheet();
+	}
+
+	public class TranslationGSheet {
+
+		Sheets mSheets;
+		final String mSpreadsheetId = "1w7KZZOa8I9J8e6FeHFjTR7u7A35EbpVF11KqMwvfFdM";
+		final String mClientID = "136451119023-6mjv73r6047am1kkg86pd06j2621ic6h.apps.googleusercontent.com";
+		final String mClientSecret = "q07gjmrfLAJHFN06kPi3wZt9";
+		final String mRedirectURI = "urn:ietf:wg:oauth:2.0:oob";
+		final List<String> mScopes = Collections.singletonList(SheetsScopes.SPREADSHEETS);
+
+		String mLastUsedKey;
+
+		TranslationGSheet() {
+		}
+
+		public List<List<Object>> readTranslationsSheet(String sheetName) throws IOException {
+			ValueRange result = mSheets.spreadsheets().values().get(mSpreadsheetId, sheetName + "!A1:Z9999").execute();
+			return result.getValues();
+		}
+
+		boolean init(CommandSender sender, String key) {
+
+			if (key == null) {
+				key = mLastUsedKey;
+			} else {
+				sender.sendMessage("attempting auth with given key");
+			}
+
+			GoogleTokenResponse response = exchangeAuthKeys(key);
+
+			if (response == null) {
+				// key exchange failed. ask for a new auth
+				sender.sendMessage("Could not create a valid auth with the given token.");
+				String authURL = new GoogleAuthorizationCodeRequestUrl(mClientID, mRedirectURI, mScopes).build();
+				sender.sendMessage("To create a new one, go to the following link:");
+				sender.sendMessage(authURL);
+				sender.sendMessage("And relaunch the command with the toekn code as argument");
+				return true;
+			}
+
+			mLastUsedKey = key;
+			sender.sendMessage("Valid token. exprires in " + response.getExpiresInSeconds() + " seconds");
+
+			GoogleCredential credential = new GoogleCredential.Builder()
+				.setClientSecrets(mClientID, mClientSecret)
+				.setTransport(new NetHttpTransport())
+				.setJsonFactory(new JacksonFactory())
+				.build()
+				.setAccessToken(response.getAccessToken())
+				.setRefreshToken(response.getRefreshToken());
+
+			try {
+				mSheets = new Sheets.Builder(GoogleNetHttpTransport.newTrustedTransport(), credential.getJsonFactory(), credential)
+					.setApplicationName("Monumenta Translations").build();
+			} catch (GeneralSecurityException | IOException e) {
+				e.printStackTrace();
+			}
+
+			return false;
+		}
+
+
+		private GoogleTokenResponse exchangeAuthKeys(String key) {
+			if (key == null) {
+				return null;
+			}
+			GoogleTokenResponse response;
+			try {
+				response = new GoogleAuthorizationCodeTokenRequest(new NetHttpTransport(), new JacksonFactory(),
+					mClientID, mClientSecret, key, mRedirectURI)
+					.execute();
+			} catch (IOException e) {
+				e.printStackTrace();
+				return null;
+			}
+			return response;
+		}
+
 	}
 
 	public static String translate(Player player, String message) {
@@ -90,6 +184,26 @@ public class TranslationsManager implements Listener {
 				}
 			})
 			.register();
+
+		// synctranslationsheet
+		new CommandAPICommand("synctranslationsheet")
+			.withPermission(perm)
+			.executes((sender, args) -> {
+				if (INSTANCE != null) {
+					INSTANCE.syncTranslationSheet(sender, null);
+				}
+			})
+			.register();
+
+		new CommandAPICommand("synctranslationsheet")
+			.withPermission(perm)
+			.withArguments(new TextArgument("callbackKey"))
+			.executes((sender, args) -> {
+				if (INSTANCE != null) {
+					INSTANCE.syncTranslationSheet(sender, (String)args[0]);
+				}
+
+			}).register();
 	}
 
 	public static void reload(CommandSender sender) {
@@ -231,30 +345,35 @@ public class TranslationsManager implements Listener {
 				this.cancel();
 				mWriteAndReloadRunnable = null;
 
-				/* Serialize the content on the main thread so there's no risk that a translation added at the wrong time will cause corruption */
-				String content = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create().toJson(mTranslationsMap);
+				writeAndReloadNow();
 
-				Bukkit.getScheduler().runTaskAsynchronously(mPlugin, () -> {
-					// write the map into the file
-					String filename = mPlugin.getDataFolder() + File.separator + "translations" + File.separator + "translations.json";
-					try {
-						FileUtils.writeFile(filename, content);
-					} catch (IOException e) {
-						mPlugin.getLogger().severe("Caught error writing translations: " + e.getMessage());
-						e.printStackTrace();
-					}
-
-					// reload the translations on all shards
-					// TODO: If the network relay isn't present, this won't do anything and will print an error in the logs
-					Bukkit.getScheduler().runTask(mPlugin, () -> {
-						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "broadcastcommand reloadtranslations");
-						mWriting = false;
-					});
-				});
 			}
 		};
 
 		mWriteAndReloadRunnable.runTaskTimer(mPlugin, 1, 1);
+	}
+
+	private void writeAndReloadNow() {
+		/* Serialize the content on the main thread so there's no risk that a translation added at the wrong time will cause corruption */
+		String content = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create().toJson(mTranslationsMap);
+
+		Bukkit.getScheduler().runTaskAsynchronously(mPlugin, () -> {
+			// write the map into the file
+			String filename = mPlugin.getDataFolder() + File.separator + "translations" + File.separator + "translations.json";
+			try {
+				FileUtils.writeFile(filename, content);
+			} catch (IOException e) {
+				mPlugin.getLogger().severe("Caught error writing translations: " + e.getMessage());
+				e.printStackTrace();
+			}
+
+			// reload the translations on all shards
+			// TODO: If the network relay isn't present, this won't do anything and will print an error in the logs
+			Bukkit.getScheduler().runTask(mPlugin, () -> {
+				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "broadcastcommand reloadtranslations");
+				mWriting = false;
+			});
+		});
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
@@ -383,5 +502,100 @@ public class TranslationsManager implements Listener {
 			}
 			mTranslationsMap.put(message, translationMap);
 		}
+	}
+
+	TranslationGSheet mGSheet;
+
+	// stats for sync
+	private int mMessageRows;
+	private int mDeletedRows;
+	private int mLoadedRows;
+	private int mLoadedTranslations;
+
+	public void syncTranslationSheet(CommandSender sender, String key) {
+
+		Bukkit.getScheduler().runTaskAsynchronously(mPlugin, () -> {
+
+			if (mGSheet.init(sender, key)) {
+				//initialisation failed, and a new auth has been asked
+				return;
+			}
+
+			mMessageRows = 0;
+			mDeletedRows = 0;
+			mLoadedRows = 0;
+			mLoadedTranslations = 0;
+
+			try {
+				List<List<Object>> rows = mGSheet.readTranslationsSheet("TEST_DO_NOT_TOUCH");
+				readSheetValues(rows);
+			} catch (IOException e) {
+				sender.sendMessage("Failed to read values from sheet. Abort. error: " + e.getMessage());
+				e.printStackTrace();
+				return;
+			}
+
+			writeAndReloadNow();
+
+		});
+
+	}
+
+	private void readSheetValues(List<List<Object>> rows) {
+
+		HashMap<Integer, String> indexToLanguageMap = new HashMap<>();
+
+		// for every row
+		for (List<Object> row : rows) {
+			// if language index map is empty, then its first row.
+			// parse language map form it
+			if (indexToLanguageMap.isEmpty()) {
+				readLanguageRow(row, indexToLanguageMap);
+				continue;
+			}
+
+			readDataRow(row, indexToLanguageMap);
+		}
+
+	}
+
+
+	private void readDataRow(List<Object> row, HashMap<Integer, String> indexToLanguageMap) {
+
+		mMessageRows++;
+
+		String message = (String)row.get(0);
+		String status = (String)row.get(1);
+
+		if (status.equals("DEL")) {
+			// line is notified as to be deleted from the system.
+			// do that
+			mTranslationsMap.remove(message);
+			mDeletedRows++;
+			return;
+		}
+
+		TreeMap<String, String> map = mTranslationsMap.getOrDefault(message, new TreeMap<>());
+
+		for (int i = 1; i < row.size(); i++) {
+			String translation = (String)row.get(i);
+			if (translation == null || translation.equals("")) {
+				continue;
+			}
+			map.put(indexToLanguageMap.get(i), translation);
+		}
+
+		mTranslationsMap.put(message, map);
+
+	}
+
+	private void readLanguageRow(List<Object> row, HashMap<Integer, String> indexToLanguageMap) {
+
+		// first cell is english. ignore
+		for (int i = 1; i < row.size(); i++) {
+			indexToLanguageMap.put(i, ((String)row.get(i)).split(" \\| ")[0]);
+		}
+
+		System.out.println(new GsonBuilder().setPrettyPrinting().create().toJson(indexToLanguageMap));
 	}
 }
