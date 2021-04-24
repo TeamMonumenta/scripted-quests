@@ -6,6 +6,7 @@ import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,9 +29,11 @@ import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.utils.FileUtils;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
 
+import dev.jorel.commandapi.arguments.StringArgument;
 import dev.jorel.commandapi.arguments.TextArgument;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ProxiedCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -49,7 +52,7 @@ public class TranslationsManager implements Listener {
 
 	private final Plugin mPlugin;
 
-	private TreeMap<UUID, String> mPlayerLanguageMap;
+	private final TreeMap<UUID, String> mPlayerLanguageMap;
 	private TreeMap<String, TreeMap<String, String>> mTranslationsMap;
 	private boolean mWriting = false;
 	private boolean mReading = false;
@@ -81,6 +84,104 @@ public class TranslationsManager implements Listener {
 		return "en-US";
 	}
 
+	private String translatePriv(String message, Player player) {
+
+		String lang = mPlayerLanguageMap.get(player.getUniqueId());
+
+		if (lang == null || lang.equals("en.US")) {
+			// base language, no need to translate
+			return message;
+		}
+
+		TreeMap<String, String> translations = mTranslationsMap.get(message);
+		if (translations == null) {
+			// no translations for this message. means its new in the system. needs to be added.
+			// do not attempt to translate afterwards, since there will be no translation for that new string anyway
+			addNewEntry(message);
+			return message;
+		}
+
+		// translate the message. if there is no entry for the player language, default fallback to the base message
+		String translated = translations.get(lang);
+		if (translated == null || translated.isEmpty()) {
+			translated = message;
+		}
+
+		return translated;
+	}
+
+	private void addNewEntry(String message) {
+
+		// update the loaded translation map
+		mTranslationsMap.put(message, new TreeMap<>());
+
+		mPlugin.getLogger().info("Added new entry for translations: " + message);
+
+		writeTranslationFileAndReloadShards();
+	}
+
+	private void changeLanguage(CommandSender sender, String arg) {
+		if (sender instanceof ProxiedCommandSender) {
+			ProxiedCommandSender target = (ProxiedCommandSender)sender;
+			sender = target.getCallee();
+		}
+		if (!(sender instanceof Player)) {
+			sender.sendMessage("This command can only be run by players");
+			return;
+		}
+		Player player = (Player)sender;
+
+		String wantedLang = null;
+		// go through the language list for a matching argument
+		for (Map.Entry<String, String> entry : getListOfAvailableLanguages().entrySet()) {
+			if (entry.getValue().toLowerCase().equals(arg.toLowerCase())) {
+				wantedLang = entry.getKey();
+				break;
+			}
+		}
+		if (wantedLang == null) {
+			sender.sendMessage("Could not find an existing language corresponding to the value " + arg);
+			return;
+		}
+
+		// remove old language tags from the player
+		removeLanguageOfPlayer(player);
+
+		// add the new language tag
+		player.addScoreboardTag("language_" + wantedLang);
+
+		// refresh
+		playerJoin(player, true);
+
+	}
+
+	public static void removeLanguageOfPlayer(Player player) {
+		Set<String> toDelete = new HashSet<>();
+		for (String s : player.getScoreboardTags()) {
+			if (s.startsWith("language_")) {
+				toDelete.add(s);
+			}
+		}
+		for (String s : toDelete) {
+			player.removeScoreboardTag(s);
+		}
+	}
+
+	public void playerJoin(Player player, boolean display) {
+		String lang = getLanguageOfPlayer(player);
+		mPlayerLanguageMap.put(player.getUniqueId(), lang);
+
+		if (display && !lang.equals("en-US")) {
+			player.sendMessage("Language set to: " + lang);
+		}
+	}
+
+	/**
+	 *
+	 * COMMANDS
+	 *
+	 */
+
 	public static void registerCommands() {
 		CommandPermission perm = CommandPermission.fromString("monumenta.translations");
 
@@ -91,8 +192,7 @@ public class TranslationsManager implements Listener {
 				if (INSTANCE != null) {
 					reload(sender);
 				}
-			})
-			.register();
+			}).register();
 
 		// synctranslationsheet
 		new CommandAPICommand("synctranslationsheet")
@@ -101,8 +201,7 @@ public class TranslationsManager implements Listener {
 				if (INSTANCE != null) {
 					INSTANCE.syncTranslationSheet(sender, null);
 				}
-			})
-			.register();
+			}).register();
 
 		new CommandAPICommand("synctranslationsheet")
 			.withPermission(perm)
@@ -111,9 +210,36 @@ public class TranslationsManager implements Listener {
 				if (INSTANCE != null) {
 					INSTANCE.syncTranslationSheet(sender, (String)args[0]);
 				}
+			}).register();
 
+		new CommandAPICommand("changelanguage")
+			.withPermission(CommandPermission.fromString("monumenta.changelanguage"))
+			.withArguments(new StringArgument("language")
+				// todo : overrideSuggestions is not working because instance is null.
+				// move the command registering after object init?
+				.overrideSuggestions(INSTANCE != null ? getListOfAvailableLanguages().values() : new ArrayList<>()))
+			.executes((sender, args) -> {
+				if (INSTANCE != null) {
+					INSTANCE.changeLanguage(sender, (String)args[0]);
+				}
+			}).register();
+
+		new CommandAPICommand("cl")
+			.withPermission(CommandPermission.fromString("monumenta.changelanguage"))
+			.withArguments(new StringArgument("language")
+				.overrideSuggestions(INSTANCE != null ? getListOfAvailableLanguages().values() : new ArrayList<>()))
+			.executes((sender, args) -> {
+				if (INSTANCE != null) {
+					INSTANCE.changeLanguage(sender, (String)args[0]);
+				}
 			}).register();
 	}
+
+	/**
+	 *
+	 * FILE RELOAD/WRITING/READING
+	 *
+	 */
 
 	public static void reload(CommandSender sender) {
 		if (INSTANCE == null) {
@@ -175,42 +301,6 @@ public class TranslationsManager implements Listener {
 		for (Player p : Bukkit.getOnlinePlayers()) {
 			INSTANCE.playerJoin(p, false);
 		}
-	}
-
-	private String translatePriv(String message, Player player) {
-
-		String lang = mPlayerLanguageMap.get(player.getUniqueId());
-
-		if (lang == null || lang.equals("en.US")) {
-			// base language, no need to translate
-			return message;
-		}
-
-		TreeMap<String, String> translations = mTranslationsMap.get(message);
-		if (translations == null) {
-			// no translations for this message. means its new in the system. needs to be added.
-			// do not attempt to translate afterwards, since there will be no translation for that new string anyway
-			addNewEntry(message);
-			return message;
-		}
-
-		// translate the message. if there is no entry for the player language, default fallback to the base message
-		String translated = translations.get(lang);
-		if (translated == null || translated.isEmpty()) {
-			translated = message;
-		}
-
-		return translated;
-	}
-
-	private void addNewEntry(String message) {
-
-		// update the loaded translation map
-		mTranslationsMap.put(message, new TreeMap<>());
-
-		mPlugin.getLogger().info("Added new entry for translations: " + message);
-
-		writeTranslationFileAndReloadShards();
 	}
 
 	private void writeTranslationFileAndReloadShards() {
@@ -285,24 +375,24 @@ public class TranslationsManager implements Listener {
 		});
 	}
 
+
+	/**
+	 *
+	 * EVENTS STUFF
+	 *
+	 */
+
+
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void playerJoinEvent(PlayerJoinEvent event) {
 		playerJoin(event.getPlayer(), true);
-	}
-
-	public void playerJoin(Player player, boolean display) {
-		String lang = getLanguageOfPlayer(player);
-		mPlayerLanguageMap.put(player.getUniqueId(), lang);
-
-		if (display && !lang.equals("en-US")) {
-			player.sendMessage("Language set to: " + lang);
-		}
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void playerQuitEvent(PlayerQuitEvent event) {
 		mPlayerLanguageMap.remove(event.getPlayer().getUniqueId());
 	}
+
 
 	/**
 	 *
@@ -488,11 +578,11 @@ public class TranslationsManager implements Listener {
 		return rows;
 	}
 
-	private TreeMap<String, String> getListOfAvailableLanguages() {
+	public static TreeMap<String, String> getListOfAvailableLanguages() {
 		// if null, a lot of things will break. its good that nullpointers will show up then.
 		TreeMap<String, String> out = new TreeMap<>();
 
-		for (Map.Entry<String, String> entry : mTranslationsMap.get(" @ @ LANGUAGES @ @ ").entrySet()) {
+		for (Map.Entry<String, String> entry : INSTANCE.mTranslationsMap.get(" @ @ LANGUAGES @ @ ").entrySet()) {
 			if (!entry.getKey().equals("S")) {
 				out.put(entry.getKey(), entry.getValue());
 			}
