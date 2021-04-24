@@ -219,6 +219,11 @@
 				}
             }
         },
+		"remove_questdata": {
+            "title": "remove_questdata",
+            "description": "Removes the QuestData for the player.",
+            "type": "string"
+        },
 		"trade": {
             "title": "trade",
             "description": "Opens an RPG Trade for the player to use.",
