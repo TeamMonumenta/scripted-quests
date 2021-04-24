@@ -15,10 +15,10 @@
 <div class='container'>
     <div class='row' style='padding-bottom: 15px;'>
         <div class='col-md-12'>
-            <h1>ScriptedQuests Instance Editor</h1>
+            <h1>ScriptedQuests Shard Editor</h1>
             <p>For the SFRPG Project, by Nova/Fire.</p>
 			<br>
-			<p>Allows for the creation of non-persistent world instances.</p>
+			<p>Allows for the creation of non-persistent world instances, AKA Shards.</p>
         </div>
     </div>
     <div class='row' style='padding-bottom: 15px;'>
@@ -45,7 +45,7 @@
 
         // The schema for the editor
         schema: {
-            title: "Instance",
+            title: "Shard",
             defaultProperties: [
 			    "id",
                 "world",
@@ -61,7 +61,7 @@
                     required: true,
                     propertyOrder: 1,
                     title: "id",
-                    description: "The ID of the Instance. This should be unique.",
+                    description: "The ID of the Shard. This should be unique.",
                     type: "string",
                     default: "quest_instance"
                 },
@@ -69,7 +69,7 @@
                     required: true,
                     propertyOrder: 2,
                     title: "world",
-                    description: "The world to use when generating instances. This is the 'master' world.",
+                    description: "The world to use when generating Shards. This is the 'master' world.",
                     type: "string",
                     default: "world"
                 },
@@ -85,14 +85,14 @@
                     required: true,
                     propertyOrder: 4,
                     title: "exitpoint",
-                    description: "The exit point whenever the player exits this dungeon. Leave this empty if the player will exit at their previous location.",
+                    description: "The exit point whenever the player exits this Shard. Leave this empty if the player will exit at their previous location.",
                     type: "string",
                     default: "0,0,0"
                 },
 				onEnter: {
                     propertyOrder: 5,
                     title: "onEnter",
-                    description: "The Quest Components to run whenever a player enters this instance. Quest Components ran will take place in the instance world.",
+                    description: "The Quest Components to run whenever a player enters this Shard. Quest Components ran will take place in the instance world.",
                     type: "array",
                     format: "tabs",
                     items: {
@@ -103,7 +103,7 @@
                 onExit: {
                     propertyOrder: 6,
                     title: "onEnter",
-                    description: "The Quest Components to run whenever a player exits this instance. Exiting an instance is usually done whenever a player finishes an instance legitimately.",
+                    description: "The Quest Components to run whenever a player exits this Shard. Exiting an instance is usually done whenever a player finishes an instance legitimately.",
                     type: "array",
                     format: "tabs",
                     items: {
@@ -114,7 +114,7 @@
                 onAbandon: {
                     propertyOrder: 7,
                     title: "onAbandon",
-                    description: "The Quest Components to run whenever a player abandons this instance. Abandoning an instance involves logging out, teleporting out of the instance, or abandoning it manually. This will usually signify a player failing to complete the instance.",
+                    description: "The Quest Components to run whenever a player abandons this Shard. Abandoning an instance involves logging out, teleporting out of the instance, or abandoning it manually. This will usually signify a player failing to complete the instance.",
                     type: "array",
                     format: "tabs",
                     items: {
