@@ -185,9 +185,12 @@ public class TranslationsManager implements Listener {
 		}
 
 		mWriting = true;
+
+		/* Serialize the content on the main thread so there's no risk that a translation added at the wrong time will cause corruption */
+		String content = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create().toJson(mTranslationsMap);
+
 		Bukkit.getScheduler().runTaskAsynchronously(mPlugin, () -> {
 			// write the map into the file
-			String content = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create().toJson(mTranslationsMap);
 			String filename = mPlugin.getDataFolder() + File.separator + "translations" + File.separator + "translations.json";
 			try {
 				FileUtils.writeFile(filename, content);
