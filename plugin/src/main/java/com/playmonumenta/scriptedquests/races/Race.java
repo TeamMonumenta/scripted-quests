@@ -242,7 +242,7 @@ public class Race {
 				// Run the actions for reaching this ring
 				mNextWaypoint.doActions(mPlugin, mPlayer);
 
-				MessagingUtils.sendActionBarMessage(mPlayer, NamedTextColor.BLUE, true, RaceUtils.msToTimeString(timeElapsed));
+				MessagingUtils.sendActionBarMessage(mPlayer, NamedTextColor.BLUE, true, RaceUtils.msToTimeString(timeElapsed), false);
 				mWorld.playSound(mPlayer.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1, 1.5f);
 
 				if (mRemainingWaypoints.size() == 0) {
