@@ -38,17 +38,13 @@ public class MessagingUtils {
 	}
 
 	public static void sendActionBarMessage(Player player, NamedTextColor color, boolean bold, String message) {
-		message = TranslationsManager.translate(player, message);
-		message = translatePlayerName(player, message);
-		Component formattedMessage = LEGACY_SERIALIZER.deserialize(message);
-		formattedMessage = formattedMessage.color(color);
-		if (bold) {
-			formattedMessage = formattedMessage.decorate(TextDecoration.BOLD);
-		}
-		player.sendMessage(formattedMessage);
+		sendActionBarMessage(player, color, bold, message, true);
 	}
 
-	public static void sendUntranslatedActionBarMessage(Player player, NamedTextColor color, boolean bold, String message) {
+	public static void sendActionBarMessage(Player player, NamedTextColor color, boolean bold, String message, boolean allowTranslations) {
+		if (allowTranslations) {
+			message = TranslationsManager.translate(player, message);
+		}
 		message = translatePlayerName(player, message);
 		Component formattedMessage = LEGACY_SERIALIZER.deserialize(message);
 		formattedMessage = formattedMessage.color(color);
@@ -87,14 +83,13 @@ public class MessagingUtils {
 	}
 
 	public static void sendRawMessage(Player player, String message) {
-		message = TranslationsManager.translate(player, message);
-		message = translatePlayerName(player, message);
-		message = message.replace('§', '&');
-		TextComponent formattedMessage = AMPERSAND_SERIALIZER.deserialize(message);
-		player.sendMessage(formattedMessage);
+		sendRawMessage(player, message, true);
 	}
 
-	public static void sendUntranslatedRawMessage(Player player, String message) {
+	public static void sendRawMessage(Player player, String message, boolean allowTranslations) {
+		if (allowTranslations) {
+			message = TranslationsManager.translate(player, message);
+		}
 		message = translatePlayerName(player, message);
 		message = message.replace('§', '&');
 		TextComponent formattedMessage = AMPERSAND_SERIALIZER.deserialize(message);
@@ -148,6 +143,4 @@ public class MessagingUtils {
 
 		e.printStackTrace();
 	}
-
-
 }
