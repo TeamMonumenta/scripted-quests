@@ -30,6 +30,7 @@ public class ActionRerunComponents implements ActionBase {
 		 */
 		if (!mLocked.contains(player)) {
 			mLocked.add(player);
+			System.out.println("rerun");
 			plugin.mNpcManager.interactEvent(plugin, player, mNpcName, mEntityType, npcEntity, true);
 			mLocked.remove(player);
 		} else {
