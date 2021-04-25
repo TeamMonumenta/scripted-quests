@@ -284,7 +284,7 @@ public class TranslationsManager implements Listener {
 					messageAmount++;
 				}
 
-				return messageAmount + " messages loaded into " + translationAmount + " translations from";
+				return messageAmount + " messages loaded into " + translationAmount + " translated messages";
 			});
 
 			Bukkit.getScheduler().runTask(Plugin.getInstance(), () -> {
