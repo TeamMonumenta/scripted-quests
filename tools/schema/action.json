@@ -3,6 +3,11 @@
     "type": "object",
     "additionalProperties": false,
     "properties": {
+		"prerequisites": {
+            "propertyOrder": 1,
+            "required": false,
+            "$ref": "prerequisites.json"
+        },
         "dialog": {
             "title": "dialog",
             "description": "Formatting supported with &amp; and §, and @S becomes the player's name",

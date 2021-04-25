@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import me.Novalescent.Core;
-import me.Novalescent.instances.ShardInstance;
+import me.Novalescent.shards.ShardInstance;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 

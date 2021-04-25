@@ -18,6 +18,7 @@ import com.playmonumenta.scriptedquests.Plugin;
 
 public class QuestActions {
 	private ArrayList<ActionBase> mActions = new ArrayList<ActionBase>();
+	private QuestPrerequisites mPrerequisites = null;
 	private int mDelayTicks = 0;
 
 	public QuestActions(String npcName, String displayName, EntityType entityType,
@@ -50,6 +51,9 @@ public class QuestActions {
 				}
 
 				switch (key) {
+				case "prerequisites":
+					mPrerequisites = new QuestPrerequisites(value);
+					break;
 				case "command":
 					mActions.add(new ActionCommand(value));
 					break;
@@ -144,7 +148,9 @@ public class QuestActions {
 						mActions.add(new ActionSetQuestData(questObject));
 					}
 					break;
-
+				case "remove_questdata":
+					mActions.add(new ActionRemoveQuestData(value));
+					break;
 				case "drop_loot":
 					mActions.add(new ActionDropLoot(value));
 					break;
@@ -172,20 +178,22 @@ public class QuestActions {
 	}
 
 	public void doActions(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
-		if (mDelayTicks <= 0) {
-			// If not delayed, actions can run without restrictions
-			for (ActionBase action : mActions) {
-				action.doAction(plugin, player, npcEntity, prereqs);
-			}
-		} else {
-			player.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-				@Override
-				public void run() {
-					for (ActionBase action : mActions) {
-						action.doAction(plugin, player, npcEntity, prereqs);
-					}
+		if (mPrerequisites == null || mPrerequisites.prerequisiteMet(player, npcEntity)) {
+			if (mDelayTicks <= 0) {
+				// If not delayed, actions can run without restrictions
+				for (ActionBase action : mActions) {
+					action.doAction(plugin, player, npcEntity, prereqs);
 				}
-			}, mDelayTicks);
+			} else {
+				player.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+					@Override
+					public void run() {
+						for (ActionBase action : mActions) {
+							action.doAction(plugin, player, npcEntity, prereqs);
+						}
+					}
+				}, mDelayTicks);
+			}
 		}
 	}
 }
