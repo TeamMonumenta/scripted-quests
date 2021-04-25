@@ -1,34 +1,22 @@
 package com.playmonumenta.scriptedquests.managers;
 
-import java.io.File;
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.UUID;
-
-import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeRequestUrl;
-import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest;
-import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
-import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.SheetsScopes;
+import com.google.api.services.sheets.v4.model.UpdateValuesResponse;
 import com.google.api.services.sheets.v4.model.ValueRange;
+import com.google.auth.http.HttpCredentialsAdapter;
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.utils.FileUtils;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
-
+import dev.jorel.commandapi.CommandAPICommand;
+import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.StringArgument;
 import dev.jorel.commandapi.arguments.TextArgument;
 import org.bukkit.Bukkit;
@@ -42,8 +30,19 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import dev.jorel.commandapi.CommandAPICommand;
-import dev.jorel.commandapi.CommandPermission;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.UUID;
 
 public class TranslationsManager implements Listener {
 	private static final int WRITE_DELAY_TICKS = 100;
@@ -66,6 +65,20 @@ public class TranslationsManager implements Listener {
 		mPlayerLanguageMap = new TreeMap<>();
 		mTranslationsMap = new TreeMap<>();
 		mGSheet = new TranslationGSheet(mPlugin);
+
+		// registercommands crashes because overridesuggestion launches a method that produces nullpointer
+		// because the mTranslationsMap is not filled since the filling is done after init.
+		// manually editing the map fixes it
+		TreeMap<String, String> tmp = new TreeMap<>();
+		tmp.put("en_US", "English");
+		tmp.put("de", "German");
+		tmp.put("es", "Spanish");
+		tmp.put("fr", "French");
+		tmp.put("ru", "Russian");
+		tmp.put("zhs", "Chinese_Simplified");
+		tmp.put("zht", "Chinese_Traditional");
+		mTranslationsMap.put(" @ @ LANGUAGES @ @ ", tmp);
+
 		registerCommands();
 	}
 
@@ -140,13 +153,15 @@ public class TranslationsManager implements Listener {
 				break;
 			}
 		}
-		if (wantedLang == null) {
-			sender.sendMessage("Could not find an existing language corresponding to the value " + arg);
-			return;
-		}
 
 		// remove old language tags from the player
 		removeLanguageOfPlayer(player);
+
+		if (wantedLang == null) {
+			sender.sendMessage("Could not find an existing language corresponding to the value " + arg);
+			sender.sendMessage("defaulting to english.");
+			return;
+		}
 
 		// add the new language tag
 		player.addScoreboardTag("language_" + wantedLang);
@@ -374,116 +389,59 @@ public class TranslationsManager implements Listener {
 		mPlayerLanguageMap.remove(event.getPlayer().getUniqueId());
 	}
 
-
 	/**
 	 *
 	 * GSHEET STUFF
 	 *
 	 */
 
-
 	public static class TranslationGSheet {
 
 		Sheets mSheets;
-		String mLastUsedKey;
 		final String mSpreadsheetId = "1w7KZZOa8I9J8e6FeHFjTR7u7A35EbpVF11KqMwvfFdM";
-		final String mRedirectURI = "urn:ietf:wg:oauth:2.0:oob";
 		final List<String> mScopes = Collections.singletonList(SheetsScopes.SPREADSHEETS);
+		InputStream mRawCredsInputStream;
 		Plugin mPlugin;
+
+		TranslationGSheet(Plugin plugin) {
+			mPlugin = plugin;
+		}
 
 		public List<List<Object>> readSheet(String sheetName) throws IOException {
 			ValueRange result = mSheets.spreadsheets().values().get(mSpreadsheetId, sheetName + "!A1:Z9999").execute();
 			return result.getValues();
 		}
 
-		TranslationGSheet(Plugin plugin) {
-			mPlugin = plugin;
-		}
-
-		private String[] getClientKeysFromCredsFile() {
-			String[] keys = new String[2];
-			// load the config file for client keys
-			String filename = mPlugin.getDataFolder() + File.separator + "translations" + File.separator + "credentials.txt";
-			String contents = "failed::toload";
-			try {
-				contents = FileUtils.readFile(filename);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			String[] split = contents.split("::");
-			keys[0] = split[0];
-			keys[1] = split[1].replace("\n", "");
-			return keys;
-		}
-
-		public void writeSheet(String sheetName, List<List<Object>> data) throws IOException {
+		public UpdateValuesResponse writeSheet(String sheetName, List<List<Object>> data) throws IOException {
 			ValueRange values = new ValueRange();
 			values.setValues(data);
-			mSheets.spreadsheets().values().update(mSpreadsheetId, sheetName + "!A1", values)
+			return mSheets.spreadsheets().values().update(mSpreadsheetId, sheetName + "!A1", values)
 				.setValueInputOption("RAW").execute();
 		}
 
-		boolean init(CommandSender sender, String key) {
-
-			if (key == null) {
-				key = mLastUsedKey;
-			} else {
-				sender.sendMessage("attempting auth with given key");
-			}
-
-			String[] clientKeys = getClientKeysFromCredsFile();
-			sender.sendMessage("\"" + clientKeys[0] + "\"");
-			sender.sendMessage("\"" + clientKeys[1] + "\"");
-
-			GoogleTokenResponse response = exchangeAuthKeys(key, clientKeys);
-
-			if (response == null) {
-				// key exchange failed. ask for a new auth
-				sender.sendMessage("Could not create a valid auth with the given token.");
-				String authURL = new GoogleAuthorizationCodeRequestUrl(clientKeys[0], mRedirectURI, mScopes).build();
-				sender.sendMessage("To create a new one, go to the following link:");
-				sender.sendMessage(authURL);
-				sender.sendMessage("And relaunch the command with the toekn code as argument");
-				return true;
-			}
-
-			mLastUsedKey = key;
-			sender.sendMessage("Valid token. Auth given. gsheet sync starting");
-
-			// deprecated, but could not find an alternative.
-			GoogleCredential credential = new GoogleCredential.Builder()
-				.setClientSecrets(clientKeys[0], clientKeys[1])
-				.setTransport(new NetHttpTransport())
-				.setJsonFactory(new JacksonFactory())
-				.build()
-				.setAccessToken(response.getAccessToken())
-				.setRefreshToken(response.getRefreshToken());
+		boolean init(CommandSender sender) {
 
 			try {
-				mSheets = new Sheets.Builder(GoogleNetHttpTransport.newTrustedTransport(), credential.getJsonFactory(), credential)
-					.setApplicationName("Monumenta Translations").build();
-			} catch (GeneralSecurityException | IOException e) {
+				String filename = mPlugin.getDataFolder() + File.separator + "translations" + File.separator + "credentials.raw";
+
+				// load the config file for raw creds inputstream
+				mRawCredsInputStream = new FileInputStream(new File(filename));
+
+				GoogleCredentials googleCredentials = ServiceAccountCredentials.fromStream(mRawCredsInputStream).createScoped(mScopes);
+
+				HttpRequestInitializer requestInitializer = new HttpCredentialsAdapter(googleCredentials);
+
+				mSheets = new Sheets.Builder(new NetHttpTransport(), new JacksonFactory(), requestInitializer).build();
+
+			} catch (IOException e) {
 				e.printStackTrace();
+				sender.sendMessage("error while connecting to she sheet: " + e.getMessage());
+				return true;
 			}
 
 			return false;
 		}
 
-		private GoogleTokenResponse exchangeAuthKeys(String key, String[] clientKeys) {
-			if (key == null) {
-				return null;
-			}
-			GoogleTokenResponse response;
-			try {
-				response = new GoogleAuthorizationCodeTokenRequest(new NetHttpTransport(), new JacksonFactory(),
-					clientKeys[0], clientKeys[1], key, mRedirectURI)
-					.execute();
-			} catch (IOException e) {
-				e.printStackTrace();
-				return null;
-			}
-			return response;
-		}
 	}
 
 	TranslationGSheet mGSheet;
@@ -492,14 +450,12 @@ public class TranslationsManager implements Listener {
 
 		Bukkit.getScheduler().runTaskAsynchronously(mPlugin, () -> {
 
-			if (mGSheet.init(sender, key)) {
-				//initialisation failed, and a new auth has been asked
+			if (mGSheet.init(sender)) {
 				return;
 			}
 
-			sender.sendMessage("Reading values");
-
 			try {
+				sender.sendMessage("Reading values");
 				List<List<Object>> rows = mGSheet.readSheet("Translations");
 				readSheetValues(rows);
 			} catch (IOException e) {
@@ -511,16 +467,17 @@ public class TranslationsManager implements Listener {
 			sender.sendMessage("Reloading shards");
 			writeAndReloadNow();
 
-			sender.sendMessage("Writing values");
-			List<List<Object>> data = convertDataToSheetList();
 			try {
-				mGSheet.writeSheet("Translations", data);
+				sender.sendMessage("Writing values");
+				List<List<Object>> data = convertDataToSheetList();
+				UpdateValuesResponse response = mGSheet.writeSheet("Translations", data);
+				sender.sendMessage("Done! written " + response.getUpdatedRows() + " rows");
 			} catch (IOException e) {
 				sender.sendMessage("Failed to write values into sheet. error: " + e.getMessage());
 				e.printStackTrace();
 				return;
 			}
-			sender.sendMessage("Done!");
+
 		});
 	}
 
@@ -590,12 +547,12 @@ public class TranslationsManager implements Listener {
 
 	private void readDataRow(List<Object> row, HashMap<Integer, String> indexToLanguageMap) {
 
-
 		String message = (String)row.get(0);
 		String status = (String)row.get(1);
 
 		if (status.equals("DEL")) {
 			// line is notified as to be deleted from the system.
+			mPlugin.getLogger().info("removing entry :" + message);
 			mTranslationsMap.remove(message);
 			return;
 		}
