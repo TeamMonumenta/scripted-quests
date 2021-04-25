@@ -24,14 +24,16 @@ public class QuestCompassManager {
 	private static class ValidCompassEntry {
 		private final QuestLocation mLocation;
 		private final String mTitle;
+		private final boolean mAllowTranslations;
 
-		private ValidCompassEntry(QuestLocation loc, String title) {
+		private ValidCompassEntry(QuestLocation loc, String title, boolean allowTranslations) {
 			mLocation = loc;
 			mTitle = title;
+			mAllowTranslations = allowTranslations;
 		}
 
 		private void directPlayer(WaypointManager mgr, Player player) {
-			MessagingUtils.sendRawMessage(player, mTitle + ": " + mLocation.getMessage());
+			MessagingUtils.sendRawMessage(player, mTitle + ": " + mLocation.getMessage(), mAllowTranslations);
 			mgr.setWaypoint(player, mLocation);
 		}
 	}
@@ -103,7 +105,7 @@ public class QuestCompassManager {
 					title += " [" + (i + 1) + "/" + questMarkers.size() + "]";
 				}
 
-				entries.add(new ValidCompassEntry(questMarkers.get(i), title));
+				entries.add(new ValidCompassEntry(questMarkers.get(i), title, true));
 			}
 		}
 
@@ -119,7 +121,7 @@ public class QuestCompassManager {
 					title += " [" + (i + 1) + "/" + deathEntries.size() + "]";
 				}
 
-				entries.add(new ValidCompassEntry(deathEntries.get(i), title));
+				entries.add(new ValidCompassEntry(deathEntries.get(i), title, false));
 			}
 		}
 
@@ -174,7 +176,7 @@ public class QuestCompassManager {
 
 	/* One command-specified waypoint per player */
 	public void setCommandWaypoint(Player player, List<Location> steps, String title, String message) {
-		ValidCompassEntry entry = new ValidCompassEntry(new CompassLocation(null, message, steps), title);
+		ValidCompassEntry entry = new ValidCompassEntry(new CompassLocation(null, message, steps), title, true);
 		mCommandWaypoints.put(player.getUniqueId(), entry);
 		getCurrentMarkerTitles(player);
 		entry.directPlayer(mPlugin.mWaypointManager, player);

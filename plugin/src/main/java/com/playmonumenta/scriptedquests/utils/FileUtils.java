@@ -54,7 +54,7 @@ public class FileUtils {
 
 	public static void writeFile(String fileName, String contents) throws IOException {
 		// Do not attempt to catch exceptions here - let them propagate to the caller
-		File file = Path.of(fileName).toRealPath().toFile();
+		File file = new File(fileName).toPath().toRealPath().toFile();
 
 		if (!file.exists()) {
 			file.getParentFile().mkdirs();
