@@ -78,6 +78,7 @@ public class Plugin extends JavaPlugin {
 	public RaceManager mRaceManager;
 	public NpcTradeManager mTradeManager;
 	public CommandTimerManager mTimerManager;
+	private TranslationsManager mTranslationsManager;
 	public CodeManager mCodeManager;
 	public ZoneManager mZoneManager;
 	public ZonePropertyManager mZonePropertyManager;
@@ -120,10 +121,10 @@ public class Plugin extends JavaPlugin {
 
 		mScheduledFunctionsManager = new ScheduleFunction(this);
 		mGrowableManager = new GrowableManager(this);
+		mTranslationsManager = new TranslationsManager(this);
 
 		Growable.register(mGrowableManager);
 		Waypoint.register(this);
-		TranslationsManager.registerCommands();
 	}
 
 	@Override
@@ -154,7 +155,7 @@ public class Plugin extends JavaPlugin {
 		manager.registerEvents(new InteractablesListener(this), this);
 		manager.registerEvents(new PlayerListener(this), this);
 		manager.registerEvents(new WorldListener(this), this);
-		manager.registerEvents(new TranslationsManager(this), this);
+		manager.registerEvents(mTranslationsManager, this);
 		manager.registerEvents(mTimerManager, this);
 		manager.registerEvents(mZonePropertyManager, this);
 		manager.registerEvents(mTradeManager, this);

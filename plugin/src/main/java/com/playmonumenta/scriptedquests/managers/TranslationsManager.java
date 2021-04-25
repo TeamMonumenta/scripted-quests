@@ -66,6 +66,7 @@ public class TranslationsManager implements Listener {
 		mPlayerLanguageMap = new TreeMap<>();
 		mTranslationsMap = new TreeMap<>();
 		mGSheet = new TranslationGSheet(mPlugin);
+		registerCommands();
 	}
 
 	public static String translate(Player player, String message) {
@@ -182,56 +183,36 @@ public class TranslationsManager implements Listener {
 	 *
 	 */
 
-	public static void registerCommands() {
+	private void registerCommands() {
 		CommandPermission perm = CommandPermission.fromString("monumenta.translations");
 
 		// reloadtranslations
 		new CommandAPICommand("reloadtranslations")
 			.withPermission(perm)
 			.executes((sender, args) -> {
-				if (INSTANCE != null) {
-					reload(sender);
-				}
+				reload(sender);
 			}).register();
 
 		// synctranslationsheet
 		new CommandAPICommand("synctranslationsheet")
 			.withPermission(perm)
 			.executes((sender, args) -> {
-				if (INSTANCE != null) {
-					INSTANCE.syncTranslationSheet(sender, null);
-				}
+				syncTranslationSheet(sender, null);
 			}).register();
 
 		new CommandAPICommand("synctranslationsheet")
 			.withPermission(perm)
 			.withArguments(new TextArgument("callbackKey"))
 			.executes((sender, args) -> {
-				if (INSTANCE != null) {
-					INSTANCE.syncTranslationSheet(sender, (String)args[0]);
-				}
+				syncTranslationSheet(sender, (String)args[0]);
 			}).register();
 
 		new CommandAPICommand("changelanguage")
 			.withPermission(CommandPermission.fromString("monumenta.changelanguage"))
-			.withArguments(new StringArgument("language")
-				// todo : overrideSuggestions is not working because instance is null.
-				// move the command registering after object init?
-				.overrideSuggestions(INSTANCE != null ? getListOfAvailableLanguages().values() : new ArrayList<>()))
+			.withAliases("cl")
+			.withArguments(new StringArgument("language").overrideSuggestions(getListOfAvailableLanguages().values()))
 			.executes((sender, args) -> {
-				if (INSTANCE != null) {
-					INSTANCE.changeLanguage(sender, (String)args[0]);
-				}
-			}).register();
-
-		new CommandAPICommand("cl")
-			.withPermission(CommandPermission.fromString("monumenta.changelanguage"))
-			.withArguments(new StringArgument("language")
-				.overrideSuggestions(INSTANCE != null ? getListOfAvailableLanguages().values() : new ArrayList<>()))
-			.executes((sender, args) -> {
-				if (INSTANCE != null) {
-					INSTANCE.changeLanguage(sender, (String)args[0]);
-				}
+				changeLanguage(sender, (String)args[0]);
 			}).register();
 	}
 
@@ -578,11 +559,11 @@ public class TranslationsManager implements Listener {
 		return rows;
 	}
 
-	public static TreeMap<String, String> getListOfAvailableLanguages() {
+	public TreeMap<String, String> getListOfAvailableLanguages() {
 		// if null, a lot of things will break. its good that nullpointers will show up then.
 		TreeMap<String, String> out = new TreeMap<>();
 
-		for (Map.Entry<String, String> entry : INSTANCE.mTranslationsMap.get(" @ @ LANGUAGES @ @ ").entrySet()) {
+		for (Map.Entry<String, String> entry : mTranslationsMap.get(" @ @ LANGUAGES @ @ ").entrySet()) {
 			if (!entry.getKey().equals("S")) {
 				out.put(entry.getKey(), entry.getValue());
 			}
