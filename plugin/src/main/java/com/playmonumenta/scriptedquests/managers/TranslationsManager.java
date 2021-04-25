@@ -212,14 +212,7 @@ public class TranslationsManager implements Listener {
 		new CommandAPICommand("synctranslationsheet")
 			.withPermission(perm)
 			.executes((sender, args) -> {
-				syncTranslationSheet(sender, null);
-			}).register();
-
-		new CommandAPICommand("synctranslationsheet")
-			.withPermission(perm)
-			.withArguments(new TextArgument("callbackKey"))
-			.executes((sender, args) -> {
-				syncTranslationSheet(sender, (String)args[0]);
+				syncTranslationSheet(sender);
 			}).register();
 
 		new CommandAPICommand("changelanguage")
@@ -446,7 +439,7 @@ public class TranslationsManager implements Listener {
 
 	TranslationGSheet mGSheet;
 
-	public void syncTranslationSheet(CommandSender sender, String key) {
+	public void syncTranslationSheet(CommandSender sender) {
 
 		Bukkit.getScheduler().runTaskAsynchronously(mPlugin, () -> {
 
