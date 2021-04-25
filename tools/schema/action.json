@@ -4,8 +4,6 @@
     "additionalProperties": false,
     "properties": {
 		"prerequisites": {
-            "propertyOrder": 1,
-            "required": false,
 			"title": "prerequisites",
             "description": "The prerequisites required for this action to run.",
             "$ref": "prerequisites.json"
