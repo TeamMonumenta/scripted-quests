@@ -160,7 +160,7 @@ public class ModelInstance implements Cloneable {
 				Vector vector = part.getCenterOffset().toVector();
 				vector = VectorUtils.rotateYAxis(vector, rotation);
 				ArmorStand stand = mLoc.getWorld().spawn(mLoc.clone().add(vector), ArmorStand.class, (ArmorStand entity) -> {
-					part.cloneIntoStand(entity, (float) rotation);
+					part.cloneIntoStand(entity, (float) (rotation + mModel.mRotation));
 				});
 				stand.setMetadata(Constants.PART_MODEL_METAKEY, new FixedMetadataValue(mPlugin, this));
 				stand.addScoreboardTag(Constants.REMOVE_ONENABLE);

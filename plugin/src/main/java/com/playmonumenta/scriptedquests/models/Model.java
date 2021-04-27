@@ -47,6 +47,7 @@ public class Model {
 	public int mOnUseTickRate = 1;
 	public boolean mQuestMarker = false;
 	public int mMarkerPriority = 0;
+	public int mRotation = 0;
 	public SpellActions mOnStart;
 	public SpellActions mOnTick;
 	public SpellActions mOnEnd;
@@ -148,6 +149,10 @@ public class Model {
 		if (object.get("locations") == null ||
 			object.get("locations").getAsJsonArray() == null) {
 			throw new Exception("Failed to parse 'locations'");
+		}
+
+		if (object.get("rotation") != null) {
+			mRotation = object.get("rotation").getAsInt();
 		}
 
 		// Region
