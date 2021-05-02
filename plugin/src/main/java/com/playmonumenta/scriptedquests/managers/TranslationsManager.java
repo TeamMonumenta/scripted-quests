@@ -95,7 +95,7 @@ public class TranslationsManager implements Listener {
 				new CommandAPICommand("synctranslationsheet")
 					.withPermission(CommandPermission.fromString("scriptedquests.translations.sync"))
 					.executes((sender, args) -> {
-						syncTranslationSheet(sender);
+						INSTANCE.syncTranslationSheet(sender);
 					}).register();
 			}
 		}
@@ -130,7 +130,7 @@ public class TranslationsManager implements Listener {
 
 		String wantedLang = null;
 		// go through the language list for a matching argument
-		for (Map.Entry<String, String> entry : getListOfAvailableLanguages().entrySet()) {
+		for (Map.Entry<String, String> entry : INSTANCE.getListOfAvailableLanguages().entrySet()) {
 			if (entry.getValue().toLowerCase().equals(arg.toLowerCase())) {
 				wantedLang = entry.getKey();
 				break;
@@ -150,7 +150,7 @@ public class TranslationsManager implements Listener {
 		player.addScoreboardTag("language_" + wantedLang);
 
 		// refresh
-		playerJoin(player, true);
+		INSTANCE.playerJoin(player, true);
 
 	}
 
@@ -423,6 +423,7 @@ public class TranslationsManager implements Listener {
 			try {
 				sender.sendMessage("Reading values");
 				rows = gSheet.readSheet();
+				sender.sendMessage("Recieved " + rows.size() + " rows from the GSheet");
 			} catch (IOException e) {
 				sender.sendMessage("Failed to read values from sheet. Abort. error: " + e.getMessage());
 				e.printStackTrace();
@@ -430,20 +431,23 @@ public class TranslationsManager implements Listener {
 			}
 
 			Bukkit.getScheduler().runTask(mPlugin, () -> {
+				sender.sendMessage("old translation map size: " + mTranslationsMap.size());
 				readSheetValues(rows);
+				sender.sendMessage("new translation map size: " + mTranslationsMap.size());
 
 				sender.sendMessage("Reloading shards");
 				writeTranslationFileAndReloadShards();
+				sender.sendMessage("translation map size: " + mTranslationsMap.size());
 
 				try {
-					sender.sendMessage("Writing values");
+					sender.sendMessage("Compiling values");
 					List<List<Object>> data = convertDataToSheetList();
+					sender.sendMessage("Writing " + data.size() + " rows to the GSheet");
 					UpdateValuesResponse response = gSheet.writeSheet(data);
 					sender.sendMessage("Done! written " + response.getUpdatedRows() + " rows");
 				} catch (IOException e) {
 					sender.sendMessage("Failed to write values into sheet. error: " + e.getMessage());
 					e.printStackTrace();
-					return;
 				}
 			});
 		});
