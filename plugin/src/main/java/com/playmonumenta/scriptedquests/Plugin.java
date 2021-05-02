@@ -78,6 +78,7 @@ public class Plugin extends JavaPlugin {
 	public RaceManager mRaceManager;
 	public NpcTradeManager mTradeManager;
 	public CommandTimerManager mTimerManager;
+	private TranslationsManager mTranslationsManager = null;
 	public CodeManager mCodeManager;
 	public ZoneManager mZoneManager;
 	public ZonePropertyManager mZonePropertyManager;
@@ -95,6 +96,8 @@ public class Plugin extends JavaPlugin {
 		 *
 		 * These need to register immediately on load to prevent function loading errors
 		 */
+
+		reloadConfigYaml(null);
 
 		InteractNpc.register(this);
 		Clickable.register(this);
@@ -123,14 +126,11 @@ public class Plugin extends JavaPlugin {
 
 		Growable.register(mGrowableManager);
 		Waypoint.register(this);
-		TranslationsManager.registerCommands();
 	}
 
 	@Override
 	public void onEnable() {
 		INSTANCE = this;
-
-		reloadConfigYaml(null);
 
 		PluginManager manager = getServer().getPluginManager();
 
@@ -154,7 +154,9 @@ public class Plugin extends JavaPlugin {
 		manager.registerEvents(new InteractablesListener(this), this);
 		manager.registerEvents(new PlayerListener(this), this);
 		manager.registerEvents(new WorldListener(this), this);
-		manager.registerEvents(new TranslationsManager(this), this);
+		if (mTranslationsManager != null) {
+			manager.registerEvents(mTranslationsManager, this);
+		}
 		manager.registerEvents(mTimerManager, this);
 		manager.registerEvents(mZonePropertyManager, this);
 		manager.registerEvents(mTradeManager, this);
@@ -245,6 +247,10 @@ public class Plugin extends JavaPlugin {
 		}
 		if (sender != null) {
 			sender.sendMessage("fallback_zone_lookup: " + Boolean.toString(mFallbackZoneLookup));
+		}
+
+		if (mConfig.contains("translations")) {
+			mTranslationsManager = new TranslationsManager(this, mConfig.getConfigurationSection("translations"));
 		}
 	}
 

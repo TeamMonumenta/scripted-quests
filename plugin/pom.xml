@@ -79,6 +79,24 @@
         </dependency>
 
         <dependency>
+            <groupId>com.google.api-client</groupId>
+            <artifactId>google-api-client</artifactId>
+            <version>1.31.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.apis</groupId>
+            <artifactId>google-api-services-sheets</artifactId>
+            <version>v4-rev1-1.21.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.auth</groupId>
+            <artifactId>google-auth-library-oauth2-http</artifactId>
+            <version>0.1.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>dynmap</groupId>
             <artifactId>DynmapCoreAPI</artifactId>
             <version>2.0</version>
@@ -116,6 +134,11 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.7.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>3.1.1</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -170,6 +193,71 @@
                 <configuration>
                     <configLocation>${basedir}/checkstyle.xml</configLocation>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <configuration>
+                    <createDependencyReducedPom>true</createDependencyReducedPom>
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <!-- Avoid "Invalid signature file digest" error -->
+                                <exclude>META-INF/*.SF</exclude>
+                                <exclude>META-INF/*.DSA</exclude>
+                                <exclude>META-INF/*.RSA</exclude>
+                                <exclude>javax/**</exclude>
+                                <exclude>com/sun/**</exclude>
+                                <exclude>com/google/gdata/**</exclude>
+                                <exclude>com/google/j2objc/**</exclude>
+                                <exclude>com/google/thirdparty/**</exclude>
+                                <exclude>org/apache/commons/**</exclude>
+                                <exclude>org/apache/http/**</exclude>
+                                <exclude>org/mortbay/**</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
+                    <transformers>
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                            <mainClass>com.playmonumenta.scriptedquests.Plugin</mainClass>
+                        </transformer>
+                    </transformers>
+                    <relocations>
+                        <relocation>
+                            <pattern>com.fasterxml</pattern>
+                            <shadedPattern>com.playmonumenta.scriptedquests.internal.com.fasterxml</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com.google.api</pattern>
+                            <shadedPattern>com.playmonumenta.scriptedquests.internal.com.google.api</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com.google.auth</pattern>
+                            <shadedPattern>com.playmonumenta.scriptedquests.internal.com.google.auth</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com.google.common</pattern>
+                            <shadedPattern>com.playmonumenta.scriptedquests.internal.com.google.common</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>io.grpc</pattern>
+                            <shadedPattern>com.playmonumenta.scriptedquests.internal.io.grpc</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>io.opencensus</pattern>
+                            <shadedPattern>com.playmonumenta.scriptedquests.internal.io.opencensus</shadedPattern>
+                        </relocation>
+                    </relocations>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
