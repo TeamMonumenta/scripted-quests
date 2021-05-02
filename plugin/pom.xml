@@ -209,6 +209,12 @@
                                 <exclude>META-INF/*.RSA</exclude>
                                 <exclude>javax/**</exclude>
                                 <exclude>com/sun/**</exclude>
+                                <exclude>com/google/gdata/**</exclude>
+                                <exclude>com/google/j2objc/**</exclude>
+                                <exclude>com/google/thirdparty/**</exclude>
+                                <exclude>org/apache/commons/**</exclude>
+                                <exclude>org/apache/http/**</exclude>
+                                <exclude>org/mortbay/**</exclude>
                             </excludes>
                         </filter>
                     </filters>
@@ -235,36 +241,12 @@
                             <shadedPattern>com.playmonumenta.scriptedquests.internal.com.google.common</shadedPattern>
                         </relocation>
                         <relocation>
-                            <pattern>com.google.gdata</pattern>
-                            <shadedPattern>com.playmonumenta.scriptedquests.internal.com.google.gdata</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>com.google.j2objc</pattern>
-                            <shadedPattern>com.playmonumenta.scriptedquests.internal.com.google.j2objc</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>com.google.thirdparty</pattern>
-                            <shadedPattern>com.playmonumenta.scriptedquests.internal.com.google.thirdparty</shadedPattern>
-                        </relocation>
-                        <relocation>
                             <pattern>io.grpc</pattern>
                             <shadedPattern>com.playmonumenta.scriptedquests.internal.io.grpc</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>io.opencensus</pattern>
                             <shadedPattern>com.playmonumenta.scriptedquests.internal.io.opencensus</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>org.apache.commons</pattern>
-                            <shadedPattern>com.playmonumenta.scriptedquests.internal.org.apache.commons</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>org.apache.http</pattern>
-                            <shadedPattern>com.playmonumenta.scriptedquests.internal.org.apache.http</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>org.mortbay</pattern>
-                            <shadedPattern>com.playmonumenta.scriptedquests.internal.org.mortbay</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
