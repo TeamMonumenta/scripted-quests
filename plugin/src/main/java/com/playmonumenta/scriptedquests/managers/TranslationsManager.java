@@ -82,7 +82,7 @@ public class TranslationsManager implements Listener {
 		new CommandAPICommand("changelanguage")
 			.withPermission(CommandPermission.fromString("scriptedquests.translations.changelanguage"))
 			.withAliases("cl")
-			.withArguments(new StringArgument("language").overrideSuggestions((sender) -> getListOfAvailableLanguages().values().toArray(String[]::new)))
+			.withArguments(new StringArgument("language").overrideSuggestions((sender) -> getListOfAvailableLanguages().values().toArray(new String[0])))
 			.executes((sender, args) -> {
 				changeLanguage(sender, (String)args[0]);
 			}).register();
