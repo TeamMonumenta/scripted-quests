@@ -25,10 +25,10 @@ public class PrerequisiteCheckAdvancements implements PrerequisiteBase {
 			mInverted = false;
 		}
 
-        mAdvancement = Bukkit.getAdvancement(InventoryUtils.getNamespacedKey(advancement));
-        if (mAdvancement == null) {
+		mAdvancement = Bukkit.getAdvancement(InventoryUtils.getNamespacedKey(advancement));
+		if (mAdvancement == null) {
 			throw new Exception("Advancement '" + advancement + "' does not exist!");
-        }
+		}
 	}
 
 	@Override

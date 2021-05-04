@@ -59,7 +59,7 @@ public class MessagingUtils {
 		message = translatePlayerName(player, message);
 		TextComponent formattedMessage = LEGACY_SERIALIZER.deserialize("[" + displayName + "] ");
 		formattedMessage = formattedMessage.color(NamedTextColor.GOLD);
-		TextComponent tempText =  AMPERSAND_SERIALIZER.deserialize(message.replace("§", "&"));
+		TextComponent tempText = AMPERSAND_SERIALIZER.deserialize(message.replace("§", "&"));
 		tempText = tempText.color(NamedTextColor.WHITE);
 		formattedMessage = formattedMessage.append(tempText);
 
