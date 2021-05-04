@@ -64,7 +64,7 @@ public class ActionVoiceOver implements ActionBase {
 		if (npcEntity != null) {
 			entity = npcEntity;
 		}
-		Location location = entity.getLocation().add(0,entity.getHeight(),0);
+		Location location = entity.getLocation().add(0, entity.getHeight(), 0);
 		float volume = 1.0f;
 		float pitch = 1.0f;
 		player.playSound(location, mSound, SoundCategory.VOICE, volume, pitch);

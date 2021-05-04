@@ -179,6 +179,30 @@
              value="COMMA, SEMI, POST_INC, POST_DEC, DOT, ELLIPSIS, METHOD_REF"/>
             <property name="allowLineBreaks" value="true"/>
         </module>
+        <module name="WhitespaceAfter">
+            <property name="tokens" value="COMMA, SEMI"/>
+        </module>
+        <module name="RegexpSinglelineJava">
+            <property name="format" value="[^\t]\t"/>
+            <property name="message" value="Tabs should only be used at the beginning of lines"/>
+            <property name="ignoreComments" value="false"/>
+        </module>
+        <module name="RegexpSinglelineJava">
+            <property name="format" value="^  *[^ ]"/>
+            <property name="message" value="Indent must use tab characters"/>
+            <property name="ignoreComments" value="true"/>
+        </module>
+        <module name="RegexpSinglelineJava">
+            <property name="format" value="[^\n\r\t -~]"/>
+            <property name="message" value="Non-ascii characters should not be used"/>
+            <property name="ignoreComments" value="true"/>
+        </module>
+        <module name="Regexp">
+            <property name="format" value="[ \t]+$"/>
+            <property name="illegalPattern" value="true"/>
+            <property name="message" value="Trailing whitespace"/>
+        </module>
+        <module name="SingleSpaceSeparator"/>
         <module name="ParenPad"/>
         <module name="AnnotationLocation">
             <property name="id" value="AnnotationLocationMostCases"/>
@@ -190,7 +214,6 @@
             <property name="tokens" value="VARIABLE_DEF"/>
             <property name="allowSamelineMultipleAnnotations" value="true"/>
         </module>
-        <module name="JavadocTagContinuationIndentation"/>
         <module name="AtclauseOrder">
             <property name="tagOrder" value="@param, @return, @throws, @deprecated"/>
             <property name="target"
@@ -200,9 +223,6 @@
             <property name="format" value="^[a-z][a-z0-9][a-zA-Z0-9_]*$"/>
             <message key="name.invalidPattern"
              value="Method name ''{0}'' must match pattern ''{1}''."/>
-        </module>
-        <module name="SingleLineJavadoc">
-            <property name="ignoreInlineTags" value="false"/>
         </module>
         <module name="EmptyCatchBlock">
             <property name="exceptionVariableName" value="expected"/>

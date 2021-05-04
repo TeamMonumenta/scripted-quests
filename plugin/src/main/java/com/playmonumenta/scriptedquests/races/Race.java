@@ -180,7 +180,7 @@ public class Race {
 					mWorld.playSound(mPlayer.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 0.890899f);
 				} else if (mTicks == 60) {
 					// Go chime & title
-					mWorld.playSound(mPlayer.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1,  1.781797f);
+					mWorld.playSound(mPlayer.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 1.781797f);
 					mPlayer.sendTitle(ChatColor.WHITE + "" + ChatColor.BOLD + "GO", "", 0, 4, 0);
 
 					// Reset race start time and create time bar
@@ -229,15 +229,17 @@ public class Race {
 				lose();
 			} else if (distance < 4) {
 				// TODO: Tell the player if they are going faster or slower than before
-				//possibleRingTimes.add(timeElapsed);
-				//if (has_ring_times) {
-				//  int oldtime = ringTimes.get(actualRing);
-				//  if (oldtime < timeElapsed) {
-				//		MessagingUtils.sendActionBarMessage(mPlayer, net.md_5.bungee.api.ChatColor.RED, true, RaceUtils.msToTimeString(timeElapsed));
-				//  } else {
-				//		MessagingUtils.sendActionBarMessage(mPlayer, net.md_5.bungee.api.ChatColor.GREEN, true, RaceUtils.msToTimeString(timeElapsed));
-				//  }
-				//} else {
+				/*
+				possibleRingTimes.add(timeElapsed);
+				if (has_ring_times) {
+					int oldtime = ringTimes.get(actualRing);
+					if (oldtime < timeElapsed) {
+						MessagingUtils.sendActionBarMessage(mPlayer, net.md_5.bungee.api.ChatColor.RED, true, RaceUtils.msToTimeString(timeElapsed));
+					} else {
+						MessagingUtils.sendActionBarMessage(mPlayer, net.md_5.bungee.api.ChatColor.GREEN, true, RaceUtils.msToTimeString(timeElapsed));
+					}
+				}
+				*/
 
 				// Run the actions for reaching this ring
 				mNextWaypoint.doActions(mPlugin, mPlayer);
@@ -370,8 +372,8 @@ public class Race {
 		// display race end info
 		//header
 		if (mShowStats) {
-			mPlayer.sendMessage("" + ChatColor.DARK_AQUA + ChatColor.BOLD +   "----====----       " + ChatColor.AQUA + ChatColor.BOLD + "Speedruns" + ChatColor.DARK_AQUA  + ChatColor.BOLD + "       ----====----\n");
-			mPlayer.sendMessage(" " +  String.format("%s - %s", "" + ChatColor.AQUA + "Race Recap", " " + ChatColor.YELLOW + mName));
+			mPlayer.sendMessage("" + ChatColor.DARK_AQUA + ChatColor.BOLD + "----====----       " + ChatColor.AQUA + ChatColor.BOLD + "Speedruns" + ChatColor.DARK_AQUA + ChatColor.BOLD + "       ----====----\n");
+			mPlayer.sendMessage(" " + String.format("%s - %s", "" + ChatColor.AQUA + "Race Recap", " " + ChatColor.YELLOW + mName));
 			mPlayer.sendMessage(" ");
 		}
 

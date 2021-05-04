@@ -22,7 +22,7 @@ public class Zone extends ZoneBase {
 	private List<ZoneFragment> mFragments = new ArrayList<ZoneFragment>();
 	private final Set<String> mProperties = new LinkedHashSet<String>();
 
-	public static  Zone constructFromJson(ZoneLayer layer, JsonObject object, Map<String, List<String>> propertyGroups) throws Exception {
+	public static Zone constructFromJson(ZoneLayer layer, JsonObject object, Map<String, List<String>> propertyGroups) throws Exception {
 		if (layer == null) {
 			throw new Exception("layer may not be null.");
 		}
