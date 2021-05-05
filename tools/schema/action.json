@@ -453,6 +453,38 @@
             "description": "Leaves the current shard that the player is in. Leave as 'false' if the player 'exits' the shard, or true if the player 'abandons' the shard.",
             "type": "boolean",
 			"default": false
+        },
+		"play_cutscene": {
+            "title": "play_cutscene",
+            "description": "Plays a cutscene at the specified origin location, which at the end of the cutscene (or by skipping it) will perform the specified Quest Components.",
+            "type": "object",
+			"properties": {
+				"cutscene_id": {
+					"title": "cutscene_id",
+					"description": "The ID of the Cutscene.",
+					"type": "string"
+				},
+				"location": {
+					"title": "location",
+					"description": "The string format of the location to play the cutscene at. Must be in world,x,y,z format. Do not use decimals, use integers only!",
+					"type": "string"
+				},
+				"end_location": {
+					"title": "end_location",
+					"description": "The string format of the location where the player is teleported after the cutscene is over. Leave blank if unneeded. Must be in world,x,y,z format. Do not use decimals, use integers only!",
+					"type": "string"
+				},
+				"quest_components": {
+					"title": "quest_components",
+					"description": "The quest components to run whenever the player finishes or skips the cutscene.",
+					"type": "array",
+					"format": "tabs",
+					"items": {
+						"title": "Quest Component",
+						"$ref": "quest_component.json"
+					}
+				}
+			}
         }
     }
 }
