@@ -454,6 +454,11 @@
             "type": "boolean",
 			"default": false
         },
+		"teleport": {
+            "title": "teleport",
+            "description": "Teleports the player to a specific world, location, and rotation. Only use this if you need to teleport a player across worlds. Format: world,x,y,z,yaw,pitch",
+            "type": "string"
+        },
 		"play_cutscene": {
             "title": "play_cutscene",
             "description": "Plays a cutscene at the specified origin location, which at the end of the cutscene (or by skipping it) will perform the specified Quest Components.",
@@ -464,14 +469,9 @@
 					"description": "The ID of the Cutscene.",
 					"type": "string"
 				},
-				"location": {
-					"title": "location",
-					"description": "The string format of the location to play the cutscene at. Must be in world,x,y,z format. Do not use decimals, use integers only!",
-					"type": "string"
-				},
-				"end_location": {
-					"title": "end_location",
-					"description": "The string format of the location where the player is teleported after the cutscene is over. Leave blank if unneeded. Must be in world,x,y,z format. Do not use decimals, use integers only!",
+				"position": {
+					"title": "position",
+					"description": "The string format of the position in the world to play the cutscene at. Use format x,y,z and integers only!",
 					"type": "string"
 				},
 				"quest_components": {
