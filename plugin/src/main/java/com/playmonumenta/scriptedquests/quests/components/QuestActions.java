@@ -130,11 +130,16 @@ public class QuestActions {
 				case "give_handbook_entries":
 					mActions.add(new ActionGiveHandbookEntries(value));
 					break;
-				case "rerun_components":
-					if (entityType != null) {
-						mActions.add(new ActionRerunComponents(npcName, entityType));
-					}
+
+				case "play_cutscene":
+					mActions.add(new ActionPlayCutscene(npcName, displayName, entityType, value));
 					break;
+
+				case "rerun_components":
+				if (entityType != null) {
+					mActions.add(new ActionRerunComponents(npcName, entityType));
+				}
+				break;
 
 				case "set_questdata":
 					JsonArray questArray = value.getAsJsonArray();

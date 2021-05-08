@@ -128,15 +128,19 @@ public class PrerequisiteCheckQuestData implements PrerequisiteBase {
 			PlayerData data = Core.getInstance().mPlayerManager.getPlayerData(player.getUniqueId());
 			QuestData questData = data.getQuestData(mId);
 
+			System.out.println(mId);
 			if (questData != null) {
-
+				System.out.println("not null");
+				System.out.println(mCompletedCheck);
 				// Check for completion
 				if (mCompletedCheck == 1) { // Is it completed?
 					if (!questData.mCompleted) {
 						return false;
 					}
  				} else if (mCompletedCheck == 2) { // Is it NOT completed?
+
 					if (questData.mCompleted) {
+						System.out.println("completed, return false");
 						return false;
 					}
 				}
@@ -146,6 +150,8 @@ public class PrerequisiteCheckQuestData implements PrerequisiteBase {
 						return false;
 					}
 				}
+
+				System.out.println("return true");
 				return true;
 			}
 			return false;

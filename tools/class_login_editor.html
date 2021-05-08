@@ -51,21 +51,20 @@
         schema: {
             title: "Class Login",
             defaultProperties: [
-                "actions",
-                "prerequisites"
+                "quest_components"
             ],
             additionalProperties:false,
             properties: {
-				prerequisites: {
-                    propertyOrder: 2,
-                    required: false,
-					$ref: "schema/prerequisites.json",
-				},
-                actions: {
-                    propertyOrder: 3,
-                    required: true,
-					$ref: "schema/actions.json",
-				},
+				quest_components: {
+                    title: "quest_components",
+                    description: "The Quest Components to run whenever a player logs into their class. These Quest Components are ran based off of the Class's data.",
+                    type: "array",
+                    format: "tabs",
+                    items: {
+                        title: "Quest component",
+                        $ref: "schema/quest_component.json",
+                    }
+                },
             }
         }
     });
