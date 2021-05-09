@@ -161,6 +161,20 @@
                     type: "integer",
 					default: 10
                 },
+				attackSpeed: {
+                    propertyOrder: 7,
+                    title: "attackSpeed",
+                    description: "The speed at which the mob will melee attack. This is in SECONDS",
+                    type: "number",
+					default: 1
+                },
+				attackRange: {
+                    propertyOrder: 7,
+                    title: "attackRange",
+                    description: "The range at which the mob will attack the player.",
+                    type: "number",
+					default: 1
+                },
 				aggroRange: {
                     propertyOrder: 7,
                     title: "aggroRange",
@@ -210,6 +224,7 @@
                     type: "boolean",
 					default: true
                 },
+
 				loottable: {
                     propertyOrder: 8,
                     title: "loottable",
