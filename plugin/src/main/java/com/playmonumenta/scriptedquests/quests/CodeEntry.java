@@ -154,8 +154,8 @@ public class CodeEntry {
 	}
 
 	public boolean doActionsIfCodeMatches(Plugin plugin, Player player, String code) {
-		String goodCode = getCodeForPlayer(player).toLowerCase().replaceAll("\\s","");
-		code = code.toLowerCase().replaceAll("\\s","");
+		String goodCode = getCodeForPlayer(player).toLowerCase().replaceAll("\\s", "");
+		code = code.toLowerCase().replaceAll("\\s", "");
 		if (goodCode.equals(code)) {
 			for (QuestComponent component : mComponents) {
 				component.doActionsIfPrereqsMet(plugin, player, null);

@@ -10,6 +10,7 @@ import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -60,11 +61,11 @@ public class ActionCommand implements ActionBase {
 
 	@Override
 	public void doAction(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
-		//	Because there's no currently good way to run commands we need to run them via the console....janky....I know.
+		// Because there's no currently good way to run commands we need to run them via the console....janky....I know.
 		String commandStr = mCommand;
 		if (npcEntity == null) {
 			if (commandStr.contains("@N")) {
-				String commandErr = "§4Cannot run ScriptedQuest command without direct NPC interaction: /" + commandStr;
+				String commandErr = ChatColor.RED + "Cannot run ScriptedQuest command without direct NPC interaction: /" + commandStr;
 				player.spigot().sendMessage(ChatMessageType.SYSTEM, TextComponent.fromLegacyText(commandErr));
 				return;
 			}
