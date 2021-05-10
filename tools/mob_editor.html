@@ -180,7 +180,7 @@
                     title: "aggroRange",
                     description: "The aggro range of a mob. This will determine how far a player can be before the mob loses aggro of the player.",
                     type: "integer",
-					default: 16
+					default: 22
                 },
 				npcHealthMinimum: {
                     propertyOrder: 7,
@@ -231,7 +231,13 @@
                     type: "boolean",
 					default: true
                 },
-
+				friendlyFire: {
+                    propertyOrder: 7,
+                    title: "friendlyFire",
+                    description: "Toggles on/off friendly fire, meaning the PLAYER is able to damage this mob if this is toggled on. Other NPCs can still damage this mob.",
+                    type: "boolean",
+					default: true
+                },
 				loottable: {
                     propertyOrder: 8,
                     title: "loottable",
