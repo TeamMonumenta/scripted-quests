@@ -22,9 +22,11 @@ public class InteractableEntry {
 		RIGHT_CLICK_BLOCK,
 		RIGHT_CLICK_ENTITY,
 		RIGHT_CLICK_FUNCTIONAL,
+		RIGHT_CLICK_INVENTORY,
 		LEFT_CLICK_AIR,
 		LEFT_CLICK_BLOCK,
-		LEFT_CLICK_ENTITY;
+		LEFT_CLICK_ENTITY,
+		LEFT_CLICK_INVENTORY;
 
 		public static InteractType fromString(String str) throws Exception {
 			switch (str) {
@@ -36,12 +38,16 @@ public class InteractableEntry {
 					return RIGHT_CLICK_ENTITY;
 				case "right_click_functional":
 					return RIGHT_CLICK_FUNCTIONAL;
+				case "right_click_inventory":
+					return RIGHT_CLICK_INVENTORY;
 				case "left_click_air":
 					return LEFT_CLICK_AIR;
 				case "left_click_block":
 					return LEFT_CLICK_BLOCK;
 				case "left_click_entity":
 					return LEFT_CLICK_ENTITY;
+				case "left_click_inventory":
+					return LEFT_CLICK_INVENTORY;
 				default:
 					throw new Exception("Unknown click_type: " + str);
 			}

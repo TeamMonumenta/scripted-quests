@@ -121,4 +121,16 @@ public class InteractableManager {
 		}
 		return cancelEvent;
 	}
+
+	public boolean clickInventoryEvent(Plugin plugin, Player player, ItemStack item, InteractType type) {
+		boolean cancelEvent = false;
+		if (mInteractables.containsKey(item.getType())) {
+			for (InteractableEntry entry : mInteractables.get(item.getType())) {
+				if (entry.interactEvent(plugin, player, null, type)) {
+					cancelEvent = true;
+				}
+			}
+		}
+		return cancelEvent;
+	}
 }

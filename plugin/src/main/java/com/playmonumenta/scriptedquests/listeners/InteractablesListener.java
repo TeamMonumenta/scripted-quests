@@ -11,6 +11,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerAnimationType;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -19,6 +21,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.quests.InteractableEntry.InteractType;
 import com.playmonumenta.scriptedquests.utils.MetadataUtils;
 
 public class InteractablesListener implements Listener {
@@ -101,6 +104,35 @@ public class InteractablesListener implements Listener {
 				// interactEntityEvent returning true means this event should be canceled
 				event.setCancelled(true);
 			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+	public void inventoryClickEvent(InventoryClickEvent event) {
+		if (!(event.getWhoClicked() instanceof Player)) {
+			return;
+		}
+
+		Player player = (Player)event.getWhoClicked();
+		ItemStack item = event.getCurrentItem();
+		ClickType type = event.getClick();
+		InteractType interactType = null;
+
+		switch (type) {
+		case RIGHT:
+			interactType = InteractType.RIGHT_CLICK_INVENTORY;
+		case LEFT:
+			interactType = InteractType.LEFT_CLICK_INVENTORY;
+		default:
+		}
+
+		if (item == null || item.getType() == Material.AIR || interactType == null) {
+			// No point continuing
+			return;
+		}
+
+		if (mPlugin.mInteractableManager.clickInventoryEvent(mPlugin, player, item, interactType)) {
+			event.setCancelled(true);
 		}
 	}
 }
