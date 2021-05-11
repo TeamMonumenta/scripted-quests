@@ -1,8 +1,5 @@
 package com.playmonumenta.scriptedquests.listeners;
 
-import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.quests.QuestNpc;
-
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -16,9 +13,13 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
+import org.bukkit.event.entity.PlayerLeashEntityEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
+
+import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.quests.QuestNpc;
 
 public class EntityListener implements Listener {
 	private Plugin mPlugin;
@@ -103,5 +104,15 @@ public class EntityListener implements Listener {
 	public void areaEffectCloudApplyEvent(AreaEffectCloudApplyEvent event) {
 		// Don't apply potion effects to quest entities
 		event.getAffectedEntities().removeIf(entity -> mPlugin.mNpcManager.getInteractNPC(entity.getCustomName(), entity.getType()) != null);
+	}
+
+	@EventHandler(priority = EventPriority.LOW)
+	public void playerLeashEntityEvent(PlayerLeashEntityEvent event) {
+		Entity leashee = event.getEntity();
+		QuestNpc npc = mPlugin.mNpcManager.getInteractNPC(leashee.getCustomName(), leashee.getType());
+
+		if (npc != null) {
+			event.setCancelled(true);
+		}
 	}
 }
