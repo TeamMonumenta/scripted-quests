@@ -36,7 +36,7 @@
         </repository>
         <repository>
             <id>dynmap-repo</id>
-            <url>http://repo.mikeprimm.com/org/</url>
+            <url>https://repo.mikeprimm.com/org/</url>
         </repository>
         <repository>
             <id>monumenta-redis-sync</id>
