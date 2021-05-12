@@ -52,27 +52,30 @@ public class InteractableManager {
 	 */
 	public boolean interactEvent(Plugin plugin, Player player, ItemStack item, Block block, Action action) {
 		boolean cancelEvent = false;
-		if (item != null && mInteractables.containsKey(item.getType())) {
-			InteractType interact;
-			switch (action) {
-				case RIGHT_CLICK_AIR:
-					interact = InteractType.RIGHT_CLICK_AIR;
-					break;
-				case RIGHT_CLICK_BLOCK:
-					interact = (block != null && MaterialUtils.isInteractableBlock(block.getType())) ? InteractType.RIGHT_CLICK_FUNCTIONAL : InteractType.RIGHT_CLICK_BLOCK;
-					break;
-				case LEFT_CLICK_AIR:
-					interact = InteractType.LEFT_CLICK_AIR;
-					break;
-				case LEFT_CLICK_BLOCK:
-					interact = InteractType.LEFT_CLICK_BLOCK;
-					break;
-				default:
-					return false;
-			}
-			for (InteractableEntry entry : mInteractables.get(item.getType())) {
-				if (entry.interactEvent(plugin, player, null, interact)) {
-					cancelEvent = true;
+		if (item != null) {
+			List<InteractableEntry> entries = mInteractables.get(item.getType());
+			if (entries != null) {
+				InteractType interact;
+				switch (action) {
+					case RIGHT_CLICK_AIR:
+						interact = InteractType.RIGHT_CLICK_AIR;
+						break;
+					case RIGHT_CLICK_BLOCK:
+						interact = (block != null && MaterialUtils.isInteractableBlock(block.getType())) ? InteractType.RIGHT_CLICK_FUNCTIONAL : InteractType.RIGHT_CLICK_BLOCK;
+						break;
+					case LEFT_CLICK_AIR:
+						interact = InteractType.LEFT_CLICK_AIR;
+						break;
+					case LEFT_CLICK_BLOCK:
+						interact = InteractType.LEFT_CLICK_BLOCK;
+						break;
+					default:
+						return false;
+				}
+				for (InteractableEntry entry : entries) {
+					if (entry.interactEvent(plugin, player, null, interact)) {
+						cancelEvent = true;
+					}
 				}
 			}
 		}
@@ -91,8 +94,9 @@ public class InteractableManager {
 	 */
 	public boolean interactEntityEvent(Plugin plugin, Player player, ItemStack item, Entity target) {
 		boolean cancelEvent = false;
-		if (mInteractables.containsKey(item.getType())) {
-			for (InteractableEntry entry : mInteractables.get(item.getType())) {
+		List<InteractableEntry> entries = mInteractables.get(item.getType());
+		if (entries != null) {
+			for (InteractableEntry entry : entries) {
 				if (entry.interactEvent(plugin, player, target, InteractType.RIGHT_CLICK_ENTITY)) {
 					cancelEvent = true;
 				}
@@ -112,9 +116,23 @@ public class InteractableManager {
 	 */
 	public boolean attackEntityEvent(Plugin plugin, Player player, ItemStack item, Entity target) {
 		boolean cancelEvent = false;
-		if (mInteractables.containsKey(item.getType())) {
-			for (InteractableEntry entry : mInteractables.get(item.getType())) {
+		List<InteractableEntry> entries = mInteractables.get(item.getType());
+		if (entries != null) {
+			for (InteractableEntry entry : entries) {
 				if (entry.interactEvent(plugin, player, target, InteractType.LEFT_CLICK_ENTITY)) {
+					cancelEvent = true;
+				}
+			}
+		}
+		return cancelEvent;
+	}
+
+	public boolean clickInventoryEvent(Plugin plugin, Player player, ItemStack item, InteractType type) {
+		boolean cancelEvent = false;
+		List<InteractableEntry> entries = mInteractables.get(item.getType());
+		if (entries != null) {
+			for (InteractableEntry entry : entries) {
+				if (entry.interactEvent(plugin, player, null, type)) {
 					cancelEvent = true;
 				}
 			}
