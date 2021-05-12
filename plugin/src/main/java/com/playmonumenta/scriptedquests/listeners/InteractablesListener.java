@@ -121,9 +121,12 @@ public class InteractablesListener implements Listener {
 		switch (type) {
 		case RIGHT:
 			interactType = InteractType.RIGHT_CLICK_INVENTORY;
+			break;
 		case LEFT:
 			interactType = InteractType.LEFT_CLICK_INVENTORY;
+			break;
 		default:
+			break;
 		}
 
 		if (item == null || item.getType() == Material.AIR || interactType == null) {
