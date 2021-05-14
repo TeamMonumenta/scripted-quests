@@ -94,6 +94,17 @@ public class ZoneProperty {
 		}
 	}
 
+	public void addFromOther(Plugin plugin, ZoneProperty other) {
+		if (!mLayer.equals(other.mLayer)
+		    || !mName.equals(other.mName)) {
+			plugin.getLogger().severe("Attempted to add two ZoneProperty objects of different properties!");
+			return;
+		}
+		for (QuestComponent component : other.getComponents()) {
+			mComponents.add(component);
+		}
+	}
+
 	public String getLayer() {
 		return mLayer;
 	}
