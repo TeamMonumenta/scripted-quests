@@ -19,7 +19,7 @@ import dev.jorel.commandapi.wrappers.FunctionWrapper;
 public class ScheduleFunction {
 	private class DelayedFunction {
 		protected int mTicksLeft;
-		private FunctionWrapper[] mFunction;
+		protected FunctionWrapper[] mFunction;
 
 		protected DelayedFunction(int ticksLeftIn, FunctionWrapper[] functionIn) {
 			mTicksLeft = ticksLeftIn;
@@ -50,6 +50,9 @@ public class ScheduleFunction {
 				if (entry.mTicksLeft < 0) {
 					mFunctionsToRun.add(entry);
 
+					for (FunctionWrapper func : entry.mFunction) {
+						mPlugin.getLogger().info("Preparing to run " + func.getKey().toString());
+					}
 					it.remove();
 				}
 			}
