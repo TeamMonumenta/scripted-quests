@@ -99,6 +99,10 @@ public class Plugin extends JavaPlugin {
 
 		reloadConfigYaml(null);
 
+		if (mConfig.contains("translations")) {
+			mTranslationsManager = new TranslationsManager(this, mConfig.getConfigurationSection("translations"));
+		}
+
 		InteractNpc.register(this);
 		Clickable.register(this);
 		GiveLootTable.register(mRandom);
@@ -247,10 +251,6 @@ public class Plugin extends JavaPlugin {
 		}
 		if (sender != null) {
 			sender.sendMessage("fallback_zone_lookup: " + Boolean.toString(mFallbackZoneLookup));
-		}
-
-		if (mConfig.contains("translations")) {
-			mTranslationsManager = new TranslationsManager(this, mConfig.getConfigurationSection("translations"));
 		}
 	}
 

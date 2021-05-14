@@ -95,7 +95,7 @@ public class TranslationsManager implements Listener {
 				new CommandAPICommand("synctranslationsheet")
 					.withPermission(CommandPermission.fromString("scriptedquests.translations.sync"))
 					.executes((sender, args) -> {
-						INSTANCE.syncTranslationSheet(sender);
+						syncTranslationSheet(sender);
 					}).register();
 			}
 		}
@@ -130,7 +130,7 @@ public class TranslationsManager implements Listener {
 
 		String wantedLang = null;
 		// go through the language list for a matching argument
-		for (Map.Entry<String, String> entry : INSTANCE.getListOfAvailableLanguages().entrySet()) {
+		for (Map.Entry<String, String> entry : getListOfAvailableLanguages().entrySet()) {
 			if (entry.getValue().toLowerCase().equals(arg.toLowerCase())) {
 				wantedLang = entry.getKey();
 				break;
@@ -150,7 +150,7 @@ public class TranslationsManager implements Listener {
 		player.addScoreboardTag("language_" + wantedLang);
 
 		// refresh
-		INSTANCE.playerJoin(player, true);
+		playerJoin(player, true);
 
 	}
 
@@ -364,7 +364,7 @@ public class TranslationsManager implements Listener {
 	 *
 	 */
 
-	public static class TranslationGSheet {
+	private static class TranslationGSheet {
 		private final Sheets mSheets;
 		private final String mSheetId;
 		private final String mSheetName;
@@ -393,12 +393,12 @@ public class TranslationsManager implements Listener {
 			mSheets = new Sheets.Builder(new NetHttpTransport(), new JacksonFactory(), requestInitializer).build();
 		}
 
-		public List<List<Object>> readSheet() throws IOException {
+		private List<List<Object>> readSheet() throws IOException {
 			ValueRange result = mSheets.spreadsheets().values().get(mSheetId, mSheetName + "!A1:Z99999").execute();
 			return result.getValues();
 		}
 
-		public UpdateValuesResponse writeSheet(List<List<Object>> data) throws IOException {
+		private UpdateValuesResponse writeSheet(List<List<Object>> data) throws IOException {
 			ValueRange values = new ValueRange();
 			values.setValues(data);
 			return mSheets.spreadsheets().values().update(mSheetId, mSheetName + "!A1", values)
@@ -406,7 +406,7 @@ public class TranslationsManager implements Listener {
 		}
 	}
 
-	public void syncTranslationSheet(CommandSender sender) {
+	private void syncTranslationSheet(CommandSender sender) {
 
 		Bukkit.getScheduler().runTaskAsynchronously(mPlugin, () -> {
 			TranslationGSheet gSheet;
