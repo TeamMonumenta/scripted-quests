@@ -83,14 +83,17 @@ public class ScheduleFunction {
 			.withArguments(new FunctionArgument("function"))
 			.withArguments(new IntegerArgument("ticks", 0))
 			.executes((sender, args) -> {
-				addDelayedFunction((FunctionWrapper[])args[0], (Integer)args[1]);
+				addDelayedFunction(plugin, (FunctionWrapper[])args[0], (Integer)args[1]);
 			})
 			.register();
 
 		/* TODO: Add the other /schedule variants (clear and replace/append variants) */
 	}
 
-	private void addDelayedFunction(FunctionWrapper[] function, int ticks) {
+	private void addDelayedFunction(Plugin plugin, FunctionWrapper[] function, int ticks) {
+		for (FunctionWrapper func : function) {
+			plugin.getLogger().info("schedule function " + func.getKey().toString() + " " + Integer.toString(ticks));
+		}
 		mFunctions.add(new DelayedFunction(ticks, function));
 
 		if (mTaskId == null) {
