@@ -19,7 +19,7 @@ import dev.jorel.commandapi.wrappers.FunctionWrapper;
 public class ScheduleFunction {
 	private class DelayedFunction {
 		protected int mTicksLeft;
-		private FunctionWrapper[] mFunction;
+		protected FunctionWrapper[] mFunction;
 
 		protected DelayedFunction(int ticksLeftIn, FunctionWrapper[] functionIn) {
 			mTicksLeft = ticksLeftIn;
@@ -50,6 +50,9 @@ public class ScheduleFunction {
 				if (entry.mTicksLeft < 0) {
 					mFunctionsToRun.add(entry);
 
+					for (FunctionWrapper func : entry.mFunction) {
+						plugin.getLogger().info("Preparing to run " + func.getKey().toString());
+					}
 					it.remove();
 				}
 			}
@@ -83,17 +86,14 @@ public class ScheduleFunction {
 			.withArguments(new FunctionArgument("function"))
 			.withArguments(new IntegerArgument("ticks", 0))
 			.executes((sender, args) -> {
-				addDelayedFunction(plugin, (FunctionWrapper[])args[0], (Integer)args[1]);
+				addDelayedFunction((FunctionWrapper[])args[0], (Integer)args[1]);
 			})
 			.register();
 
 		/* TODO: Add the other /schedule variants (clear and replace/append variants) */
 	}
 
-	private void addDelayedFunction(Plugin plugin, FunctionWrapper[] function, int ticks) {
-		for (FunctionWrapper func : function) {
-			plugin.getLogger().info("schedule function " + func.getKey().toString() + " " + Integer.toString(ticks));
-		}
+	private void addDelayedFunction(FunctionWrapper[] function, int ticks) {
 		mFunctions.add(new DelayedFunction(ticks, function));
 
 		if (mTaskId == null) {
