@@ -364,7 +364,7 @@ public class TranslationsManager implements Listener {
 	 *
 	 */
 
-	public static class TranslationGSheet {
+	private static class TranslationGSheet {
 		private final Sheets mSheets;
 		private final String mSheetId;
 		private final String mSheetName;
@@ -393,12 +393,12 @@ public class TranslationsManager implements Listener {
 			mSheets = new Sheets.Builder(new NetHttpTransport(), new JacksonFactory(), requestInitializer).build();
 		}
 
-		public List<List<Object>> readSheet() throws IOException {
+		private List<List<Object>> readSheet() throws IOException {
 			ValueRange result = mSheets.spreadsheets().values().get(mSheetId, mSheetName + "!A1:Z99999").execute();
 			return result.getValues();
 		}
 
-		public UpdateValuesResponse writeSheet(List<List<Object>> data) throws IOException {
+		private UpdateValuesResponse writeSheet(List<List<Object>> data) throws IOException {
 			ValueRange values = new ValueRange();
 			values.setValues(data);
 			return mSheets.spreadsheets().values().update(mSheetId, mSheetName + "!A1", values)
@@ -406,7 +406,7 @@ public class TranslationsManager implements Listener {
 		}
 	}
 
-	public void syncTranslationSheet(CommandSender sender) {
+	private void syncTranslationSheet(CommandSender sender) {
 
 		Bukkit.getScheduler().runTaskAsynchronously(mPlugin, () -> {
 			TranslationGSheet gSheet;
@@ -423,6 +423,7 @@ public class TranslationsManager implements Listener {
 			try {
 				sender.sendMessage("Reading values");
 				rows = gSheet.readSheet();
+				sender.sendMessage("Recieved " + rows.size() + " rows from the GSheet");
 			} catch (IOException e) {
 				sender.sendMessage("Failed to read values from sheet. Abort. error: " + e.getMessage());
 				e.printStackTrace();
@@ -430,20 +431,23 @@ public class TranslationsManager implements Listener {
 			}
 
 			Bukkit.getScheduler().runTask(mPlugin, () -> {
+				sender.sendMessage("old translation map size: " + mTranslationsMap.size());
 				readSheetValues(rows);
+				sender.sendMessage("new translation map size: " + mTranslationsMap.size());
 
 				sender.sendMessage("Reloading shards");
 				writeTranslationFileAndReloadShards();
+				sender.sendMessage("translation map size: " + mTranslationsMap.size());
 
 				try {
-					sender.sendMessage("Writing values");
+					sender.sendMessage("Compiling values");
 					List<List<Object>> data = convertDataToSheetList();
+					sender.sendMessage("Writing " + data.size() + " rows to the GSheet");
 					UpdateValuesResponse response = gSheet.writeSheet(data);
 					sender.sendMessage("Done! written " + response.getUpdatedRows() + " rows");
 				} catch (IOException e) {
 					sender.sendMessage("Failed to write values into sheet. error: " + e.getMessage());
 					e.printStackTrace();
-					return;
 				}
 			});
 		});
