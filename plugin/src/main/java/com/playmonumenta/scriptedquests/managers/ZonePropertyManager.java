@@ -48,11 +48,13 @@ public class ZonePropertyManager implements Listener {
 			}
 			Map<String, ZoneProperty> layer = mZoneProperties.get(layerName);
 
-			if (layer.containsKey(name)) {
-				throw new Exception(name + "' already exists on layer '" + layerName + "'!");
+			ZoneProperty existingProperty = layer.get(name);
+			if (existingProperty != null) {
+				// Existing ZoneProperty
+				existingProperty.addFromOther(plugin, property);
+			} else {
+				layer.put(name, property);
 			}
-
-			layer.put(name, property);
 
 			return name + ":" + Integer.toString(property.getComponents().size());
 		});
