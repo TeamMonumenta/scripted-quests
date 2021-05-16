@@ -101,6 +101,11 @@
 				}
 			}
 		},
+		"circle_aoe": {
+			"title": "circle_aoe",
+			"description": "Casts a particle AoE circle like the AoE circle ability given the specified mob ability. This will not deal damage typically.",
+			"type": "string"
+		},
 		"summon": {
 			"title": "summon",
 			"description": "Use this to summon mobs at the target's location",
