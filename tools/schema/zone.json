@@ -51,10 +51,16 @@
 					"description": "Toggles on/off the default discovery sounds for this zone. Useful for if you need to use quest_components for custom discoveries.",
 					"default": true
 				},
-				"song": {
+				"ambience_pack": {
 					"type": "string",
-					"title": "song",
-					"description": "The song that will be played while the player is in this zone. This can be left blank if there is none.",
+					"title": "ambience_pack",
+					"description": "The Music Pack that will play as ambience music in this zone. Leave blank if there is none.",
+					"default": ""
+				},
+				"combat_pack": {
+					"type": "string",
+					"title": "combat_pack",
+					"description": "The Music Pack that will play as combat music in this zone whenever a player enters combat with an enemy. Leave blank if there is none.",
 					"default": ""
 				},
 				"quest_components": {
