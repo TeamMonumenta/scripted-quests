@@ -40,6 +40,7 @@ public class ActionTimerReset implements ActionBase {
 			}
 
 			timerData.mResetCounter = timer.getResetCounter() - 1;
+			timerData.mTimerTags.clear();
 			data.updateQuestVisibility();
 		}
 	}
