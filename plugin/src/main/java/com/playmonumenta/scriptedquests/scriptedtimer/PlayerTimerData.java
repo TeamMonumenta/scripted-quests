@@ -2,10 +2,14 @@ package com.playmonumenta.scriptedquests.scriptedtimer;
 
 import com.google.gson.JsonObject;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class PlayerTimerData {
 
 	public final String mId;
 	public int mResetCounter;
+	public Set<String> mTimerTags = new HashSet<>();
 
 	public PlayerTimerData(JsonObject json) {
 		mId = json.get("id").getAsString();

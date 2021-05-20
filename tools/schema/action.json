@@ -236,8 +236,24 @@
         },
 	    "timer_cooldown": {
             "title": "timer_cooldown",
-            "description": "Puts the player on cooldown with the specified timer. This will cause the pre-requisite 'timer_cooldown' to return true.",
-            "type": "string"
+            "description": "Puts the player on cooldown with the specified timer and timer tags. This will cause the pre-requisite 'timer_cooldown' to return true.",
+			"properties": {
+				"timer_id": {
+					"title": "Timer ID",
+					"description": "The ID of the Timer",
+					"type": "string"
+				},
+				"timer_tags": {
+					"title": "timer_tags",
+					"description": "Gives the player the specified timer tags. These timer tags are assigned to this specific timer, and the tags will clear once the timer resets.",
+					"type": "array",
+					"item": {
+						"name": "Timer Tag",
+						"type": "string"
+					}
+				}
+			},
+            "type": "object"
         },
 	    "timer_reset": {
             "title": "timer_reset",
