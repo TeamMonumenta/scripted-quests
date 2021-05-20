@@ -1,6 +1,12 @@
 {
     "type": "object",
     "additionalProperties": false,
+	"defaultProperties": [
+		"x",
+		"y",
+		"z",
+		"yaw"
+	],
     "properties": {
 		"world": {
             "type": "string",
