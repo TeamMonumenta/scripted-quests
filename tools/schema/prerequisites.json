@@ -206,7 +206,7 @@
 					"description": "The tags to check for on this timer.",
 					"type": "array",
 					"items": {
-						"name": "Timer Tag",
+						"title": "Timer Tag",
 						"type": "string"
 					}
 				}
