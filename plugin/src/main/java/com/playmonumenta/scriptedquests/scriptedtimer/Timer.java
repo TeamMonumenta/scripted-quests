@@ -59,7 +59,6 @@ public class Timer {
 
 				World world = null;
 				String message = "@T";
-				double yaw = -1;
 				for (Map.Entry<String, JsonElement> ent : locObject.entrySet()) {
 					String key = ent.getKey();
 					JsonElement v = ent.getValue();
@@ -105,8 +104,6 @@ public class Timer {
 					quadTree.add(node);
 					quadTree.getValues().add(node);
 				}
-
-
 			}
 		}
 
