@@ -24,6 +24,13 @@
             "$ref": "coordinate.json",
             "propertyOrder": 3
 		},
+		"timer_tag": {
+		    "required": true,
+			"description": "The timer tag required for this counter to be shown.",
+            "type": "string",
+            "propertyOrder": 4,
+			"default": "world"
+		},
         "message": {
             "required": true,
 			"description": "The message to display on the counter. Use @T within the message to display the time.",

@@ -1,6 +1,7 @@
 package com.playmonumenta.scriptedquests.quests.components.actions;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import com.playmonumenta.scriptedquests.scriptedtimer.PlayerTimerData;
@@ -11,13 +12,23 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class ActionTimerCooldown implements ActionBase {
 
 	private String mTimerId;
+	private Set<String> mTimerTags = new HashSet<>();
 	public ActionTimerCooldown(JsonElement value) throws Exception {
-		mTimerId = value.getAsString();
-		if (mTimerId == null) {
-			throw new Exception("timer value is not a string!");
+		JsonObject json = value.getAsJsonObject();
+		if (json == null) {
+			throw new Exception("timer value is not a json object!");
+		}
+
+		mTimerId = json.get("timer_id").getAsString();
+
+		for (JsonElement element : json.get("timer_tags").getAsJsonArray()) {
+			mTimerTags.add(element.getAsString());
 		}
 	}
 
@@ -41,6 +52,7 @@ public class ActionTimerCooldown implements ActionBase {
 			}
 
 			timerData.mResetCounter = timer.getResetCounter();
+			timerData.mTimerTags.addAll(mTimerTags);
 			data.updateQuestVisibility();
 		}
 	}

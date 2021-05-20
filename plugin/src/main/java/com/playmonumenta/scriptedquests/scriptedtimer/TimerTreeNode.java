@@ -14,13 +14,15 @@ import java.util.concurrent.TimeUnit;
 
 public class TimerTreeNode extends QuadTreeValue {
 
+	public final String mTimerTag;
 	private String mMessage;
 	public final Timer mTimer;
 
 	private ArmorStand mStand;
 	private BukkitRunnable mRunnable;
-	public TimerTreeNode(Location loc, Timer timer, String message) {
+	public TimerTreeNode(String timerTag, Location loc, Timer timer, String message) {
 		super(loc);
+		mTimerTag = timerTag;
 		mMessage = message;
 		mTimer = timer;
 	}

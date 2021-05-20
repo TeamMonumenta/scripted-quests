@@ -94,7 +94,7 @@ public class Timer {
 					Vector vec = new Vector(x, y, z);
 					Location loc = vec.toLocation(world);
 
-					TimerTreeNode node = new TimerTreeNode(loc, this, message);
+					TimerTreeNode node = new TimerTreeNode(locObject.get("timer_tag").getAsString(), loc, this, message);
 					QuadTree<TimerTreeNode> quadTree = mPlugin.mTimerManager.getQuadTree(world);
 
 					if (quadTree == null) {

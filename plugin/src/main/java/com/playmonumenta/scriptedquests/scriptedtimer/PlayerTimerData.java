@@ -1,5 +1,7 @@
 package com.playmonumenta.scriptedquests.scriptedtimer;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.util.HashSet;
@@ -14,6 +16,13 @@ public class PlayerTimerData {
 	public PlayerTimerData(JsonObject json) {
 		mId = json.get("id").getAsString();
 		mResetCounter = json.get("resetCounter").getAsInt();
+
+		if (json.has("timer_tags")) {
+			JsonArray timerTags = json.get("timer_tags").getAsJsonArray();
+			for (JsonElement element : timerTags) {
+				mTimerTags.add(element.getAsString());
+			}
+		}
 	}
 
 	public PlayerTimerData(String id) {
@@ -25,6 +34,12 @@ public class PlayerTimerData {
 		JsonObject json = new JsonObject();
 		json.addProperty("id", mId);
 		json.addProperty("resetCounter", mResetCounter);
+
+		JsonArray tagArray = new JsonArray();
+		for (String str : mTimerTags) {
+			tagArray.add(str);
+		}
+		json.add("timer_tags", tagArray);
 		return json;
 	}
 }
