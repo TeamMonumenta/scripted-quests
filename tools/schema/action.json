@@ -247,7 +247,7 @@
 					"title": "timer_tags",
 					"description": "Gives the player the specified timer tags. These timer tags are assigned to this specific timer, and the tags will clear once the timer resets.",
 					"type": "array",
-					"item": {
+					"items": {
 						"name": "Timer Tag",
 						"type": "string"
 					}

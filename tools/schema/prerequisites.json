@@ -205,7 +205,7 @@
 					"title": "timer_tags",
 					"description": "The tags to check for on this timer.",
 					"type": "array",
-					"item": {
+					"items": {
 						"name": "Timer Tag",
 						"type": "string"
 					}
