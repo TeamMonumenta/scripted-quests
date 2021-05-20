@@ -250,6 +250,7 @@ public class Model {
 				throw new Exception("locations array entry is not a valid location");
 			}
 
+			World world = null;
 			x = 0;
 			y = 0;
 			z = 0;
@@ -259,6 +260,10 @@ public class Model {
 				JsonElement value = ent.getValue();
 
 				switch (key) {
+					case "world":
+						world = Bukkit.getWorld(value.getAsString());
+						break;
+
 					case "x":
 						x = value.getAsDouble();
 						break;
@@ -279,21 +284,23 @@ public class Model {
 						throw new Exception("Unknown locations key: '" + key + "'");
 				}
 			}
+
+			World modelWorld = world != null ? world : mWorld;
 			Vector vec = new Vector(x, y, z);
-			Location loc = vec.toLocation(mWorld);
+			Location loc = vec.toLocation(modelWorld);
 			ModelInstance instance = new ModelInstance(plugin, this, loc, yaw);
 			// instance.toggle();
 
 			ModelTreeNode node = new ModelTreeNode(instance);
 			node.mQuestMarkers = mQuestMarker;
-			QuadTree<ModelTreeNode> quadTree = plugin.mModelManager.mQuadTrees.get(mWorld.getUID());
+			QuadTree<ModelTreeNode> quadTree = plugin.mModelManager.mQuadTrees.get(modelWorld.getUID());
 			if (quadTree == null) {
 				quadTree = new QuadTree<>();
 			}
 
 			quadTree.add(node);
 			quadTree.getValues().add(node);
-			plugin.mModelManager.mQuadTrees.put(mWorld.getUID(), quadTree);
+			plugin.mModelManager.mQuadTrees.put(modelWorld.getUID(), quadTree);
 
 			mInstances.add(instance);
 		}
