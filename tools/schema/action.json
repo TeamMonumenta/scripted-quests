@@ -354,6 +354,13 @@
             "title": "give_reward",
             "description": "Rewards the player all of the items from given loot tables in a stylized UI.",
             "type": "object",
+			"defaultProperties": [
+				"base_reward",
+				"pick_reward",
+				"xp",
+				"coins",
+				"quest_components"
+			],
 			"properties": {
 				"base_reward": {
 					"title": "base_reward",
@@ -370,6 +377,23 @@
 					"description": "The amount of experience given to the player.",
 					"type": "integer",
 					"default": 0
+				},
+				"xp_percent": {
+					"title": "xp_percent",
+					"description": "Gives XP based on the parameters given using MATHS. The amount of XP it gives correlates to the specified player level and the percentage of XP for the next level after",
+					"properties": {
+						"level": {
+							"title": "level",
+							"description": "The level to base the XP given off of.",
+							"$ref": "minmax_range.json",
+							"type": "integer"
+						},
+						"xp_percent": {
+							"title": "xp_percent",
+							"description": "The percentage of XP to give according to the amount of XP needed to get the player from <level> to <level + 1>. This is a decimal from 0 - 1",
+							"$ref": "xp_range.json"
+						}
+					}
 				},
 				"coins": {
 					"title": "coins",
@@ -394,6 +418,23 @@
             "description": "Gives the player the amount of XP specified.",
             "type": "integer"
         },
+		"give_xp_percent": {
+			"title": "give_xp_percent",
+			"description": "Gives XP based on the parameters given using MATHS. The amount of XP it gives correlates to the specified player level and the percentage of XP for the next level after",
+			"properties": {
+				"level": {
+					"title": "level",
+					"description": "The level to base the XP given off of.",
+					"$ref": "minmax_range.json",
+					"type": "integer"
+				},
+				"xp_percent": {
+					"title": "xp_percent",
+					"description": "The percentage of XP to give according to the amount of XP needed to get the player from <level> to <level + 1>. This is a decimal from 0 - 1",
+					"$ref": "xp_range.json"
+				}
+			}
+		},
         "interact_npc": {
             "title": "interact_npc",
             "description": "Triggers a follow-on interaction with a different NPC.",

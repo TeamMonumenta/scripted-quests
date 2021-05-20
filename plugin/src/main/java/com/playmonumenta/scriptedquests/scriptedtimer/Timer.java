@@ -59,6 +59,7 @@ public class Timer {
 
 				World world = null;
 				String message = "@T";
+				String timer_tag = null;
 				for (Map.Entry<String, JsonElement> ent : locObject.entrySet()) {
 					String key = ent.getKey();
 					JsonElement v = ent.getValue();
@@ -85,6 +86,10 @@ public class Timer {
 							message = v.getAsString();
 							break;
 
+						case "timer_tag":
+							timer_tag = v.getAsString();
+							break;
+
 						default:
 							throw new Exception("Unknown locations key: '" + key + "'");
 					}
@@ -94,7 +99,7 @@ public class Timer {
 					Vector vec = new Vector(x, y, z);
 					Location loc = vec.toLocation(world);
 
-					TimerTreeNode node = new TimerTreeNode(locObject.get("timer_tag").getAsString(), loc, this, message);
+					TimerTreeNode node = new TimerTreeNode(timer_tag, loc, this, message);
 					QuadTree<TimerTreeNode> quadTree = mPlugin.mTimerManager.getQuadTree(world);
 
 					if (quadTree == null) {
