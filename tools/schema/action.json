@@ -385,7 +385,6 @@
 						"level": {
 							"title": "level",
 							"description": "The level to base the XP given off of.",
-							"$ref": "minmax_range.json",
 							"type": "integer"
 						},
 						"xp_percent": {
@@ -425,7 +424,6 @@
 				"level": {
 					"title": "level",
 					"description": "The level to base the XP given off of.",
-					"$ref": "minmax_range.json",
 					"type": "integer"
 				},
 				"xp_percent": {

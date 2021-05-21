@@ -51,6 +51,8 @@ public class ActionGiveReward implements ActionBase {
 		}
 
 		public void openMenu(Plugin plugin, Entity npcEntity, Player player) {
+
+			int xp = (int) (mAction.mXP + (PlayerData.getXPForLevel(mAction.mXPLevel) * mAction.mXPPercent));
 			MenuPage page = new MenuPage(player, "Claim Rewards", 54);
 
 			ItemStack filler = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
@@ -136,13 +138,12 @@ public class ActionGiveReward implements ActionBase {
 						@Override
 						public void run() {
 							player.closeInventory();
-
+							PlayerData data = Core.getInstance().mPlayerManager.getPlayerData(player.getUniqueId());
 							player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1.15f);
 							// Actions to run whenever the player accepts
 							for (QuestComponent component : mAction.mComponents) {
 								component.doActionsIfPrereqsMet(plugin, player, npcEntity);
 							}
-							PlayerData data = Core.getInstance().mPlayerManager.getPlayerData(player.getUniqueId());
 
 							if (mAction.mXP > 0) {
 								data.giveXP(mAction.mXP);
@@ -247,7 +248,6 @@ public class ActionGiveReward implements ActionBase {
 				page.setMenuElement(coinItem, 31);
 			}
 
-			int xp = mAction.mXP;
 			if (xp > 0) {
 				ItemStack xpIcon = new ItemStack(Material.EXPERIENCE_BOTTLE);
 				ItemMeta xpMeta = xpIcon.getItemMeta();
@@ -336,6 +336,10 @@ public class ActionGiveReward implements ActionBase {
 	private Integer mXP;
 	private Integer mCoin;
 
+	// XP Percent
+	private Integer mXPLevel;
+	private double mXPPercent;
+
 	private Random mRandom;
 	private List<QuestComponent> mComponents = new ArrayList<>();
 	public ActionGiveReward(String npcName, String displayName, EntityType entityType, JsonElement element) throws Exception {
@@ -353,6 +357,7 @@ public class ActionGiveReward implements ActionBase {
 				&& !key.equals("pick_reward")
 				&& !key.equals("xp")
 				&& !key.equals("coins")
+				&& !key.equals("xp_percent")
 				&& !key.equals("quest_components")) {
 				throw new Exception("Unknown give_reward key: " + key);
 			}
@@ -379,6 +384,14 @@ public class ActionGiveReward implements ActionBase {
 				if (mXP == null) {
 					throw new Exception("give_reward xp entry is not a integer!");
 				}
+			} else if (key.equals("xp_percent")) {
+				if (!value.isJsonObject()) {
+					throw new Exception("give_reward xp entry is not a integer!");
+				}
+				JsonObject xpObject = value.getAsJsonObject();
+				mXPLevel = xpObject.get("level").getAsInt();
+				mXPPercent = xpObject.get("percent").getAsDouble();
+
 			} else if (key.equals("coins")) {
 				mCoin = value.getAsInt();
 				if (mCoin == null) {

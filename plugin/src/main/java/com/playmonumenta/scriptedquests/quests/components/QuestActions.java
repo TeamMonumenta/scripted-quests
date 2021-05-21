@@ -120,6 +120,9 @@ public class QuestActions {
 				case "give_xp":
 					mActions.add(new ActionGiveXP(value));
 					break;
+				case "give_xp_percent":
+					mActions.add(new ActionGiveXPPercent(value));
+					break;
 				case "give_ability":
 					mActions.add(new ActionGiveAbility(value));
 					break;
