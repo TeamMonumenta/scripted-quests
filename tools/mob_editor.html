@@ -332,38 +332,32 @@
                 },
 				xp_values: {
                     propertyOrder: 11,
-                    title: "xp_ranges",
-                    description: "The amount of XP that the mob gives. Has to be a range",
-					properties: {
-                        min: {
-                            title: "Minimum",
-                            $ref: "schema/minmax_range.json",
-                            propertyOrder: 1
-                        },
-                        max: {
-                            title: "Maximum",
-                            $ref: "schema/minmax_range.json",
-                            propertyOrder: 2
-                        }
-                    }
-                },
-				xp_percents: {
-                    propertyOrder: 11,
-                    title: "xp_percents",
-                    description: "The amount of XP that the mob gives using MATHS. The amount of XP it gives correlates to the specified player level and the percentage of XP for the next level after",
-					properties: {
-                        level: {
-                            title: "level",
-							description: "The level to base the XP given off of.",
-                            type: "integer"
-                        },
-                        xp_percent: {
-                            title: "xp_percent",
-							description: "The percentage of XP to give according to the amount of XP needed to get the player from <level> to <level + 1>. This is a decimal from 0 - 1",
-                            $ref: "schema/xp_range.json",
-                            propertyOrder: 2
-                        }
-                    }
+                    title: "xp_values",
+                    description: "The amount of XP that the mob gives.",
+					oneOf: [
+						{
+							title: "number",
+							description: "Specific number of XP to give.",
+							type: "integer"
+						},
+						{
+							title: "Item",
+							description: "The item used to trade",
+							properties: {
+								level: {
+									title: "level",
+									description: "The level to base the XP given off of.",
+									type: "integer"
+								},
+								percent: {
+									title: "percent",
+									description: "The percentage of XP to get to get to the next level based on the level specified. This should be a decimal between 0 - 1",
+									type: "numbet"
+								}
+							},
+							type: "object"
+						}
+					]
                 },
 				sounds: {
                     propertyOrder: 12,
