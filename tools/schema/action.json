@@ -364,13 +364,41 @@
 			"properties": {
 				"base_reward": {
 					"title": "base_reward",
-					"description": "The loot table that is given to the player as the base.",
-					"type": "string"
+					"description": "The rewards that are given to the player as the base.",
+                    "oneOf": [
+                        {
+                            "title": "Loot Table",
+                            "type": "string"
+                        },
+                        {
+                            "title": "RPG Item IDs",
+                            "type": "array",
+                            "minItems": 1,
+                            "items": {
+                                "title": "RPG Item",
+                                "type": "string"
+                            }
+                        }
+                    ]
 				},
 				"pick_reward": {
 					"title": "pick_reward",
-					"description": "The loot table that contains the loot from which the player has to pick 1 item from. This can be left blank if not intended.",
-					"type": "string"
+					"description": "The loot from which the player has to pick 1 item from. This can be left blank if not intended.",
+                    "oneOf": [
+                        {
+                            "title": "Loot Table",
+                            "type": "string"
+                        },
+                        {
+                            "title": "RPG Item IDs",
+                            "type": "array",
+                            "minItems": 1,
+                            "items": {
+                                "title": "RPG Item",
+                                "type": "string"
+                            }
+                        }
+                    ]
 				},
 				"xp": {
 					"title": "xp",
