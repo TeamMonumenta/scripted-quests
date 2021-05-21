@@ -7,6 +7,32 @@
 			"propertyOrder": 1,
 			"title": "defense",
 			"description": "Global Damage Reduction. Protects against all damage",
+			"oneOf": [
+				{
+					"title": "number",
+					"type": "integer"
+				},
+				{
+					"title": "percentage",
+					"type": "object",
+					"properties": {
+						"level": {
+							"required": true,
+							"propertyOrder": 2,
+							"title": "level",
+							"description": "The level to base the Damage Reduction calculation",
+							"type": "integer"
+						},
+						"percent": {
+							"required": true,
+							"propertyOrder": 2,
+							"title": "percent",
+							"description": "The percentage of DR for this mob to have when taking damage from enemies against the specified level.",
+							"$ref": "xp_range.json"
+						}
+					}
+				}
+			]
 			"type": "integer"
         },
         "armor": {
@@ -14,14 +40,64 @@
 			"propertyOrder": 2,
 			"title": "armor",
 			"description": "Physical Defense. Protects against Physical Damage.",
-			"type": "integer"
+			"oneOf": [
+				{
+					"title": "number",
+					"type": "integer"
+				},
+				{
+					"title": "percentage",
+					"type": "object",
+					"properties": {
+						"level": {
+							"required": true,
+							"propertyOrder": 2,
+							"title": "level",
+							"description": "The level to base the Damage Reduction calculation",
+							"type": "integer"
+						},
+						"percent": {
+							"required": true,
+							"propertyOrder": 2,
+							"title": "percent",
+							"description": "The percentage of DR for this mob to have when taking damage from enemies against the specified level.",
+							"$ref": "xp_range.json"
+						}
+					}
+				}
+			]
         },
         "resistance": {
             "required": true,
 			"propertyOrder": 3,
 			"title": "resistance",
 			"description": "Resistance against Magicks. Protects against Magical Damage.",
-			"type": "integer"
+			"oneOf": [
+				{
+					"title": "number",
+					"type": "integer"
+				},
+				{
+					"title": "percentage",
+					"type": "object",
+					"properties": {
+						"level": {
+							"required": true,
+							"propertyOrder": 2,
+							"title": "level",
+							"description": "The level to base the Damage Reduction calculation",
+							"type": "integer"
+						},
+						"percent": {
+							"required": true,
+							"propertyOrder": 2,
+							"title": "percent",
+							"description": "The percentage of DR for this mob to have when taking damage from enemies against the specified level.",
+							"$ref": "xp_range.json"
+						}
+					}
+				}
+			]
 		}
     }
 }
