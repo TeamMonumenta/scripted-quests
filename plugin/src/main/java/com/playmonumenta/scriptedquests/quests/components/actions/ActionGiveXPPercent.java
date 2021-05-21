@@ -23,7 +23,7 @@ public class ActionGiveXPPercent implements ActionBase {
 		}
 		JsonObject jsonObject = value.getAsJsonObject();
 		mXPLevel = jsonObject.get("level").getAsInt();
-		mXPPercent = jsonObject.get("percent").getAsDouble();
+		mXPPercent = jsonObject.get("xp_percent").getAsDouble();
 	}
 
 	private String bracketText(String str) {

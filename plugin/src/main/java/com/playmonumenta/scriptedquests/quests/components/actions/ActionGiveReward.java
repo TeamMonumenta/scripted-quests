@@ -70,12 +70,36 @@ public class ActionGiveReward implements ActionBase {
 			});
 
 			try {
-				Collection<ItemStack> base = InventoryUtils.getLootTableContents(player, mAction.mLootBasePath, mAction.mRandom);
+
 				// Base rewards
+				Collection<ItemStack> base = new ArrayList<>();
+				if (mAction.mLootBasePath != null) {
+					base = InventoryUtils.getLootTableContents(player, mAction.mLootBasePath, mAction.mRandom);
+				} else {
+					for (String str : mAction.mLootBaseList) {
+						RPGItem rpgItem = Core.getInstance().mItemManager.getItem(str);
+						if (rpgItem != null) {
+							base.add(rpgItem.getItemStack());
+						}
+					}
+				}
+
 				populateItemBox(page, base, 10, false, null);
 
-				Collection<ItemStack> picks = InventoryUtils.getLootTableContents(player, mAction.mLootPickPath, mAction.mRandom);
 				// Pick rewards
+				Collection<ItemStack> picks = new ArrayList<>();
+
+				if (mAction.mLootPickPath != null) {
+					picks = InventoryUtils.getLootTableContents(player, mAction.mLootPickPath, mAction.mRandom);
+				} else {
+					for (String str : mAction.mLootPickList) {
+						RPGItem rpgItem = Core.getInstance().mItemManager.getItem(str);
+						if (rpgItem != null) {
+							picks.add(rpgItem.getItemStack());
+						}
+					}
+				}
+
 				populateItemBox(page, picks, 10, true,
 					(ItemStack item) -> {
 					mPicked = item;
@@ -133,6 +157,7 @@ public class ActionGiveReward implements ActionBase {
 					claim.setItemMeta(claimMeta);
 
 					MenuItem claimItem = new MenuItem(claim);
+					Collection<ItemStack> finalBase = base;
 					claimItem.setAction(new CodeSnip() {
 
 						@Override
@@ -145,8 +170,8 @@ public class ActionGiveReward implements ActionBase {
 								component.doActionsIfPrereqsMet(plugin, player, npcEntity);
 							}
 
-							if (mAction.mXP > 0) {
-								data.giveXP(mAction.mXP);
+							if (xp > 0) {
+								data.giveXP(xp);
 								player.sendMessage(bracketText(Utils.getColor("#73deff") + "+"
 									+ mAction.mXP + " " + Utils.getColor("#93ff73") + "Experience Points"));
 							}
@@ -178,10 +203,10 @@ public class ActionGiveReward implements ActionBase {
 								player.sendMessage(bracketText(coinCounts));
 							}
 
-							if (base.size() > 0) {
-								InventoryUtils.giveItems(player, base, false);
+							if (finalBase.size() > 0) {
+								InventoryUtils.giveItems(player, finalBase, false);
 
-								for (ItemStack item : base) {
+								for (ItemStack item : finalBase) {
 
 									ItemStack converted = Utils.convertItemToRPG(item);
 									ItemMeta meta = converted.getItemMeta();
@@ -333,6 +358,8 @@ public class ActionGiveReward implements ActionBase {
 
 	private String mLootBasePath;
 	private String mLootPickPath;
+	private List<String> mLootBaseList = new ArrayList<>();
+	private List<String> mLootPickList = new ArrayList<>();
 	private Integer mXP;
 	private Integer mCoin;
 
@@ -370,14 +397,29 @@ public class ActionGiveReward implements ActionBase {
 			}
 
 			if (key.equals("base_reward")) {
-				mLootBasePath = value.getAsString();
-				if (mLootBasePath == null) {
-					throw new Exception("give_reward base_reward entry is not a string!");
+				if (value.isJsonPrimitive()) {
+					mLootBasePath = value.getAsString();
+					if (mLootBasePath == null) {
+						throw new Exception("give_reward base_reward entry is not a string!");
+					}
+				} else {
+					JsonArray array = value.getAsJsonArray();
+					for (JsonElement itemEle : array) {
+						mLootBaseList.add(itemEle.getAsString());
+					}
 				}
+
 			} else if (key.equals("pick_reward")) {
-				mLootPickPath = value.getAsString();
-				if (mLootPickPath == null) {
-					throw new Exception("give_reward pick_reward entry is not a string!");
+				if (value.isJsonPrimitive()) {
+					mLootPickPath = value.getAsString();
+					if (mLootPickPath == null) {
+						throw new Exception("give_reward pick_reward entry is not a string!");
+					}
+				} else {
+					JsonArray array = value.getAsJsonArray();
+					for (JsonElement itemEle : array) {
+						mLootPickList.add(itemEle.getAsString());
+					}
 				}
 			} else if (key.equals("xp")) {
 				mXP = value.getAsInt();
@@ -390,7 +432,7 @@ public class ActionGiveReward implements ActionBase {
 				}
 				JsonObject xpObject = value.getAsJsonObject();
 				mXPLevel = xpObject.get("level").getAsInt();
-				mXPPercent = xpObject.get("percent").getAsDouble();
+				mXPPercent = xpObject.get("xp_percent").getAsDouble();
 
 			} else if (key.equals("coins")) {
 				mCoin = value.getAsInt();
