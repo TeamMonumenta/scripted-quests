@@ -257,7 +257,28 @@
                     title: "loottable",
                     description: "The Loot Table that the mob uses to drop items.",
                     type: "string",
-					default: "rpg:tier_1/currency_loottable"
+					default: ""
+                },
+				conditional_loottables: {
+                    propertyOrder: 8,
+                    title: "conditional_loottables",
+                    description: "Loot Tables that dropped based on the conditions met for the player. These loot tables also drop PER PLAYER (Meaning if a player kills the mob and is in a party, then all of the party gets personal drops from this loot table).",
+                    type: "array",
+					items: {
+						title: "Conditional Loottable",
+						type: "object",
+						properties: {
+							prerequisites: {
+								title: "prerequisites",
+								description: "The prerequisites for this loot table to drop for the player. Leave blank if there are no prerequisites.",
+								$ref: "schema/prerequisites.json"
+							},
+							loottable: {
+								title: "loottable",
+								description: "The loot table to drop if the preprequisites are met."
+							}
+						}
+					}
                 },
 				model: {
                     propertyOrder: 8,
