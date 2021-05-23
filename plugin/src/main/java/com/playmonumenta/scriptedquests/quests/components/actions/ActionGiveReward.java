@@ -22,9 +22,11 @@ import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.util.Vector;
 
 import javax.swing.*;
 import java.util.*;
@@ -82,6 +84,15 @@ public class ActionGiveReward implements ActionBase {
 							base.add(rpgItem.getItemStack());
 						}
 					}
+
+					for (String id : mAction.mLootBaseMap.keySet()) {
+						RPGItem rpgItem = Core.getInstance().mItemManager.getItem(id);
+						if (rpgItem != null) {
+							ItemStack itemStack = rpgItem.getItemStack();
+							itemStack.setAmount(mAction.mLootBaseMap.get(id));
+							base.add(itemStack);
+						}
+					}
 				}
 
 				populateItemBox(page, base, 10, false, null);
@@ -96,6 +107,15 @@ public class ActionGiveReward implements ActionBase {
 						RPGItem rpgItem = Core.getInstance().mItemManager.getItem(str);
 						if (rpgItem != null) {
 							picks.add(rpgItem.getItemStack());
+						}
+					}
+
+					for (String id : mAction.mLootPickMap.keySet()) {
+						RPGItem rpgItem = Core.getInstance().mItemManager.getItem(id);
+						if (rpgItem != null) {
+							ItemStack itemStack = rpgItem.getItemStack();
+							itemStack.setAmount(mAction.mLootPickMap.get(id));
+							picks.add(itemStack);
 						}
 					}
 				}
@@ -360,6 +380,9 @@ public class ActionGiveReward implements ActionBase {
 	private String mLootPickPath;
 	private List<String> mLootBaseList = new ArrayList<>();
 	private List<String> mLootPickList = new ArrayList<>();
+
+	private Map<String, Integer> mLootBaseMap = new HashMap<>();
+	private Map<String, Integer> mLootPickMap = new HashMap<>();
 	private Integer mXP;
 	private Integer mCoin;
 
@@ -405,7 +428,13 @@ public class ActionGiveReward implements ActionBase {
 				} else {
 					JsonArray array = value.getAsJsonArray();
 					for (JsonElement itemEle : array) {
-						mLootBaseList.add(itemEle.getAsString());
+						if (itemEle.isJsonPrimitive()) {
+							mLootBaseList.add(itemEle.getAsString());
+						} else {
+							JsonObject jsonObject = itemEle.getAsJsonObject();
+							mLootBaseMap.put(jsonObject.get("id").getAsString(), jsonObject.get("amount").getAsInt());
+						}
+
 					}
 				}
 
@@ -418,7 +447,12 @@ public class ActionGiveReward implements ActionBase {
 				} else {
 					JsonArray array = value.getAsJsonArray();
 					for (JsonElement itemEle : array) {
-						mLootPickList.add(itemEle.getAsString());
+						if (itemEle.isJsonPrimitive()) {
+							mLootPickList.add(itemEle.getAsString());
+						} else {
+							JsonObject jsonObject = itemEle.getAsJsonObject();
+							mLootPickMap.put(jsonObject.get("id").getAsString(), jsonObject.get("amount").getAsInt());
+						}
 					}
 				}
 			} else if (key.equals("xp")) {

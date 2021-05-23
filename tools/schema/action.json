@@ -391,12 +391,23 @@
                         },
                         {
                             "title": "RPG Item IDs",
-                            "type": "array",
-                            "minItems": 1,
-                            "items": {
-                                "title": "RPG Item",
-                                "type": "string"
-                            }
+							"type": "array",
+							"items": {
+								"title": "RPG Item",
+								"type": "object",
+								"properties": {
+									"id": {
+										"title": "id",
+										"description": "The RPG Item ID of the item",
+										"type": "string"
+									},
+									"amount": {
+										"title": "amount",
+										"description": "The amount of the item to give",
+										"type": "integer"
+									}
+								}
+							}
                         }
                     ]
 				},
