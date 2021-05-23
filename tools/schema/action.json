@@ -493,8 +493,33 @@
         },
 		"drop_loot": {
             "title": "drop_loot",
-            "description": "Drops all items fro a loot table for a player on a Quest NPC. If there is no Quest NPC, it defaults to the player instead.",
-            "type": "string"
+            "description": "Drops all items for a player on a Quest NPC. If there is no Quest NPC, it defaults to the player instead.",
+            "oneOf": [
+				{
+					"title": "Loot Table",
+					"type": "string"
+				},
+				{
+					"title": "Items List",
+					"type": "array",
+					"items": {
+						"title": "RPG Item",
+						"type": "object",
+						"properties": {
+							"id": {
+								"title": "id",
+								"description": "The RPG Item ID of the item",
+								"type": "string"
+							},
+							"amount": {
+								"title": "amount",
+								"description": "The amount of the item to give",
+								"type": "integer"
+							}
+						}
+					}
+				}
+			]
         },
 		"spawn_mob": {
             "title": "spawn_mob",

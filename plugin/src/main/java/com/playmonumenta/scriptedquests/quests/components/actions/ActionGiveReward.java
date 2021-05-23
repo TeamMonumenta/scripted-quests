@@ -173,7 +173,7 @@ public class ActionGiveReward implements ActionBase {
 							if (xp > 0) {
 								data.giveXP(xp);
 								player.sendMessage(bracketText(Utils.getColor("#73deff") + "+"
-									+ mAction.mXP + " " + Utils.getColor("#93ff73") + "Experience Points"));
+									+ xp + " " + Utils.getColor("#93ff73") + "Experience Points"));
 							}
 
 							if (mAction.mCoin > 0) {
