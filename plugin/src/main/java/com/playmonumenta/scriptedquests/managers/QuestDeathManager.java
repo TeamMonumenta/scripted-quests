@@ -3,6 +3,7 @@ package com.playmonumenta.scriptedquests.managers;
 import java.util.ArrayList;
 
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
 import com.playmonumenta.scriptedquests.Plugin;
@@ -19,6 +20,13 @@ public class QuestDeathManager {
 			mDeaths.add(new QuestDeath(object));
 			return null;
 		});
+	}
+
+	public void runDeaths(Plugin plugin, Player player) {
+		/* Try each available death-triggered quest */
+		for (QuestDeath death : mDeaths) {
+			death.runDeathActions(plugin, player);
+		}
 	}
 
 	public boolean deathEvent(Plugin plugin, PlayerDeathEvent event) {

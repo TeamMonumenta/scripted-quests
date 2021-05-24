@@ -54,7 +54,7 @@ public class ActionGiveReward implements ActionBase {
 
 		public void openMenu(Plugin plugin, Entity npcEntity, Player player) {
 
-			int xp = (int) (mAction.mXP + (PlayerData.getXPForLevel(mAction.mXPLevel) * mAction.mXPPercent));
+			int xp = (int) (mAction.mXP + (mAction.mXPLevel > 0 ? (PlayerData.getXPForLevel(mAction.mXPLevel) * mAction.mXPPercent) : 0));
 			MenuPage page = new MenuPage(player, "Claim Rewards", 54);
 
 			ItemStack filler = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
@@ -383,12 +383,12 @@ public class ActionGiveReward implements ActionBase {
 
 	private Map<String, Integer> mLootBaseMap = new HashMap<>();
 	private Map<String, Integer> mLootPickMap = new HashMap<>();
-	private Integer mXP;
-	private Integer mCoin;
+	private Integer mXP = 0;
+	private Integer mCoin = 0;
 
 	// XP Percent
-	private Integer mXPLevel;
-	private double mXPPercent;
+	private Integer mXPLevel = 0;
+	private double mXPPercent = 0;
 
 	private Random mRandom;
 	private List<QuestComponent> mComponents = new ArrayList<>();

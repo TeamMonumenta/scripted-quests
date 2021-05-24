@@ -5,6 +5,7 @@ import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import me.Novalescent.Core;
 import me.Novalescent.items.imbuements.ImbuementMenu;
+import me.Novalescent.items.refinements.RefinementMenu;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -23,6 +24,8 @@ public class ActionMenu implements ActionBase {
 	public void doAction(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
 		if (mMenu.equalsIgnoreCase("imbuements")) {
 			ImbuementMenu.openMenu(Core.getInstance(), player);
+		} else if (mMenu.equalsIgnoreCase("refinements")) {
+			RefinementMenu.openMenu(Core.getInstance(), player);
 		} else {
 			player.sendMessage(ChatColor.RED + "The menu that this interaction was supposed to open was not found. Contact an admin!");
 		}

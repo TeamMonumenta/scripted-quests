@@ -97,6 +97,12 @@ public class QuestDeath {
 		}
 	}
 
+	public void runDeathActions(Plugin plugin, Player player) {
+		if (mPrerequisites == null || mPrerequisites.prerequisiteMet(player, null)) {
+			mActions.doActions(plugin, player, null, mPrerequisites);
+		}
+	}
+
 	/* Returns true if prerequisites match and actions were taken, false otherwise */
 	@SuppressWarnings("unchecked")
 	public boolean deathEvent(Plugin plugin, PlayerDeathEvent event) {
