@@ -121,6 +121,43 @@
                         title: "Quest component",
                         $ref: "schema/quest_component.json",
                     }
+                },
+                onFieldChange: {
+                    propertyOrder: 8,
+                    title: "onFieldChange",
+                    description: "The Quest Components to run on all players within this Shard whenever a Shard Field reaches a specific amount.",
+                    type: "array",
+                    items: {
+                        title: "Shard Field Change",
+						type: "object",
+						defaultProperties: [
+							"shard_field_id",
+							"shard_field_data",
+							"quest_components"
+						],
+						properties: {
+							shard_field_id: {
+								title: "shard_field_id",
+								description: "The shard field ID to check for.",
+								type: "string"
+							},
+							shard_field_data: {
+								title: "shard_field_data",
+								description: "The Shard Field data amount. This is an integer.",
+								type: "integer"
+							},
+							quest_components: {
+								title: "quest_components",
+								description: "The Quest Components to run on all players whenever the Shard Field ID reaches this number.",
+								type: "array",
+								format: "tabs",
+								items: {
+									title: "Quest component",
+									$ref: "schema/quest_component.json",
+								}
+							}
+						}
+                    }
                 }
             }
         }
