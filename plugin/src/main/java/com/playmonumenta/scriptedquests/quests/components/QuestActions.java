@@ -57,6 +57,9 @@ public class QuestActions {
 				case "command":
 					mActions.add(new ActionCommand(value));
 					break;
+				case "command_world":
+					mActions.add(new ActionCommandWorld(value));
+					break;
 				case "dialog":
 					mActions.add(new ActionDialog(npcName, displayName, entityType, value));
 					break;
@@ -155,6 +158,9 @@ public class QuestActions {
 						}
 						mActions.add(new ActionSetQuestData(questObject));
 					}
+					break;
+				case "set_shard_field":
+					mActions.add(new ActionSetShardData(value));
 					break;
 				case "remove_questdata":
 					mActions.add(new ActionRemoveQuestData(value));

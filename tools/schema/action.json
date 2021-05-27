@@ -201,8 +201,8 @@
 				],
 				"properties": {
 				    "shard_field_id": {
-						"title": "Quest ID",
-						"description": "The ID of the questdata",
+						"title": "shard_field_id",
+						"description": "The ID of the Shard Field",
 						"type": "string"
 					},
 					"shard_field_data": {
@@ -325,6 +325,11 @@
         "command": {
             "title": "command",
             "description": "Runs a command via the console. Any instance of '@S' (uppercase!) will be replaced with the player's name. Any instance of '@N' (uppercase!) will be replaced with the NPC's UUID, which can be used like @e to target a specific entity. The NPC must be selected by trading or punching to use the entity UUID, or the player will receive an error instead.",
+            "type": "string"
+        },
+		"command_world": {
+            "title": "command_world",
+            "description": "Runs a command via the console. This is different from the 'command' action, as it runs the command in the player's WORLD (It will add '/execute in <world> run' at the beginning automatically, with <world> being the player's current world). Any instance of '@S' (uppercase!) will be replaced with the player's name. Any instance of '@N' (uppercase!) will be replaced with the NPC's UUID, which can be used like @e to target a specific entity. The NPC must be selected by trading or punching to use the entity UUID, or the player will receive an error instead.",
             "type": "string"
         },
 		"run_actions": {
