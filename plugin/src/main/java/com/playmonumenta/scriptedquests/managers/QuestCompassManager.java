@@ -176,7 +176,7 @@ public class QuestCompassManager {
 
 	/* One command-specified waypoint per player */
 	public void setCommandWaypoint(Player player, List<Location> steps, String title, String message) {
-		ValidCompassEntry entry = new ValidCompassEntry(new CompassLocation(null, message, steps), title, true);
+		ValidCompassEntry entry = new ValidCompassEntry(new CompassLocation(null, message, steps), title, false);
 		mCommandWaypoints.put(player.getUniqueId(), entry);
 		getCurrentMarkerTitles(player);
 		entry.directPlayer(mPlugin.mWaypointManager, player);
