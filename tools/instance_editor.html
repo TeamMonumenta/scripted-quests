@@ -51,6 +51,7 @@
                 "world",
 				"spawnpoint",
 				"exitpoint",
+				"solo",
 				"onEnter",
 				"onExit",
 				"onAbandon",
@@ -89,6 +90,14 @@
                     description: "The exit point whenever the player exits this Shard. Leave this empty if the player will exit at their previous location.",
                     type: "string",
                     default: "0,0,0"
+                },
+				solo: {
+                    required: true,
+                    propertyOrder: 4,
+                    title: "solo",
+                    description: "Determines whether or not this is a SOLO Shard. Solo Shards cannot be ran with other players, including party members and friends.",
+                    type: "boolean",
+                    default: false
                 },
 				onEnter: {
                     propertyOrder: 5,
