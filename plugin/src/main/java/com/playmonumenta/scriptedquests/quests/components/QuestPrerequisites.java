@@ -166,6 +166,9 @@ public class QuestPrerequisites implements PrerequisiteBase {
 			case "check_class":
 				mPrerequisites.add(new PrerequisiteCheckClass(value));
 				break;
+			case "check_shard":
+				mPrerequisites.add(new PrerequisiteCheckShard(value));
+				break;
 			default:
 				throw new Exception("Unknown prerequisites key: '" + key + "'");
 			}
