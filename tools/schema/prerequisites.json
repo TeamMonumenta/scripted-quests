@@ -144,6 +144,12 @@
             "description": "Check if the player is a certain class. Valid Class IDs: Warrior, Ranger, Caster, Rogue, Cleric",
             "type": "string"
         },
+		"check_shard": {
+            "propertyOrder": 3,
+            "title": "check_shard",
+            "description": "Check if the player is inside a specific Shard. Shard IDs are case-sensitive!",
+            "type": "string"
+        },
         "items_in_inventory": {
             "propertyOrder": 4,
             "title": "items_in_inventory",
