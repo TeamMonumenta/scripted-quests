@@ -28,6 +28,7 @@ public class ActionPlayCutscene implements ActionBase {
 
 	private String mCutsceneId;
 
+	private Integer mEndingFrame = 999999;
 	private Vector mPosition;
 	private List<QuestComponent> mComponents = new ArrayList<>();
 	public ActionPlayCutscene(String npcName, String displayName, EntityType entityType, JsonElement value) throws Exception {
@@ -45,6 +46,10 @@ public class ActionPlayCutscene implements ActionBase {
 			QuestComponent component = new QuestComponent(npcName, displayName, entityType, ele);
 			mComponents.add(component);
 		}
+
+		if (json.has("ending_frame")) {
+			mEndingFrame = json.get("ending_frame").getAsInt();
+		}
 	}
 
 	@Override
@@ -60,7 +65,7 @@ public class ActionPlayCutscene implements ActionBase {
 					component.doActionsIfPrereqsMet(plugin, player, npcEntity);
 				}
 			});
-			sceneActive.playScene(loc, false, false);
+			sceneActive.playScene(loc, false, false, mEndingFrame);
 			data.mSceneActive = sceneActive;
 		}
 	}

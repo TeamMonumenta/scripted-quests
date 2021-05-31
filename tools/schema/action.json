@@ -631,6 +631,11 @@
 						"title": "Quest Component",
 						"$ref": "quest_component.json"
 					}
+				},
+				"end_frame": {
+					"title": "end_frame",
+					"description": "The frame that the cutscene to end on.",
+					"type": "integer"
 				}
 			}
         }
