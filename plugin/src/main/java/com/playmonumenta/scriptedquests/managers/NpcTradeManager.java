@@ -200,6 +200,7 @@ public class NpcTradeManager implements Listener {
 		Player player = (Player)event.getWhoClicked();
 		MerchantInventory merchInv = (MerchantInventory)event.getInventory();
 		PlayerTradeContext context = mOpenTrades.get(player.getUniqueId());
+		int hotbarButton = event.getHotbarButton();
 
 		if (context == null || !merchInv.getMerchant().equals(context.getMerchant())) {
 			player.sendMessage(ChatColor.RED + "DENIED: You should not have been able to view this interface. If this is a bug, please report it, and try trading with the villager again.");
@@ -218,24 +219,39 @@ public class NpcTradeManager implements Listener {
 		}
 
 		ItemStack clickedItem = event.getInventory().getItem(event.getSlot());
-		if ((event.getCursor() == null || event.getCursor().getType().isAir()) && clickedItem != null && !clickedItem.getType().isAir()) {
-			/* This is a successful trade - clicking with an empty cursor on a valid result item */
+		if (hotbarButton != -1) {
+			ItemStack hotbarItem = player.getInventory().getItem(hotbarButton);
+			if ((hotbarItem == null || hotbarItem.getType().isAir()) && clickedItem != null && !clickedItem.getType().isAir()) {
+				onSuccessfulTrade(event);
+			}
+		} else {
+			if ((event.getCursor() == null || event.getCursor().getType().isAir()) && clickedItem != null && !clickedItem.getType().isAir()) {
+				onSuccessfulTrade(event);
+			}
+		}
+	}
 
-			/*
-			 * Have to manually compute which slot this was because merchInv.getSelectedIndex returns the wrong index
-			 * if the player leaves the trade on the first slot but puts in materials for one of the other trades
-			 */
-			MerchantRecipe recipe = merchInv.getSelectedRecipe();
-			List<MerchantRecipe> recipes = merchInv.getMerchant().getRecipes();
-			int selectedIndex = recipes.indexOf(recipe);
+	/* This is a successful trade - clicking with an empty cursor on a valid result item */
+	private void onSuccessfulTrade(InventoryClickEvent event) {
+		Player player = (Player)event.getWhoClicked();
+		MerchantInventory merchInv = (MerchantInventory)event.getInventory();
+		PlayerTradeContext context = mOpenTrades.get(player.getUniqueId());
 
-			if (selectedIndex < 0) {
-				player.sendMessage(ChatColor.YELLOW + "BUG! Somehow the recipe you selected couldn't be found. Please report this, and include which villager and what you were trading for");
-			} else {
-				NpcTrade trade = context.getSlotProperties().get(selectedIndex);
-				if (trade != null) {
-					trade.doActions(Plugin.getInstance(), player, context.getVillager());
-				}
+		/*
+		 * Have to manually compute which slot this was because merchInv.getSelectedIndex returns the wrong index
+		 * if the player leaves the trade on the first slot but puts in materials for one of the other trades
+		 */
+
+		MerchantRecipe recipe = merchInv.getSelectedRecipe();
+		List<MerchantRecipe> recipes = merchInv.getMerchant().getRecipes();
+		int selectedIndex = recipes.indexOf(recipe);
+
+		if (selectedIndex < 0) {
+			player.sendMessage(ChatColor.YELLOW + "BUG! Somehow the recipe you selected couldn't be found. Please report this, and include which villager and what you were trading for");
+		} else {
+			NpcTrade trade = context.getSlotProperties().get(selectedIndex);
+			if (trade != null) {
+				trade.doActions(Plugin.getInstance(), player, context.getVillager());
 			}
 		}
 	}
