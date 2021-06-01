@@ -611,6 +611,11 @@
             "title": "play_cutscene",
             "description": "Plays a cutscene at the specified origin location, which at the end of the cutscene (or by skipping it) will perform the specified Quest Components.",
             "type": "object",
+			"defaultProperties": [
+				"cutscene_id",
+				"position",
+				"quest_components"
+			],
 			"properties": {
 				"cutscene_id": {
 					"title": "cutscene_id",
