@@ -65,7 +65,7 @@ public class ActionPlayCutscene implements ActionBase {
 					component.doActionsIfPrereqsMet(plugin, player, npcEntity);
 				}
 			});
-			sceneActive.playScene(loc, false, false, mEndingFrame);
+			sceneActive.playScene(loc, false, false, 0, mEndingFrame);
 			data.mSceneActive = sceneActive;
 		}
 	}
