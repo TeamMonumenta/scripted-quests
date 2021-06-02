@@ -4,9 +4,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -322,7 +327,7 @@ public class TranslationsManager implements Listener {
 
 				Bukkit.getScheduler().runTaskAsynchronously(mPlugin, () -> {
 					// write the map into the file
-					String filename = mPlugin.getDataFolder() + File.separator + "translations" + File.separator + "translations.json";
+					String filename = Paths.get(mPlugin.getDataFolder().toString(), "translations", "translations.json").toString();
 					try {
 						FileUtils.writeFile(filename, content);
 					} catch (IOException e) {
@@ -410,6 +415,21 @@ public class TranslationsManager implements Listener {
 	private void syncTranslationSheet(CommandSender sender) {
 
 		Bukkit.getScheduler().runTaskAsynchronously(mPlugin, () -> {
+			/* First make a backup copy of the translations database */
+			try {
+				sender.sendMessage("Making backup copy of the translations.json database");
+				Date date = Calendar.getInstance().getTime();
+				String filename = Paths.get(mPlugin.getDataFolder().toString(), "translations", "translations.json").toString();
+				String toFilename = filename + (new SimpleDateFormat(".yyyy-MM-dd_hh:mm:ss")).format(date);
+				Files.copy(new File(filename).toPath(),
+				           new File(toFilename).toPath(),
+				           StandardCopyOption.REPLACE_EXISTING);
+			} catch (Exception e) {
+				sender.sendMessage("Failed to backup translations.json database: " + e.getMessage());
+				e.printStackTrace();
+				return;
+			}
+
 			TranslationGSheet gSheet;
 			try {
 				sender.sendMessage("Initializing Google Sheets");
