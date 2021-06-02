@@ -162,6 +162,11 @@
 							"title": "raw",
 							"description": "Whether the text is raw or not, meaning it will not display the NPC name, and you have to do your own formatting.",
 							"type": "boolean"
+						},
+						"autoScroll": {
+							"title": "autoScroll",
+							"description": "Whether the text will autoscroll, meaning the player does not have to click on the [>>>] Button if they choose not to. The text will scroll every 4.5s.",
+							"type": "boolean"
 						}
 					}
 				}

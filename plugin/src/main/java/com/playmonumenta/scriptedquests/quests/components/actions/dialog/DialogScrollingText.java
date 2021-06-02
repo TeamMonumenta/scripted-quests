@@ -32,6 +32,7 @@ public class DialogScrollingText implements DialogBase {
 	private QuestActions mActions;
 	public int mClickType = 0;
 	private boolean mRaw = false;
+	private boolean mAutoScroll = false;
 
 	public DialogScrollingText(String displayName, JsonElement element)  throws Exception {
 		mDisplayName = displayName;
@@ -55,13 +56,17 @@ public class DialogScrollingText implements DialogBase {
 		if (jsonObject.has("raw")) {
 			mRaw = jsonObject.get("raw").getAsBoolean();
 		}
+
+		if (jsonObject.has("autoScroll")) {
+			mAutoScroll = jsonObject.get("autoScroll").getAsBoolean();
+		}
 	}
 
 	@Override
 	public void sendDialog(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
 		ScrollingTextActive active = new ScrollingTextActive(plugin, player, npcEntity, mText, mActions, prereqs,
 			new AreaBounds("", new Point(player.getLocation().subtract(mRadius, mRadius, mRadius)),
-				new Point(player.getLocation().add(mRadius, mRadius, mRadius))), mRaw);
+				new Point(player.getLocation().add(mRadius, mRadius, mRadius))), mRaw, mAutoScroll);
 
 		String metakey = com.playmonumenta.scriptedquests.Constants.PLAYER_SCROLLING_DIALOG_METAKEY;
 		player.setMetadata(metakey, new FixedMetadataValue(plugin, active));

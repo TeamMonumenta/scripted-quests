@@ -27,14 +27,10 @@ public class ScrollingTextActive {
 	private QuestPrerequisites mPrerequisites;
 	private final AreaBounds mValidArea;
 	private boolean mRaw;
+	private boolean mAutoScroll;
 
 	public ScrollingTextActive(Plugin plugin, Player player, Entity npcEntity,
-							   List<String> text, QuestActions actions, QuestPrerequisites prerequisites, AreaBounds validArea) {
-		this(plugin, player, npcEntity, text, actions, prerequisites, validArea, false);
-	}
-
-	public ScrollingTextActive(Plugin plugin, Player player, Entity npcEntity,
-							   List<String> text, QuestActions actions, QuestPrerequisites prerequisites, AreaBounds validArea, boolean raw) {
+							   List<String> text, QuestActions actions, QuestPrerequisites prerequisites, AreaBounds validArea, boolean raw, boolean autoScroll) {
 		mPlugin = plugin;
 		mPlayer = player;
 		mEntity = npcEntity;
@@ -43,6 +39,7 @@ public class ScrollingTextActive {
 		mPrerequisites = prerequisites;
 		mValidArea = validArea;
 		mRaw = raw;
+		mAutoScroll = autoScroll;
 	}
 
 	public void next() {
