@@ -17,7 +17,7 @@ import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 
 public class ActionDialog implements ActionBase {
 	private ArrayList<DialogBase> mDialogs = new ArrayList<DialogBase>();
-
+	private ArrayList<DialogClickableText> mClickableTexts = new ArrayList<>();
 	public ActionDialog(String npcName, String displayName,
 	             EntityType entityType, JsonElement element) throws Exception {
 		JsonObject object = element.getAsJsonObject();
@@ -34,7 +34,7 @@ public class ActionDialog implements ActionBase {
 			} else if (key.equals("raw_text")) {
 				mDialogs.add(new DialogRawText(ent.getValue()));
 			} else if (key.equals("clickable_text")) {
-				mDialogs.add(new DialogClickableText(npcName, displayName, entityType, ent.getValue()));
+				mClickableTexts.add(new DialogClickableText(npcName, displayName, entityType, ent.getValue()));
 			} else if (key.equals("random_text")) {
 				mDialogs.add(new DialogRandomText(displayName, ent.getValue()));
 			} else if (key.equals("raw_random_text")) {
@@ -48,13 +48,21 @@ public class ActionDialog implements ActionBase {
 	}
 
 	public List<DialogBase> getDialog() {
-		return mDialogs;
+		List<DialogBase> dialogs = new ArrayList<>();
+		dialogs.addAll(mDialogs);
+		dialogs.addAll(mClickableTexts);
+		return dialogs;
 	}
 
 	@Override
 	public void doAction(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
 		for (DialogBase dialog : mDialogs) {
 			dialog.sendDialog(plugin, player, npcEntity, prereqs);
+		}
+
+		// Run the Clickable Dialogs AFTER everything else, because we always want clickable text to appear at the bottom
+		for (DialogClickableText clickableText : mClickableTexts) {
+			clickableText.sendDialog(plugin, player, npcEntity, prereqs);
 		}
 	}
 }

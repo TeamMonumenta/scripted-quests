@@ -132,6 +132,10 @@
 				"scrolling_text": {
 					"title": "scrolling_text",
 					"type": "object",
+					"defaultProperties": [
+						"text",
+						"actions"
+					],
 					"properties": {
 						"text": {
 							"title": "text",
@@ -147,6 +151,17 @@
 							"title": "actions",
 							"description": "The actions to perform whenever the dialog is finished",
 							"$ref": "actions.json"
+						},
+						"click_type": {
+							"title": "click_type",
+							"description": "The number state this is. This is mainly use to telegraph whether the NPC has a quest or not. 1 = Acceptable Quest, 2 = Turnin Quest",
+							"title": "click_type",
+							"type": "integer"
+						},
+						"raw": {
+							"title": "raw",
+							"description": "Whether the text is raw or not, meaning it will not display the NPC name, and you have to do your own formatting.",
+							"type": "boolean"
 						}
 					}
 				}
