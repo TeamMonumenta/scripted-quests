@@ -1,9 +1,10 @@
 package com.playmonumenta.scriptedquests.managers;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -381,11 +382,11 @@ public class TranslationsManager implements Listener {
 			}
 			mSheetName = gsheetSettings.getString("sheet_name");
 
-			if (!gsheetSettings.contains("credentials")) {
-				throw new Exception("Google Sheets configuration missing 'credentials'");
+			File credentialsFile = Paths.get(Plugin.getInstance().getDataFolder().toString(), "gsheet_credentials.json").toFile();
+			if (!credentialsFile.isFile()) {
+				throw new Exception("Google Sheets requires a gsheet_credentials.json file in the plugin data folder");
 			}
-			InputStream credentialsStream = new ByteArrayInputStream(gsheetSettings.getString("credentials").getBytes());
-
+			InputStream credentialsStream = new FileInputStream(credentialsFile);
 			GoogleCredentials googleCredentials = ServiceAccountCredentials.fromStream(credentialsStream).createScoped(mScopes);
 
 			HttpRequestInitializer requestInitializer = new HttpCredentialsAdapter(googleCredentials);
