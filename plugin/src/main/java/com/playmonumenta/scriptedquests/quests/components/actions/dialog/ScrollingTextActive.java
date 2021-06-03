@@ -13,6 +13,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.List;
 
@@ -29,6 +30,8 @@ public class ScrollingTextActive {
 	private boolean mRaw;
 	private boolean mAutoScroll;
 
+	private BukkitRunnable mScrollRunnable = null;
+	private int mScrollTime = (int) (20 * 4.5);
 	public ScrollingTextActive(Plugin plugin, Player player, Entity npcEntity,
 							   List<String> text, QuestActions actions, QuestPrerequisites prerequisites, AreaBounds validArea, boolean raw, boolean autoScroll) {
 		mPlugin = plugin;
@@ -42,17 +45,26 @@ public class ScrollingTextActive {
 		mAutoScroll = autoScroll;
 	}
 
+	public void cancelScroll() {
+		if (mScrollRunnable != null) {
+			mScrollRunnable.cancel();
+			mScrollRunnable = null;
+		}
+	}
+
 	public void next() {
 
 		if (!mValidArea.within(mPlayer.getLocation())) {
 			mPlayer.playSound(mPlayer.getLocation(), Sound.UI_BUTTON_CLICK, 0.7f, 0.3f);
 			FormattedMessage.sendMessage(mPlayer, MessageFormat.NOTICE, ChatColor.RED + "You moved too far away to hear the dialogue...");
 			mPlayer.removeMetadata(com.playmonumenta.scriptedquests.Constants.PLAYER_SCROLLING_DIALOG_METAKEY, mPlugin);
+			cancelScroll();
 			return;
 		} else if (mPrerequisites != null && !mPrerequisites.prerequisiteMet(mPlayer, mEntity)) {
 			mPlayer.playSound(mPlayer.getLocation(), Sound.UI_BUTTON_CLICK, 0.7f, 0.3f);
 			FormattedMessage.sendMessage(mPlayer, MessageFormat.NOTICE, ChatColor.RED + "You no longer meet the requirements to listen to this dialogue...");
 			mPlayer.removeMetadata(com.playmonumenta.scriptedquests.Constants.PLAYER_SCROLLING_DIALOG_METAKEY, mPlugin);
+			cancelScroll();
 			return;
 		}
 
@@ -65,7 +77,7 @@ public class ScrollingTextActive {
 		if (mIndex < mText.size()) {
 			String text = mText.get(mIndex);
 			if (!text.trim().isEmpty()) {
-				if (!mRaw) {
+				if (mRaw) {
 					MessagingUtils.sendScrollableRawMessage(mPlayer, text);
 				} else {
 					MessagingUtils.sendScrollableNPCMessage(mPlayer, name, text);
@@ -77,9 +89,28 @@ public class ScrollingTextActive {
 		} else {
 			mActions.doActions(mPlugin, mPlayer, mEntity, mPrerequisites);
 			mPlayer.removeMetadata(com.playmonumenta.scriptedquests.Constants.PLAYER_SCROLLING_DIALOG_METAKEY, mPlugin);
+			cancelScroll();
 			return;
 		}
+		mScrollTime = (int) (20 * 4.5);
+	}
 
+	public void toggleScroll() {
+		if (mScrollRunnable == null) {
+			mScrollRunnable = new BukkitRunnable() {
+
+				@Override
+				public void run() {
+					mScrollTime--;
+
+					if (mScrollTime <= 0) {
+						next();
+					}
+				}
+			};
+
+			mScrollRunnable.runTaskTimer(mPlugin,  0, 1);
+		}
 	}
 
 }

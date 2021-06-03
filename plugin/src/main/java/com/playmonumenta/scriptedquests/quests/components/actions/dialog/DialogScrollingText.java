@@ -60,6 +60,10 @@ public class DialogScrollingText implements DialogBase {
 		if (jsonObject.has("autoScroll")) {
 			mAutoScroll = jsonObject.get("autoScroll").getAsBoolean();
 		}
+
+		if (jsonObject.has("radius")) {
+			mRadius = jsonObject.get("radius").getAsDouble();
+		}
 	}
 
 	@Override
@@ -72,5 +76,9 @@ public class DialogScrollingText implements DialogBase {
 		player.setMetadata(metakey, new FixedMetadataValue(plugin, active));
 
 		active.next();
+
+		if (mAutoScroll) {
+			active.toggleScroll();
+		}
 	}
 }

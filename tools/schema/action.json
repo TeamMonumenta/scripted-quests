@@ -167,6 +167,14 @@
 							"title": "autoScroll",
 							"description": "Whether the text will autoscroll, meaning the player does not have to click on the [>>>] Button if they choose not to. The text will scroll every 4.5s.",
 							"type": "boolean"
+						},
+						"radius": {
+							"description": "Range that the player is allowed to walk from the point where they were shown the message and still have the dialog work. Default is 4.0.",
+							"required": false,
+							"propertyOrder": 5,
+							"type": "number",
+							"minimum": 3,
+							"maximum": 29999984
 						}
 					}
 				}
