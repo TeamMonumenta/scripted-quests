@@ -305,6 +305,27 @@
                         },
                     }
                 },
+				skins: {
+                    propertyOrder: 8,
+                    title: "skins",
+                    description: "The skins that the mob can have. This skin will be assigned at random.",
+					type: "array",
+					items: {
+						title: "Skin",
+						type: "object",
+						properties: {
+                        skin_data: {
+                            title: "skin_data",
+                            description: "The skin data for the skin .png",
+							type: "string",
+                        },
+                        skin_signature: {
+                            title: "skin_signature",
+                            description: "The skin signature for the skin .png",
+							type: "string",
+                        },
+                    }
+                },
 				strafe_settings: {
                     propertyOrder: 11,
                     title: "strafe_settings",
@@ -454,6 +475,11 @@
 				on_targethit: {
 					title: "on_targethit",
 					description: "The actions to play on the target hit by the mob when struck by a melee. This can be left blank.",
+					$ref: "schema/ability_actions.json"
+				},		
+				on_damaged: {
+					title: "on_damaged",
+					description: "The actions to play on the mob when they are damaged. This can be left blank.",
 					$ref: "schema/ability_actions.json"
 				},		
 				on_death: {
