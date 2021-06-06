@@ -87,9 +87,9 @@ public class ScrollingTextActive {
 				return;
 			}
 		} else {
-			mActions.doActions(mPlugin, mPlayer, mEntity, mPrerequisites);
 			mPlayer.removeMetadata(com.playmonumenta.scriptedquests.Constants.PLAYER_SCROLLING_DIALOG_METAKEY, mPlugin);
 			cancelScroll();
+			mActions.doActions(mPlugin, mPlayer, mEntity, mPrerequisites);
 			return;
 		}
 		mScrollTime = (int) (20 * 4.5);

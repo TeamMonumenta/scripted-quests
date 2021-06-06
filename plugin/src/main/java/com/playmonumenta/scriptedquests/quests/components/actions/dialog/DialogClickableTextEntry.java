@@ -27,13 +27,15 @@ public class DialogClickableTextEntry implements DialogBase {
 
 	public class PlayerClickableTextEntry {
 		private final QuestPrerequisites mPrerequisites;
+		private final QuestPrerequisites mVisibilityPrerequisites;
 		private final QuestActions mActions;
 		private final AreaBounds mValidArea;
 		private final Entity mNpcEntity;
 
-		public PlayerClickableTextEntry(QuestPrerequisites prereqs, QuestActions actions,
+		public PlayerClickableTextEntry(QuestPrerequisites prereqs, QuestPrerequisites visibleprereqs, QuestActions actions,
 		                                Entity npcEntity, AreaBounds validArea) {
 			mPrerequisites = prereqs;
+			mVisibilityPrerequisites = visibleprereqs;
 			mActions = actions;
 			mValidArea = validArea;
 			mNpcEntity = npcEntity;
@@ -43,7 +45,8 @@ public class DialogClickableTextEntry implements DialogBase {
 			if (!mValidArea.within(player.getLocation())) {
 				player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 0.7f, 0.3f);
 				FormattedMessage.sendMessage(player, MessageFormat.NOTICE, ChatColor.RED + "You moved too far away to be heard...");
-			} else if (mPrerequisites != null && !mPrerequisites.prerequisiteMet(player, mNpcEntity)) {
+			} else if ((mPrerequisites != null && !mPrerequisites.prerequisiteMet(player, mNpcEntity)
+				|| (mVisibilityPrerequisites != null && !mVisibilityPrerequisites.prerequisiteMet(player, mNpcEntity)))) {
 				player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 0.7f, 0.3f);
 				FormattedMessage.sendMessage(player, MessageFormat.NOTICE, ChatColor.RED + "You no longer meet the requirements for this option...");
 			} else {
@@ -129,7 +132,7 @@ public class DialogClickableTextEntry implements DialogBase {
 				"/questtrigger " + Integer.toString(mIdx));
 
 			/* Create a new object describing the prereqs/actions/location for this clickable message */
-			PlayerClickableTextEntry newEntry = new PlayerClickableTextEntry(prereqs, mActions, npcEntity,
+			PlayerClickableTextEntry newEntry = new PlayerClickableTextEntry(prereqs, mPrerequisites, mActions, npcEntity,
 				new AreaBounds("", new Point(player.getLocation().subtract(mRadius, mRadius, mRadius)),
 					new Point(player.getLocation().add(mRadius, mRadius, mRadius))));
 
