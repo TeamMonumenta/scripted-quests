@@ -51,7 +51,7 @@ public class ScheduleFunction {
 					mFunctionsToRun.add(entry);
 
 					for (FunctionWrapper func : entry.mFunction) {
-						mPlugin.getLogger().info("Preparing to run " + func.getKey().toString());
+						mPlugin.getLogger().fine("Preparing to run " + func.getKey().toString());
 					}
 					it.remove();
 				}
