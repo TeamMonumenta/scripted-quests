@@ -15,10 +15,10 @@
 <div class='container'>
     <div class='row' style='padding-bottom: 15px;'>
         <div class='col-md-12'>
-            <h1>Wynncon Festival Editor</h1>
+            <h1>Wynncon Arena Editor</h1>
             <p>For Wynncon, by Nova/Fire.</p>
 			<br>
-			<p>Used for Festivals.</p>
+			<p>Used for Arenas.</p>
         </div>
     </div>
     <div class='row' style='padding-bottom: 15px;'>
@@ -45,7 +45,7 @@
 
         // The schema for the editor
         schema: {
-            title: "Festival Editor",
+            title: "Arena Editor",
             defaultProperties: [
                 "id",
 				"name",
@@ -58,26 +58,47 @@
                     required: true,
                     propertyOrder: 1,
                     title: "id",
-                    description: "The ID of the Festival. Needs to be unique.",
+                    description: "The ID of the Arena. Needs to be unique.",
                     type: "string",
-                    default: "festival_2021"
+                    default: "arena_2021"
                 },
 				name: {
                     required: true,
                     propertyOrder: 2,
                     title: "name",
-                    description: "The name of the Festival.",
+                    description: "The name of the Arena.",
                     type: "string",
-                    default: "Festival 2021"
+                    default: "Arena"
                 },
 				world: {
                     required: true,
                     propertyOrder: 3,
                     title: "world",
-                    description: "The world that the festival builds are contained in for use",
+                    description: "The world that the arena builds are contained in for use",
                     type: "string",
                     default: "world"
                 },
+				gamemodes: {
+					required: true,
+                    propertyOrder: 3,
+                    title: "gamemodes",
+                    description: "The gamemodes that this arena can be picked from. Valid games: TEAM_DEATHMATCH, DOMINATION",
+                    type: "array",
+                    items: {
+						"type": "string",
+						"title": "Gamemode"
+					}
+				},
+				teams: {
+					required: true,
+                    propertyOrder: 3,
+                    title: "teams",
+                    description: "Teams for this arena.",
+                    type: "array",
+                    items: {
+						"type": "object"
+					}
+				},
 				games: {
                     propertyOrder: 4,
                     title: "games",
@@ -401,20 +422,6 @@
 								    required: true,
 									title: "spawnDark",
 									description: "The vector location where the Dark team will spawn",
-									type: "string",
-									default: "0,0,0"
-								}
-							}
-						},
-						salted_says: {
-							title: "salted_says",
-							description: "In this gamemode, players are given 5 weapons, each corresponding to one of the 5 original classes. The players are all given a random class, and they need to perform the correct spell combo which is chosen at random by Salted. The player who does it the fastest will gain points. There are 6 rounds, and each round the amount of spells in a combo increases by 1. The player with the most points wins!",
-							type: "object",
-							properties: {
-								spawn: {
-								    required: true,
-									title: "spawn",
-									description: "The vector location where the players spawn",
 									type: "string",
 									default: "0,0,0"
 								}
