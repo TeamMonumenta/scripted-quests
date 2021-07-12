@@ -63,7 +63,7 @@ public class InteractablesListener implements Listener {
 
 		Player player = event.getPlayer();
 		//This only applies to players in adventure mode looking at blocks (not air)
-		if (event.isCancelled() || player.getGameMode() != GameMode.ADVENTURE || event.getAnimationType() != PlayerAnimationType.ARM_SWING || player.getTargetBlock(null, 4).getType() == Material.AIR) {
+		if (player.getGameMode() != GameMode.ADVENTURE || event.getAnimationType() != PlayerAnimationType.ARM_SWING || player.getTargetBlock(null, 4).getType() == Material.AIR) {
 			return;
 		}
 
@@ -96,8 +96,7 @@ public class InteractablesListener implements Listener {
 			return;
 		}
 
-		if (!event.isCancelled()
-			&& mPlugin.mInteractableManager.interactEntityEvent(mPlugin, player, item, entity)) {
+		if (mPlugin.mInteractableManager.interactEntityEvent(mPlugin, player, item, entity)) {
 			// interactEntityEvent returning true means this event should be canceled
 			event.setCancelled(true);
 		}
@@ -120,8 +119,7 @@ public class InteractablesListener implements Listener {
 				return;
 			}
 
-			if (!event.isCancelled()
-				&& mPlugin.mInteractableManager.attackEntityEvent(mPlugin, player, item, damagee)) {
+			if (mPlugin.mInteractableManager.attackEntityEvent(mPlugin, player, item, damagee)) {
 				// interactEntityEvent returning true means this event should be canceled
 				event.setCancelled(true);
 			}
