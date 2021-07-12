@@ -32,7 +32,7 @@ public class InteractablesListener implements Listener {
 		mPlugin = plugin;
 	}
 
-	@EventHandler(priority = EventPriority.LOW)
+	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
 	public void playerInteractEvent(PlayerInteractEvent event) {
 		if (event.useItemInHand() != Event.Result.DENY) {
 			Action action = event.getAction();
@@ -58,7 +58,7 @@ public class InteractablesListener implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.LOW)
+	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
 	public void playerAnimationEvent(PlayerAnimationEvent event) {
 
 		Player player = event.getPlayer();
@@ -85,7 +85,7 @@ public class InteractablesListener implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.LOW)
+	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
 	public void playerInteractEntityEvent(PlayerInteractEntityEvent event) {
 		Entity entity = event.getRightClicked();
 		Player player = event.getPlayer();
@@ -103,7 +103,7 @@ public class InteractablesListener implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.LOW)
+	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
 	public void entityDamageByEntityEvent(EntityDamageByEntityEvent event) {
 		Entity damagee = event.getEntity();
 		Entity damager = event.getDamager();
