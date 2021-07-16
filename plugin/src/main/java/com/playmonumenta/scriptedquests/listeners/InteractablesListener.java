@@ -32,7 +32,7 @@ public class InteractablesListener implements Listener {
 		mPlugin = plugin;
 	}
 
-	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.LOW)
 	public void playerInteractEvent(PlayerInteractEvent event) {
 		if (event.useItemInHand() != Event.Result.DENY) {
 			Action action = event.getAction();
@@ -58,12 +58,12 @@ public class InteractablesListener implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.LOW)
 	public void playerAnimationEvent(PlayerAnimationEvent event) {
 
 		Player player = event.getPlayer();
 		//This only applies to players in adventure mode looking at blocks (not air)
-		if (player.getGameMode() != GameMode.ADVENTURE || event.getAnimationType() != PlayerAnimationType.ARM_SWING || player.getTargetBlock(null, 4).getType() == Material.AIR) {
+		if (event.isCancelled() || player.getGameMode() != GameMode.ADVENTURE || event.getAnimationType() != PlayerAnimationType.ARM_SWING || player.getTargetBlock(null, 4).getType() == Material.AIR) {
 			return;
 		}
 
@@ -85,7 +85,7 @@ public class InteractablesListener implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.LOW)
 	public void playerInteractEntityEvent(PlayerInteractEntityEvent event) {
 		Entity entity = event.getRightClicked();
 		Player player = event.getPlayer();
@@ -96,13 +96,14 @@ public class InteractablesListener implements Listener {
 			return;
 		}
 
-		if (mPlugin.mInteractableManager.interactEntityEvent(mPlugin, player, item, entity)) {
+		if (!event.isCancelled()
+			&& mPlugin.mInteractableManager.interactEntityEvent(mPlugin, player, item, entity)) {
 			// interactEntityEvent returning true means this event should be canceled
 			event.setCancelled(true);
 		}
 	}
 
-	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.LOW)
 	public void entityDamageByEntityEvent(EntityDamageByEntityEvent event) {
 		Entity damagee = event.getEntity();
 		Entity damager = event.getDamager();
@@ -119,7 +120,8 @@ public class InteractablesListener implements Listener {
 				return;
 			}
 
-			if (mPlugin.mInteractableManager.attackEntityEvent(mPlugin, player, item, damagee)) {
+			if (!event.isCancelled()
+				&& mPlugin.mInteractableManager.attackEntityEvent(mPlugin, player, item, damagee)) {
 				// interactEntityEvent returning true means this event should be canceled
 				event.setCancelled(true);
 			}
