@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>ScriptedQuests Chest Group Editor</title>
+
+    <!-- Foundation CSS framework (Bootstrap and jQueryUI also supported) -->
+    <link rel='stylesheet' href='//cdn.jsdelivr.net/bootstrap/3.2.0/css/bootstrap.css'>
+    <!-- Font Awesome icons (Bootstrap, Foundation, and jQueryUI also supported) -->
+    <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.6.1/css/all.css'>
+
+    <script src="https://cdn.jsdelivr.net/npm/@json-editor/json-editor@1.3.5/dist/jsoneditor.min.js"></script>
+</head>
+<body>
+<div class='container'>
+    <div class='row' style='padding-bottom: 15px;'>
+        <div class='col-md-12'>
+            <h1>ScriptedQuests Chest Group Editor</h1>
+            <p>For the SFRPG Project, by Nova/Fire.</p>
+			<br>
+			<p>Allows for the creation of loot chests in the world.</p>
+        </div>
+    </div>
+    <div class='row' style='padding-bottom: 15px;'>
+        <div class='col-md-12'>
+            <button id='restore' class='btn btn-info'>Restore to Default</button>
+            <span id='valid_indicator' class='label label-success'></span>
+        </div>
+    </div>
+    <div class='row'>
+        <div class='col-md-12'>
+            <div id='editor_holder'></div>
+        </div>
+    </div>
+</div>
+
+<script>
+       // Initialize the editor
+    var editor = new JSONEditor(document.getElementById('editor_holder'),{
+        theme: 'bootstrap3',
+        iconlib: 'fontawesome5',
+
+        // Enable fetching schemas via ajax
+        ajax: true,
+
+        // The schema for the editor
+        schema: {
+            title: "Chest",
+            defaultProperties: [
+			    "id",
+                "timer",
+				"locations",
+				"use_info",
+				"onOpen"
+            ],
+            additionalProperties:false,
+            properties: {
+                id: {
+                    required: true,
+                    propertyOrder: 1,
+                    title: "id",
+                    description: "The ID of the Loot Chest Group. This should be unique.",
+                    type: "string",
+                    default: "loot_chests"
+                },
+				timer: {
+                    required: true,
+                    propertyOrder: 2,
+                    title: "timer",
+                    description: "The timer to use to reset loot chests.",
+                    type: "string",
+                    default: "timer"
+                },
+				locations: {
+                    propertyOrder: 3,
+                    title: "locations",
+                    description: "The locations in the world where the chests are located. You can set the yaw to a number less than 0 to give it a random yaw direction whenever it spawns.",
+					type: "array",
+					items: {
+						$ref: "schema/xyz_yaw.json"
+					}
+                },
+				use_info: {
+					propertyOrder: 4,
+                    title: "use_info",
+					defaultProperties: [
+						"use_time",
+						"use_message",
+						"use_disable_time",
+						"on_tick_rate",
+						"on_start",
+						"on_tick",
+						"on_end"
+					],
+                    description: "Define the properties of what happens when you interact with this chest",
+                    type: "object",
+					properties: {
+						use_time: {
+							title: "use_time",
+							description: "How long it takes to use this model",
+							type: "integer",
+							default: 0
+						},
+						use_message: {
+							title: "use_message",
+							description: "The message to show to the player while they are using the model.",
+							type: "string",
+							default: "Using..."
+						},
+						use_disable_time: {
+							title: "use_disable_time",
+							description: "How long the model is disabled after being used.",
+							type: "integer",
+							default: 0
+						},
+						on_tick_rate: {
+							title: "on_tick_rate",
+							description: "The rate at which on_tick triggers in ticks.",
+							type: "integer",
+							default: 1
+						},
+						on_start: {
+							title: "on_start",
+							description: "The actions to play on the model when the player first interacts with it",
+							$ref: "schema/ability_actions.json"
+						},
+						on_tick: {
+							title: "on_ticks",
+							description: "The actions to play on the model while the model is ticking in progress",
+							$ref: "schema/ability_actions.json"
+						},
+						on_end: {
+							title: "on_end",
+							description: "The actions to play on the model when the player finishes interacting with the model",
+							$ref: "schema/ability_actions.json"
+						},
+					}
+				},
+                onOpen: {
+                    required: true,
+                    propertyOrder: 4,
+                    title: "onOpen",
+                    description: "A list of actions to do whenever the player interacts with this model after the use time",
+                    type: "array",
+                    format: "tabs",
+                    minItems: 1,
+                    items: {
+                        title: "Quest component",
+                        $ref: "schema/quest_component.json",
+                    }
+                }
+            }
+        }
+    });
+
+    // Hook up the Restore to Default button
+    document.getElementById('restore').addEventListener('click',function() {
+        editor.setValue(starting_value);
+    });
+
+    // Hook up the validation indicator to update its
+    // status whenever the editor changes
+    editor.on('change',function() {
+        // Get an array of errors from the validator
+        var errors = editor.validate();
+
+        var indicator = document.getElementById('valid_indicator');
+
+        // Not valid
+        if(errors.length) {
+            indicator.className = 'label label-danger'
+            indicator.textContent = "not valid";
+        }
+        // Valid
+        else {
+            indicator.className = 'label label-success'
+            indicator.textContent = "valid";
+        }
+    });
+</script>
+</body>
+</html>
