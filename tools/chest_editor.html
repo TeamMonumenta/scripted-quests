@@ -48,6 +48,7 @@
             title: "Chest",
             defaultProperties: [
 			    "id",
+				"model",
                 "timer",
 				"locations",
 				"use_info",
@@ -62,6 +63,14 @@
                     description: "The ID of the Loot Chest Group. This should be unique.",
                     type: "string",
                     default: "loot_chests"
+                },
+				model: {
+                    required: true,
+                    propertyOrder: 2,
+                    title: "model",
+                    description: "The model to use for loot chests.",
+                    type: "string",
+                    default: "model"
                 },
 				timer: {
                     required: true,
