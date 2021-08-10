@@ -168,6 +168,12 @@
 							type: "integer",
 							default: 1
 						},
+						on_idle_rate: {
+							title: "on_idle_rate",
+							description: "The rate at which on_idle triggers in ticks.",
+							type: "integer",
+							default: 1
+						},
 						on_start: {
 							title: "on_start",
 							description: "The actions to play on the model when the player first interacts with it",
@@ -176,6 +182,11 @@
 						on_tick: {
 							title: "on_ticks",
 							description: "The actions to play on the model while the model is ticking in progress",
+							$ref: "schema/ability_actions.json"
+						},
+						on_idle: {
+							title: "on_idle",
+							description: "The actions to play on the model while the model is sitting there idle. Players will only see the idle actions if they can view the model.",
 							$ref: "schema/ability_actions.json"
 						},
 						on_end: {
