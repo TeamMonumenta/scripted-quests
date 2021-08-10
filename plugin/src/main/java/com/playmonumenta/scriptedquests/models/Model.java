@@ -45,12 +45,14 @@ public class Model {
 	public int mUseDisableTime = 0;
 	public String mUseMessage = "Using...";
 	public int mOnUseTickRate = 1;
+	public int mOnUseIdleRate = 1;
 	public boolean mQuestMarker = false;
 	public int mMarkerPriority = 0;
 	public int mRotation = 0;
 	public SpellActions mOnStart;
 	public SpellActions mOnTick;
 	public SpellActions mOnEnd;
+	public SpellActions mOnIdle;
 
 	public Model(Plugin plugin, JsonObject object) throws Exception {
 
@@ -95,6 +97,10 @@ public class Model {
 					mOnUseTickRate = value.getAsInt();
 					break;
 
+				case "on_idle_rate":
+					mOnUseIdleRate = value.getAsInt();
+					break;
+
 				case "on_start":
 					mOnStart = new SpellActions(null, null, value);
 					break;
@@ -105,6 +111,10 @@ public class Model {
 
 				case "on_end":
 					mOnEnd = new SpellActions(null, null, value);
+					break;
+
+				case "on_idle":
+					mOnIdle = new SpellActions(null, null, value);
 					break;
 
 				default:
@@ -319,6 +329,8 @@ public class Model {
 	}
 
 	public List<QuestComponent> getFailComponents() { return mOnFailComponents; }
+
+	public SpellActions getOnIdle() { return mOnIdle; }
 
 	public double getHeight() {
 		return mBox.getHeight();
