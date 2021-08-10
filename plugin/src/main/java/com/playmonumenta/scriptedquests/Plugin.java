@@ -22,6 +22,7 @@ import com.playmonumenta.scriptedquests.commands.GenerateCode;
 import com.playmonumenta.scriptedquests.commands.GetDate;
 import com.playmonumenta.scriptedquests.commands.GiveItemWithLore;
 import com.playmonumenta.scriptedquests.commands.GiveLootTable;
+import com.playmonumenta.scriptedquests.commands.GiveMap;
 import com.playmonumenta.scriptedquests.commands.Growable;
 import com.playmonumenta.scriptedquests.commands.HasPermission;
 import com.playmonumenta.scriptedquests.commands.Heal;
@@ -107,6 +108,7 @@ public class Plugin extends JavaPlugin {
 		Clickable.register(this);
 		GiveLootTable.register(mRandom);
 		GiveItemWithLore.register();
+		GiveMap.register();
 		Race.register(this);
 		Leaderboard.register(this);
 		Line.register();
