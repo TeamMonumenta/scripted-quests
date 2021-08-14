@@ -12,6 +12,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -30,6 +31,12 @@ public class ActionTimerCooldown implements ActionBase {
 		for (JsonElement element : json.get("timer_tags").getAsJsonArray()) {
 			mTimerTags.add(element.getAsString());
 		}
+	}
+
+	public ActionTimerCooldown(Timer timer, String... tags) {
+		mTimerId = timer.mId;
+
+		mTimerTags.addAll(Arrays.asList(tags));
 	}
 
 	@Override

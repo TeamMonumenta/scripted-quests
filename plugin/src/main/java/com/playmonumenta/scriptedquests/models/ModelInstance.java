@@ -3,6 +3,8 @@ package com.playmonumenta.scriptedquests.models;
 import com.playmonumenta.scriptedquests.Constants;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
+import com.playmonumenta.scriptedquests.quests.components.actions.ActionTimerCooldown;
+import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteTimerCooldown;
 import me.Novalescent.utils.VectorUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -269,14 +271,7 @@ public class ModelInstance implements Cloneable {
 			}
 
 			if (mModel.mUseTime <= 0) {
-				for (QuestComponent component : mModel.getComponents()) {
-					component.doActionsIfPrereqsMet(mPlugin, player, mStands.get(0));
-				}
-				mUsers.remove(player.getUniqueId());
-				if (mModel.mOnEnd != null) {
-					mModel.mOnEnd.doActions(null, mLoc);
-				}
-				disable(mModel.mUseDisableTime);
+				success(player);
 			} else {
 				Location loc = mLoc.clone().add(0, mModel.getHeight(), 0);
 				ProgressBar bar = new ProgressBar(mModel.mUseTime);
@@ -319,15 +314,8 @@ public class ModelInstance implements Cloneable {
 
 						if (t >= mModel.mUseTime) {
 							this.cancel();
-							for (QuestComponent component : mModel.getComponents()) {
-								component.doActionsIfPrereqsMet(mPlugin, player, mStands.get(0));
-							}
 							mRunnables.remove(this);
-							mUsers.remove(player.getUniqueId());
-							disable(mModel.mUseDisableTime);
-							if (mModel.mOnEnd != null) {
-								mModel.mOnEnd.doActions(null, mLoc);
-							}
+							success(player);
 						}
 
 					}
@@ -340,6 +328,36 @@ public class ModelInstance implements Cloneable {
 		}
 
 		return false;
+	}
+
+	public void success(Player player) {
+		for (QuestComponent component : mModel.getComponents()) {
+			component.doActionsIfPrereqsMet(mPlugin, player, mStands.get(0));
+		}
+
+		if (mModel.mTimer != null) {
+			ActionTimerCooldown cooldown = new ActionTimerCooldown(mModel.mTimer, getTimerString());
+			cooldown.doAction(mPlugin, player, mStands.get(0), null);
+		}
+
+		mUsers.remove(player.getUniqueId());
+		disable(mModel.mUseDisableTime);
+		if (mModel.mOnEnd != null) {
+			mModel.mOnEnd.doActions(null, mLoc);
+		}
+	}
+
+	public boolean isVisible(Player player) {
+		PrerequisiteTimerCooldown prereq = null;
+		if (mModel.mTimer != null) {
+			prereq = new PrerequisiteTimerCooldown(mModel.mTimer, getTimerString());
+		}
+		return (mModel.mVisibilityPrerequisites == null || mModel.mVisibilityPrerequisites.prerequisiteMet(player, mStands.get(0)))
+			&& (prereq == null || prereq.prerequisiteMet(player, mStands.get(0)));
+	}
+
+	private String getTimerString() {
+		return mModel.mId + "," + mLoc.getWorld().getName() + "," + mLoc.getX() + "," + mLoc.getY() + "," + mLoc.getZ();
 	}
 
 	@Override

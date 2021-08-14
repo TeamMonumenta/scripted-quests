@@ -111,8 +111,8 @@ public class Plugin extends JavaPlugin {
 		mCommandTimerManager = new CommandTimerManager(this);
 		mWaypointManager = new WaypointManager(this);
 		mQuestDataLinkManager = new QuestDataLinkManager(this);
-		mModelManager = new ModelManager(this);
 		mTimerManager = new TimerManager(this);
+		mModelManager = new ModelManager(this);
 
 		manager.registerEvents(new EntityListener(this), this);
 		manager.registerEvents(new PlayerListener(this), this);

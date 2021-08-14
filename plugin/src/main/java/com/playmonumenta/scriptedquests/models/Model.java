@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
+import com.playmonumenta.scriptedquests.scriptedtimer.Timer;
 import me.Novalescent.mobs.spells.scripted.actions.SpellActions;
 import me.Novalescent.utils.quadtree.reworked.QuadTree;
 import org.bukkit.Bukkit;
@@ -53,6 +54,7 @@ public class Model {
 	public SpellActions mOnTick;
 	public SpellActions mOnEnd;
 	public SpellActions mOnIdle;
+	public Timer mTimer = null;
 
 	public Model(Plugin plugin, JsonObject object) throws Exception {
 
@@ -205,15 +207,18 @@ public class Model {
 			}
 		}
 
-		Location centerWorld = mCenter.toLocation(mWorld);
-		mWorld.getChunkAt(centerWorld).load();
+
 
 		mPos1 = new Vector(corners[0], corners[1], corners[2]);
 		mPos2 = new Vector(corners[3], corners[4], corners[5]);
 
 		mBox = BoundingBox.of(mPos1, mPos2);
-		for (Entity e : mWorld.getNearbyEntities(mBox)) {
-			if (e instanceof ArmorStand) {
+		Location centerWorld = mCenter.toLocation(mWorld);
+		//mWorld.loadChunk(centerWorld.getChunk());
+
+		for (Entity e : mWorld.getChunkAt(centerWorld).getEntities()) {
+
+			if (e instanceof ArmorStand && e.getBoundingBox().overlaps(mBox)) {
 				ArmorStand stand = (ArmorStand) e;
 				mModelParts.add(new ModelPart(stand, mCenter));
 			}

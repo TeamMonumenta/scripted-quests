@@ -30,27 +30,27 @@ public class ActionCommand implements ActionBase {
 		}
 
 		ParseResults<?> pr = null;
-		try {
-			Object server = Bukkit.getServer().getClass().getDeclaredMethod("getServer").invoke(Bukkit.getServer());
-			String packageName = server.getClass().getPackage().getName();
-
-			Class<?> minecraftServerClass = Class.forName(packageName + "." + "MinecraftServer");
-			Object minecraftServer = minecraftServerClass.getDeclaredMethod("getServer").invoke(null);
-			Object clw = minecraftServerClass.getDeclaredMethod("getServerCommandListener").invoke(minecraftServer);
-
-			Object commandDispatcher = minecraftServerClass.getDeclaredMethod("getCommandDispatcher").invoke(minecraftServer);
-			Class<?> commandDispatcherClass = Class.forName(packageName + "." + "CommandDispatcher");
-			Object brigadierCmdDispatcher = commandDispatcherClass.getDeclaredMethod("a").invoke(commandDispatcher);
-
-			String testCommandStr = mCommand.replaceAll("@S", "testuser").replaceAll("@N", "testnpc");
-			Method parse = CommandDispatcher.class.getDeclaredMethod("parse", String.class, Object.class);
-			pr = (ParseResults<?>) parse.invoke(brigadierCmdDispatcher, testCommandStr, clw);
-		} catch (Exception e) {
-			// Failed to test the command - ignore it and print a log message
-			e.printStackTrace();
-
-			pr = null;
-		}
+//		try {
+//			Object server = Bukkit.getServer().getClass().getDeclaredMethod("getServer").invoke(Bukkit.getServer());
+//			String packageName = server.getClass().getPackage().getName();
+//
+//			Class<?> minecraftServerClass = Class.forName(packageName + "." + "MinecraftServer");
+//			Object minecraftServer = minecraftServerClass.getDeclaredMethod("getServer").invoke(null);
+//			Object clw = minecraftServerClass.getDeclaredMethod("getServerCommandListener").invoke(minecraftServer);
+//
+//			Object commandDispatcher = minecraftServerClass.getDeclaredMethod("getCommandDispatcher").invoke(minecraftServer);
+//			Class<?> commandDispatcherClass = Class.forName(packageName + "." + "CommandDispatcher");
+//			Object brigadierCmdDispatcher = commandDispatcherClass.getDeclaredMethod("a").invoke(commandDispatcher);
+//
+//			String testCommandStr = mCommand.replaceAll("@S", "testuser").replaceAll("@N", "testnpc");
+//			Method parse = CommandDispatcher.class.getDeclaredMethod("parse", String.class, Object.class);
+//			pr = (ParseResults<?>) parse.invoke(brigadierCmdDispatcher, testCommandStr, clw);
+//		} catch (Exception e) {
+//			// Failed to test the command - ignore it and print a log message
+//			e.printStackTrace();
+//
+//			pr = null;
+//		}
 
 		if (pr != null && pr.getReader().canRead()) {
 			throw new Exception("Invalid command: '" + mCommand + "'");

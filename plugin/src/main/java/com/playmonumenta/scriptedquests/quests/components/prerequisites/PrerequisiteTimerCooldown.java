@@ -12,6 +12,7 @@ import me.Novalescent.player.PlayerData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -31,6 +32,12 @@ public class PrerequisiteTimerCooldown implements PrerequisiteBase {
 		for (JsonElement element : json.get("timer_tags").getAsJsonArray()) {
 			mTimerTags.add(element.getAsString());
 		}
+	}
+
+	public PrerequisiteTimerCooldown(Timer timer, String... tags) {
+		mTimerId = timer.mId;
+
+		mTimerTags.addAll(Arrays.asList(tags));
 	}
 
 	@Override
