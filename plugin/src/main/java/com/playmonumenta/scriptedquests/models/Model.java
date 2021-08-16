@@ -10,6 +10,7 @@ import com.playmonumenta.scriptedquests.scriptedtimer.Timer;
 import me.Novalescent.mobs.spells.scripted.actions.SpellActions;
 import me.Novalescent.utils.quadtree.reworked.QuadTree;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
@@ -214,6 +215,8 @@ public class Model {
 
 		mBox = BoundingBox.of(mPos1, mPos2);
 		Location centerWorld = mCenter.toLocation(mWorld);
+		Chunk chunk = centerWorld.getChunk();
+		mWorld.addPluginChunkTicket(chunk.getX(), chunk.getZ(), plugin);
 		//mWorld.loadChunk(centerWorld.getChunk());
 
 		for (Entity e : mWorld.getChunkAt(centerWorld).getEntities()) {
@@ -223,6 +226,8 @@ public class Model {
 				mModelParts.add(new ModelPart(stand, mCenter));
 			}
 		}
+
+		mWorld.removePluginChunkTicket(chunk.getX(), chunk.getZ(), plugin);
 
 		// Components
 		JsonArray components = object.get("quest_components").getAsJsonArray();
@@ -254,6 +259,10 @@ public class Model {
 
 		if (object.has("marker_priority")) {
 			mMarkerPriority = object.get("marker_priority").getAsInt();
+		}
+
+		if (object.has("timer")) {
+			mTimer = plugin.mTimerManager.getTimer(object.get("timer").getAsString());
 		}
 
 		// Spawn @ Locations

@@ -353,7 +353,7 @@ public class ModelInstance implements Cloneable {
 			prereq = new PrerequisiteTimerCooldown(mModel.mTimer, getTimerString());
 		}
 		return (mModel.mVisibilityPrerequisites == null || mModel.mVisibilityPrerequisites.prerequisiteMet(player, mStands.get(0)))
-			&& (prereq == null || prereq.prerequisiteMet(player, mStands.get(0)));
+			&& (prereq == null || !prereq.prerequisiteMet(player, mStands.get(0)));
 	}
 
 	private String getTimerString() {
