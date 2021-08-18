@@ -22,6 +22,8 @@ public class WorldListener implements Listener {
 	public void chunkLoadEvent(ChunkLoadEvent event) {
 		Chunk chunk = event.getChunk();
 		for (Entity entity : chunk.getEntities()) {
+			mPlugin.mRaceManager.removeIfNotActive(entity);
+
 			QuestNpc npc = mPlugin.mNpcManager.getInteractNPC(entity.getName(), entity.getType());
 			if (npc != null) {
 				// Invulnerable NPCs cannot be interacted with in some versions of Minecraft

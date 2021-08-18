@@ -115,6 +115,8 @@ public class Race {
 			out.setVisible(false);
 			out.setSmall(true);
 			out.setMarker(true);
+			out.addScoreboardTag(RaceManager.ARMOR_STAND_RACE_TAG);
+			out.addScoreboardTag(RaceManager.ARMOR_STAND_ID_PREFIX_TAG + mPlayer.getUniqueId().toString());
 			mRingEntities.add(out);
 		}
 

@@ -3,10 +3,12 @@ package com.playmonumenta.scriptedquests.managers;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -17,6 +19,9 @@ import com.playmonumenta.scriptedquests.races.RaceFactory;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
 
 public class RaceManager {
+	public static final String ARMOR_STAND_RACE_TAG = "RaceRing";
+	public static final String ARMOR_STAND_ID_PREFIX_TAG = "RacerId_";
+
 	private Plugin mPlugin;
 
 	/*
@@ -68,6 +73,33 @@ public class RaceManager {
 			}
 		};
 		mRunnable.runTaskTimer(plugin, 0, 2);
+	}
+
+	public void removeIfNotActive(Entity entity) {
+		Set<String> tags = entity.getScoreboardTags();
+		if (tags.contains(ARMOR_STAND_RACE_TAG)) {
+			UUID ownerId = null;
+			for (String tag : tags) {
+				if (tag.startsWith(ARMOR_STAND_ID_PREFIX_TAG)) {
+					try {
+						ownerId = UUID.fromString(tag.substring​(ARMOR_STAND_ID_PREFIX_TAG.length()));
+					} catch (Exception e) {
+						mPlugin.getLogger().warning("Invalid Race ID tag on ring: " + tag);
+					}
+				}
+			}
+			if (!isRacing(ownerId)) {
+				entity.remove();
+			}
+		}
+	}
+
+	public boolean isRacing(Player player) {
+		return isRacing(player.getUniqueId());
+	}
+
+	public boolean isRacing(UUID playerId) {
+		return mActiveRaces.containsKey(playerId);
 	}
 
 	public boolean isNotRacingOrAllowsDialogClick(Player player) {
