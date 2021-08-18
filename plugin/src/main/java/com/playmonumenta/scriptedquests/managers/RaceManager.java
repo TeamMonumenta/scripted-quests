@@ -82,7 +82,7 @@ public class RaceManager {
 			for (String tag : tags) {
 				if (tag.startsWith(ARMOR_STAND_ID_PREFIX_TAG)) {
 					try {
-						ownerId = UUID.fromString(tag.substring​(ARMOR_STAND_ID_PREFIX_TAG.length()));
+						ownerId = UUID.fromString(tag.substring(ARMOR_STAND_ID_PREFIX_TAG.length()));
 					} catch (Exception e) {
 						mPlugin.getLogger().warning("Invalid Race ID tag on ring: " + tag);
 					}
