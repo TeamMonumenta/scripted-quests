@@ -161,7 +161,12 @@ public class Race {
 			@Override
 			public void run() {
 				// Teleport player if they get too far away from the start while counting down
-				if (mTicks < 60 && mPlayer.getLocation().distance(mStart) > 0.8 && !mRingless) {
+				Location pLoc = mPlayer.getLocation();
+
+				// Compute the distance manually, with y distance counting only 1/3 as much as X and Z
+				double dist = Math.sqrt(Math.pow(pLoc.getX() - mStart.getX(), 2) + Math.pow((pLoc.getY() - mStart.getY()) / 3, 2) + Math.pow(pLoc.getZ() - mStart.getZ(), 2));
+
+				if (mTicks < 60 && dist > 0.8 && !mRingless) {
 					mPlayer.teleport(mStart);
 				}
 
