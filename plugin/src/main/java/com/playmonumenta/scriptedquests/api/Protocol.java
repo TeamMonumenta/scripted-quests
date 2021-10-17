@@ -27,18 +27,19 @@ public class Protocol implements PluginMessageListener {
 	private final Set<UUID> mShouldSendMessage = new HashSet<>();
 
 	public void sendPacket(List<QuestComponent> packet, Plugin plugin, Player player, Entity npc) {
-		JsonObject out = JsonObjectBuilder.get()
+		JsonObject obj = JsonObjectBuilder.get()
 			.add("type", "actions")
 			.add("data", packet.stream().map(v -> v.serialize(plugin, player, npc))
 				.map(v -> v.orElse(null))
 				.collect(Collectors.toList()))
 			.build();
-		Logger logger = Plugin.getInstance().getLogger();
-		logger.info(GSON.toJson(out));
 
-		//ByteArrayDataOutput out = ByteStreams.newDataOutput();
-		//out.writeUTF(GSON.toJson(packet));
-		//player.getServer().sendPluginMessage(Plugin.getInstance(), Constants.API_CHANNEL_ID, out.toByteArray());
+		// Logger logger = Plugin.getInstance().getLogger();
+		// logger.info(GSON.toJson(obj));
+
+		ByteArrayDataOutput out = ByteStreams.newDataOutput();
+		out.writeUTF(GSON.toJson(obj));
+		player.getServer().sendPluginMessage(Plugin.getInstance(), Constants.API_CHANNEL_ID, out.toByteArray());
 	}
 
 	@Override
