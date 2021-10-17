@@ -3,7 +3,10 @@ package com.playmonumenta.scriptedquests.quests.components.actions.dialog;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import com.google.gson.JsonPrimitive;
+import com.playmonumenta.scriptedquests.api.JsonObjectBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
@@ -109,25 +112,19 @@ public class DialogClickableTextEntry implements DialogBase {
 		}
 	}
 
-
 	@SuppressWarnings("unchecked")
-	@Override
-	public void sendDialog(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
-		MessagingUtils.sendClickableNPCMessage(plugin, player, mText,
-		                                       "/questtrigger " + Integer.toString(mIdx), mHoverEvent);
-
-		/* Create a new object describing the prereqs/actions/location for this clickable message */
+	private void setupTriggersEntries(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
 		PlayerClickableTextEntry newEntry = new PlayerClickableTextEntry(prereqs, mActions, npcEntity,
-		        new AreaBounds("", new Point(player.getLocation().subtract(mRadius, mRadius, mRadius)),
-		                       new Point(player.getLocation().add(mRadius, mRadius, mRadius))));
+			new AreaBounds("", new Point(player.getLocation().subtract(mRadius, mRadius, mRadius)),
+				new Point(player.getLocation().add(mRadius, mRadius, mRadius))));
 
 		/* Get the list of currently available clickable entries */
 		HashMap<Integer, PlayerClickableTextEntry> availTriggers;
 		if (player.hasMetadata(Constants.PLAYER_CLICKABLE_DIALOG_METAKEY)) {
 			availTriggers = (HashMap<Integer, PlayerClickableTextEntry>)player.getMetadata(
-			                    Constants.PLAYER_CLICKABLE_DIALOG_METAKEY).get(0).value();
+				Constants.PLAYER_CLICKABLE_DIALOG_METAKEY).get(0).value();
 		} else {
-			availTriggers = new HashMap<Integer, PlayerClickableTextEntry>();
+			availTriggers = new HashMap<>();
 		}
 
 		/* Then we add this entry to the end of all available entries */
@@ -135,7 +132,24 @@ public class DialogClickableTextEntry implements DialogBase {
 
 		/* Attach the new list of clickable options to the player */
 		player.setMetadata(Constants.PLAYER_CLICKABLE_DIALOG_METAKEY,
-		                   new FixedMetadataValue(plugin, availTriggers));
+			new FixedMetadataValue(plugin, availTriggers));
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void sendDialog(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
+		MessagingUtils.sendClickableNPCMessage(plugin, player, mText, "/questtrigger " + mIdx, mHoverEvent);
+		setupTriggersEntries(plugin, player, npcEntity, prereqs);
+	}
+
+	@Override
+	public JsonElement serialize(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
+		JsonObject tmp = JsonObjectBuilder.get()
+			.add("command", "/questtrigger " + mIdx)
+			.add("text", mText)
+			.build();
+		setupTriggersEntries(plugin, player, npcEntity, prereqs);
+		return tmp;
 	}
 }
 

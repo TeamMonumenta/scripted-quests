@@ -2,7 +2,10 @@ package com.playmonumenta.scriptedquests.quests.components.actions.dialog;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.stream.Collectors;
 
+import com.google.gson.JsonPrimitive;
+import com.playmonumenta.scriptedquests.api.JsonObjectBuilder;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -32,5 +35,13 @@ public class DialogRawText implements DialogBase {
 		for (String text : mText) {
 			MessagingUtils.sendRawMessage(player, text);
 		}
+	}
+
+	@Override
+	public JsonElement serialize(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
+		return JsonObjectBuilder.get()
+			.add("type", "raw_text")
+			.add("text", mText.stream().map(JsonPrimitive::new).collect(Collectors.toList()))
+			.build();
 	}
 }

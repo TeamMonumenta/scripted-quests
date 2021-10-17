@@ -3,7 +3,11 @@ package com.playmonumenta.scriptedquests.quests.components.actions.dialog;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
+import java.util.stream.Collectors;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+import com.playmonumenta.scriptedquests.api.JsonObjectBuilder;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -36,6 +40,17 @@ public class DialogRandomText implements DialogBase {
 	public void sendDialog(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
 		int idx = mRandom.nextInt(mText.size());
 		MessagingUtils.sendNPCMessage(player, mDisplayName, mText.get(idx));
+	}
+
+	@Override
+	public JsonElement serialize(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
+		int idx = mRandom.nextInt(mText.size());
+		return JsonObjectBuilder.get()
+			.add("type", "random_text")
+			.add("commands",  mText.get(idx))
+			.add("npc_name", mDisplayName)
+			.build();
+
 	}
 }
 

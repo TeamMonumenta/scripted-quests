@@ -1,5 +1,7 @@
 package com.playmonumenta.scriptedquests.quests.components.actions.dialog;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -15,4 +17,8 @@ public interface DialogBase {
 	 * npcEntity might be null (for all interactions except those involving an NPC)
 	 */
 	void sendDialog(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs);
+
+	default JsonElement serialize(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
+		return JsonNull.INSTANCE;
+	}
 }

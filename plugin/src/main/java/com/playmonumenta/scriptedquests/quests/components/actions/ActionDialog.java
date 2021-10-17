@@ -3,7 +3,9 @@ package com.playmonumenta.scriptedquests.quests.components.actions;
 import java.util.ArrayList;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import com.playmonumenta.scriptedquests.api.JsonObjectBuilder;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -51,8 +53,18 @@ public class ActionDialog implements ActionBase {
 
 	@Override
 	public void doAction(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
+		// handle packet stuff
 		for (DialogBase dialog : mDialogs) {
 			dialog.sendDialog(plugin, player, npcEntity, prereqs);
 		}
+	}
+
+	@Override
+	public JsonElement serialize(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
+		return JsonObjectBuilder.get()
+			.add("type", "dialog")
+			.add("dialog", mDialogs.stream().map(v -> v.serialize(plugin, player, npcEntity, prereqs))
+				.collect(Collectors.toList()))
+			.build();
 	}
 }
