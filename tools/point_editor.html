@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>ScriptedQuests Handbook Editor</title>
+    <title>ScriptedQuests Point Editor</title>
 
     <!-- Foundation CSS framework (Bootstrap and jQueryUI also supported) -->
     <link rel='stylesheet' href='//cdn.jsdelivr.net/bootstrap/3.2.0/css/bootstrap.css'>
@@ -15,10 +15,10 @@
 <div class='container'>
     <div class='row' style='padding-bottom: 15px;'>
         <div class='col-md-12'>
-            <h1>ScriptedQuests Handbook Editor</h1>
+            <h1>ScriptedQuests Point Editor</h1>
             <p>For the SFRPG Project, by Nova/Fire.</p>
 			<br>
-			<p>Used for creating Guidebook Entries.</p>
+			<p>Used for creating Points that will cause Quest Components to be execute upon arrival.</p>
         </div>
     </div>
     <div class='row' style='padding-bottom: 15px;'>
@@ -45,47 +45,49 @@
 
         // The schema for the editor
         schema: {
-            title: "Player Guidebook Editor",
+            title: "Point Editor",
             defaultProperties: [
-                "id",
-				"name",
-				"material",
-				"description"
+                "location",
+				"radius",
+				"visibilityPrerequisites",
+				"quest_components"
             ],
             additionalProperties:false,
             properties: {
-                 id: {
+                 location: {
                     required: true,
                     propertyOrder: 1,
-                    title: "id",
-                    description: "The ID of the Guidebook Entry. Needs to be unique.",
+                    title: "location",
+                    description: "The location of the point.",
                     type: "string",
-                    default: "guidebook_entry"
+                    default: "world,0,0,0"
                 },
-				name: {
+				radius: {
                     required: true,
                     propertyOrder: 2,
-                    title: "name",
-                    description: "The title of the Guidebook Entry.",
-                    type: "string",
-                    default: "Guidebook Entry"
+                    title: "radius",
+                    description: "The radius of the point that the player has to be within in order for it to trigger.",
+                    type: "double",
+                    default: 1
                 },
-				material: {
+				visibilityPrerequisites: {
+					propertyOrder: 3,
+                    title: "visibilityPrerequisites",
+                    description: "The prerequisites requires to SEE this point with particles.",
+                    $ref: "schema/prerequisites.json"				
+				},
+                quest_components: {
                     required: true,
-                    propertyOrder: 3,
-                    title: "material",
-                    description: "The item material to use for the icon. Use in-game item material names for this",
-                    type: "string",
-                    default: "diamond_sword"
-                },
-				description: {
                     propertyOrder: 4,
-                    title: "description",
-                    description: "The description for this Guidebook Entry. Can have multiple lines. Lines will autowrap.",
-					type: "array",
-					items: {
-						type: "string"
-					}
+                    title: "quest_components",
+                    description: "A list of quest components to perform whenever the player is near this point.",
+                    type: "array",
+                    format: "tabs",
+                    minItems: 1,
+                    items: {
+                        title: "Quest component",
+                        $ref: "schema/quest_component.json",
+                    }
                 }
             }
         }

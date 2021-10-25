@@ -27,6 +27,7 @@ public class ZoneManager {
 	private Map<String, ZoneLayer> mPluginLayers = new HashMap<String, ZoneLayer>();
 	private ZoneTreeBase mZoneTree = null;
 	private Map<Player, ZoneFragment> mLastPlayerZoneFragment = new HashMap<Player, ZoneFragment>();
+	private Map<Player, Location> mLastPlayerZoneLocation = new HashMap<Player, Location>();
 	private Map<Player, Map<String, Zone>> mLastPlayerZones = new HashMap<Player, Map<String, Zone>>();
 
 	public ZoneManager(Plugin plugin) {

@@ -8,7 +8,7 @@ import me.Novalescent.player.quests.QuestData;
 
 import java.util.*;
 
-public class QuestDataLink {
+public class  QuestDataLink {
 
 	public final String mId;
 	public final String mDisplayName;
