@@ -143,7 +143,7 @@ public class DialogClickableTextEntry implements DialogBase {
 	}
 
 	@Override
-	public JsonElement serialize(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
+	public JsonElement serializeForClientAPI(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
 		JsonObject tmp = JsonObjectBuilder.get()
 			.add("command", "/questtrigger " + mIdx)
 			.add("text", mText)

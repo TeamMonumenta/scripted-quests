@@ -66,9 +66,9 @@ public class QuestComponent {
 		return false;
 	}
 
-	public Optional<JsonElement> serialize(Plugin plugin, Player player, Entity npcEntity) {
+	public Optional<JsonElement> serializeForClientAPI(Plugin plugin, Player player, Entity npcEntity) {
 		if (mPrerequisites == null || mPrerequisites.prerequisiteMet(player, npcEntity)) {
-			return mActions.serialize(plugin, player, npcEntity, mPrerequisites);
+			return mActions.serializeForClientAPI(plugin, player, npcEntity, mPrerequisites);
 		}
 		return Optional.empty();
 	}

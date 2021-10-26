@@ -5,10 +5,7 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import com.playmonumenta.scriptedquests.api.JsonObjectBuilder;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -120,10 +117,10 @@ public class QuestActions {
 		}
 	}
 
-	public Optional<JsonElement> serialize(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
+	public Optional<JsonElement> serializeForClientAPI(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
 		if (mDelayTicks <= 0) {
 			JsonArray a = new JsonArray();
-			mActions.stream().map(v -> v.serialize(plugin, player, npcEntity, prereqs))
+			mActions.stream().map(v -> v.serializeForClientAPI(plugin, player, npcEntity, prereqs))
 				.forEach(a::add);
 			return Optional.of(a);
 		}

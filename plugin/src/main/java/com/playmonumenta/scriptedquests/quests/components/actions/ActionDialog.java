@@ -60,10 +60,10 @@ public class ActionDialog implements ActionBase {
 	}
 
 	@Override
-	public JsonElement serialize(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
+	public JsonElement serializeForClientAPI(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
 		return JsonObjectBuilder.get()
 			.add("type", "dialog")
-			.add("dialog", mDialogs.stream().map(v -> v.serialize(plugin, player, npcEntity, prereqs))
+			.add("dialog", mDialogs.stream().map(v -> v.serializeForClientAPI(plugin, player, npcEntity, prereqs))
 				.collect(Collectors.toList()))
 			.build();
 	}

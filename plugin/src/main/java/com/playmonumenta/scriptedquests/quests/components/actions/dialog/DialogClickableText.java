@@ -1,13 +1,10 @@
 package com.playmonumenta.scriptedquests.quests.components.actions.dialog;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Random;
 import java.util.stream.Collectors;
 
-import com.google.api.client.json.Json;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
-import com.google.gson.annotations.SerializedName;
 import com.playmonumenta.scriptedquests.api.JsonObjectBuilder;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -54,10 +51,10 @@ public class DialogClickableText implements DialogBase {
 	}
 
 	@Override
-	public JsonElement serialize(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
+	public JsonElement serializeForClientAPI(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
 		return JsonObjectBuilder.get()
 			.add("type", "clickable_text")
-			.add("commands", mEntries.stream().map(v -> v.serialize(plugin, player, npcEntity, prereqs))
+			.add("commands", mEntries.stream().map(v -> v.serializeForClientAPI(plugin, player, npcEntity, prereqs))
 				.collect(Collectors.toList()))
 			.build();
 	}

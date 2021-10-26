@@ -43,11 +43,11 @@ public class DialogRandomText implements DialogBase {
 	}
 
 	@Override
-	public JsonElement serialize(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
+	public JsonElement serializeForClientAPI(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
 		int idx = mRandom.nextInt(mText.size());
 		return JsonObjectBuilder.get()
 			.add("type", "random_text")
-			.add("commands",  mText.get(idx))
+			.add("commands", mText.get(idx))
 			.add("npc_name", mDisplayName)
 			.build();
 

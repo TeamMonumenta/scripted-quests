@@ -19,7 +19,7 @@ public interface ActionBase {
 	 */
 	void doAction(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs);
 
-	default JsonElement serialize(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
+	default JsonElement serializeForClientAPI(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
 		return JsonNull.INSTANCE;
 	}
 }

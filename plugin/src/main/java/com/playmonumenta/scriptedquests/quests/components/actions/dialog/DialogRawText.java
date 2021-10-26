@@ -38,7 +38,7 @@ public class DialogRawText implements DialogBase {
 	}
 
 	@Override
-	public JsonElement serialize(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
+	public JsonElement serializeForClientAPI(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
 		return JsonObjectBuilder.get()
 			.add("type", "raw_text")
 			.add("text", mText.stream().map(JsonPrimitive::new).collect(Collectors.toList()))

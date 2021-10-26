@@ -118,7 +118,7 @@ public class QuestNpc {
 	// Note: npcEntity might be null
 	public boolean interactEvent(Plugin plugin, Player player, String npcName, EntityType entityType, Entity npcEntity) {
 		if (mEntityType.equals(entityType) && mNpcName.equals(npcName)) {
-			if(plugin.mProtocol.shouldSend(player)) {
+			if (plugin.mProtocol.shouldSend(player)) {
 				plugin.mProtocol.sendPacket(mComponents, plugin, player, npcEntity);
 			} else {
 				for (QuestComponent component : mComponents) {

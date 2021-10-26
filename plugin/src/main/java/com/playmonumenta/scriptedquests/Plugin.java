@@ -3,7 +3,7 @@ package com.playmonumenta.scriptedquests;
 import java.io.File;
 import java.util.Random;
 
-import com.playmonumenta.scriptedquests.api.Protocol;
+import com.playmonumenta.scriptedquests.api.ClientChatProtocol;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -85,7 +85,7 @@ public class Plugin extends JavaPlugin {
 	public ZonePropertyManager mZonePropertyManager;
 	public WaypointManager mWaypointManager;
 	public GrowableManager mGrowableManager;
-	public Protocol mProtocol;
+	public ClientChatProtocol mProtocol;
 
 	public World mWorld;
 	public Random mRandom = new Random();
@@ -171,7 +171,7 @@ public class Plugin extends JavaPlugin {
 		getCommand("reloadZones").setExecutor(new ReloadZones(this));
 		getCommand("questTrigger").setExecutor(new QuestTrigger(this));
 
-		mProtocol = new Protocol();
+		mProtocol = new ClientChatProtocol();
 		this.getServer().getMessenger().registerOutgoingPluginChannel(this, Constants.API_CHANNEL_ID);
 		this.getServer().getMessenger().registerIncomingPluginChannel(this, Constants.API_CHANNEL_ID, mProtocol);
 

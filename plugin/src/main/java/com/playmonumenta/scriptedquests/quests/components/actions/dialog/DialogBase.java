@@ -18,7 +18,7 @@ public interface DialogBase {
 	 */
 	void sendDialog(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs);
 
-	default JsonElement serialize(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
+	default JsonElement serializeForClientAPI(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
 		return JsonNull.INSTANCE;
 	}
 }
