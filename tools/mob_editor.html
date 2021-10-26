@@ -141,18 +141,100 @@
 					default: false
                 },
 				ai: {
+				    required: true,
                     propertyOrder: 5,
                     title: "ai",
-                    description: "The Mob AI Type. Valid types: FRIENDLY, HOSTILE",
+                    description: "The Mob AI Type. Valid types: FRIENDLY, NEUTRAL, HOSTILE",
                     type: "string",
 					default: "HOSTILE"				
 				},
                 health: {
+				    required: true,
                     propertyOrder: 6,
                     title: "health",
                     description: "The health of a mob.",
-                    type: "integer",
-					default: 10
+					oneOf: [
+						{
+							title: "number",
+							description: "Specific number of health for the mob to have.",
+							type: "integer",
+							default: 100
+						},
+						{
+							title: "formulaic",
+							description: "Generates the mob's HP based on a series of parameters given. Use this for easy calculations and accurate math.",
+							properties: {
+								playerLevel: {
+								    required: true,
+									title: "playerLevel",
+									description: "The level of the player(s) that are expected to fight this mob",
+									type: "number",
+									default: 1
+								},
+								timeToKill: {
+								    required: true,
+									title: "timeToKill",
+									description: "The PREDICTED time needed to kill this mob (in SECONDS)",
+									type: "number",
+									default: 10
+								},
+								dpsFactor: {
+								    required: true,
+									title: "dpsFactor",
+									description: "The percentage to multiply the DPS by to get a player's predicted DPS via Attributes. This is given as a decimal from 0 - 1, and can be done numerically or formulaically",
+									oneOf: [
+										{
+											title: "percent",
+											description: "The DPS factor in terms of a percent from 0 - 1.",
+											type: "number,
+											default: 0.2
+										},
+										{
+										    required: true,
+											title: "formulaic",
+											description: "Generates the DPS Factor using the given parameters",
+											properties: {
+												playerRarity: {
+													title: "playerRarity",
+													description: "The expected rarity of the gear that the player has. Valid options: Common, Uncommon, Rare, Epic, Legendary. CASE-SENSITIVE",
+													type: "string",
+													default: "Common"
+												},
+												includeAccessories: {
+													title: "includeAccessories",
+													description: "Whether the player is expected to have accessories that grant them additional attributes. This is useful for lower levels.",
+													type: "boolean",
+													default: false
+												}
+											},
+											type: "object"
+										}
+									]
+								},
+								skillCount: {
+								    required: true,
+									title: "skillCount",
+									description: "The amount of skills that a player is expected to have when fighting this boss. These only include ACTIVE/CASTABLE Skills, and not Passive Skills.",
+									type: "number",
+									default: 1
+								},
+								damageReduction: {
+								    required: true,
+									title: "damageReduction",
+									description: "The predicted damage reduction that the mob will have against attacks. This should be a decimal from 0 - 1",
+									type: "number",
+									default: 0.2
+								},
+								zeroRounding: {
+									title: "zeroRounding",
+									description: "The amount of zeroes to round the health by. Used for fancier rounding.",
+									type: "integer",
+									default: 1
+								}
+							},
+							type: "object"
+						}
+					]
                 },
 				speed: {
                     propertyOrder: 6,
