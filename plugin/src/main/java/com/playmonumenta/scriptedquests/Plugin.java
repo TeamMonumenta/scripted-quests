@@ -47,6 +47,7 @@ public class Plugin extends JavaPlugin {
 	public QuestDataLinkManager mQuestDataLinkManager;
 	public ModelManager mModelManager;
 	public TimerManager mTimerManager;
+	public QuestPointManager mPointManager;
 
 	public World mWorld;
 	public Random mRandom = new Random();
@@ -113,6 +114,7 @@ public class Plugin extends JavaPlugin {
 		mQuestDataLinkManager = new QuestDataLinkManager(this);
 		mTimerManager = new TimerManager(this);
 		mModelManager = new ModelManager(this);
+		mPointManager = new QuestPointManager();
 
 		manager.registerEvents(new EntityListener(this), this);
 		manager.registerEvents(new PlayerListener(this), this);
@@ -170,6 +172,7 @@ public class Plugin extends JavaPlugin {
 		mQuestDataLinkManager.reload(this, sender);
 		mModelManager.reload(this, sender);
 		mTimerManager.reload(this, sender);
+		mPointManager.reload(this, sender);
 	}
 
 	public void reloadZones(CommandSender sender) {

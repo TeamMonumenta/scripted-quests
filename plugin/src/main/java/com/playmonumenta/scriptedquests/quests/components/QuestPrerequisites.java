@@ -2,6 +2,7 @@ package com.playmonumenta.scriptedquests.quests.components;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -243,5 +244,13 @@ public class QuestPrerequisites implements PrerequisiteBase {
 			}
 			return true;
 		}
+	}
+
+	/**
+	 * Returns a clone of the Prerequisites list for this QuestPrerequisites
+	 * @return A clone of the Prerequisites list
+	 */
+	public List<PrerequisiteBase> getPrerequisites() {
+		return new ArrayList<>(mPrerequisites);
 	}
 }
