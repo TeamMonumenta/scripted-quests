@@ -172,6 +172,8 @@ public class Plugin extends JavaPlugin {
 		getCommand("questTrigger").setExecutor(new QuestTrigger(this));
 
 		mProtocol = new ClientChatProtocol();
+		getCommand("toggleapi").setExecutor(mProtocol);
+
 		this.getServer().getMessenger().registerOutgoingPluginChannel(this, Constants.API_CHANNEL_ID);
 		this.getServer().getMessenger().registerIncomingPluginChannel(this, Constants.API_CHANNEL_ID, mProtocol);
 

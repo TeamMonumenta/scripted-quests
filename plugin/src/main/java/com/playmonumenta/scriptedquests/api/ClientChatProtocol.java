@@ -1,11 +1,16 @@
 package com.playmonumenta.scriptedquests.api;
 
 import com.google.common.io.ByteArrayDataInput;
+import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.playmonumenta.scriptedquests.Constants;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
@@ -18,23 +23,22 @@ import java.util.UUID;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-public class ClientChatProtocol implements PluginMessageListener {
+public class ClientChatProtocol implements PluginMessageListener, CommandExecutor {
 	private static final Gson GSON = new Gson();
 	private final Set<UUID> mShouldSendMessage = new HashSet<>();
+	private boolean mOverride = false;
 
 	public void sendPacket(List<QuestComponent> packet, Plugin plugin, Player player, Entity npc) {
-		JsonObject out = JsonObjectBuilder.get()
+		JsonObject data = JsonObjectBuilder.get()
 			.add("type", "actions")
 			.add("data", packet.stream().map(v -> v.serializeForClientAPI(plugin, player, npc))
 				.map(v -> v.orElse(null))
 				.collect(Collectors.toList()))
 			.build();
-		Logger logger = Plugin.getInstance().getLogger();
-		logger.info(GSON.toJson(out));
 
-		//ByteArrayDataOutput out = ByteStreams.newDataOutput();
-		//out.writeUTF(GSON.toJson(packet));
-		//player.getServer().sendPluginMessage(Plugin.getInstance(), Constants.API_CHANNEL_ID, out.toByteArray());
+		ByteArrayDataOutput out = ByteStreams.newDataOutput();
+		out.writeUTF(GSON.toJson(data));
+		player.getServer().sendPluginMessage(Plugin.getInstance(), Constants.API_CHANNEL_ID, out.toByteArray());
 	}
 
 	@Override
@@ -50,6 +54,13 @@ public class ClientChatProtocol implements PluginMessageListener {
 	}
 
 	public boolean shouldSend(Player p) {
-		return mShouldSendMessage.contains(p.getUniqueId());
+		return mOverride || mShouldSendMessage.contains(p.getUniqueId());
+	}
+
+	@Override
+	public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
+		mOverride = !mOverride;
+		Plugin.getInstance().getLogger().info("Should always send custom data to player" + mOverride);
+		return true;
 	}
 }
