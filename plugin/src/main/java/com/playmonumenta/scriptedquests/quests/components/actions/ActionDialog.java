@@ -3,14 +3,12 @@ package com.playmonumenta.scriptedquests.quests.components.actions;
 import java.util.ArrayList;
 import java.util.Map.Entry;
 import java.util.Set;
-
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
+import java.util.stream.Collectors;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.api.JsonObjectBuilder;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import com.playmonumenta.scriptedquests.quests.components.actions.dialog.DialogAllInOneText;
 import com.playmonumenta.scriptedquests.quests.components.actions.dialog.DialogBase;
@@ -18,6 +16,10 @@ import com.playmonumenta.scriptedquests.quests.components.actions.dialog.DialogC
 import com.playmonumenta.scriptedquests.quests.components.actions.dialog.DialogRandomText;
 import com.playmonumenta.scriptedquests.quests.components.actions.dialog.DialogRawText;
 import com.playmonumenta.scriptedquests.quests.components.actions.dialog.DialogText;
+
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 
 public class ActionDialog implements ActionBase {
 	private ArrayList<DialogBase> mDialogs = new ArrayList<DialogBase>();
@@ -51,8 +53,18 @@ public class ActionDialog implements ActionBase {
 
 	@Override
 	public void doAction(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
+		// handle packet stuff
 		for (DialogBase dialog : mDialogs) {
 			dialog.sendDialog(plugin, player, npcEntity, prereqs);
 		}
+	}
+
+	@Override
+	public JsonElement serializeForClientAPI(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
+		return JsonObjectBuilder.get()
+			.add("type", "dialog")
+			.add("dialog", mDialogs.stream().map(v -> v.serializeForClientAPI(plugin, player, npcEntity, prereqs))
+				.collect(Collectors.toList()))
+			.build();
 	}
 }

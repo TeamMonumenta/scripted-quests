@@ -3,11 +3,8 @@ package com.playmonumenta.scriptedquests.quests.components;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
-
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -22,6 +19,10 @@ import com.playmonumenta.scriptedquests.quests.components.actions.ActionInteract
 import com.playmonumenta.scriptedquests.quests.components.actions.ActionRerunComponents;
 import com.playmonumenta.scriptedquests.quests.components.actions.ActionSetScore;
 import com.playmonumenta.scriptedquests.quests.components.actions.ActionVoiceOver;
+
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 
 public class QuestActions {
 	private ArrayList<ActionBase> mActions = new ArrayList<ActionBase>();
@@ -114,5 +115,16 @@ public class QuestActions {
 				}
 			}, mDelayTicks);
 		}
+	}
+
+	public Optional<JsonElement> serializeForClientAPI(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
+		if (mDelayTicks <= 0) {
+			JsonArray a = new JsonArray();
+			mActions.stream().map(v -> v.serializeForClientAPI(plugin, player, npcEntity, prereqs))
+				.forEach(a::add);
+			return Optional.of(a);
+		}
+
+		return Optional.empty();
 	}
 }

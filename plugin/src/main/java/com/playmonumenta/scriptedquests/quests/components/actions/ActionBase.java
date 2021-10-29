@@ -1,10 +1,12 @@
 package com.playmonumenta.scriptedquests.quests.components.actions;
 
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-
+import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
+
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 
 public interface ActionBase {
 	/**
@@ -16,4 +18,8 @@ public interface ActionBase {
 	 * npcEntity might be null (for all interactions except those involving an NPC)
 	 */
 	void doAction(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs);
+
+	default JsonElement serializeForClientAPI(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
+		return JsonNull.INSTANCE;
+	}
 }

@@ -4,13 +4,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
 
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-
 import com.google.gson.JsonElement;
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.api.JsonObjectBuilder;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
+
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 
 public class DialogRandomText implements DialogBase {
 	private String mDisplayName;
@@ -36,6 +37,17 @@ public class DialogRandomText implements DialogBase {
 	public void sendDialog(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
 		int idx = mRandom.nextInt(mText.size());
 		MessagingUtils.sendNPCMessage(player, mDisplayName, mText.get(idx));
+	}
+
+	@Override
+	public JsonElement serializeForClientAPI(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
+		int idx = mRandom.nextInt(mText.size());
+		return JsonObjectBuilder.get()
+			.add("type", "random_text")
+			.add("commands", mText.get(idx))
+			.add("npc_name", mDisplayName)
+			.build();
+
 	}
 }
 

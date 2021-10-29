@@ -2,14 +2,17 @@ package com.playmonumenta.scriptedquests.quests.components.actions.dialog;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.stream.Collectors;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
+import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.api.JsonObjectBuilder;
+import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
+import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-
-import com.google.gson.JsonElement;
-import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
-import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 
 public class DialogText implements DialogBase {
 	private String mDisplayName;
@@ -40,5 +43,14 @@ public class DialogText implements DialogBase {
 			}
 
 		}
+	}
+
+	@Override
+	public JsonElement serializeForClientAPI(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
+		return JsonObjectBuilder.get()
+			.add("type", "text")
+			.add("text", mText.stream().map(JsonPrimitive::new).collect(Collectors.toList()))
+			.add("npc_name", mDisplayName)
+			.build();
 	}
 }

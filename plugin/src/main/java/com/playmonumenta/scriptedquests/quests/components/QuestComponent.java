@@ -1,15 +1,16 @@
 package com.playmonumenta.scriptedquests.quests.components;
 
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
-
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
+
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 
 public class QuestComponent {
 	private QuestPrerequisites mPrerequisites = null;
@@ -63,5 +64,12 @@ public class QuestComponent {
 			return true;
 		}
 		return false;
+	}
+
+	public Optional<JsonElement> serializeForClientAPI(Plugin plugin, Player player, Entity npcEntity) {
+		if (mPrerequisites == null || mPrerequisites.prerequisiteMet(player, npcEntity)) {
+			return mActions.serializeForClientAPI(plugin, player, npcEntity, mPrerequisites);
+		}
+		return Optional.empty();
 	}
 }
