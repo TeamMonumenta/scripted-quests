@@ -38,7 +38,7 @@ public class ClientChatProtocol implements PluginMessageListener, CommandExecuto
 
 		ByteArrayDataOutput out = ByteStreams.newDataOutput();
 		out.writeUTF(GSON.toJson(data));
-		player.getServer().sendPluginMessage(Plugin.getInstance(), Constants.API_CHANNEL_ID, out.toByteArray());
+		player.sendPluginMessage(Plugin.getInstance(), Constants.API_CHANNEL_ID, out.toByteArray());
 	}
 
 	@Override
@@ -60,7 +60,7 @@ public class ClientChatProtocol implements PluginMessageListener, CommandExecuto
 	@Override
 	public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
 		mOverride = !mOverride;
-		Plugin.getInstance().getLogger().info("Should always send custom data to player" + mOverride);
+		Plugin.getInstance().getLogger().info("Should always send custom data to player: " + mOverride);
 		return true;
 	}
 }

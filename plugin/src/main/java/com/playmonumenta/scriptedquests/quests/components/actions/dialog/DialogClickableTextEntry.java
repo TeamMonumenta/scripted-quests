@@ -1,12 +1,17 @@
 package com.playmonumenta.scriptedquests.quests.components.actions.dialog;
 
-import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.playmonumenta.scriptedquests.Constants;
+import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.api.JsonObjectBuilder;
+import com.playmonumenta.scriptedquests.point.AreaBounds;
+import com.playmonumenta.scriptedquests.point.Point;
+import com.playmonumenta.scriptedquests.quests.components.QuestActions;
+import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
+import com.playmonumenta.scriptedquests.utils.MessagingUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.HoverEvent;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
@@ -14,18 +19,9 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.playmonumenta.scriptedquests.Constants;
-import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.point.AreaBounds;
-import com.playmonumenta.scriptedquests.point.Point;
-import com.playmonumenta.scriptedquests.quests.components.QuestActions;
-import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
-import com.playmonumenta.scriptedquests.utils.MessagingUtils;
-
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.event.HoverEvent;
+import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.Set;
 
 public class DialogClickableTextEntry implements DialogBase {
 	public class PlayerClickableTextEntry {
@@ -135,7 +131,6 @@ public class DialogClickableTextEntry implements DialogBase {
 			new FixedMetadataValue(plugin, availTriggers));
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void sendDialog(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
 		MessagingUtils.sendClickableNPCMessage(plugin, player, mText, "/questtrigger " + mIdx, mHoverEvent);
