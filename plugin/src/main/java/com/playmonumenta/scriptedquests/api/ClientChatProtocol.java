@@ -27,8 +27,13 @@ public class ClientChatProtocol implements PluginMessageListener, CommandExecuto
 	private static final Gson GSON = new Gson();
 	private final Set<UUID> mShouldSendMessage = new HashSet<>();
 	private boolean mOverride = false;
+	private static ClientChatProtocol INSTANCE = null;
 
-	public void sendPacket(List<QuestComponent> packet, Plugin plugin, Player player, Entity npc) {
+	public ClientChatProtocol() {
+		INSTANCE = this;
+	}
+
+	public static void sendPacket(List<QuestComponent> packet, Plugin plugin, Player player, Entity npc) {
 		JsonObject data = JsonObjectBuilder.get()
 			.add("type", "actions")
 			.add("data", packet.stream().map(v -> v.serializeForClientAPI(plugin, player, npc))
@@ -46,15 +51,18 @@ public class ClientChatProtocol implements PluginMessageListener, CommandExecuto
 		ByteArrayDataInput in = ByteStreams.newDataInput(bytes);
 		String mode = in.readUTF();
 
-		if (mode.equals("enabled")) {
+		if (mode != null && mode.equals("enabled")) {
 			mShouldSendMessage.add(player.getUniqueId());
-		} else if (mode.equals("disabled")) {
+		} else if (mode != null && mode.equals("disabled")) {
 			mShouldSendMessage.remove(player.getUniqueId());
 		}
 	}
 
-	public boolean shouldSend(Player p) {
-		return mOverride || mShouldSendMessage.contains(p.getUniqueId());
+	public static boolean shouldSend(Player p) {
+		if (INSTANCE != null) {
+			return INSTANCE.mOverride || INSTANCE.mShouldSendMessage.contains(p.getUniqueId());
+		}
+		return false;
 	}
 
 	@Override

@@ -9,6 +9,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.api.ClientChatProtocol;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
 
 import org.bukkit.ChatColor;
@@ -117,8 +118,8 @@ public class QuestNpc {
 	// Note: npcEntity might be null
 	public boolean interactEvent(Plugin plugin, Player player, String npcName, EntityType entityType, Entity npcEntity) {
 		if (mEntityType.equals(entityType) && mNpcName.equals(npcName)) {
-			if (plugin.mProtocol.shouldSend(player)) {
-				plugin.mProtocol.sendPacket(mComponents, plugin, player, npcEntity);
+			if (ClientChatProtocol.shouldSend(player)) {
+				ClientChatProtocol.sendPacket(mComponents, plugin, player, npcEntity);
 			} else {
 				for (QuestComponent component : mComponents) {
 					component.doActionsIfPrereqsMet(plugin, player, npcEntity);
