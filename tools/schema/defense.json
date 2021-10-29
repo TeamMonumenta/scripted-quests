@@ -2,7 +2,8 @@
 	"oneOf": [
 		{
 			"title": "number",
-			"type": "integer"
+			"type": "integer",
+			"default": 0
 		},
 		{
 			"title": "percentage",
