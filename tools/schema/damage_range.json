@@ -1,0 +1,40 @@
+{
+	"oneOf": [
+		{
+			"title": "range",
+			"type": "string",
+			"default": "1-2"
+		},
+		{
+			"title": "formulaic",
+			"description": "Generates the mob's Damage based on a series of parameters given. The range generated will be a 10% difference from the result of this formula for both min and max damage. Use this for easy calculations and accurate math.",
+			"type": "object",
+			"properties": {
+				"playerLevel": {
+					"required": true,
+					"propertyOrder": 1,
+					"title": "playerLevel",
+					"description": "The level of the player(s) that are expected to fight this mob. This is used to get the player's base HP at their level.",
+					"type": "number",
+					"default": 1
+				},
+				"playerDr": {
+					"required": true,
+					"propertyOrder": 2,
+					"title": "playerDr",
+					"description": "The amount of DR that the player is expected to have against this type of damage. This has to be a decimal from 0 - 1",
+					"type": "number",
+					"default": 0.2
+				},
+				"damagePerHit": {
+					"required": true,
+					"propertyOrder": 3,
+					"title": "damagePerHit",
+					"description": "The amount of damage that this mob deals based on the player's MAX HP and DR. This is a decimal from 0 - 1",
+					"type": "number",
+					"default": 0.1
+				}
+			}
+		}
+	]
+}
