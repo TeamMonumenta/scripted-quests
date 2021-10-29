@@ -51,9 +51,9 @@ public class ClientChatProtocol implements PluginMessageListener, CommandExecuto
 		ByteArrayDataInput in = ByteStreams.newDataInput(bytes);
 		String mode = in.readUTF();
 
-		if (mode != null && mode.equals("enabled")) {
+		if (mode.equals("enabled")) {
 			mShouldSendMessage.add(player.getUniqueId());
-		} else if (mode != null && mode.equals("disabled")) {
+		} else if (mode.equals("disabled")) {
 			mShouldSendMessage.remove(player.getUniqueId());
 		}
 	}
