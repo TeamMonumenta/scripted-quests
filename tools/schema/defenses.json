@@ -7,21 +7,21 @@
 			"propertyOrder": 1,
 			"title": "defense",
 			"description": "Global Damage Reduction. Protects against all damage",
-			"$schema": "defense.json"
+			"$ref": "defense.json"
         },
         "armor": {
             "required": true,
 			"propertyOrder": 2,
 			"title": "armor",
 			"description": "Physical Defense. Protects against Physical Damage.",
-			"$schema": "defense.json"
+			"$ref": "defense.json"
         },
         "resistance": {
             "required": true,
 			"propertyOrder": 3,
 			"title": "resistance",
 			"description": "Resistance against Magicks. Protects against Magical Damage.",
-			"$schema": "defense.json"
+			"$ref": "defense.json"
 		}
     }
 }

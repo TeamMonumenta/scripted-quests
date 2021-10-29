@@ -6,12 +6,12 @@
         "physical_damage": {
             "title": "physical_damage",
             "description": "The range of Physical Damage a mob deals",
-			"$schema": "damage_range.json"            
+			"$ref": "damage_range.json"            
         },
         "magical_damage": {
             "title": "magical_damage",
             "description": "The range of Magical Damage a mob deals",
-			"$schema": "damage_range.json"
+			"$ref": "damage_range.json"
         }
     }
 }
