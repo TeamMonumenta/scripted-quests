@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
@@ -118,8 +117,8 @@ public class QuestNpc {
 	// Note: npcEntity might be null
 	public boolean interactEvent(Plugin plugin, Player player, String npcName, EntityType entityType, Entity npcEntity) {
 		if (mEntityType.equals(entityType) && mNpcName.equals(npcName)) {
-			if (plugin.mProtocol.shouldSend(player)) {
-				plugin.mProtocol.sendPacket(mComponents, plugin, player, npcEntity);
+			if (plugin.mClientChatProtocol.shouldSend(player)) {
+				plugin.mClientChatProtocol.sendPacket(mComponents, plugin, player, npcEntity);
 			} else {
 				for (QuestComponent component : mComponents) {
 					component.doActionsIfPrereqsMet(plugin, player, npcEntity);

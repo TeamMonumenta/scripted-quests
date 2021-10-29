@@ -18,6 +18,6 @@ commands:
     description: Reloads quest zone files
     usage: /reloadzones
   toggleapi:
-      permission: scriptedquests.toggleapi
+      permission: scriptedquests.toggleclientchatapi
       description: Toggles API
-      usage: /toggleapi
+      usage: /toggleclientchatapi

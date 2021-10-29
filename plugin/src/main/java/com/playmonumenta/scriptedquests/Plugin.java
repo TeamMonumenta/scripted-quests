@@ -85,7 +85,7 @@ public class Plugin extends JavaPlugin {
 	public ZonePropertyManager mZonePropertyManager;
 	public WaypointManager mWaypointManager;
 	public GrowableManager mGrowableManager;
-	public ClientChatProtocol mProtocol;
+	public ClientChatProtocol mClientChatProtocol;
 
 	public World mWorld;
 	public Random mRandom = new Random();
@@ -171,11 +171,11 @@ public class Plugin extends JavaPlugin {
 		getCommand("reloadZones").setExecutor(new ReloadZones(this));
 		getCommand("questTrigger").setExecutor(new QuestTrigger(this));
 
-		mProtocol = new ClientChatProtocol();
-		getCommand("toggleapi").setExecutor(mProtocol);
+		mClientChatProtocol = new ClientChatProtocol();
+		getCommand("toggleclientchatapi").setExecutor(mClientChatProtocol);
 
 		this.getServer().getMessenger().registerOutgoingPluginChannel(this, Constants.API_CHANNEL_ID);
-		this.getServer().getMessenger().registerIncomingPluginChannel(this, Constants.API_CHANNEL_ID, mProtocol);
+		this.getServer().getMessenger().registerIncomingPluginChannel(this, Constants.API_CHANNEL_ID, mClientChatProtocol);
 
 		/* Load the config 1 tick later to let other plugins load */
 		new BukkitRunnable() {
