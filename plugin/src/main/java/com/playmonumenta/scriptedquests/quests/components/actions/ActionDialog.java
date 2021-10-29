@@ -5,14 +5,10 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.playmonumenta.scriptedquests.api.JsonObjectBuilder;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.api.JsonObjectBuilder;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import com.playmonumenta.scriptedquests.quests.components.actions.dialog.DialogAllInOneText;
 import com.playmonumenta.scriptedquests.quests.components.actions.dialog.DialogBase;
@@ -20,6 +16,10 @@ import com.playmonumenta.scriptedquests.quests.components.actions.dialog.DialogC
 import com.playmonumenta.scriptedquests.quests.components.actions.dialog.DialogRandomText;
 import com.playmonumenta.scriptedquests.quests.components.actions.dialog.DialogRawText;
 import com.playmonumenta.scriptedquests.quests.components.actions.dialog.DialogText;
+
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 
 public class ActionDialog implements ActionBase {
 	private ArrayList<DialogBase> mDialogs = new ArrayList<DialogBase>();

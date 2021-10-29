@@ -6,10 +6,6 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -23,6 +19,10 @@ import com.playmonumenta.scriptedquests.quests.components.actions.ActionInteract
 import com.playmonumenta.scriptedquests.quests.components.actions.ActionRerunComponents;
 import com.playmonumenta.scriptedquests.quests.components.actions.ActionSetScore;
 import com.playmonumenta.scriptedquests.quests.components.actions.ActionVoiceOver;
+
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 
 public class QuestActions {
 	private ArrayList<ActionBase> mActions = new ArrayList<ActionBase>();

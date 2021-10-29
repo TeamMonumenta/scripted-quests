@@ -4,15 +4,6 @@ import java.io.File;
 import java.util.Random;
 
 import com.playmonumenta.scriptedquests.api.ClientChatProtocol;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
-
 import com.playmonumenta.scriptedquests.commands.Clickable;
 import com.playmonumenta.scriptedquests.commands.Clock;
 import com.playmonumenta.scriptedquests.commands.Code;
@@ -60,6 +51,15 @@ import com.playmonumenta.scriptedquests.managers.ZonePropertyManager;
 import com.playmonumenta.scriptedquests.timers.CommandTimerManager;
 import com.playmonumenta.scriptedquests.utils.MetadataUtils;
 import com.playmonumenta.scriptedquests.zones.ZoneManager;
+
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class Plugin extends JavaPlugin {
 	private static Plugin INSTANCE = null;

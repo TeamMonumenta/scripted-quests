@@ -3,18 +3,15 @@ package com.playmonumenta.scriptedquests.quests.components.actions.dialog;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
-import java.util.stream.Collectors;
-
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
-import com.playmonumenta.scriptedquests.api.JsonObjectBuilder;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 
 import com.google.gson.JsonElement;
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.api.JsonObjectBuilder;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
+
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 
 public class DialogRandomText implements DialogBase {
 	private String mDisplayName;
