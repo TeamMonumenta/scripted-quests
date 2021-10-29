@@ -2,11 +2,11 @@ package com.playmonumenta.scriptedquests.quests.components.actions;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
+
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 
 public interface ActionBase {
 	/**

@@ -5,14 +5,14 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import com.google.gson.JsonElement;
+import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.api.JsonObjectBuilder;
+import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
+
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-
-import com.google.gson.JsonElement;
-import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 
 public class DialogClickableText implements DialogBase {
 	private ArrayList<DialogClickableTextEntry> mEntries = new ArrayList<DialogClickableTextEntry>();

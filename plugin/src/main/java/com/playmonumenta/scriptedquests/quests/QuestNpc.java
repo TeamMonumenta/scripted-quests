@@ -5,16 +5,17 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.api.ClientChatProtocol;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
+
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 
 /*
  * A QuestNpc object holds all the quest components belonging to an NPC with a specific name
@@ -117,8 +118,8 @@ public class QuestNpc {
 	// Note: npcEntity might be null
 	public boolean interactEvent(Plugin plugin, Player player, String npcName, EntityType entityType, Entity npcEntity) {
 		if (mEntityType.equals(entityType) && mNpcName.equals(npcName)) {
-			if (plugin.mClientChatProtocol.shouldSend(player)) {
-				plugin.mClientChatProtocol.sendPacket(mComponents, plugin, player, npcEntity);
+			if (ClientChatProtocol.shouldSend(player)) {
+				ClientChatProtocol.sendPacket(mComponents, plugin, player, npcEntity);
 			} else {
 				for (QuestComponent component : mComponents) {
 					component.doActionsIfPrereqsMet(plugin, player, npcEntity);
