@@ -192,6 +192,12 @@ an NPC, quest components are run in-order (more than one may be executed).
 - permission: `scriptedquests.randomnumber`
 - Used to store a random number into a scoreboard value. `min` and `max` are inclusive.
 
+`/random sample <entities> <objective> <min> <max>`
+- permission: `scriptedquests.random.sample`
+- Assigns each entity a random score from `min` to `max` without replacements.
+  Fails if there aren't enough unique numbers for the number of entities.
+  `min` and `max` are both inclusive.
+
 `/race start <players> <raceLabel>`
 - permission: `scriptedquests.race`
 - Start the race <raceLabel> for <players>
