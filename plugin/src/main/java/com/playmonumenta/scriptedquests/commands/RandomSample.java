@@ -18,6 +18,7 @@ import dev.jorel.commandapi.arguments.ObjectiveArgument;
 public class RandomSample {
 	private static final SplittableRandom mRandom = new SplittableRandom();
 
+	@SuppressWarnings("unchecked")
 	public static void register() {
 		new CommandAPICommand("random")
 			.withPermission(CommandPermission.fromString("scriptedquests.random.sample"))
