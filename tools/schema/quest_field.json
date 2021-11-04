@@ -8,6 +8,7 @@
 		"display_number",
 		"number_addon",
 		"max",
+		"stages",
 		"completion"
     ],
 	"additionalProperties": false,
@@ -56,8 +57,32 @@
 			"description": "The prerequisites to display this objective in the quest book. Can be left blank.",
             "$ref": "prerequisites.json"
         },
-		"completion": {
+		"stages": {
             "propertyOrder": 6,
+            "required": true,
+			"description": "The actions done on certain stages (value numbers) of the Quest Field.",
+            "type": "array",
+			"items": {
+				"title": "Stage",
+				"description": "A stage in the Quest Field progression",
+				"properties": {
+					"value": {
+						"required": true,
+						"title": "value",
+						"description": "The value that the Quest Field needs to be at in order for these actions to trigger",
+						"type": "integer"
+					},
+					"actions": {
+						"required": true,
+						"description": "The actions to be performed when the quest reaches this stage",
+						"$ref": "actions.json"
+					}
+				},
+				"type": "object"
+			}
+		},
+		"completion": {
+            "propertyOrder": 7,
             "required": true,
 			"description": "The actions done on completion. Can be left blank.",
             "$ref": "actions.json"
