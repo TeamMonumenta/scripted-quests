@@ -1,15 +1,23 @@
 package com.playmonumenta.scriptedquests.api;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import com.floweytf.utils.Utils;
+import com.floweytf.utils.streams.stdstreams.IStandardByteReader;
+import com.floweytf.utils.streams.stdstreams.IStandardByteWriter;
+import com.floweytf.utils.streams.stdstreams.StandardByteReader;
+import com.floweytf.utils.streams.stdstreams.StandardByteWriter;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Constants;
 import com.playmonumenta.scriptedquests.Plugin;
@@ -41,21 +49,24 @@ public class ClientChatProtocol implements PluginMessageListener, CommandExecuto
 				.collect(Collectors.toList()))
 			.build();
 
-		ByteArrayDataOutput out = ByteStreams.newDataOutput();
-		out.writeUTF(GSON.toJson(data));
-		player.sendPluginMessage(Plugin.getInstance(), Constants.API_CHANNEL_ID, out.toByteArray());
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		IStandardByteWriter out = new StandardByteWriter(baos);
+		Utils.rethrow(() -> out.write(GSON.toJson(data)));
+		player.sendPluginMessage(Plugin.getInstance(), Constants.API_CHANNEL_ID, baos.toByteArray());
 	}
 
 	@Override
 	public void onPluginMessageReceived(@NotNull String s, @NotNull Player player, byte[] bytes) {
-		ByteArrayDataInput in = ByteStreams.newDataInput(bytes);
-		String mode = in.readUTF();
-
-		if (mode.equals("enabled")) {
-			mShouldSendMessage.add(player.getUniqueId());
-		} else if (mode.equals("disabled")) {
-			mShouldSendMessage.remove(player.getUniqueId());
-		}
+		ByteArrayInputStream in = new ByteArrayInputStream(bytes);
+		IStandardByteReader rd = new StandardByteReader(in);
+		Utils.rethrow(() -> {
+			String data = rd.readString();
+			if (data.equals("enabled")) {
+				mShouldSendMessage.add(player.getUniqueId());
+			} else if (data.equals("disabled")) {
+				mShouldSendMessage.remove(player.getUniqueId());
+			}
+		});
 	}
 
 	public static boolean shouldSend(Player p) {
