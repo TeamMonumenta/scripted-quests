@@ -185,14 +185,14 @@
 									oneOf: [
 										{
 											title: "percent",
-											description: "The DPS factor in terms of a decimal from 0 - 1.",
+											description: "The percentage to multiply the DPS by to get a player's predicted DPS via Attributes. This is given as a decimal from 0 - 1, and can be done numerically or formulaically",
 											type: "number",
 											default: 0.2
 										},
 										{
 										    required: true,
 											title: "formulaic",
-											description: "Generates the DPS Factor using the given parameters",
+											description: "The percentage to multiply the DPS by to get a player's predicted DPS via Attributes. This is given as a decimal from 0 - 1, and can be done numerically or formulaically",
 											properties: {
 												playerRarity: {
 													title: "playerRarity",
@@ -215,6 +215,13 @@
 								    required: true,
 									title: "skillCount",
 									description: "The amount of skills that a player is expected to have when fighting this mob. These only include ACTIVE/CASTABLE Skills, and not Passive Skills.",
+									type: "number",
+									default: 1
+								},
+								skillMultiplier: {
+								    required: true,
+									title: "skillMultiplier",
+									description: "The average percent of damage that the player's skills does in comparison to their normal attacks. (Weapon Attacks = 100%, Class-Weapon Skills = 125%). This is a decimal",
 									type: "number",
 									default: 1
 								},

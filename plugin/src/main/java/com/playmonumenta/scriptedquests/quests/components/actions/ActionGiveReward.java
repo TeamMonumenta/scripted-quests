@@ -307,7 +307,7 @@ public class ActionGiveReward implements ActionBase {
 			}
 
 
-			page.displayShop();
+			page.displayMenu();
 		}
 
 		private void populateItemBox(MenuPage page, Collection<ItemStack> items, int startingSlot, boolean mirror, OnPick onPick) {
