@@ -24,6 +24,7 @@ import com.playmonumenta.scriptedquests.commands.Line;
 import com.playmonumenta.scriptedquests.commands.QuestTrigger;
 import com.playmonumenta.scriptedquests.commands.Race;
 import com.playmonumenta.scriptedquests.commands.RandomNumber;
+import com.playmonumenta.scriptedquests.commands.RandomSample;
 import com.playmonumenta.scriptedquests.commands.ReloadQuests;
 import com.playmonumenta.scriptedquests.commands.ReloadZones;
 import com.playmonumenta.scriptedquests.commands.ScheduleFunction;
@@ -112,6 +113,7 @@ public class Plugin extends JavaPlugin {
 		Leaderboard.register(this);
 		Line.register();
 		RandomNumber.register();
+		RandomSample.register();
 		HasPermission.register();
 		TimerDebug.register(this);
 		GenerateCode.register(this);
