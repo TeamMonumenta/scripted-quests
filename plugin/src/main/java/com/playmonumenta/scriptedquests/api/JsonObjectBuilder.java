@@ -8,18 +8,14 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
 public class JsonObjectBuilder {
-	JsonObject mObj;
-
-	private JsonObjectBuilder() {
-		mObj = new JsonObject();
-	}
+	private final JsonObject mObject = new JsonObject();
 
 	public static JsonObjectBuilder get() {
 		return new JsonObjectBuilder();
 	}
 
 	public JsonObjectBuilder add(String key, JsonElement e) {
-		mObj.add(key, e);
+		mObject.add(key, e);
 		return this;
 	}
 
@@ -45,11 +41,11 @@ public class JsonObjectBuilder {
 			a.add(elem);
 		}
 
-		mObj.add(key, a);
+		mObject.add(key, a);
 		return this;
 	}
 
 	public JsonObject build() {
-		return mObj;
+		return mObject;
 	}
 }
