@@ -14,22 +14,22 @@ public class BasicStandardWriter<T> implements IStandardByteWriter {
 		void write(T instance, byte[] buf) throws IOException;
 	}
 
-	private final T instance;
-	private final ByteWriter<T> writer;
+	private final T mInstance;
+	private final ByteWriter<T> mWriter;
 
 	public BasicStandardWriter(T inst, ByteWriter<T> wr) {
-		instance = inst;
-		writer = wr;
+		mInstance = inst;
+		mWriter = wr;
 	}
 
 	@Override
 	public void write(byte b) throws IOException {
-		writer.write(instance, new byte[] {b});
+		mWriter.write(mInstance, new byte[] {b});
 	}
 
 	@Override
 	public void write(short s) throws IOException {
-		writer.write(instance, new byte[] {
+		mWriter.write(mInstance, new byte[] {
 			(byte) s,
 			(byte) ((s >> 8) & 0xFF)
 		});
@@ -37,7 +37,7 @@ public class BasicStandardWriter<T> implements IStandardByteWriter {
 
 	@Override
 	public void write(int i) throws IOException {
-		writer.write(instance, new byte[] {
+		mWriter.write(mInstance, new byte[] {
 			(byte) i,
 			(byte) ((i >> 8) & 0xFF),
 			(byte) ((i >> 16) & 0xFF),
@@ -47,7 +47,7 @@ public class BasicStandardWriter<T> implements IStandardByteWriter {
 
 	@Override
 	public void write(long l) throws IOException {
-		writer.write(instance, new byte[]{
+		mWriter.write(mInstance, new byte[]{
 			(byte) l,
 			(byte) (l >> 8),
 			(byte) (l >> 16),
@@ -63,7 +63,7 @@ public class BasicStandardWriter<T> implements IStandardByteWriter {
 	public void write(String s) throws IOException {
 		write(s.length());
 		byte[] ba = s.getBytes(StandardCharsets.UTF_8);
-		writer.write(instance, ba);
+		mWriter.write(mInstance, ba);
 	}
 
 	@Override

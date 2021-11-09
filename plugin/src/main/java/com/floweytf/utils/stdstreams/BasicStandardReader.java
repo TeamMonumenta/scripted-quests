@@ -15,42 +15,42 @@ public class BasicStandardReader<T> implements IStandardByteReader {
 		int read(T instance, byte[] buf) throws IOException;
 	}
 
-	private final T instance;
-	private final ByteReader<T> reader;
+	private final T mInstance;
+	private final ByteReader<T> mReader;
 
 	public BasicStandardReader(T inst, ByteReader<T> rd) {
-		instance = inst;
-		reader = rd;
+		mInstance = inst;
+		mReader = rd;
 	}
 
 	public long readLong() throws IOException {
 		byte[] bytes = new byte[8];
-		reader.read(instance, bytes);
+		mReader.read(mInstance, bytes);
 		return ByteBuffer.wrap(bytes).order(java.nio.ByteOrder.LITTLE_ENDIAN).getLong();
 	}
 
 	public int readInt() throws IOException {
 		byte[] bytes = new byte[4];
-		reader.read(instance, bytes);
+		mReader.read(mInstance, bytes);
 		return ByteBuffer.wrap(bytes).order(java.nio.ByteOrder.LITTLE_ENDIAN).getInt();
 	}
 
 	public short readShort() throws IOException {
 		byte[] bytes = new byte[2];
-		reader.read(instance, bytes);
+		mReader.read(mInstance, bytes);
 		return ByteBuffer.wrap(bytes).order(java.nio.ByteOrder.LITTLE_ENDIAN).getShort();
 	}
 
 	public byte readByte() throws IOException {
 		byte[] bytes = new byte[1];
-		reader.read(instance, bytes);
+		mReader.read(mInstance, bytes);
 		return bytes[0];
 	}
 
 	public String readString() throws IOException {
 		int size = readInt();
 		byte[] bytes = new byte[size];
-		reader.read(instance, bytes);
+		mReader.read(mInstance, bytes);
 		return new String(bytes, StandardCharsets.UTF_8);
 	}
 
