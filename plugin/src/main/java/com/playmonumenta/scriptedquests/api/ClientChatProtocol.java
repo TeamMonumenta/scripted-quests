@@ -48,7 +48,7 @@ public class ClientChatProtocol implements PluginMessageListener, CommandExecuto
 			out.write(GSON.toJson(data));
 			player.sendPluginMessage(Plugin.getInstance(), Constants.API_CHANNEL_ID, stream.toByteArray());
 		} catch (Exception e) {
-			// should never throw
+			e.printStackTrace();
 		}
 	}
 
@@ -64,7 +64,7 @@ public class ClientChatProtocol implements PluginMessageListener, CommandExecuto
 				mShouldSendMessage.remove(player.getUniqueId());
 			}
 		} catch (Exception e) {
-			// should never throw (again)
+			e.printStackTrace();
 		}
 	}
 
