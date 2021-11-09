@@ -1,14 +1,16 @@
 package com.playmonumenta.scriptedquests.api;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
+import com.floweytf.utils.stdstreams.IStandardByteReader;
+import com.floweytf.utils.stdstreams.StandardByteReader;
+import com.floweytf.utils.stdstreams.StandardByteWriter;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Constants;
@@ -21,7 +23,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
-import org.jetbrains.annotations.NotNull;
 
 public class ClientChatProtocol implements PluginMessageListener, CommandExecutor {
 	private static final Gson GSON = new Gson();
@@ -41,20 +42,29 @@ public class ClientChatProtocol implements PluginMessageListener, CommandExecuto
 				.collect(Collectors.toList()))
 			.build();
 
-		ByteArrayDataOutput out = ByteStreams.newDataOutput();
-		out.writeUTF(GSON.toJson(data));
-		player.sendPluginMessage(Plugin.getInstance(), Constants.API_CHANNEL_ID, out.toByteArray());
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		StandardByteWriter out = new StandardByteWriter(stream);
+		try {
+			out.write(GSON.toJson(data));
+			player.sendPluginMessage(Plugin.getInstance(), Constants.API_CHANNEL_ID, stream.toByteArray());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
-	public void onPluginMessageReceived(@NotNull String s, @NotNull Player player, byte[] bytes) {
-		ByteArrayDataInput in = ByteStreams.newDataInput(bytes);
-		String mode = in.readUTF();
-
-		if (mode.equals("enabled")) {
-			mShouldSendMessage.add(player.getUniqueId());
-		} else if (mode.equals("disabled")) {
-			mShouldSendMessage.remove(player.getUniqueId());
+	public void onPluginMessageReceived(String s, Player player, byte[] bytes) {
+		ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
+		IStandardByteReader out = new StandardByteReader(stream);
+		try {
+			String mode = out.readString();
+			if (mode.equals("enabled")) {
+				mShouldSendMessage.add(player.getUniqueId());
+			} else if (mode.equals("disabled")) {
+				mShouldSendMessage.remove(player.getUniqueId());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
