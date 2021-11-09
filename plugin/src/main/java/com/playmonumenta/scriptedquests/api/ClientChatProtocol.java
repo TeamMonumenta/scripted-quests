@@ -1,5 +1,13 @@
 package com.playmonumenta.scriptedquests.api;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import com.floweytf.utils.stdstreams.IStandardByteReader;
 import com.floweytf.utils.stdstreams.StandardByteReader;
 import com.floweytf.utils.stdstreams.StandardByteWriter;
@@ -8,17 +16,13 @@ import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Constants;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.util.*;
-import java.util.stream.Collectors;
 
 public class ClientChatProtocol implements PluginMessageListener, CommandExecutor {
 	private static final Gson GSON = new Gson();

@@ -11,54 +11,54 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
 public class BasicStandardReader<T> implements IStandardByteReader {
-    public interface ByteReader<T> {
-        int read(T instance, byte[] buf) throws IOException;
-    }
+	public interface ByteReader<T> {
+		int read(T instance, byte[] buf) throws IOException;
+	}
 
-    private final T instance;
-    private final ByteReader<T> reader;
+	private final T instance;
+	private final ByteReader<T> reader;
 
-    public BasicStandardReader(T inst, ByteReader<T> rd) {
-        instance = inst;
-        reader = rd;
-    }
+	public BasicStandardReader(T inst, ByteReader<T> rd) {
+		instance = inst;
+		reader = rd;
+	}
 
-    public long readLong() throws IOException {
-        byte[] bytes = new byte[8];
-        reader.read(instance, bytes);
-        return ByteBuffer.wrap(bytes).order(java.nio.ByteOrder.LITTLE_ENDIAN).getLong();
-    }
+	public long readLong() throws IOException {
+		byte[] bytes = new byte[8];
+		reader.read(instance, bytes);
+		return ByteBuffer.wrap(bytes).order(java.nio.ByteOrder.LITTLE_ENDIAN).getLong();
+	}
 
-    public int readInt() throws IOException {
-        byte[] bytes = new byte[4];
-        reader.read(instance, bytes);
-        return ByteBuffer.wrap(bytes).order(java.nio.ByteOrder.LITTLE_ENDIAN).getInt();
-    }
+	public int readInt() throws IOException {
+		byte[] bytes = new byte[4];
+		reader.read(instance, bytes);
+		return ByteBuffer.wrap(bytes).order(java.nio.ByteOrder.LITTLE_ENDIAN).getInt();
+	}
 
-    public short readShort() throws IOException {
-        byte[] bytes = new byte[2];
-        reader.read(instance, bytes);
-        return ByteBuffer.wrap(bytes).order(java.nio.ByteOrder.LITTLE_ENDIAN).getShort();
-    }
+	public short readShort() throws IOException {
+		byte[] bytes = new byte[2];
+		reader.read(instance, bytes);
+		return ByteBuffer.wrap(bytes).order(java.nio.ByteOrder.LITTLE_ENDIAN).getShort();
+	}
 
-    public byte readByte() throws IOException {
-        byte[] bytes = new byte[1];
-        reader.read(instance, bytes);
-        return bytes[0];
-    }
+	public byte readByte() throws IOException {
+		byte[] bytes = new byte[1];
+		reader.read(instance, bytes);
+		return bytes[0];
+	}
 
-    public String readString() throws IOException {
-        int size = readInt();
-        byte[] bytes = new byte[size];
-        reader.read(instance, bytes);
-        return new String(bytes, StandardCharsets.UTF_8);
-    }
+	public String readString() throws IOException {
+		int size = readInt();
+		byte[] bytes = new byte[size];
+		reader.read(instance, bytes);
+		return new String(bytes, StandardCharsets.UTF_8);
+	}
 
-    public float readFloat() throws IOException {
-        return Float.intBitsToFloat(readInt());
-    }
+	public float readFloat() throws IOException {
+		return Float.intBitsToFloat(readInt());
+	}
 
-    public double readDouble() throws IOException {
-        return Double.longBitsToDouble(readLong());
-    }
+	public double readDouble() throws IOException {
+		return Double.longBitsToDouble(readLong());
+	}
 }
