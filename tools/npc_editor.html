@@ -71,6 +71,12 @@
                     type: "string",
                     default: "&7NPC"
                 },
+				visibilityPrerequisites: {
+					propertyOrder: 3,
+                    title: "visibilityPrerequisites",
+                    description: "The prerequisites requires to SEE this NPC.",
+                    $ref: "schema/prerequisites.json"				
+				},
 				loc: {
                     required: true,
                     propertyOrder: 3,

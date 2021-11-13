@@ -89,7 +89,8 @@ public class DialogClickableTextEntry extends ActionQuestMarker implements Dialo
 				&& !key.equals("actions")
 				&& !key.equals("delay_actions_by_ticks")
 				&& !key.equals("prerequisites")
-				&& !key.equals("click_type")) {
+				&& !key.equals("click_type")
+			&& !key.equals("quest_marker")) {
 				throw new Exception("Unknown clickable_text key: " + key);
 			}
 
