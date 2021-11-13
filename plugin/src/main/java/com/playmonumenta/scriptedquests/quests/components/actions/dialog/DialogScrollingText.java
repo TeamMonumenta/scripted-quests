@@ -8,6 +8,7 @@ import com.playmonumenta.scriptedquests.point.AreaBounds;
 import com.playmonumenta.scriptedquests.point.Point;
 import com.playmonumenta.scriptedquests.quests.components.QuestActions;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
+import com.playmonumenta.scriptedquests.quests.components.actions.ActionQuestMarker;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 import me.Novalescent.Constants;
 import me.Novalescent.mobs.npcs.RPGNPC;
@@ -25,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class DialogScrollingText implements DialogBase {
+public class DialogScrollingText extends ActionQuestMarker implements DialogBase {
 	private Double mRadius = 4.0;
 	private String mDisplayName;
 	private ArrayList<String> mText = new ArrayList<String>();
@@ -34,7 +35,9 @@ public class DialogScrollingText implements DialogBase {
 	private boolean mRaw = false;
 	private boolean mAutoScroll = false;
 
-	public DialogScrollingText(String displayName, JsonElement element)  throws Exception {
+	public DialogScrollingText(String displayName, JsonElement element) throws Exception {
+		super(element.getAsJsonObject());
+
 		mDisplayName = displayName;
 		JsonObject jsonObject = element.getAsJsonObject();
 		if (jsonObject == null) {

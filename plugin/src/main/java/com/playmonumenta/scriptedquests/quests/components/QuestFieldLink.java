@@ -1,8 +1,12 @@
 package com.playmonumenta.scriptedquests.quests.components;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.bukkit.entity.EntityType;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class QuestFieldLink {
 
@@ -15,6 +19,7 @@ public class QuestFieldLink {
 	public final Boolean mDisplayNumber;
 	public final String mAddon;
 
+	private Map<Integer, QuestActions> mStages = new HashMap<>();
 	private QuestPrerequisites mPrerequisites;
 	private QuestActions mActions;
 	public QuestFieldLink(String questId, JsonElement value) throws Exception {
@@ -55,6 +60,16 @@ public class QuestFieldLink {
 			throw new Exception("number_addon value is not a string!");
 		}
 
+		if (object.has("stages")) {
+			JsonArray stageArray = object.get("stages").getAsJsonArray();
+			for (JsonElement element : stageArray) {
+				JsonObject stageObject = element.getAsJsonObject();
+
+				QuestActions actions = new QuestActions("", "", EntityType.PLAYER, 0, stageObject.get("actions"));
+				mStages.put(stageObject.get("value").getAsInt(), actions);
+			}
+		}
+
 		mPrerequisites = new QuestPrerequisites(object.get("prerequisites"));
 		mActions = new QuestActions("", "", EntityType.PLAYER, 0, object.get("completion"));
 	}
@@ -65,6 +80,10 @@ public class QuestFieldLink {
 
 	public QuestActions getActions() {
 		return mActions;
+	}
+
+	public QuestActions getStageActions(int value) {
+		return mStages.get(value);
 	}
 
 }

@@ -86,6 +86,12 @@
 								"title": "click_type",
 								"type": "integer"
 							},
+							"quest_marker": {
+								"description": "The Quest Marker that this Clickable Text Entry uses. Valid entries: MAIN_ACCEPT, MAIN_CONTINUE, MAIN_TURNIN, UNLOCK_ACCEPT, UNLOCK_CONTINUE, UNLOCK_TURNIN, WORLD_ACCEPT, WORLD_CONTINUE, WORLD_TURNIN",
+								"title": "click_type",
+								"type": "string",
+								"default": "WORLD_ACCEPT"
+							},
                             "delay_actions_by_ticks": {
                                 "propertyOrder": 2,
                                 "$ref": "delay_actions_by_ticks.json"
@@ -157,6 +163,12 @@
 							"description": "The number state this is. This is mainly use to telegraph whether the NPC has a quest or not. 1 = Acceptable Quest, 2 = Turnin Quest",
 							"title": "click_type",
 							"type": "integer"
+						},
+						"quest_marker": {
+								"description": "The Quest Marker that this Scrollable Text Entry uses. Valid entries: MAIN_ACCEPT, MAIN_CONTINUE, MAIN_TURNIN, UNLOCK_ACCEPT, UNLOCK_CONTINUE, UNLOCK_TURNIN, WORLD_ACCEPT, WORLD_CONTINUE, WORLD_TURNIN",
+								"title": "click_type",
+								"type": "string",
+								"default": "WORLD_ACCEPT"
 						},
 						"raw": {
 							"title": "raw",

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.playmonumenta.scriptedquests.quests.components.actions.ActionQuestMarker;
 import me.Novalescent.utils.FormattedMessage;
 import me.Novalescent.utils.MessageFormat;
 import org.bukkit.ChatColor;
@@ -23,7 +24,7 @@ import com.playmonumenta.scriptedquests.quests.components.QuestActions;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 
-public class DialogClickableTextEntry implements DialogBase {
+public class DialogClickableTextEntry extends ActionQuestMarker implements DialogBase {
 
 	public class PlayerClickableTextEntry {
 		private final QuestPrerequisites mPrerequisites;
@@ -65,9 +66,9 @@ public class DialogClickableTextEntry implements DialogBase {
 
 	public DialogClickableTextEntry(String npcName, String displayName, EntityType entityType,
 	                                JsonElement element, int elementIdx) throws Exception {
-		mIdx = elementIdx;
-
+		super(element.getAsJsonObject());
 		JsonObject object = element.getAsJsonObject();
+		mIdx = elementIdx;
 		if (object == null) {
 			throw new Exception("dialog value is not an object!");
 		}

@@ -58,15 +58,11 @@ public class ActionPlayCutscene implements ActionBase {
 
 		if (scene != null) {
 			Location loc = new Location(player.getWorld(), mPosition.getBlockX(), mPosition.getBlockY(), mPosition.getBlockZ());
-			PlayerData data = Core.getInstance().mPlayerManager.getPlayerData(player.getUniqueId());
-			SceneActive sceneActive = new SceneActive(Core.getInstance(), player, scene, (Player p) -> {
-				data.mSceneActive = null;
+			Core.getInstance().mSceneManager.playScene(scene, loc, player, mEndingFrame, () -> {
 				for (QuestComponent component : mComponents) {
 					component.doActionsIfPrereqsMet(plugin, player, npcEntity);
 				}
 			});
-			sceneActive.playScene(loc, false, false, 0, mEndingFrame);
-			data.mSceneActive = sceneActive;
 		}
 	}
 }

@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.QuestDataLink;
+import com.playmonumenta.scriptedquests.quests.components.QuestActions;
 import com.playmonumenta.scriptedquests.quests.components.QuestFieldLink;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import me.Novalescent.Core;
@@ -60,6 +61,10 @@ public class ActionSetQuestData implements ActionBase {
 
 			QuestDataLink link = plugin.mQuestDataLinkManager.getQuestDataLink(questData.mId);
 			if (link != null) {
+
+				runStages(plugin, player, link, mFieldName,
+					questData.getEntry(mFieldName), mOperation == SET_EXACT ? value : questData.getEntry(mFieldName) + value);
+
 				if (link.mVisible) {
 					if ((boolean) data.mOptions.getOptionValue(RPGOption.AUTOTRACK_QUESTS) &&
 						!questData.mTracked && tracked == null) {
@@ -90,6 +95,22 @@ public class ActionSetQuestData implements ActionBase {
 			return maxed;
 		}
 
+	}
+
+	void runStages(Plugin plugin, Player player, QuestDataLink link, String fieldName, int prev, int cur) {
+		QuestFieldLink fieldLink = link.getFieldLink(fieldName);
+		if (fieldLink != null) {
+
+			for (int i = Math.min(prev, cur); i <= Math.max(prev, cur); i++) {
+				if (i == prev) {
+					continue;
+				}
+				QuestActions stageActions = fieldLink.getStageActions(i);
+				if (stageActions != null) {
+					stageActions.doActions(plugin, player, player, null);
+				}
+			}
+		}
 	}
 
 	/*

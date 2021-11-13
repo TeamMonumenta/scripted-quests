@@ -9,7 +9,7 @@ import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import com.playmonumenta.scriptedquests.utils.InventoryUtils;
 import me.Novalescent.Core;
-import me.Novalescent.items.ItemTier;
+import me.Novalescent.items.ItemRarity;
 import me.Novalescent.items.types.RPGItem;
 import me.Novalescent.player.PlayerData;
 import me.Novalescent.utils.CodeSnip;
@@ -164,7 +164,7 @@ public class ActionGiveReward implements ActionBase {
 
 						RPGItem rpgItem = Utils.getRPGItem(mPicked);
 						if (rpgItem != null) {
-							ItemTier tier = rpgItem.mTier;
+							ItemRarity tier = rpgItem.mTier;
 							lore.add(tier.getSubColor() + " - x" + mPicked.getAmount() + " " + tier.getColor() + "[" + tier.getSubColor()
 								+ rpgItem.mDisplayName + tier.getSubColor() + "]");
 						} else {
