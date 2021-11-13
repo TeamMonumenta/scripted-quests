@@ -88,7 +88,7 @@
 							},
 							"quest_marker": {
 								"description": "The Quest Marker that this Clickable Text Entry uses. Valid entries: MAIN_ACCEPT, MAIN_CONTINUE, MAIN_TURNIN, UNLOCK_ACCEPT, UNLOCK_CONTINUE, UNLOCK_TURNIN, WORLD_ACCEPT, WORLD_CONTINUE, WORLD_TURNIN",
-								"title": "click_type",
+								"title": "quest_marker",
 								"type": "string",
 								"default": "WORLD_ACCEPT"
 							},
@@ -166,7 +166,7 @@
 						},
 						"quest_marker": {
 								"description": "The Quest Marker that this Scrollable Text Entry uses. Valid entries: MAIN_ACCEPT, MAIN_CONTINUE, MAIN_TURNIN, UNLOCK_ACCEPT, UNLOCK_CONTINUE, UNLOCK_TURNIN, WORLD_ACCEPT, WORLD_CONTINUE, WORLD_TURNIN",
-								"title": "click_type",
+								"title": "quest_marker",
 								"type": "string",
 								"default": "WORLD_ACCEPT"
 						},
