@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>SFRPG Enchantment Edito</title>
+    <title>SFRPG Event Editor</title>
 
     <!-- Foundation CSS framework (Bootstrap and jQueryUI also supported) -->
     <link rel='stylesheet' href='//cdn.jsdelivr.net/bootstrap/3.2.0/css/bootstrap.css'>
@@ -15,10 +15,8 @@
 <div class='container'>
     <div class='row' style='padding-bottom: 15px;'>
         <div class='col-md-12'>
-            <h1>SFRPG Enchantment Editor</h1>
+            <h1>SFRPG Event Editor</h1>
             <p>For the SFRPG Project, by Nova/Fire.</p>
-			<br>
-			<p>Allows for creation of Enchantment Altars in the world.</p>
         </div>
     </div>
     <div class='row' style='padding-bottom: 15px;'>
@@ -45,46 +43,39 @@
 
         // The schema for the editor
         schema: {
-            title: "Enchantment Altar",
+            title: "Events",
             defaultProperties: [
-                "id",
-				"name",
-				"location",
-				"enchantments"
+                "skill_cast"
             ],
             additionalProperties:false,
             properties: {
-                id: {
+                skill_cast: {
                     required: true,
                     propertyOrder: 1,
-                    title: "id",
-                    description: "Unique altar name.",
-                    type: "string",
-                    default: "enchantment_altar"
-                },
-				name: {
-                    required: true,
-                    propertyOrder: 2,
-                    title: "name",
-                    description: "The name of the Enchantment Altar.",
-                    type: "string",
-                    default: "Enchantment Altar"
-                },
-				location: {
-                    propertyOrder: 5,
-                    title: "location",
-                    description: "The location of where the enchantment altar will do its rituals. format is 'world,x,y,z'",
-                    type: "string"
-                },
-				enchantments: {
-                    propertyOrder: 13,
-                    title: "enchantments",
-                    description: "The enchantments offered at the altar",
-                    type: "array",
-                    items: {
-					    title: "Enchantments",
-                        $ref: "schema/enchantment.json",
-                    }
+                    title: "skill_cast",
+                    description: "The Quest Components to run whenever a player casts a Skill",
+                    type: "object",
+                    properties: {
+						skill_category: {
+							title: "skill_category",
+							description: "The category of the skill that needs to be casted for the event to be triggered. Valid arguments: WEAPON, CLASS",
+							type: "string",
+							default: "WEAPON"
+						},
+						quest_components: {
+							required: true,
+							propertyOrder: 4,
+							title: "quest_components",
+							description: "The Quest Components",
+							type: "array",
+							format: "tabs",
+							minItems: 1,
+							items: {
+								title: "Quest component",
+								$ref: "schema/quest_component.json",
+							}
+						}
+					}
                 }
             }
         }
