@@ -127,7 +127,7 @@
 					default: 0
                 },
 				npcKnockbackResistance: {
-                    propertyOrder: 7,
+                    propertyOrder: 5,
                     title: "npcKnockbackResistance",
                     description: "The amount of knockback resistance to melee. 0 = 0%, 1 = 100% Resistance",
                     type: "number",
@@ -185,14 +185,14 @@
 									oneOf: [
 										{
 											title: "percent",
-											description: "The percentage to multiply the DPS by to get a player's predicted DPS via Attributes. This is given as a decimal from 0 - 1, and can be done numerically or formulaically",
+											description: "The percentage to multiply the DPS by to get a player's predicted DPS via Attributes. This is given as a decimal from 0 - 1.",
 											type: "number",
 											default: 0.2
 										},
 										{
 										    required: true,
 											title: "formulaic",
-											description: "The percentage to multiply the DPS by to get a player's predicted DPS via Attributes. This is given as a decimal from 0 - 1, and can be done numerically or formulaically",
+											description: "A formulaic method to calculate the DPS Factor of attributes for the player.",
 											properties: {
 												playerRarity: {
 													title: "playerRarity",
@@ -243,113 +243,129 @@
 						}
 					]
                 },
-				speed: {
+				defense_values: {
                     propertyOrder: 6,
+                    title: "defense_values",
+                    description: "The defense values of each mob, regarding Defense, Armor, and Resistance",
+                    $ref: "schema/defenses.json"
+                },
+				damage_values: {
+                    propertyOrder: 7,
+                    title: "damage_ranges",
+                    description: "The damage values of each mob, regarding Physical Damage, and Magical Damage",
+					minItems: 1,
+					defaultProperties: [
+                        "physical_damage"
+                    ],
+                    $ref: "schema/damage_ranges.json"
+                },
+				speed: {
+                    propertyOrder: 8,
                     title: "speed",
                     description: "The speed of a mob.",
                     type: "number",
 					default: 0.25
                 },
 				vision: {
-                    propertyOrder: 7,
+                    propertyOrder: 9,
                     title: "vision",
                     description: "The vision of a mob. This will determine how far their aggro distance is.",
                     type: "integer",
 					default: 10
                 },
 				attackSpeed: {
-                    propertyOrder: 7,
+                    propertyOrder: 10,
                     title: "attackSpeed",
                     description: "The speed at which the mob will melee attack. This is in SECONDS",
                     type: "number",
 					default: 1
                 },
 				attackRange: {
-                    propertyOrder: 7,
+                    propertyOrder: 11,
                     title: "attackRange",
                     description: "The range at which the mob will attack the player.",
                     type: "number",
 					default: 1.5
                 },
 				aggroRange: {
-                    propertyOrder: 7,
+                    propertyOrder: 12,
                     title: "aggroRange",
                     description: "The aggro range of a mob. This will determine how far a player can be before the mob loses aggro of the player.",
                     type: "integer",
 					default: 22
                 },
 				npcHealthMinimum: {
-                    propertyOrder: 7,
+                    propertyOrder: 13,
                     title: "npcHealthMinimum",
                     description: "The minimum amount of health (in %) that this mob can go down to while fighting an NPC. This prevents an NPC from dying to another NPC. Value of 0-1, use decimals.",
                     type: "number",
 					default: 0
                 },
 				knockback: {
-                    propertyOrder: 7,
+                    propertyOrder: 14,
                     title: "knockback",
                     description: "The knockback modifier of the mob when they melee an enemy. This is a decimal, and scales the same amount as weapon knockback modifiers. 0 = No knockback",
                     type: "number",
 					default: 0
                 },
 				visible: {
-                    propertyOrder: 7,
+                    propertyOrder: 15,
                     title: "visible",
                     description: "Whether the mob has the invisiblity effect on or not",
                     type: "boolean",
 					default: true
                 },
 				invulnerable: {
-                    propertyOrder: 7,
+                    propertyOrder: 16,
                     title: "invulnerable",
                     description: "Whether the mob is invulnerable or not. Invulnerable mobs cannot be targeted by abilities.",
                     type: "boolean",
 					default: false
                 },
 				gravity: {
-                    propertyOrder: 7,
+                    propertyOrder: 17,
                     title: "gravity",
                     description: "Whether this mob has gravity or not.",
                     type: "boolean",
 					default: true
                 },
 				hideName: {
-                    propertyOrder: 7,
+                    propertyOrder: 18,
                     title: "hideName",
                     description: "Hides the name and HP status of the mob.",
                     type: "boolean",
 					default: false
                 },
 				seeThroughWalls: {
-                    propertyOrder: 7,
+                    propertyOrder: 19,
                     title: "seeThroughWalls",
                     description: "Whether this mob will able to detect enemies through walls and platforms. Useful for wall archers",
                     type: "boolean",
 					default: false
                 },
 				turnable: {
-                    propertyOrder: 7,
+                    propertyOrder: 20,
                     title: "turnable",
                     description: "Toggles on/off whether or not this mob will look around and look at players.",
                     type: "boolean",
 					default: true
                 },
 				friendlyFire: {
-                    propertyOrder: 7,
+                    propertyOrder: 21,
                     title: "friendlyFire",
                     description: "Toggles on/off friendly fire, meaning the PLAYER is able to damage this mob if this is toggled on. Other NPCs can still damage this mob.",
                     type: "boolean",
 					default: true
                 },
 				loottable: {
-                    propertyOrder: 8,
+                    propertyOrder: 22,
                     title: "loottable",
                     description: "The Loot Table that the mob uses to drop items.",
                     type: "string",
 					default: ""
                 },
 				conditional_loottables: {
-                    propertyOrder: 8,
+                    propertyOrder: 23,
                     title: "conditional_loottables",
                     description: "Loot Tables that dropped based on the conditions met for the player. These loot tables also drop PER PLAYER (Meaning if a player kills the mob and is in a party, then all of the party gets personal drops from this loot table).",
                     type: "array",
@@ -371,21 +387,21 @@
 					}
                 },
 				model: {
-                    propertyOrder: 8,
+                    propertyOrder: 24,
                     title: "model",
                     description: "The Armor Stand Model id that is attached to the entity at all times. Leave blank for none.",
                     type: "string",
 					default: ""				
 				},
 				skinPack: {
-                    propertyOrder: 8,
+                    propertyOrder: 25,
                     title: "skinPack",
                     description: "The Skin Pack to use for this mob, which will be used to randomly assign the mob a skin.",
 					type: "string",
 					default: ""	
                 },
 				skin: {
-                    propertyOrder: 8,
+                    propertyOrder: 26,
                     title: "skin",
                     description: "The Skin Information for the mob. For this to work, the mob has to be an entity type of PLAYER. To generate skin data, use https://mineskin.org/",
 					properties: {
@@ -402,7 +418,7 @@
                     }
                 },
 				skins: {
-                    propertyOrder: 8,
+                    propertyOrder: 27,
                     title: "skins",
                     description: "The skins that the mob can have. This skin will be assigned at random.",
 					type: "array",
@@ -424,7 +440,7 @@
                     }
                 },
 				strafe_settings: {
-                    propertyOrder: 11,
+                    propertyOrder: 28,
                     title: "strafe_settings",
                     description: "Giving monsters the ability to strafe their targets. Leave this off if you don't wish to have this.",
 					properties: {
@@ -454,24 +470,8 @@
                         }
                     }
                 },
-				defense_values: {
-                    propertyOrder: 9,
-                    title: "defense_values",
-                    description: "The defense values of each mob, regarding Defense, Armor, and Resistance",
-                    $ref: "schema/defenses.json"
-                },
-				damage_values: {
-                    propertyOrder: 10,
-                    title: "damage_ranges",
-                    description: "The damage values of each mob, regarding Physical Damage, and Magical Damage",
-					minItems: 1,
-					defaultProperties: [
-                        "physical_damage"
-                    ],
-                    $ref: "schema/damage_ranges.json"
-                },
 				xp_values: {
-                    propertyOrder: 11,
+                    propertyOrder: 29,
                     title: "xp_values",
                     description: "The amount of XP that the mob gives.",
 					oneOf: [
@@ -500,7 +500,7 @@
 					]
                 },
 				sounds: {
-                    propertyOrder: 12,
+                    propertyOrder: 30,
                     title: "sound",
                     description: "The sounds for the mob",
                     properties: {
@@ -531,7 +531,7 @@
                     }
                 },
 				tags: {
-                    propertyOrder: 13,
+                    propertyOrder: 31,
                     title: "tags",
                     description: "Tags for the mob. Can have multiple",
                     type: "array",
@@ -540,7 +540,7 @@
                     }
                 },
 				targetTags: {
-                    propertyOrder: 13,
+                    propertyOrder: 32,
                     title: "targetTags",
                     description: "The tags that will cause the mob to target a nearby entity. Can have multiple",
                     type: "array",
@@ -550,7 +550,7 @@
 				},
 				
 				abilities: {
-                    propertyOrder: 13,
+                    propertyOrder: 33,
                     title: "ability",
                     description: "The abilities for this mob. Must specify the mob ability ID",
                     type: "array",
@@ -562,7 +562,7 @@
 				    title: "ranged",
                     description: "Use if you want to give the mob a ranged property",
                     $ref: "schema/ranged.json",
-					propertyOrder: 14
+					propertyOrder: 34
 				},
 				on_spawn: {
 					title: "on_spawn",
@@ -612,7 +612,6 @@
 				},					
                 quest_components: {
                     required: true,
-                    propertyOrder: 15,
                     title: "quest_components",
                     description: "A list of actions with associated prerequisites to perform when the mob dies to a player.",
                     type: "array",

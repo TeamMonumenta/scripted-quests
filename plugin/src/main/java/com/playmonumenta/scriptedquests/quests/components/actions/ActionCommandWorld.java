@@ -70,6 +70,6 @@ public class ActionCommandWorld implements ActionBase {
 		}
 		commandStr = commandStr.replaceAll("@S", player.getName());
 		plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),
-			"execute in minecraft:" + player.getWorld().getName() + " run " + commandStr);
+			"execute in minecraft:" + player.getWorld().getName().toLowerCase() + " run " + commandStr);
 	}
 }

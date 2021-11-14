@@ -26,6 +26,29 @@
 					"type": "number",
 					"default": 0.2
 				},
+				"healthMultiplier": {
+					"required": true,
+					"propertyOrder": 2,
+					"title": "healthMultiplier",
+					"oneOf": [
+						{
+							"required": true,
+							"propertyOrder": 3,
+							"title": "decimal",
+							"description": "The amount that their health is multiplied by. This is a percentage and can go beyond 0 - 1. Plate = 2 (200%), Mail = 1, Leather/Cloth = 0.5",
+							"type": "number",
+							"default": 1
+						},
+						{
+							"required": true,
+							"propertyOrder": 3,
+							"title": "armor",
+							"description": "The type of armor that the player is expected to wear when fighting this mob. This will automatically calculate their health multiplier based on the type. It's recommended to use this in case the Armor health balancing ever changes. Valid arguments: PLATE, MAIL, CLOTH, LEATHER",
+							"type": "string",
+							"default": "MAIL"
+						}
+					]
+				},
 				"damagePerHit": {
 					"required": true,
 					"propertyOrder": 3,
