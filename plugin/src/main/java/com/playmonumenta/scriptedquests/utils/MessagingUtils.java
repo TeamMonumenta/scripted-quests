@@ -163,7 +163,9 @@ public class MessagingUtils {
 		if (message instanceof JsonPrimitive) {
 			JsonPrimitive messagePrimitive = (JsonPrimitive) message;
 			messageStr = messagePrimitive.getAsString();
-			if (RE_NUMERIC.matcher(messageStr).matches()) {
+			if (messageStr.isEmpty()) {
+				return messagePrimitive;
+			} else if (RE_NUMERIC.matcher(messageStr).matches()) {
 				return messagePrimitive;
 			}
 			return new JsonPrimitive(TranslationsManager.translate(player, messageStr));
