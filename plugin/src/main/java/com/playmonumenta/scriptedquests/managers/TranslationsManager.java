@@ -31,10 +31,16 @@ import com.google.auth.http.HttpCredentialsAdapter;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.utils.FileUtils;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
+
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -56,6 +62,7 @@ public class TranslationsManager implements Listener {
 	private static final int WRITE_DELAY_TICKS = 100;
 
 	private static TranslationsManager INSTANCE = null;
+	private static GsonComponentSerializer GSON_COMPONENT_SERIALIZER = GsonComponentSerializer.gson();
 
 	private final Plugin mPlugin;
 	private final TreeMap<UUID, String> mPlayerLanguageMap;
@@ -112,6 +119,15 @@ public class TranslationsManager implements Listener {
 			return message;
 		}
 		return INSTANCE.translatePriv(message, player);
+	}
+
+	public static Component translate(Player player, Component message) {
+		if (INSTANCE == null) {
+			return message;
+		}
+		JsonElement messageJson = GSON_COMPONENT_SERIALIZER.serializeToTree(message);
+		messageJson = INSTANCE.translatePriv(messageJson, player);
+		return GSON_COMPONENT_SERIALIZER.deserializeFromTree(messageJson);
 	}
 
 	public static String getLanguageOfPlayer(Player player) {
@@ -270,6 +286,74 @@ public class TranslationsManager implements Listener {
 		}
 
 		return translated;
+	}
+
+	private JsonElement translatePriv(JsonElement message, Player player) {
+		String messageStr;
+		if (message instanceof JsonPrimitive) {
+			JsonPrimitive messagePrimitive = (JsonPrimitive) message;
+			messageStr = messagePrimitive.getAsString();
+			return new JsonPrimitive(translatePriv(messageStr, player));
+		} else if (message instanceof JsonArray) {
+			JsonArray messageArray = (JsonArray) message;
+			int size = messageArray.size();
+			for (int i = 0; i < size; ++i) {
+				JsonElement childMessage = messageArray.get(i);
+				childMessage = translatePriv(childMessage, player);
+				messageArray.set(i, childMessage);
+			}
+			return message;
+		} else if (message instanceof JsonObject) {
+			JsonObject messageObject = (JsonObject) message;
+			JsonObject hoverEvent = messageObject.getAsJsonObject("hoverEvent");
+			if (hoverEvent != null) {
+				JsonPrimitive actionPrimitive = hoverEvent.getAsJsonPrimitive("action");
+				String action = "UNKNOWN";
+				if (actionPrimitive != null) {
+					action = actionPrimitive.getAsString();
+				}
+				if (action.equals("show_entity")) {
+					JsonObject showEntityContents = hoverEvent.getAsJsonObject("contents");
+					if (showEntityContents != null) {
+						JsonPrimitive entityTypePrimitive = showEntityContents.getAsJsonPrimitive("type");
+						String entityTypeStr = "UNKNOWN";
+						if (entityTypePrimitive != null) {
+							entityTypeStr = entityTypePrimitive.getAsString();
+						}
+						if (entityTypeStr.equals("minecraft:player")) {
+							// Don't translate player names (assuming vanilla selectors)
+							return message;
+						}
+
+						JsonElement entityName = showEntityContents.get("name");
+						if (entityName != null) {
+							// Do translate other entity names
+							entityName = translatePriv(entityName, player);
+							showEntityContents.add("name", entityName);
+						}
+					}
+				} else if (action.equals("show_text")) {
+					JsonElement showTextContents = hoverEvent.get("contents");
+					showTextContents = translatePriv(showTextContents, player);
+					hoverEvent.add("contents", showTextContents);
+				}
+			}
+
+			JsonArray extraArray = messageObject.getAsJsonArray("extra");
+			if (extraArray != null) {
+				messageObject.add("extra", translatePriv(extraArray, player));
+			}
+
+			JsonPrimitive textPrimitive = messageObject.getAsJsonPrimitive("text");
+			if (textPrimitive != null) {
+				messageStr = textPrimitive.getAsString();
+				textPrimitive = new JsonPrimitive(messageStr);
+				messageObject.add("text", textPrimitive);
+			}
+			return message;
+		} else {
+			return message;
+		}
 	}
 
 	private void addNewEntry(String message) {
