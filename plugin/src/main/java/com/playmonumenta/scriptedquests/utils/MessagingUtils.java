@@ -4,11 +4,16 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import com.playmonumenta.scriptedquests.managers.TranslationsManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.playmonumenta.scriptedquests.Plugin;
 
 import net.kyori.adventure.text.Component;
@@ -18,11 +23,14 @@ import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 
 public class MessagingUtils {
+	private static final Pattern RE_NUMERIC = Pattern.compile("[0-9]+");
 	public static final LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.legacySection();
 	public static final LegacyComponentSerializer AMPERSAND_SERIALIZER = LegacyComponentSerializer.legacyAmpersand();
+	public static final GsonComponentSerializer GSON_COMPONENT_SERIALIZER = GsonComponentSerializer.gson();
 	public static final PlainComponentSerializer PLAIN_SERIALIZER = PlainComponentSerializer.plain();
 
 	public static String translatePlayerName(Player player, String message) {
@@ -142,5 +150,80 @@ public class MessagingUtils {
 		}
 
 		e.printStackTrace();
+	}
+
+	public static Component translate(Player player, Component message) {
+		JsonElement messageJson = GSON_COMPONENT_SERIALIZER.serializeToTree(message);
+		messageJson = translateJson(player, messageJson);
+		return GSON_COMPONENT_SERIALIZER.deserializeFromTree(messageJson);
+	}
+
+	private static JsonElement translateJson(Player player, JsonElement message) {
+		String messageStr;
+		if (message instanceof JsonPrimitive) {
+			JsonPrimitive messagePrimitive = (JsonPrimitive) message;
+			messageStr = messagePrimitive.getAsString();
+			if (RE_NUMERIC.matcher(messageStr).matches()) {
+				return messagePrimitive;
+			}
+			return new JsonPrimitive(TranslationsManager.translate(player, messageStr));
+		} else if (message instanceof JsonArray) {
+			JsonArray messageArray = (JsonArray) message;
+			int size = messageArray.size();
+			for (int i = 0; i < size; ++i) {
+				JsonElement childMessage = messageArray.get(i);
+				childMessage = translateJson(player, childMessage);
+				messageArray.set(i, childMessage);
+			}
+			return message;
+		} else if (message instanceof JsonObject) {
+			JsonObject messageObject = (JsonObject) message;
+			JsonObject hoverEvent = messageObject.getAsJsonObject("hoverEvent");
+			if (hoverEvent != null) {
+				JsonPrimitive actionPrimitive = hoverEvent.getAsJsonPrimitive("action");
+				String action = "UNKNOWN";
+				if (actionPrimitive != null) {
+					action = actionPrimitive.getAsString();
+				}
+				if (action.equals("show_entity")) {
+					JsonObject showEntityContents = hoverEvent.getAsJsonObject("contents");
+					if (showEntityContents != null) {
+						JsonPrimitive entityTypePrimitive = showEntityContents.getAsJsonPrimitive("type");
+						String entityTypeStr = "UNKNOWN";
+						if (entityTypePrimitive != null) {
+							entityTypeStr = entityTypePrimitive.getAsString();
+						}
+						if (entityTypeStr.equals("minecraft:player")) {
+							// Don't translate player names (assuming vanilla selectors)
+							return message;
+						}
+
+						JsonElement entityName = showEntityContents.get("name");
+						if (entityName != null) {
+							// Do translate other entity names
+							entityName = translateJson(player, entityName);
+							showEntityContents.add("name", entityName);
+						}
+					}
+				} else if (action.equals("show_text")) {
+					JsonElement showTextContents = hoverEvent.get("contents");
+					showTextContents = translateJson(player, showTextContents);
+					hoverEvent.add("contents", showTextContents);
+				}
+			}
+
+			JsonArray extraArray = messageObject.getAsJsonArray("extra");
+			if (extraArray != null) {
+				messageObject.add("extra", translateJson(player, extraArray));
+			}
+
+			JsonPrimitive textPrimitive = messageObject.getAsJsonPrimitive("text");
+			if (textPrimitive != null) {
+				messageObject.add("text", translateJson(player, textPrimitive));
+			}
+			return message;
+		} else {
+			return message;
+		}
 	}
 }
