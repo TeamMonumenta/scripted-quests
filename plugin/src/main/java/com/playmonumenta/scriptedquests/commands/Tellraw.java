@@ -1,7 +1,6 @@
 package com.playmonumenta.scriptedquests.commands;
 
 import java.util.Collection;
-import java.util.SplittableRandom;
 
 import org.bukkit.entity.Player;
 
@@ -16,6 +15,7 @@ import dev.jorel.commandapi.arguments.EntitySelectorArgument;
 import net.kyori.adventure.text.Component;
 
 public class Tellraw {
+	@SuppressWarnings("unchecked")
 	public static void register() {
 		CommandAPI.unregister("tellraw");
 
