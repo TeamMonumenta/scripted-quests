@@ -5,13 +5,13 @@ import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 public class ArgUtils {
-	private static Pattern ALLOWED_WITHOUT_QUOTES = Pattern.compile("[0-9A-Za-z_.+-]+");
+	private static final Pattern RE_ALLOWED_WITHOUT_QUOTES = Pattern.compile("[0-9A-Za-z_.+-]+");
 
 	public static boolean requiresQuotes(String arg) {
 		if (arg == null) {
 			return true;
 		}
-		return !ALLOWED_WITHOUT_QUOTES.matcher(arg).matches();
+		return !RE_ALLOWED_WITHOUT_QUOTES.matcher(arg).matches();
 	}
 
 	public static String quoteIfNeeded(String arg) {
