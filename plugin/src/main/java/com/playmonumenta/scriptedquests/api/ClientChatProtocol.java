@@ -18,7 +18,10 @@ import org.bukkit.plugin.messaging.PluginMessageListener;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class ClientChatProtocol implements PluginMessageListener, CommandExecutor {
@@ -56,9 +59,8 @@ public class ClientChatProtocol implements PluginMessageListener, CommandExecuto
 		try {
 			out.write(GSON.toJson(object));
 			player.sendPluginMessage(mPlugin, Constants.API_CHANNEL_ID, stream.toByteArray());
-		}
-		catch (Exception e) {
-			// should never throw
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -84,25 +86,25 @@ public class ClientChatProtocol implements PluginMessageListener, CommandExecuto
 
 			// implements `C->S 'version'` and `C->S 'mode'`
 			switch (request.get("type").getAsString()) {
-			case "version":
-				// implements `S->C 'version'`
-				sendJson(player, JsonObjectBuilder.get()
-					.add("type", "version")
-					.add("version", VERSION)
-					.build()
-				);
-				break;
-			case "mode":
-				boolean newMode = request.get("send").getAsJsonPrimitive().getAsBoolean();
-				if (newMode) {
-					mShouldSendMessage.add(player.getUniqueId());
-				} else {
-					mShouldSendMessage.remove(player.getUniqueId());
-				}
-				break;
+				case "version":
+					// implements `S->C 'version'`
+					sendJson(player, JsonObjectBuilder.get()
+						.add("type", "version")
+						.add("version", VERSION)
+						.build()
+					);
+					break;
+				case "mode":
+					boolean newMode = request.get("send").getAsJsonPrimitive().getAsBoolean();
+					if (newMode) {
+						mShouldSendMessage.add(player.getUniqueId());
+					} else {
+						mShouldSendMessage.remove(player.getUniqueId());
+					}
+					break;
 			}
-		}
-		catch (Exception ignored) {
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
