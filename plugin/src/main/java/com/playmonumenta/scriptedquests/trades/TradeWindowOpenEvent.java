@@ -7,6 +7,7 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.MerchantRecipe;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * This event is called when a player right-clicks a villager to start trading.
@@ -20,36 +21,36 @@ public class TradeWindowOpenEvent extends Event implements Cancellable {
 
 	private static final HandlerList handlers = new HandlerList();
 
-	private final Player player;
-	private final List<MerchantRecipe> trades;
+	private final Player mPlayer;
+	private final List<MerchantRecipe> mTrades;
 
-	private boolean cancelled;
+	private boolean mCancelled;
 
 	public TradeWindowOpenEvent(Player player, List<MerchantRecipe> trades) {
-		this.player = player;
-		this.trades = trades;
+		this.mPlayer = player;
+		this.mTrades = trades;
 	}
 
 	public Player getPlayer() {
-		return player;
+		return mPlayer;
 	}
 
 	public List<MerchantRecipe> getTrades() {
-		return trades;
+		return mTrades;
 	}
 
 	@Override
 	public boolean isCancelled() {
-		return cancelled;
+		return mCancelled;
 	}
 
 	@Override
 	public void setCancelled(boolean cancel) {
-		cancelled = cancel;
+		mCancelled = cancel;
 	}
 
 	@Override
-	public HandlerList getHandlers() {
+	public @NotNull HandlerList getHandlers() {
 		return handlers;
 	}
 
