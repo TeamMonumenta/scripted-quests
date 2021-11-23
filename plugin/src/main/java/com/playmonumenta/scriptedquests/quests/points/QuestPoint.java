@@ -52,6 +52,10 @@ public class QuestPoint implements Cloneable {
 			&& mVisibilityPrerequisites.prerequisiteMet(player, player);
 	}
 
+	public double getRadius() {
+		return mRadius;
+	}
+
 	public void checkAndActivate(Player player) {
 		if (player.getLocation().distance(mLocation) <= mRadius) {
 			for (QuestComponent component : mComponents) {
