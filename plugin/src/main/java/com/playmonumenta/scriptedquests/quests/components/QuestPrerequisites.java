@@ -174,6 +174,11 @@ public class QuestPrerequisites implements PrerequisiteBase {
 		}
 	}
 
+	public QuestPrerequisites() {
+		mOperator = "and";
+		mUseNpcForPrereqs = false;
+	}
+
 	@Override
 	public boolean prerequisiteMet(Entity entity, Entity npc) {
 		/*
