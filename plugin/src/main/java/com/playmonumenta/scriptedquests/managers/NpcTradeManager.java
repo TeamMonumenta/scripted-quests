@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -29,6 +30,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.QuestNpc;
+import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import com.playmonumenta.scriptedquests.trades.NpcTrade;
 import com.playmonumenta.scriptedquests.trades.NpcTrader;
 import com.playmonumenta.scriptedquests.trades.TradeWindowOpenEvent;
@@ -170,15 +172,26 @@ public class NpcTradeManager implements Listener {
 		 * This allows multiple players to trade with the same NPC at the same time, and also gives score-limited trades
 		 */
 		if (trades.size() > 0) {
-			TradeWindowOpenEvent tradeEvent = new TradeWindowOpenEvent(player, trades);
+			List<TradeWindowOpenEvent.Trade> eventTrades = new ArrayList<>();
+			for (int i = 0; i < trades.size(); i++) {
+				NpcTrade npcTrade = slotProperties.get(i);
+				eventTrades.add(new TradeWindowOpenEvent.Trade(trades.get(i), npcTrade != null ? npcTrade.getActions() : null));
+			}
+			TradeWindowOpenEvent tradeEvent = new TradeWindowOpenEvent(player, eventTrades);
 			Bukkit.getPluginManager().callEvent(tradeEvent);
 			if (!tradeEvent.isCancelled() && !tradeEvent.getTrades().isEmpty()) {
 				new BukkitRunnable() {
 					@Override
 					public void run() {
 						Merchant merchant = Bukkit.createMerchant(villager.getName());
-						merchant.setRecipes(tradeEvent.getTrades());
-						mOpenTrades.put(player.getUniqueId(), new PlayerTradeContext(slotProperties, villager, merchant));
+						final List<TradeWindowOpenEvent.Trade> newEventTrades = tradeEvent.getTrades();
+						Map<Integer, NpcTrade> newSlotProperties = new HashMap<>();
+						for (int i = 0; i < newEventTrades.size(); i++) {
+							NpcTrade npcTrade = new NpcTrade(i, new QuestPrerequisites(), newEventTrades.get(i).getActions());
+							newSlotProperties.put(i, npcTrade);
+						}
+						merchant.setRecipes(newEventTrades.stream().map(TradeWindowOpenEvent.Trade::getRecipe).collect(Collectors.toList()));
+						mOpenTrades.put(player.getUniqueId(), new PlayerTradeContext(newSlotProperties, villager, merchant));
 						player.openMerchant(merchant, true);
 					}
 				}.runTaskLater(plugin, 1);
