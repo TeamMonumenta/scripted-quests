@@ -102,6 +102,8 @@ public class ClientChatProtocol implements PluginMessageListener, CommandExecuto
 						mShouldSendMessage.remove(player.getUniqueId());
 					}
 					break;
+				default:
+					break; // Silently ignore other type requests
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
