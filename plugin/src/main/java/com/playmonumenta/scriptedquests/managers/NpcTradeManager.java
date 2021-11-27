@@ -7,6 +7,14 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.quests.QuestNpc;
+import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
+import com.playmonumenta.scriptedquests.trades.NpcTrade;
+import com.playmonumenta.scriptedquests.trades.NpcTrader;
+import com.playmonumenta.scriptedquests.trades.TradeWindowOpenEvent;
+import com.playmonumenta.scriptedquests.utils.QuestUtils;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -18,6 +26,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -27,14 +36,6 @@ import org.bukkit.inventory.Merchant;
 import org.bukkit.inventory.MerchantInventory;
 import org.bukkit.inventory.MerchantRecipe;
 import org.bukkit.scheduler.BukkitRunnable;
-
-import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.quests.QuestNpc;
-import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
-import com.playmonumenta.scriptedquests.trades.NpcTrade;
-import com.playmonumenta.scriptedquests.trades.NpcTrader;
-import com.playmonumenta.scriptedquests.trades.TradeWindowOpenEvent;
-import com.playmonumenta.scriptedquests.utils.QuestUtils;
 
 public class NpcTradeManager implements Listener {
 	private final HashMap<String, NpcTrader> mTraders = new HashMap<>();
@@ -243,6 +244,10 @@ public class NpcTradeManager implements Listener {
 				onSuccessfulTrade(event);
 			}
 		} else {
+			// If they use the swap hands key on the trade item and their offhand is not empty, do not trigger a successful trade
+			if (event.getClick().equals(ClickType.SWAP_OFFHAND) && player.getInventory().getItemInOffHand() != null && !player.getInventory().getItemInOffHand().getType().isAir()) {
+				return;
+			}
 			if ((event.getCursor() == null || event.getCursor().getType().isAir()) && clickedItem != null && !clickedItem.getType().isAir()) {
 				onSuccessfulTrade(event);
 			}

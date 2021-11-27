@@ -172,11 +172,7 @@ public class Plugin extends JavaPlugin {
 		getCommand("reloadZones").setExecutor(new ReloadZones(this));
 		getCommand("questTrigger").setExecutor(new QuestTrigger(this));
 
-		ClientChatProtocol protocol = new ClientChatProtocol();
-		getCommand("toggleclientchatapi").setExecutor(protocol);
-
-		this.getServer().getMessenger().registerOutgoingPluginChannel(this, Constants.API_CHANNEL_ID);
-		this.getServer().getMessenger().registerIncomingPluginChannel(this, Constants.API_CHANNEL_ID, protocol);
+		ClientChatProtocol.initialize(this);
 
 		/* Load the config 1 tick later to let other plugins load */
 		new BukkitRunnable() {
@@ -200,8 +196,7 @@ public class Plugin extends JavaPlugin {
 		MetadataUtils.removeAllMetadata(this);
 
 		// Run all pending delayed commands
-		this.getServer().getMessenger().unregisterOutgoingPluginChannel(this);
-		this.getServer().getMessenger().unregisterIncomingPluginChannel(this);
+		ClientChatProtocol.getInstance().deinitialize();
 		mScheduledFunctionsManager.cancel();
 		mScheduledFunctionsManager = null;
 	}

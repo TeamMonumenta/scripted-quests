@@ -88,7 +88,7 @@ public class TranslationsManager implements Listener {
 		new CommandAPICommand("changelanguage")
 			.withPermission(CommandPermission.fromString("scriptedquests.translations.changelanguage"))
 			.withAliases("cl")
-			.withArguments(new StringArgument("language").overrideSuggestions((sender) -> getListOfAvailableLanguages().values().toArray(new String[0])))
+			.withArguments(new StringArgument("language").overrideSuggestions((sender) -> getListOfAvailableLanguages(true).values().toArray(new String[0])))
 			.executes((sender, args) -> {
 				changeLanguage(sender, (String)args[0]);
 			}).register();
@@ -137,7 +137,7 @@ public class TranslationsManager implements Listener {
 		String wantedLang = null;
 		// go through the language list for a matching argument
 		for (Map.Entry<String, String> entry : getListOfAvailableLanguages().entrySet()) {
-			if (entry.getValue().toLowerCase().equals(arg.toLowerCase())) {
+			if (entry.getValue().equalsIgnoreCase(arg)) {
 				wantedLang = entry.getKey();
 				break;
 			}
@@ -146,9 +146,14 @@ public class TranslationsManager implements Listener {
 		// remove old language tags from the player
 		removeLanguageOfPlayer(player);
 
+		if ("English".equalsIgnoreCase(arg)) {
+			playerJoin(player, true);
+			return;
+		}
 		if (wantedLang == null) {
 			sender.sendMessage("Could not find an existing language corresponding to the value " + arg);
 			sender.sendMessage("defaulting to english.");
+			playerJoin(player, true);
 			return;
 		}
 
@@ -512,8 +517,15 @@ public class TranslationsManager implements Listener {
 	}
 
 	public TreeMap<String, String> getListOfAvailableLanguages() {
+		return getListOfAvailableLanguages(false);
+	}
+
+	public TreeMap<String, String> getListOfAvailableLanguages(boolean includeDefault) {
 		// if null, a lot of things will break. its good that nullpointers will show up then.
 		TreeMap<String, String> out = new TreeMap<>();
+		if (includeDefault) {
+			out.put("en | English", "English");
+		}
 
 		for (Map.Entry<String, String> entry : mTranslationsMap.get(" @ @ LANGUAGES @ @ ").entrySet()) {
 			if (!entry.getKey().equals("S")) {
