@@ -139,6 +139,8 @@ public class Race {
 			mStartActions.doActions(mPlugin, mPlayer, null, null);
 		}
 
+		mPlayer.addScoreboardTag(RaceManager.PLAYER_RACE_TAG);
+
 		mStartTime = System.currentTimeMillis();
 		mMaxTime = mTimes.get(mTimes.size() - 1).getTime();
 
@@ -295,6 +297,7 @@ public class Race {
 		for (Entity e : mRingEntities) {
 			e.remove();
 		}
+		mPlayer.removeScoreboardTag(RaceManager.PLAYER_RACE_TAG);
 	}
 
 	public void lose() {

@@ -19,6 +19,7 @@ import com.playmonumenta.scriptedquests.races.RaceFactory;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
 
 public class RaceManager {
+	public static final String PLAYER_RACE_TAG = "SQRacer";
 	public static final String ARMOR_STAND_RACE_TAG = "RaceRing";
 	public static final String ARMOR_STAND_ID_PREFIX_TAG = "RacerId_";
 
@@ -92,6 +93,12 @@ public class RaceManager {
 				mPlugin.getLogger().fine("Removing stale race ring armor stand.");
 				entity.remove();
 			}
+		}
+	}
+
+	public void onLogin(Player player) {
+		if (!isRacing(player)) {
+			player.removeScoreboardTag(PLAYER_RACE_TAG);
 		}
 	}
 
