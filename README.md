@@ -200,11 +200,12 @@ an NPC, quest components are run in-order (more than one may be executed).
 
 `/race start <players> <raceLabel>`
 - permission: `scriptedquests.race`
-- Start the race <raceLabel> for <players>
+- Start the race <raceLabel> for <players>.
+- They will be given the tag SQRacer for the duration of the race.
 
 `/race stop <players>`
 - permission: `scriptedquests.race`
-- Stop <players> from participating in their current race
+- Stop <players> from participating in their current race.
 
 `/race win <players>`
 - permission: `scriptedquests.race`

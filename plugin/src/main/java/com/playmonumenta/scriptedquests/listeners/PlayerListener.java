@@ -201,6 +201,7 @@ public class PlayerListener implements Listener {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
+				mPlugin.mRaceManager.onLogin(event.getPlayer());
 				mPlugin.mLoginManager.loginEvent(mPlugin, event);
 			}
 		}.runTaskLater(mPlugin, 3);
