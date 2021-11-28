@@ -40,6 +40,7 @@ public class ZoneManager {
 
 	public ZoneManager(Plugin plugin) {
 		mPlugin = plugin;
+		mQueuedReloadRequesters.add(null);
 		doReload(plugin);
 	}
 

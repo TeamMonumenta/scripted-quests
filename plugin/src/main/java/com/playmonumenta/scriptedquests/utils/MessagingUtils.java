@@ -146,7 +146,9 @@ public class MessagingUtils {
 		TextComponent textStackTrace = Component.text(sStackTrace.replace("\t", "  "), NamedTextColor.RED);
 		formattedMessage.hoverEvent(textStackTrace);
 		for (CommandSender sender : senders) {
-			sender.sendMessage(formattedMessage);
+			if (sender != null) {
+				sender.sendMessage(formattedMessage);
+			}
 		}
 
 		e.printStackTrace();
