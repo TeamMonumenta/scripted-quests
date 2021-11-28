@@ -284,6 +284,7 @@ public class ZoneManager {
 	private void doReload(Plugin plugin) {
 		mReloadRequesters = mQueuedReloadRequesters;
 		mQueuedReloadRequesters = new HashSet<CommandSender>();
+		mReloadRequesters.add(Bukkit.getConsoleSender());
 
 		for (ZoneLayer layer : mLayers.values()) {
 			// Cause zones to stop tracking their fragments; speeds up garbage collection.
