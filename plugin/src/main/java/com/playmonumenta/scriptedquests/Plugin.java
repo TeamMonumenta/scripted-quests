@@ -179,6 +179,7 @@ public class Plugin extends JavaPlugin {
 			@Override
 			public void run() {
 				reloadConfig(null);
+				mZoneManager.reload(INSTANCE, null);
 			}
 		}.runTaskLater(this, 1);
 	}

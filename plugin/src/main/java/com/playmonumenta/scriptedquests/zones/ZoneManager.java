@@ -40,6 +40,7 @@ public class ZoneManager {
 
 	public ZoneManager(Plugin plugin) {
 		mPlugin = plugin;
+		mQueuedReloadRequesters.add(null);
 		doReload(plugin);
 	}
 
@@ -243,11 +244,11 @@ public class ZoneManager {
 	 * clock speeds while the tree is loading. We have options.
 	 */
 	public void reload(Plugin plugin, CommandSender sender) {
-		mQueuedReloadRequesters.add(sender);
-
-		if (sender != null) {
-			sender.sendMessage(ChatColor.GOLD + "Zone reload started in the background, you will be notified of progress.");
+		if (sender == null) {
+			sender = Bukkit.getConsoleSender();
 		}
+		mQueuedReloadRequesters.add(sender);
+		sender.sendMessage(ChatColor.GOLD + "Zone reload started in the background, you will be notified of progress.");
 		if (mAsyncReloadHandler == null) {
 			// Start a new async task to handle reloads
 			mAsyncReloadHandler = new BukkitRunnable() {
@@ -283,6 +284,7 @@ public class ZoneManager {
 	private void doReload(Plugin plugin) {
 		mReloadRequesters = mQueuedReloadRequesters;
 		mQueuedReloadRequesters = new HashSet<CommandSender>();
+		mReloadRequesters.add(Bukkit.getConsoleSender());
 
 		for (ZoneLayer layer : mLayers.values()) {
 			// Cause zones to stop tracking their fragments; speeds up garbage collection.
