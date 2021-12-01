@@ -2,7 +2,6 @@ package com.playmonumenta.scriptedquests.commands;
 
 import org.bukkit.ChatColor;
 
-import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
 
