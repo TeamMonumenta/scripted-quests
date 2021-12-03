@@ -127,6 +127,7 @@ public class Plugin extends JavaPlugin {
 		Cooldown.register();
 		Clock.register();
 		ImprovedClear.register();
+		ReloadZones.register(this);
 
 		mScheduledFunctionsManager = new ScheduleFunction(this);
 		mGrowableManager = new GrowableManager(this);
@@ -169,7 +170,6 @@ public class Plugin extends JavaPlugin {
 		manager.registerEvents(mTradeManager, this);
 
 		getCommand("reloadQuests").setExecutor(new ReloadQuests(this));
-		getCommand("reloadZones").setExecutor(new ReloadZones(this));
 		getCommand("questTrigger").setExecutor(new QuestTrigger(this));
 
 		ClientChatProtocol.initialize(this);
