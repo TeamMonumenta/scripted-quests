@@ -128,7 +128,7 @@ public class WaypointManager {
 					QuestLocation questLoc = entry.getValue();
 					List<Location> waypoints = questLoc.getWaypoints();
 
-					if (!player.isValid() || player.isDead() || !player.isOnline() || (mPrereqCounter == 0 && !questLoc.prerequisiteMet(player))) {
+					if (!player.isValid() || player.isDead() || !player.isOnline() || !questLoc.getLocation().getWorld().equals(player.getWorld()) || (mPrereqCounter == 0 && !questLoc.prerequisiteMet(player))) {
 						iter.remove();
 						continue;
 					}
@@ -163,6 +163,11 @@ public class WaypointManager {
 
 								mY += 0.1;
 								mTheta += Math.PI / 10;
+
+								if (!player.getWorld().equals(targetLoc.getWorld())) {
+									this.cancel();
+									return;
+								}
 
 								double targetDist = player.getLocation().distance(targetLoc);
 								if (mY >= 4.0 || targetDist < WAYPOINT_FINAL_ANIM_MIN_DIST || targetDist > WAYPOINT_DEST_ANIM_MAX_DIST) {
@@ -211,16 +216,19 @@ public class WaypointManager {
 
 								@Override
 								public void run() {
+									// Stop this animated beam when it has lingered too long, reaches the target, or the player moves
+									if (mTicks >= WAYPOINT_SLOW_BEAM_MAX_TICKS
+										|| !player.getWorld().equals(mPlayerStartLoc.getWorld())
+										|| particleLoc.distance(targetLoc) < 1.5
+										|| player.getLocation().distance(mPlayerStartLoc) > WAYPOINT_PLAYER_MOVE_THRESH) {
+										this.cancel();
+										return;
+									}
+
 									mTicks += WAYPOINT_SLOW_BEAM_TICK_PERIOD;
 									particleLoc.add(dir);
 									if (RAND.nextFloat() > 0.5) {
 										player.spawnParticle(Particle.VILLAGER_HAPPY, particleLoc, 1, 0.1, 0.1, 0.1, 1);
-									}
-									// Stop this animated beam when it has lingered too long, reaches the target, or the player moves
-									if (mTicks >= WAYPOINT_SLOW_BEAM_MAX_TICKS
-										|| particleLoc.distance(targetLoc) < 1.5
-										|| player.getLocation().distance(mPlayerStartLoc) > WAYPOINT_PLAYER_MOVE_THRESH) {
-										this.cancel();
 									}
 								}
 							}.runTaskTimer(mPlugin, 0, WAYPOINT_SLOW_BEAM_TICK_PERIOD);

@@ -227,6 +227,7 @@ public class Race {
 		if (timeElapsed > mMaxTime) {
 			mPlayer.sendMessage("" + ChatColor.RED + ChatColor.BOLD + "You ran out of time!");
 			lose();
+			return;
 		}
 		mTimeBar.update(timeElapsed);
 
@@ -236,6 +237,7 @@ public class Race {
 			if (distance > 100) {
 				mPlayer.sendMessage("" + ChatColor.RED + ChatColor.BOLD + "You went too far away from the race path!");
 				lose();
+				return;
 			} else if (distance < 4) {
 				// TODO: Tell the player if they are going faster or slower than before
 				/*

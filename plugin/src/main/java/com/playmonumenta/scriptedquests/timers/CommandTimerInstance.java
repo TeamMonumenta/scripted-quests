@@ -2,7 +2,8 @@ package com.playmonumenta.scriptedquests.timers;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.bukkit.Bukkit;
+import com.playmonumenta.scriptedquests.Plugin;
+
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -11,8 +12,6 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.CommandBlock;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
-
-import com.playmonumenta.scriptedquests.Plugin;
 
 public class CommandTimerInstance {
 	private final Location mLoc;
@@ -42,7 +41,7 @@ public class CommandTimerInstance {
 			return true;
 		}
 
-		for (Player player : Bukkit.getOnlinePlayers()) {
+		for (Player player : mLoc.getWorld().getPlayers()) {
 			if (mLoc.distance(player.getLocation()) <= mPlayerRange && player.getGameMode() != GameMode.SPECTATOR) {
 				return true;
 			}
