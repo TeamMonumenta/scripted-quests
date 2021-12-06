@@ -1,11 +1,13 @@
 package com.playmonumenta.scriptedquests.timers;
 
 public class TimerCoords implements Comparable<TimerCoords> {
+	private final String mWorldName;
 	private final int mX;
 	private final int mY;
 	private final int mZ;
 
-	public TimerCoords(int x, int y, int z) {
+	public TimerCoords(String worldName, int x, int y, int z) {
+		mWorldName = worldName;
 		mX = x;
 		mY = y;
 		mZ = z;
@@ -14,12 +16,15 @@ public class TimerCoords implements Comparable<TimerCoords> {
 	public int compareTo(TimerCoords c) {
 		int ret;
 
-		ret = mX - c.mX;
+		ret = Integer.compare(mX, c.mX);
 		if (ret == 0) {
-			ret = mZ - c.mZ;
+			ret = Integer.compare(mZ, c.mZ);
 		}
 		if (ret == 0) {
-			ret = mY - c.mY;
+			ret = Integer.compare(mY, c.mY);
+		}
+		if (ret == 0) {
+			ret = mWorldName.compareTo(c.mWorldName);
 		}
 
 		return ret;

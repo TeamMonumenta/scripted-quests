@@ -99,7 +99,7 @@ public class CommandTimer implements Listener {
 
 		final int playerRange = playerRangeTemp;
 		final Location loc = entity.getLocation().subtract(0, 1, 0);
-		final TimerCoords coords = new TimerCoords(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+		final TimerCoords coords = new TimerCoords(loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
 
 		if (!tryAddTimer(entity, tags, playerRange, loc, coords)) {
 			// Adding initially failed, try exactly one more time in 10 ticks
