@@ -49,8 +49,8 @@
             defaultProperties: [
                 "id",
 				"skins",
-				"skinStyle",
-				"skinColor",
+				"bodyStyle",
+				"bodyColor",
 				"hairStyle",
 				"hairColor",
 				"eyeStyle",
@@ -66,19 +66,19 @@
                     type: "string",
                     default: "skin"
                 },
-				skinStyle: {
+				bodyStyle: {
                     required: true,
                     propertyOrder: 2,
-                    title: "skinStyle",
-                    description: "The name of the skin style to be used for this NPC. This is the name of the skin style file.",
+                    title: "bodyStyle",
+                    description: "The name of the body style to be used for this NPC. This is the name of the body style file.",
                     type: "string",
                     default: "default"
                 },
-				skinColor: {
+				bodyColor: {
                     required: true,
                     propertyOrder: 2,
-                    title: "skinColor",
-                    description: "The color of the skin. This will tint the skin to a specific color. Use a HEX value!",
+                    title: "bodyColor",
+                    description: "The color of the body. This will tint the body to a specific color. Use a HEX value!",
                     type: "string",
                     default: "#FFFFFF"
                 },
