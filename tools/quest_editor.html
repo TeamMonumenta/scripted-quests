@@ -15,8 +15,7 @@
 <div class='container'>
     <div class='row' style='padding-bottom: 15px;'>
         <div class='col-md-12'>
-            <h1>ScriptedQuests Quest Editor</h1>
-            <p>Quest Compass data is stored as a separate file, as quests data is npc specific, and compass data is quest specific.</p>
+            <h1>ScriptedQuests Interactions Editor</h1>
             <br>
             <a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html">Entity Types</a>
             <br>
@@ -49,7 +48,7 @@
 
         // The schema for the editor
         schema: {
-            title: "Quest NPC",
+            title: "NPC Interaction",
             defaultProperties: [
                 "npc",
                 "quest_components"
@@ -59,14 +58,8 @@
                 npc: {
                     required: true,
                     propertyOrder: 1,
-                    title: "npc",
-                    description: "NPC's name. Will be the NPC's display_name if that is not specified. Any characters except a-zA-Z0-9 will be stripped to create a condensed name to use with /interactnpc",
-                    type: "string"
-                },
-                display_name: {
-                    propertyOrder: 2,
-                    title: "display_name",
-                    description: "NPC's name as displayed in chat messages sent from the NPC. Can contain spaces and technically colors, though use of colors is discouraged here.",
+                    title: "interaction_id",
+                    description: "The Interaction ID. Any characters except a-zA-Z0-9 will be stripped to create a condensed name to use with /interactnpc",
                     type: "string"
                 },
 				visibility_prerequisites: {
