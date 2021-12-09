@@ -45,10 +45,16 @@
 
         // The schema for the editor
         schema: {
-            title: "Skin Pack",
+            title: "Character Skin",
             defaultProperties: [
                 "id",
-				"skins"
+				"skins",
+				"skinStyle",
+				"skinColor",
+				"hairStyle",
+				"hairColor",
+				"eyeStyle",
+				"eyeColor"
             ],
             additionalProperties:false,
             properties: {
@@ -103,7 +109,7 @@
 				eyeColor: {
                     required: true,
                     propertyOrder: 2,
-                    title: "eyeStyle",
+                    title: "eyeColor",
                     description: "The color of the eyes. This will tint the hair style to a specific color. Use a HEX value!",
                     type: "string",
                     default: "#000000"
