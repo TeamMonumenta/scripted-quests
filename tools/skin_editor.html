@@ -53,6 +53,7 @@
 				"bodyColor",
 				"hairStyle",
 				"hairColor",
+				"hairColorStrength",
 				"eyeStyle",
 				"eyeColor"
             ],
@@ -97,6 +98,14 @@
                     description: "The color of the hair. This will tint the hair style to a specific color. Use a HEX value!",
                     type: "string",
                     default: "#FFFFFF"
+                },
+				hairColorStrength: {
+                    required: true,
+                    propertyOrder: 2,
+                    title: "hairColorStrength",
+                    description: "The strength of the hair color, ranging from 0 - 1",
+                    type: "number",
+                    default: 0.5
                 },
 				eyeStyle: {
                     required: true,
