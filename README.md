@@ -222,7 +222,7 @@ an NPC, quest components are run in-order (more than one may be executed).
 - Schedules a function to run #ticks later. This is the exact same function provided in
   1.14+, except it also allows the same function to be scheduled more than once.
 
-`/setvelocity <@a> <x> <y> <z>`
+`/setvelocity <@e> <x> <y> <z>`
 - permission: `scriptedquests.setvelocity`
 - Sets the velocity of the targeted entity to x y z.
 
