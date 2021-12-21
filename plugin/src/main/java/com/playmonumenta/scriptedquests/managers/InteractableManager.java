@@ -12,6 +12,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.InteractableEntry;
@@ -21,6 +22,8 @@ import com.playmonumenta.scriptedquests.utils.QuestUtils;
 
 public class InteractableManager {
 	private final Map<Material, List<InteractableEntry>> mInteractables = new EnumMap<>(Material.class);
+
+	private static final ThreadLocal<@Nullable ItemStack> clickedItem = new ThreadLocal<>();
 
 	/*
 	 * If sender is non-null, it will be sent debugging information
@@ -127,14 +130,23 @@ public class InteractableManager {
 		return cancelEvent;
 	}
 
+	public static @Nullable ItemStack getClickedItem() {
+		return clickedItem.get();
+	}
+
 	public boolean clickInventoryEvent(Plugin plugin, Player player, ItemStack item, InteractType type) {
 		boolean cancelEvent = false;
 		List<InteractableEntry> entries = mInteractables.get(item.getType());
 		if (entries != null) {
-			for (InteractableEntry entry : entries) {
-				if (entry.interactEvent(plugin, player, null, type)) {
-					cancelEvent = true;
+			try {
+				clickedItem.set(item);
+				for (InteractableEntry entry : entries) {
+					if (entry.interactEvent(plugin, player, null, type)) {
+						cancelEvent = true;
+					}
 				}
+			} finally {
+				clickedItem.remove();
 			}
 		}
 		return cancelEvent;
