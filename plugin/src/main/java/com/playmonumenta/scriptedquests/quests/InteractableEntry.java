@@ -10,6 +10,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -56,7 +57,7 @@ public class InteractableEntry {
 
 	private final ArrayList<QuestComponent> mComponents = new ArrayList<>();
 	private final EnumSet<InteractType> mInteractTypes = EnumSet.noneOf(InteractType.class);
-	private final Material mMaterial;
+	private final ImmutableSet<Material> mMaterials;
 	private final Boolean mCancelEvent;
 
 	public InteractableEntry(JsonObject object) throws Exception {
@@ -65,12 +66,24 @@ public class InteractableEntry {
 		if (material == null) {
 			throw new Exception("'material' entry is required");
 		}
-		if (material.getAsString() == null) {
-			throw new Exception("Failed to parse 'material' as string");
-		}
-		mMaterial = Material.getMaterial(material.getAsString());
-		if (mMaterial == null) {
-			throw new Exception("Material not found: " + material.getAsString());
+		if (material.isJsonArray()) {
+			ImmutableSet.Builder<Material> matSetBuilder = ImmutableSet.builder();
+			for (JsonElement matElement : material.getAsJsonArray()) {
+				Material mat = Material.getMaterial(matElement.getAsString());
+				if (mat == null) {
+					throw new Exception("Material not found: " + matElement.getAsString());
+				}
+				matSetBuilder.add(mat);
+			}
+			mMaterials = matSetBuilder.build();
+		} else if (material.isJsonPrimitive() && material.getAsJsonPrimitive().isString()) {
+			Material mat = Material.getMaterial(material.getAsString());
+			if (mat == null) {
+				throw new Exception("Material not found: " + material.getAsString());
+			}
+			mMaterials = ImmutableSet.of(mat);
+		} else {
+			throw new Exception("Failed to parse 'material' as string or array");
 		}
 
 		//////////////////////////////////////// clicks (Required) ////////////////////////////////////////
@@ -110,7 +123,7 @@ public class InteractableEntry {
 			String key = ent.getKey();
 
 			if (!key.equals("material") && !key.equals("click_types") && !key.equals("cancel_event")
-				&& !key.equals("quest_components")) {
+				    && !key.equals("quest_components")) {
 				throw new Exception("Unknown quest key: " + key);
 			}
 		}
@@ -120,8 +133,8 @@ public class InteractableEntry {
 		return mComponents;
 	}
 
-	public Material getMaterial() {
-		return mMaterial;
+	public ImmutableSet<Material> getMaterials() {
+		return mMaterials;
 	}
 
 	public boolean interactEvent(Plugin plugin, Player player, Entity entity, InteractType interactType) {

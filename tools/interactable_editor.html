@@ -58,8 +58,25 @@
                     required: true,
                     propertyOrder: 1,
                     title: "material",
-                    description: "Matches if the item type is exactly this Material. List of available materials can be found here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html",
-                    type: "string"
+                    description: "Matches if the item type is exactly this Material, or one of these materials if multiple. List of available materials can be found here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html",
+                    "options": {
+                        "keep_oneof_values": false
+                    },
+                    "oneOf": [
+                        {
+                            "title": "One material",
+                            "type": "string"
+                        },
+                        {
+                            "title": "Multiple materials",
+                            "type": "array",
+                            "minItems": 2,
+                            "items": {
+                                "title": "material",
+                                "type": "string"
+                            }
+                        }
+                    ]
                 },
                 click_types: {
                     required: true,
