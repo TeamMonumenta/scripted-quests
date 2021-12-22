@@ -108,10 +108,10 @@
                 "$ref": "item.json"
             }
         },
-        "clicked_item": {
+        "used_item": {
             "propertyOrder": 8,
-            "title": "clicked_item",
-            "description": "Checks that all of the conditions match for the item that was clicked in the inventory. Requires click type 'right_click_inventory' or 'left_click_inventory', and will not match for other click types.",
+            "title": "used_item",
+            "description": "Checks that all of the conditions match for the item that was used in this event. The used item is the item that was used to left or right click with (which is usually the main hand, but could be the offhand as well), or the clicked item when clicked in an inventory.",
             "type": "array",
             "minItems": 1,
             "items": {

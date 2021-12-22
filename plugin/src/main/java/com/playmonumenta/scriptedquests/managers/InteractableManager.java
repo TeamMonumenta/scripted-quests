@@ -23,7 +23,7 @@ import com.playmonumenta.scriptedquests.utils.QuestUtils;
 public class InteractableManager {
 	private final Map<Material, List<InteractableEntry>> mInteractables = new EnumMap<>(Material.class);
 
-	private static final ThreadLocal<@Nullable ItemStack> clickedItem = new ThreadLocal<>();
+	private static final ThreadLocal<@Nullable ItemStack> usedItem = new ThreadLocal<>();
 
 	/*
 	 * If sender is non-null, it will be sent debugging information
@@ -58,8 +58,10 @@ public class InteractableManager {
 		if (item != null) {
 			List<InteractableEntry> entries = mInteractables.get(item.getType());
 			if (entries != null) {
-				InteractType interact;
-				switch (action) {
+				try {
+					usedItem.set(item);
+					InteractType interact;
+					switch (action) {
 					case RIGHT_CLICK_AIR:
 						interact = InteractType.RIGHT_CLICK_AIR;
 						break;
@@ -74,11 +76,14 @@ public class InteractableManager {
 						break;
 					default:
 						return false;
-				}
-				for (InteractableEntry entry : entries) {
-					if (entry.interactEvent(plugin, player, null, interact)) {
-						cancelEvent = true;
 					}
+					for (InteractableEntry entry : entries) {
+						if (entry.interactEvent(plugin, player, null, interact)) {
+							cancelEvent = true;
+						}
+					}
+				} finally {
+					usedItem.remove();
 				}
 			}
 		}
@@ -99,10 +104,15 @@ public class InteractableManager {
 		boolean cancelEvent = false;
 		List<InteractableEntry> entries = mInteractables.get(item.getType());
 		if (entries != null) {
-			for (InteractableEntry entry : entries) {
-				if (entry.interactEvent(plugin, player, target, InteractType.RIGHT_CLICK_ENTITY)) {
-					cancelEvent = true;
+			try {
+				usedItem.set(item);
+				for (InteractableEntry entry : entries) {
+					if (entry.interactEvent(plugin, player, target, InteractType.RIGHT_CLICK_ENTITY)) {
+						cancelEvent = true;
+					}
 				}
+			} finally {
+				usedItem.remove();
 			}
 		}
 		return cancelEvent;
@@ -121,17 +131,18 @@ public class InteractableManager {
 		boolean cancelEvent = false;
 		List<InteractableEntry> entries = mInteractables.get(item.getType());
 		if (entries != null) {
-			for (InteractableEntry entry : entries) {
-				if (entry.interactEvent(plugin, player, target, InteractType.LEFT_CLICK_ENTITY)) {
-					cancelEvent = true;
+			try {
+				usedItem.set(item);
+				for (InteractableEntry entry : entries) {
+					if (entry.interactEvent(plugin, player, target, InteractType.LEFT_CLICK_ENTITY)) {
+						cancelEvent = true;
+					}
 				}
+			} finally {
+				usedItem.remove();
 			}
 		}
 		return cancelEvent;
-	}
-
-	public static @Nullable ItemStack getClickedItem() {
-		return clickedItem.get();
 	}
 
 	public boolean clickInventoryEvent(Plugin plugin, Player player, ItemStack item, InteractType type) {
@@ -139,16 +150,21 @@ public class InteractableManager {
 		List<InteractableEntry> entries = mInteractables.get(item.getType());
 		if (entries != null) {
 			try {
-				clickedItem.set(item);
+				usedItem.set(item);
 				for (InteractableEntry entry : entries) {
 					if (entry.interactEvent(plugin, player, null, type)) {
 						cancelEvent = true;
 					}
 				}
 			} finally {
-				clickedItem.remove();
+				usedItem.remove();
 			}
 		}
 		return cancelEvent;
 	}
+
+	public static @Nullable ItemStack getUsedItem() {
+		return usedItem.get();
+	}
+
 }

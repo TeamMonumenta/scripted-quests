@@ -15,7 +15,6 @@ import com.playmonumenta.scriptedquests.quests.components.prerequisites.Prerequi
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteCheckAdvancements;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteCheckScores;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteCheckTags;
-import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteClickedItem;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteFacing;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteFullyHealed;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteGamemode;
@@ -27,6 +26,7 @@ import com.playmonumenta.scriptedquests.quests.components.prerequisites.Prerequi
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteLocation;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteSneaking;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteTestForBlock;
+import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteUsedItem;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteZoneProperties;
 
 public class QuestPrerequisites implements PrerequisiteBase {
@@ -151,14 +151,14 @@ public class QuestPrerequisites implements PrerequisiteBase {
 				}
 				break;
 			}
-			case "clicked_item": {
+			case "used_item": {
 				JsonArray array = value.getAsJsonArray();
 				if (array == null) {
 					throw new Exception("Prerequisites value for key '" + key + "' is not an array!");
 				}
 
 				for (JsonElement jsonElement : array) {
-					mPrerequisites.add(new PrerequisiteClickedItem(jsonElement));
+					mPrerequisites.add(new PrerequisiteUsedItem(jsonElement));
 				}
 				break;
 			}
