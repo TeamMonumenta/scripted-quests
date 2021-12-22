@@ -162,7 +162,7 @@ public class InteractableManager {
 		}
 		return cancelEvent;
 	}
-	
+
 	public static @Nullable ItemStack getUsedItem() {
 		return usedItem.get();
 	}
