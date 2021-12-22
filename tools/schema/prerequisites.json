@@ -108,12 +108,24 @@
                 "$ref": "item.json"
             }
         },
-        "location": {
+        "clicked_item": {
             "propertyOrder": 8,
+            "title": "clicked_item",
+            "description": "Checks that all of the conditions match for the item that was clicked in the inventory. Requires click type 'right_click_inventory' or 'left_click_inventory', and will not match for other click types.",
+            "type": "array",
+            "minItems": 1,
+            "items": {
+                "title": "Item",
+                "description": "Checks that a specific item stack exists in the player's inventory. All conditions given here must match to succeed. All fields are optional, but at least one of (lore|name|type) must be specified. Items found are not removed.",
+                "$ref": "item.json"
+            }
+        },
+        "location": {
+            "propertyOrder": 9,
             "$ref": "location.json"
         },
         "test_for_block": {
-            "propertyOrder": 9,
+            "propertyOrder": 10,
             "title": "test_for_block",
             "description": "Checks that the block at x y z is the specified material. Will test on the current world the player is in. WILL FAIL IF CHUNK IS NOT LOADED!",
             "type": "object",
@@ -144,7 +156,7 @@
             }
         },
         "is_fully_healed": {
-            "propertyOrder": 10,
+            "propertyOrder": 11,
             "title": "is_fully_healed",
             "description": "If checked, succeeds if the entity is at full health; if not checked, succeeds if not at full health",
             "type": "boolean",
@@ -152,7 +164,7 @@
             "default": "true"
         },
         "is_sneaking": {
-            "propertyOrder": 11,
+            "propertyOrder": 12,
             "title": "is_sneaking",
             "description": "If checked, succeeds if the player is sneaking; if not checked, succeeds if not sneaking",
             "type": "boolean",
@@ -160,7 +172,7 @@
             "default": "true"
         },
         "gamemode": {
-            "propertyOrder": 12,
+            "propertyOrder": 13,
             "title": "gamemode",
             "description": "Succeeds if the player is in one of the checked gamemodes",
             "type": "array",
@@ -177,7 +189,7 @@
             }
         },
         "facing": {
-            "propertyOrder": 13,
+            "propertyOrder": 14,
             "title": "facing",
             "description": "Succeeds if a player is facing the specified location. ",
             "type": "object",
@@ -210,7 +222,7 @@
             }
         },
         "min_empty_inventory_slots": {
-            "propertyOrder": 14,
+            "propertyOrder": 15,
             "title": "min_empty_inventory_slots",
             "description": "Checks that at least the specified amount of slots in a player's inventory are empty.",
             "type": "number",
@@ -219,7 +231,7 @@
             "default": 1
         },
         "zone_properties": {
-            "propertyOrder": 1,
+            "propertyOrder": 16,
             "title": "zone_properties",
             "description": "Checks that the player is in a zone with the specified properties. Properties may be inverted by starting them with `!`. Click Properties, then type in the layer name in the input box and click the 'add' button. Layer and property names are case sensitive.",
             "type": "object",
@@ -235,42 +247,42 @@
             }
         },
         "use_npc_for_prereqs": {
-            "propertyOrder": 14,
+            "propertyOrder": 17,
             "title": "use_npc_for_prereqs",
             "description": "All nested items use the NPC (instead of the player) for prereq checks. Use this to check if the NPC itself has scores, tags, etc. This only works when the NPC actually exists - such as when trading with an NPC or interacting with one directly by hitting them. This will NOT work when this interaction was started by /interactnpc commands or actions. Also does NOT work with inventory-related things such as item in hand/inventory.",
             "type": "object",
             "$ref": "prerequisites.json"
         },
         "and": {
-            "propertyOrder": 15,
+            "propertyOrder": 18,
             "title": "and",
             "description": "Returns true if all contained prerequisites are true, false otherwise",
             "type": "object",
             "$ref": "prerequisites.json"
         },
         "or": {
-            "propertyOrder": 16,
+            "propertyOrder": 19,
             "title": "or",
             "description": "Returns true if any contained prerequisite is true, false otherwise",
             "type": "object",
             "$ref": "prerequisites.json"
         },
         "not_and": {
-            "propertyOrder": 17,
+            "propertyOrder": 20,
             "title": "not_and",
             "description": "Returns true if any contained prerequisite is false, false otherwise",
             "type": "object",
             "$ref": "prerequisites.json"
         },
         "not_or": {
-            "propertyOrder": 18,
+            "propertyOrder": 21,
             "title": "not_or",
             "description": "Returns true if all contained prerequisites are false, false otherwise",
             "type": "object",
             "$ref": "prerequisites.json"
         },
         "only_one_of": {
-            "propertyOrder": 19,
+            "propertyOrder": 22,
             "title": "only_one_of",
             "description": "Returns true if exactly one contained prerequisite is true, false otherwise",
             "type": "object",
