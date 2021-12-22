@@ -34,12 +34,11 @@ public class InteractableManager {
 		QuestUtils.loadScriptedQuests(plugin, "interactables", sender, (object) -> {
 			InteractableEntry interactable = new InteractableEntry(object);
 
-			if (!mInteractables.containsKey(interactable.getMaterial())) {
-				mInteractables.put(interactable.getMaterial(), new ArrayList<>());
+			for (Material material : interactable.getMaterials()) {
+				mInteractables.computeIfAbsent(material, k -> new ArrayList<>()).add(interactable);
 			}
-			mInteractables.get(interactable.getMaterial()).add(interactable);
 
-			return interactable.getMaterial() + ":" + interactable.getComponents().size();
+			return (interactable.getMaterials().size() == 1 ? interactable.getMaterials().iterator().next() : interactable.getMaterials()) + ":" + interactable.getComponents().size();
 		});
 	}
 
