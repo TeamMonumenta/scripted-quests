@@ -1,0 +1,119 @@
+package com.playmonumenta.scriptedquests.quests.components;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.playmonumenta.scriptedquests.api.JsonObjectBuilder;
+import com.playmonumenta.scriptedquests.utils.CustomInventory;
+import com.playmonumenta.scriptedquests.utils.JsonUtils;
+
+import de.tr7zw.nbtapi.NBTContainer;
+import de.tr7zw.nbtapi.NBTItem;
+import dev.jorel.commandapi.CommandAPI;
+import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
+
+public final class GuiPage {
+
+	private final int mRows;
+	private final String mTitle;
+	private final @Nullable ItemStack mFillerItem;
+	private final List<GuiItem> mItems = new ArrayList<>();
+
+	public GuiPage(JsonObject object) throws Exception {
+		mRows = JsonUtils.getInt(object, "rows");
+		mTitle = JsonUtils.getString(object, "title");
+		String fillerItem = JsonUtils.getString(object, "filler_item", null);
+		mFillerItem = fillerItem != null && !fillerItem.isEmpty() ? NBTItem.convertNBTtoItem(new NBTContainer(fillerItem)) : null;
+		for (JsonElement item : JsonUtils.getJsonArray(object, "items")) {
+			GuiItem guiItem = new GuiItem(item.getAsJsonObject());
+			int index = guiItem.getRow() * 9 + guiItem.getCol();
+			if (index < 0 || index >= mRows * 9) {
+				throw new Exception("Invalid coordinates (row=" + guiItem.getRow() + ", col=" + guiItem.getCol() + ") for GUI item");
+			}
+			mItems.add(guiItem);
+		}
+	}
+
+	private GuiPage(int rows, String title, ItemStack fillerItem) {
+		mRows = rows;
+		mTitle = title;
+		mFillerItem = fillerItem;
+	}
+
+	public JsonObject toJson() {
+		return new JsonObjectBuilder()
+			.add("rows", mRows)
+			.add("title", mTitle)
+			.add("filler_item", NBTItem.convertItemtoNBT(mFillerItem).toString())
+			.add("items", JsonUtils.toJsonArray(mItems, GuiItem::toJson))
+			.build();
+	}
+
+	public void setupInventory(CustomInventory customInventory, Player player, boolean edit) throws WrapperCommandSyntaxException {
+		Inventory inventory = customInventory.getInventory();
+		inventory.clear();
+		for (GuiItem item : mItems) {
+			int index = item.getRow() * 9 + item.getCol();
+			if (edit && inventory.getItem(index) != null) {
+				// Multiple items can be in the same slot, though usually only one is made visible using appropriate prerequisites.
+				CommandAPI.fail("This GUI page has multiple items in the same slot and thus cannot be edited in-game. " +
+					                "Consider creating a new page to edit and then merge your edits back into the original page.");
+			}
+			ItemStack displayItem = item.getDisplayItem(player, edit);
+			if (displayItem != null) {
+				inventory.setItem(index, displayItem);
+			}
+		}
+		if (!edit && mFillerItem != null) {
+			for (int i = 0; i < inventory.getSize(); i++) {
+				if (inventory.getItem(i) == null) {
+					inventory.setItem(i, mFillerItem);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Creates a new {@link GuiPage} that is a copy of this one with items replaced by the ones in the given inventory.
+	 *
+	 * @param inventory An inventory
+	 * @return A new {@link GuiPage}
+	 * @throws Exception If anything bad happens, e.g. prerequisites cannot be parsed
+	 */
+	public GuiPage createUpdated(Inventory inventory) throws Exception {
+		GuiPage clone = new GuiPage(mRows, mTitle, mFillerItem);
+		@Nullable ItemStack[] contents = inventory.getContents();
+		for (int i = 0; i < contents.length; i++) {
+			ItemStack itemStack = contents[i];
+			if (itemStack != null) {
+				clone.mItems.add(new GuiItem(i, itemStack));
+			}
+		}
+		return clone;
+	}
+
+	public @Nullable GuiItem getItem(int index) {
+		for (GuiItem item : mItems) {
+			if (item.getCol() + item.getRow() * 9 == index) {
+				return item;
+			}
+		}
+		return null;
+	}
+
+	public int getRows() {
+		return mRows;
+	}
+
+	public String getTitle() {
+		return mTitle;
+	}
+
+}

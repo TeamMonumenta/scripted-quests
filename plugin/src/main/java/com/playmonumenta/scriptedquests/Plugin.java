@@ -3,6 +3,15 @@ package com.playmonumenta.scriptedquests;
 import java.io.File;
 import java.util.Random;
 
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
+
 import com.playmonumenta.scriptedquests.api.ClientChatProtocol;
 import com.playmonumenta.scriptedquests.commands.Clickable;
 import com.playmonumenta.scriptedquests.commands.Clock;
@@ -15,6 +24,7 @@ import com.playmonumenta.scriptedquests.commands.GetDate;
 import com.playmonumenta.scriptedquests.commands.GiveItemWithLore;
 import com.playmonumenta.scriptedquests.commands.GiveLootTable;
 import com.playmonumenta.scriptedquests.commands.Growable;
+import com.playmonumenta.scriptedquests.commands.GuiCommand;
 import com.playmonumenta.scriptedquests.commands.HasPermission;
 import com.playmonumenta.scriptedquests.commands.Heal;
 import com.playmonumenta.scriptedquests.commands.ImprovedClear;
@@ -39,6 +49,7 @@ import com.playmonumenta.scriptedquests.listeners.WorldListener;
 import com.playmonumenta.scriptedquests.managers.ClickableManager;
 import com.playmonumenta.scriptedquests.managers.CodeManager;
 import com.playmonumenta.scriptedquests.managers.GrowableManager;
+import com.playmonumenta.scriptedquests.managers.GuiManager;
 import com.playmonumenta.scriptedquests.managers.InteractableManager;
 import com.playmonumenta.scriptedquests.managers.NpcTradeManager;
 import com.playmonumenta.scriptedquests.managers.QuestCompassManager;
@@ -52,15 +63,6 @@ import com.playmonumenta.scriptedquests.managers.ZonePropertyManager;
 import com.playmonumenta.scriptedquests.timers.CommandTimerManager;
 import com.playmonumenta.scriptedquests.utils.MetadataUtils;
 import com.playmonumenta.scriptedquests.zones.ZoneManager;
-
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class Plugin extends JavaPlugin {
 	private static Plugin INSTANCE = null;
@@ -86,6 +88,7 @@ public class Plugin extends JavaPlugin {
 	public ZonePropertyManager mZonePropertyManager;
 	public WaypointManager mWaypointManager;
 	public GrowableManager mGrowableManager;
+	public GuiManager mGuiManager;
 
 	public World mWorld;
 	public Random mRandom = new Random();
@@ -128,6 +131,7 @@ public class Plugin extends JavaPlugin {
 		Clock.register();
 		ImprovedClear.register();
 		ReloadZones.register(this);
+		GuiCommand.register(this);
 
 		mScheduledFunctionsManager = new ScheduleFunction(this);
 		mGrowableManager = new GrowableManager(this);
@@ -157,6 +161,7 @@ public class Plugin extends JavaPlugin {
 		mZonePropertyManager = new ZonePropertyManager(this);
 		mTimerManager = new CommandTimerManager(this);
 		mWaypointManager = new WaypointManager(this);
+		mGuiManager = new GuiManager(this);
 
 		manager.registerEvents(new EntityListener(this), this);
 		manager.registerEvents(new InteractablesListener(this), this);
@@ -216,6 +221,7 @@ public class Plugin extends JavaPlugin {
 		mCodeManager.reload(this, sender);
 		mZonePropertyManager.reload(this, sender);
 		mGrowableManager.reload(this, sender);
+		mGuiManager.reload(this, sender);
 		TranslationsManager.reload(sender);
 	}
 
