@@ -20,7 +20,7 @@ import org.bukkit.plugin.Plugin;
 import net.kyori.adventure.text.Component;
 
 /**
- * This code was originally copied from NBTEditor, Copyright (C) 2013-2018 Gonçalo Baltazar <me@goncalomb.com>, released under GPLv3.
+ * This code was originally copied from NBTEditor, Copyright (C) 2013-2018 Gonçalo Baltazar (me@goncalomb.com), released under GPLv3.
  * <p>
  * Original source: https://github.com/goncalomb/NBTEditor/blob/master/src/main/java/com/goncalomb/bukkit/mylib/utils/CustomInventory.java
  */
