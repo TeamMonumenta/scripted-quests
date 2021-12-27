@@ -89,9 +89,20 @@
                     "$ref": "prerequisites.json",
                     "required": false
                   },
-                  "on_click": {
+                  "left_click_actions": {
                     "required": false,
-                    "title": "actions",
+                    "title": "left click actions",
+                    "type": "array",
+                    "items": {
+                      "defaultProperties": [
+                        "command"
+                      ],
+                      "$ref": "action.json"
+                    }
+                  },
+                  "right_click_actions": {
+                    "required": false,
+                    "title": "right click actions",
                     "type": "array",
                     "items": {
                       "defaultProperties": [
