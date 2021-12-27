@@ -1,6 +1,7 @@
 package com.playmonumenta.scriptedquests.commands;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Optional;
 
 import org.bukkit.entity.Player;
@@ -11,7 +12,7 @@ import com.playmonumenta.scriptedquests.quests.Gui;
 
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.Argument;
-import dev.jorel.commandapi.arguments.PlayerArgument;
+import dev.jorel.commandapi.arguments.EntitySelectorArgument;
 import dev.jorel.commandapi.arguments.StringArgument;
 
 public class GuiCommand {
@@ -33,19 +34,23 @@ public class GuiCommand {
 				new CommandAPICommand("show")
 					.withPermission("scriptedquests.gui.show")
 					.withArguments(guiNameArgument,
-					               new PlayerArgument("player"))
+					               new EntitySelectorArgument("player", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
 					.executes((sender, args) -> {
-						plugin.mGuiManager.showGui((String) args[0], (Player) args[1], GuiManager.MAIN_PAGE);
+						for (Player player : (Collection<Player>) args[1]) {
+							plugin.mGuiManager.showGui((String) args[0], player, GuiManager.MAIN_PAGE);
+						}
 					})
 			)
 			.withSubcommand(
 				new CommandAPICommand("show")
 					.withPermission("scriptedquests.gui.show")
 					.withArguments(guiNameArgument,
-					               new PlayerArgument("player"),
+					               new EntitySelectorArgument("player", EntitySelectorArgument.EntitySelector.MANY_PLAYERS),
 					               guiPageArgument)
 					.executes((sender, args) -> {
-						plugin.mGuiManager.showGui((String) args[0], (Player) args[1], (String) args[2]);
+						for (Player player : (Collection<Player>) args[1]) {
+							plugin.mGuiManager.showGui((String) args[0], player, (String) args[2]);
+						}
 					})
 			)
 			.withSubcommand(
