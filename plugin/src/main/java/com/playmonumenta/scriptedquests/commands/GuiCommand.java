@@ -17,6 +17,7 @@ import dev.jorel.commandapi.arguments.StringArgument;
 
 public class GuiCommand {
 
+	@SuppressWarnings("unchecked")
 	public static void register(Plugin plugin) {
 
 		Argument guiNameArgument = new StringArgument("name")
