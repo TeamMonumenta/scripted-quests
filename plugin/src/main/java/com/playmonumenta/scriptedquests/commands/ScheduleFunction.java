@@ -17,7 +17,6 @@ import com.playmonumenta.scriptedquests.utils.CommandArgument;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
-import dev.jorel.commandapi.arguments.EntitySelectorArgument;
 import dev.jorel.commandapi.arguments.FunctionArgument;
 import dev.jorel.commandapi.arguments.IntegerArgument;
 import dev.jorel.commandapi.wrappers.FunctionWrapper;
@@ -142,14 +141,6 @@ public class ScheduleFunction {
 					               new CommandArgument("cmd"))
 					.executes((sender, args) -> {
 						addDelayedCommand(sender, (String) args[1], (Integer) args[0]);
-					}))
-			.withSubcommand(
-				new CommandAPICommand("command")
-					.withArguments(new EntitySelectorArgument("entity", EntitySelectorArgument.EntitySelector.ONE_ENTITY),
-					               new IntegerArgument("ticks", 0),
-					               new CommandArgument("cmd"))
-					.executes((sender, args) -> {
-						addDelayedCommand((Entity) args[0], (String) args[2], (Integer) args[1]);
 					}))
 			.register();
 
