@@ -101,7 +101,7 @@ public class GuiManager {
 			if (page == null) {
 				return;
 			}
-			GuiItem guiItem = page.getItem(event.getSlot());
+			GuiItem guiItem = page.getItem(event.getSlot(), player);
 			if (guiItem != null) {
 				if (event.getClick() == ClickType.LEFT && guiItem.getLeftClickActions() != null) {
 					if (!guiItem.getKeepGuiOpen()) {

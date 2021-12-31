@@ -16,7 +16,6 @@ import com.playmonumenta.scriptedquests.utils.JsonUtils;
 
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTItem;
-import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 
 public final class GuiPage {
@@ -61,12 +60,19 @@ public final class GuiPage {
 		inventory.clear();
 		for (GuiItem item : mItems) {
 			int index = item.getRow() * 9 + item.getCol();
-			if (edit && inventory.getItem(index) != null) {
-				// Multiple items can be in the same slot, though usually only one is made visible using appropriate prerequisites.
-				CommandAPI.fail("This GUI page has multiple items in the same slot and thus cannot be edited in-game. " +
-					                "Consider creating a new page to edit and then merge your edits back into the original page.");
+			ItemStack existingItem = inventory.getItem(index);
+			ItemStack displayItem;
+			if (existingItem != null) {
+				if (edit) {
+					displayItem = item.combineDisplayItem(player, existingItem);
+				} else {
+					// When multiple items are visible in the same slot, show only the first one.
+					// This matches the click behaviour where only the first visible item's actions are executed.
+					continue;
+				}
+			} else {
+				displayItem = item.getDisplayItem(player, edit);
 			}
-			ItemStack displayItem = item.getDisplayItem(player, edit);
 			if (displayItem != null) {
 				inventory.setItem(index, displayItem);
 			}
@@ -93,15 +99,16 @@ public final class GuiPage {
 		for (int i = 0; i < contents.length; i++) {
 			ItemStack itemStack = contents[i];
 			if (itemStack != null) {
-				clone.mItems.add(new GuiItem(i, itemStack));
+				clone.mItems.addAll(GuiItem.parseItems(i, itemStack));
 			}
 		}
 		return clone;
 	}
 
-	public @Nullable GuiItem getItem(int index) {
+	public @Nullable GuiItem getItem(int index, Player player) {
 		for (GuiItem item : mItems) {
-			if (item.getCol() + item.getRow() * 9 == index) {
+			if (item.getCol() + item.getRow() * 9 == index
+				    && (item.getPrerequisites() == null || item.getPrerequisites().prerequisiteMet(player, null))) {
 				return item;
 			}
 		}
