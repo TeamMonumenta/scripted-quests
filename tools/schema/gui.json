@@ -1,0 +1,122 @@
+{
+  "title": "GUI",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "label": {
+      "propertyOrder": 1,
+      "required": true,
+      "type": "string",
+      "description": "Unique label of this GUI"
+    },
+    "pages": {
+      "title": "Pages",
+      "propertyOrder": 1,
+      "required": true,
+      "description": "List of pages. Edit properties above to add a new page. The 'main' page is the default page if a GUI is opened without a page label.",
+      "type": "object",
+      "defaultProperties": [
+        "main"
+      ],
+      "patternProperties": {
+        ".*": {
+          "titlePattern": "{0}",
+          "propertyOrder": 2,
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "rows": {
+              "propertyOrder": 1,
+              "required": true,
+              "type": "integer",
+              "description": "Number of inventory rows of this page, must be between 1 and 6.",
+              "default": 3,
+              "minimum": 1,
+              "maximum": 6
+            },
+            "title": {
+              "propertyOrder": 2,
+              "required": true,
+              "type": "string",
+              "title": "Title",
+              "description": "Displayed name of this inventory, can contain formatting codes."
+            },
+            "filler_item": {
+              "propertyOrder": 3,
+              "title": "Filler Item (Mojangson), optional",
+              "description": "Item to fill empty slots with. Preferably use the in-game editor for this (by setting any slot to the filler and then moving it to here), or copy it from another GUI.",
+              "type": "string",
+              "required": false
+            },
+            "items": {
+              "title": "Items",
+              "propertyOrder": 4,
+              "required": true,
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "row": {
+                    "title": "row (0 .. rows-1)",
+                    "type": "integer",
+                    "required": true,
+                    "minimum": 0,
+                    "maximum": 5
+                  },
+                  "col": {
+                    "title": "column (0 .. 8)",
+                    "description": "Multiple items can share the same slot, but make sure that only one is visible using prerequisites. Note that the in-game editor won't be able to edit GUI pages with multiple items in the same slot. To be able to still use it, use a different page to create items and copy the definition here, or temporarily move the conflicting items to separate spots.",
+                    "type": "integer",
+                    "required": true,
+                    "minimum": 0,
+                    "maximum": 8
+                  },
+                  "item": {
+                    "title": "Item (Mojangson)",
+                    "description": "Preferably use the in-game editor for this.",
+                    "type": "string",
+                    "required": true
+                  },
+                  "keep_gui_open": {
+                    "title": "Keep GUI open",
+                    "description": "Keep GUI open when actions are executed. When no action is executed (empty slot, item with no actions, or no actions for current click type), the GUI is always kept open.",
+                    "type": "boolean",
+                    "default": false,
+                    "required": false
+                  },
+                  "prerequisites": {
+                    "$ref": "prerequisites.json",
+                    "required": false
+                  },
+                  "left_click_actions": {
+                    "required": false,
+                    "title": "left click actions",
+                    "type": "array",
+                    "items": {
+                      "defaultProperties": [
+                        "command"
+                      ],
+                      "$ref": "action.json"
+                    }
+                  },
+                  "right_click_actions": {
+                    "required": false,
+                    "title": "right click actions",
+                    "type": "array",
+                    "items": {
+                      "defaultProperties": [
+                        "command"
+                      ],
+                      "$ref": "action.json"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
