@@ -160,7 +160,7 @@
                         $ref: "schema/quest_component.json",
                     }
                 },
-				shardObjectives: {
+				shard_objectives: {
                     propertyOrder: 8,
                     title: "shardObjectives",
                     description: "The objectives to complete in this shard. When all objectives are complete, the onComplete functions will run. Shard Objectives are displayed in the Shard Sidebar (/sidebar shard). NOTE: If onComplete is empty, or is not present, the Shard will show a Completion message and exit the players out of the shard by default.",
@@ -169,29 +169,29 @@
                         title: "Shard Objective",
 						type: "object",
 						defaultProperties: [
-							"shard_field_id",
-							"shard_field_description",
-							"shard_field_data",
+							"objective_id",
+							"objective_description",
+							"objective_data",
 							"hidden",
 							"optional",
 							"onObjectiveStage",
 							"onObjectiveComplete"
 						],
 						properties: {
-							shard_field_id: {
-								title: "shard_field_id",
-								description: "The Shard Field ID. This ID should be unique for this Shard.",
+							objective_id: {
+								title: "objective_id",
+								description: "The Objective Field ID. This ID should be unique for this Shard.",
 								type: "string"
 							},
-							shard_field_description: {
-								title: "shard_field_description",
+							objective_description: {
+								title: "objective_description",
 								description: "The description of the Field to show in the Sidebar",
 								type: "string",
 								default: "Complete Objective"
 							},
-							shard_field_data: {
-								title: "shard_field_data",
-								description: "The Shard Field data amount to reach in order to complete this objective",
+							objective_data: {
+								title: "objective_data",
+								description: "The Objective Field data amount to reach in order to complete this objective",
 								type: "integer"
 							},
 							show_data_number: {
