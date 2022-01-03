@@ -161,7 +161,6 @@
 						"click_type": {
 							"title": "click_type",
 							"description": "The number state this is. This is mainly use to telegraph whether the NPC has a quest or not. 1 = Acceptable Quest, 2 = Turnin Quest",
-							"title": "click_type",
 							"type": "integer"
 						},
 						"quest_marker": {

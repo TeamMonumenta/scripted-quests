@@ -38,7 +38,7 @@ public class ActionSetShardObjective implements ActionBase {
 			ShardInstance shardInstance = Core.getInstance().mShardManager.getShard(entity);
 
 			if (shardInstance != null) {
-				shardInstance.changeField(mFieldName, mParameter);
+				shardInstance.changeObjective(mFieldName, mParameter);
 				return true;
 			}
 			return false;
@@ -57,7 +57,7 @@ public class ActionSetShardObjective implements ActionBase {
 
 		for (JsonElement arrayElement : array) {
 			JsonObject jsonObject = arrayElement.getAsJsonObject();
-			SetField field = new SetField(jsonObject.get("shard_field_id").getAsString(), jsonObject.get("shard_field_data").getAsString());
+			SetField field = new SetField(jsonObject.get("objective_id").getAsString(), jsonObject.get("objective_data").getAsString());
 			mFields.add(field);
 		}
 	}
