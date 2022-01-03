@@ -67,7 +67,7 @@
 		<dependency>
 			<groupId>dev.jorel.CommandAPI</groupId>
 			<artifactId>commandapi-core</artifactId>
-			<version>6.0.0</version>
+			<version>6.4.0</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -89,9 +89,9 @@
 			<groupId>me.Novalescent</groupId>
 			<artifactId>SpellforgedRPG</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-			<scope>provided</scope>
-<!--			<scope>system</scope>-->
-<!--			<systemPath>${basedir}/libs/SpellforgedRPG-0.0.1-SNAPSHOT.jar</systemPath>-->
+<!--			<scope>provided</scope>-->
+			<scope>system</scope>
+			<systemPath>${basedir}/libs/SpellforgedRPG.jar</systemPath>
 		</dependency>
 
         <dependency>

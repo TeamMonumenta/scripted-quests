@@ -162,6 +162,9 @@ public class QuestActions {
 				case "set_shard_field":
 					mActions.add(new ActionSetShardData(value));
 					break;
+				case "set_shard_objective":
+					mActions.add(new ActionSetShardObjective(value));
+					break;
 				case "remove_questdata":
 					mActions.add(new ActionRemoveQuestData(value));
 					break;

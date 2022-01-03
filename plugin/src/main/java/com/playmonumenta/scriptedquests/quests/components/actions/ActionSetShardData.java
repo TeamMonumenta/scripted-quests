@@ -53,7 +53,7 @@ public class ActionSetShardData implements ActionBase {
 
 	}
 
-	private List<SetField> mFields = new ArrayList<>();
+	private final List<SetField> mFields = new ArrayList<>();
 
 	public ActionSetShardData(JsonElement element) throws Exception {
 		if (!element.isJsonArray()) {
