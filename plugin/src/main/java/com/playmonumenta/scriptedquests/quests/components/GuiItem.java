@@ -16,12 +16,26 @@ import com.playmonumenta.scriptedquests.api.JsonObjectBuilder;
 import com.playmonumenta.scriptedquests.utils.JsonUtils;
 
 import de.tr7zw.nbtapi.NBTCompound;
+import de.tr7zw.nbtapi.NBTCompoundList;
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTItem;
+import de.tr7zw.nbtapi.NBTListCompound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 
 public class GuiItem {
+
+	private static final String ROW_KEY = "row";
+	private static final String COL_KEY = "col";
+	private static final String ITEM_KEY = "item";
+	private static final String KEEP_GUI_OPEN_KEY = "keep_gui_open";
+	private static final String PREREQUISITES_KEY = "prerequisites";
+	private static final String LEFT_CLICK_ACTIONS_KEY = "left_click_actions";
+	private static final String RIGHT_CLICK_ACTIONS_KEY = "right_click_actions";
+
+	// these are only used for the items in the edit inventory
+	private static final String SQGUI_KEY = "sqgui";
+	private static final String MORE_ITEMS_KEY = "more_items";
 
 	private final int mRow;
 	private final int mCol;
@@ -36,23 +50,23 @@ public class GuiItem {
 	private @Nullable QuestActions mRightClickActions;
 
 	public GuiItem(JsonObject object) throws Exception {
-		mRow = JsonUtils.getInt(object, "row");
-		mCol = JsonUtils.getInt(object, "col");
-		mDisplayItem = NBTItem.convertNBTtoItem(new NBTContainer(JsonUtils.getString(object, "item")));
+		mRow = JsonUtils.getInt(object, ROW_KEY);
+		mCol = JsonUtils.getInt(object, COL_KEY);
+		mDisplayItem = NBTItem.convertNBTtoItem(new NBTContainer(JsonUtils.getString(object, ITEM_KEY)));
 
-		mKeepGuiOpen = JsonUtils.getBoolean(object, "keep_gui_open", false);
+		mKeepGuiOpen = JsonUtils.getBoolean(object, KEEP_GUI_OPEN_KEY, false);
 
-		mPrerequisitesJson = object.get("prerequisites");
+		mPrerequisitesJson = object.get(PREREQUISITES_KEY);
 		if (mPrerequisitesJson != null) {
 			mPrerequisites = new QuestPrerequisites(mPrerequisitesJson.getAsJsonObject());
 		}
 
-		mLeftClickActionsJson = object.get("left_click_actions");
+		mLeftClickActionsJson = object.get(LEFT_CLICK_ACTIONS_KEY);
 		if (mLeftClickActionsJson != null) {
 			mLeftClickActions = new QuestActions(null, null, null, 0, mLeftClickActionsJson);
 		}
 
-		mRightClickActionsJson = object.get("right_click_actions");
+		mRightClickActionsJson = object.get(RIGHT_CLICK_ACTIONS_KEY);
 		if (mRightClickActionsJson != null) {
 			mRightClickActions = new QuestActions(null, null, null, 0, mRightClickActionsJson);
 		}
@@ -61,29 +75,29 @@ public class GuiItem {
 
 	public JsonObject toJson() {
 		return new JsonObjectBuilder()
-			.add("row", mRow)
-			.add("col", mCol)
-			.add("item", NBTItem.convertItemtoNBT(mDisplayItem).toString())
-			.add("prerequisites", mPrerequisitesJson)
-			.add("keep_gui_open", mKeepGuiOpen)
-			.add("left_click_actions", mLeftClickActionsJson)
-			.add("right_click_actions", mRightClickActionsJson)
+			.add(ROW_KEY, mRow)
+			.add(COL_KEY, mCol)
+			.add(ITEM_KEY, NBTItem.convertItemtoNBT(mDisplayItem).toString())
+			.add(KEEP_GUI_OPEN_KEY, mKeepGuiOpen)
+			.add(PREREQUISITES_KEY, mPrerequisitesJson)
+			.add(LEFT_CLICK_ACTIONS_KEY, mLeftClickActionsJson)
+			.add(RIGHT_CLICK_ACTIONS_KEY, mRightClickActionsJson)
 			.build();
 	}
 
-	public GuiItem(int index, ItemStack itemStack) throws Exception {
+	private GuiItem(int index, ItemStack itemStack) throws Exception {
 		mRow = index / 9;
 		mCol = index % 9;
 
 		NBTItem nbtItem = new NBTItem(itemStack);
-		NBTCompound sqguiCompound = nbtItem.getCompound("sqgui");
+		NBTCompound sqguiCompound = nbtItem.getCompound(SQGUI_KEY);
 		if (sqguiCompound != null) {
 			JsonParser jsonParser = new JsonParser();
-			Boolean keepGuiOpen = sqguiCompound.getBoolean("keep_gui_open");
+			Boolean keepGuiOpen = sqguiCompound.getBoolean(KEEP_GUI_OPEN_KEY);
 			if (keepGuiOpen != null) {
 				mKeepGuiOpen = keepGuiOpen;
 			}
-			String prerequisites = sqguiCompound.getString("prerequisites");
+			String prerequisites = sqguiCompound.getString(PREREQUISITES_KEY);
 			if (prerequisites != null) {
 				mPrerequisitesJson = jsonParser.parse(prerequisites);
 				if (mPrerequisitesJson.isJsonNull()) {
@@ -92,7 +106,7 @@ public class GuiItem {
 					mPrerequisites = new QuestPrerequisites(mPrerequisitesJson);
 				}
 			}
-			String leftClickActions = sqguiCompound.getString("left_click_actions");
+			String leftClickActions = sqguiCompound.getString(LEFT_CLICK_ACTIONS_KEY);
 			if (leftClickActions != null) {
 				mLeftClickActionsJson = jsonParser.parse(leftClickActions);
 				if (mLeftClickActionsJson.isJsonNull()) {
@@ -101,7 +115,7 @@ public class GuiItem {
 					mLeftClickActions = new QuestActions(null, null, null, 0, mLeftClickActionsJson);
 				}
 			}
-			String rightClickActions = sqguiCompound.getString("right_click_actions");
+			String rightClickActions = sqguiCompound.getString(RIGHT_CLICK_ACTIONS_KEY);
 			if (rightClickActions != null) {
 				mRightClickActionsJson = jsonParser.parse(rightClickActions);
 				if (mRightClickActionsJson.isJsonNull()) {
@@ -110,7 +124,7 @@ public class GuiItem {
 					mRightClickActions = new QuestActions(null, null, null, 0, mRightClickActionsJson);
 				}
 			}
-			nbtItem.removeKey("sqgui");
+			nbtItem.removeKey(SQGUI_KEY);
 			itemStack = nbtItem.getItem();
 			List<Component> lore = itemStack.lore();
 			if (lore != null) {
@@ -119,6 +133,7 @@ public class GuiItem {
 		}
 
 		mDisplayItem = itemStack;
+
 	}
 
 	public int getRow() {
@@ -150,20 +165,47 @@ public class GuiItem {
 			}
 			item.lore(lore);
 			NBTItem nbtItem = new NBTItem(item);
-			NBTCompound sqguiCompound = nbtItem.addCompound("sqgui");
+			NBTCompound sqguiCompound = nbtItem.addCompound(SQGUI_KEY);
 			Gson gson = new Gson();
-			sqguiCompound.setBoolean("keep_gui_open", mKeepGuiOpen);
-			sqguiCompound.setString("prerequisites", gson.toJson(mPrerequisitesJson));
-			sqguiCompound.setString("left_click_actions", gson.toJson(mLeftClickActionsJson));
-			sqguiCompound.setString("right_click_actions", gson.toJson(mRightClickActionsJson));
-			item = nbtItem.getItem();
-			return item;
+			sqguiCompound.setBoolean(KEEP_GUI_OPEN_KEY, mKeepGuiOpen);
+			sqguiCompound.setString(PREREQUISITES_KEY, gson.toJson(mPrerequisitesJson));
+			sqguiCompound.setString(LEFT_CLICK_ACTIONS_KEY, gson.toJson(mLeftClickActionsJson));
+			sqguiCompound.setString(RIGHT_CLICK_ACTIONS_KEY, gson.toJson(mRightClickActionsJson));
+			return nbtItem.getItem();
 		} else {
 			if (mPrerequisites != null && !mPrerequisites.prerequisiteMet(player, null)) {
 				return null;
 			}
 			return mDisplayItem;
 		}
+	}
+
+	public ItemStack combineDisplayItem(Player player, ItemStack item) {
+		List<Component> lore = item.lore();
+		if (lore == null) {
+			lore = new ArrayList<>();
+		}
+		lore.add(Component.text("[SQGUI] Has more items in this slot"));
+		item.lore(lore);
+		NBTItem nbtItem = new NBTItem(item);
+		NBTCompound sqguiCompound = nbtItem.addCompound(SQGUI_KEY);
+		NBTCompoundList moreItemsList = sqguiCompound.getCompoundList(MORE_ITEMS_KEY);
+		moreItemsList.addCompound(NBTItem.convertItemtoNBT(getDisplayItem(player, true)));
+		return nbtItem.getItem();
+	}
+
+	public static List<GuiItem> parseItems(int index, ItemStack itemStack) throws Exception {
+		List<GuiItem> result = new ArrayList<>();
+		NBTItem nbtItem = new NBTItem(itemStack);
+		NBTCompound sqguiCompound = nbtItem.getCompound(SQGUI_KEY);
+		if (sqguiCompound != null) {
+			NBTCompoundList moreItems = sqguiCompound.getCompoundList(MORE_ITEMS_KEY);
+			for (NBTListCompound item : moreItems) {
+				result.add(new GuiItem(index, NBTItem.convertNBTtoItem(new NBTContainer(item.getCompound()))));
+			}
+		}
+		result.add(0, new GuiItem(index, itemStack));
+		return result;
 	}
 
 	public boolean getKeepGuiOpen() {
