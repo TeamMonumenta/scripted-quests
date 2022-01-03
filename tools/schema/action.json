@@ -228,7 +228,35 @@
                 }
             }
         },
-
+		"set_shard_field": {
+            "title": "set_shard_field",
+            "description": "Set the shard's specified Shard Data values(s) that the player is currently in. Shard Data IDs are case-sensitive",
+            "type": "array",
+			"items": {
+                "type": "object",
+				"defaultProperties": [
+					"shard_field_id",
+					"shard_field_data"
+				],
+				"properties": {
+				    "shard_field_id": {
+						"title": "shard_field_id",
+						"description": "The ID of the Shard Field",
+						"type": "string"
+					},
+					"shard_field_data": {
+						"title": "shard_field_data",
+						"description": "Sets the Shard Data field for the Shard Data ID. Adding a + to the beginning will add to the score. Adding a - to the beginning will subtract from the score.",
+						"type": "string"
+					}
+				}
+            }
+        },
+		"set_shard_music": {
+            "title": "set_shard_music",
+            "description": "Sets the music being played in the Shard. The ID of the music is case-sensitive.",
+            "type": "string"
+        },
 		"set_shard_objective": {
             "title": "set_shard_objective",
             "description": "Set the shard's specified Shard Objective values(s) that the player is currently in. Objective IDs are case-sensitive. The Objective will only be set if it's already defined in the Shard. Else, this will not do anything.",

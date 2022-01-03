@@ -160,6 +160,17 @@
                         $ref: "schema/quest_component.json",
                     }
                 },
+				onDeath: {
+                    propertyOrder: 8,
+                    title: "onDeath",
+                    description: "The Quest Components to run whenever a player dies in this instance. This is a good way to kick the player out of a Shard if they fail it.",
+                    type: "array",
+                    format: "tabs",
+                    items: {
+                        title: "Quest component",
+                        $ref: "schema/quest_component.json",
+                    }
+                },
 				shard_objectives: {
                     propertyOrder: 8,
                     title: "shardObjectives",
