@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>ScriptedQuests Instance Editor</title>
+    <title>ScriptedQuests Shard Instance Editor</title>
 
     <!-- Foundation CSS framework (Bootstrap and jQueryUI also supported) -->
     <link rel='stylesheet' href='//cdn.jsdelivr.net/bootstrap/3.2.0/css/bootstrap.css'>
@@ -15,7 +15,7 @@
 <div class='container'>
     <div class='row' style='padding-bottom: 15px;'>
         <div class='col-md-12'>
-            <h1>ScriptedQuests Shard Editor</h1>
+            <h1>ScriptedQuests Shard Instance Editor</h1>
             <p>For the SFRPG Project, by Nova/Fire.</p>
 			<br>
 			<p>Allows for the creation of non-persistent world instances, AKA Shards.</p>
@@ -48,6 +48,7 @@
             title: "Shard",
             defaultProperties: [
 			    "id",
+				"name",
                 "world",
 				"spawnpoint",
 				"exitpoint",
@@ -55,7 +56,8 @@
 				"onEnter",
 				"onExit",
 				"onAbandon",
-				"onFieldChange"
+				"onComplete",
+				"shardObjectives"
             ],
             additionalProperties:false,
             properties: {
@@ -63,9 +65,17 @@
                     required: true,
                     propertyOrder: 1,
                     title: "id",
-                    description: "The ID of the Shard. This should be unique.",
+                    description: "The ID of the Shard. This should be a unique ID.",
                     type: "string",
                     default: "quest_instance"
+                },
+				name: {
+                    required: true,
+                    propertyOrder: 1,
+                    title: "name",
+                    description: "The name of the Shard used to display in the menu",
+                    type: "string",
+                    default: "Quest Instance"
                 },
 				world: {
                     required: true,
@@ -105,6 +115,7 @@
                     description: "The Prerequisites to enter this shard. If the player does not meet these prerequisites, they will not be able to enter.",
 					$ref: "schema/prerequisites.json"
                 },
+			
 				onEnter: {
                     propertyOrder: 5,
                     title: "onEnter",
@@ -138,10 +149,104 @@
                         $ref: "schema/quest_component.json",
                     }
                 },
-                onFieldChange: {
+				onComplete: {
                     propertyOrder: 8,
-                    title: "onFieldChange",
-                    description: "The Quest Components to run on all players within this Shard whenever a Shard Field reaches a specific amount.",
+                    title: "onComplete",
+                    description: "The Quest Components to run whenever a player completes all of the Shard Objectives. It is highly recommend you make the player exit the shard within this function.",
+                    type: "array",
+                    format: "tabs",
+                    items: {
+                        title: "Quest component",
+                        $ref: "schema/quest_component.json",
+                    }
+                },
+				shardObjectives: {
+                    propertyOrder: 8,
+                    title: "shardObjectives",
+                    description: "The objectives to complete in this shard. When all objectives are complete, the onComplete functions will run. Shard Objectives are displayed in the Shard Sidebar (/sidebar shard). NOTE: If onComplete is empty, or is not present, the Shard will show a Completion message and exit the players out of the shard by default.",
+                    type: "array",
+                    items: {
+                        title: "Shard Objective",
+						type: "object",
+						defaultProperties: [
+							"shard_field_id",
+							"shard_field_name",
+							"shard_field_data",
+							"quest_components"
+						],
+						properties: {
+							shard_field_id: {
+								title: "shard_field_id",
+								description: "The Shard Field ID. This ID should be unique for this Shard.",
+								type: "string"
+							},
+							shard_field_description: {
+								title: "shard_field_description",
+								description: "The description of the Field to show in the Sidebar",
+								type: "string",
+								default: "Complete Objective"
+							},
+							shard_field_data: {
+								title: "shard_field_data",
+								description: "The Shard Field data amount to reach in order to complete this objective",
+								type: "integer"
+							},
+							show_data_number: {
+								title: "show_data_number",
+								description: "Toggles on/off whether or not the data amount for this Objective is shown in the sidebar",
+								type: "boolean",
+								default: true
+							},
+							optional: {
+								title: "optional",
+								description: "Toggles on/off whether this objective is an optional objective, and not required to complete the Shard. Optional objectives are useful for Shard triggers, or side objectives in a Shard.",
+								type: "boolean",
+								default: false
+							},
+							hidden: {
+								title: "hidden",
+								description: "Toggles on/off whether this objective is hidden from the Sidebar. It is highly recommend that non-optional objectives are NOT hidden.",
+								type: "boolean",
+								default: false
+							},
+							onObjectiveStage: {
+								description: "Quest Components to run whenever the Objective reaches a specified amount",
+								type: "array",
+								items: {
+									title: "Stage",
+									description: "A stage in the Objective progression",
+									properties: {
+										value: {
+											required: true,
+											title: "value",
+											description: "The value that the Objective needs to be at in order for these actions to trigger",
+											type: "integer"
+										},
+										actions: {
+											required: true,
+											description: "The actions to be performed when the quest reaches this stage",
+											$ref: "actions.json"
+										}
+									}
+								}
+							},
+							onObjectiveComplete: {
+								title: "onObjectiveComplete",
+								description: "The Quest Components to run on all players whenever this Shard Objective is complete.",
+								type: "array",
+								format: "tabs",
+								items: {
+									title: "Quest component",
+									$ref: "schema/quest_component.json",
+								}
+							}
+						}
+                    }
+                },
+                onFieldChange: {
+                    propertyOrder: 9,
+                    title: "onFieldChange [DEPRECATED]",
+                    description: "DEPRECATED. DO NOT USE. The Quest Components to run on all players within this Shard whenever a Shard Field reaches a specific amount.",
                     type: "array",
                     items: {
                         title: "Shard Field Change",
@@ -159,7 +264,7 @@
 							},
 							shard_field_data: {
 								title: "shard_field_data",
-								description: "The Shard Field data amount. This is an integer.",
+								description: "The Shard Field data amount to reach for this action to take place. This is an integer.",
 								type: "integer"
 							},
 							quest_components: {
