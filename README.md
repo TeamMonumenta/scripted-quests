@@ -11,6 +11,7 @@ JSON-driven Minecraft Paper plugin for creating quests
 - [Structure of a Quests File](#structure)
 - [List of Commands / Permissions](#commands)
 - [Current Capabilities](#capabilities)
+- [Maven Dependency](#maven)
 
 ## <a name="description"></a>Description
 This plugin is a Minecraft game developer's toolbox, greatly expanding and
@@ -42,7 +43,7 @@ hope others will find it useful too.
 ## <a name="download"></a>Download
 
 ScriptedQuests works on Paper 1.16.5 or higher. It also requires
-[CommandAPI](https://github.com/JorelAli/1.13-Command-API) version 5.x. Other
+[CommandAPI](https://github.com/JorelAli/1.13-Command-API) version 6.x. Other
 CommandAPI versions may also work, worth giving it a shot. It'll be immediately
 obvious as if the version is incompatible, the plugin won't load or no commands
 will work.
@@ -265,3 +266,23 @@ actions:
 - give\_loot - Generates loot from a loot table and gives it to the player
 - interact\_npc - Triggers a follow-on interaction with a different NPC
 - rerun\_components - Re-runs all components for this NPC from the beginning
+
+## <a name="maven"></a>Maven Dependency:
+```xml
+    <repositories>
+        <repository>
+            <id>scripted-quests</id>
+            <url>https://raw.githubusercontent.com/TeamMonumenta/scripted-quests/master/mvn-repo/</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.playmonumenta</groupId>
+            <artifactId>scripted-quests</artifactId>
+            <version>4.5</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+```
+
