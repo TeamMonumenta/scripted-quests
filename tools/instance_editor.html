@@ -53,6 +53,7 @@
 				"spawnpoint",
 				"exitpoint",
 				"solo",
+				"copySpawners",
 				"onEnter",
 				"onExit",
 				"onAbandon",
@@ -106,6 +107,14 @@
                     propertyOrder: 4,
                     title: "solo",
                     description: "Determines whether or not this is a SOLO Shard. Solo Shards cannot be ran with other players, including party members and friends.",
+                    type: "boolean",
+                    default: false
+                },
+				copySpawners: {
+                    required: true,
+                    propertyOrder: 4,
+                    title: "copySpawners",
+                    description: "Determines whether or not this Shard will copy the Spawners from the Master World it's connected to.",
                     type: "boolean",
                     default: false
                 },
