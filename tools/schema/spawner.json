@@ -25,10 +25,8 @@
 				"type": "object",
 				"defaultProperties": [
 					"mob",
-					"loc",
-					"amount",
-					"radius",
-					"spawn"
+					"spawn",
+					"spawnRate"
 				],
 				"properties": {
 					"mob": {
@@ -47,6 +45,12 @@
 								"description": "Spawns a number of mobs in a radius",
 								"type": "object",
 								"properties": {
+									"center": {
+										"title": "center",
+										"description": "The center that the mobs spawn around in x,y,z format",
+										"type": "string",
+										"default": "0,0,0"
+									},
 									"amount": {
 										"title": "amount",
 										"description": "The amount of mobs to spawn.",
@@ -74,7 +78,7 @@
 					},
 					"spawnRate": {
 						"title": "spawnRate",
-						"description": "This is in SECONDS. Group spawnrates are independent of each other.",
+						"description": "This is in SECONDS. Group spawnrates are independent of each other. Inputting -1 or lower will make this spawner never respawn once the mob is killed.",
 						"type": "integer",
 						"default": 300
 					},
