@@ -165,6 +165,9 @@ public class QuestActions {
 				case "set_shard_objective":
 					mActions.add(new ActionSetShardObjective(value));
 					break;
+				case "set_shard_music":
+					mActions.add(new ActionSetShardMusic(value));
+					break;
 				case "remove_questdata":
 					mActions.add(new ActionRemoveQuestData(value));
 					break;

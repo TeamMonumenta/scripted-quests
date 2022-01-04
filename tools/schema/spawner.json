@@ -1,0 +1,120 @@
+{
+	"type": "object",
+	"title": "RPG Spawner",
+	"defaultProperties": [
+		"loc",
+		"groups"
+	],
+	"additionalProperties": false,
+	"properties": {
+		"loc": {
+			"required": true,
+			"propertyOrder": 1,
+			"title": "loc",
+			"description": "The location of where the spawner group is. This is the location that is used for detection of players nearby.",
+			"type": "string",
+			"default": "world,0,0,0"
+		},
+		"groups": {
+			"required": true,
+			"propertyOrder": 2,
+			"title": "groups",
+			"description": "Spawner groups.",
+			"type": "array",
+			"items": {
+				"type": "object",
+				"defaultProperties": [
+					"mob",
+					"loc",
+					"amount",
+					"radius",
+					"spawn"
+				],
+				"properties": {
+					"mob": {
+						"title": "mob",
+						"description": "The mob to spawn from this Spawner Group. This has to be the Mob's ID, and is case-sensitive.",
+						"type": "string"
+					},
+					"spawn": {
+						"title": "spawn",
+						"description": "The method and places for how the mobs spawn, using either a Radius or a defined list of location vectors",
+						"options": {
+							"keep_oneof_values": false
+						},
+						"oneOf": [{
+								"title": "Radius",
+								"description": "Spawns a number of mobs in a radius",
+								"type": "object",
+								"properties": {
+									"amount": {
+										"title": "amount",
+										"description": "The amount of mobs to spawn.",
+										"type": "integer"
+									},
+									"radius": {
+										"title": "radius",
+										"description": "The radius that the mobs spawn.",
+										"type": "number"
+									}
+								}
+							},
+							{
+								"title": "Locations",
+								"description": "The list of Locations to spawn this mob.",
+								"type": "array",
+								"items": {
+									"title": "Location",
+									"description": "A location in x,y,z format",
+									"type": "string",
+									"default": "0,0,0"
+								}
+							}
+						]
+					},
+					"spawnRate": {
+						"title": "spawnRate",
+						"description": "This is in SECONDS. Group spawnrates are independent of each other.",
+						"type": "integer",
+						"default": 300
+					},
+					"sitting": {
+						"title": "sitting",
+						"description": "Toggle on/off to determine whether the mob is sitting on the ground or not.",
+						"type": "boolean",
+						"default": "false"
+					},
+					"wanderSpeed": {
+						"title": "wanderSpeed",
+						"description": "Number = the speed multiplier of the mob while wandering",
+						"type": "number",
+						"default": 0.7
+					},
+					"wanderRadius": {
+						"title": "wanderRadius",
+						"description": "The radius which the mob wanders in",
+						"type": "number",
+						"default": 5
+					},
+					"path": {
+						"title": "path",
+						"description": "The path the mob walks using location vectors. The mob will walk to each location in order. When it reaches the last location, it will walk the path in reverse, and repeat. There needs to be at least 2 Path Points in order for this to function. Using paths will override wandering by default.",
+						"type": "array",
+						"items": {
+							"title": "Path Point",
+							"description": "A path point to walk to.",
+							"type": "string",
+							"default": "0,0,0"
+						}
+					},
+					"pathSpeed": {
+						"title": "pathSpeed",
+						"description": "The speed that the mob walks along the Path. Will only work if the Path property is in use",
+						"type": "number",
+						"default": 0.8
+					}
+				}
+			}
+		}
+	}
+}
