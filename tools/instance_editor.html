@@ -59,7 +59,8 @@
 				"onExit",
 				"onAbandon",
 				"onComplete",
-				"shard_objectives"
+				"shard_objectives",
+				"worldborder"
             ],
             additionalProperties:false,
             properties: {
@@ -139,6 +140,26 @@
                     description: "The Prerequisites to enter this shard. If the player does not meet these prerequisites, they will not be able to enter.",
 					$ref: "schema/prerequisites.json"
                 },
+				worldborder: {
+					propertyOrder: 5,
+					title: "worldborder",
+					description: "The Worldborder of this shard to prevent players from exploring outwards. If the radius is 0 or less, this will not be enabled",
+					type: "object",
+					properties: {
+						radius: {
+							title: "radius",
+							description: "The radius of the world border. Input 0 or less to disable.",
+							type: "integer",
+							default: 0
+						},
+						center: {
+							title: "center",
+							description: "The center of the world border in the master world using x,y,z coordinates",
+							type: "string",
+							default: "0,0,0"
+						}
+					}
+				}
 			
 				onEnter: {
                     propertyOrder: 5,
