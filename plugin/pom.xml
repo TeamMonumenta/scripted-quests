@@ -89,9 +89,7 @@
 			<groupId>me.Novalescent</groupId>
 			<artifactId>SpellforgedRPG</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-<!--			<scope>provided</scope>-->
-			<scope>system</scope>
-			<systemPath>${basedir}/libs/SpellforgedRPG.jar</systemPath>
+			<scope>provided</scope>
 		</dependency>
 
         <dependency>
