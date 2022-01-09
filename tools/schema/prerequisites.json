@@ -94,6 +94,24 @@
 				}
             }
 		},
+		"check_shard_objectives": {
+            "propertyOrder": 2,
+            "title": "check_shard_objectives",
+            "description": "Checks the player's current Shard to see if the objective is completed.",
+			"type": "object",
+			"properties": {
+				"objective_id": {
+					"title": "objective_id",
+					"type": "string"
+				},
+				"completed": {
+					"title": "completed",
+					"description": "Whether or not this Shard Objective needs to be completed.",
+					"type": "boolean",
+					"default": false
+				}
+			}
+		},
         "check_advancements": {
             "propertyOrder": 2,
             "title": "check_advancements",

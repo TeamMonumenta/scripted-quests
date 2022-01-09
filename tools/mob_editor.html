@@ -609,7 +609,19 @@
 							}
 						}
 					}
-				},					
+				},			
+				on_engage: {
+					required: true,
+                    title: "on_engage",
+                    description: "A list of quest components to perform whenever the mob is engaged.",
+                    type: "array",
+                    format: "tabs",
+                    minItems: 1,
+                    items: {
+                        title: "Quest component",
+                        $ref: "schema/quest_component.json",
+                    }
+				},				
                 quest_components: {
                     required: true,
                     title: "quest_components",
