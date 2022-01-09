@@ -50,6 +50,8 @@
 			    "id",
 				"name",
                 "world",
+				"description",
+				"level",
 				"spawnpoint",
 				"exitpoint",
 				"solo",
@@ -111,6 +113,25 @@
                     description: "Determines whether or not this is a SOLO Shard. Solo Shards cannot be ran with other players, including party members and friends.",
                     type: "boolean",
                     default: false
+                },
+				level: {
+                    required: true,
+                    propertyOrder: 1,
+                    title: "level",
+                    description: "The level of the Dungeon. This will be used for level scaling, and as a level requirement for the Dungeon.",
+                    type: "integer",
+                    default: 10
+                },
+				description: {
+                    required: true,
+                    propertyOrder: 1,
+                    title: "description",
+                    description: "The description of the Dungeon shown in its menu.",
+                    type: "array",
+                    items: {
+						title: "Line",
+						type: "string"
+					}
                 },
 				copySpawners: {
                     required: true,
