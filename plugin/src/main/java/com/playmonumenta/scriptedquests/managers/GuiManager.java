@@ -20,6 +20,7 @@ import com.playmonumenta.scriptedquests.utils.CustomInventory;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
 
+import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 
 public class GuiManager {
@@ -43,6 +44,20 @@ public class GuiManager {
 		});
 	}
 
+	public void reloadSingleGui(Gui gui, CommandSender sender) throws WrapperCommandSyntaxException {
+		try {
+			QuestUtils.loadScriptedQuestsFile(gui.getFile(), (object, file) -> {
+				Gui newGui = new Gui(object, file);
+				mGuis.remove(gui.getLabel());
+				mGuis.put(newGui.getLabel(), newGui);
+				return null;
+			});
+		} catch (Exception e) {
+			MessagingUtils.sendStackTrace(sender, e);
+			CommandAPI.fail("Failed to reload GUI: error in quest file '" + gui.getFile().getPath() + "'");
+		}
+	}
+
 	public String[] getGuiNames() {
 		return mGuis.keySet().toArray(new String[0]);
 	}
@@ -56,6 +71,11 @@ public class GuiManager {
 	}
 
 	public void editGui(String label, Player player, String pageName) throws WrapperCommandSyntaxException {
+		Gui gui = mGuis.get(label);
+		if (gui == null) {
+			return;
+		}
+		reloadSingleGui(gui, player);
 		openGui(label, player, pageName, true);
 	}
 

@@ -79,18 +79,7 @@ public class QuestUtils {
 		Collections.sort(listOfFiles);
 		for (File file : listOfFiles) {
 			try {
-				String content = FileUtils.readFile(file.getPath());
-				if (content == null || content.isEmpty()) {
-					throw new Exception("Failed to parse file as JSON object");
-				}
-
-				Gson gson = new Gson();
-				JsonObject object = gson.fromJson(content, JsonObject.class);
-				if (object == null) {
-					throw new Exception("Failed to parse file as JSON object");
-				}
-
-				String label = action.load(object, file);
+				String label = loadScriptedQuestsFile(file, action);
 				numFiles++;
 				if (label != null) {
 					listOfLabels.add(label);
@@ -146,6 +135,29 @@ public class QuestUtils {
 				}
 			}
 		}
+	}
+
+	/**
+	 * (re)loads a single SQ file.
+	 *
+	 * @param file   The file to reload
+	 * @param action Action to parse the file
+	 * @return The value returned by {@code action}
+	 * @throws Exception If there was an error loading the file (e.g. file does not exist, cannot be read, or cannot be parsed)
+	 */
+	public static @Nullable String loadScriptedQuestsFile(File file, JsonLoadActionWithFile action) throws Exception {
+		String content = FileUtils.readFile(file.getPath());
+		if (content == null || content.isEmpty()) {
+			throw new Exception("Failed to parse file as JSON object");
+		}
+
+		Gson gson = new Gson();
+		JsonObject object = gson.fromJson(content, JsonObject.class);
+		if (object == null) {
+			throw new Exception("Failed to parse file as JSON object");
+		}
+
+		return action.load(object, file);
 	}
 
 	public static void save(Plugin plugin, @Nullable CommandSender sender, JsonObject object, File file) {
