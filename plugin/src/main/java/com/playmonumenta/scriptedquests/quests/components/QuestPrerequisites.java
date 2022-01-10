@@ -13,6 +13,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteBase;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteCheckAdvancements;
+import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteCheckPermissions;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteCheckScores;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteCheckTags;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteFacing;
@@ -103,6 +104,16 @@ public class QuestPrerequisites implements PrerequisiteBase {
 				Iterator<JsonElement> iter = array.iterator();
 				while (iter.hasNext()) {
 					mPrerequisites.add(new PrerequisiteCheckTags(iter.next()));
+				}
+				break;
+			}
+			case "check_permissions": {
+				JsonArray array = value.getAsJsonArray();
+				if (array == null) {
+					throw new Exception("Prerequisites value for key '" + key + "' is not an array!");
+				}
+				for (JsonElement jsonElement : array) {
+					mPrerequisites.add(new PrerequisiteCheckPermissions(jsonElement));
 				}
 				break;
 			}
