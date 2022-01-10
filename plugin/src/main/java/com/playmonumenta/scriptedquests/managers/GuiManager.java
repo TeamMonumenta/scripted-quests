@@ -113,7 +113,8 @@ public class GuiManager {
 			}
 			event.setCancelled(true);
 			if (event.getClick() != ClickType.LEFT && event.getClick() != ClickType.RIGHT
-				    || !(event.getWhoClicked() instanceof Player)) {
+				    || !(event.getWhoClicked() instanceof Player)
+				    || event.getClickedInventory() != mInventory) {
 				return;
 			}
 			Player player = (Player) event.getWhoClicked();
