@@ -331,6 +331,55 @@
 						$ref: "schema/spawner.json"
 					}
 				},
+				bossRegions: {
+					title: "bossRegions",
+					description: "The Boss Regions in this Shard. Boss Regions are used to create arena blockades for whenever the boss is engaged.",
+					type: "array",
+					items: {
+						title: "Boss Region",
+						type: "object",
+						properties: {
+							name: {
+								title: "name",
+								description: "The name of the Boss Region",
+								type: "string"
+							},
+							groundLevel: {
+								title: "groundLevel",
+								description: "The ground level of the boss region.",
+								type: "integer",
+								default: 0
+							},
+							region: {
+								title: "region",
+								description: "The cubic region that the boss is contained in, defining 2 corners. The y-axis of the corners are ignored.",
+								type: "object",
+								properties: {
+									corner1: {
+										title: "corner1",
+										description: "The first corner in x,y,z format",
+										type: "string",
+										default: "0,0,0"
+									},
+									corner2: {
+										title: "corner2",
+										description: "The second corner in x,y,z format",
+										type: "string",
+										default: "0,0,0"
+									}
+								}
+							},
+							spawners: {
+								title: "spawners",
+								description: "The spawners in this Boss Region. The mobs from these spawners will activate/deactivate the boss region whenever they're aggroed.",
+								type: "array",
+								items: {
+									$ref: "schema/spawner.json"
+								}
+							}
+						}
+					}
+				},
                 onFieldChange: {
                     propertyOrder: 9,
                     title: "onFieldChange [DEPRECATED]",
