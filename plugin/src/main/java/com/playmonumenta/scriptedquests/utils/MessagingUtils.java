@@ -109,7 +109,7 @@ public class MessagingUtils {
 		message = TranslationsManager.translate(player, message);
 		message = translatePlayerName(player, message);
 		Component formattedMessage = LEGACY_SERIALIZER.deserialize("[" + message + "]");
-		formattedMessage = Component.empty().color(NamedTextColor.LIGHT_PURPLE.append(formattedMessage))
+		formattedMessage = Component.empty().color(NamedTextColor.LIGHT_PURPLE).append(formattedMessage)
 			.clickEvent(ClickEvent.runCommand(commandStr));
 
 		if (hoverEvent != null) {
