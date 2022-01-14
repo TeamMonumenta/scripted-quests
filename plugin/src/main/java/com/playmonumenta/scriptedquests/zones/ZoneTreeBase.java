@@ -1,5 +1,6 @@
 package com.playmonumenta.scriptedquests.zones;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,10 +24,6 @@ public abstract class ZoneTreeBase {
 			result = new ZoneTreeLeaf(zones.get(0));
 		} else {
 			result = new ZoneTreeParent(zones);
-		}
-
-		if (Plugin.getInstance().mShowZonesDynmap) {
-			result.refreshDynmapTree();
 		}
 
 		return result;
