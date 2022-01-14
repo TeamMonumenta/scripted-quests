@@ -7,10 +7,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.bukkit.util.Vector;
-
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
+import org.bukkit.util.Vector;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /*
  * A zone, to be split into fragments. This class holds the name and properties, and the fragments determine
@@ -34,23 +36,29 @@ public class Zone extends ZoneBase {
 		}
 
 		Double[] corners = new Double[6];
-		String name;
+		@Nullable String name;
 		Set<String> properties = new LinkedHashSet<String>();
 
 		// Load the zone name
-		if (object.get("name") == null ||
-		    object.get("name").getAsString() == null ||
-		    object.get("name").getAsString().isEmpty()) {
+		@Nullable JsonElement nameElement = object.get("name");
+		if (nameElement == null) {
 			throw new Exception("Failed to parse 'name'");
 		}
-		name = object.get("name").getAsString();
+		name = nameElement.getAsString();
+		if (name == null ||
+		    name.isEmpty()) {
+			throw new Exception("Failed to parse 'name'");
+		}
 
 		// Load the zone location
-		if (object.get("location") == null ||
-		    object.get("location").getAsJsonObject() == null) {
+		@Nullable JsonElement locationElement = object.get("location");
+		if (locationElement == null) {
 			throw new Exception("Failed to parse 'location'");
 		}
-		JsonObject locationJson = object.get("location").getAsJsonObject();
+		@Nullable JsonObject locationJson = locationElement.getAsJsonObject();
+		if (locationJson == null) {
+			throw new Exception("Failed to parse 'location'");
+		}
 		for (Map.Entry<String, JsonElement> ent : locationJson.entrySet()) {
 			String key = ent.getKey();
 			JsonElement value = ent.getValue();
@@ -86,11 +94,15 @@ public class Zone extends ZoneBase {
 		Vector pos2 = new Vector(corners[3], corners[4], corners[5]);
 
 		// Load the zone properties
-		if (object.get("properties") == null ||
-		    object.get("properties").getAsJsonArray() == null) {
+		@Nullable JsonElement propertiesElement = object.get("properties");
+		if (propertiesElement == null) {
 			throw new Exception("Failed to parse 'properties'");
 		}
-		Iterator<JsonElement> iter = object.get("properties").getAsJsonArray().iterator();
+		@Nullable JsonArray propertiesArray = propertiesElement.getAsJsonArray();
+		if (propertiesArray == null) {
+			throw new Exception("Failed to parse 'properties'");
+		}
+		Iterator<JsonElement> iter = propertiesArray.iterator();
 		while (iter.hasNext()) {
 			JsonElement element = iter.next();
 			String propertyName = element.getAsString();
@@ -151,7 +163,7 @@ public class Zone extends ZoneBase {
 	protected boolean splitByOverlap(ZoneBase overlap, Zone otherZone, boolean includeOther) {
 		List<ZoneFragment> newFragments = new ArrayList<ZoneFragment>();
 		for (ZoneFragment fragment : mFragments) {
-			ZoneBase subOverlap = fragment.overlappingZone(overlap);
+			@Nullable ZoneBase subOverlap = fragment.overlappingZone(overlap);
 
 			if (subOverlap == null) {
 				newFragments.add(fragment);
@@ -230,7 +242,7 @@ public class Zone extends ZoneBase {
 
 		char prefix = propertyName.charAt(0);
 		if (prefix == '#') {
-			List<String> propertyGroup = propertyGroups.get(propertyName.substring(1));
+			@Nullable List<String> propertyGroup = propertyGroups.get(propertyName.substring(1));
 			if (propertyGroup == null) {
 				throw new Exception("No such property group: " + propertyName);
 			}

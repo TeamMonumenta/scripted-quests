@@ -1,26 +1,38 @@
 package com.playmonumenta.scriptedquests.zones;
 
-import org.bukkit.Bukkit;
-import org.bukkit.util.Vector;
+import java.util.HashSet;
+import java.util.Set;
 
+import org.bukkit.Bukkit;
+import org.bukkit.util.BoundingBox;
+import org.bukkit.util.Vector;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dynmap.markers.MarkerSet;
 import org.dynmap.markers.AreaMarker;
 
 public class ZoneTreeLeaf extends ZoneTreeBase {
-	private ZoneFragment mZone;
+	private ZoneFragment mFragment;
 
 	public ZoneTreeLeaf(ZoneFragment zone) {
 		mFragmentCount = 1;
-		mZone = zone;
+		mFragment = zone;
 	}
 
 	protected void invalidate() {
-		mZone.invalidate();
+		mFragment.invalidate();
 	}
 
-	public ZoneFragment getZoneFragment(Vector loc) {
-		if (mZone.within(loc)) {
-			return mZone;
+	public Set<ZoneFragment> getZoneFragments(BoundingBox bb) {
+		Set<ZoneFragment> result = new HashSet<>();
+		if (mFragment.boundingBox().contains(bb)) {
+			result.add(mFragment);
+		}
+		return result;
+	}
+
+	public @Nullable ZoneFragment getZoneFragment(Vector loc) {
+		if (mFragment.within(loc)) {
+			return mFragment;
 		} else {
 			return null;
 		}
@@ -49,8 +61,8 @@ public class ZoneTreeLeaf extends ZoneTreeBase {
 		String fragmentId = "zone_fragment_hash_" + Integer.toString(hashCode());
 		String fragmentLabel = "zone fragment";
 
-		Vector minCorner = mZone.minCorner();
-		Vector maxCorner = mZone.maxCornerExclusive();
+		Vector minCorner = mFragment.minCorner();
+		Vector maxCorner = mFragment.maxCornerExclusive();
 
 		double[] x = new double[2];
 		double[] z = new double[2];
@@ -60,7 +72,7 @@ public class ZoneTreeLeaf extends ZoneTreeBase {
 		z[1] = maxCorner.getZ();
 
 		int color = 0;
-		color = (color << 8) | (r & 0xff);
+		color = (r & 0xff);
 		color = (color << 8) | (g & 0xff);
 		color = (color << 8) | (b & 0xff);
 
@@ -71,6 +83,6 @@ public class ZoneTreeLeaf extends ZoneTreeBase {
 	}
 
 	public String toString() {
-		return ("ZoneTreeBase(" + mZone.toString() + ")");
+		return ("ZoneTreeBase(" + mFragment.toString() + ")");
 	}
 }

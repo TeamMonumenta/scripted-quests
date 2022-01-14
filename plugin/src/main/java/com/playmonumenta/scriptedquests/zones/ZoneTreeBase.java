@@ -1,16 +1,20 @@
 package com.playmonumenta.scriptedquests.zones;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import com.playmonumenta.scriptedquests.Plugin;
 
 import org.bukkit.Bukkit;
+import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dynmap.DynmapCommonAPI;
 import org.dynmap.markers.MarkerAPI;
 import org.dynmap.markers.MarkerSet;
-
-import com.playmonumenta.scriptedquests.Plugin;
 
 public abstract class ZoneTreeBase {
 	protected int mFragmentCount = 0;
@@ -39,16 +43,21 @@ public abstract class ZoneTreeBase {
 	protected abstract void invalidate();
 
 	/*
+	 * Returns all ZoneFragments that overlap a bounding box.
+	 */
+	public abstract Set<ZoneFragment> getZoneFragments(BoundingBox bb);
+
+	/*
 	 * For a given location, return the fragment that contains it.
 	 * Returns null if no fragment overlaps it.
 	 */
-	public abstract ZoneFragment getZoneFragment(Vector loc);
+	public abstract @Nullable ZoneFragment getZoneFragment(Vector loc);
 
 	/*
 	 * For a given location, return the zones that contain it.
 	 */
 	public Map<String, Zone> getZones(Vector loc) {
-		ZoneFragment fragment = getZoneFragment(loc);
+		@Nullable ZoneFragment fragment = getZoneFragment(loc);
 
 		if (fragment == null) {
 			return new HashMap<String, Zone>();
@@ -58,11 +67,28 @@ public abstract class ZoneTreeBase {
 	}
 
 	/*
+	 * Returns all zones that overlap a bounding box, optionally including eclipsed zones.
+	 */
+	public Set<Zone> getZones(BoundingBox bb, boolean includeEclipsed) {
+		Set<Zone> result = new HashSet<>();
+		for (ZoneFragment fragment : getZoneFragments(bb)) {
+			if (includeEclipsed) {
+				for (List<Zone> zones : fragment.getParentsAndEclipsed().values()) {
+					result.addAll(zones);
+				}
+			} else {
+				result.addAll(fragment.getParents().values());
+			}
+		}
+		return result;
+	}
+
+	/*
 	 * For a given location and layer name, return the zone that contains it.
 	 * Returns null if no zone overlaps it on that layer.
 	 */
-	public Zone getZone(Vector loc, String layer) {
-		ZoneFragment fragment = getZoneFragment(loc);
+	public @Nullable Zone getZone(Vector loc, String layer) {
+		@Nullable ZoneFragment fragment = getZoneFragment(loc);
 
 		if (fragment == null) {
 			return null;
@@ -72,7 +98,7 @@ public abstract class ZoneTreeBase {
 	}
 
 	public boolean hasProperty(Vector loc, String layerName, String propertyName) {
-		ZoneFragment fragment = getZoneFragment(loc);
+		@Nullable ZoneFragment fragment = getZoneFragment(loc);
 		return fragment != null && fragment.hasProperty(layerName, propertyName);
 	}
 
@@ -93,21 +119,19 @@ public abstract class ZoneTreeBase {
 	}
 
 	public void refreshDynmapTree() {
-		DynmapCommonAPI dynmapHook = (DynmapCommonAPI) Bukkit.getServer().getPluginManager().getPlugin("dynmap");
+		@Nullable DynmapCommonAPI dynmapHook = (DynmapCommonAPI) Bukkit.getServer().getPluginManager().getPlugin("dynmap");
 		if (dynmapHook == null) {
 			return;
 		}
 
-		MarkerAPI markerHook = dynmapHook.getMarkerAPI();
+		@Nullable MarkerAPI markerHook = dynmapHook.getMarkerAPI();
 		if (markerHook == null) {
 			// Not initialized
 			return;
 		}
 
 		String markerSetId = ZoneLayer.DYNMAP_PREFIX + "Tree";
-		MarkerSet markerSet;
-
-		markerSet = markerHook.getMarkerSet(markerSetId);
+		@Nullable MarkerSet markerSet = markerHook.getMarkerSet(markerSetId);
 		if (markerSet != null) {
 			// Delete old marker set
 			markerSet.deleteMarkerSet();
