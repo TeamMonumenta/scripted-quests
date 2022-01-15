@@ -39,6 +39,7 @@ import com.playmonumenta.scriptedquests.commands.ReloadQuests;
 import com.playmonumenta.scriptedquests.commands.ReloadZones;
 import com.playmonumenta.scriptedquests.commands.ScheduleFunction;
 import com.playmonumenta.scriptedquests.commands.SetVelocity;
+import com.playmonumenta.scriptedquests.commands.ShowZones;
 import com.playmonumenta.scriptedquests.commands.TestZone;
 import com.playmonumenta.scriptedquests.commands.TimerDebug;
 import com.playmonumenta.scriptedquests.commands.Waypoint;
@@ -132,6 +133,7 @@ public class Plugin extends JavaPlugin {
 		ImprovedClear.register();
 		ReloadZones.register(this);
 		GuiCommand.register(this);
+		ShowZones.register(this);
 
 		mScheduledFunctionsManager = new ScheduleFunction(this);
 		mGrowableManager = new GrowableManager(this);

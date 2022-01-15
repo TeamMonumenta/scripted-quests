@@ -21,6 +21,7 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -108,6 +109,13 @@ public class ZoneManager {
 	}
 
 	/*
+	 * Returns all ZoneFragments that overlap a bounding box.
+	 */
+	public Set<ZoneFragment> getZoneFragments(BoundingBox bb) {
+		return mZoneTree.getZoneFragments(bb);
+	}
+
+	/*
 	 * For a given location, return the fragment that contains it.
 	 * Returns null if no fragment overlaps it.
 	 *
@@ -136,6 +144,13 @@ public class ZoneManager {
 		}
 
 		return mZoneTree.getZones(loc.toVector());
+	}
+
+	/*
+	 * Returns all zones that overlap a bounding box, optionally including eclipsed zones.
+	 */
+	public Set<Zone> getZones(BoundingBox bb, boolean includeEclipsed) {
+		return mZoneTree.getZones(bb, includeEclipsed);
 	}
 
 	/*

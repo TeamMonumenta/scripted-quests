@@ -24,7 +24,7 @@ public class ZoneTreeLeaf extends ZoneTreeBase {
 
 	public Set<ZoneFragment> getZoneFragments(BoundingBox bb) {
 		Set<ZoneFragment> result = new HashSet<>();
-		if (mFragment.boundingBox().contains(bb)) {
+		if (mFragment.boundingBox().overlaps(bb)) {
 			result.add(mFragment);
 		}
 		return result;
