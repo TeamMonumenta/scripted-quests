@@ -13,7 +13,9 @@ public class GetDate {
 	public static void register() {
 		new CommandAPICommand("getdate")
 			.withPermission(CommandPermission.fromString("scriptedquests.getdate"))
-			.withArguments(new TextArgument("field").replaceSuggestions(info -> {return FIELDS;}))
+			.withArguments(new TextArgument("field").replaceSuggestions(info -> {
+				return FIELDS;
+			}))
 			.executes((sender, args) -> {
 					return getField((String)args[0]);
 				})

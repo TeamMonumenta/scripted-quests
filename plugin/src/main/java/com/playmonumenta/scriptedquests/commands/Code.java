@@ -16,7 +16,9 @@ public class Code {
 	public static void register(Plugin plugin) {
 		new CommandAPICommand("code")
 			.withPermission(CommandPermission.fromString("scriptedquests.code"))
-			.withArguments(new TextArgument("word1").replaceSuggestions(info -> {return CodeEntry.words;}))
+			.withArguments(new TextArgument("word1").replaceSuggestions(info -> {
+				return CodeEntry.words;
+			}))
 			.withArguments(new TextArgument("word2").replaceSuggestions(info -> {return CodeEntry.words;}))
 			.withArguments(new TextArgument("word3").replaceSuggestions(info -> {return CodeEntry.words;}))
 			.executes((sender, args) -> {

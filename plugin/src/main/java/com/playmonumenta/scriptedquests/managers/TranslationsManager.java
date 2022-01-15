@@ -88,7 +88,9 @@ public class TranslationsManager implements Listener {
 		new CommandAPICommand("changelanguage")
 			.withPermission(CommandPermission.fromString("scriptedquests.translations.changelanguage"))
 			.withAliases("cl")
-			.withArguments(new StringArgument("language").replaceSuggestions(info -> {return getListOfAvailableLanguages(true).values().toArray(new String[0]);}))
+			.withArguments(new StringArgument("language").replaceSuggestions(info -> {
+				return getListOfAvailableLanguages(true).values().toArray(new String[0]);
+			}))
 			.executes((sender, args) -> {
 				changeLanguage(sender, (String)args[0]);
 			}).register();
