@@ -14,7 +14,7 @@ public class TestZone {
 		new CommandAPICommand("testzones")
 			.withPermission(CommandPermission.fromString("scriptedquests.testzones"))
 			.withArguments(new LocationArgument("location"))
-			.withArguments(new TextArgument("layer").overrideSuggestions((sender) -> {
+			.withArguments(new TextArgument("layer").replaceSuggestions(info -> {
 				return plugin.mZoneManager.getLayerNameSuggestions();
 			}))
 			.executes((sender, args) -> {
@@ -25,11 +25,11 @@ public class TestZone {
 		new CommandAPICommand("testzones")
 			.withPermission(CommandPermission.fromString("scriptedquests.testzones"))
 			.withArguments(new LocationArgument("location"))
-			.withArguments(new TextArgument("layer").overrideSuggestions((sender) -> {
+			.withArguments(new TextArgument("layer").replaceSuggestions(info -> {
 				return plugin.mZoneManager.getLayerNameSuggestions();
 			}))
-			.withArguments(new TextArgument("property").overrideSuggestions((sender, args) -> {
-				return plugin.mZoneManager.getLoadedPropertySuggestions((String) args[1]);
+			.withArguments(new TextArgument("property").replaceSuggestions(info -> {
+				return plugin.mZoneManager.getLoadedPropertySuggestions((String) info.previousArgs()[1]);
 			}))
 			.executes((sender, args) -> {
 				return hasProperty(plugin, (Location) args[0], (String) args[1], (String) args[2]);

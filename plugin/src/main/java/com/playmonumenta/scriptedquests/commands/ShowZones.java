@@ -242,7 +242,7 @@ public class ShowZones {
 		new CommandAPICommand("showzones")
 			.withPermission(CommandPermission.fromString("scriptedquests.showzones"))
 			.withArguments(new MultiLiteralArgument("show"))
-			.withArguments(new TextArgument("layer").overrideSuggestions((sender) -> {
+			.withArguments(new TextArgument("layer").replaceSuggestions(info -> {
 				return plugin.mZoneManager.getLayerNameSuggestions();
 			}))
 			.executes((sender, args) -> {
@@ -254,11 +254,11 @@ public class ShowZones {
 		new CommandAPICommand("showzones")
 			.withPermission(CommandPermission.fromString("scriptedquests.showzones"))
 			.withArguments(new MultiLiteralArgument("show"))
-			.withArguments(new TextArgument("layer").overrideSuggestions((sender) -> {
+			.withArguments(new TextArgument("layer").replaceSuggestions(info -> {
 				return plugin.mZoneManager.getLayerNameSuggestions();
 			}))
-			.withArguments(new TextArgument("property").overrideSuggestions((sender, args) -> {
-				return plugin.mZoneManager.getLoadedPropertySuggestions((String) args[1]);
+			.withArguments(new TextArgument("property").replaceSuggestions(info -> {
+				return plugin.mZoneManager.getLoadedPropertySuggestions((String) info.previousArgs()[1]);
 			}))
 			.executes((sender, args) -> {
 				String layerName = (String) args[1];
