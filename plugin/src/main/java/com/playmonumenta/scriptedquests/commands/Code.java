@@ -19,8 +19,12 @@ public class Code {
 			.withArguments(new TextArgument("word1").replaceSuggestions(info -> {
 				return CodeEntry.words;
 			}))
-			.withArguments(new TextArgument("word2").replaceSuggestions(info -> {return CodeEntry.words;}))
-			.withArguments(new TextArgument("word3").replaceSuggestions(info -> {return CodeEntry.words;}))
+			.withArguments(new TextArgument("word2").replaceSuggestions(info -> {
+				return CodeEntry.words;
+			}))
+			.withArguments(new TextArgument("word3").replaceSuggestions(info -> {
+				return CodeEntry.words;
+			}))
 			.executes((sender, args) -> {
 				submitCode(plugin, sender, (String)args[0], (String)args[1], (String)args[2]);
 			})
