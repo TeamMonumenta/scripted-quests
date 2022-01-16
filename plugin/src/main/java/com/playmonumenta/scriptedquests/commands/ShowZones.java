@@ -467,8 +467,6 @@ public class ShowZones {
 		}
 		Player player = (Player)sender;
 
-		BoundingBox bbVisible = BoundingBox.of(player.getLocation(), 32.0, 32.0, 32.0);
-
 		UUID playerUuid = player.getUniqueId();
 		@Nullable ShownInfo shownInfo = mShownInfo.get(playerUuid);
 		if (shownInfo == null) {
