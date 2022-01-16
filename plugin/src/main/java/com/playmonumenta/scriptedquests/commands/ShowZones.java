@@ -1,9 +1,11 @@
 package com.playmonumenta.scriptedquests.commands;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NavigableMap;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
 
@@ -153,8 +155,52 @@ public class ShowZones {
 						                 b);
 				}
 
+				/*
+				 * The number of particles sent to each client can vary wildly;
+				 * estimate the space those particles are spread over to make
+				 * the number of particles sent more consistent.
+				 */
+				Set<ZoneFragment> fragments = mPlugin.mZoneManager.getZoneFragments(bbVisible);
+				Iterator<ZoneFragment> it = fragments.iterator();
+				double maxPossibleTotalArea = 0.0;
+				double maxPossibleTotalLength = 0.0;
+				while (it.hasNext()) {
+					ZoneFragment fragment = it.next();
+					@Nullable Zone targetZone = fragment.getParent(mLayerName);
+					if (targetZone == null) {
+						it.remove();
+						continue;
+					}
+					if (mPropertyName != null && !targetZone.hasProperty(mPropertyName)) {
+						it.remove();
+						continue;
+					}
+
+					Vector minCorner = fragment.minCorner();
+					Vector maxCorner = fragment.maxCornerExclusive();
+
+					double fragMinXShown = Double.max(minX, minCorner.getX());
+					double fragMinYShown = Double.max(minY, minCorner.getY());
+					double fragMinZShown = Double.max(minZ, minCorner.getZ());
+					double fragMaxXShown = Double.min(maxX, maxCorner.getX());
+					double fragMaxYShown = Double.min(maxY, maxCorner.getY());
+					double fragMaxZShown = Double.min(maxZ, maxCorner.getZ());
+					double fragSizeXShown = fragMaxXShown - fragMinXShown;
+					double fragSizeYShown = fragMaxYShown - fragMinYShown;
+					double fragSizeZShown = fragMaxZShown - fragMinZShown;
+
+					// Save *2 part for outside the loop
+					maxPossibleTotalArea += ((fragSizeXShown * fragSizeYShown)
+					                       + (fragSizeXShown * fragSizeZShown)
+					                       + (fragSizeYShown * fragSizeZShown));
+					// Save *4 part for outside the loop
+					maxPossibleTotalLength += fragSizeXShown + fragSizeYShown + fragSizeZShown;
+				}
+				maxPossibleTotalArea *= 2;
+				maxPossibleTotalLength *= 4;
+
 				NavigableMap<Double, FragmentEdge> edgeWeights = new TreeMap<>();
-				for (ZoneFragment fragment : mPlugin.mZoneManager.getZoneFragments(bbVisible)) {
+				for (ZoneFragment fragment : fragments) {
 					@Nullable Zone targetZone = fragment.getParent(mLayerName);
 					if (targetZone == null) {
 						continue;
@@ -224,7 +270,7 @@ public class ShowZones {
 							area = (fragSizeXShown) * (fragSizeYShown);
 						}
 
-						Double faceParticleCount = 1.0 + 0.01 * area;
+						Double faceParticleCount = 1.0 + 25.0 * area / maxPossibleTotalArea;
 						for (int i = faceParticleCount.intValue(); i != 0; --i) {
 							x = randRange(partMinXShown, partMaxXShown);
 							y = randRange(partMinYShown, partMaxYShown);
@@ -275,7 +321,7 @@ public class ShowZones {
 						}
 						edgeWeights.put(maxWeight, edge);
 					}
-					Double edgeParticleCount = 1.0 + (0.1 * maxWeight);
+					Double edgeParticleCount = 1.0 + 50.0 * maxWeight / maxPossibleTotalLength;
 					for (int i = edgeParticleCount.intValue(); i != 0; --i) {
 						@Nullable Entry<Double, FragmentEdge> edgeEntry = edgeWeights.higherEntry(maxWeight * RANDOM.nextDouble());
 						if (edgeEntry == null) {
