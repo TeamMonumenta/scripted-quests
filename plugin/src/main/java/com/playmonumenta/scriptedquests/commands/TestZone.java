@@ -14,9 +14,9 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 
 public class TestZone {
-	public static void register(Plugin plugin) {
-		String[] EXECUTE_FALLBACK_SUGGESTION = {"\"Suggestions unavaible through /execute\""};
+	private static final String[] EXECUTE_FALLBACK_SUGGESTION = {"\"Suggestions unavaible through /execute\""};
 
+	public static void register(Plugin plugin) {
 		new CommandAPICommand("testzones")
 			.withPermission(CommandPermission.fromString("scriptedquests.testzones"))
 			.withArguments(new LocationArgument("location"))

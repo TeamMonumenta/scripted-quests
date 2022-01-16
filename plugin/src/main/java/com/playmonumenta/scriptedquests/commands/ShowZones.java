@@ -35,6 +35,8 @@ import org.bukkit.util.Vector;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 public class ShowZones {
+	private static final String[] EXECUTE_FALLBACK_SUGGESTION = {"\"Suggestions unavaible through /execute\""};
+
 	enum FragmentFace {
 		X_MIN,
 		Y_MIN,
@@ -176,8 +178,12 @@ public class ShowZones {
 					double fragSizeYShown = fragMaxYShown - fragMinYShown;
 					double fragSizeZShown = fragMaxZShown - fragMinZShown;
 
-					double partMinXShown, partMinYShown, partMinZShown;
-					double partMaxXShown, partMaxYShown, partMaxZShown;
+					double partMinXShown;
+					double partMinYShown;
+					double partMinZShown;
+					double partMaxXShown;
+					double partMaxYShown;
+					double partMaxZShown;
 
 					// Trickier, show faces of fragments *unless* they're next to another fragment of the same zone
 					Particle.DustOptions dustOptions = new Particle.DustOptions(color, 0.75f);
@@ -397,8 +403,6 @@ public class ShowZones {
 	protected static Map<UUID, ShownInfo> mShownInfo = new HashMap<>();
 
 	public static void register(Plugin plugin) {
-		String[] EXECUTE_FALLBACK_SUGGESTION = {"\"Suggestions unavaible through /execute\""};
-
 		new CommandAPICommand("showzones")
 			.withPermission(CommandPermission.fromString("scriptedquests.showzones"))
 			.withArguments(new MultiLiteralArgument("hide"))
