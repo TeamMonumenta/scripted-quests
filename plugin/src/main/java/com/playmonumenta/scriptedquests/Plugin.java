@@ -186,7 +186,7 @@ public class Plugin extends JavaPlugin {
 			@Override
 			public void run() {
 				reloadConfig(null);
-				mZoneManager.reload(INSTANCE, null);
+				mZoneManager.reload(INSTANCE, Bukkit.getConsoleSender());
 			}
 		}.runTaskLater(this, 1);
 	}

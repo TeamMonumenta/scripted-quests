@@ -219,7 +219,11 @@ public class Zone extends ZoneBase {
 	}
 
 	public boolean hasProperty(String propertyName) {
-		return mProperties.contains(propertyName);
+		boolean negate = propertyName.charAt(0) == '!';
+		if (negate) {
+			propertyName = propertyName.substring(1);
+		}
+		return negate ^ mProperties.contains(propertyName);
 	}
 
 	private static void applyProperty(Map<String, List<String>> propertyGroups, Set<String> currentProperties, String propertyName) throws Exception {
