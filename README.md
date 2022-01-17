@@ -218,10 +218,20 @@ an NPC, quest components are run in-order (more than one may be executed).
 - Provides helpful debugging to resolve problems with any files that fail to load.
 - Hover over the error messages in chat for more information.
 
+`/clock ~ ~ ~ always <period> [repeater]`
+`/clock ~ ~ ~ player <period> [repeater]`
+`/clock ~ ~ ~ range <range> <period> [repeater]`
+- permission: `scriptedquests.clock`
+- Summons a timer armor stand, which activates the command block below it every `<period>` ticks.
+- Repeating command blocks can be turned on or off with the `repeater` option, checked every `<period>` ticks.
+- The timer armor stand can run `always`, when a non-spectating player is in `range` (blocks) on the same world,
+  or when there is a `player` online on any world on the server.
+
 `/schedule function <namespace:path/to/function> <ticks>`
 - permission: `scriptedquests.schedulefunction`
 - Schedules a function to run #ticks later. This is the exact same function provided in
-  1.14+, except it also allows the same function to be scheduled more than once.
+  1.14+, except it also allows the same function to be scheduled more than once, and
+  preserves the executing entity and location.
 
 `/setvelocity <@e> <x> <y> <z>`
 - permission: `scriptedquests.setvelocity`
