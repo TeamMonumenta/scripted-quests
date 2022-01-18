@@ -50,7 +50,7 @@ public class Clock {
 			if (mRange > 0) {
 				armorStand.addScoreboardTag("range=" + mRange);
 			} else if (mPlayer) {
-				armorStand.addScoreboardTag("player=online");
+				armorStand.addScoreboardTag("range=player");
 			}
 			if (mRepeater) {
 				armorStand.addScoreboardTag("repeat");
