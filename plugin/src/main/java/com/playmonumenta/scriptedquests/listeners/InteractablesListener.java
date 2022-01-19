@@ -120,8 +120,7 @@ public class InteractablesListener implements Listener {
 				return;
 			}
 
-			if (!event.isCancelled()
-				&& mPlugin.mInteractableManager.attackEntityEvent(mPlugin, player, item, damagee)) {
+			if (mPlugin.mInteractableManager.attackEntityEvent(mPlugin, player, item, damagee)) {
 				// interactEntityEvent returning true means this event should be canceled
 				event.setCancelled(true);
 			}

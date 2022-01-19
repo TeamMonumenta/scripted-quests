@@ -15,7 +15,6 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.entity.PlayerLeashEntityEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
 import com.playmonumenta.scriptedquests.Plugin;
@@ -35,7 +34,6 @@ public class EntityListener implements Listener {
 
 		if (damager instanceof Player) {
 			Player player = (Player)damager;
-			ItemStack item = player.getInventory().getItemInMainHand();
 			if (player.isRiptiding()) {
 				return;
 			}
