@@ -91,7 +91,9 @@ public class CommandTimer implements Listener {
 		int playerRangeTemp = -1;
 
 		for (String tag : tags) {
-			if (tag.startsWith("range=")) {
+			if (tag.equals("range=player")) {
+				break;
+			} else if (tag.startsWith("range=")) {
 				playerRangeTemp = Integer.parseInt(tag.substring(6));
 				break;
 			}
@@ -116,9 +118,10 @@ public class CommandTimer implements Listener {
 	private boolean tryAddTimer(final ArmorStand entity, final Set<String> tags, final int playerRange, final Location loc, final TimerCoords coords) {
 		CommandTimerInstance timer;
 
+		boolean playerOnline = tags.contains("range=player");
 		if (tags.contains("repeat")) {
 			if (loc.getBlock().getType().equals(Material.REPEATING_COMMAND_BLOCK)) {
-				timer = new CommandTimerInstance(loc, coords, mPeriodStr, playerRange, true);
+				timer = new CommandTimerInstance(loc, coords, mPeriodStr, playerRange, playerOnline, true);
 			} else {
 				entity.setCustomNameVisible(true);
 				entity.setCustomName(ChatColor.RED + "" + ChatColor.BOLD + "Timer: INVALID BLOCK");
@@ -127,7 +130,7 @@ public class CommandTimer implements Listener {
 			}
 		} else {
 			if (loc.getBlock().getType().equals(Material.COMMAND_BLOCK)) {
-				timer = new CommandTimerInstance(loc, coords, mPeriodStr, playerRange, false);
+				timer = new CommandTimerInstance(loc, coords, mPeriodStr, playerRange, playerOnline, false);
 			} else {
 				entity.setCustomNameVisible(true);
 				entity.setCustomName(ChatColor.RED + "" + ChatColor.BOLD + "Timer: INVALID BLOCK");

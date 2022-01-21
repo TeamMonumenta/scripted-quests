@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import com.playmonumenta.scriptedquests.Plugin;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -18,6 +19,7 @@ public class CommandTimerInstance {
 	private final TimerCoords mCoords;
 	private final String mPeriodStr;
 	private final int mPlayerRange;
+	private final boolean mPlayerOnline;
 	private final boolean mRepeat;
 
 	/*
@@ -28,15 +30,20 @@ public class CommandTimerInstance {
 	 */
 	private boolean mRepeaterEnabled = true;
 
-	public CommandTimerInstance(Location loc, TimerCoords coords, String periodStr, int playerRange, boolean repeat) {
+	public CommandTimerInstance(Location loc, TimerCoords coords, String periodStr, int playerRange, boolean playerOnline, boolean repeat) {
 		mLoc = loc;
 		mCoords = coords;
 		mPeriodStr = periodStr;
 		mPlayerRange = playerRange;
+		mPlayerOnline = playerOnline;
 		mRepeat = repeat;
 	}
 
 	public boolean canRun() {
+		if (mPlayerOnline) {
+			return !Bukkit.getOnlinePlayers().isEmpty();
+		}
+
 		if (mPlayerRange <= 0) {
 			return true;
 		}
@@ -81,8 +88,10 @@ public class CommandTimerInstance {
 			name += ChatColor.GOLD + "Timer ";
 		}
 		name += mPeriodStr + " ";
-		if (mPlayerRange <= 0) {
-			name += ChatColor.DARK_PURPLE + "always ";
+		if (mPlayerOnline) {
+			name += ChatColor.DARK_GREEN + "player online";
+		} else if (mPlayerRange <= 0) {
+			name += ChatColor.DARK_PURPLE + "always";
 		} else if (mPlayerRange > 1000) {
 			name += ChatColor.YELLOW + "range=" + Integer.toString(mPlayerRange);
 		} else {
