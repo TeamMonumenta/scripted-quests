@@ -10,14 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
-import org.bukkit.util.Vector;
-import org.dynmap.DynmapCommonAPI;
-import org.dynmap.markers.AreaMarker;
-import org.dynmap.markers.MarkerAPI;
-import org.dynmap.markers.MarkerSet;
-
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
@@ -26,6 +19,15 @@ import com.playmonumenta.scriptedquests.utils.ZoneUtils;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
+
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+import org.bukkit.util.Vector;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dynmap.DynmapCommonAPI;
+import org.dynmap.markers.AreaMarker;
+import org.dynmap.markers.MarkerAPI;
+import org.dynmap.markers.MarkerSet;
 
 public class ZoneLayer {
 	public static final String DYNMAP_PREFIX = "SQZone";
@@ -48,29 +50,36 @@ public class ZoneLayer {
 		}
 
 		// Load the layer name
-		if (object.get("name") == null ||
-		    object.get("name").getAsString() == null ||
-		    object.get("name").getAsString().isEmpty()) {
+		@Nullable JsonElement nameElement = object.get("name");
+		if (nameElement == null) {
 			throw new Exception("Failed to parse 'name'");
 		}
-		mName = object.get("name").getAsString();
+		@Nullable String name = nameElement.getAsString();
+		if (name == null ||
+		    name.isEmpty()) {
+			throw new Exception("Failed to parse 'name'");
+		}
+		mName = name;
 
 		// Load whether this layer is hidden by default on the dynmap
-		if (object.get("hidden") != null &&
-		    object.get("hidden").getAsBoolean()) {
-			mHidden = object.get("hidden").getAsBoolean();
+		@Nullable JsonElement hiddenElement = object.get("hidden");
+		if (hiddenElement != null &&
+		    hiddenElement.getAsBoolean()) {
+			mHidden = hiddenElement.getAsBoolean();
 		}
 
 		// Load the property groups - why yes, this section is rather long.
-		if (object.get("property_groups") == null ||
-		    object.get("property_groups").getAsJsonObject() == null) {
+		@Nullable JsonElement propertyGroupsElement = object.get("property_groups");
+		if (propertyGroupsElement == null) {
+			throw new Exception("Failed to parse 'property_groups'");
+		}
+		@Nullable JsonObject propertyGroupsJson = propertyGroupsElement.getAsJsonObject();
+		if (propertyGroupsJson == null) {
 			throw new Exception("Failed to parse 'property_groups'");
 		}
 
 		Map<String, List<String>> propertyGroups = new HashMap<String, List<String>>();
 		Map<String, Set<String>> groupReferences = new HashMap<String, Set<String>>();
-
-		JsonObject propertyGroupsJson = object.get("property_groups").getAsJsonObject();
 
 		for (Map.Entry<String, JsonElement> ent : propertyGroupsJson.entrySet()) {
 			String propertyGroupName = ent.getKey();
@@ -79,7 +88,8 @@ public class ZoneLayer {
 			if (propertyGroupName == null || propertyGroupName.isEmpty()) {
 				throw new Exception("Failed to parse 'property_groups': group name may not be empty.");
 			}
-			if (propertyGroupJson.getAsJsonArray() == null) {
+			@Nullable JsonArray propertyGroupJsonArray = propertyGroupJson.getAsJsonArray();
+			if (propertyGroupJsonArray == null) {
 				throw new Exception("Failed to parse 'property_groups." + propertyGroupName + "'");
 			}
 
@@ -87,7 +97,7 @@ public class ZoneLayer {
 			Set<String> ownGroupReferences = new LinkedHashSet<String>();
 
 			Integer propertyGroupIndex = 0;
-			Iterator<JsonElement> propertyGroupIter = propertyGroupJson.getAsJsonArray().iterator();
+			Iterator<JsonElement> propertyGroupIter = propertyGroupJsonArray.iterator();
 
 			while (propertyGroupIter.hasNext()) {
 				JsonElement propertyNameElement = propertyGroupIter.next();
@@ -122,20 +132,25 @@ public class ZoneLayer {
 
 
 		// Load the zones
-		if (object.get("zones") == null ||
-		    object.get("zones").getAsJsonArray() == null) {
+		@Nullable JsonElement zonesElement = object.get("zones");
+		if (zonesElement == null) {
+			throw new Exception("Failed to parse 'zones'");
+		}
+		@Nullable JsonArray zonesArray = zonesElement.getAsJsonArray();
+		if (zonesArray == null) {
 			throw new Exception("Failed to parse 'zones'");
 		}
 
 		Integer zoneIndex = 0;
-		Iterator<JsonElement> zonesIter = object.get("zones").getAsJsonArray().iterator();
+		Iterator<JsonElement> zonesIter = zonesArray.iterator();
 
 		while (zonesIter.hasNext()) {
 			JsonElement zoneElement = zonesIter.next();
-			if (zoneElement.getAsJsonObject() == null) {
+			@Nullable JsonObject zoneObject = zoneElement.getAsJsonObject();
+			if (zoneObject == null) {
 				throw new Exception("Failed to parse 'zones[" + Integer.toString(zoneIndex) + "]'");
 			}
-			Zone zone = Zone.constructFromJson(this, zoneElement.getAsJsonObject(), propertyGroups);
+			Zone zone = Zone.constructFromJson(this, zoneObject, propertyGroups);
 			mLoadedProperties.addAll(zone.getProperties());
 			mZones.add(zone);
 			zoneIndex++;
@@ -173,7 +188,7 @@ public class ZoneLayer {
 	 * handle that on its own.
 	 */
 	public boolean addZone(Vector pos1, Vector pos2, String name, Set<String> properties) {
-		Zone zone = null;
+		@Nullable Zone zone = null;
 
 		try {
 			zone = new Zone(this, pos1, pos2, name, properties);
@@ -286,7 +301,7 @@ public class ZoneLayer {
 	/*
 	 * Use this only as a fallback; it's slower than using a zone tree.
 	 */
-	public Zone fallbackGetZone(Vector loc) {
+	public @Nullable Zone fallbackGetZone(Vector loc) {
 		for (Zone zone : mZones) {
 			if (zone.within(loc)) {
 				return zone;
@@ -306,7 +321,7 @@ public class ZoneLayer {
 		for (int i = 0; i < zones.size(); i++) {
 			Zone outer = zones.get(i);
 			for (Zone inner : zones.subList(i + 1, zones.size())) {
-				ZoneBase overlap = outer.overlappingZone(inner);
+				@Nullable ZoneBase overlap = outer.overlappingZone(inner);
 				if (overlap == null) {
 					continue;
 				}
@@ -317,7 +332,7 @@ public class ZoneLayer {
 										+ ChatColor.BOLD + outer.getName();
 					if (senders != null) {
 						BaseComponent[] errorMessage = TextComponent.fromLegacyText(errorMessageLegacy);
-						for (CommandSender sender : senders) {
+						for (@Nullable CommandSender sender : senders) {
 							if (sender != null) {
 								sender.spigot().sendMessage(errorMessage);
 							}
@@ -334,7 +349,7 @@ public class ZoneLayer {
 	}
 
 	private boolean hasPropertyGroupLoop(Map<String, Set<String>> groupReferences, String startGroup, String continueGroup) {
-		Set<String> subGroupReferences = groupReferences.get(continueGroup);
+		@Nullable Set<String> subGroupReferences = groupReferences.get(continueGroup);
 		if (subGroupReferences == null) {
 			return false;
 		}
@@ -356,12 +371,12 @@ public class ZoneLayer {
 	 * This should only be called by the ZoneManager.
 	 */
 	protected static void clearDynmapLayers() {
-		DynmapCommonAPI dynmapHook = (DynmapCommonAPI) Bukkit.getServer().getPluginManager().getPlugin("dynmap");
+		@Nullable DynmapCommonAPI dynmapHook = (DynmapCommonAPI) Bukkit.getServer().getPluginManager().getPlugin("dynmap");
 		if (dynmapHook == null) {
 			return;
 		}
 
-		MarkerAPI markerHook = dynmapHook.getMarkerAPI();
+		@Nullable MarkerAPI markerHook = dynmapHook.getMarkerAPI();
 		if (markerHook == null) {
 			// Not initialized
 			return;
@@ -380,19 +395,19 @@ public class ZoneLayer {
 	}
 
 	private void refreshDynmapLayer() {
-		DynmapCommonAPI dynmapHook = (DynmapCommonAPI) Bukkit.getServer().getPluginManager().getPlugin("dynmap");
+		@Nullable DynmapCommonAPI dynmapHook = (DynmapCommonAPI) Bukkit.getServer().getPluginManager().getPlugin("dynmap");
 		if (dynmapHook == null) {
 			return;
 		}
 
-		MarkerAPI markerHook = dynmapHook.getMarkerAPI();
+		@Nullable MarkerAPI markerHook = dynmapHook.getMarkerAPI();
 		if (markerHook == null) {
 			// Not initialized
 			return;
 		}
 
 		String markerSetId = DYNMAP_PREFIX + mName.replace(" ", "_");
-		MarkerSet markerSet;
+		@Nullable MarkerSet markerSet;
 
 		markerSet = markerHook.getMarkerSet(markerSetId);
 		if (markerSet != null) {
@@ -429,7 +444,7 @@ public class ZoneLayer {
 			x[1] = maxCorner.getX();
 			z[1] = maxCorner.getZ();
 
-			AreaMarker areaMarker = markerSet.createAreaMarker(zoneId, zoneLabel, false, world, x, z, false);
+			@Nullable AreaMarker areaMarker = markerSet.createAreaMarker(zoneId, zoneLabel, false, world, x, z, false);
 			if (areaMarker != null) {
 				areaMarker.setRangeY(maxCorner.getY(), minCorner.getY());
 				areaMarker.setFillStyle(0.2, zoneColor);

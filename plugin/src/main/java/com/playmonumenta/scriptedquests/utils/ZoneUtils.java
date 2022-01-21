@@ -1,6 +1,8 @@
 package com.playmonumenta.scriptedquests.utils;
 
-import java.awt.Color;
+import static java.awt.Color.HSBtoRGB;
+
+import org.bukkit.Color;
 
 public class ZoneUtils {
 	public static float floatFloorMod(float x, float y) {
@@ -25,6 +27,10 @@ public class ZoneUtils {
 		float value = 1.0f - 0.6f * ((float) ((zoneNameHash >> 16) & 0xffff)) / (float) 0xffff;
 
 		// Mask out alpha channel, dynmap expects only RGB.
-		return Color.HSBtoRGB(hue, saturation, value) & 0x00ffffff;
+		return HSBtoRGB(hue, saturation, value) & 0x00ffffff;
+	}
+
+	public static Color getBukkitColor(String layerName, String zoneName) {
+		return Color.fromRGB(getColor(layerName, zoneName));
 	}
 }

@@ -1,9 +1,11 @@
 package com.playmonumenta.scriptedquests.zones;
 
-import org.bukkit.Axis;
-import org.bukkit.util.Vector;
-
 import com.playmonumenta.scriptedquests.utils.VectorUtils;
+
+import org.bukkit.Axis;
+import org.bukkit.util.BoundingBox;
+import org.bukkit.util.Vector;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public class ZoneBase {
 	protected Vector mPosition;
@@ -93,6 +95,10 @@ public class ZoneBase {
 		mSize = newSize;
 	}
 
+	public BoundingBox boundingBox() {
+		return BoundingBox.of(minCorner(), maxCornerExclusive());
+	}
+
 	public Vector size() {
 		return mSize.clone();
 	}
@@ -127,7 +133,7 @@ public class ZoneBase {
 	/*
 	 * Returns a ZoneBase that is inside this and the other zone.
 	 */
-	public ZoneBase overlappingZone(ZoneBase other) {
+	public @Nullable ZoneBase overlappingZone(ZoneBase other) {
 		Vector selfMin = minCorner();
 		Vector selfMax = maxCorner();
 		Vector otherMin = other.minCorner();

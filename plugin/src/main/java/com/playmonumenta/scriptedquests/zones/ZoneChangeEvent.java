@@ -3,6 +3,7 @@ package com.playmonumenta.scriptedquests.zones;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public class ZoneChangeEvent extends Event {
 	private static final HandlerList handlers = new HandlerList();
@@ -27,11 +28,11 @@ public class ZoneChangeEvent extends Event {
 		return mLayer;
 	}
 
-	public Zone getFromZone() {
+	public @Nullable Zone getFromZone() {
 		return mFromZone;
 	}
 
-	public Zone getToZone() {
+	public @Nullable Zone getToZone() {
 		return mToZone;
 	}
 

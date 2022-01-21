@@ -21,7 +21,9 @@ public class Growable {
 			.withPermission(perm)
 			.withSubcommand(new CommandAPICommand("grow")
 				.withArguments(new LocationArgument("location", LocationType.BLOCK_POSITION))
-				.withArguments(new StringArgument("label").overrideSuggestions(manager.getLabels()))
+				.withArguments(new StringArgument("label").replaceSuggestions(info -> {
+					return manager.getLabels();
+				}))
 				.withArguments(new IntegerArgument("ticksPerStep", 1))
 				.withArguments(new IntegerArgument("blocksPerStep", 1))
 				.withArguments(new BooleanArgument("callStructureGrowEvent"))

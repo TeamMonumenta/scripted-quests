@@ -5,10 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.playmonumenta.scriptedquests.utils.VectorUtils;
+
 import org.bukkit.Axis;
 import org.bukkit.util.Vector;
-
-import com.playmonumenta.scriptedquests.utils.VectorUtils;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /*
  * A fragment of a zone; this is used to find zones quickly, but not hold their properties.
@@ -102,13 +103,13 @@ public class ZoneFragment extends ZoneBase {
 		List<ZoneFragment> result = new ArrayList<ZoneFragment>();
 
 		for (Axis axis : Axis.values()) {
-			ZoneFragment lower;
-			ZoneFragment upper;
+			@Nullable ZoneFragment lower;
+			@Nullable ZoneFragment upper;
 
 			List<ZoneFragment> workZones = result;
 			result = new ArrayList<ZoneFragment>();
 
-			for (ZoneFragment workZone : workZones) {
+			for (@Nullable ZoneFragment workZone : workZones) {
 				// Add zones split from existing split zones
 				tempSplitResult = workZone.splitAxis(otherMin, axis);
 				lower = tempSplitResult[0];
@@ -154,7 +155,7 @@ public class ZoneFragment extends ZoneBase {
 		}
 
 		// Track the new parent zone of the center fragment, even if it's eclipsed.
-		List<Zone> newParentLayerZones = centerZone.mParentsAndEclipsed.get(newParentLayer);
+		@Nullable List<Zone> newParentLayerZones = centerZone.mParentsAndEclipsed.get(newParentLayer);
 		if (newParentLayerZones == null) {
 			newParentLayerZones = new ArrayList<Zone>();
 			centerZone.mParentsAndEclipsed.put(newParentLayer, newParentLayerZones);
@@ -174,9 +175,9 @@ public class ZoneFragment extends ZoneBase {
 	 *
 	 * Assumes fragments do not overlap.
 	 *
-	 * Returns the merged ZoneFragment or None.
+	 * Returns the merged ZoneFragment or null.
 	 */
-	protected ZoneFragment merge(ZoneFragment other) {
+	protected @Nullable ZoneFragment merge(ZoneFragment other) {
 		if (mValid != other.mValid ||
 		    !mParents.equals(other.mParents) ||
 		    !mParentsAndEclipsed.equals(other.mParentsAndEclipsed)) {
@@ -261,7 +262,7 @@ public class ZoneFragment extends ZoneBase {
 	}
 
 	public List<Zone> getParentAndEclipsed(String layer) {
-		List<Zone> zones = mParentsAndEclipsed.get(layer);
+		@Nullable List<Zone> zones = mParentsAndEclipsed.get(layer);
 		List<Zone> result = new ArrayList<Zone>();
 		if (zones != null) {
 			result.addAll(zones);
@@ -270,7 +271,7 @@ public class ZoneFragment extends ZoneBase {
 	}
 
 	public boolean hasProperty(String layerName, String propertyName) {
-		Zone zone = getParent(layerName);
+		@Nullable Zone zone = getParent(layerName);
 		return zone != null && zone.hasProperty(propertyName);
 	}
 

@@ -1,14 +1,17 @@
 package com.playmonumenta.scriptedquests.zones;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-
-import org.bukkit.Axis;
-import org.bukkit.util.Vector;
-
-import org.dynmap.markers.MarkerSet;
+import java.util.Set;
 
 import com.playmonumenta.scriptedquests.utils.VectorUtils;
+
+import org.bukkit.Axis;
+import org.bukkit.util.BoundingBox;
+import org.bukkit.util.Vector;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dynmap.markers.MarkerSet;
 
 public class ZoneTreeParent extends ZoneTreeBase {
 	// The axis this node is split over.
@@ -131,12 +134,28 @@ public class ZoneTreeParent extends ZoneTreeBase {
 		mMore.invalidate();
 	}
 
-	public ZoneFragment getZoneFragment(Vector loc) {
+	public Set<ZoneFragment> getZoneFragments(BoundingBox bb) {
+		Set<ZoneFragment> result = new HashSet<>();
+		double bbMin = VectorUtils.vectorAxis(bb.getMin(), mAxis);
+		double bbMax = VectorUtils.vectorAxis(bb.getMax(), mAxis);
+		if (bbMin < mPivot && bbMax > mMin) {
+			result.addAll(mLess.getZoneFragments(bb));
+		}
+		if (bbMin < mMidMax && bbMax > mMidMin) {
+			result.addAll(mMid.getZoneFragments(bb));
+		}
+		if (bbMin < mMax && bbMax > mPivot) {
+			result.addAll(mMore.getZoneFragments(bb));
+		}
+		return result;
+	}
+
+	public @Nullable ZoneFragment getZoneFragment(Vector loc) {
 		if (loc == null) {
 			return null;
 		}
 
-		ZoneFragment result = null;
+		@Nullable ZoneFragment result = null;
 		double test = VectorUtils.vectorAxis(loc, mAxis);
 
 		// If the test point is outside this node, return null immediately.

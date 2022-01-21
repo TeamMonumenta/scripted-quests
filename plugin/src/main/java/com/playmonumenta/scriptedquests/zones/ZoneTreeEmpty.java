@@ -1,7 +1,11 @@
 package com.playmonumenta.scriptedquests.zones;
 
-import org.bukkit.util.Vector;
+import java.util.HashSet;
+import java.util.Set;
 
+import org.bukkit.util.BoundingBox;
+import org.bukkit.util.Vector;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dynmap.markers.MarkerSet;
 
 public class ZoneTreeEmpty extends ZoneTreeBase {
@@ -9,7 +13,11 @@ public class ZoneTreeEmpty extends ZoneTreeBase {
 		// Nothing to do! Still needs to be a valid method, though.
 	}
 
-	public ZoneFragment getZoneFragment(Vector loc) {
+	public Set<ZoneFragment> getZoneFragments(BoundingBox bb) {
+		return new HashSet<>();
+	}
+
+	public @Nullable ZoneFragment getZoneFragment(Vector loc) {
 		return null;
 	}
 

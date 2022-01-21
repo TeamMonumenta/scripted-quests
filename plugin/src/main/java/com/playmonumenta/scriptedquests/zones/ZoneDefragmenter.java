@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 class ZoneDefragmenter {
 	class FragCombos extends HashMap<Set<Integer>, ZoneFragment> {}
 
@@ -73,7 +75,7 @@ class ZoneDefragmenter {
 					continue;
 				}
 
-				ZoneFragment merged = upperZone.merge(lowerZone);
+				@Nullable ZoneFragment merged = upperZone.merge(lowerZone);
 				if (merged == null) {
 					// Couldn't merge, skip
 					continue;
@@ -98,14 +100,14 @@ class ZoneDefragmenter {
 	 *
 	 * Returns the best solution (list of zones), or null (to continue searching).
 	 */
-	private List<ZoneFragment> optimalMerge(List<ZoneFragment> resultsSoFar, Set<Integer> remainingIds) {
+	private @Nullable List<ZoneFragment> optimalMerge(List<ZoneFragment> resultsSoFar, Set<Integer> remainingIds) {
 		for (Integer mergeLevel = remainingIds.size(); mergeLevel >= 1; mergeLevel--) {
 			FragCombos fragCombos = mMergedCombos.get(mergeLevel);
 			for (Map.Entry<Set<Integer>, ZoneFragment> entry : fragCombos.entrySet()) {
 				Set<Integer> mergedIds = entry.getKey();
 				ZoneFragment mergedZone = entry.getValue();
 
-				List<ZoneFragment> result = new ArrayList<ZoneFragment>(resultsSoFar);
+				@Nullable List<ZoneFragment> result = new ArrayList<ZoneFragment>(resultsSoFar);
 				result.add(mergedZone);
 
 				Set<Integer> overlappedIds = new LinkedHashSet<Integer>(mergedIds);

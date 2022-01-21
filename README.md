@@ -250,6 +250,11 @@ an NPC, quest components are run in-order (more than one may be executed).
 - permission: `scriptedquests.debugzones`
 - Get debug information about which zone a player or position is.
 
+`/showzones hide`
+`/showzones show <layerName> [propertyName]`
+- permission: `scriptedquests.showzones`
+- Shows nearby zones to the player running the command.
+
 `/timerdebug <enabledOnly>`
 - permission: `scriptedquests.timerdebug`
 - Shows a list of all the currently loaded timers. If `enabledOnly` is true, will only
