@@ -93,6 +93,7 @@ public class ModelInstance implements Cloneable {
 
 	public void remove() {
 		for (ArmorStand stand : mStands) {
+			stand.removeMetadata(Constants.PART_MODEL_METAKEY, mPlugin);
 			stand.remove();
 		}
 

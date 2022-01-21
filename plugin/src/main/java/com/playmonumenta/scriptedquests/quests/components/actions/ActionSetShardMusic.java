@@ -67,7 +67,7 @@ public class ActionSetShardMusic implements ActionBase {
 	@Override
 	public void doAction(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
 		ShardInstance shardInstance = Core.getInstance().mShardManager.getShard(player);
-		if (mSong != null || mSilence) {
+		if (shardInstance != null && (mSong != null || mSilence)) {
 			shardInstance.setMusic(mSong);
 		}
 	}
