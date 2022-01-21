@@ -343,6 +343,9 @@ public class ZoneManager {
 		ZoneTreeBase newTree;
 		try {
 			newTree = ZoneTreeBase.createZoneTree(zoneFragments);
+			if (mPlugin.mShowZonesDynmap) {
+				newTree.refreshDynmapTree();
+			}
 		} catch (Exception e) {
 			MessagingUtils.sendStackTrace(mReloadRequesters, e);
 			return;

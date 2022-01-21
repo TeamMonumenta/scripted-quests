@@ -217,7 +217,11 @@ public class ZoneLayer {
 		}
 
 		// Create the new tree.
-		return ZoneTreeBase.createZoneTree(zoneFragments);
+		ZoneTreeBase newTree = ZoneTreeBase.createZoneTree(zoneFragments);
+		if (Plugin.getInstance().mShowZonesDynmap) {
+			newTree.refreshDynmapTree();
+		}
+		return newTree;
 	}
 
 	/*

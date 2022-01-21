@@ -25,10 +25,6 @@ public abstract class ZoneTreeBase {
 			result = new ZoneTreeParent(zones);
 		}
 
-		if (Plugin.getInstance().mShowZonesDynmap) {
-			result.refreshDynmapTree();
-		}
-
 		return result;
 	}
 
