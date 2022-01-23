@@ -46,11 +46,5 @@ jobs:
         ./gradlew build --console=plain | tee compile.log
         set +o pipefail
         cat compile.log | grep '^\[WARNING\].*\.java' | reviewdog -efm="[WARNING] %f:[%l,%c] %m" -name="compiler-warnings" -reporter=github-pr-check
-        set -o pipefail
-
-        ./gradlew checkstyleMain
         cat ./plugin/build/reports/checkstyle/main.xml | reviewdog -f=checkstyle -name="checkstyle (plugin)" -reporter=github-pr-check
-
-        # TODO: These need re-enabling
-        # ./mvn_version_wrapper.sh pmd:pmd --batch-mode --no-snapshot-updates
-        # cat plugin/target/pmd.txt | reviewdog -efm="%f:%l:	%m" -name="pmd" -reporter=github-pr-check
+        cat ./plugin/build/reports/pmd/main.xml -efm='%+P<file name="%f">' -efm='%W<violation beginline="%l%.%#begincolumn="%c%.%#' -efm='%-C<%.%#' -efm='%+C%.%#' -efm='%-Q' -name="pmd" -reporter=github-pr-check
