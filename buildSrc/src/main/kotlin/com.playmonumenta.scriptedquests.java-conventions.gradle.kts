@@ -29,6 +29,11 @@ repositories {
 
     maven {
         url = uri("https://repo.maven.apache.org/maven2/")
+
+    // NBT API
+    maven {
+        url = uri("https://repo.codemc.org/repository/maven-public/")
+    }
     }
 }
 
