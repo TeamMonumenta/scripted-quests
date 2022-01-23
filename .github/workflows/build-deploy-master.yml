@@ -12,15 +12,33 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-    - name: Set up JDK 1.16
+    - name: Set up JDK 1.17
       uses: actions/setup-java@v1
       with:
-        java-version: 1.16
-    - name: Deploy to Github Package Registry
-      working-directory: ./plugin
+        java-version: 1.17
+
+    - name: git config
+      run: |
+          git config --global user.name "Monumenta CI"
+          git config --global user.email "Monumenta.CI@NotARealEmail.com"
+
+    - name: Cache maven dependencies
+      uses: actions/cache@v2
+      env:
+        cache-name: cache-maven-dependencies
+      with:
+        # maven files are stored in `~/.m2/repository`
+        path: |
+          ~/.m2/repository
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        # Create the key based on runner os, cache name, and a hash of all the pom.xml files
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-build-
+
+    - name: Build and deploy to Github Package Registry
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        mkdir -p ~/.m2
-        echo "<settings><servers><server><id>github</id><username>x-access-token</username><password>${GITHUB_TOKEN}</password></server></servers></settings>" > ~/.m2/settings.xml
-        ./deploy.sh
+        ./gradlew publish
