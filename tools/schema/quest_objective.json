@@ -6,8 +6,7 @@
 		"prerequisites",
 		"visible",
 		"display_number",
-		"number_addon",
-		"max",
+		"objective_data",
 		"stages",
 		"completion"
     ],
@@ -55,16 +54,16 @@
 		"stages": {
             "propertyOrder": 6,
             "required": true,
-			"description": "The actions done on certain stages (value numbers) of the Quest Field.",
+			"description": "The actions done on certain stages (value numbers) of the Quest Objective.",
             "type": "array",
 			"items": {
 				"title": "Stage",
-				"description": "A stage in the Quest Field progression",
+				"description": "A stage in the Quest Objective progression",
 				"properties": {
 					"value": {
 						"required": true,
 						"title": "value",
-						"description": "The value that the Quest Field needs to be at in order for these actions to trigger",
+						"description": "The value that the Quest Objective needs to be at in order for these actions to trigger",
 						"type": "integer"
 					},
 					"actions": {
