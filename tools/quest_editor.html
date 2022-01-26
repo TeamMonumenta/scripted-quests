@@ -15,7 +15,8 @@
 <div class='container'>
     <div class='row' style='padding-bottom: 15px;'>
         <div class='col-md-12'>
-            <h1>ScriptedQuests Interactions Editor</h1>
+            <h1>ScriptedQuests Quest Editor</h1>
+            <p>Used to define the names and objectives of a Quest. Allows for the telegraphing of the quest in the Player's Questbook.</p>
             <br>
             <a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html">Entity Types</a>
             <br>
@@ -28,10 +29,8 @@
             <span id='valid_indicator' class='label label-success'></span>
         </div>
     </div>
-</div>
-<div class='container-fluid'>
     <div class='row'>
-        <div class='col-xl'>
+        <div class='col-md-12'>
             <div id='editor_holder'></div>
         </div>
     </div>
@@ -48,43 +47,114 @@
 
         // The schema for the editor
         schema: {
-            title: "NPC Interaction",
+            title: "Quest",
             defaultProperties: [
-                "npc",
-                "quest_components"
+                "quest_id",
+				"quest_name",
+				"level",
+				"type",
+				"rewards",
+				"visible",
+                "quest_fields"
             ],
-            additionalProperties:false,
+            additionalProperties: false,
             properties: {
-                npc: {
+                quest_id: {
                     required: true,
                     propertyOrder: 1,
-                    title: "interaction_id",
-                    description: "The Interaction ID. Any characters except a-zA-Z0-9 will be stripped to create a condensed name to use with /interactnpc",
+                    title: "quest_id",
+                    description: "The Quest ID for this quest.",
                     type: "string"
                 },
-				visibility_prerequisites: {
-					propertyOrder: 2,
-                    title: "visibilityPrerequisites",
-                    description: "The prerequisites for a player to see this NPC",
-                    $ref: "schema/prerequisites.json"				
-				},
-                entity_type: {
+                quest_name: {
+                    propertyOrder: 2,
+                    title: "quest_name",
+                    description: "The display name of the quest.",
+                    type: "string"
+                },
+				level: {
                     propertyOrder: 3,
-                    title: "entity_type",
-                    description: "Bukkit/Spigot EntityType. Can be any of these choices: VILLAGER (default), ARMOR_STAND, BAT, BLAZE, CAVE_SPIDER, CHICKEN, COW, CREEPER, DONKEY, ELDER_GUARDIAN, ENDER_DRAGON, ENDERMAN, ENDERMITE, EVOKER, GHAST, GIANT, GUARDIAN, HORSE, HUSK, ILLUSIONER, IRON_GOLEM, LLAMA, MAGMA_CUBE, MULE, MUSHROOM_COW, OCELOT, PARROT, PIG, PIG_ZOMBIE, POLAR_BEAR, RABBIT, SHEEP, SHULKER, SILVERFISH, SKELETON, SKELETON_HORSE, SLIME, SNOWMAN, SPIDER, SQUID, STRAY, VEX, VINDICATOR, WITCH, WITHER, WITHER_SKELETON, WOLF, ZOMBIE, ZOMBIE_HORSE, ZOMBIE_VILLAGER",
-                    type: "string"
+                    title: "level",
+                    description: "The level of this quest.",
+                    type: "integer"
                 },
-                quest_components: {
+				type: {
+                    propertyOrder: 3,
+                    title: "type",
+                    description: "The type of this quest, usually signifying what content this quest is tied to. Valid values: MAIN, SIDE, CLASS, UNLOCK",
+                    type: "string",
+					default: "SIDE"
+                },
+				visible: {
+                    propertyOrder: 3,
+                    title: "visible",
+                    description: "Whether or not this data will be visible in the quest book.",
+                    type: "boolean",
+					default: true
+                },
+				rewards: {
+					propertyOrder: 4,
+					title: "rewards",
+                    description: "The rewards given for completing this quest.",
+                    type: "object",
+					properties: {
+						xp: {
+							title: "xp",
+							description: "The amount of XP given for completing this quest. This can be done as a static number, or calculated for a certain level.",
+							oneOf: [
+								{
+									title: "number",
+									description: "Specific number of XP to give.",
+									type: "integer"
+								},
+								{
+									title: "percent",
+									description: "Gives XP based on the amount of XP needed to get to the next level specified",
+									properties: {
+										level: {
+											title: "level",
+											description: "The level to base the XP given off of.",
+											type: "integer"
+										},
+										percent: {
+											title: "percent",
+											description: "The percentage of XP to get to get to the next level based on the level specified. This should be a decimal between 0 - 1",
+											type: "number"
+										}
+									},
+									type: "object"
+								}
+							]
+						},
+						coin: {
+							title: "coin",
+							description: "The amount of money/coins given to the player for completing this quest. For reference: 1 coin = 1 Silver Coin, 100 coins = 1 Gold Coin, 10000 coins = 1 Platinum Coin. This has to be a number greater than -1. Leave as 0 for no coins.",
+							type: "integer",
+							default: 0
+						},
+						base_loot: {
+							title: "base_loot",
+							description: "The base loot to give for the player for completing this quest. This can be left blank for no base loot.",
+							$ref: "schema/loot.json"
+						},
+						pick_loot: {
+							title: "pick_loot",
+							description: "The pickable loot that the player can select from for this quest. This is loot that the player can only choose 1 of on completion. This can be left blank for no pickable loot.",
+							$ref: "schema/loot.json"
+						}
+					}
+				},
+                quest_objectives: {
                     required: true,
-                    propertyOrder: 4,
-                    title: "quest_components",
-                    description: "A list of actions with associated prerequisites",
+                    propertyOrder: 5,
+                    title: "quest_objectives",
+                    description: "A list of objectives for this quest",
                     type: "array",
                     format: "tabs",
                     minItems: 1,
                     items: {
-                        title: "Quest component",
-                        $ref: "schema/quest_component.json",
+                        title: "Quest Objective",
+                        $ref: "schema/quest_objective.json",
                     }
                 }
             }

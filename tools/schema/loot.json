@@ -1,0 +1,28 @@
+{
+	"oneOf": [
+		{
+			"title": "Loot Table",
+			"type": "string"
+		},
+		{
+			"title": "RPG Item IDs",
+			"type": "array",
+			"items": {
+				"title": "RPG Item",
+				"type": "object",
+				"properties": {
+					"id": {
+						"title": "id",
+						"description": "The RPG Item ID of the item",
+						"type": "string"
+					},
+					"amount": {
+						"title": "amount",
+						"description": "The amount of the item to give. This number has to be greater than 0.",
+						"type": "integer"
+					}
+				}
+			}
+		}
+	]
+}

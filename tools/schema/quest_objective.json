@@ -1,0 +1,86 @@
+{
+	"type": "object",
+    "defaultProperties": [
+        "objective_id",
+		"objective_description",
+		"prerequisites",
+		"visible",
+		"display_number",
+		"number_addon",
+		"max",
+		"stages",
+		"completion"
+    ],
+	"additionalProperties": false,
+	"properties": {
+		"objective_id": {
+			"propertyOrder": 1,
+			"title": "objective_id",
+			"description": "The Objective ID for this Quest Objective. This has to be unique for this Quest.",
+			"type": "string"
+		},
+		"objective_description": {
+			"propertyOrder": 2,
+			"title": "objective_description",
+			"description": "The Objective's description shown on the sidebar.",
+			"type": "string"
+		},
+		"objective_data": {
+			"propertyOrder": 4,
+			"title": "max",
+			"description": "The max number that the objective data can go up to. This number has to be above 1.",
+			"type": "integer",
+			"default": 1
+		},
+		"visible": {
+			"propertyOrder": 3,
+			"title": "visible",
+			"description": "Toggles on whether or not this Objective is displayed in the questbook. Good for internal/hidden quest values",
+			"type": "boolean",
+			"default": true
+		},
+		"display_number": {
+			"propertyOrder": 3,
+			"title": "display_number",
+			"description": "Toggles on whether or not this objective will have its objective data amount displayed, along with its maximum.",
+			"type": "boolean",
+			"default": true
+		},
+	    "prerequisites": {
+            "propertyOrder": 5,
+            "required": false,
+			"description": "The prerequisites to display this objective in the quest book. Leave this blank if this objective will always be available.",
+            "$ref": "prerequisites.json"
+        },
+		"stages": {
+            "propertyOrder": 6,
+            "required": true,
+			"description": "The actions done on certain stages (value numbers) of the Quest Field.",
+            "type": "array",
+			"items": {
+				"title": "Stage",
+				"description": "A stage in the Quest Field progression",
+				"properties": {
+					"value": {
+						"required": true,
+						"title": "value",
+						"description": "The value that the Quest Field needs to be at in order for these actions to trigger",
+						"type": "integer"
+					},
+					"actions": {
+						"required": true,
+						"description": "The actions to be performed when the quest reaches this stage",
+						"$ref": "actions.json"
+					}
+				},
+				"type": "object"
+			}
+		},
+		"completion": {
+            "propertyOrder": 7,
+            "required": true,
+			"description": "The actions done on completion. Can be left blank.",
+            "$ref": "actions.json"
+		}
+	}
+}
