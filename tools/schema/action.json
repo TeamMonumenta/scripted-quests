@@ -8,6 +8,7 @@
 			"description": "Accepts the quest that is specified by the quest ID, adding the Quest to the player's questbook, and starting the player at Stage 1 of the quest. This works if the player does not currently have this quest, and if the Prerequisite 'can_accept_quest' is true. (This prerequisite is ran automatically by this action)",
 			"type": "string"
 		},
+		
 		"quest_progress": {
 			"title": "quest_progress",
 			"description": "Progresses the specified quest by changing the specified objectives that's in the specified stage numbers using the specified values. If all of the objectives for a stage is completed, it will automatically progress the player to the next stage of the quest, except if the player is already on the last stage of the quest.",
