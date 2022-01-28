@@ -1,0 +1,10 @@
+{
+    "title": "actions",
+    "type": "array",
+    "items": {
+        "defaultProperties": [
+            "dialog"
+        ],
+        "$ref": "action.json"
+    }
+}
