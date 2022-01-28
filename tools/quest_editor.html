@@ -55,7 +55,7 @@
 				"type",
 				"rewards",
 				"visible",
-                "quest_objectives"
+                "quest_stages"
             ],
             additionalProperties: false,
             properties: {
@@ -159,7 +159,11 @@
 							quest_objectives: {
 								title: "quest_objectives",
 								description: "The list of objectives for this quest to complete.",
-								$ref: "schema/quest_objective.json"
+								type: "array",
+								items: {
+									title: "Quest Objective",
+									$ref: "schema/quest_objective.json"
+								}
 							},
 							stage_start: {
 								title: "stage_start",
