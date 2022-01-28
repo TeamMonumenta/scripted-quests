@@ -200,6 +200,25 @@ public class QuestActions {
 		return mActions;
 	}
 
+	/**
+	 * Gets the Actions from this QuestActions object.
+	 * @param deep If true, it will also get the list of actions from the actions that also have a list of them.
+	 * @param player The player to check all of the prerequisites for certain actions. Null if the check is not required
+	 * @return A list of all the actions
+	 */
+	public List<ActionBase> getActions(boolean deep, Player player) {
+		List<ActionBase> actions = new ArrayList<>();
+
+		for (ActionBase action : mActions) {
+			actions.add(action);
+			if (deep) {
+
+			}
+		}
+
+		return actions;
+	}
+
 	public void doActions(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
 		if (mPrerequisites == null || mPrerequisites.prerequisiteMet(player, npcEntity)) {
 			if (mDelayTicks <= 0) {

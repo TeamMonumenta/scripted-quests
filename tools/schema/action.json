@@ -5,8 +5,20 @@
     "properties": {
 	    "quest_accept": {
 			"title": "quest_accept",
-			"description": "Accepts the quest that is specified by the quest ID, adding the Quest to the player's questbook, and starting the player at Stage 1 of the quest. This works if the player does not currently have this quest, and if the Prerequisite 'can_accept_quest' is true. (This prerequisite is ran automatically by this action)",
-			"type": "string"
+			"description": "Accepts the quest that is specified by the quest ID, adding the Quest to the player's questbook, and starting the player at Stage 1 of the quest. This works if the player does not currently have this quest, and if the Prerequisite 'can_accept_quest' is true. (This prerequisite is ran automatically by this action). If the player successfully accepts this quest, the actions specified will be executed.",
+			"type": "object",
+			"properties": {
+				"quest_id": {
+					"title": "quest_id",
+					"description": "The Quest ID that we are accepting.",
+					"type": "string"
+				},
+				"actions": {
+					"title": "actions",
+					"description": "The actions taken whenever the quest is accepted.",
+					"$ref": "actions.json"
+				}
+			}
 		},
 		
 		"quest_progress": {
