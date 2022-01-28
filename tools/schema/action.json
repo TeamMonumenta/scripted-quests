@@ -3,6 +3,84 @@
     "type": "object",
     "additionalProperties": false,
     "properties": {
+	    "quest_accept": {
+			"title": "quest_accept",
+			"description": "Accepts the quest that is specified by the quest ID, adding the Quest to the player's questbook, and starting the player at Stage 1 of the quest. This works if the player does not currently have this quest, and if the Prerequisite 'can_accept_quest' is true. (This prerequisite is ran automatically by this action)",
+			"type": "string"
+		},
+		"quest_progress": {
+			"title": "quest_progress",
+			"description": "Progresses the specified quest by changing the specified objectives that's in the specified stage numbers using the specified values. If all of the objectives for a stage is completed, it will automatically progress the player to the next stage of the quest, except if the player is already on the last stage of the quest.",
+			"type": "object",
+			"properties": {
+				"quest_id": {
+					"title": "quest_id",
+					"description": "The Quest ID that we are progressing.",
+					"type": "string"
+				},
+				"progress_changes": {
+					"title": "progress_changes",
+					"description": "The list of progress changes made to this quest.",
+					"type": "array",
+					"items": {
+						"title": "Progress Change",
+						"type": "object",
+						"properties": {
+							"stage": {
+								"title": "stage",
+								"description": "The numerical stage that is having its objectives being changed to. If the stage number is -1, then it will automatically default to whatever stage the player is currently on. If the stage number is invalid (out of range and NOT -1), then nothing will happen.",
+								"type": "integer",
+								"default": -1
+							},
+							"objective_id": {
+								"title": "objective_id",
+								"description": "The objective that we are changing, specified by the objective ID. If the objective ID is invalid, then nothing will happen.",
+								"type": "string"
+							},
+							"objective_value": {
+								"title": "objective_value",
+								"description": "The new value that we are changing the objective to. Using + or - before the value will increment or decrement the value respectively. The value can only be between 0 and the maximum specified by the objective"
+							}
+						}
+					}
+				}
+			}
+		},
+		"quest_reset_stage": {
+			"title": "quest_reset_stage",
+			"description": "Resets the specified stage for the specified quest, setting all quest objectives back to their default values. If the quest stage is -1, this will reset the stage that the player is currently on. If the quest stage is invalid (out of range AND not -1), nothing will happen.",
+			"type": "object",
+			"properties": {
+				"quest_id": {
+					"title": "quest_id",
+					"description": "The Quest ID that we are resetting the stage for.",
+					"type": "string"
+				},
+				"quest_stage": {
+					"title": "quest_stage",
+					"description": "The quest stage that we are resetting.",
+					"type": "integer",
+					"default": -1
+			}
+		},
+		"quest_complete": {
+			"title": "quest_complete",
+			"description": "Completes the quest that is specified by the quest ID, prompting a rewards screen which the player can receive their rewards from, and afterwards marking the quest as completed. For this, you can also specify additional actions to occur after the player completes the quest.",
+			"type": "object",
+			"properties": {
+				"quest_id": {
+					"title": "quest_id",
+					"description": "The Quest ID that we are marking off as complete and using the rewards from.",
+					"type": "string"
+				},
+				"actions": {
+					"title": "actions",
+					"description": "The actions taken whenever the quest is completed.",
+					"$ref": "actions.json"
+				}
+			}
+		},
+
 		"prerequisites": {
 			"title": "prerequisites",
             "description": "The prerequisites required for this action to run.",
@@ -615,11 +693,6 @@
                     "type": "string"
                 }
             }
-        },
-        "voice_over": {
-            "title": "voice_over",
-            "description": "Play a sound to the player as an NPC (WIP)",
-            "type": "string"
         },
         "rerun_components": {
             "title": "rerun_components",

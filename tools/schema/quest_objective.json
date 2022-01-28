@@ -6,7 +6,7 @@
 		"prerequisites",
 		"visible",
 		"display_number",
-		"objective_data",
+		"objective_max",
 		"stages",
 		"completion"
     ],
@@ -24,35 +24,42 @@
 			"description": "The Objective's description shown on the sidebar.",
 			"type": "string"
 		},
-		"objective_data": {
-			"propertyOrder": 4,
-			"title": "max",
+		"objective_max": {
+			"propertyOrder": 3,
+			"title": "objective_max",
 			"description": "The max number that the objective data can go up to. This number has to be above 1.",
 			"type": "integer",
 			"default": 1
 		},
+		"objective_default": {
+			"propertyOrder": 4,
+			"title": "objective_default",
+			"description": "[OPTIONAL] The default objective value that this objective starts at.",
+			"type": "integer",
+			"default": 0
+		},
 		"visible": {
-			"propertyOrder": 3,
+			"propertyOrder": 5,
 			"title": "visible",
 			"description": "Toggles on whether or not this Objective is displayed in the questbook. Good for internal/hidden quest values",
 			"type": "boolean",
 			"default": true
 		},
 		"display_number": {
-			"propertyOrder": 3,
+			"propertyOrder": 6,
 			"title": "display_number",
 			"description": "Toggles on whether or not this objective will have its objective data amount displayed, along with its maximum.",
 			"type": "boolean",
 			"default": true
 		},
 	    "prerequisites": {
-            "propertyOrder": 5,
+            "propertyOrder": 7,
             "required": false,
 			"description": "The prerequisites to display this objective in the quest book. Leave this blank if this objective will always be available.",
             "$ref": "prerequisites.json"
         },
 		"stages": {
-            "propertyOrder": 6,
+            "propertyOrder": 8,
             "required": true,
 			"description": "The actions done on certain stages (value numbers) of the Quest Objective.",
             "type": "array",
@@ -76,7 +83,7 @@
 			}
 		},
 		"completion": {
-            "propertyOrder": 7,
+            "propertyOrder": 9,
             "required": true,
 			"description": "The actions done on completion. Can be left blank.",
             "$ref": "actions.json"

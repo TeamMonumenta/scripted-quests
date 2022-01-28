@@ -4,6 +4,91 @@
     "defaultProperties": [],
     "additionalProperties": false,
     "properties": {
+	    "can_accept_quest": {
+			"propertyOrder": 0,
+			"title": "can_accept_quest",
+			"description": "Checks to see if the player can accept the specified quest. Input the Quest ID of the quest you're checking for. The player can accept the quest if it meets all of the (applicable) requirements. These are set by the Quest automatically depending on what parameters you put in. The prerequisites checked are, but not limited to: Questline progression, Level, previous quests done, prerequisites defined by the Quest file. This will automatically return false if the player already has this quest, or they have completed this quest.",
+			"type": "string",
+			"default": "quest_id"
+		},
+		"is_quest_completed": {
+			"propertyOrder": 0,
+			"title": "is_quest_completed",
+			"description": "Checks to see if the player has completed the following quest. Input the Quest ID you're checking for.",
+			"type": "string",
+			"default": "quest_id"
+		},
+		"is_on_quest_stage": {
+			"propertyOrder": 0,
+			"title": "is_on_quest_stage",
+			"description": "Checks to see if the player is on the specified stage for the following quest. Input the Quest ID you're checking for. This will always return false if the player has the quest completed.",
+			"type": "object",
+			"properties": {
+				"quest_id": {
+					"title": "quest_id",
+					"description": "The Quest ID that we're checking.",
+					"type": "string"
+				},
+				"quest_stage": {
+					"title": "quest_stage",
+					"description": "The Quest Stage we are checking to see if the player is currently on it.",
+					"type": "integer",
+					"default": 1
+				}
+			}
+		},
+		"check_quest_objectives": {
+            "propertyOrder": 0,
+            "title": "check_quest_objectives",
+            "description": "Checks that the player has the specified Quest Objective value(s) in the specified Quest Stage. Click Properties, then type in the Quest Objective ID in the input box and click the 'add' button. Quest Objective ids are case-sensitive",
+            "type": "array",
+			"items": {
+                "type": "object",
+				"properties": {
+				    "quest_id": {
+						"title": "Quest ID",
+						"type": "string"
+					},
+					"quest_stage": {
+						"title": "quest_stage",
+						"description": "The stage that is being checked. Use -1 if the current stage that the player is on is being checked",
+						"type": "integer",
+						"default": -1
+					},
+					"quest_objectives": {
+					    "type": "object",
+						"patternProperties": {
+							".*": {
+								"headerTemplate": "{{i}}",
+								"options": {
+									"keep_oneof_values": false
+								},
+								"oneOf": [
+									{
+										"title": "Exactly",
+										"$ref": "score.json"
+									},
+									{
+										"title": "Range",
+										"type": "object",
+										"properties": {
+											"min": {
+												"title": "Minimum",
+												"$ref": "score.json"
+											},
+											"max": {
+												"title": "Maximum",
+												"$ref": "score.json"
+											}
+										}
+									}
+								]
+							}
+						}
+					}
+				}
+            }
+		},
         "check_scores": {
             "propertyOrder": 1,
             "title": "check_scores",

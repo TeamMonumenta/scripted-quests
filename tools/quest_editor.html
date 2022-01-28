@@ -144,17 +144,34 @@
 						}
 					}
 				},
-                quest_objectives: {
+                quest_stages: {
                     required: true,
                     propertyOrder: 5,
-                    title: "quest_objectives",
-                    description: "A list of objectives for this quest",
+                    title: "quest_stages",
+                    description: "A list of Quest Stages for this Quest. Quest Stages are groups of Objectives that the player needs to complete in order to progress to the next stage. Whenever the player has completed all of the objectives in a stage, they will automatically progress to the next stage. The Stage number is determined by the position of the stage in the list. The first stage in the list (the very top Stage) will ALWAYS be Stage 1.",
                     type: "array",
                     format: "tabs",
                     minItems: 1,
                     items: {
-                        title: "Quest Objective",
-                        $ref: "schema/quest_objective.json",
+                        title: "Quest Stage",
+						type: "object",
+						properties: {
+							quest_objectives: {
+								title: "quest_objectives",
+								description: "The list of objectives for this quest to complete.",
+								$ref: "schema/quest_objective.json"
+							},
+							stage_start: {
+								title: "stage_start",
+								description: "A list of actions to perform whenever the player begins this stage.",
+								$ref: "schema/actions.json"
+							},
+							stage_complete: {
+								title: "stage_complete",
+								description: "A list of actions to perform whenever the player completes this stage.",
+								$ref: "schema/actions.json"
+							}
+						}
                     }
                 }
             }
