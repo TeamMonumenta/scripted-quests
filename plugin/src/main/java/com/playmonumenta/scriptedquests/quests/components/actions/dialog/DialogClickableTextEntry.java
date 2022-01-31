@@ -1,10 +1,13 @@
 package com.playmonumenta.scriptedquests.quests.components.actions.dialog;
 
-import java.util.HashMap;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
+import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
+import com.playmonumenta.scriptedquests.quests.components.actions.ActionBase;
+import com.playmonumenta.scriptedquests.quests.components.actions.ActionNested;
 import com.playmonumenta.scriptedquests.quests.components.actions.ActionQuestMarker;
+import com.playmonumenta.scriptedquests.quests.components.actions.quest.ActionQuest;
 import me.Novalescent.utils.FormattedMessage;
 import me.Novalescent.utils.MessageFormat;
 import org.bukkit.ChatColor;
@@ -24,9 +27,9 @@ import com.playmonumenta.scriptedquests.quests.components.QuestActions;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 
-public class DialogClickableTextEntry extends ActionQuestMarker implements DialogBase {
+public class DialogClickableTextEntry extends ActionQuestMarker implements DialogBase, ActionNested {
 
-	public class PlayerClickableTextEntry {
+	public static class PlayerClickableTextEntry {
 		private final QuestPrerequisites mPrerequisites;
 		private final QuestPrerequisites mVisibilityPrerequisites;
 		private final QuestActions mActions;
@@ -63,10 +66,12 @@ public class DialogClickableTextEntry extends ActionQuestMarker implements Dialo
 	private QuestActions mActions;
 	private int mIdx;
 	public int mClickType = 0;
+	private final ActionNested mParent;
 
 	public DialogClickableTextEntry(String npcName, String displayName, EntityType entityType,
-	                                JsonElement element, int elementIdx) throws Exception {
+	                                JsonElement element, int elementIdx, ActionNested parent) throws Exception {
 		super(element.getAsJsonObject());
+		mParent = parent;
 		JsonObject object = element.getAsJsonObject();
 		mIdx = elementIdx;
 		if (object == null) {
@@ -108,8 +113,6 @@ public class DialogClickableTextEntry extends ActionQuestMarker implements Dialo
 				}
 			} else if (key.equals("player_valid_radius")) {
 				mRadius = value.getAsDouble();
-			} else if (key.equals("actions")) {
-				mActions = new QuestActions(npcName, displayName, entityType, delayTicks, value);
 			} else if (key.equals("prerequisites")) {
 				mPrerequisites = new QuestPrerequisites(value);
 			} else if (key.equals("click_type")) {
@@ -117,13 +120,36 @@ public class DialogClickableTextEntry extends ActionQuestMarker implements Dialo
 			}
 		}
 
+		// Initialize actions last so that way Prerequisites can happen first
+		mActions = new QuestActions(npcName, displayName, entityType, delayTicks, object.get("actions"), this);
+
 		if (mActions == null) {
 			throw new Exception("clickable_text value without an action!");
 		}
 	}
 
+	@Override
+	public ActionNested getParent() {
+		return mParent;
+	}
+
+	@Override
 	public QuestPrerequisites getPrerequisites() {
 		return mPrerequisites;
+	}
+
+	@Override
+	public List<ActionQuest> getQuestActions() {
+		return new ArrayList<>();
+	}
+
+	@Override
+	public List<QuestComponent> getQuestComponents(Entity entity) {
+		return Collections.emptyList();
+	}
+
+	public QuestActions getActions() {
+		return mActions;
 	}
 
 	@SuppressWarnings("unchecked")

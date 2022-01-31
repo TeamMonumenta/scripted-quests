@@ -18,6 +18,12 @@ public class QuestPrerequisites implements PrerequisiteBase {
 	private final String mOperator;
 	private final boolean mUseNpcForPrereqs;
 
+	public QuestPrerequisites(List<PrerequisiteBase> prerequisites) {
+		mPrerequisites.addAll(prerequisites);
+		mOperator = "and";
+		mUseNpcForPrereqs = false;
+	}
+
 	/* Default to AND if no operator specified */
 	public QuestPrerequisites(JsonElement element) throws Exception {
 		this(element, "and", false);
@@ -252,5 +258,18 @@ public class QuestPrerequisites implements PrerequisiteBase {
 	 */
 	public List<PrerequisiteBase> getPrerequisites() {
 		return new ArrayList<>(mPrerequisites);
+	}
+
+	/**
+	 * Merges the specified QuestPrerequisites into this one.
+	 * @param toMerge The QuestPrerequisites to merge with
+	 * @return A cloned version of these prerequisites with the new, merged version.
+	 */
+	public QuestPrerequisites merge(QuestPrerequisites toMerge) {
+		List<PrerequisiteBase> prerequisitesList = getPrerequisites();
+		if (toMerge != null && !toMerge.getPrerequisites().isEmpty()) {
+			prerequisitesList.add(toMerge);
+		}
+		return new QuestPrerequisites(prerequisitesList);
 	}
 }

@@ -2,10 +2,10 @@ package com.playmonumenta.scriptedquests.quests.components.actions;
 
 import com.google.gson.JsonElement;
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.quests.QuestData;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import me.Novalescent.Core;
 import me.Novalescent.player.PlayerData;
-import me.Novalescent.player.quests.QuestData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 

@@ -3,20 +3,17 @@ package com.playmonumenta.scriptedquests.quests.components.actions;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.quests.QuestDataLink;
+import com.playmonumenta.scriptedquests.quests.*;
 import com.playmonumenta.scriptedquests.quests.components.QuestActions;
-import com.playmonumenta.scriptedquests.quests.components.QuestFieldLink;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import me.Novalescent.Core;
 import me.Novalescent.player.PlayerData;
 import me.Novalescent.player.options.RPGOption;
-import me.Novalescent.player.quests.QuestData;
 import me.Novalescent.player.quests.QuestTemplate;
 import me.Novalescent.player.scoreboards.PlayerScoreboard;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Villager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,27 +56,52 @@ public class ActionSetQuestData implements ActionBase {
 
 			QuestData tracked = data.getTrackedQuest();
 
-			QuestDataLink link = plugin.mQuestDataLinkManager.getQuestDataLink(questData.mId);
-			if (link != null) {
+			Quest quest = plugin.mQuestManager.getQuest(questData.mId);
 
-				runStages(plugin, player, link, mFieldName,
-					questData.getEntry(mFieldName), mOperation == SET_EXACT ? value : questData.getEntry(mFieldName) + value);
 
-				if (link.mVisible) {
-					if ((boolean) data.mOptions.getOptionValue(RPGOption.AUTOTRACK_QUESTS) &&
-						!questData.mTracked && tracked == null) {
-						questData.mTracked = true;
-						tracked = questData;
-					}
+			// QuestDataLink link = plugin.mQuestDataLinkManager.getQuestDataLink(questData.mId);
+
+			if ((boolean) data.mOptions.getOptionValue(RPGOption.AUTOTRACK_QUESTS) &&
+				!questData.mTracked && tracked == null) {
+				questData.mTracked = true;
+				tracked = questData;
+			}
+//			if (link != null) {
+//
+//				runStages(plugin, player, link, mFieldName,
+//					questData.getEntry(mFieldName), mOperation == SET_EXACT ? value : questData.getEntry(mFieldName) + value);
+//
+//				if (link.mVisible) {
+//					if ((boolean) data.mOptions.getOptionValue(RPGOption.AUTOTRACK_QUESTS) &&
+//						!questData.mTracked && tracked == null) {
+//						questData.mTracked = true;
+//						tracked = questData;
+//					}
+//				}
+//			}
+
+			// LEGACY CODE
+			// Usually legacy quests have all of their objectives one 1 stage, so get the first stage.
+			QuestStageData stageData = questData.getStageData(1);
+			QuestStage stage = quest.getStage(1);
+			QuestObjective objective = stage.getObjective(mFieldName);
+
+			if (mOperation == SET_EXACT) {
+				if (objective != null) {
+					stageData.setObjective(mFieldName, objective.getObjectiveMax(), value, 0);
+				} else {
+					stageData.setObjective(mFieldName, 9999, value, 0);
+				}
+
+			} else if (mOperation == INCREMENT) {
+				if (objective != null) {
+					stageData.changeObjective(mFieldName, objective.getObjectiveMax(), value, 0);
+				} else {
+					stageData.changeObjective(mFieldName, 9999, value, 0);
 				}
 			}
 
-			boolean maxed = false;
-			if (mOperation == SET_EXACT) {
-				maxed = questData.setEntry(mFieldName, value);
-			} else if (mOperation == INCREMENT) {
-				maxed = questData.changeEntry(mFieldName, value);
-			}
+			boolean maxed = objective != null && stageData.getObjective(mFieldName) == objective.getObjectiveMax();
 
 			PlayerScoreboard scoreboard = data.mScoreboard;
 			if (scoreboard.mTemplate != null) {
@@ -170,7 +192,7 @@ public class ActionSetQuestData implements ActionBase {
 					questData.mCompleted = mCompleted;
 
 					PlayerScoreboard scoreboard = data.mScoreboard;
-					if (scoreboard.mTemplate != null && scoreboard.mTemplate instanceof QuestTemplate) {
+					if (scoreboard.mTemplate instanceof QuestTemplate) {
 						scoreboard.updateScoreboard();
 					}
 				}
@@ -183,6 +205,9 @@ public class ActionSetQuestData implements ActionBase {
 			if (maxed) {
 				QuestData questData = data.getQuestData(mId);
 				if (questData != null) {
+					Quest quest = plugin.mQuestManager.getQuest(questData.mId);
+
+
 					QuestDataLink link = plugin.mQuestDataLinkManager.getQuestDataLink(questData.mId);
 
 					if (link != null) {

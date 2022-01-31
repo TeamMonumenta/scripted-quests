@@ -3,8 +3,6 @@ package com.playmonumenta.scriptedquests.quests;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.playmonumenta.scriptedquests.quests.components.QuestFieldLink;
-import me.Novalescent.player.quests.QuestData;
 
 import java.util.*;
 
@@ -30,9 +28,6 @@ public class  QuestDataLink {
 		}
 
 		mLevel = object.get("level").getAsInt();
-		if (mLevel == null) {
-			throw new Exception("level value is not a string!");
-		}
 
 		if (object.has("visible")) {
 			mVisible = object.get("visible").getAsBoolean();

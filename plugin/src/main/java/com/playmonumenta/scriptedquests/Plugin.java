@@ -48,6 +48,7 @@ public class Plugin extends JavaPlugin {
 	public ModelManager mModelManager;
 	public TimerManager mTimerManager;
 	public QuestPointManager mPointManager;
+	public QuestManager mQuestManager;
 
 	public World mWorld;
 	public Random mRandom = new Random();
@@ -115,6 +116,7 @@ public class Plugin extends JavaPlugin {
 		mTimerManager = new TimerManager(this);
 		mModelManager = new ModelManager(this);
 		mPointManager = new QuestPointManager();
+		mQuestManager = new QuestManager();
 
 		manager.registerEvents(new EntityListener(this), this);
 		manager.registerEvents(new PlayerListener(this), this);
@@ -173,6 +175,7 @@ public class Plugin extends JavaPlugin {
 		mModelManager.reload(this, sender);
 		mTimerManager.reload(this, sender);
 		mPointManager.reload(this, sender);
+		mQuestManager.reload(this, sender);
 	}
 
 	public void reloadZones(CommandSender sender) {

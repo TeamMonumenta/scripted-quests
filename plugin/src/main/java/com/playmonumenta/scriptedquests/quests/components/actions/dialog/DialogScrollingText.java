@@ -7,8 +7,12 @@ import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.point.AreaBounds;
 import com.playmonumenta.scriptedquests.point.Point;
 import com.playmonumenta.scriptedquests.quests.components.QuestActions;
+import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
+import com.playmonumenta.scriptedquests.quests.components.actions.ActionBase;
+import com.playmonumenta.scriptedquests.quests.components.actions.ActionNested;
 import com.playmonumenta.scriptedquests.quests.components.actions.ActionQuestMarker;
+import com.playmonumenta.scriptedquests.quests.components.actions.quest.ActionQuest;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 import me.Novalescent.Constants;
 import me.Novalescent.mobs.npcs.RPGNPC;
@@ -23,10 +27,11 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-public class DialogScrollingText extends ActionQuestMarker implements DialogBase {
+public class DialogScrollingText extends ActionQuestMarker implements DialogBase, ActionNested {
 	private Double mRadius = 4.0;
 	private String mDisplayName;
 	private ArrayList<String> mText = new ArrayList<String>();
@@ -34,10 +39,12 @@ public class DialogScrollingText extends ActionQuestMarker implements DialogBase
 	public int mClickType = 0;
 	private boolean mRaw = false;
 	private boolean mAutoScroll = false;
+	private final ActionNested mParent;
 
-	public DialogScrollingText(String displayName, JsonElement element) throws Exception {
+	public DialogScrollingText(String displayName, JsonElement element, ActionNested parent) throws Exception {
 		super(element.getAsJsonObject());
 
+		mParent = parent;
 		mDisplayName = displayName;
 		JsonObject jsonObject = element.getAsJsonObject();
 		if (jsonObject == null) {
@@ -45,12 +52,11 @@ public class DialogScrollingText extends ActionQuestMarker implements DialogBase
 		}
 
 		JsonArray array = jsonObject.get("text").getAsJsonArray();
-		Iterator<JsonElement> iter = array.iterator();
-		while (iter.hasNext()) {
-			mText.add(iter.next().getAsString());
+		for (JsonElement jsonElement : array) {
+			mText.add(jsonElement.getAsString());
 		}
 
-		mActions = new QuestActions("", displayName, EntityType.VILLAGER, 0, jsonObject.get("actions"));
+		mActions = new QuestActions("", displayName, EntityType.VILLAGER, 0, jsonObject.get("actions"), parent);
 
 		if (jsonObject.has("click_type")) {
 			mClickType = jsonObject.get("click_type").getAsInt();
@@ -69,6 +75,10 @@ public class DialogScrollingText extends ActionQuestMarker implements DialogBase
 		}
 	}
 
+	public QuestActions getActions() {
+		return mActions;
+	}
+
 	@Override
 	public void sendDialog(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
 		ScrollingTextActive active = new ScrollingTextActive(plugin, player, npcEntity, mText, mActions, prereqs,
@@ -83,5 +93,25 @@ public class DialogScrollingText extends ActionQuestMarker implements DialogBase
 		if (mAutoScroll) {
 			active.toggleScroll();
 		}
+	}
+
+	@Override
+	public ActionNested getParent() {
+		return mParent;
+	}
+
+	@Override
+	public QuestPrerequisites getPrerequisites() {
+		return null;
+	}
+
+	@Override
+	public List<ActionQuest> getQuestActions() {
+		return new ArrayList<>();
+	}
+
+	@Override
+	public List<QuestComponent> getQuestComponents(Entity entity) {
+		return Collections.emptyList();
 	}
 }

@@ -53,8 +53,9 @@
 				"quest_name",
 				"level",
 				"type",
-				"rewards",
 				"visible",
+				"prerequisites",
+				"rewards",
                 "quest_stages"
             ],
             additionalProperties: false,
@@ -92,6 +93,12 @@
                     type: "boolean",
 					default: true
                 },
+				prerequisites: {
+					propertyOrder: 4,
+					title: "prerequisites",
+					description: "[OPTIONAL] Additional prerequisites that the player must meet in order to accept this quest.",
+					$ref: "schema/prerequisites.json"
+				},
 				rewards: {
 					propertyOrder: 4,
 					title: "rewards",

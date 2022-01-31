@@ -3,8 +3,10 @@ package com.playmonumenta.scriptedquests.quests.components.actions;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.quests.components.QuestActions;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
+import com.playmonumenta.scriptedquests.quests.components.actions.quest.ActionQuest;
 import me.Novalescent.Core;
 import me.Novalescent.actorsystem.Scene;
 import me.Novalescent.actorsystem.SceneActive;
@@ -22,17 +24,19 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class ActionPlayCutscene implements ActionBase {
+public class ActionPlayCutscene implements ActionBase, ActionNested {
 
-	private String mCutsceneId;
+	private final String mCutsceneId;
 
 	private Integer mEndingFrame = 999999;
-	private Vector mPosition;
-	private List<QuestComponent> mComponents = new ArrayList<>();
-	public ActionPlayCutscene(String npcName, String displayName, EntityType entityType, JsonElement value) throws Exception {
-
+	private final Vector mPosition;
+	private final List<QuestComponent> mComponents = new ArrayList<>();
+	private final ActionNested mParent;
+	public ActionPlayCutscene(String npcName, String displayName, EntityType entityType, JsonElement value, ActionNested parent) throws Exception {
+		mParent = parent;
 		JsonObject json = value.getAsJsonObject();
 
 		mCutsceneId = json.get("cutscene_id").getAsString();
@@ -43,7 +47,7 @@ public class ActionPlayCutscene implements ActionBase {
 		mPosition = Utils.getVector(json.get("position").getAsString());
 
 		for (JsonElement ele : json.get("quest_components").getAsJsonArray()) {
-			QuestComponent component = new QuestComponent(npcName, displayName, entityType, ele);
+			QuestComponent component = new QuestComponent(npcName, displayName, entityType, ele, parent);
 			mComponents.add(component);
 		}
 
@@ -64,5 +68,33 @@ public class ActionPlayCutscene implements ActionBase {
 				}
 			});
 		}
+	}
+
+	@Override
+	public ActionNested getParent() {
+		return mParent;
+	}
+
+	@Override
+	public QuestPrerequisites getPrerequisites() {
+		return null;
+	}
+
+	@Override
+	public List<ActionQuest> getQuestActions() {
+		return Collections.emptyList();
+	}
+
+	@Override
+	public List<QuestComponent> getQuestComponents(Entity entity) {
+		List<QuestComponent> components = new ArrayList<>();
+
+		for (QuestComponent component : mComponents) {
+			if (component.getPrerequisites() == null || component.getPrerequisites().prerequisiteMet(entity, entity)) {
+				components.add(component);
+			}
+		}
+
+		return components;
 	}
 }

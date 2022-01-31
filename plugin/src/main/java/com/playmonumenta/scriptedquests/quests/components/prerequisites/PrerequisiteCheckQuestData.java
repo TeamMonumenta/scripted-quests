@@ -2,9 +2,11 @@ package com.playmonumenta.scriptedquests.quests.components.prerequisites;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.playmonumenta.scriptedquests.quests.QuestData;
+import com.playmonumenta.scriptedquests.quests.QuestStageData;
 import me.Novalescent.Core;
 import me.Novalescent.player.PlayerData;
-import me.Novalescent.player.quests.QuestData;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -52,7 +54,11 @@ public class PrerequisiteCheckQuestData implements PrerequisiteBase {
 
 			if (questData != null) {
 
-				int value = questData.getEntry(mFieldName);
+				QuestStageData stageData = questData.getStageData(1);
+				Integer value = stageData.getObjective(mFieldName);
+				if (value == null) {
+					return false;
+				}
 				switch (mOperation) {
 					case CHECK_EXACT:
 						return value == mMin;
@@ -67,9 +73,9 @@ public class PrerequisiteCheckQuestData implements PrerequisiteBase {
 
 	}
 
-	private String mId;
+	private final String mId;
 	private Integer mCompletedCheck = 0;
-	private List<CheckField> mChecks;
+	private final List<CheckField> mChecks;
 	public PrerequisiteCheckQuestData(JsonElement value) throws Exception {
 		JsonObject object = value.getAsJsonObject();
 		if (object == null) {
@@ -95,8 +101,8 @@ public class PrerequisiteCheckQuestData implements PrerequisiteBase {
 				mChecks.add(new CheckField(entry.getKey(), fieldValue.getAsInt()));
 			} else {
 				// Range of values
-				Integer imin = Integer.MIN_VALUE;
-				Integer imax = Integer.MAX_VALUE;
+				int imin = Integer.MIN_VALUE;
+				int imax = Integer.MAX_VALUE;
 
 				Set<Map.Entry<String, JsonElement>> subentries = fieldValue.getAsJsonObject().entrySet();
 				for (Map.Entry<String, JsonElement> subent : subentries) {
@@ -127,9 +133,7 @@ public class PrerequisiteCheckQuestData implements PrerequisiteBase {
 			Player player = (Player) entity;
 			PlayerData data = Core.getInstance().mPlayerManager.getPlayerData(player.getUniqueId());
 			QuestData questData = data.getQuestData(mId);
-
 			if (questData != null) {
-
 				// Check for completion
 				if (mCompletedCheck == 1) { // Is it completed?
 					if (!questData.mCompleted) {

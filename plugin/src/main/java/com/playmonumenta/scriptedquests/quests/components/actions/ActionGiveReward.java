@@ -39,10 +39,10 @@ public class ActionGiveReward implements ActionBase {
 
 	}
 
-	private class RewardMenu {
+	private static class RewardMenu {
 
 		private ItemStack mPicked = null;
-		private ActionGiveReward mAction;
+		private final ActionGiveReward mAction;
 
 		public RewardMenu(ActionGiveReward reward) {
 			mAction = reward;
@@ -392,7 +392,8 @@ public class ActionGiveReward implements ActionBase {
 
 	private Random mRandom;
 	private List<QuestComponent> mComponents = new ArrayList<>();
-	public ActionGiveReward(String npcName, String displayName, EntityType entityType, JsonElement element) throws Exception {
+	public ActionGiveReward(String npcName, String displayName,
+							EntityType entityType, JsonElement element) throws Exception {
 		JsonObject object = element.getAsJsonObject();
 
 		if (object == null) {
@@ -419,66 +420,74 @@ public class ActionGiveReward implements ActionBase {
 				throw new Exception("give_reward value for key '" + key + "' is not parseable!");
 			}
 
-			if (key.equals("base_reward")) {
-				if (value.isJsonPrimitive()) {
-					mLootBasePath = value.getAsString();
-					if (mLootBasePath == null) {
-						throw new Exception("give_reward base_reward entry is not a string!");
-					}
-				} else {
-					JsonArray array = value.getAsJsonArray();
-					for (JsonElement itemEle : array) {
-						if (itemEle.isJsonPrimitive()) {
-							mLootBaseList.add(itemEle.getAsString());
-						} else {
-							JsonObject jsonObject = itemEle.getAsJsonObject();
-							mLootBaseMap.put(jsonObject.get("id").getAsString(), jsonObject.get("amount").getAsInt());
+			switch (key) {
+				case "base_reward":
+					if (value.isJsonPrimitive()) {
+						mLootBasePath = value.getAsString();
+						if (mLootBasePath == null) {
+							throw new Exception("give_reward base_reward entry is not a string!");
 						}
+					} else {
+						JsonArray array = value.getAsJsonArray();
+						for (JsonElement itemEle : array) {
+							if (itemEle.isJsonPrimitive()) {
+								mLootBaseList.add(itemEle.getAsString());
+							} else {
+								JsonObject jsonObject = itemEle.getAsJsonObject();
+								mLootBaseMap.put(jsonObject.get("id").getAsString(), jsonObject.get("amount").getAsInt());
+							}
 
-					}
-				}
-
-			} else if (key.equals("pick_reward")) {
-				if (value.isJsonPrimitive()) {
-					mLootPickPath = value.getAsString();
-					if (mLootPickPath == null) {
-						throw new Exception("give_reward pick_reward entry is not a string!");
-					}
-				} else {
-					JsonArray array = value.getAsJsonArray();
-					for (JsonElement itemEle : array) {
-						if (itemEle.isJsonPrimitive()) {
-							mLootPickList.add(itemEle.getAsString());
-						} else {
-							JsonObject jsonObject = itemEle.getAsJsonObject();
-							mLootPickMap.put(jsonObject.get("id").getAsString(), jsonObject.get("amount").getAsInt());
 						}
 					}
-				}
-			} else if (key.equals("xp")) {
-				mXP = value.getAsInt();
-				if (mXP == null) {
-					throw new Exception("give_reward xp entry is not a integer!");
-				}
-			} else if (key.equals("xp_percent")) {
-				if (!value.isJsonObject()) {
-					throw new Exception("give_reward xp entry is not a integer!");
-				}
-				JsonObject xpObject = value.getAsJsonObject();
-				mXPLevel = xpObject.get("level").getAsInt();
-				mXPPercent = xpObject.get("xp_percent").getAsDouble();
 
-			} else if (key.equals("coins")) {
-				mCoin = value.getAsInt();
-				if (mCoin == null) {
-					throw new Exception("give_reward coins entry is not a integer!");
-				}
-			} else if (key.equals("quest_components")) {
-				JsonArray components = value.getAsJsonArray();
-				for (JsonElement ele : components) {
-					QuestComponent component = new QuestComponent(npcName, displayName, entityType, ele);
-					mComponents.add(component);
-				}
+					break;
+				case "pick_reward":
+					if (value.isJsonPrimitive()) {
+						mLootPickPath = value.getAsString();
+						if (mLootPickPath == null) {
+							throw new Exception("give_reward pick_reward entry is not a string!");
+						}
+					} else {
+						JsonArray array = value.getAsJsonArray();
+						for (JsonElement itemEle : array) {
+							if (itemEle.isJsonPrimitive()) {
+								mLootPickList.add(itemEle.getAsString());
+							} else {
+								JsonObject jsonObject = itemEle.getAsJsonObject();
+								mLootPickMap.put(jsonObject.get("id").getAsString(), jsonObject.get("amount").getAsInt());
+							}
+						}
+					}
+					break;
+				case "xp":
+					if (value.isJsonObject()) {
+						JsonObject xpObject = value.getAsJsonObject();
+						mXPLevel = xpObject.get("level").getAsInt();
+						mXPPercent = xpObject.get("xp_percent").getAsDouble();
+					} else {
+						mXP = value.getAsInt();
+					}
+
+					break;
+				case "xp_percent":
+					if (!value.isJsonObject()) {
+						throw new Exception("give_reward xp_percent entry is not an object!");
+					}
+					JsonObject xpObject = value.getAsJsonObject();
+					mXPLevel = xpObject.get("level").getAsInt();
+					mXPPercent = xpObject.get("xp_percent").getAsDouble();
+
+					break;
+				case "coins":
+					mCoin = value.getAsInt();
+					break;
+				case "quest_components":
+					JsonArray components = value.getAsJsonArray();
+					for (JsonElement ele : components) {
+						QuestComponent component = new QuestComponent(npcName, displayName, entityType, ele);
+						mComponents.add(component);
+					}
+					break;
 			}
 		}
 
