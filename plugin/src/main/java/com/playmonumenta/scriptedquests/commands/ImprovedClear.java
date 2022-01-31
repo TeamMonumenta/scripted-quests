@@ -2,19 +2,17 @@ package com.playmonumenta.scriptedquests.commands;
 
 import com.playmonumenta.scriptedquests.utils.InventoryUtils;
 import com.playmonumenta.scriptedquests.utils.MaterialUtils;
-
-import org.bukkit.block.ShulkerBox;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BlockStateMeta;
-
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.BooleanArgument;
 import dev.jorel.commandapi.arguments.EntitySelectorArgument;
 import dev.jorel.commandapi.arguments.IntegerArgument;
 import dev.jorel.commandapi.arguments.TextArgument;
+import org.bukkit.block.ShulkerBox;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BlockStateMeta;
 
 public class ImprovedClear {
 	public static void register() {
@@ -84,10 +82,10 @@ public class ImprovedClear {
 
 				if (MaterialUtils.shulkerTypes.contains(item.getType())) {
 					// This is a shulker box
-					if (clearShulkers && InventoryUtils.testForItemWithLore(item, shulkerLore)) {
+					if (clearShulkers && InventoryUtils.testForItemWithLore(item, shulkerLore, false)) {
 						// We are clearing shulkers and this specific shulker matches the search lore text (or none was provided)
-						BlockStateMeta shulkerMeta = (BlockStateMeta)item.getItemMeta();
-						ShulkerBox shulkerBox = (ShulkerBox)shulkerMeta.getBlockState();
+						BlockStateMeta shulkerMeta = (BlockStateMeta) item.getItemMeta();
+						ShulkerBox shulkerBox = (ShulkerBox) shulkerMeta.getBlockState();
 
 						// Recurse!
 						count = clearInventory(shulkerBox.getInventory(), itemName, maxAmount, clearShulkers, shulkerLore, count);
@@ -97,7 +95,7 @@ public class ImprovedClear {
 					}
 				} else {
 					// Not a shulker box
-					if (InventoryUtils.testForItemWithName(item, itemName)) {
+					if (InventoryUtils.testForItemWithName(item, itemName, false)) {
 						// Item matches
 						if (maxAmount != 0 && (count < maxAmount || maxAmount == -1)) {
 							// Clear the item

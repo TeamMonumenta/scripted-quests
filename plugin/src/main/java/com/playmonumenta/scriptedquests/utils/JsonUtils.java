@@ -1,13 +1,14 @@
 package com.playmonumenta.scriptedquests.utils;
 
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.api.JsonObjectBuilder;
+import org.bukkit.Material;
+
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
 public abstract class JsonUtils {
 
@@ -65,6 +66,17 @@ public abstract class JsonUtils {
 		return element.getAsInt();
 	}
 
+	public static int getInt(JsonObject object, String property, int defaultValue) throws Exception {
+		JsonElement element = object.get(property);
+		if (element == null) {
+			return defaultValue;
+		}
+		if (!element.isJsonPrimitive() || !element.getAsJsonPrimitive().isNumber()) {
+			throw new Exception("'" + property + "' entry must be a number");
+		}
+		return element.getAsInt();
+	}
+
 	public static boolean getBoolean(JsonObject object, String property) throws Exception {
 		JsonElement element = getElement(object, property);
 		if (!element.isJsonPrimitive() || !element.getAsJsonPrimitive().isBoolean()) {
@@ -100,4 +112,20 @@ public abstract class JsonUtils {
 		return array;
 	}
 
+	public static Material getMaterial(JsonObject object, String property, Material defaultValue) throws Exception {
+		JsonElement element = object.get(property);
+		if (element == null) {
+			return defaultValue;
+		}
+		if (!element.isJsonPrimitive() || !element.getAsJsonPrimitive().isString()) {
+			throw new Exception("'" + property + "' entry must be a string");
+		}
+		try {
+			return Material.valueOf(element.getAsString());
+		} catch (IllegalArgumentException e) {
+			throw new Exception("Unknown Material '" + element.getAsString() +
+				                    "' - it should be one of the values in this list: " +
+				                    "https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html");
+		}
+	}
 }
