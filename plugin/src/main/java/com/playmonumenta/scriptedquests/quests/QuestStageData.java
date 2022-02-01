@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
+import org.bukkit.Bukkit;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -63,7 +64,9 @@ public class QuestStageData {
 
 	private boolean addNewObjective(String objectiveId, Integer defaultIfNotPresent) {
 		if (defaultIfNotPresent != null) {
-			mObjectives.put(objectiveId, defaultIfNotPresent);
+			if (!mObjectives.containsKey(objectiveId)) {
+				mObjectives.put(objectiveId, defaultIfNotPresent);
+			}
 			return true;
 		}
 		return false;

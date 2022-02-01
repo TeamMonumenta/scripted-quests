@@ -204,7 +204,7 @@ public class QuestActions implements ActionNested {
 						break;
 
 					case "quest_complete":
-						ActionQuestComplete actionQuestComplete = new ActionQuestComplete(value, this);
+						ActionQuestComplete actionQuestComplete = new ActionQuestComplete(npcName, displayName, value, this);
 						mActions.add(actionQuestComplete);
 						mQuestActions.add(actionQuestComplete);
 						break;

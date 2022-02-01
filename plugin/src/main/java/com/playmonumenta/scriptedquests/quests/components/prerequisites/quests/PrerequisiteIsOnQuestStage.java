@@ -27,7 +27,7 @@ public class PrerequisiteIsOnQuestStage implements PrerequisiteBase {
 		if (entity instanceof Player player) {
 			PlayerData data = Core.getInstance().mPlayerManager.getPlayerData(player.getUniqueId());
 			QuestData questData = data.getQuestData(mQuestId);
-			if (questData != null) {
+			if (questData != null && !questData.mCompleted) {
 				return questData.getStage() == mStage;
 			}
 		}

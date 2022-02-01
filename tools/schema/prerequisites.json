@@ -21,7 +21,7 @@
 		"is_on_quest_stage": {
 			"propertyOrder": 0,
 			"title": "is_on_quest_stage",
-			"description": "Checks to see if the player is on the specified stage for the following quest. Input the Quest ID you're checking for. This will always return false if the player has the quest completed.",
+			"description": "Checks to see if the player is on the specified stage for the following quest. Input the Quest ID you're checking for. This will always return false if the player has the quest completed. If you need to check if the player has a certain quest completed, use the 'is_quest_completed' prerequisite.",
 			"type": "object",
 			"properties": {
 				"quest_id": {

@@ -39,13 +39,40 @@ public class ActionGiveReward implements ActionBase {
 
 	}
 
-	private static class RewardMenu {
+	public static class RewardMenu {
 
 		private ItemStack mPicked = null;
 		private final ActionGiveReward mAction;
+		private String mTitle;
+		private Runnable mOnOK;
+		private boolean mDisplayOnly;
+		private String mOKButtonText;
+		private String mOKButtonLore = null;
 
 		public RewardMenu(ActionGiveReward reward) {
 			mAction = reward;
+			mTitle = "Claim Rewards";
+			mOKButtonText = "Claim Rewards";
+		}
+
+		public void setTitle(String title) {
+			mTitle = title;
+		}
+
+		public void setOnOK(Runnable runnable) {
+			mOnOK = runnable;
+		}
+
+		public void setDisplayOnly(boolean displayOnly) {
+			mDisplayOnly = displayOnly;
+		}
+
+		public void setOKButtonText(String text) {
+			mOKButtonText = text;
+		}
+
+		public void setOKButtonLore(String lore) {
+			mOKButtonLore = lore;
 		}
 
 		private String bracketText(String str) {
@@ -55,7 +82,7 @@ public class ActionGiveReward implements ActionBase {
 		public void openMenu(Plugin plugin, Entity npcEntity, Player player) {
 
 			int xp = (int) (mAction.mXP + (mAction.mXPLevel > 0 ? (PlayerData.getXPForLevel(mAction.mXPLevel) * mAction.mXPPercent) : 0));
-			MenuPage page = new MenuPage(player, "Claim Rewards", 54);
+			MenuPage page = new MenuPage(player, mTitle, 54);
 
 			ItemStack filler = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
 			ItemMeta fillerMeta = filler.getItemMeta();
@@ -120,11 +147,32 @@ public class ActionGiveReward implements ActionBase {
 					}
 				}
 
+				for (ItemStack item : picks) {
+					ItemMeta meta = item.getItemMeta();
+					List<String> lore = new ArrayList<>();
+					if (meta.hasLore()) {
+						lore = meta.getLore();
+					}
+
+					lore.add("");
+					if (!mDisplayOnly) {
+						if (mPicked != null && !mPicked.isSimilar(item)) {
+							lore.add(ChatColor.YELLOW + "Click to select this item");
+						}
+					} else {
+						lore.add(ChatColor.YELLOW + "Selectable Item");
+					}
+					meta.setLore(lore);
+					item.setItemMeta(meta);
+				}
+
 				populateItemBox(page, picks, 10, true,
 					(ItemStack item) -> {
-					mPicked = item;
-					player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 2);
-					openMenu(plugin, npcEntity, player);
+					if (!mDisplayOnly) {
+						mPicked = item;
+						player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 2);
+						openMenu(plugin, npcEntity, player);
+					}
 				});
 
 				// Exit
@@ -142,7 +190,7 @@ public class ActionGiveReward implements ActionBase {
 				});
 				page.setMenuElement(exitItem, 48);
 
-				if (picks.size() > 0 && mPicked == null) {
+				if (!mDisplayOnly && picks.size() > 0 && mPicked == null) {
 					// Cannot accept
 					ItemStack claim = new ItemStack(Material.YELLOW_CONCRETE);
 					ItemMeta claimMeta = claim.getItemMeta();
@@ -156,10 +204,10 @@ public class ActionGiveReward implements ActionBase {
 					// Accept
 					ItemStack claim = new ItemStack(Material.LIME_CONCRETE);
 					ItemMeta claimMeta = claim.getItemMeta();
-					claimMeta.setDisplayName(ChatColor.GREEN + "Claim Rewards");
+					claimMeta.setDisplayName(ChatColor.GREEN + mOKButtonText);
 
+					List<String> lore = new ArrayList<>();
 					if (mPicked != null) {
-						List<String> lore = new ArrayList<>();
 						lore.add(ChatColor.WHITE + "Selected Item:");
 
 						RPGItem rpgItem = Utils.getRPGItem(mPicked);
@@ -171,9 +219,16 @@ public class ActionGiveReward implements ActionBase {
 							ItemMeta pickedMeta = mPicked.getItemMeta();
 							lore.add(ChatColor.WHITE + " - x" + mPicked.getAmount() + " " + pickedMeta.getDisplayName());
 						}
-						claimMeta.setLore(lore);
 					}
 
+					if (mOKButtonLore != null) {
+						lore.add("");
+						for (String str : Utils.getSplitLore(mOKButtonLore, 25)) {
+							lore.add(ChatColor.GRAY + str);
+						}
+					}
+
+					claimMeta.setLore(lore);
 					claim.setItemMeta(claimMeta);
 
 					MenuItem claimItem = new MenuItem(claim);
@@ -184,65 +239,69 @@ public class ActionGiveReward implements ActionBase {
 						public void run() {
 							player.closeInventory();
 							PlayerData data = Core.getInstance().mPlayerManager.getPlayerData(player.getUniqueId());
-							player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1.15f);
-							// Actions to run whenever the player accepts
-							for (QuestComponent component : mAction.mComponents) {
-								component.doActionsIfPrereqsMet(plugin, player, npcEntity);
-							}
+							mOnOK.run();
 
-							if (xp > 0) {
-								data.giveXP(xp);
-								player.sendMessage(bracketText(Utils.getColor("#73deff") + "+"
-									+ xp + " " + Utils.getColor("#93ff73") + "Experience Points"));
-							}
-
-							if (mAction.mCoin > 0) {
-								data.mCoins += mAction.mCoin;
-								data.updateCoinPurse();
-								player.playSound(player.getLocation(), Sound.ITEM_ARMOR_EQUIP_DIAMOND, 1, 2);
-								player.playSound(player.getLocation(), Sound.ITEM_ARMOR_EQUIP_LEATHER, 1, 1.5f);
-
-								int[] coins = Utils.getCoinCounts(mAction.mCoin);
-								String coinCounts = "";
-
-								List<String> toJoin = new ArrayList<>();
-
-								if (coins[2] > 0) {
-									toJoin.add(Utils.getColor("#c5dde6") + "+" + coins[2] + " Platinum Coins");
+							if (!mDisplayOnly) {
+								player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1.15f);
+								// Actions to run whenever the player accepts
+								for (QuestComponent component : mAction.mComponents) {
+									component.doActionsIfPrereqsMet(plugin, player, npcEntity);
 								}
 
-								if (coins[1] > 0) {
-									toJoin.add(Utils.getColor("#ffd633") + "+" + coins[1] + " Gold Coins");
+								if (xp > 0) {
+									data.giveXP(xp);
+									player.sendMessage(bracketText(Utils.getColor("#73deff") + "+"
+										+ xp + " " + Utils.getColor("#93ff73") + "Experience Points"));
 								}
 
-								if (coins[0] > 0) {
-									toJoin.add(Utils.getColor("#ffffff") + "+" + coins[0] + " Silver Coins");
+								if (mAction.mCoin > 0) {
+									data.mCoins += mAction.mCoin;
+									data.updateCoinPurse();
+									player.playSound(player.getLocation(), Sound.ITEM_ARMOR_EQUIP_DIAMOND, 1, 2);
+									player.playSound(player.getLocation(), Sound.ITEM_ARMOR_EQUIP_LEATHER, 1, 1.5f);
+
+									int[] coins = Utils.getCoinCounts(mAction.mCoin);
+									String coinCounts = "";
+
+									List<String> toJoin = new ArrayList<>();
+
+									if (coins[2] > 0) {
+										toJoin.add(Utils.getColor("#c5dde6") + "+" + coins[2] + " Platinum Coins");
+									}
+
+									if (coins[1] > 0) {
+										toJoin.add(Utils.getColor("#ffd633") + "+" + coins[1] + " Gold Coins");
+									}
+
+									if (coins[0] > 0) {
+										toJoin.add(Utils.getColor("#ffffff") + "+" + coins[0] + " Silver Coins");
+									}
+
+									coinCounts += String.join(", ", toJoin);
+									player.sendMessage(bracketText(coinCounts));
 								}
 
-								coinCounts += String.join(", ", toJoin);
-								player.sendMessage(bracketText(coinCounts));
-							}
+								if (finalBase.size() > 0) {
+									InventoryUtils.giveItems(player, finalBase, false);
 
-							if (finalBase.size() > 0) {
-								InventoryUtils.giveItems(player, finalBase, false);
+									for (ItemStack item : finalBase) {
 
-								for (ItemStack item : finalBase) {
-
-									ItemStack converted = Utils.convertItemToRPG(item);
-									ItemMeta meta = converted.getItemMeta();
-									player.sendMessage(bracketText(ChatColor.AQUA + "+" + converted.getAmount() +
-										" " + meta.getDisplayName()));
+										ItemStack converted = Utils.convertItemToRPG(item);
+										ItemMeta meta = converted.getItemMeta();
+										player.sendMessage(bracketText(ChatColor.AQUA + "+" + converted.getAmount() +
+											" " + meta.getDisplayName()));
+									}
 								}
-							}
 
-							if (mPicked != null) {
-								Collection<ItemStack> picked = new HashSet<>();
-								picked.add(mPicked);
-								InventoryUtils.giveItems(player, picked, false);
+								if (mPicked != null) {
+									Collection<ItemStack> picked = new HashSet<>();
+									picked.add(mPicked);
+									InventoryUtils.giveItems(player, picked, false);
 
-								ItemMeta meta = mPicked.getItemMeta();
-								player.sendMessage(bracketText(ChatColor.AQUA + "+" + mPicked.getAmount()
-									+ " " + meta.getDisplayName()));
+									ItemMeta meta = mPicked.getItemMeta();
+									player.sendMessage(bracketText(ChatColor.AQUA + "+" + mPicked.getAmount()
+										+ " " + meta.getDisplayName()));
+								}
 							}
 
 						}

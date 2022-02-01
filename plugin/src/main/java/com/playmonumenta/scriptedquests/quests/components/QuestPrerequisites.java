@@ -8,6 +8,7 @@ import java.util.Set;
 
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.*;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.quests.PrerequisiteCanAcceptQuest;
+import com.playmonumenta.scriptedquests.quests.components.prerequisites.quests.PrerequisiteIsOnQuestStage;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.quests.PrerequisiteIsQuestCompleted;
 import org.bukkit.entity.Entity;
 
@@ -185,6 +186,10 @@ public class QuestPrerequisites implements PrerequisiteBase {
 
 			case "is_quest_completed":
 				mPrerequisites.add(new PrerequisiteIsQuestCompleted(value));
+				break;
+
+			case "is_on_quest_stage":
+				mPrerequisites.add(new PrerequisiteIsOnQuestStage(value));
 				break;
 			default:
 				throw new Exception("Unknown prerequisites key: '" + key + "'");

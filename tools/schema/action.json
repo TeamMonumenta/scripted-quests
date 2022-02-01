@@ -80,7 +80,7 @@
 		},
 		"quest_complete": {
 			"title": "quest_complete",
-			"description": "Completes the quest that is specified by the quest ID, prompting a rewards screen which the player can receive their rewards from, and afterwards marking the quest as completed. For this, you can also specify additional actions to occur after the player completes the quest.",
+			"description": "Completes the quest that is specified by the quest ID, prompting a rewards screen which the player can receive their rewards from, and afterwards marking the quest as completed. This will automatically mark all of the quest's objectives and stages as 'complete.' For this, you can also specify additional actions to occur after the player completes the quest.",
 			"type": "object",
 			"properties": {
 				"quest_id": {

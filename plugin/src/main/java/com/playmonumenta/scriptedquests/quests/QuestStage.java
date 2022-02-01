@@ -42,11 +42,11 @@ public class QuestStage {
 		return mObjectives;
 	}
 
-	public QuestStageData getNewStageData(String questId) {
+	public QuestStageData getNewStageData(String questId, boolean completed) {
 		JsonObject object = new JsonObject();
 
 		for (QuestObjective objective : mObjectives) {
-			object.addProperty(objective.getId(), objective.getObjectiveDefault());
+			object.addProperty(objective.getId(), completed ? objective.getObjectiveMax() : objective.getObjectiveDefault());
 		}
 
 		return new QuestStageData(object);
@@ -55,7 +55,7 @@ public class QuestStage {
 	public void messageObjectives(Player player) {
 		for (QuestObjective objectives : mObjectives) {
 			if (objectives.isVisible()) {
-				player.sendMessage("  " + ChatColor.of("#FEF2C1") + objectives.getDescription());
+				player.sendMessage(" " + ChatColor.of("#FEF2C1") + " > " + objectives.getDescription());
 			}
 		}
 	}

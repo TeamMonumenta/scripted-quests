@@ -80,6 +80,10 @@ public class Quest {
 		return mPrerequisites;
 	}
 
+	public QuestType getType() {
+		return mType;
+	}
+
 	public ActionGiveReward getRewardAction() {
 		return mRewardAction;
 	}

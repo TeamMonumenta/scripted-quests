@@ -184,6 +184,10 @@ public class QuestData {
 		}
 	}
 
+	public List<QuestStageData> getStages() {
+		return mStages;
+	}
+
 	public QuestStageData nextStage(Quest quest, boolean progressStage) {
 		if (progressStage) {
 			if (mStage < quest.getStages().size()) {
@@ -194,7 +198,7 @@ public class QuestData {
 		}
 
 		QuestStage nextStage = quest.getStage(mStage);
-		QuestStageData stageData = nextStage.getNewStageData(mId);
+		QuestStageData stageData = nextStage.getNewStageData(mId, false);
 		mStages.add(stageData);
 		return stageData;
 	}

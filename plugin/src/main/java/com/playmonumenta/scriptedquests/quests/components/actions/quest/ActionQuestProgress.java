@@ -16,6 +16,7 @@ import me.Novalescent.player.scoreboards.PlayerScoreboard;
 import me.Novalescent.utils.FormattedMessage;
 import me.Novalescent.utils.MessageFormat;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -57,8 +58,8 @@ public class ActionQuestProgress extends ActionQuest implements ActionBase {
 					QuestStageData stageData = data.getStageData(actualStage);
 
 					switch (mOperation) {
-						case SET_EXACT -> stageData.setObjective(mObjectiveId, objective.getObjectiveMax(), mValue, null);
-						case INCREMENT -> stageData.changeObjective(mObjectiveId, objective.getObjectiveMax(), mValue, null);
+						case SET_EXACT -> stageData.setObjective(mObjectiveId, objective.getObjectiveMax(), mValue, objective.getObjectiveDefault());
+						case INCREMENT -> stageData.changeObjective(mObjectiveId, objective.getObjectiveMax(), mValue, objective.getObjectiveDefault());
 					}
 
 					if (data.getStage() == actualStage && stageData.isStageCompleted(stage)) { // The stage we changed was the player current's stage, and they just completed it.
@@ -116,6 +117,7 @@ public class ActionQuestProgress extends ActionQuest implements ActionBase {
 					data.mScoreboard.updateScoreboard();
 				}
 
+				data.updateQuestVisibility();
 			}
 		}
 
