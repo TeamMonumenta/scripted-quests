@@ -39,6 +39,7 @@ public class DialogScrollingText extends ActionQuestMarker implements DialogBase
 	public int mClickType = 0;
 	private boolean mRaw = false;
 	private boolean mAutoScroll = false;
+	private boolean mTriggerActionsOnLastDialog = false;
 	private final ActionNested mParent;
 
 	public DialogScrollingText(String displayName, JsonElement element, ActionNested parent) throws Exception {
@@ -57,6 +58,10 @@ public class DialogScrollingText extends ActionQuestMarker implements DialogBase
 		}
 
 		mActions = new QuestActions("", displayName, EntityType.VILLAGER, 0, jsonObject.get("actions"), parent);
+
+		if (jsonObject.has("trigger_actions_on_last_dialog")) {
+			mTriggerActionsOnLastDialog = jsonObject.get("trigger_actions_on_last_dialog").getAsBoolean();
+		}
 
 		if (jsonObject.has("click_type")) {
 			mClickType = jsonObject.get("click_type").getAsInt();
@@ -83,7 +88,7 @@ public class DialogScrollingText extends ActionQuestMarker implements DialogBase
 	public void sendDialog(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
 		ScrollingTextActive active = new ScrollingTextActive(plugin, player, npcEntity, mText, mActions, prereqs,
 			new AreaBounds("", new Point(player.getLocation().subtract(mRadius, mRadius, mRadius)),
-				new Point(player.getLocation().add(mRadius, mRadius, mRadius))), mRaw, mAutoScroll);
+				new Point(player.getLocation().add(mRadius, mRadius, mRadius))), mRaw, mAutoScroll, mTriggerActionsOnLastDialog);
 
 		String metakey = com.playmonumenta.scriptedquests.Constants.PLAYER_SCROLLING_DIALOG_METAKEY;
 		player.setMetadata(metakey, new FixedMetadataValue(plugin, active));

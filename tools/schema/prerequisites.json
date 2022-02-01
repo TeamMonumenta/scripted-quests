@@ -14,9 +14,16 @@
 		"is_quest_completed": {
 			"propertyOrder": 0,
 			"title": "is_quest_completed",
-			"description": "Checks to see if the player has completed the following quest. Input the Quest ID you're checking for.",
+			"description": "Checks to see if the player has completed the specified quest. Input the Quest ID you're checking for. If the quest no longer exists for whatever reason or is an invalid quest id, this will return false.",
 			"type": "string",
 			"default": "quest_id"
+		},
+		"is_questline_completed": {
+			"propertyOrder": 0,
+			"title": "is_questline_completed",
+			"description": "Checks to see if the player has completed the specified questline, meaning they've completed all of the quests in this questline. Input the ID of the questline you're looking for. If this questline does not exist, this will return false.",
+			"type": "string",
+			"default": "questline_id"
 		},
 		"is_on_quest_stage": {
 			"propertyOrder": 0,

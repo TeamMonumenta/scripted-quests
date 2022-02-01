@@ -29,11 +29,13 @@ public class ScrollingTextActive {
 	private final AreaBounds mValidArea;
 	private boolean mRaw;
 	private boolean mAutoScroll;
+	private boolean mTriggerActionsOnLast;
 
 	private BukkitRunnable mScrollRunnable = null;
 	private int mScrollTime = (int) (20 * 4.5);
 	public ScrollingTextActive(Plugin plugin, Player player, Entity npcEntity,
-							   List<String> text, QuestActions actions, QuestPrerequisites prerequisites, AreaBounds validArea, boolean raw, boolean autoScroll) {
+							   List<String> text, QuestActions actions, QuestPrerequisites prerequisites,
+							   AreaBounds validArea, boolean raw, boolean autoScroll, boolean triggerActionsLast) {
 		mPlugin = plugin;
 		mPlayer = player;
 		mEntity = npcEntity;
@@ -43,6 +45,7 @@ public class ScrollingTextActive {
 		mValidArea = validArea;
 		mRaw = raw;
 		mAutoScroll = autoScroll;
+		mTriggerActionsOnLast = triggerActionsLast;
 	}
 
 	public void cancelScroll() {
@@ -77,6 +80,7 @@ public class ScrollingTextActive {
 		if (mIndex < mText.size()) {
 			String text = mText.get(mIndex);
 			if (!text.trim().isEmpty()) {
+				mPlayer.sendMessage("");
 				if (mRaw) {
 					MessagingUtils.sendScrollableRawMessage(mPlayer, text);
 				} else {
@@ -84,6 +88,13 @@ public class ScrollingTextActive {
 				}
 			} else {
 				next();
+				return;
+			}
+
+			if (mTriggerActionsOnLast && mIndex + 1 >= mText.size()) {
+				mPlayer.removeMetadata(com.playmonumenta.scriptedquests.Constants.PLAYER_SCROLLING_DIALOG_METAKEY, mPlugin);
+				cancelScroll();
+				mActions.doActions(mPlugin, mPlayer, mEntity, mPrerequisites);
 				return;
 			}
 		} else {

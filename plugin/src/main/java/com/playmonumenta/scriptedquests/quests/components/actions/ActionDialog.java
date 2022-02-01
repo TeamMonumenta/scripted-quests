@@ -62,12 +62,15 @@ public class ActionDialog implements ActionBase, ActionNested {
 
 	@Override
 	public void doAction(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
+
 		for (DialogBase dialog : mDialogs) {
+			player.sendMessage("");
 			dialog.sendDialog(plugin, player, npcEntity, prereqs);
 		}
 
 		// Run the Clickable Dialogs AFTER everything else, because we always want clickable text to appear at the bottom
 		for (DialogClickableText clickableText : mClickableTexts) {
+			player.sendMessage("");
 			clickableText.sendDialog(plugin, player, npcEntity, prereqs);
 		}
 	}

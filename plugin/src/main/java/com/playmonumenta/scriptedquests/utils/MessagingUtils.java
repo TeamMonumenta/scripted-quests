@@ -3,6 +3,7 @@ package com.playmonumenta.scriptedquests.utils;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import me.Novalescent.Constants;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -44,41 +45,36 @@ public class MessagingUtils {
 
 	public static void sendNPCMessage(Player player, String displayName, String message) {
 		message = ChatColor.translateAlternateColorCodes('&',translatePlayerName(player, message));
-		TextComponent formattedMessage = new TextComponent(TextComponent.fromLegacyText(displayName));
-		formattedMessage.setColor(ChatColor.GOLD);
-		TextComponent semiColon = new TextComponent(TextComponent.fromLegacyText(": "));
-		semiColon.setColor(ChatColor.YELLOW);
-		formattedMessage.addExtra(semiColon);
-		TextComponent tempText = new TextComponent(TextComponent.fromLegacyText(message));
-		tempText.setColor(ChatColor.WHITE);
-		formattedMessage.addExtra(tempText);
-
-		BaseComponent[] toDisplay = new BaseComponent[1];
-		toDisplay[0] = formattedMessage;
-
-		player.spigot().sendMessage(ChatMessageType.SYSTEM,toDisplay);
+		player.sendMessage(Constants.QUEST_MAIN_COLOR + "" + ChatColor.BOLD + displayName + ":");
+		player.sendMessage(Constants.QUEST_SUB_COLOR + "  " + message);
 	}
 
 	public static void sendScrollableNPCMessage(Player player, String displayName, String message) {
 		message = ChatColor.translateAlternateColorCodes('&',translatePlayerName(player, message));
-		TextComponent formattedMessage = new TextComponent(TextComponent.fromLegacyText(displayName));
-		formattedMessage.setColor(ChatColor.GOLD);
-		TextComponent semiColon = new TextComponent(TextComponent.fromLegacyText(": "));
-		semiColon.setColor(ChatColor.YELLOW);
-		formattedMessage.addExtra(semiColon);
-		TextComponent tempText = new TextComponent(TextComponent.fromLegacyText(message + " "));
-		tempText.setColor(ChatColor.WHITE);
-		formattedMessage.addExtra(tempText);
+//		TextComponent formattedMessage = new TextComponent(TextComponent.fromLegacyText(displayName));
+//		formattedMessage.setColor(ChatColor.GOLD);
+//		TextComponent semiColon = new TextComponent(TextComponent.fromLegacyText(": "));
+//		semiColon.setColor(ChatColor.YELLOW);
+//		formattedMessage.addExtra(semiColon);
+//		TextComponent tempText = new TextComponent(TextComponent.fromLegacyText(message + " "));
+//		tempText.setColor(ChatColor.WHITE);
+//		formattedMessage.addExtra(tempText);
 
-		TextComponent skip = new TextComponent(TextComponent.fromLegacyText("[>>>]"));
+		player.sendMessage(Constants.QUEST_MAIN_COLOR + "" + ChatColor.BOLD + displayName + ":");
+		player.sendMessage(Constants.QUEST_SUB_COLOR + "  " + message);
+
+		player.sendMessage("");
+
+		TextComponent skip = new TextComponent(TextComponent.fromLegacyText(" [>>>]"));
 		skip.setColor(ChatColor.of("#6cc0eb"));
 		skip.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/scrolltext"));
-		formattedMessage.addExtra(skip);
+//		formattedMessage.addExtra(skip);
+		player.spigot().sendMessage(ChatMessageType.SYSTEM, skip);
 
-		BaseComponent[] toDisplay = new BaseComponent[1];
-		toDisplay[0] = formattedMessage;
-
-		player.spigot().sendMessage(ChatMessageType.SYSTEM,toDisplay);
+//		BaseComponent[] toDisplay = new BaseComponent[1];
+//		toDisplay[0] = formattedMessage;
+//
+//		player.spigot().sendMessage(ChatMessageType.SYSTEM,toDisplay);
 	}
 
 	public static void sendRawMessage(Player player, String message) {
@@ -92,22 +88,27 @@ public class MessagingUtils {
 		TextComponent formattedMessage = new TextComponent(TextComponent.fromLegacyText(message + " "));
 		formattedMessage.setColor(ChatColor.WHITE);
 
-		TextComponent skip = new TextComponent(TextComponent.fromLegacyText("[>>>]"));
+		player.spigot().sendMessage(ChatMessageType.SYSTEM, formattedMessage);
+
+		player.sendMessage("");
+		TextComponent skip = new TextComponent(TextComponent.fromLegacyText(" [>>>]"));
 		skip.setColor(ChatColor.of("#6cc0eb"));
 		skip.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/scrolltext"));
-		formattedMessage.addExtra(skip);
+		player.spigot().sendMessage(ChatMessageType.SYSTEM, skip);
 
-		BaseComponent[] toDisplay = new BaseComponent[1];
-		toDisplay[0] = formattedMessage;
-
-		player.spigot().sendMessage(ChatMessageType.SYSTEM,toDisplay);
+//		formattedMessage.addExtra(skip);
+//
+//		BaseComponent[] toDisplay = new BaseComponent[1];
+//		toDisplay[0] = formattedMessage;
+//
+//		player.spigot().sendMessage(ChatMessageType.SYSTEM,toDisplay);
 	}
 
 
 	public static void sendClickableNPCMessage(Plugin plugin, Player player, String message,
 	                                           String commandStr) {
 		message = translatePlayerName(player, message);
-		TextComponent formattedMessage = new TextComponent(TextComponent.fromLegacyText(">> " + message));
+		TextComponent formattedMessage = new TextComponent(TextComponent.fromLegacyText(" >> " + message));
 		formattedMessage.setColor(ChatColor.of("#6cc0eb"));
 		formattedMessage.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, commandStr));
 

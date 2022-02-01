@@ -3,6 +3,7 @@ package com.playmonumenta.scriptedquests.quests;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import me.Novalescent.Constants;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -55,7 +56,7 @@ public class QuestStage {
 	public void messageObjectives(Player player) {
 		for (QuestObjective objectives : mObjectives) {
 			if (objectives.isVisible()) {
-				player.sendMessage(" " + ChatColor.of("#FEF2C1") + " > " + objectives.getDescription());
+				player.sendMessage(" " + Constants.QUEST_MAIN_COLOR + " > " + Constants.QUEST_SUB_COLOR + objectives.getDescription());
 			}
 		}
 	}

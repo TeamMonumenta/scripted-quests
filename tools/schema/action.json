@@ -233,6 +233,7 @@
 					"type": "object",
 					"defaultProperties": [
 						"text",
+						"trigger_actions_on_last_dialog",
 						"actions"
 					],
 					"properties": {
@@ -245,6 +246,11 @@
 								"title": "A NPC Dialogue line",
 								"type": "string"
 							}
+						},
+						"trigger_actions_on_last_dialog": {
+							"title": "trigger_actions_on_last_dialog",
+							"description": "Toggles whether or not the actions for this scrolling_text component will trigger when the player reaches the last dialog text line. If this is toggled off, then the actions will trigger once the player clicks through all of the dialog.",
+							"type": "boolean"
 						},
 						"actions": {
 							"title": "actions",

@@ -50,7 +50,7 @@ public class Quest {
 				mStages.add(new QuestStage(stage.getAsJsonObject()));
 			}
 		} else {
-			mType = QuestType.SIDE;
+			mType = QuestType.LEGACY;
 			mRewardAction = null;
 			mPrerequisites = null;
 

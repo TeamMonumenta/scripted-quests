@@ -69,4 +69,8 @@ public class QuestManager {
 		return mQuests.get(id);
 	}
 
+	public QuestLine getQuestline(String id) {
+		return mQuestLines.get(id);
+	}
+
 }

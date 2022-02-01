@@ -9,7 +9,6 @@ import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import me.Novalescent.Core;
 import me.Novalescent.player.PlayerData;
 import me.Novalescent.player.options.RPGOption;
-import me.Novalescent.player.quests.QuestData;
 import me.Novalescent.player.quests.QuestTemplate;
 import me.Novalescent.player.scoreboards.PlayerScoreboard;
 import me.Novalescent.shards.ShardInstance;

@@ -12,6 +12,7 @@ import com.playmonumenta.scriptedquests.quests.components.actions.ActionBase;
 import com.playmonumenta.scriptedquests.quests.components.actions.ActionGiveReward;
 import com.playmonumenta.scriptedquests.quests.components.actions.ActionNested;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.quests.PrerequisiteCanAcceptQuest;
+import me.Novalescent.Constants;
 import me.Novalescent.Core;
 import me.Novalescent.player.ExpandingTitle;
 import me.Novalescent.player.PlayerData;
@@ -64,8 +65,8 @@ public class ActionQuestAccept extends ActionQuest implements ActionBase {
 					data.getQuestDataList().add(questData);
 
 					new BukkitRunnable() {
-						final ExpandingTitle acceptTitle = new ExpandingTitle("Quest Accepted", 0, ChatColor.of("#FFD05A"), ChatColor.of("#FEF2C1"));
-						final ExpandingTitle nameTitle = new ExpandingTitle(quest.getDisplayName(), 12, ChatColor.of("#FFD05A"), ChatColor.of("#FEF2C1"));
+						final ExpandingTitle acceptTitle = new ExpandingTitle("Quest Accepted", 0, Constants.QUEST_MAIN_COLOR, Constants.QUEST_SUB_COLOR);
+						final ExpandingTitle nameTitle = new ExpandingTitle(quest.getDisplayName(), 12, Constants.QUEST_MAIN_COLOR, Constants.QUEST_SUB_COLOR);
 
 						boolean retract = false;
 						int maxTime = 0;
@@ -116,7 +117,7 @@ public class ActionQuestAccept extends ActionQuest implements ActionBase {
 						mActions.doActions(plugin, player, npcEntity, prereqs);
 					}
 
-					FormattedMessage.sendMessage(player, MessageFormat.QUESTS, "Quest Accepted: " + ChatColor.of("#FFD05A") + quest.getDisplayName());
+					FormattedMessage.sendMessage(player, MessageFormat.QUESTS, "Quest Accepted: " + Constants.QUEST_MAIN_COLOR + quest.getDisplayName());
 					QuestStage stage = quest.getStage(questData.getStage());
 					stage.messageObjectives(player);
 

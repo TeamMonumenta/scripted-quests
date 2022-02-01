@@ -1,6 +1,8 @@
 package com.playmonumenta.scriptedquests.quests.components.prerequisites.quests;
 
 import com.google.gson.JsonElement;
+import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.quests.Quest;
 import com.playmonumenta.scriptedquests.quests.QuestData;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteBase;
 import me.Novalescent.Core;
@@ -21,10 +23,11 @@ public class PrerequisiteIsQuestCompleted implements PrerequisiteBase {
 	@Override
 	public boolean prerequisiteMet(Entity entity, Entity npcEntity) {
 		if (entity instanceof Player player) {
-			PlayerData data = Core.getInstance().mPlayerManager.getPlayerData(player.getUniqueId());
-			QuestData questData = data.getQuestData(mQuestId);
-			if (questData != null) {
-				return questData.mCompleted;
+			Quest quest = Plugin.getInstance().mQuestManager.getQuest(mQuestId);
+			if (quest != null) {
+				PlayerData data = Core.getInstance().mPlayerManager.getPlayerData(player.getUniqueId());
+				QuestData questData = data.getQuestData(mQuestId);
+				return questData != null && questData.mCompleted;
 			}
 		}
 		return false;
