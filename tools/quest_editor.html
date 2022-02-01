@@ -133,19 +133,19 @@
 								}
 							]
 						},
-						coin: {
-							title: "coin",
+						coins: {
+							title: "coins",
 							description: "The amount of money/coins given to the player for completing this quest. For reference: 1 coin = 1 Silver Coin, 100 coins = 1 Gold Coin, 10000 coins = 1 Platinum Coin. This has to be a number greater than -1. Leave as 0 for no coins.",
 							type: "integer",
 							default: 0
 						},
-						base_loot: {
-							title: "base_loot",
+						base_reward: {
+							title: "base_reward",
 							description: "The base loot to give for the player for completing this quest. This can be left blank for no base loot.",
 							$ref: "schema/loot.json"
 						},
-						pick_loot: {
-							title: "pick_loot",
+						pick_reward: {
+							title: "pick_reward",
 							description: "The pickable loot that the player can select from for this quest. This is loot that the player can only choose 1 of on completion. This can be left blank for no pickable loot.",
 							$ref: "schema/loot.json"
 						}

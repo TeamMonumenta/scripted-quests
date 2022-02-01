@@ -7,6 +7,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.*;
+import com.playmonumenta.scriptedquests.quests.components.prerequisites.quests.PrerequisiteCanAcceptQuest;
+import com.playmonumenta.scriptedquests.quests.components.prerequisites.quests.PrerequisiteIsQuestCompleted;
 import org.bukkit.entity.Entity;
 
 import com.google.gson.JsonArray;
@@ -175,6 +177,14 @@ public class QuestPrerequisites implements PrerequisiteBase {
 				break;
 			case "check_shard":
 				mPrerequisites.add(new PrerequisiteCheckShard(value));
+				break;
+
+			case "can_accept_quest":
+				mPrerequisites.add(new PrerequisiteCanAcceptQuest(value));
+				break;
+
+			case "is_quest_completed":
+				mPrerequisites.add(new PrerequisiteIsQuestCompleted(value));
 				break;
 			default:
 				throw new Exception("Unknown prerequisites key: '" + key + "'");

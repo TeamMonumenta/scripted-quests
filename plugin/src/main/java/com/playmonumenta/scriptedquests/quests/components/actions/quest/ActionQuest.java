@@ -13,6 +13,10 @@ public class ActionQuest {
 		return mPrerequisites;
 	}
 
+	public String getQuestId() {
+		return mQuestId;
+	}
+
 	protected QuestPrerequisites mergePrerequisites(ActionNested parent) {
 		QuestPrerequisites prerequisites = null;
 		while (parent != null) {

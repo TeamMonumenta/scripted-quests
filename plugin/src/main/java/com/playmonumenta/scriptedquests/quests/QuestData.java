@@ -184,17 +184,19 @@ public class QuestData {
 		}
 	}
 
-	public void nextStage(Quest quest, boolean progressStage) {
+	public QuestStageData nextStage(Quest quest, boolean progressStage) {
 		if (progressStage) {
 			if (mStage < quest.getStages().size()) {
 				mStage++;
 			} else {
-				return;
+				return null;
 			}
 		}
 
 		QuestStage nextStage = quest.getStage(mStage);
-		mStages.add(nextStage.getNewStageData(mId));
+		QuestStageData stageData = nextStage.getNewStageData(mId);
+		mStages.add(stageData);
+		return stageData;
 	}
 
 	public JsonObject getAsJsonObject() {

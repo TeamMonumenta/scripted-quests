@@ -34,7 +34,7 @@ public class PrerequisiteCanAcceptQuest implements PrerequisiteBase {
 
 			if (questData == null) {
 				Quest quest = Plugin.getInstance().mQuestManager.getQuest(mQuestId);
-				if (quest != null && data.getLevel() == quest.getLevel()
+				if (quest != null && data.getLevel() >= quest.getLevel()
 				&& (quest.getPrerequisites() == null || quest.getPrerequisites().prerequisiteMet(player, npcEntity))) {
 
 					QuestLine.QuestGroup group = quest.getQuestlineGroup();

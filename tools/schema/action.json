@@ -53,7 +53,7 @@
 							"objective_value": {
 								"title": "objective_value",
 								"description": "The new value that we are changing the objective to. Using + or - before the value will increment or decrement the value respectively. The value can only be between 0 and the maximum specified by the objective",
-								"type": "integer"
+								"type": "string"
 							}
 						}
 					}

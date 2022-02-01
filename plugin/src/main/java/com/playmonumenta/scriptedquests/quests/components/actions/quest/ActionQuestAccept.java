@@ -55,7 +55,7 @@ public class ActionQuestAccept extends ActionQuest implements ActionBase {
 				ChatColor.of("#FEF2C1") + quest.getDisplayName(), 10, 20 * 2, 20);
 			player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2, 1.5f);
 			player.playSound(player.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 1, 1.2f);
-			FormattedMessage.sendMessage(player, MessageFormat.QUESTS, "Quest Accepted: " + quest.getDisplayName());
+			FormattedMessage.sendMessage(player, MessageFormat.QUESTS, "Quest Accepted: " + ChatColor.of("#FFD05A") + quest.getDisplayName());
 			QuestStage stage = quest.getStage(questData.getStage());
 			stage.messageObjectives(player);
 

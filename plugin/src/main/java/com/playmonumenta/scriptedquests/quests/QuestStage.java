@@ -55,7 +55,7 @@ public class QuestStage {
 	public void messageObjectives(Player player) {
 		for (QuestObjective objectives : mObjectives) {
 			if (objectives.isVisible()) {
-				player.sendMessage(ChatColor.of("#FEF2C1") + objectives.getDescription());
+				player.sendMessage("  " + ChatColor.of("#FEF2C1") + objectives.getDescription());
 			}
 		}
 	}
