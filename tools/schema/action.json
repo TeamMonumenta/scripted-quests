@@ -243,8 +243,41 @@
 							"type": "array",
 							"minItems": 1,
 							"items": {
-								"title": "A NPC Dialogue line",
-								"type": "string"
+								"title": "Dialogue Line",
+								"description": "A line of dialog for the scrollable text. This can either be a Simple string, or a Complex setup. Use Complex setup if you need to have a different speaker or raw text.",
+								"options": {
+									"keep_oneof_values": false
+								},
+								"oneOf": [
+									{
+										"title": "Simple",
+										"type": "string"
+									},
+									{
+										"title": "Complex",
+										"type": "object",
+										"properties": {
+											"speaker": {
+												"title": "speaker",
+												"description": "The speaker for this dialogue line, which is shown up as the person who is speaking this line. Leave blank if you wish to use the current NPC's name.",
+												"type": "string",
+												"default": ""
+											},
+											"raw": {
+												"title": "raw",
+												"description": "Toggles on or off whether or not this text is raw text, meaning no formatting or speaker.",
+												"type": "boolean",
+												"default": false
+											},
+											"text": {
+												"title": "text",
+												"description": "The text to speak.",
+												"type": "string",
+												"default": ""
+											}
+										}
+									}
+								]
 							}
 						},
 						"trigger_actions_on_last_dialog": {

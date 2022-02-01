@@ -66,7 +66,7 @@ public class MessagingUtils {
 		player.sendMessage("");
 
 		TextComponent skip = new TextComponent(TextComponent.fromLegacyText(" [>>>]"));
-		skip.setColor(ChatColor.of("#6cc0eb"));
+		skip.setColor(Constants.QUEST_INTERACT_COLOR);
 		skip.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/scrolltext"));
 //		formattedMessage.addExtra(skip);
 		player.spigot().sendMessage(ChatMessageType.SYSTEM, skip);
@@ -92,7 +92,7 @@ public class MessagingUtils {
 
 		player.sendMessage("");
 		TextComponent skip = new TextComponent(TextComponent.fromLegacyText(" [>>>]"));
-		skip.setColor(ChatColor.of("#6cc0eb"));
+		skip.setColor(Constants.QUEST_INTERACT_COLOR);
 		skip.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/scrolltext"));
 		player.spigot().sendMessage(ChatMessageType.SYSTEM, skip);
 
@@ -109,7 +109,7 @@ public class MessagingUtils {
 	                                           String commandStr) {
 		message = translatePlayerName(player, message);
 		TextComponent formattedMessage = new TextComponent(TextComponent.fromLegacyText(" >> " + message));
-		formattedMessage.setColor(ChatColor.of("#6cc0eb"));
+		formattedMessage.setColor(Constants.QUEST_INTERACT_COLOR);
 		formattedMessage.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, commandStr));
 
 		BaseComponent[] toDisplay = new BaseComponent[1];
