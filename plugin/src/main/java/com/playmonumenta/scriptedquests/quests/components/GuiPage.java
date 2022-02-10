@@ -1,22 +1,20 @@
 package com.playmonumenta.scriptedquests.quests.components;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.api.JsonObjectBuilder;
 import com.playmonumenta.scriptedquests.utils.CustomInventory;
 import com.playmonumenta.scriptedquests.utils.JsonUtils;
-
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTItem;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public final class GuiPage {
 
@@ -24,6 +22,8 @@ public final class GuiPage {
 	private final String mTitle;
 	private final @Nullable ItemStack mFillerItem;
 	private final List<GuiItem> mItems = new ArrayList<>();
+	private final @Nullable JsonElement mCloseActionsJson;
+	private final @Nullable QuestActions mCloseActions;
 
 	public GuiPage(JsonObject object) throws Exception {
 		mRows = JsonUtils.getInt(object, "rows");
@@ -38,12 +38,20 @@ public final class GuiPage {
 			}
 			mItems.add(guiItem);
 		}
+		mCloseActionsJson = object.get("close_actions");
+		if (mCloseActionsJson != null) {
+			mCloseActions = new QuestActions(null, null, null, 1, mCloseActionsJson);
+		} else {
+			mCloseActions = null;
+		}
 	}
 
-	private GuiPage(int rows, String title, ItemStack fillerItem) {
+	private GuiPage(int rows, String title, @Nullable ItemStack fillerItem, @Nullable JsonElement closeActionsJson, @Nullable QuestActions closeActions) {
 		mRows = rows;
 		mTitle = title;
 		mFillerItem = fillerItem;
+		mCloseActionsJson = closeActionsJson;
+		mCloseActions = closeActions;
 	}
 
 	public JsonObject toJson() {
@@ -52,6 +60,7 @@ public final class GuiPage {
 			.add("title", mTitle)
 			.add("filler_item", NBTItem.convertItemtoNBT(mFillerItem).toString())
 			.add("items", JsonUtils.toJsonArray(mItems, GuiItem::toJson))
+			.add("close_actions", mCloseActionsJson)
 			.build();
 	}
 
@@ -94,7 +103,7 @@ public final class GuiPage {
 	 * @throws Exception If anything bad happens, e.g. prerequisites cannot be parsed
 	 */
 	public GuiPage createUpdated(Inventory inventory) throws Exception {
-		GuiPage clone = new GuiPage(mRows, mTitle, mFillerItem);
+		GuiPage clone = new GuiPage(mRows, mTitle, mFillerItem, mCloseActionsJson, mCloseActions);
 		@Nullable ItemStack[] contents = inventory.getContents();
 		for (int i = 0; i < contents.length; i++) {
 			ItemStack itemStack = contents[i];
@@ -123,4 +132,7 @@ public final class GuiPage {
 		return mTitle;
 	}
 
+	public QuestActions getCloseActions() {
+		return mCloseActions;
+	}
 }
