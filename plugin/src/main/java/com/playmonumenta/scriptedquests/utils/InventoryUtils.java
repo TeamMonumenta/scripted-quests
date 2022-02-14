@@ -1,9 +1,6 @@
 package com.playmonumenta.scriptedquests.utils;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Random;
-
+import javax.annotation.Nullable;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -14,8 +11,12 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.loot.LootContext;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Random;
+
 public class InventoryUtils {
-	public static boolean testForItemWithLore(ItemStack item, String loreText) {
+	public static boolean testForItemWithLore(ItemStack item, @Nullable String loreText, boolean exactMatch) {
 		if (loreText == null || loreText.isEmpty()) {
 			return true;
 		}
@@ -26,7 +27,7 @@ public class InventoryUtils {
 				List<String> lore = meta.getLore();
 				if (lore != null && !lore.isEmpty()) {
 					for (String loreEntry : lore) {
-						if (loreEntry.contains(loreText)) {
+						if (exactMatch ? ChatColor.stripColor(loreEntry).equals(loreText) : loreEntry.contains(loreText)) {
 							return true;
 						}
 					}
@@ -38,7 +39,7 @@ public class InventoryUtils {
 	}
 
 	// TODO: This will *not* match items that don't have an NBT name (stick, stone sword, etc.)
-	public static boolean testForItemWithName(ItemStack item, String nameText) {
+	public static boolean testForItemWithName(ItemStack item, @Nullable String nameText, boolean exactMatch) {
 		if (nameText == null || nameText.isEmpty()) {
 			return true;
 		}
@@ -47,7 +48,9 @@ public class InventoryUtils {
 			ItemMeta meta = item.getItemMeta();
 			if (meta != null) {
 				String displayName = meta.getDisplayName();
-				if (displayName != null && !displayName.isEmpty() && displayName.contains(nameText)) {
+				if (displayName != null
+					    && !displayName.isEmpty()
+					    && (exactMatch ? ChatColor.stripColor(displayName).equals(nameText) : displayName.contains(nameText))) {
 					return true;
 				}
 			}
