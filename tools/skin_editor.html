@@ -94,20 +94,29 @@
 					items: {
 						title: "Clothing Layer",
 						type: "object",
+						defaultProperties: [
+							"cloth_id",
+							"armor",
+							"to_overlay",
+							"dye_color"
+						],
 						additionalProperties: false,
 						properties: {
 							cloth_id: {
+								required: true,
 								title: "cloth_id",
 								description: "The image ID of the clothing. This should not include the .png extension.",
 								type: "string"
 							},
 							armor: {
+								required: true,
 								title: "armor",
 								description: "Indicates if the image of the clothing is in an armor format. This is necessary to convert the armor image into a usable skin format. If the clothing is NOT an armor image, leave this as false.",
 								type: "boolean",
 								default: false
 							},
 							to_overlay: {
+								required: true,
 								title: "to_overlay",
 								description: "Converts the clothing to all overlay, combining the base layer of the clothing with the overlay clothing.",
 								type: "boolean",
