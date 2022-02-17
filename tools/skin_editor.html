@@ -94,6 +94,7 @@
 					items: {
 						title: "Clothing Layer",
 						type: "object",
+						additionalProperties: false,
 						properties: {
 							cloth_id: {
 								title: "cloth_id",
@@ -106,11 +107,60 @@
 								type: "boolean",
 								default: false
 							},
+							to_overlay: {
+								title: "to_overlay",
+								description: "Converts the clothing to all overlay, combining the base layer of the clothing with the overlay clothing.",
+								type: "boolean",
+								default: false
+							},
 							dye_color: {
 								title: "dye_color",
 								description: "The color of the clothing if it is a dyeable piece. Clothing is dyeable if it has the appropriate overlay format to go with it. Otherwise, this will do nothing. Use a HEX format for the dye (Ex. #FFFFFF). Leave as blank or below 7 letters if this should not be dyed.",
 								type: "string",
 								default: ""
+							},
+							toggled_parts: {
+								title: "toggled_parts",
+								description: "The parts that are toggled on for this clothing layer.",
+								type: "object",
+								properties: {
+									head: {
+										title: "head",
+										description: "Toggles ON/OFF the head skin part.",
+										type: "boolean",
+										default: true
+									},
+									chest: {
+										title: "chest",
+										description: "Toggles ON/OFF the chest skin part.",
+										type: "boolean",
+										default: true
+									},
+									arm_left: {
+										title: "arm_left",
+										description: "Toggles ON/OFF the arm_left skin part.",
+										type: "boolean",
+										default: true
+									},
+									arm_right: {
+										title: "arm_right",
+										description: "Toggles ON/OFF the arm_right skin part.",
+										type: "boolean",
+										default: true
+									},
+									leg_left: {
+										title: "leg_left",
+										description: "Toggles ON/OFF the leg_left skin part.",
+										type: "boolean",
+										default: true
+									},
+									leg_right: {
+										title: "leg_right",
+										description: "Toggles ON/OFF the leg_right skin part.",
+										type: "boolean",
+										default: true
+									}
+								}
 							}
 						}
 					}
