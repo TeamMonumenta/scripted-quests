@@ -49,13 +49,10 @@
             defaultProperties: [
                 "id",
 				"skins",
-				"bodyStyle",
-				"bodyColor",
-				"hairStyle",
-				"hairColor",
-				"hairColorStrength",
-				"eyeStyle",
-				"eyeColor"
+				"body",
+				"hair",
+				"eyes",
+				"cloth_layers"
             ],
             additionalProperties:false,
             properties: {
@@ -67,70 +64,57 @@
                     type: "string",
                     default: "skin"
                 },
-				bodyStyle: {
+				body: {
                     required: true,
                     propertyOrder: 2,
-                    title: "bodyStyle",
-                    description: "The name of the body style to be used for this NPC. This is the name of the body style file.",
-                    type: "string",
-                    default: "default"
+                    title: "body",
+                    description: "The body style that this skin will use. Fill out the fields.",
+                    $ref: "scchema/base_skin_part.json"
                 },
-				bodyColor: {
+				hair: {
                     required: true,
                     propertyOrder: 2,
-                    title: "bodyColor",
-                    description: "The color of the body. This will tint the body to a specific color. Use a HEX value!",
-                    type: "string",
-                    default: "#FFFFFF"
+                    title: "hair",
+                    description: "The hair style that this skin will use. Fill out the fields.",
+                    $ref: "scchema/base_skin_part.json"
                 },
-				hairStyle: {
+				eyes: {
                     required: true,
                     propertyOrder: 2,
-                    title: "hairStyle",
-                    description: "The name of the hair style to be used for this NPC. This is the name of the hair style file.",
-                    type: "string",
-                    default: "default"
+                    title: "eyes",
+                    description: "The eye style that this skin will use. Field out the fields.",
+                    $ref: "scchema/base_skin_part.json"
                 },
-				hairColor: {
-                    required: true,
+				cloth_layers: {
+					required: true,
                     propertyOrder: 2,
-                    title: "hairColor",
-                    description: "The color of the hair. This will tint the hair style to a specific color. Use a HEX value!",
-                    type: "string",
-                    default: "#FFFFFF"
-                },
-				hairColorStrength: {
-                    required: true,
-                    propertyOrder: 2,
-                    title: "hairColorStrength",
-                    description: "The strength of the hair color, ranging from 0 - 1",
-                    type: "number",
-                    default: 0.5
-                },
-				eyeStyle: {
-                    required: true,
-                    propertyOrder: 2,
-                    title: "eyeStyle",
-                    description: "The name of the eye style to be used for this NPC. This is the name of the eye style file.",
-                    type: "string",
-                    default: "default"
-                },
-				eyeColor: {
-                    required: true,
-                    propertyOrder: 2,
-                    title: "eyeColor",
-                    description: "The color of the eyes. This will tint the hair style to a specific color. Use a HEX value!",
-                    type: "string",
-                    default: "#000000"
-                },
-				eyeColorStrength: {
-                    required: true,
-                    propertyOrder: 2,
-                    title: "eyeColorStrength",
-                    description: "The strength of the eye color, ranging from 0 - 1",
-                    type: "number",
-                    default: 0.5
-                }
+                    title: "cloth_layers",
+                    description: "The clothing that the skin will have. This is applied in layers in order",
+					type: "array",
+					items: {
+						title: "Clothing Layer",
+						type: "object",
+						properties: {
+							cloth_id: {
+								title: "cloth_id",
+								description: "The image ID of the clothing. This should not include the .png extension.",
+								type: "string"
+							},
+							armor: {
+								title: "armor",
+								description: "Indicates if the image of the clothing is in an armor format. This is necessary to convert the armor image into a usable skin format. If the clothing is NOT an armor image, leave this as false.",
+								type: "boolean",
+								default: false
+							},
+							dye_color: {
+								title: "dye_color",
+								description: "The color of the clothing if it is a dyeable piece. Clothing is dyeable if it has the appropriate overlay format to go with it. Otherwise, this will do nothing. Use a HEX format for the dye (Ex. #FFFFFF). Leave as blank or below 7 letters if this should not be dyed.",
+								type: "string",
+								default: ""
+							}
+						}
+					}
+				}
             }
         }
     });

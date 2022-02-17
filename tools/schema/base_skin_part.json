@@ -1,0 +1,23 @@
+{
+	"type": "object",
+    "defaultProperties": [
+        "image_id",
+		"image_color"
+    ],
+	"additionalProperties": false,
+	"properties": {
+		"image_id": {
+			"propertyOrder": 1,
+			"title": "image_id",
+			"description": "The ID of the image to use for this skin part.",
+			"type": "string"
+		},
+		"image_color": {
+			"propertyOrder": 2,
+			"title": "image_color",
+			"description": "The color that the image should be dyed to for the skin part. Use a HEX format for this (Ex. #FFFFFF).",
+			"type": "string",
+			"default": "#FFFFFF"
+		}
+	}
+}
