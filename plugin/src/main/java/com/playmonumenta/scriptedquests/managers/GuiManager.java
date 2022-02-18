@@ -1,8 +1,15 @@
 package com.playmonumenta.scriptedquests.managers;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.quests.Gui;
+import com.playmonumenta.scriptedquests.quests.components.GuiItem;
+import com.playmonumenta.scriptedquests.quests.components.GuiPage;
+import com.playmonumenta.scriptedquests.quests.components.QuestActions;
+import com.playmonumenta.scriptedquests.utils.CustomInventory;
+import com.playmonumenta.scriptedquests.utils.MessagingUtils;
+import com.playmonumenta.scriptedquests.utils.QuestUtils;
+import dev.jorel.commandapi.CommandAPI;
+import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -12,16 +19,8 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.quests.Gui;
-import com.playmonumenta.scriptedquests.quests.components.GuiItem;
-import com.playmonumenta.scriptedquests.quests.components.GuiPage;
-import com.playmonumenta.scriptedquests.utils.CustomInventory;
-import com.playmonumenta.scriptedquests.utils.MessagingUtils;
-import com.playmonumenta.scriptedquests.utils.QuestUtils;
-
-import dev.jorel.commandapi.CommandAPI;
-import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GuiManager {
 
@@ -147,13 +146,13 @@ public class GuiManager {
 
 		@Override
 		protected void inventoryClose(InventoryCloseEvent event) {
+			GuiPage page = mGui.getPage(mPageName);
+			if (page == null) { // this could happen if someone removed the page while the inventory was open
+				return;
+			}
 			if (mEditMode) {
 				// save the GUI
 				try {
-					GuiPage page = mGui.getPage(mPageName);
-					if (page == null) { // this could happen if someone removed the page while the inventory was open
-						return;
-					}
 					GuiPage updated = page.createUpdated(getInventory());
 					mGui.setPage(mPageName, updated);
 					QuestUtils.save(getPlugin(), event.getPlayer(), mGui.toJson(), mGui.getFile());
@@ -161,6 +160,14 @@ public class GuiManager {
 				} catch (Exception e) {
 					event.getPlayer().sendMessage(ChatColor.RED + "Failed to update GUI.");
 					MessagingUtils.sendStackTrace(event.getPlayer(), e);
+				}
+			} else {
+				if (!(event.getPlayer() instanceof Player)) {
+					return;
+				}
+				QuestActions closeActions = page.getCloseActions();
+				if (closeActions != null) {
+					closeActions.doActions((Plugin) getPlugin(), (Player) event.getPlayer(), null, null);
 				}
 			}
 		}
