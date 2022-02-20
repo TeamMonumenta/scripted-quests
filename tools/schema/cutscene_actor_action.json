@@ -8,6 +8,12 @@
 			"description": "Moves the specified actor to the specified location by following the path given. You can specify its walking speed, or use the default constants WALK, RUN, or SPRINT.",
 			"type": "object",
 			"properties": {
+				"speed": {
+					"title": "speed",
+					"description": "The speed of the movement. The number can be a decimal, or you can use the default constants WALK, RUN, or SPRINT.",
+					"type": "string",
+					"default": "WALK"
+				},
 				"path": {
 					"title": "path",
 					"description": "The path that the NPC walks in vector coordinates (x,y,z). This occurs in order.",

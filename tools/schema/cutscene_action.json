@@ -17,7 +17,6 @@
 					"title": "script",
 					"description": "The list of actions/scripts that this actor performs in order.",
 					"type": "array",
-					"format": "tabs",
 					"items": {
 						"title": "Script Action",
 						"$ref": "cutscene_actor_action.json"
