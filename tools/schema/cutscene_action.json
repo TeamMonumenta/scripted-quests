@@ -18,7 +18,7 @@
 					"format": "tabs",
 					"items": {
 						"title": "Script Action",
-						"$ref": "schema/cutscene_actor_action.json"
+						"$ref": "cutscene_actor_action.json"
 					}
 				}
 			}

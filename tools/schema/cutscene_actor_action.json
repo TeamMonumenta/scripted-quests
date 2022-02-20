@@ -13,7 +13,7 @@
 					"items": {
 						"title": "Path Point",
 						"type": "string",
-						"default": "0,00"
+						"default": "0,0,0"
 					}
 				}
 			}
