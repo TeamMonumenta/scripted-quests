@@ -1,5 +1,7 @@
 {
 	"type": "object",
+	"defaultProperties": [],
+	"additionalProperties": false,
 	"properties": {
 		"script_actor": {
 			"title": "script_actor",
