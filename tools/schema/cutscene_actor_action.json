@@ -41,7 +41,7 @@
 		},
 		"focus": {
 			"title": "focus",
-			"description": "Makes the actor focus (look at) another actor specified. If the targeted actor is a blank field, or they're not spawned in, they will unfocus.",
+			"description": "Makes the actor look at and keep looking at another actor specified. If the targeted actor is a blank field, or they're not spawned in, they will unfocus.",
 			"type": "object",
 			"properties": {
 				"focused_actor": {
