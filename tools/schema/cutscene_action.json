@@ -1,0 +1,66 @@
+{
+	"type": "object",
+	"properties": {
+		"script_actor": {
+			"title": "script_actor",
+			"description": "Makes the specified actor execute a list of actions in order. Actions will execute one after another, meaning the next action in a list will not be executed until the previous one is finished. Actor Scripts can be overlap if they are called in succession in a cutscene script list, however it is not recommended to overlap certain actions together, such as move actions!",
+			"type": "object",
+			"properties": {
+				"actor": {
+					"title": "actor",
+					"description": "The actor variable ID to make perform this script.",
+					"type": "string"
+				},
+				"script": {
+					"title": "script",
+					"description": "The list of actions/scripts that this actor performs in order.",
+					"type": "array",
+					"format": "tabs",
+					"items": {
+						"title": "Script Action",
+						"$ref": "schema/cutscene_actor_action.json"
+					}
+				}
+			}
+		},
+		"dialogue": {
+			"title": "dialogue",
+			"description": "Displays the given dialogue shown, using the specified actor as the speaker of the dialogue.",
+			"type": "object",
+			"properties": {
+				"actor": {
+					"title": "actor",
+					"description": "The actor variable ID to make speak the dialogue. This can be left blank if no specific actor speaks this dialogue, however if no actor is provided then it is highly recommended that the display_name field below is filled in.",
+					"type": "string"
+				},
+				"display_name": {
+					"title": "display_name",
+					"description": "The display name of the speaker of the dialogue. If left blank, it will automatically default to the Actor's name. If the actor field is blank and there is no display name, it is defaulted to '???'",
+					"type": "string"
+				},
+				"dialogue": {
+					"title": "dialogue",
+					"description": "The dialogue to be spoken.",
+					"type": "string"
+				},
+				"required_click": {
+					"title": "required_click",
+					"description": "Toggles on/off if the player is required to click the 'Next Dialogue' button in order to progress. If this option is toggled on, then the dialogue will act similar to a 'wait' function, in which the scene will not continue to execute actions until the player clicks to view the next dialogue. It is recommended to leave this toggled on for self-paced readability.",
+					"type": "boolean",
+					"default": true
+				}
+			}
+		},
+		"wait": {
+			"title": "wait",
+			"description": "Causes the scene to wait the specified amount of time before continuing to execute actions. Any in-progress actions are not halted. This is in SECONDS and can be a decimal.",
+			"type": "number",
+			"default": 0.0
+		},
+		"waitfor": {
+			"title": "waitfor",
+			"description": "Causes the scene to wait for the specified actor to finish their current scripts before continuing to execute any scene actions. Any in-progress actions are not halted. If the actor specified is invalid, empty, or not spawned in, this action will be ignored.",
+			"type": "string"
+		}
+	}
+}

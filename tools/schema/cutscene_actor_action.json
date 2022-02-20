@@ -1,0 +1,47 @@
+{
+	"type": "object",
+	"properties": {
+		"move": {
+			"title": "move",
+			"description": "Moves the specified actor to the specified location by following the path given. You can specify its walking speed, or use the default constants WALK, RUN, or SPRINT.",
+			"type": "object",
+			"properties": {
+				"path": {
+					"title": "path",
+					"description": "The path that the NPC walks in vector coordinates (x,y,z). This occurs in order.",
+					"type": "array",
+					"items": {
+						"title": "Path Point",
+						"type": "string",
+						"default": "0,00"
+					}
+				}
+			}
+		},
+		"spawn": {
+			"title": "spawn",
+			"description": "Spawns the actor at a specified location. If the actor is already spawned in, this does nothing.",
+			"type": "object",
+			"properties": {
+				"location": {
+					"title": "location",
+					"description": "The location vector that the actor will spawn at (x,y,z).",
+					"type": "string",
+					"default": "0,0,0"
+				}
+			}
+		},
+		"focus": {
+			"title": "focus",
+			"description": "Makes the actor focus (look at) another actor specified. If the targeted actor is a blank field, or they're not spawned in, they will unfocus.",
+			"type": "object",
+			"properties": {
+				"focused_actor": {
+					"title": "actor",
+					"description": "The targeted actor variable ID for the actor to focus on.",
+					"type": "string"
+				}
+			}
+		}
+	}
+}

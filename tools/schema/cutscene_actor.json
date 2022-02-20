@@ -1,0 +1,27 @@
+{
+  "type": "object",
+  "patternProperties": {
+    ".*": {
+		"headerTemplate": "{{i}}",
+		"description": "The loot from which the player has to pick 1 item from. This can be left blank if not intended.",
+		"oneOf": [
+			{
+				"title": "Actor ID",
+				"type": "string"
+			},
+			{
+				"title": "Player",
+				"type": "object",
+				"properties": {
+					"viewer": {
+						"title": "viewer",
+						"description": "Toggles whether or not this actor is the watcher of this cutscene, making it so it uses their player character as an actor. If this option is toggled on, all other fields below are ignored.",
+						"type": "boolean",
+						"default": true
+					}
+				}
+			}
+		]
+	}
+  }
+}

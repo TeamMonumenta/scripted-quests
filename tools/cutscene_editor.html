@@ -49,7 +49,8 @@
             defaultProperties: [
                 "id",
 				"name",
-				"actors"
+				"actors",
+				"scene_script"
             ],
             additionalProperties:false,
             properties: {
@@ -71,16 +72,24 @@
                 },
 				actors: {
                     required: true,
-                    propertyOrder: 2,
+                    propertyOrder: 3,
                     title: "actors",
                     description: "A list of actors in this cutscene. To add an actor, click the 'Properties' button, and add in the variable name for an actor. When added, type the Actor's ID in the variable. When using an actor in this list, use the VARIABLE name of the actor, not the Actor ID.",
-                    type: "object",
-                    patternProperties: {
-						.*: {
-							type: "string"
-						}
+                    $ref: "schema/cutscene_actor.json"
+                },
+				scene_script: {
+					required: true,
+                    propertyOrder: 4,
+                    title: "scene_script",
+                    description: "The scene script that plays out in this cutscene. The script is a list of actions and pauses that actors perform on stage. For each action, there can only be 1 action selected and used. If there are multiple active, the top-most action is used.",
+                    type: "array",
+                    format: "tabs",
+                    minItems: 1,
+                    items: {
+						title: "Scene Line"
+						$ref: "schema/cutscene_action.json"
 					}
-                }
+				}
             }
         }
     });
