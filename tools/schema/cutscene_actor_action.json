@@ -1,5 +1,7 @@
 {
 	"type": "object",
+	"defaultProperties": [],
+	"additionalProperties": false,
 	"properties": {
 		"move": {
 			"title": "move",
