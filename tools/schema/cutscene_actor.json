@@ -3,7 +3,7 @@
   "patternProperties": {
     ".*": {
 		"headerTemplate": "{{i}}",
-		"description": "The loot from which the player has to pick 1 item from. This can be left blank if not intended.",
+		"description": "An actor variable, with the JSON key being the variable ID/name, and the specified object with the JSON key being information about the actual actor.",
 		"oneOf": [
 			{
 				"title": "Actor ID",
