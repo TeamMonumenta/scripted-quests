@@ -68,6 +68,16 @@
 			"description": "Plays the specified body animation for that NPC. Body animations affect the NPCs swings and head rotation. If another body animation is in progress, this will override it.",
 			"type": "string"
 		},
+		"swing_mainhand": {
+			"title": "swing_mainhand",
+			"description": "Swings the actor's main hand if they have one.",
+			"type": "boolean"
+		},
+		"swing_offhand": {
+			"title": "swing_offhand",
+			"description": "Swings the actor's off hand if they have one.",
+			"type": "boolean"
+		},
 		"wait": {
 			"title": "wait",
 			"description": "Causes the actor script to wait the specified amount of time before continuing to execute actions. Any in-progress actions are not halted. This is in SECONDS and can be a decimal.",
