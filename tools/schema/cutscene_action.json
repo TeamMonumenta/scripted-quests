@@ -63,6 +63,11 @@
 			"description": "Causes the scene to wait for the specified actor to finish their current scripts before continuing to execute any scene actions. Any in-progress actions are not halted. If the actor specified is invalid, empty, or not spawned in, this action will be ignored.",
 			"type": "string"
 		},
+		"wait_camera": {
+			"title": "wait_camera",
+			"description": "Causes the scene to wait for the camera to finish pathing its current path before continuing to execute any scene actions. Any in-progress actions are not halted. If the camera is not on any path, or has already finished its path, then this action will be ignored.",
+			"type": "boolean"
+		},
 		"path_camera": {
 			"title": "path_camera",
 			"description": "Paths the player camera along the specified path of points. At the end of the path, the camera halts and awaits the next path. If another path_camera action plays, the current one is cancelled. The first camera point in a path is the starting point.",
