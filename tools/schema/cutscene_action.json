@@ -82,12 +82,10 @@
                                 "description": "The script that is played whenever the player chooses this prompt.",
 								"type": "array",
 								"format": "tabs",
+								"minItems": 1,
 								"items": {
-									"minItems": 1,
-									"items": {
-										"title": "Scene Line",
-										"$ref": "cutscene_action.json"
-									}
+									"title": "Scene Line",
+									"$ref": "cutscene_action.json"
 								}
 							}
 						}
