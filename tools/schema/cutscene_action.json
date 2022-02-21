@@ -52,6 +52,49 @@
 				}
 			}
 		},
+		"dialogue_choice": {
+			"title": "dialogue_choice",
+			"description": "Displays dialogue options that the player can choose from, which will play additional script lines depending on which dialogue option is chosen. The cutscene script will not continue until the player chooses an answer, so it acts similar to wait actions.",
+			"type": "object",
+			"properties": {
+				"choice_prompt": {
+					"title": "choice_prompt",
+					"description": "The prompt that the dialogue choices aim to answer. This is also displayed above all of the dialogue choices so that way the player knows what they're answering.",
+					"type": "string",
+					"default": "What will you say?"
+				},
+				"choices": {
+					"title": "choices",
+					"description": "The list of choices that the player can choose from.",
+					"format": "tabs",
+					"type": "array",
+					"items": {
+						"headerTemplate": "{{self.prompt_response}}",
+						"type": "object",
+						"properties": {
+                            "prompt_response": {
+                                "title": "prompt_response",
+                                "description": "The player's response. If you want to show the player's response as dialogue, you will have to manually do it with a script line.",
+                                "type": "string"
+                            },
+							"script": {
+								"title": "script",
+                                "description": "The script that is played whenever the player chooses this prompt.",
+								"type": "array",
+								"format": "tabs",
+								"items": {
+									"minItems": 1,
+									"items": {
+										"title": "Scene Line",
+										"$ref": "cutscene_action.json"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
 		"path_camera": {
 			"title": "path_camera",
 			"description": "Paths the player camera along the specified path of points. At the end of the path, the camera halts and awaits the next path. If another path_camera action plays, the current one is cancelled. The first camera point in a path is the starting point.",
