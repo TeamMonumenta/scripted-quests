@@ -116,6 +116,12 @@
 				}
 			}
 		},
+		"play_music": {
+			"title": "play_music",
+			"description": "Plays the specified music track on loop. If this field is empty, then any music being played is canceled, including music that was playing when the player entered the cutscene. All custom cutscene music that is playing is stopped when the cutscene is over.",
+			"type": "string",
+			"default": ""
+		},
 		"set_player_time": {
 			"title": "set_player_time",
 			"description": "Sets the player's time in-game. This is a clientsided time and only shows for the player, not everyone else, and will stay at the specific time until the player's time is reset. The player's time is reset back automatically when the cutscene ends.",
