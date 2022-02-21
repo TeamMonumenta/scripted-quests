@@ -65,12 +65,25 @@
 		},
 		"path_camera": {
 			"title": "path_camera",
-			"description": "Paths the player camera along the specified path of points. At the end of the path, the camera halts and awaits the next path. If another path_camera action plays, the current one is cancelled. The format for each path point is in x,y,z,yaw,pitch format.",
+			"description": "Paths the player camera along the specified path of points. At the end of the path, the camera halts and awaits the next path. If another path_camera action plays, the current one is cancelled. The first camera point in a path is the starting point.",
 			"type": "array",
 			"items": {
 				"title": "Path Point",
-				"type": "string",
-				"default": "0,0,0,0,0"
+				"type": "object",
+				"properties": {
+					"time": {
+						"title": "time",
+						"description": "The amount of time for the camera to reach this point. This number is in SECONDS, and has to be greater than 0.",
+						"type": "number",
+						"default": 1
+					},
+					"point": {
+						"title": "point",
+						"description": "The coordinate point to move to. The format for this is in x,y,z,yaw,pitch format.",
+						"type": "string",
+						"default": "0,0,0,0,0"
+					}
+				}
 			}
 		}
 	}
