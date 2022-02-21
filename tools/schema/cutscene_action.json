@@ -52,22 +52,6 @@
 				}
 			}
 		},
-		"wait": {
-			"title": "wait",
-			"description": "Causes the scene to wait the specified amount of time before continuing to execute actions. Any in-progress actions are not halted. This is in SECONDS and can be a decimal.",
-			"type": "number",
-			"default": 0.0
-		},
-		"waitfor": {
-			"title": "waitfor",
-			"description": "Causes the scene to wait for the specified actor to finish their current scripts before continuing to execute any scene actions. Any in-progress actions are not halted. If the actor specified is invalid, empty, or not spawned in, this action will be ignored.",
-			"type": "string"
-		},
-		"wait_camera": {
-			"title": "wait_camera",
-			"description": "Causes the scene to wait for the camera to finish pathing its current path before continuing to execute any scene actions. Any in-progress actions are not halted. If the camera is not on any path, or has already finished its path, then this action will be ignored.",
-			"type": "boolean"
-		},
 		"path_camera": {
 			"title": "path_camera",
 			"description": "Paths the player camera along the specified path of points. At the end of the path, the camera halts and awaits the next path. If another path_camera action plays, the current one is cancelled. The first camera point in a path is the starting point.",
@@ -90,6 +74,34 @@
 					}
 				}
 			}
+		},
+		"set_player_time": {
+			"title": "set_player_time",
+			"description": "Sets the player's time in-game. This is a clientsided time and only shows for the player, not everyone else, and will stay at the specific time until the player's time is reset. The player's time is reset back automatically when the cutscene ends.",
+			"type": "integer",
+			"default": 0
+		},
+		"reset_player_time": {
+			"title": "reset_player_time",
+			"description": "Resets the player's time in-game to sync up with the current, actual world time.",
+			"type": "boolean",
+			"default": true
+		},
+		"wait": {
+			"title": "wait",
+			"description": "Causes the scene to wait the specified amount of time before continuing to execute actions. Any in-progress actions are not halted. This is in SECONDS and can be a decimal.",
+			"type": "number",
+			"default": 0.0
+		},
+		"waitfor": {
+			"title": "waitfor",
+			"description": "Causes the scene to wait for the specified actor to finish their current scripts before continuing to execute any scene actions. Any in-progress actions are not halted. If the actor specified is invalid, empty, or not spawned in, this action will be ignored.",
+			"type": "string"
+		},
+		"wait_camera": {
+			"title": "wait_camera",
+			"description": "Causes the scene to wait for the camera to finish pathing its current path before continuing to execute any scene actions. Any in-progress actions are not halted. If the camera is not on any path, or has already finished its path, then this action will be ignored.",
+			"type": "boolean"
 		}
 	}
 }
