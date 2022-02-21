@@ -101,7 +101,8 @@
 		"wait_camera": {
 			"title": "wait_camera",
 			"description": "Causes the scene to wait for the camera to finish pathing its current path before continuing to execute any scene actions. Any in-progress actions are not halted. If the camera is not on any path, or has already finished its path, then this action will be ignored.",
-			"type": "boolean"
+			"type": "boolean",
+			"default": true
 		}
 	}
 }
