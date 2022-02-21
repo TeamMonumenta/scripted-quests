@@ -28,7 +28,7 @@
 		},
 		"spawn": {
 			"title": "spawn",
-			"description": "Spawns the actor at a specified location. If the actor is already spawned in, this does nothing.",
+			"description": "Spawns the actor at a specified location. If the actor is already spawned in, this does nothing. This is in x,y,z format. Optionally, it can be in x,y,z,yaw,pitch format.",
 			"type": "object",
 			"properties": {
 				"location": {
@@ -50,6 +50,29 @@
 					"type": "string"
 				}
 			}
+		},
+		"look": {
+			"title": "look",
+			"description": "Makes the actor look at the specified location. If this is left blank, the actor's look target is reset. This is in x,y,z format",
+			"type": "string",
+			"default": "0,0,0"
+		},
+		"teleport": {
+			"title": "teleport",
+			"description": "Teleports the actor to the specified location. This is in x,y,z format. Optionally, it can be in x,y,z,yaw,pitch format.",
+			"type": "string",
+			"default": "0,0,0"
+		},
+		"play_body_animation": {
+			"title": "play_body_animation",
+			"description": "Plays the specified body animation for that NPC. Body animations affect the NPCs swings and head rotation. If another body animation is in progress, this will override it.",
+			"type": "string"
+		},
+		"wait": {
+			"title": "wait",
+			"description": "Causes the actor script to wait the specified amount of time before continuing to execute actions. Any in-progress actions are not halted. This is in SECONDS and can be a decimal.",
+			"type": "number",
+			"default": 0.0
 		}
 	}
 }
