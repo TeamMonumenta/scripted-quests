@@ -124,7 +124,7 @@
 		},
 		"set_player_time": {
 			"title": "set_player_time",
-			"description": "Sets the player's time in-game. This is a clientsided time and only shows for the player, not everyone else, and will stay at the specific time until the player's time is reset. The player's time is reset back automatically when the cutscene ends.",
+			"description": "Sets the player's time in-game. This is a clientsided time and only shows for the player, not everyone else, and will stay at the specific time until the player's time is reset. The player's time is reset back automatically when the cutscene ends. The integer is in Minecraft Tick Time.",
 			"type": "integer",
 			"default": 0
 		},

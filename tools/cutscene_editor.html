@@ -80,6 +80,19 @@
                     description: "A list of actors in this cutscene. To add an actor, click the 'Properties' button, and add in the variable name for an actor. When added, type the Actor's ID in the variable. When using an actor in this list, use the VARIABLE name of the actor, not the Actor ID.",
                     $ref: "schema/cutscene_actor.json"
                 },
+				setup_script: {
+					required: true,
+                    propertyOrder: 4,
+                    title: "setup_script",
+                    description: "The scene script that plays before the cutscene starts to set up things like assets and times. DO NOT use this for normal scripting. Only use it for set-up! Dialogue is NOT supported!",
+                    type: "array",
+                    format: "tabs",
+                    minItems: 1,
+                    items: {
+						title: "Scene Line",
+						$ref: "schema/cutscene_action.json"
+					}
+				},
 				scene_script: {
 					required: true,
                     propertyOrder: 4,
