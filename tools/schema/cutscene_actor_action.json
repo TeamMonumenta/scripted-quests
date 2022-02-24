@@ -70,13 +70,15 @@
 		},
 		"swing_mainhand": {
 			"title": "swing_mainhand",
-			"description": "Swings the actor's main hand if they have one.",
-			"type": "boolean"
+			"description": "Swings the actor's main hand if they have one. When this action is played, it will incur the specified amount of wait time between the swing. If you don't want there to be a wait time, put it as 0 or lower. This is in SECONDS and can be a decimal.",
+			"type": "number",
+			"default": 0.5
 		},
 		"swing_offhand": {
 			"title": "swing_offhand",
-			"description": "Swings the actor's off hand if they have one.",
-			"type": "boolean"
+			"description": "Swings the actor's off hand if they have one. When this action is played, it will incur the specified amount of wait time between the swing. If you don't want there to be a wait time, put it as 0 or lower. This is in SECONDS and can be a decimal.",
+			"type": "number",
+			"default": 0.5
 		},
 		"wait": {
 			"title": "wait",
