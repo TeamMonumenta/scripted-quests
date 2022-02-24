@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>SFRPG Cutscene Head Animation Editor</title>
+
+    <!-- Foundation CSS framework (Bootstrap and jQueryUI also supported) -->
+    <link rel='stylesheet' href='//cdn.jsdelivr.net/bootstrap/3.2.0/css/bootstrap.css'>
+    <!-- Font Awesome icons (Bootstrap, Foundation, and jQueryUI also supported) -->
+    <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.6.1/css/all.css'>
+
+    <script src="https://cdn.jsdelivr.net/npm/@json-editor/json-editor@1.3.5/dist/jsoneditor.min.js"></script>
+</head>
+<body>
+<div class='container'>
+    <div class='row' style='padding-bottom: 15px;'>
+        <div class='col-md-12'>
+            <h1>SFRPG Cutscene Head Animation Editor</h1>
+            <p>For the SFRPG Project, by Nova/Fire.</p>
+			<br>
+			<p>Allows for the creation of Head Animations for use in SFRPG Cutscenes.</p>
+        </div>
+    </div>
+    <div class='row' style='padding-bottom: 15px;'>
+        <div class='col-md-12'>
+            <button id='restore' class='btn btn-info'>Restore to Default</button>
+            <span id='valid_indicator' class='label label-success'></span>
+        </div>
+    </div>
+    <div class='row'>
+        <div class='col-md-12'>
+            <div id='editor_holder'></div>
+        </div>
+    </div>
+</div>
+
+<script>
+       // Initialize the editor
+    var editor = new JSONEditor(document.getElementById('editor_holder'),{
+        theme: 'bootstrap3',
+        iconlib: 'fontawesome5',
+
+        // Enable fetching schemas via ajax
+        ajax: true,
+
+        // The schema for the editor
+        schema: {
+            title: "Head Animation",
+            defaultProperties: [
+                "id",
+				"rotations"
+            ],
+            additionalProperties:false,
+            properties: {
+                id: {
+                    required: true,
+                    propertyOrder: 1,
+                    title: "id",
+                    description: "The ID of the cutscene head animation for use in cutscenes. Must be unique",
+                    type: "string",
+                    default: "actor"
+                },
+				rotations: {
+                    required: true,
+                    propertyOrder: 2,
+                    title: "rotations",
+                    description: "The list of head rotations in order of execution. For each head rotation, specify a yaw and pitch, the time take to get to that point, and the interpolation type.",
+                    type: "array",
+                    items: {
+						title: "Point",
+						description: "A rotation point for the head.",
+						type: "object",
+						properties: { 
+							rotation: {
+								title: "rotation",
+								description: "The rotation amount to do, in yaw,pitch format. This is added relatively to the cutscene NPC's head rotation.",
+								type: "string",
+								default: "0,0"
+							},
+							time: {
+								title: "time",
+								description: "The time taken to complete the rotation point. This is in seconds.",
+								type: "number",
+								default: 0.5
+							},
+							interpolation: {
+								title: "interpolation",
+								description: "The interpolation type that this point has to arrive to it. This field is case-sensitive! Valid interpolations: LINEAR, BELL_CURVE, BELL_CURVE_UPSIDE_DOWN",
+								type: "string",
+								default: "LINEAR"
+							}
+						}
+					}
+                }
+            }
+        }
+    });
+
+    // Hook up the Restore to Default button
+    document.getElementById('restore').addEventListener('click',function() {
+        editor.setValue(starting_value);
+    });
+
+    // Hook up the validation indicator to update its
+    // status whenever the editor changes
+    editor.on('change',function() {
+        // Get an array of errors from the validator
+        var errors = editor.validate();
+
+        var indicator = document.getElementById('valid_indicator');
+
+        // Not valid
+        if(errors.length) {
+            indicator.className = 'label label-danger'
+            indicator.textContent = "not valid";
+        }
+        // Valid
+        else {
+            indicator.className = 'label label-success'
+            indicator.textContent = "valid";
+        }
+    });
+</script>
+</body>
+</html>
