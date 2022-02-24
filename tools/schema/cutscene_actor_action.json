@@ -53,7 +53,7 @@
 		},
 		"look": {
 			"title": "look",
-			"description": "Makes the actor look at the specified location or yaw/pitch within the specified amount of time.",
+			"description": "Makes the actor look at the specified location or yaw/pitch within the specified amount of time. If the NPC has a focus target, it will be canceled.",
 			"type": "object",
 			"properties": {
 				"rotation": {

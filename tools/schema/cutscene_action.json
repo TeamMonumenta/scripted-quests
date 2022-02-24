@@ -134,6 +134,44 @@
 			"type": "boolean",
 			"default": true
 		},
+		"fade_in": {
+			"title": "fade_in",
+			"description": "Causes a screen fade-in over the specified amount of time.",
+			"type": "object",
+			"properties": {
+				"time": {
+					"title": "time",
+					"description": "The amount of time that the fade-in takes. This is in SECONDS, and can be decimals",
+					"type": "number",
+					"default": 0.0
+				},
+				"white": {
+					"title": "white",
+					"description": "Toggles whether or not this fade-in is white.",
+					"type": "boolean",
+					"default": false
+				}
+			}
+		},
+		"fade_out": {
+			"title": "fade_out",
+			"description": "Causes a screen fade-out over the specified amount of time. The fade-out will stay until the next fade-in occurs.",
+			"type": "object",
+			"properties": {
+				"time": {
+					"title": "time",
+					"description": "The amount of time that the fade-out takes. This is in SECONDS, and can be decimals",
+					"type": "number",
+					"default": 0.0
+				},
+				"white": {
+					"title": "white",
+					"description": "Toggles whether or not this fade-out is white.",
+					"type": "boolean",
+					"default": false
+				}
+			}
+		},
 		"wait": {
 			"title": "wait",
 			"description": "Causes the scene to wait the specified amount of time before continuing to execute actions. Any in-progress actions are not halted. This is in SECONDS and can be a decimal.",
