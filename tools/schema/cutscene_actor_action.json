@@ -53,9 +53,28 @@
 		},
 		"look": {
 			"title": "look",
-			"description": "Makes the actor look at the specified location. If this is left blank, the actor's look target is reset. This is in x,y,z format",
-			"type": "string",
-			"default": "0,0,0"
+			"description": "Makes the actor look at the specified location or yaw/pitch within the specified amount of time.",
+			"type": "object",
+			"properties": {
+				"rotation": {
+					"title": "rotation",
+					"description": "The rotation that the NPC looks towards. This can either be in x,y,z format, or yaw,pitch format.",
+					"type": "string",
+					"default": "0,0"
+				},
+				"time": {
+					"title": "time",
+					"description": "The time taken to turn towards the specified rotation. This is in SECONDS, and can be a decimal.",
+					"type": "number",
+					"default": 0.5
+				},
+				"interpolation": {
+					"title": "interpolation",
+					"description": "The interpolation of the rotation. Valid interpolations: LINEAR, BELL_CURVE, BELL_CURVE_UPSIDE_DOWN.",
+					"type": "string",
+					"default": "LINEAR"
+				}
+			}
 		},
 		"teleport": {
 			"title": "teleport",
