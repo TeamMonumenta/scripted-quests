@@ -63,9 +63,9 @@
 			"type": "string",
 			"default": "0,0,0"
 		},
-		"play_body_animation": {
-			"title": "play_body_animation",
-			"description": "Plays the specified body animation for that NPC. Body animations affect the NPCs swings and head rotation. If another body animation is in progress, this will override it.",
+		"play_head_animation": {
+			"title": "play_head_animation",
+			"description": "Plays the specified head animation for that NPC. Head animations affect the NPC's head rotation. If another head animation is in progress, this will override it.",
 			"type": "string"
 		},
 		"swing_mainhand": {
