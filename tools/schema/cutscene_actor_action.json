@@ -140,7 +140,7 @@
 		},
 		"sit": {
 			"title": "sit",
-			"description": "Toggles sitting. If the NPC is currently moving, then they are unseated. The NPC will sit regardless if the boolean is true or false.",
+			"description": "Toggles sitting. If the NPC is currently moving, then they are unseated. The true/false statement determines whether if the sitting is a silent action. No sounds will be played if the boolean is true.",
 			"type": "boolean",
 			"default": false
 		},
