@@ -38,7 +38,7 @@
 			"properties": {
 				"speed": {
 					"title": "speed",
-					"description": "The speed of the movement. The number can be a decimal, or you can use the default constants WALK, RUN, or SPRINT.",
+					"description": "The speed of the movement. The number can be a decimal, or you can use the default constants WALK (= 0.15), RUN (= 0.2), or SPRINT (= 0.3). You can type in the constant string.",
 					"type": "string",
 					"default": "WALK"
 				},
