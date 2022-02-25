@@ -138,12 +138,6 @@
 			"type": "number",
 			"default": 0.5
 		},
-		"wait": {
-			"title": "wait",
-			"description": "Causes the actor script to wait the specified amount of time before continuing to execute actions. Any in-progress actions are not halted. This is in SECONDS and can be a decimal.",
-			"type": "number",
-			"default": 0.0
-		},
 		"sit": {
 			"title": "sit",
 			"description": "Toggles sitting. If the NPC is currently moving, then they are unseated. The NPC will sit regardless if the boolean is true or false.",
@@ -203,6 +197,12 @@
 					"$ref": "ability_actions.json"
 				}
 			}
+		},
+		"wait": {
+			"title": "wait",
+			"description": "Causes the actor script to wait the specified amount of time before continuing to execute actions. Any in-progress actions are not halted. This is in SECONDS and can be a decimal.",
+			"type": "number",
+			"default": 0.0
 		}
 	}
 }
