@@ -9,7 +9,7 @@
 			"type": "object",
 			"properties": {
 				"iterations": {
-					"title": "speed",
+					"title": "iterations",
 					"description": "The amount of iterations to perform. This number has to be greater than -1.",
 					"type": "integer",
 					"default": 1
@@ -26,7 +26,7 @@
 					"type": "array",
 					"items": {
 						"title": "Script Line",
-						"$ref": "cutscene_action.json"
+						"$ref": "cutscene_actor_action.json"
 					}
 				}
 			}
