@@ -129,32 +129,32 @@
 			"properties": {
 				"head": {
 					"title": "head",
-					"description": "Sets the head slot to the new item. To use vanilla Minecraft items, include the vanilla Minecraft namespace (ex. minecraft:stone_sword). Otherwise, it will default to an actual SF Item by searching for it by ID. If this field is blank, the slot is left unchanged. If the field is NONE, then the slot is cleared.",
+					"description": "Sets the head slot to the new item. To use vanilla Minecraft items, include the vanilla Minecraft namespace (ex. minecraft:stone_sword). Otherwise, it will default to an actual SF Item by searching for it by ID. If this field is blank, the slot is left unchanged. If the field is minecraft:air, then the slot is cleared.",
 					"type": "string"
 				},
 				"chestplate": {
 					"title": "chestplate",
-					"description": "Sets the chestplate slot to the new item. To use vanilla Minecraft items, include the vanilla Minecraft namespace (ex. minecraft:stone_sword). Otherwise, it will default to an actual SF Item by searching for it by ID. If this field is blank, the slot is left unchanged. If the field is NONE, then the slot is cleared.",
+					"description": "Sets the chestplate slot to the new item. To use vanilla Minecraft items, include the vanilla Minecraft namespace (ex. minecraft:stone_sword). Otherwise, it will default to an actual SF Item by searching for it by ID. If this field is blank, the slot is left unchanged. If the field is minecraft:air, then the slot is cleared.",
 					"type": "string"
 				},
 				"leggings": {
 					"title": "leggings",
-					"description": "Sets the leggings slot to the new item. To use vanilla Minecraft items, include the vanilla Minecraft namespace (ex. minecraft:stone_sword). Otherwise, it will default to an actual SF Item by searching for it by ID. If this field is blank, the slot is left unchanged. If the field is NONE, then the slot is cleared.",
+					"description": "Sets the leggings slot to the new item. To use vanilla Minecraft items, include the vanilla Minecraft namespace (ex. minecraft:stone_sword). Otherwise, it will default to an actual SF Item by searching for it by ID. If this field is blank, the slot is left unchanged. If the field is minecraft:air, then the slot is cleared.",
 					"type": "string"
 				},
 				"boots": {
 					"title": "boots",
-					"description": "Sets the boots slot to the new item. To use vanilla Minecraft items, include the vanilla Minecraft namespace (ex. minecraft:stone_sword). Otherwise, it will default to an actual SF Item by searching for it by ID. If this field is blank, the slot is left unchanged. If the field is NONE, then the slot is cleared.",
+					"description": "Sets the boots slot to the new item. To use vanilla Minecraft items, include the vanilla Minecraft namespace (ex. minecraft:stone_sword). Otherwise, it will default to an actual SF Item by searching for it by ID. If this field is blank, the slot is left unchanged. If the field is minecraft:air, then the slot is cleared.",
 					"type": "string"
 				},
 				"mainhand": {
 					"title": "mainhand",
-					"description": "Sets the mainhand slot to the new item. To use vanilla Minecraft items, include the vanilla Minecraft namespace (ex. minecraft:stone_sword). Otherwise, it will default to an actual SF Item by searching for it by ID. If this field is blank, the slot is left unchanged. If the field is NONE, then the slot is cleared.",
+					"description": "Sets the mainhand slot to the new item. To use vanilla Minecraft items, include the vanilla Minecraft namespace (ex. minecraft:stone_sword). Otherwise, it will default to an actual SF Item by searching for it by ID. If this field is blank, the slot is left unchanged. If the field is minecraft:air, then the slot is cleared.",
 					"type": "string"
 				},
 				"offhand": {
 					"title": "offhand",
-					"description": "Sets the offhand slot to the new item. To use vanilla Minecraft items, include the vanilla Minecraft namespace (ex. minecraft:stone_sword). Otherwise, it will default to an actual SF Item by searching for it by ID. If this field is blank, the slot is left unchanged. If the field is NONE, then the slot is cleared.",
+					"description": "Sets the offhand slot to the new item. To use vanilla Minecraft items, include the vanilla Minecraft namespace (ex. minecraft:stone_sword). Otherwise, it will default to an actual SF Item by searching for it by ID. If this field is blank, the slot is left unchanged. If the field is minecraft:air, then the slot is cleared.",
 					"type": "string"
 				}
 			}
