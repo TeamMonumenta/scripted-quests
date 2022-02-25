@@ -110,6 +110,23 @@
 			"description": "Toggles sitting. If the NPC is currently moving, then they are unseated. The NPC will sit regardless if the boolean is true or false.",
 			"type": "boolean",
 			"default": false
+		},
+		"play_effects": {
+			"title": "play_effects",
+			"description": "Plays the specified effects at the specified location",
+			"type": "object",
+			"properties": {
+				"location": {
+					"description": "The location where the effects are played. This is in x,y,z format.",
+					"type": "string",
+					"default": "0,0,0"
+				}
+				"effects": {
+					"title": "effects",
+					"description": "The effects to play at the location",
+					"$ref": "ability_actions.json"
+				}
+			}
 		}
 	}
 }

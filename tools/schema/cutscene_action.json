@@ -172,6 +172,23 @@
 				}
 			}
 		},
+		"play_effects": {
+			"title": "play_effects",
+			"description": "Plays the specified effects at the specified location",
+			"type": "object",
+			"properties": {
+				"location": {
+					"description": "The location where the effects are played. This is in x,y,z format.",
+					"type": "string",
+					"default": "0,0,0"
+				}
+				"effects": {
+					"title": "effects",
+					"description": "The effects to play at the location",
+					"$ref": "ability_actions.json"
+				}
+			}
+		},
 		"wait": {
 			"title": "wait",
 			"description": "Causes the scene to wait the specified amount of time before continuing to execute actions. Any in-progress actions are not halted. This is in SECONDS and can be a decimal.",
