@@ -119,8 +119,30 @@
 		"play_music": {
 			"title": "play_music",
 			"description": "Plays the specified music track on loop. If this field is empty, then any music being played is canceled, including music that was playing when the player entered the cutscene. All custom cutscene music that is playing is stopped when the cutscene is over.",
-			"type": "string",
-			"default": ""
+			"oneOf": [
+				{
+					"title": "Generic Control",
+					"type": "string",
+					"default": ""
+				},
+				{
+					"title": "Custom Control",
+					"type": "object",
+					"properties": {
+						"music": {
+							"title": "music",
+							"description": "The ID of the music piece.",
+							"type": "string"
+						},
+						"fade_out_time": {
+							"title": "fade_out_time",
+							"description": "The time it takes for the music that was previously playing, if any, to fade out. This is in SECONDS, and can be a decimal.",
+							"type": "number",
+							"default": 1
+						}
+					}
+				}
+			]
 		},
 		"set_player_time": {
 			"title": "set_player_time",
