@@ -33,9 +33,9 @@
 			"properties": {
 				"location": {
 					"title": "location",
-					"description": "The location vector that the actor will spawn at (x,y,z).",
+					"description": "The location vector that the actor will spawn at (x,y,z,yaw,pitch).",
 					"type": "string",
-					"default": "0,0,0"
+					"default": "0,0,0,0,0"
 				}
 			}
 		},
