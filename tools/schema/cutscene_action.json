@@ -181,7 +181,7 @@
 					"description": "The location where the effects are played. This is in x,y,z format.",
 					"type": "string",
 					"default": "0,0,0"
-				}
+				},
 				"effects": {
 					"title": "effects",
 					"description": "The effects to play at the location",
