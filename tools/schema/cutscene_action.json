@@ -73,7 +73,7 @@
 						"title": "Scene Line",
 						"$ref": "cutscene_action.json"
 					}
-				}
+				},
 				"choices": {
 					"title": "choices",
 					"description": "The list of choices that the player can choose from.",
