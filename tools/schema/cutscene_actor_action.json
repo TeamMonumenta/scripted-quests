@@ -16,7 +16,7 @@
 				},
 				"time": {
 					"title": "time",
-					"description": "The time between each iteration. This is in SECONDS, and can be a decimal."
+					"description": "The time between each iteration. This is in SECONDS, and can be a decimal.",
 					"type": "number",
 					"default": 0
 				},
