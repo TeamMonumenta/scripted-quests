@@ -63,6 +63,17 @@
 					"type": "string",
 					"default": "What will you say?"
 				},
+				"common_script": {
+					"title": "common_script",
+					"description": "The common script that occurs at the beginning of each choice script. This is useful for when each choice script as a similar starting script to each other to help reduce redundancy.",
+					"type": "array",
+					"format": "tabs",
+					"minItems": 1,
+					"items": {
+						"title": "Scene Line",
+						"$ref": "cutscene_action.json"
+					}
+				}
 				"choices": {
 					"title": "choices",
 					"description": "The list of choices that the player can choose from.",
