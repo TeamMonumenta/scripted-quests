@@ -73,8 +73,19 @@
 					"description": "The interpolation of the rotation. Valid interpolations: LINEAR, BELL_CURVE, BELL_CURVE_UPSIDE_DOWN.",
 					"type": "string",
 					"default": "LINEAR"
+				},
+				"lock": {
+					"title": "lock",
+					"description": "Toggles of the NPC locks into this look rotation. If they are locked, then they will look in this direction if they're moving. To cancel the lock, use, cancel_look",
+					"type": "boolean",
+					"default": false
 				}
 			}
+		},
+		"cancel_look": {
+			"title": "cancel_look",
+			"description": "Cancels the NPC's look if they're locked into a look rotation.",
+			"type": "boolean"
 		},
 		"teleport": {
 			"title": "teleport",
