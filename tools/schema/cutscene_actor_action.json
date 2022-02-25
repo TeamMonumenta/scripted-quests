@@ -5,7 +5,7 @@
 	"properties": {
 		"action_loop": {
 			"title": "action_loop",
-			"description": "Creates a loop of actions that iterates once per specified time for the amount of iterations specified. This is useful for creating repeated actions.",
+			"description": "Creates a loop of actions that iterates once per specified time for the amount of iterations specified. This is useful for creating repeated actions, such as rapid punches.",
 			"type": "object",
 			"properties": {
 				"iterations": {
