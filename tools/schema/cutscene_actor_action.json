@@ -3,6 +3,34 @@
 	"defaultProperties": [],
 	"additionalProperties": false,
 	"properties": {
+		"action_loop": {
+			"title": "action_loop",
+			"description": "Creates a loop of actions that iterates once per specified time for the amount of iterations specified. This is useful for creating repeated actions.",
+			"type": "object",
+			"properties": {
+				"iterations": {
+					"title": "speed",
+					"description": "The amount of iterations to perform. This number has to be greater than -1.",
+					"type": "integer",
+					"default": 1
+				},
+				"time": {
+					"title": "time",
+					"description": "The time between each iteration. This is in SECONDS, and can be a decimal."
+					"type": "number",
+					"default": 0
+				},
+				"script": {				
+					"title": "script",
+					"description": "The script that is repeated.",
+					"type": "array",
+					"items": {
+						"title": "Script Line",
+						"$ref": "cutscene_action.json"
+					}
+				}
+			}
+		},
 		"move": {
 			"title": "move",
 			"description": "Moves the specified actor to the specified location by following the path given. You can specify its walking speed, or use the default constants WALK, RUN, or SPRINT.",
