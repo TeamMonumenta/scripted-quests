@@ -5,11 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import java.util.WeakHashMap;
 
 import com.playmonumenta.scriptedquests.Constants;
 import com.playmonumenta.scriptedquests.Plugin;
@@ -19,6 +15,11 @@ import com.playmonumenta.scriptedquests.quests.components.DeathLocation;
 import com.playmonumenta.scriptedquests.quests.components.QuestLocation;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
+
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 public class QuestCompassManager {
 	private static class ValidCompassEntry {
@@ -54,7 +55,7 @@ public class QuestCompassManager {
 
 	private final List<QuestCompass> mQuests = new ArrayList<QuestCompass>();
 	private final Map<UUID, CompassCacheEntry> mCompassCache = new HashMap<UUID, CompassCacheEntry>();
-	private final Map<Player, Integer> mCurrentIndex = new HashMap<>();
+	private final Map<Player, Integer> mCurrentIndex = new WeakHashMap<>();
 	private final Plugin mPlugin;
 
 	/* One command-specified waypoint per player */
@@ -154,19 +155,13 @@ public class QuestCompassManager {
 	}
 
 	public void showCurrentQuest(Player player) {
-		Integer index = mCurrentIndex.get(player);
-		if (index == null) {
-			index = 0;
-		}
+		Integer index = mCurrentIndex.getOrDefault(player, 0);
 
 		showCurrentQuest(player, index);
 	}
 
 	public void cycleQuestTracker(Player player) {
-		Integer index = mCurrentIndex.get(player);
-		if (index == null) {
-			index = 0;
-		}
+		Integer index = mCurrentIndex.getOrDefault(player, 0);
 		index += 1;
 
 		index = showCurrentQuest(player, index);
