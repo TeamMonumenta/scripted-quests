@@ -113,6 +113,17 @@
                   }
                 }
               }
+            },
+            "close_actions": {
+              "required": false,
+              "title": "close actions",
+              "type": "array",
+              "items": {
+                "defaultProperties": [
+                  "command"
+                ],
+                "$ref": "action.json"
+              }
             }
           }
         }
