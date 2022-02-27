@@ -75,7 +75,6 @@ tasks {
        exclude("org/apache/http/**")
        exclude("org/mortbay/**")
        relocate("com.fasterxml", "com.playmonumenta.scriptedquests.internal.com.fasterxml")
-       relocate("com.google", "com.playmonumenta.scriptedquests.internal.com.google")
        relocate("io.grpc", "com.playmonumenta.scriptedquests.internal.io.grpc")
        relocate("io.opencensus", "com.playmonumenta.scriptedquests.internal.io.opencensus")
     }

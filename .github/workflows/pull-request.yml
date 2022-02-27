@@ -7,44 +7,57 @@ jobs:
     name: Build plugin
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
-    - name: Set up JDK 1.17
-      uses: actions/setup-java@v1
-      with:
-        java-version: 1.17
+      - uses: actions/checkout@v1
+      - name: Set up JDK 1.17
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.17
 
-    - name: Setup reviewdog
-      uses: reviewdog/action-setup@v1
-      with:
-        reviewdog_version: latest
+      - name: Setup reviewdog
+        uses: reviewdog/action-setup@v1
+        with:
+          reviewdog_version: latest
 
-    - name: git config
-      run: |
-        git config --global user.name "Monumenta CI"
-        git config --global user.email "Monumenta.CI@NotARealEmail.com"
+      - name: git config
+        run: |
+          git config --global user.name "Monumenta CI"
+          git config --global user.email "Monumenta.CI@NotARealEmail.com"
 
-    - name: Cache maven dependencies
-      uses: actions/cache@v2
-      env:
-        cache-name: cache-maven-dependencies
-      with:
-        # maven files are stored in `~/.m2/repository`
-        path: |
-          ~/.m2/repository
-          ~/.gradle/caches
-          ~/.gradle/wrapper
-        # Create the key based on runner os, cache name, and a hash of all the pom.xml files
-        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-        restore-keys: |
-          ${{ runner.os }}-build-
+      - name: Cache maven dependencies
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-maven-dependencies
+        with:
+          # maven files are stored in `~/.m2/repository`
+          path: |
+            ~/.m2/repository
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          # Create the key based on runner os, cache name, and a hash of all the pom.xml files
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-build-
 
-    - name: Build and report style/pmd/warnings
-      env:
-        REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        set -o pipefail
-        ./gradlew build --console=plain | tee compile.log
-        set +o pipefail
-        cat compile.log | grep '^\[WARNING\].*\.java' | reviewdog -efm="[WARNING] %f:[%l,%c] %m" -name="compiler-warnings" -reporter=github-pr-check
-        cat ./plugin/build/reports/checkstyle/main.xml | reviewdog -f=checkstyle -name="checkstyle (plugin)" -reporter=github-pr-check
+      - name: Build Paper
+        run: |
+          if [[ ! -d ~/.m2/repository/com/destroystokyo/paper ]]; then
+            git clone https://github.com/TeamMonumenta/Paper.git
+            cd Paper
+            git checkout 1.16
+            ./paper jar
+          
+            # Build the plugin to make sure its dependencies are also cached
+            cd ../plugins
+            ./gradlew build
+          fi
+
+      - name: Build and report style/pmd/warnings
+        env:
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -o pipefail
+          ./gradlew build --console=plain | tee compile.log
+          set +o pipefail
+          cat compile.log | grep '^\[WARNING\].*\.java' | reviewdog -efm="[WARNING] %f:[%l,%c] %m" -name="compiler-warnings" -reporter=github-pr-check
+          cat ./plugin/build/reports/checkstyle/main.xml | reviewdog -f=checkstyle -name="checkstyle (plugin)" -reporter=github-pr-check
         cat ./plugin/build/reports/pmd/main.xml | reviewdog -efm='%+P<file name="%f">' -efm='%W<violation beginline="%l%.%#begincolumn="%c%.%#' -efm='%-C<%.%#' -efm='%+C%.%#' -efm='%-Q' -name="pmd" -reporter=github-pr-check
