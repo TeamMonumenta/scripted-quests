@@ -47,7 +47,7 @@ jobs:
             ./paper jar
           
             # Build the plugin to make sure its dependencies are also cached
-            cd ../plugins
+            cd ../plugin
             ./gradlew build
           fi
 
