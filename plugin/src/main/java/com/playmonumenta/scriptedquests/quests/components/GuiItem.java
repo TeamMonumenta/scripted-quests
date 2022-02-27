@@ -1,20 +1,12 @@
 package com.playmonumenta.scriptedquests.quests.components;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.playmonumenta.scriptedquests.api.JsonObjectBuilder;
 import com.playmonumenta.scriptedquests.utils.JsonUtils;
-
+import com.playmonumenta.scriptedquests.utils.NmsUtils;
 import de.tr7zw.nbtapi.NBTCompound;
 import de.tr7zw.nbtapi.NBTCompoundList;
 import de.tr7zw.nbtapi.NBTContainer;
@@ -22,6 +14,14 @@ import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.NBTListCompound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class GuiItem {
 
@@ -176,7 +176,15 @@ public class GuiItem {
 			if (mPrerequisites != null && !mPrerequisites.prerequisiteMet(player, null)) {
 				return null;
 			}
-			return mDisplayItem;
+			ItemStack displayItem = mDisplayItem.clone();
+			ItemMeta meta = displayItem.getItemMeta();
+			meta.displayName(NmsUtils.getVersionAdapter().resolveComponents(meta.displayName(), player));
+			List<Component> lore = meta.lore();
+			if (lore != null) {
+				meta.lore(lore.stream().map(line -> NmsUtils.getVersionAdapter().resolveComponents(line, player)).collect(Collectors.toList()));
+			}
+			displayItem.setItemMeta(meta);
+			return displayItem;
 		}
 	}
 
