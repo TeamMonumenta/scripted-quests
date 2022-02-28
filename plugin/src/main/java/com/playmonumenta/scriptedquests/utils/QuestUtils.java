@@ -9,7 +9,7 @@ import java.util.Set;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import javax.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -24,6 +24,7 @@ public class QuestUtils {
 		 */
 		String load(JsonObject object) throws Exception;
 
+		@Override
 		default String load(JsonObject object, File file) throws Exception {
 			return load(object);
 		}

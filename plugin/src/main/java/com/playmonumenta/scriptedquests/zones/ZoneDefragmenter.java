@@ -7,10 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
+import javax.annotation.Nullable;
 
 class ZoneDefragmenter {
-	class FragCombos extends HashMap<Set<Integer>, ZoneFragment> {}
+	static class FragCombos extends HashMap<Set<Integer>, ZoneFragment> {
+	}
 
 	private Map<Integer, FragCombos> mMergedCombos = new HashMap<Integer, FragCombos>();
 	private Set<Integer> mAllIds = new LinkedHashSet<Integer>();

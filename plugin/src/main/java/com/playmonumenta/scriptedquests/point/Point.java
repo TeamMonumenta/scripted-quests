@@ -20,6 +20,7 @@ public class Point {
 		mZ = loc.getZ();
 	}
 
+	@Override
 	public String toString() {
 		return "(" + Double.toString(mX) + ", " +
 			Double.toString(mY) + ", " + Double.toString(mZ) + ")";

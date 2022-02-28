@@ -4,6 +4,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.ArmorStand;
@@ -128,7 +130,7 @@ public class CommandTimerManager implements Listener {
 		}
 	}
 
-	private Integer getPeriod(Entity entity, Set<String> tags) {
+	private @Nullable Integer getPeriod(Entity entity, Set<String> tags) {
 		if (tags != null && tags.contains("timer")) {
 			for (String tag : tags) {
 				if (tag.startsWith("period=")) {

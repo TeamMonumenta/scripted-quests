@@ -43,27 +43,24 @@ public class CompassLocation implements QuestLocation {
 
 				// Read x coordinate
 				JsonElement xElement = entry.get("x");
-				int x = 0;
 				if (xElement == null) {
 					throw new Exception("Failed to parse location x value!");
 				}
-				x = xElement.getAsInt();
+				int x = xElement.getAsInt();
 
 				// Read y coordinate
 				JsonElement yElement = entry.get("y");
-				int y = 0;
 				if (yElement == null) {
 					throw new Exception("Failed to parse location y value!");
 				}
-				y = yElement.getAsInt();
+				int y = yElement.getAsInt();
 
 				// Read z coordinate
 				JsonElement zElement = entry.get("z");
-				int z = 0;
 				if (zElement == null) {
 					throw new Exception("Failed to parse location z value!");
 				}
-				z = zElement.getAsInt();
+				int z = zElement.getAsInt();
 
 				mWaypoints.add(new Location(world, x + 0.5, y, z + 0.5));
 			}
@@ -71,19 +68,17 @@ public class CompassLocation implements QuestLocation {
 		} else {
 			// Read x coordinate
 			JsonElement xElement = object.get("x");
-			int x = 0;
 			if (xElement == null) {
 				throw new Exception("Failed to parse location x value!");
 			}
-			x = xElement.getAsInt();
+			int x = xElement.getAsInt();
 
 			// Read z coordinate
 			JsonElement zElement = object.get("z");
-			int z = 0;
 			if (zElement == null) {
 				throw new Exception("Failed to parse location z value!");
 			}
-			z = zElement.getAsInt();
+			int z = zElement.getAsInt();
 
 			mWaypoints.add(new Location(world, x + 0.5, -1, z + 0.5));
 		}

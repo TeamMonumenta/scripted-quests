@@ -17,7 +17,7 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import javax.annotation.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -111,7 +111,7 @@ public class GuiManager {
 				return;
 			}
 			event.setCancelled(true);
-			if (event.getClick() != ClickType.LEFT && event.getClick() != ClickType.RIGHT
+			if ((event.getClick() != ClickType.LEFT && event.getClick() != ClickType.RIGHT)
 				    || !(event.getWhoClicked() instanceof Player)
 				    || event.getClickedInventory() != mInventory) {
 				return;

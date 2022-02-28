@@ -3,7 +3,6 @@ package com.playmonumenta.scriptedquests.quests;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import com.google.gson.JsonArray;
@@ -58,7 +57,7 @@ public class GrowableStructure {
 			return state;
 		}
 
-		private JsonObject getAsJsonObject() {
+		protected JsonObject getAsJsonObject() {
 			JsonObject obj = new JsonObject();
 			obj.addProperty("dx", mDX);
 			obj.addProperty("dy", mDY);
@@ -122,16 +121,13 @@ public class GrowableStructure {
 			throw new Exception("Failed to parse 'elements' as JSON array");
 		}
 
-		List<GrowableElement> tempList = new LinkedList<>();
+		mElements = new ArrayList<>(array.size());
 
 		Iterator<JsonElement> iter = array.iterator();
 		while (iter.hasNext()) {
 			JsonElement entry = iter.next();
-			tempList.add(new GrowableElement(entry.getAsJsonObject()));
+			mElements.add(new GrowableElement(entry.getAsJsonObject()));
 		}
-
-		/* Convert to an array list for long term storage */
-		mElements = new ArrayList<>(tempList);
 	}
 
 	public GrowableStructure(Plugin plugin, Location origin, String label, int maxDepth) throws Exception {
@@ -145,7 +141,7 @@ public class GrowableStructure {
 		 */
 
 		/* The resulting list of locations */
-		List<GrowableElement> result = new LinkedList<>();
+		List<GrowableElement> result = new ArrayList<>();
 
 		/* The list of next locations to visit after the current work list is complete */
 		List<Location> pending = new ArrayList<>();
@@ -205,7 +201,7 @@ public class GrowableStructure {
 		}
 
 		mLabel = label;
-		mElements = new ArrayList<>(result);
+		mElements = result;
 	}
 
 	public String getLabel() {

@@ -26,7 +26,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
 
 public class DialogClickableTextEntry implements DialogBase {
-	public class PlayerClickableTextEntry {
+	public static class PlayerClickableTextEntry {
 		private final QuestPrerequisites mPrerequisites;
 		private final QuestActions mActions;
 		private final AreaBounds mValidArea;

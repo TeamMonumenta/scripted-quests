@@ -4,6 +4,8 @@ import org.hidetake.groovy.ssh.core.Remote
 import org.hidetake.groovy.ssh.core.RunHandler
 import org.hidetake.groovy.ssh.core.Service
 import org.hidetake.groovy.ssh.session.SessionHandler
+import net.ltgt.gradle.errorprone.errorprone
+import net.ltgt.gradle.errorprone.CheckSeverity
 
 plugins {
     id("com.github.johnrengelman.shadow") version "7.1.2"
@@ -11,6 +13,8 @@ plugins {
     id("net.minecrell.plugin-yml.bukkit") version "0.5.1" // Generates plugin.yml
     id("org.hidetake.ssh") version "2.10.1"
     id("java")
+    id("net.ltgt.errorprone") version "2.0.2"
+    id("net.ltgt.nullaway") version "1.3.0"
 }
 
 dependencies {
@@ -27,6 +31,8 @@ dependencies {
     compileOnly("com.google.code.gson:gson:2.8.5")
     compileOnly("org.dynmap:DynmapCoreAPI:2.0")
     compileOnly("com.playmonumenta:redissync:1.7")
+    errorprone("com.google.errorprone:error_prone_core:2.10.0")
+    errorprone("com.uber.nullaway:nullaway:0.9.5")
 }
 
 group = "com.playmonumenta"
@@ -83,6 +89,29 @@ tasks {
         minimize {
             exclude(dependency("com.playmonumenta.*:.*:.*"))
         }
+    }
+}
+
+tasks.withType<JavaCompile>().configureEach {
+    options.compilerArgs.add("-Xmaxwarns")
+    options.compilerArgs.add("10000")
+    options.compilerArgs.add("-Xlint:deprecation")
+
+    options.errorprone {
+        // TODO This must be turned back on as soon as some of the other warnings are under control
+        option("NullAway:AnnotatedPackages", "com.playmonumenta.DISABLE")
+
+        allErrorsAsWarnings.set(true)
+
+        /*** Disabled checks ***/
+        // These we almost certainly don't want
+        check("CatchAndPrintStackTrace", CheckSeverity.OFF) // This is the primary way a lot of exceptions are handled
+        check("FutureReturnValueIgnored", CheckSeverity.OFF) // This one is dumb and doesn't let you check return values with .whenComplete()
+        check("ImmutableEnumChecker", CheckSeverity.OFF) // Would like to turn this on but we'd have to annotate a bunch of base classes
+        check("LockNotBeforeTry", CheckSeverity.OFF) // Very few locks in our code, those that we have are simple and refactoring like this would be ugly
+        check("StaticAssignmentInConstructor", CheckSeverity.OFF) // We have tons of these on purpose
+        check("StringSplitter", CheckSeverity.OFF) // We have a lot of string splits too which are fine for this use
+        check("MutablePublicArray", CheckSeverity.OFF) // These are bad practice but annoying to refactor and low risk of actual bugs
     }
 }
 

@@ -47,6 +47,7 @@ public class AreaBounds {
 		return mName;
 	}
 
+	@Override
 	public String toString() {
 		return "{" + mName + ", " + mLowerCorner.toString() + ", " + mUpperCorner.toString() + "}";
 	}

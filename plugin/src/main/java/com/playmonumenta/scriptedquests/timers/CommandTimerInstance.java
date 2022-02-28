@@ -98,6 +98,7 @@ public class CommandTimerInstance {
 		return name;
 	}
 
+	@Override
 	public String toString() {
 		return Integer.toString(mLoc.getBlockX()) + " " +
 			   Integer.toString(mLoc.getBlockY()) + " " +

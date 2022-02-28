@@ -15,7 +15,7 @@ import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
 
-/*
+/**
  * A ClickableEntry is a container for an interaction the player can trigger at any time
  * by clicking an in-game object (sign, book entry) or by typing the command
  * /click <label>

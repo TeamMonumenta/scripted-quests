@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.annotation.Nullable;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
@@ -30,7 +32,7 @@ public class RaceManager {
 	 */
 	private final HashMap<String, RaceFactory> mRaceFactories = new HashMap<String, RaceFactory>();
 	private final HashMap<UUID, Race> mActiveRaces = new HashMap<UUID, Race>();
-	private BukkitRunnable mRunnable = null;
+	private @Nullable BukkitRunnable mRunnable = null;
 
 	public RaceManager(Plugin plugin) {
 		mPlugin = plugin;

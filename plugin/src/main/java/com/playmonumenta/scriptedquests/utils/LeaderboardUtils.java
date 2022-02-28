@@ -2,6 +2,8 @@ package com.playmonumenta.scriptedquests.utils;
 
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -18,7 +20,7 @@ public class LeaderboardUtils {
 			this(name, color, value, null);
 		}
 
-		public LeaderboardEntry(String name, String color, int value, String valueStr) {
+		public LeaderboardEntry(String name, String color, int value, @Nullable String valueStr) {
 			mName = name;
 			mColor = color;
 			mValue = value;

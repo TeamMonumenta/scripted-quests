@@ -1,7 +1,14 @@
 package com.playmonumenta.scriptedquests.listeners;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
+
+import com.playmonumenta.scriptedquests.Constants;
+import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.point.Point;
+import com.playmonumenta.scriptedquests.quests.QuestDeath.DeathActions;
+import com.playmonumenta.scriptedquests.quests.components.DeathLocation;
+import com.playmonumenta.scriptedquests.utils.MetadataUtils;
 
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -25,13 +32,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
-
-import com.playmonumenta.scriptedquests.Constants;
-import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.point.Point;
-import com.playmonumenta.scriptedquests.quests.QuestDeath.DeathActions;
-import com.playmonumenta.scriptedquests.quests.components.DeathLocation;
-import com.playmonumenta.scriptedquests.utils.MetadataUtils;
 
 public class PlayerListener implements Listener {
 
@@ -140,7 +140,7 @@ public class PlayerListener implements Listener {
 			deathEntries = (List<DeathLocation>)player.getMetadata(Constants.PLAYER_DEATH_LOCATION_METAKEY).get(0).value();
 		} else {
 			// No - need a new list to keep track.
-			deathEntries = new LinkedList<DeathLocation>();
+			deathEntries = new ArrayList<DeathLocation>(4);
 		}
 
 		// Prevent safe deaths from being counted

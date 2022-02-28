@@ -65,6 +65,7 @@ public class DateUtils {
 		return LocalDateTime.now(TIMEZONE).getSecond();
 	}
 
+	@SuppressWarnings("JavaLocalDateTimeGetNano")
 	public static int getMs() {
 		return LocalDateTime.now(TIMEZONE).getNano() / 1000000;
 	}

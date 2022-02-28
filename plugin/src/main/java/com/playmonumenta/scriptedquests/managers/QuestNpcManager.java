@@ -8,6 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.QuestNpc;
@@ -58,7 +59,7 @@ public class QuestNpcManager {
 		mPlugin = plugin;
 	}
 
-	public QuestNpc getInteractNPC(String npcName, EntityType entityType) {
+	public @Nullable QuestNpc getInteractNPC(String npcName, EntityType entityType) {
 		// Only search for the entity's name if we have a quest with that entity type
 		if (!mEntityTypes.contains(entityType)) {
 			return null;

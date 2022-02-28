@@ -14,7 +14,7 @@ import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
 
-/*
+/**
  * A CodeEntry is a container for an interaction the player can trigger at any time
  * by typing /code <words>
  *

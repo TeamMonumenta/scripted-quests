@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import javax.annotation.Nullable;
+
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
@@ -38,7 +40,7 @@ public class WaypointManager {
 	private final Plugin mPlugin;
 	private final Map<Player, QuestLocation> mPlayers = new LinkedHashMap<>();
 	private final Map<Player, Location> mPlayerAverageLocs = new LinkedHashMap<>();
-	private BukkitRunnable mRunnable = null;
+	private @Nullable BukkitRunnable mRunnable = null;
 
 	private static double distance2D(Location loc1, Location loc2) {
 		return Math.sqrt(Math.pow(loc1.getX() - loc2.getX(), 2) + Math.pow(loc1.getZ() - loc2.getZ(), 2));
@@ -54,7 +56,7 @@ public class WaypointManager {
 		Location playerLoc = player.getLocation();
 		Location prevLoc = null;
 		Location closestLoc = null;
-		double closestDist = 99999999999999999d;
+		double closestDist = Double.MAX_VALUE;
 
 		/*
 		 * Iterate the list to determine the closest-next waypoint
@@ -155,6 +157,7 @@ public class WaypointManager {
 							double mY = -1.0;
 							double mTheta = mHelixStart;
 
+							@Override
 							public void run() {
 								Vector offset = new Vector(WAYPOINT_DEST_ANIM_RADIUS * Math.cos(mTheta),
 														   mY,

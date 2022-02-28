@@ -13,7 +13,7 @@ import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import com.playmonumenta.scriptedquests.utils.ScoreboardUtils;
 
 public class ActionSetScore implements ActionBase {
-	private class SetScore {
+	private static class SetScore {
 		// This should be an enum, but idk how to set those up. -Nick
 		private int mOperation;
 		private static final int SET_EXACT = 1;

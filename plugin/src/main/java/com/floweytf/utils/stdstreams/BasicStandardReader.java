@@ -23,30 +23,35 @@ public class BasicStandardReader<T> implements IStandardByteReader {
 		mReader = rd;
 	}
 
+	@Override
 	public long readLong() throws IOException {
 		byte[] bytes = new byte[8];
 		mReader.read(mInstance, bytes);
 		return ByteBuffer.wrap(bytes).order(java.nio.ByteOrder.LITTLE_ENDIAN).getLong();
 	}
 
+	@Override
 	public int readInt() throws IOException {
 		byte[] bytes = new byte[4];
 		mReader.read(mInstance, bytes);
 		return ByteBuffer.wrap(bytes).order(java.nio.ByteOrder.LITTLE_ENDIAN).getInt();
 	}
 
+	@Override
 	public short readShort() throws IOException {
 		byte[] bytes = new byte[2];
 		mReader.read(mInstance, bytes);
 		return ByteBuffer.wrap(bytes).order(java.nio.ByteOrder.LITTLE_ENDIAN).getShort();
 	}
 
+	@Override
 	public byte readByte() throws IOException {
 		byte[] bytes = new byte[1];
 		mReader.read(mInstance, bytes);
 		return bytes[0];
 	}
 
+	@Override
 	public String readString() throws IOException {
 		int size = readInt();
 		byte[] bytes = new byte[size];
@@ -54,10 +59,12 @@ public class BasicStandardReader<T> implements IStandardByteReader {
 		return new String(bytes, StandardCharsets.UTF_8);
 	}
 
+	@Override
 	public float readFloat() throws IOException {
 		return Float.intBitsToFloat(readInt());
 	}
 
+	@Override
 	public double readDouble() throws IOException {
 		return Double.longBitsToDouble(readLong());
 	}
