@@ -1,15 +1,11 @@
 package com.playmonumenta.scriptedquests.quests.components.actions;
 
-import java.lang.reflect.Method;
-import java.util.UUID;
-
 import com.google.gson.JsonElement;
-import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.ParseResults;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
+import com.playmonumenta.scriptedquests.utils.NmsUtils;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -31,29 +27,7 @@ public class ActionCommand implements ActionBase {
 			mCommand = mCommand.substring(1);
 		}
 
-		ParseResults<?> pr = null;
-		try {
-			Object server = Bukkit.getServer().getClass().getDeclaredMethod("getServer").invoke(Bukkit.getServer());
-			String packageName = server.getClass().getPackage().getName();
-
-			Class<?> minecraftServerClass = Class.forName(packageName + "." + "MinecraftServer");
-			Object minecraftServer = minecraftServerClass.getDeclaredMethod("getServer").invoke(null);
-			Object clw = minecraftServerClass.getDeclaredMethod("getServerCommandListener").invoke(minecraftServer);
-
-			Object commandDispatcher = minecraftServerClass.getDeclaredMethod("getCommandDispatcher").invoke(minecraftServer);
-			Class<?> commandDispatcherClass = Class.forName(packageName + "." + "CommandDispatcher");
-			Object brigadierCmdDispatcher = commandDispatcherClass.getDeclaredMethod("a").invoke(commandDispatcher);
-
-			String testCommandStr = mCommand.replaceAll("@S", "testuser").replaceAll("@N", "testnpc").replaceAll("@U", UUID.randomUUID().toString().toLowerCase());
-			Method parse = CommandDispatcher.class.getDeclaredMethod("parse", String.class, Object.class);
-			pr = (ParseResults<?>) parse.invoke(brigadierCmdDispatcher, testCommandStr, clw);
-		} catch (Exception e) {
-			// Failed to test the command - ignore it and print a log message
-			e.printStackTrace();
-
-			pr = null;
-		}
-
+		ParseResults<?> pr = NmsUtils.getVersionAdapter().parseCommand(mCommand);
 		if (pr != null && pr.getReader().canRead()) {
 			throw new Exception("Invalid command: '" + mCommand + "'");
 		}

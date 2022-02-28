@@ -45,7 +45,7 @@ jobs:
             cd Paper
             git checkout 1.16
             ./paper jar
-          
+
             # Build the plugin to make sure its dependencies are also cached
             cd ..
             ./gradlew build
