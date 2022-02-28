@@ -1,13 +1,20 @@
 package com.playmonumenta.scriptedquests.adapters;
 
 import com.mojang.brigadier.ParseResults;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import io.papermc.paper.adventure.AdventureComponent;
+import io.papermc.paper.adventure.PaperAdventure;
 import javax.annotation.Nullable;
+import net.kyori.adventure.text.Component;
+import net.minecraft.network.chat.ComponentUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.block.CommandBlock;
 import org.bukkit.craftbukkit.v1_18_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_18_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_18_R1.block.CraftCommandBlock;
+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.util.UUID;
@@ -37,6 +44,17 @@ public class VersionAdapter_v1_18_R1 implements VersionAdapter {
 			// Failed to test the command - ignore it and print a log message
 			e.printStackTrace();
 			return null;
+		}
+	}
+
+	@Override
+	public Component resolveComponents(Component component, Player player) {
+		try {
+			return PaperAdventure.asAdventure(ComponentUtils.updateForEntity(((CraftPlayer) player).getHandle().createCommandSourceStack(),
+				new AdventureComponent(component).deepConverted(), ((CraftPlayer) player).getHandle(), 0));
+		} catch (CommandSyntaxException e) {
+			e.printStackTrace();
+			return component;
 		}
 	}
 
