@@ -10,9 +10,14 @@ plugins {
     id("com.playmonumenta.scriptedquests.java-conventions")
     id("net.minecrell.plugin-yml.bukkit") version "0.5.1" // Generates plugin.yml
     id("org.hidetake.ssh") version "2.10.1"
+    id("java")
 }
 
 dependencies {
+    implementation(project(":adapter_api"))
+    implementation(project(":adapter_unsupported"))
+    implementation(project(":adapter_v1_16_R3"))
+    implementation(project(":adapter_v1_18_R1", "reobf"))
     implementation("com.google.api-client:google-api-client:1.31.4")
     implementation("com.google.apis:google-api-services-sheets:v4-rev1-1.21.0")
     implementation("com.google.auth:google-auth-library-oauth2-http:0.1.0")
@@ -59,20 +64,25 @@ bukkit {
 // Relocation / shading
 tasks {
     shadowJar {
-       exclude("javax/**")
-       exclude("com/sun/**")
-       exclude("com/google/gdata/**")
-       exclude("com/google/gson/**")
-       exclude("com/google/errorprone/**")
-       exclude("com/google/j2objc/**")
-       exclude("com/google/thirdparty/**")
-       exclude("org/apache/commons/**")
-       exclude("org/apache/http/**")
-       exclude("org/mortbay/**")
-       relocate("com.fasterxml", "com.playmonumenta.scriptedquests.internal.com.fasterxml")
-       relocate("com.google", "com.playmonumenta.scriptedquests.internal.com.google")
-       relocate("io.grpc", "com.playmonumenta.scriptedquests.internal.io.grpc")
-       relocate("io.opencensus", "com.playmonumenta.scriptedquests.internal.io.opencensus")
+        exclude("javax/**")
+        exclude("com/sun/**")
+        exclude("com/google/gdata/**")
+        exclude("com/google/gson/**")
+        exclude("com/google/errorprone/**")
+        exclude("com/google/j2objc/**")
+        exclude("com/google/thirdparty/**")
+        exclude("org/apache/commons/**")
+        exclude("org/apache/http/**")
+        exclude("org/mortbay/**")
+        relocate("com.fasterxml", "com.playmonumenta.scriptedquests.internal.com.fasterxml")
+        relocate("com.google", "com.playmonumenta.scriptedquests.internal.com.google") {
+            exclude("com/google/gson/**")
+        }
+        relocate("io.grpc", "com.playmonumenta.scriptedquests.internal.io.grpc")
+        relocate("io.opencensus", "com.playmonumenta.scriptedquests.internal.io.opencensus")
+        minimize {
+            exclude(dependency("com.playmonumenta.*:.*:.*"))
+        }
     }
 }
 

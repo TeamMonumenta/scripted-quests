@@ -1,9 +1,7 @@
 package com.playmonumenta.scriptedquests.timers;
 
-import java.lang.reflect.InvocationTargetException;
-
 import com.playmonumenta.scriptedquests.Plugin;
-
+import com.playmonumenta.scriptedquests.utils.NmsUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -111,38 +109,15 @@ public class CommandTimerInstance {
 		return mCoords;
 	}
 
-	private static java.lang.reflect.Method cachedHandleMethod = null;
-	private static java.lang.reflect.Method cachedAutoMethod = null;
-
 	private static void setAutoState(Plugin plugin, Location loc, boolean auto) {
 		Block block = loc.getBlock();
 		BlockState state = block.getState();
-		if (state instanceof CommandBlock) {
-			/*
-			 * Use reflection to:
-			 *   TileEntityCommand nmsTileCmd = cmd.getTileEntity();
-			 *   nmsTileCmd.b(true)
-			 */
-			try {
-				// Get command block's getTileEntity() via reflection
-				// Cache reflection results for performance
-				if (cachedHandleMethod == null) {
-					cachedHandleMethod = state.getClass().getMethod("getTileEntity");
-				}
-				Object handle = cachedHandleMethod.invoke(state);
-
-				if (cachedAutoMethod == null) {
-					cachedAutoMethod = handle.getClass().getMethod("b", boolean.class);
-				}
-				cachedAutoMethod.invoke(handle, auto);
-			} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-				plugin.getLogger().severe("Failed to set command block auto state at " + loc.toString());
-				e.printStackTrace();
-			}
+		if (state instanceof CommandBlock commandBlock) {
+			NmsUtils.getVersionAdapter().setAutoState(commandBlock, auto);
 		} else {
 			plugin.getLogger().severe("Command block is missing for timer at " + loc.toString());
-			return;
 		}
 	}
+
 }
 
