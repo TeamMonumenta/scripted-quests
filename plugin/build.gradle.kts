@@ -64,19 +64,25 @@ bukkit {
 // Relocation / shading
 tasks {
     shadowJar {
-       exclude("javax/**")
-       exclude("com/sun/**")
-       exclude("com/google/gdata/**")
-       exclude("com/google/gson/**")
-       exclude("com/google/errorprone/**")
-       exclude("com/google/j2objc/**")
-       exclude("com/google/thirdparty/**")
-       exclude("org/apache/commons/**")
-       exclude("org/apache/http/**")
-       exclude("org/mortbay/**")
-       relocate("com.fasterxml", "com.playmonumenta.scriptedquests.internal.com.fasterxml")
-       relocate("io.grpc", "com.playmonumenta.scriptedquests.internal.io.grpc")
-       relocate("io.opencensus", "com.playmonumenta.scriptedquests.internal.io.opencensus")
+        exclude("javax/**")
+        exclude("com/sun/**")
+        exclude("com/google/gdata/**")
+        exclude("com/google/gson/**")
+        exclude("com/google/errorprone/**")
+        exclude("com/google/j2objc/**")
+        exclude("com/google/thirdparty/**")
+        exclude("org/apache/commons/**")
+        exclude("org/apache/http/**")
+        exclude("org/mortbay/**")
+        relocate("com.fasterxml", "com.playmonumenta.scriptedquests.internal.com.fasterxml")
+        relocate("com.google", "com.playmonumenta.scriptedquests.internal.com.google") {
+            exclude("com/google/gson/**")
+        }
+        relocate("io.grpc", "com.playmonumenta.scriptedquests.internal.io.grpc")
+        relocate("io.opencensus", "com.playmonumenta.scriptedquests.internal.io.opencensus")
+        minimize {
+            exclude(dependency("com.playmonumenta.*:.*:.*"))
+        }
     }
 }
 
