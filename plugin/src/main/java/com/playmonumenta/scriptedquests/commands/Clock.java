@@ -2,7 +2,6 @@ package com.playmonumenta.scriptedquests.commands;
 
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Player;
 import org.bukkit.util.Consumer;
 
 import dev.jorel.commandapi.CommandAPICommand;

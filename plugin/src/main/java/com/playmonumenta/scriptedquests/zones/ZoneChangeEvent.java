@@ -3,17 +3,17 @@ package com.playmonumenta.scriptedquests.zones;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import javax.annotation.Nullable;
 
 public class ZoneChangeEvent extends Event {
 	private static final HandlerList handlers = new HandlerList();
 
 	private final String mLayer;
 	private final Player mPlayer;
-	private final Zone mFromZone;
-	private final Zone mToZone;
+	private final @Nullable Zone mFromZone;
+	private final @Nullable Zone mToZone;
 
-	public ZoneChangeEvent(Player player, String layer, Zone from, Zone to) {
+	public ZoneChangeEvent(Player player, String layer, @Nullable Zone from, @Nullable Zone to) {
 		mPlayer = player;
 		mLayer = layer;
 		mFromZone = from;

@@ -4,7 +4,6 @@ import java.util.Collection;
 
 import com.playmonumenta.scriptedquests.Plugin;
 
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import dev.jorel.commandapi.CommandAPICommand;
@@ -22,20 +21,20 @@ public class Race {
 				.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
 				.withArguments(new StringArgument("raceLabel"))
 				.executes((sender, args) -> {
-					raceStart(plugin, sender, (Collection<Player>)args[0],
+					raceStart(plugin, (Collection<Player>)args[0],
 						(String)args[1]);
 				}))
 			.withSubcommand(new CommandAPICommand("stop")
 				.withPermission(CommandPermission.fromString("scriptedquests.race.stop"))
 				.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
 				.executes((sender, args) -> {
-					raceStop(plugin, sender, (Collection<Player>)args[0]);
+					raceStop(plugin, (Collection<Player>)args[0]);
 				}))
 			.withSubcommand(new CommandAPICommand("win")
 				.withPermission(CommandPermission.fromString("scriptedquests.race.win"))
 				.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
 				.executes((sender, args) -> {
-					raceWin(plugin, sender, (Collection<Player>)args[0]);
+					raceWin(plugin, (Collection<Player>)args[0]);
 				}))
 			.withSubcommand(new CommandAPICommand("leaderboard")
 				.withPermission(CommandPermission.fromString("scriptedquests.race.leaderboard"))
@@ -49,8 +48,7 @@ public class Race {
 			.register();
 	}
 
-	private static void raceStart(Plugin plugin, CommandSender sender,
-	                              Collection<Player> players, String raceLabel) {
+	private static void raceStart(Plugin plugin, Collection<Player> players, String raceLabel) {
 		if (plugin.mRaceManager != null) {
 			for (Player player : players) {
 				plugin.mRaceManager.startRace(player, raceLabel);
@@ -58,8 +56,7 @@ public class Race {
 		}
 	}
 
-	private static void raceStop(Plugin plugin, CommandSender sender,
-	                             Collection<Player> players) {
+	private static void raceStop(Plugin plugin, Collection<Player> players) {
 		if (plugin.mRaceManager != null) {
 			for (Player player : players) {
 				plugin.mRaceManager.cancelRace(player);
@@ -67,8 +64,7 @@ public class Race {
 		}
 	}
 
-	private static void raceWin(Plugin plugin, CommandSender sender,
-								Collection<Player> players) {
+	private static void raceWin(Plugin plugin, Collection<Player> players) {
 		if (plugin.mRaceManager != null) {
 			for (Player player : players) {
 				plugin.mRaceManager.winRace(player);

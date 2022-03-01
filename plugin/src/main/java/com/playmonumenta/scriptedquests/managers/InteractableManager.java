@@ -12,7 +12,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import javax.annotation.Nullable;
 
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.InteractableEntry;
@@ -23,7 +23,7 @@ import com.playmonumenta.scriptedquests.utils.QuestUtils;
 public class InteractableManager {
 	private final Map<Material, List<InteractableEntry>> mInteractables = new EnumMap<>(Material.class);
 
-	private static final ThreadLocal<@Nullable ItemStack> usedItem = new ThreadLocal<>();
+	private static final ThreadLocal<ItemStack> usedItem = new ThreadLocal<>();
 
 	/*
 	 * If sender is non-null, it will be sent debugging information

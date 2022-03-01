@@ -12,7 +12,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import org.bukkit.util.Vector;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import javax.annotation.Nullable;
 
 /*
  * A zone, to be split into fragments. This class holds the name and properties, and the fragments determine
@@ -261,12 +261,6 @@ public class Zone extends ZoneBase {
 		} else {
 			currentProperties.add(propertyName);
 		}
-	}
-
-	public boolean equals(Zone other) {
-		return (super.equals(other) &&
-		        getLayerName().equals(other.getLayerName()) &&
-		        getName().equals(other.getName()));
 	}
 
 	@Override

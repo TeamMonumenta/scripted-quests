@@ -5,7 +5,7 @@ import com.playmonumenta.scriptedquests.utils.VectorUtils;
 import org.bukkit.Axis;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import javax.annotation.Nullable;
 
 public class ZoneBase {
 	protected Vector mPosition;
@@ -42,7 +42,7 @@ public class ZoneBase {
 	 * Sets the smallest integer coordinate that is inside the zone on each axis.
 	 */
 	public void minCorner(Vector other) {
-		Vector newPosition = mPosition.clone();
+		Vector newPosition;
 		Vector newSize = mSize.clone();
 
 		newSize.add(mPosition);
@@ -174,6 +174,7 @@ public class ZoneBase {
 		return 31*mPosition.hashCode() + mSize.hashCode();
 	}
 
+	@Override
 	public String toString() {
 		return "ZoneBase(" + minCorner().toString() + ", " + maxCorner().toString() + ")";
 	}

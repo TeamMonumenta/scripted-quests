@@ -9,7 +9,7 @@ import com.google.gson.JsonElement;
 import com.playmonumenta.scriptedquests.utils.ScoreboardUtils;
 
 public class PrerequisiteCheckScores implements PrerequisiteBase {
-	private class CheckScore {
+	private static class CheckScore {
 		// This should be an enum, but idk how to set those up. -Nick
 		private int mOperation;
 		private static final int CHECK_EXACT = 1;

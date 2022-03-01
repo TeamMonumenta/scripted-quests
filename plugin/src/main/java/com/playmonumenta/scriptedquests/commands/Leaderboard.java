@@ -178,13 +178,13 @@ public class Leaderboard {
 		for (LeaderboardEntry entry : entries) {
 			String color;
 			switch (index) {
-			case (0):
+			case 0:
 				color = "" + ChatColor.GOLD + ChatColor.BOLD;
 				break;
-			case (1):
+			case 1:
 				color = "" + ChatColor.WHITE + ChatColor.BOLD;
 				break;
-			case (2):
+			case 2:
 				color = "" + ChatColor.DARK_RED + ChatColor.BOLD;
 				break;
 			default:

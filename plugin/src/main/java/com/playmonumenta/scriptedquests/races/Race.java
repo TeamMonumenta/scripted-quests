@@ -6,6 +6,8 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nullable;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -74,7 +76,7 @@ public class Race {
 	private long mStartTime;
 	private long mMaxTime;
 	private int mFrame = 0;
-	private TimeBar mTimeBar = null;
+	private @Nullable TimeBar mTimeBar = null;
 	private boolean mCountdownActive = false;
 	private int mWRTime = Integer.MAX_VALUE;
 
@@ -282,7 +284,7 @@ public class Race {
 		// Ring location faces player
 		rloc.setDirection(mPlayer.getLocation().toVector().subtract(mNextWaypoint.getPosition()));
 		int i = 0;
-		for (Location loc : RaceUtils.transformPoints(rloc, RING_SHAPE, rloc.getYaw(), -rloc.getPitch(), 0d, 4 + 0.5 * (Math.cos(Math.toRadians(mFrame * 20))))) {
+		for (Location loc : RaceUtils.transformPoints(rloc, RING_SHAPE, rloc.getYaw(), -rloc.getPitch(), 0d, 4 + 0.5 * Math.cos(Math.toRadians(mFrame * 20)))) {
 			loc.subtract(0, 0.5, 0);
 			mRingEntities.get(i).teleport(loc);
 			i++;

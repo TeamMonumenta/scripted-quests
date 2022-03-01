@@ -9,7 +9,7 @@ import com.playmonumenta.scriptedquests.utils.VectorUtils;
 
 import org.bukkit.Axis;
 import org.bukkit.util.Vector;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import javax.annotation.Nullable;
 
 /*
  * A fragment of a zone; this is used to find zones quickly, but not hold their properties.
@@ -303,12 +303,6 @@ public class ZoneFragment extends ZoneBase {
 			}
 		}
 		return true;
-	}
-
-	public boolean equals(ZoneFragment other) {
-		return (super.equals(other) &&
-		        mParents.equals(other.mParents) &&
-		        mParentsAndEclipsed.equals(other.mParentsAndEclipsed));
 	}
 
 	@Override

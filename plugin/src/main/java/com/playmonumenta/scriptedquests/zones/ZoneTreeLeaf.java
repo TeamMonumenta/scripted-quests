@@ -6,7 +6,7 @@ import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import javax.annotation.Nullable;
 import org.dynmap.markers.MarkerSet;
 import org.dynmap.markers.AreaMarker;
 
@@ -18,10 +18,12 @@ public class ZoneTreeLeaf extends ZoneTreeBase {
 		mFragment = zone;
 	}
 
+	@Override
 	protected void invalidate() {
 		mFragment.invalidate();
 	}
 
+	@Override
 	public Set<ZoneFragment> getZoneFragments(BoundingBox bb) {
 		Set<ZoneFragment> result = new HashSet<>();
 		if (mFragment.boundingBox().overlaps(bb)) {
@@ -30,6 +32,7 @@ public class ZoneTreeLeaf extends ZoneTreeBase {
 		return result;
 	}
 
+	@Override
 	public @Nullable ZoneFragment getZoneFragment(Vector loc) {
 		if (mFragment.within(loc)) {
 			return mFragment;
@@ -38,14 +41,17 @@ public class ZoneTreeLeaf extends ZoneTreeBase {
 		}
 	}
 
+	@Override
 	public int maxDepth() {
 		return 1;
 	}
 
+	@Override
 	protected int totalDepth() {
 		return 1;
 	}
 
+	@Override
 	protected void refreshDynmapTree(MarkerSet markerSet, int parentR, int parentG, int parentB) {
 		int r = parentR;
 		int g = parentG;
@@ -71,7 +77,7 @@ public class ZoneTreeLeaf extends ZoneTreeBase {
 		x[1] = maxCorner.getX();
 		z[1] = maxCorner.getZ();
 
-		int color = 0;
+		int color;
 		color = (r & 0xff);
 		color = (color << 8) | (g & 0xff);
 		color = (color << 8) | (b & 0xff);
@@ -82,6 +88,7 @@ public class ZoneTreeLeaf extends ZoneTreeBase {
 		areaMarker.setLineStyle(1, 0.3, color);
 	}
 
+	@Override
 	public String toString() {
 		return ("ZoneTreeBase(" + mFragment.toString() + ")");
 	}

@@ -22,7 +22,7 @@ import dev.jorel.commandapi.arguments.IntegerArgument;
 import dev.jorel.commandapi.wrappers.FunctionWrapper;
 
 public class ScheduleFunction {
-	private abstract class DelayedAction {
+	private abstract static class DelayedAction {
 		private int mTicksLeft;
 
 		private DelayedAction(int ticksLeftIn) {
@@ -32,7 +32,7 @@ public class ScheduleFunction {
 		protected abstract void run();
 	}
 
-	private class DelayedFunction extends DelayedAction {
+	private static class DelayedFunction extends DelayedAction {
 		private final FunctionWrapper[] mFunction;
 
 		private DelayedFunction(int ticksLeftIn, FunctionWrapper[] functionIn) {
@@ -40,6 +40,7 @@ public class ScheduleFunction {
 			mFunction = functionIn;
 		}
 
+		@Override
 		protected void run() {
 			for (FunctionWrapper func : mFunction) {
 				func.run();
@@ -54,7 +55,7 @@ public class ScheduleFunction {
 		}
 	}
 
-	private class DelayedCommand extends DelayedAction {
+	private static class DelayedCommand extends DelayedAction {
 		private final CommandSender mSender;
 		private final String mCommand;
 
@@ -64,6 +65,7 @@ public class ScheduleFunction {
 			mCommand = command;
 		}
 
+		@Override
 		protected void run() {
 			CommandSender sender = mSender;
 			if (sender instanceof ProxiedCommandSender) {

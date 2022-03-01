@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nullable;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -32,7 +34,7 @@ import com.playmonumenta.scriptedquests.utils.RaceUtils;
 public class RaceFactory {
 	private final String mName;
 	private final String mLabel;
-	private final Objective mObjective;
+	private final @Nullable Objective mObjective;
 	private final boolean mShowStats;
 	private final boolean mAllowDialogClick;
 	private final boolean mAllowCode;

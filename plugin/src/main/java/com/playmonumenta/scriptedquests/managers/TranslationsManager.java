@@ -427,7 +427,7 @@ public class TranslationsManager implements Listener {
 				sender.sendMessage("Making backup copy of the translations.json database");
 				Date date = Calendar.getInstance().getTime();
 				String filename = Paths.get(mPlugin.getDataFolder().toString(), "translations", "translations.json").toString();
-				String toFilename = filename + (new SimpleDateFormat(".yyyy-MM-dd_hh:mm:ss")).format(date);
+				String toFilename = filename + new SimpleDateFormat(".yyyy-MM-dd_hh:mm:ss").format(date);
 				Files.copy(new File(filename).toPath(),
 				           new File(toFilename).toPath(),
 				           StandardCopyOption.REPLACE_EXISTING);

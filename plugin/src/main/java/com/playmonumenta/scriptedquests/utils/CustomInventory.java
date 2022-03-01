@@ -40,7 +40,7 @@ public abstract class CustomInventory {
 				mMainListener = new Listener() {
 
 					@EventHandler
-					private void pluginDisable(PluginDisableEvent event) {
+					public void pluginDisable(PluginDisableEvent event) {
 						HashSet<CustomInventory> invs = mOpenedInvsByPlugin.remove(event.getPlugin());
 						if (invs != null) {
 							for (CustomInventory inv : invs) {
@@ -61,7 +61,7 @@ public abstract class CustomInventory {
 					}
 
 					@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-					private void inventoryClick(InventoryClickEvent event) {
+					public void inventoryClick(InventoryClickEvent event) {
 						CustomInventory inv = mOpenedInvsByPlayer.get(event.getWhoClicked());
 						if (inv != null) {
 							inv.inventoryClick(event);
@@ -69,7 +69,7 @@ public abstract class CustomInventory {
 					}
 
 					@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-					private void inventoryDrag(InventoryDragEvent event) {
+					public void inventoryDrag(InventoryDragEvent event) {
 						CustomInventory inv = mOpenedInvsByPlayer.get(event.getWhoClicked());
 						if (inv != null) {
 							inv.inventoryDrag(event);
@@ -77,7 +77,7 @@ public abstract class CustomInventory {
 					}
 
 					@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-					private void inventoryClose(InventoryCloseEvent event) {
+					public void inventoryClose(InventoryCloseEvent event) {
 						CustomInventory inv = mOpenedInvsByPlayer.remove(event.getPlayer());
 						if (inv != null) {
 							mOpenedInvsByPlugin.get(inv.mOwner).remove(inv);

@@ -23,7 +23,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.util.Vector;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import javax.annotation.Nullable;
 import org.dynmap.DynmapCommonAPI;
 import org.dynmap.markers.AreaMarker;
 import org.dynmap.markers.MarkerAPI;
@@ -309,12 +309,6 @@ public class ZoneLayer {
 		}
 
 		return null;
-	}
-
-	private void removeOverlaps(CommandSender sender, List<Zone> zones) {
-		Set<CommandSender> senders = new HashSet<CommandSender>();
-		senders.add(sender);
-		removeOverlaps(senders, zones);
 	}
 
 	private void removeOverlaps(Set<CommandSender> senders, List<Zone> zones) {

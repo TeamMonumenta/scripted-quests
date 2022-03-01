@@ -34,7 +34,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import javax.annotation.Nullable;
 
 public class ShowZones {
 	private static final String[] EXECUTE_FALLBACK_SUGGESTION = {"\"Suggestions unavaible through /execute\""};
@@ -250,7 +250,7 @@ public class ShowZones {
 							} else {
 								partMinXShown = fragMaxXShown;
 							}
-							area = (fragSizeYShown) * (fragSizeZShown);
+							area = fragSizeYShown * fragSizeZShown;
 							break;
 						case Y_MIN:
 						case Y_MAX:
@@ -259,7 +259,7 @@ public class ShowZones {
 							} else {
 								partMinYShown = fragMaxYShown;
 							}
-							area = (fragSizeXShown) * (fragSizeZShown);
+							area = fragSizeXShown * fragSizeZShown;
 							break;
 						default:
 							if (face == FragmentFace.Z_MIN) {
@@ -267,7 +267,7 @@ public class ShowZones {
 							} else {
 								partMinZShown = fragMaxZShown;
 							}
-							area = (fragSizeXShown) * (fragSizeYShown);
+							area = fragSizeXShown * fragSizeYShown;
 						}
 
 						Double faceParticleCount = 1.0 + 25.0 * area / maxPossibleTotalArea;

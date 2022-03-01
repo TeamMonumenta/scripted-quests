@@ -23,7 +23,7 @@ import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
  * set of death rules (keep inventory, respawn location, etc.)
  */
 public class QuestDeath {
-	public class DeathActions {
+	public static class DeathActions {
 		private final QuestActions mActions;
 		private final QuestPrerequisites mPrerequisites;
 
@@ -56,27 +56,24 @@ public class QuestDeath {
 				JsonObject coordObj = value.getAsJsonObject();
 				// Read x coordinate
 				JsonElement xElement = coordObj.get("x");
-				double x = 0;
 				if (xElement == null) {
 					throw new Exception("Failed to parse location x value!");
 				}
-				x = xElement.getAsDouble();
+				double x = xElement.getAsDouble();
 
 				// Read y coordinate
 				JsonElement yElement = coordObj.get("y");
-				double y = 0;
 				if (yElement == null) {
 					throw new Exception("Failed to parse location y value!");
 				}
-				y = yElement.getAsDouble();
+				double y = yElement.getAsDouble();
 
 				// Read z coordinate
 				JsonElement zElement = coordObj.get("z");
-				double z = 0;
 				if (zElement == null) {
 					throw new Exception("Failed to parse location z value!");
 				}
-				z = zElement.getAsDouble();
+				double z = zElement.getAsDouble();
 
 				mRespawnPt = new Point(x, y, z);
 

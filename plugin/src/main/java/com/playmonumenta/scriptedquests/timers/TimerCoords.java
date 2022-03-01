@@ -13,6 +13,7 @@ public class TimerCoords implements Comparable<TimerCoords> {
 		mZ = z;
 	}
 
+	@Override
 	public int compareTo(TimerCoords c) {
 		int ret;
 
