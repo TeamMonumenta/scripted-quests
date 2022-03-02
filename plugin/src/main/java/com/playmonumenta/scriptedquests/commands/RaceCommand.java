@@ -1,18 +1,15 @@
 package com.playmonumenta.scriptedquests.commands;
 
-import java.util.Collection;
-
 import com.playmonumenta.scriptedquests.Plugin;
-
-import org.bukkit.entity.Player;
-
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.EntitySelectorArgument;
 import dev.jorel.commandapi.arguments.IntegerArgument;
 import dev.jorel.commandapi.arguments.StringArgument;
+import java.util.Collection;
+import org.bukkit.entity.Player;
 
-public class Race {
+public class RaceCommand {
 	@SuppressWarnings("unchecked")
 	public static void register(Plugin plugin) {
 		new CommandAPICommand("race")
@@ -21,8 +18,8 @@ public class Race {
 				.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
 				.withArguments(new StringArgument("raceLabel"))
 				.executes((sender, args) -> {
-					raceStart(plugin, (Collection<Player>)args[0],
-						(String)args[1]);
+					raceStart(plugin, (Collection<Player>) args[0],
+						(String) args[1]);
 				}))
 			.withSubcommand(new CommandAPICommand("stop")
 				.withPermission(CommandPermission.fromString("scriptedquests.race.stop"))

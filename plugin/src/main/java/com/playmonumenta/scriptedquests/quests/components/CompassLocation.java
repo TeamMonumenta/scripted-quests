@@ -1,16 +1,16 @@
 package com.playmonumenta.scriptedquests.quests.components;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.quests.QuestContext;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
 
 public class CompassLocation implements QuestLocation {
 	private final QuestPrerequisites mPrerequisites;
@@ -123,10 +123,6 @@ public class CompassLocation implements QuestLocation {
 
 	@Override
 	public boolean prerequisiteMet(Player player) {
-		if (mPrerequisites == null) {
-			return true;
-		} else {
-			return mPrerequisites.prerequisiteMet(player, null);
-		}
+		return mPrerequisites == null || mPrerequisites.prerequisiteMet(new QuestContext(Plugin.getInstance(), player, null));
 	}
 }

@@ -1,12 +1,11 @@
 package com.playmonumenta.scriptedquests.quests.components.prerequisites;
 
+import com.google.gson.JsonElement;
+import com.playmonumenta.scriptedquests.quests.QuestContext;
+import com.playmonumenta.scriptedquests.utils.InventoryUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.advancement.Advancement;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-
-import com.google.gson.JsonElement;
-import com.playmonumenta.scriptedquests.utils.InventoryUtils;
 
 public class PrerequisiteCheckAdvancements implements PrerequisiteBase {
 	private boolean mInverted;
@@ -32,9 +31,9 @@ public class PrerequisiteCheckAdvancements implements PrerequisiteBase {
 	}
 
 	@Override
-	public boolean prerequisiteMet(Entity entity, Entity npcEntity) {
-		if (entity instanceof Player) {
-			return mInverted ^ ((Player)entity).getAdvancementProgress(mAdvancement).isDone();
+	public boolean prerequisiteMet(QuestContext context) {
+		if (context.getEntityUsedForPrerequisites() instanceof Player player) {
+			return mInverted ^ player.getAdvancementProgress(mAdvancement).isDone();
 		}
 
 		// Non-player entities can't have advancements

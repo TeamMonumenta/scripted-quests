@@ -1,10 +1,9 @@
 package com.playmonumenta.scriptedquests.quests.components.prerequisites;
 
-import org.bukkit.attribute.Attribute;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-
 import com.google.gson.JsonElement;
+import com.playmonumenta.scriptedquests.quests.QuestContext;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.entity.LivingEntity;
 
 public class PrerequisiteFullyHealed implements PrerequisiteBase {
 	private final boolean mValue;
@@ -14,9 +13,8 @@ public class PrerequisiteFullyHealed implements PrerequisiteBase {
 	}
 
 	@Override
-	public boolean prerequisiteMet(Entity entity, Entity npcEntity) {
-		if (entity instanceof LivingEntity) {
-			LivingEntity le = (LivingEntity)entity;
+	public boolean prerequisiteMet(QuestContext context) {
+		if (context.getEntityUsedForPrerequisites() instanceof LivingEntity le) {
 			return mValue == (le.getHealth() > le.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() - 0.5);
 		}
 		return mValue;

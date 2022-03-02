@@ -1,21 +1,20 @@
 package com.playmonumenta.scriptedquests.quests;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.api.ClientChatProtocol;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
-
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.Set;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 /*
  * A QuestNpc object holds all the quest components belonging to an NPC with a specific name
@@ -105,9 +104,7 @@ public class QuestNpc {
 	// Combines another quest using the same NPC into this one
 	public void addFromQuest(Plugin plugin, QuestNpc quest) {
 		if (quest.getNpcName().equals(mNpcName)) {
-			for (QuestComponent component : quest.getComponents()) {
-				mComponents.add(component);
-			}
+			mComponents.addAll(quest.getComponents());
 		} else {
 			plugin.getLogger().severe("Attempted to add two quests together with different NPCs!");
 		}
@@ -115,14 +112,14 @@ public class QuestNpc {
 
 	// Returns true if any quest components were attempted with this NPC
 	// False otherwise
-	// Note: npcEntity might be null
-	public boolean interactEvent(Plugin plugin, Player player, String npcName, EntityType entityType, Entity npcEntity) {
+	public boolean interactEvent(Plugin plugin, Player player, String npcName, EntityType entityType, @Nullable Entity npcEntity) {
 		if (mEntityType.equals(entityType) && mNpcName.equals(npcName)) {
+			QuestContext context = new QuestContext(plugin, player, npcEntity);
 			if (ClientChatProtocol.shouldSend(player)) {
-				ClientChatProtocol.sendPacket(mComponents, plugin, player, npcEntity);
+				ClientChatProtocol.sendPacket(mComponents, context);
 			} else {
 				for (QuestComponent component : mComponents) {
-					component.doActionsIfPrereqsMet(plugin, player, npcEntity);
+					component.doActionsIfPrereqsMet(context);
 				}
 			}
 			return true;

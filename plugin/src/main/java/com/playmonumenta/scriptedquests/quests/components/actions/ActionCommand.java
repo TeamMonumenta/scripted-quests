@@ -2,16 +2,12 @@ package com.playmonumenta.scriptedquests.quests.components.actions;
 
 import com.google.gson.JsonElement;
 import com.mojang.brigadier.ParseResults;
-import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
+import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.utils.NmsUtils;
-
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 
 public class ActionCommand implements ActionBase {
 	private String mCommand;
@@ -34,19 +30,24 @@ public class ActionCommand implements ActionBase {
 	}
 
 	@Override
-	public void doAction(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
+	public void doAction(QuestContext context) {
 		// Because there's no currently good way to run commands we need to run them via the console....janky....I know.
 		String commandStr = mCommand;
-		if (npcEntity == null) {
+		if (context.getNpcEntity() == null) {
 			if (commandStr.contains("@N")) {
 				String commandErr = ChatColor.RED + "Cannot run ScriptedQuest command without direct NPC interaction: /" + commandStr;
-				player.spigot().sendMessage(ChatMessageType.SYSTEM, TextComponent.fromLegacyText(commandErr));
+				context.getPlayer().spigot().sendMessage(ChatMessageType.SYSTEM, TextComponent.fromLegacyText(commandErr));
 				return;
 			}
 		} else {
-			commandStr = commandStr.replaceAll("@N", npcEntity.getUniqueId().toString());
+			commandStr = commandStr.replaceAll("@N", context.getNpcEntity().getUniqueId().toString());
 		}
-		commandStr = commandStr.replaceAll("@S", player.getName()).replaceAll("@U", player.getUniqueId().toString().toLowerCase());
-		plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), commandStr);
+		commandStr = commandStr.replaceAll("@S", context.getPlayer().getName()).replaceAll("@U", context.getPlayer().getUniqueId().toString().toLowerCase());
+		QuestContext.pushCurrentContext(context);
+		try {
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), commandStr);
+		} finally {
+			QuestContext.popCurrentContext();
+		}
 	}
 }

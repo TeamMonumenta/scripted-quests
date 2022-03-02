@@ -1,21 +1,18 @@
 package com.playmonumenta.scriptedquests.quests.components.prerequisites;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.zones.Zone;
 import com.playmonumenta.scriptedquests.zones.ZoneFragment;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
 public class PrerequisiteZoneProperties implements PrerequisiteBase {
 	private final Set<String> mMentionedLayers;
@@ -71,8 +68,8 @@ public class PrerequisiteZoneProperties implements PrerequisiteBase {
 	}
 
 	@Override
-	public boolean prerequisiteMet(Entity entity, Entity npcEntity) {
-		Location loc = entity.getLocation();
+	public boolean prerequisiteMet(QuestContext context) {
+		Location loc = context.getEntityUsedForPrerequisites().getLocation();
 		ZoneFragment fragment = Plugin.getInstance().mZoneManager.getZoneFragment(loc);
 
 		// If no fragment exists here, neither do zones or layers.

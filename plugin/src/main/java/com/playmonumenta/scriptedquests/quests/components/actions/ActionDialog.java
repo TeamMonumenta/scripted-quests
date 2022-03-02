@@ -1,25 +1,20 @@
 package com.playmonumenta.scriptedquests.quests.components.actions;
 
-import java.util.ArrayList;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.api.JsonObjectBuilder;
-import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
+import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.quests.components.actions.dialog.DialogAllInOneText;
 import com.playmonumenta.scriptedquests.quests.components.actions.dialog.DialogBase;
 import com.playmonumenta.scriptedquests.quests.components.actions.dialog.DialogClickableText;
 import com.playmonumenta.scriptedquests.quests.components.actions.dialog.DialogRandomText;
 import com.playmonumenta.scriptedquests.quests.components.actions.dialog.DialogRawText;
 import com.playmonumenta.scriptedquests.quests.components.actions.dialog.DialogText;
-
-import org.bukkit.entity.Entity;
+import java.util.ArrayList;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
 
 public class ActionDialog implements ActionBase {
 	private ArrayList<DialogBase> mDialogs = new ArrayList<DialogBase>();
@@ -52,18 +47,18 @@ public class ActionDialog implements ActionBase {
 	}
 
 	@Override
-	public void doAction(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
+	public void doAction(QuestContext context) {
 		// handle packet stuff
 		for (DialogBase dialog : mDialogs) {
-			dialog.sendDialog(plugin, player, npcEntity, prereqs);
+			dialog.sendDialog(context);
 		}
 	}
 
 	@Override
-	public JsonElement serializeForClientAPI(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
+	public JsonElement serializeForClientAPI(QuestContext context) {
 		return JsonObjectBuilder.get()
 			.add("type", "dialog")
-			.add("dialog", mDialogs.stream().map(v -> v.serializeForClientAPI(plugin, player, npcEntity, prereqs))
+			.add("dialog", mDialogs.stream().map(v -> v.serializeForClientAPI(context))
 				.collect(Collectors.toList()))
 			.build();
 	}

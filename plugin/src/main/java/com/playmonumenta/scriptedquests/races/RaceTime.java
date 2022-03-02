@@ -1,12 +1,10 @@
 package com.playmonumenta.scriptedquests.races;
 
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.quests.components.QuestActions;
+import org.bukkit.ChatColor;
 
 public class RaceTime implements Comparable<RaceTime> {
 	private final String mLabel;
@@ -57,9 +55,9 @@ public class RaceTime implements Comparable<RaceTime> {
 		}
 	}
 
-	public void doActions(Plugin plugin, Player player) {
+	public void doActions(QuestContext context) {
 		if (mActions != null) {
-			mActions.doActions(plugin, player, null, null);
+			mActions.doActions(context);
 		}
 	}
 

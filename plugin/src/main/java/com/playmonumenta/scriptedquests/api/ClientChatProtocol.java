@@ -8,14 +8,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Constants;
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.messaging.PluginMessageListener;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.HashSet;
@@ -23,6 +17,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.messaging.PluginMessageListener;
 
 public class ClientChatProtocol implements PluginMessageListener, CommandExecutor {
 	private static ClientChatProtocol INSTANCE = null;
@@ -64,16 +63,16 @@ public class ClientChatProtocol implements PluginMessageListener, CommandExecuto
 		}
 	}
 
-	public static void sendPacket(List<QuestComponent> packet, Plugin plugin, Player player, Entity npc) {
+	public static void sendPacket(List<QuestComponent> packet, QuestContext context) {
 		// implements `S->C 'actions'`
 		JsonObject data = JsonObjectBuilder.get()
 			.add("type", "actions")
-			.add("data", packet.stream().map(v -> v.serializeForClientAPI(plugin, player, npc))
+			.add("data", packet.stream().map(v -> v.serializeForClientAPI(context))
 				.map(v -> v.orElse(null))
 				.collect(Collectors.toList()))
 			.build();
 
-		sendJson(player, data);
+		sendJson(context.getPlayer(), data);
 	}
 
 	@Override

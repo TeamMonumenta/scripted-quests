@@ -1,14 +1,11 @@
 package com.playmonumenta.scriptedquests.quests.components.actions;
 
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-
 import com.google.gson.JsonElement;
-import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
+import com.playmonumenta.scriptedquests.quests.QuestContext;
+import org.bukkit.Bukkit;
 
 public class ActionFunction implements ActionBase {
-	private String mFunctionFileName;
+	private final String mFunctionFileName;
 
 	public ActionFunction(JsonElement element) throws Exception {
 		mFunctionFileName = element.getAsString();
@@ -18,9 +15,14 @@ public class ActionFunction implements ActionBase {
 	}
 
 	@Override
-	public void doAction(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
+	public void doAction(QuestContext context) {
 		// Because there's no currently good way to run functions we need to run them via the console....janky....I know.
-		String commandStr = String.format("execute as %s at @s run function %s", player.getName(), mFunctionFileName);
-		plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), commandStr);
+		String commandStr = String.format("execute as %s at @s run function %s", context.getPlayer().getName(), mFunctionFileName);
+		QuestContext.pushCurrentContext(context);
+		try {
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), commandStr);
+		} finally {
+			QuestContext.popCurrentContext();
+		}
 	}
 }

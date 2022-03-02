@@ -1,10 +1,8 @@
 package com.playmonumenta.scriptedquests.quests.components.prerequisites;
 
-import org.bukkit.entity.Entity;
-import org.bukkit.inventory.ItemStack;
-
 import com.google.gson.JsonElement;
-import com.playmonumenta.scriptedquests.managers.InteractableManager;
+import com.playmonumenta.scriptedquests.quests.QuestContext;
+import org.bukkit.inventory.ItemStack;
 
 public class PrerequisiteUsedItem implements PrerequisiteBase {
 	private final PrerequisiteItem mPrereqItem;
@@ -14,8 +12,8 @@ public class PrerequisiteUsedItem implements PrerequisiteBase {
 	}
 
 	@Override
-	public boolean prerequisiteMet(Entity entity, Entity npcEntity) {
-		ItemStack usedItem = InteractableManager.getUsedItem();
+	public boolean prerequisiteMet(QuestContext context) {
+		ItemStack usedItem = context.getUsedItem();
 		return usedItem != null && mPrereqItem.prerequisiteMet(new ItemStack[] {usedItem});
 	}
 }

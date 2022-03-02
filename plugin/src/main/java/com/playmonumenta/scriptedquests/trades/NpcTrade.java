@@ -1,19 +1,14 @@
 package com.playmonumenta.scriptedquests.trades;
 
-import java.util.Map.Entry;
-import java.util.Set;
-
-import javax.annotation.Nullable;
-
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.quests.components.QuestActions;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
+import java.util.Map.Entry;
+import java.util.Set;
+import javax.annotation.Nullable;
+import org.bukkit.entity.EntityType;
 
 public class NpcTrade implements Comparable<NpcTrade> {
 
@@ -74,13 +69,13 @@ public class NpcTrade implements Comparable<NpcTrade> {
 		return mActions;
 	}
 
-	public boolean prerequisiteMet(Player player, Entity npc) {
-		return mPrerequisites.prerequisiteMet(player, npc);
+	public boolean prerequisiteMet(QuestContext context) {
+		return mPrerequisites.prerequisiteMet(context);
 	}
 
-	public void doActions(Plugin plugin, Player player, Entity npcEntity) {
+	public void doActions(QuestContext context) {
 		if (mActions != null) {
-			mActions.doActions(plugin, player, npcEntity, null);
+			mActions.doActions(context);
 		}
 	}
 

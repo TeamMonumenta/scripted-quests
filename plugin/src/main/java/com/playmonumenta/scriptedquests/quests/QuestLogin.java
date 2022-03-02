@@ -1,17 +1,15 @@
 package com.playmonumenta.scriptedquests.quests;
 
-import java.util.Map.Entry;
-import java.util.Set;
-
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerJoinEvent;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestActions;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
+import java.util.Map.Entry;
+import java.util.Set;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 /*
  * A QuestLogin object holds all the quest components bound together with a particular
@@ -53,8 +51,9 @@ public class QuestLogin {
 			return false;
 		}
 
-		if (mPrerequisites == null || mPrerequisites.prerequisiteMet(player, null)) {
-			mActions.doActions(plugin, player, null, mPrerequisites);
+		QuestContext context = new QuestContext(plugin, player, null);
+		if (mPrerequisites == null || mPrerequisites.prerequisiteMet(context)) {
+			mActions.doActions(context.withPrerequisites(mPrerequisites));
 			return true;
 		}
 		return false;

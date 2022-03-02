@@ -1,13 +1,19 @@
 package com.playmonumenta.scriptedquests.races;
 
+import com.playmonumenta.redissync.MonumentaRedisSyncAPI;
+import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.managers.RaceManager;
+import com.playmonumenta.scriptedquests.quests.QuestContext;
+import com.playmonumenta.scriptedquests.quests.components.QuestActions;
+import com.playmonumenta.scriptedquests.utils.MessagingUtils;
+import com.playmonumenta.scriptedquests.utils.RaceUtils;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.Nullable;
-
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -23,15 +29,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 import org.bukkit.util.Vector;
-
-import com.playmonumenta.redissync.MonumentaRedisSyncAPI;
-import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.managers.RaceManager;
-import com.playmonumenta.scriptedquests.quests.components.QuestActions;
-import com.playmonumenta.scriptedquests.utils.MessagingUtils;
-import com.playmonumenta.scriptedquests.utils.RaceUtils;
-
-import net.kyori.adventure.text.format.NamedTextColor;
 
 /*
  * A Race is a currently active race a player is doing
@@ -138,7 +135,7 @@ public class Race {
 		}
 
 		if (mStartActions != null) {
-			mStartActions.doActions(mPlugin, mPlayer, null, null);
+			mStartActions.doActions(new QuestContext(mPlugin, mPlayer, null));
 		}
 
 		mPlayer.addScoreboardTag(RaceManager.PLAYER_RACE_TAG);
@@ -255,7 +252,7 @@ public class Race {
 				*/
 
 				// Run the actions for reaching this ring
-				mNextWaypoint.doActions(mPlugin, mPlayer);
+				mNextWaypoint.doActions(new QuestContext(mPlugin, mPlayer, null));
 
 				MessagingUtils.sendActionBarMessage(mPlayer, NamedTextColor.BLUE, true, RaceUtils.msToTimeString(timeElapsed), false);
 				mWorld.playSound(mPlayer.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1, 1.5f);
@@ -297,7 +294,9 @@ public class Race {
 	private void end() {
 		mManager.removeRace(mPlayer);
 
-		mTimeBar.cancel();
+		if (mTimeBar != null) {
+			mTimeBar.cancel();
+		}
 		for (Entity e : mRingEntities) {
 			e.remove();
 		}
@@ -306,7 +305,7 @@ public class Race {
 
 	public void lose() {
 		if (mLoseActions != null) {
-			mLoseActions.doActions(mPlugin, mPlayer, null, null);
+			mLoseActions.doActions(new QuestContext(mPlugin, mPlayer, null));
 		}
 		mPlayer.teleport(mStopLoc);
 		end();
@@ -317,10 +316,12 @@ public class Race {
 	 */
 	public void abort() {
 		if (mLoseActions != null) {
-			mLoseActions.doActions(mPlugin, mPlayer, null, null);
+			mLoseActions.doActions(new QuestContext(mPlugin, mPlayer, null));
 		}
 		mPlayer.teleport(mStopLoc);
-		mTimeBar.cancel();
+		if (mTimeBar != null) {
+			mTimeBar.cancel();
+		}
 		for (Entity e : mRingEntities) {
 			e.remove();
 		}
@@ -441,7 +442,7 @@ public class Race {
 		/* Last thing is to do any actions associated with the race */
 		for (RaceTime time : mTimes) {
 			if (endTime <= time.getTime()) {
-				time.doActions(mPlugin, mPlayer);
+				time.doActions(new QuestContext(mPlugin, mPlayer, null));
 			}
 		}
 	}

@@ -1,18 +1,16 @@
 package com.playmonumenta.scriptedquests.quests;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.Set;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 
 /**
  * A CodeEntry is a container for an interaction the player can trigger at any time
@@ -158,7 +156,7 @@ public class CodeEntry {
 		code = code.toLowerCase().replaceAll("\\s", "");
 		if (goodCode.equals(code)) {
 			for (QuestComponent component : mComponents) {
-				component.doActionsIfPrereqsMet(plugin, player, null);
+				component.doActionsIfPrereqsMet(new QuestContext(plugin, player, null));
 			}
 
 			return true;

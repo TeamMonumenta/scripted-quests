@@ -1,11 +1,10 @@
 package com.playmonumenta.scriptedquests.quests.components.prerequisites;
 
 import com.google.gson.JsonElement;
-import org.bukkit.GameMode;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-
+import com.playmonumenta.scriptedquests.quests.QuestContext;
 import java.util.ArrayList;
+import org.bukkit.GameMode;
+import org.bukkit.entity.Player;
 
 public class PrerequisiteGamemode implements PrerequisiteBase {
 	private final ArrayList<GameMode> mValues = new ArrayList<>();
@@ -38,9 +37,8 @@ public class PrerequisiteGamemode implements PrerequisiteBase {
 	}
 
 	@Override
-	public boolean prerequisiteMet(Entity entity, Entity npcEntity) {
-		if (entity instanceof Player) {
-			Player player = (Player) entity;
+	public boolean prerequisiteMet(QuestContext context) {
+		if (context.getEntityUsedForPrerequisites() instanceof Player player) {
 			return mValues.contains(player.getGameMode());
 		}
 		return false;

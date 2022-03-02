@@ -1,15 +1,14 @@
 package com.playmonumenta.scriptedquests.quests.components.prerequisites;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.playmonumenta.scriptedquests.quests.QuestContext;
 import java.util.Map.Entry;
 import java.util.Set;
-
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.util.Vector;
-
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
 public class PrerequisiteFacing implements PrerequisiteBase {
 	private final Vector mLoc;
@@ -53,10 +52,11 @@ public class PrerequisiteFacing implements PrerequisiteBase {
 	}
 
 	@Override
-	public boolean prerequisiteMet(Entity entity, Entity npcEntity) {
+	public boolean prerequisiteMet(QuestContext context) {
 		final Location entityLoc;
+		Entity entity = context.getEntityUsedForPrerequisites();
 		if (entity instanceof Mob) {
-			entityLoc = ((Mob)entity).getEyeLocation();
+			entityLoc = ((Mob) entity).getEyeLocation();
 		} else {
 			entityLoc = entity.getLocation();
 		}

@@ -3,18 +3,17 @@ package com.playmonumenta.scriptedquests.quests.components;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.api.JsonObjectBuilder;
+import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.utils.CustomInventory;
 import com.playmonumenta.scriptedquests.utils.JsonUtils;
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTItem;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import javax.annotation.Nullable;
-
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Nullable;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 public final class GuiPage {
 
@@ -64,7 +63,7 @@ public final class GuiPage {
 			.build();
 	}
 
-	public void setupInventory(CustomInventory customInventory, Player player, boolean edit) throws WrapperCommandSyntaxException {
+	public void setupInventory(CustomInventory customInventory, QuestContext context, boolean edit) throws WrapperCommandSyntaxException {
 		Inventory inventory = customInventory.getInventory();
 		inventory.clear();
 		for (GuiItem item : mItems) {
@@ -73,14 +72,14 @@ public final class GuiPage {
 			ItemStack displayItem;
 			if (existingItem != null) {
 				if (edit) {
-					displayItem = item.combineDisplayItem(player, existingItem);
+					displayItem = item.combineDisplayItem(context, existingItem);
 				} else {
 					// When multiple items are visible in the same slot, show only the first one.
 					// This matches the click behaviour where only the first visible item's actions are executed.
 					continue;
 				}
 			} else {
-				displayItem = item.getDisplayItem(player, edit);
+				displayItem = item.getDisplayItem(context, edit);
 			}
 			if (displayItem != null) {
 				inventory.setItem(index, displayItem);
@@ -114,10 +113,10 @@ public final class GuiPage {
 		return clone;
 	}
 
-	public @Nullable GuiItem getItem(int index, Player player) {
+	public @Nullable GuiItem getItem(int index, QuestContext context) {
 		for (GuiItem item : mItems) {
 			if (item.getCol() + item.getRow() * 9 == index
-				    && (item.getPrerequisites() == null || item.getPrerequisites().prerequisiteMet(player, null))) {
+				    && (item.getPrerequisites() == null || item.getPrerequisites().prerequisiteMet(context))) {
 				return item;
 			}
 		}

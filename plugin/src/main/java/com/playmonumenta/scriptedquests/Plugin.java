@@ -24,6 +24,8 @@ import com.playmonumenta.scriptedquests.timers.CommandTimerManager;
 import com.playmonumenta.scriptedquests.utils.MetadataUtils;
 import com.playmonumenta.scriptedquests.utils.NmsUtils;
 import com.playmonumenta.scriptedquests.zones.ZoneManager;
+import java.io.File;
+import java.util.Random;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -32,9 +34,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
-
-import java.io.File;
-import java.util.Random;
 
 public class Plugin extends JavaPlugin {
 	private static Plugin INSTANCE = null;
@@ -86,7 +85,7 @@ public class Plugin extends JavaPlugin {
 		Clickable.register(this);
 		GiveLootTable.register(mRandom);
 		GiveItemWithLore.register();
-		Race.register(this);
+		RaceCommand.register(this);
 		Leaderboard.register(this);
 		Line.register();
 		RandomNumber.register();

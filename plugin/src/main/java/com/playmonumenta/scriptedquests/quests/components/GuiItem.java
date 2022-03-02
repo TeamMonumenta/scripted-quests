@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.playmonumenta.scriptedquests.api.JsonObjectBuilder;
+import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.utils.JsonUtils;
 import com.playmonumenta.scriptedquests.utils.NmsUtils;
 import de.tr7zw.nbtapi.NBTCompound;
@@ -12,16 +13,14 @@ import de.tr7zw.nbtapi.NBTCompoundList;
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.NBTListCompound;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import javax.annotation.Nullable;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 public class GuiItem {
 
@@ -143,7 +142,7 @@ public class GuiItem {
 		return mCol;
 	}
 
-	public ItemStack getDisplayItem(Player player, boolean edit) {
+	public ItemStack getDisplayItem(QuestContext context, boolean edit) {
 		if (edit) {
 			ItemStack item = mDisplayItem.clone();
 			List<Component> lore = item.lore();
@@ -172,22 +171,22 @@ public class GuiItem {
 			sqguiCompound.setString(RIGHT_CLICK_ACTIONS_KEY, gson.toJson(mRightClickActionsJson));
 			return nbtItem.getItem();
 		} else {
-			if (mPrerequisites != null && !mPrerequisites.prerequisiteMet(player, null)) {
+			if (mPrerequisites != null && !mPrerequisites.prerequisiteMet(context)) {
 				return null;
 			}
 			ItemStack displayItem = mDisplayItem.clone();
 			ItemMeta meta = displayItem.getItemMeta();
-			meta.displayName(NmsUtils.getVersionAdapter().resolveComponents(meta.displayName(), player));
+			meta.displayName(NmsUtils.getVersionAdapter().resolveComponents(meta.displayName(), context.getPlayer()));
 			List<Component> lore = meta.lore();
 			if (lore != null) {
-				meta.lore(lore.stream().map(line -> NmsUtils.getVersionAdapter().resolveComponents(line, player)).collect(Collectors.toList()));
+				meta.lore(lore.stream().map(line -> NmsUtils.getVersionAdapter().resolveComponents(line, context.getPlayer())).collect(Collectors.toList()));
 			}
 			displayItem.setItemMeta(meta);
 			return displayItem;
 		}
 	}
 
-	public ItemStack combineDisplayItem(Player player, ItemStack item) {
+	public ItemStack combineDisplayItem(QuestContext context, ItemStack item) {
 		List<Component> lore = item.lore();
 		if (lore == null) {
 			lore = new ArrayList<>();
@@ -197,7 +196,7 @@ public class GuiItem {
 		NBTItem nbtItem = new NBTItem(item);
 		NBTCompound sqguiCompound = nbtItem.addCompound(SQGUI_KEY);
 		NBTCompoundList moreItemsList = sqguiCompound.getCompoundList(MORE_ITEMS_KEY);
-		moreItemsList.addCompound(NBTItem.convertItemtoNBT(getDisplayItem(player, true)));
+		moreItemsList.addCompound(NBTItem.convertItemtoNBT(getDisplayItem(context, true)));
 		return nbtItem.getItem();
 	}
 

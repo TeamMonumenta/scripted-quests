@@ -1,16 +1,12 @@
 package com.playmonumenta.scriptedquests.quests.components;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.playmonumenta.scriptedquests.quests.QuestContext;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
-
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.playmonumenta.scriptedquests.Plugin;
-
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
 
 public class QuestComponent {
 	private QuestPrerequisites mPrerequisites = null;
@@ -58,17 +54,17 @@ public class QuestComponent {
 		}
 	}
 
-	public boolean doActionsIfPrereqsMet(Plugin plugin, Player player, Entity npcEntity) {
-		if (mPrerequisites == null || mPrerequisites.prerequisiteMet(player, npcEntity)) {
-			mActions.doActions(plugin, player, npcEntity, mPrerequisites);
+	public boolean doActionsIfPrereqsMet(QuestContext context) {
+		if (mPrerequisites == null || mPrerequisites.prerequisiteMet(context)) {
+			mActions.doActions(context.withPrerequisites(mPrerequisites));
 			return true;
 		}
 		return false;
 	}
 
-	public Optional<JsonElement> serializeForClientAPI(Plugin plugin, Player player, Entity npcEntity) {
-		if (mPrerequisites == null || mPrerequisites.prerequisiteMet(player, npcEntity)) {
-			return mActions.serializeForClientAPI(plugin, player, npcEntity, mPrerequisites);
+	public Optional<JsonElement> serializeForClientAPI(QuestContext context) {
+		if (mPrerequisites == null || mPrerequisites.prerequisiteMet(context)) {
+			return mActions.serializeForClientAPI(context);
 		}
 		return Optional.empty();
 	}

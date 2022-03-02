@@ -1,12 +1,10 @@
 package com.playmonumenta.scriptedquests.races;
 
-import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.quests.components.QuestActions;
+import org.bukkit.util.Vector;
 
 public class RaceWaypoint {
 	private final Vector mPosition;
@@ -61,9 +59,9 @@ public class RaceWaypoint {
 		return mPosition.clone();
 	}
 
-	public void doActions(Plugin plugin, Player player) {
+	public void doActions(QuestContext context) {
 		if (mActions != null) {
-			mActions.doActions(plugin, player, null, null);
+			mActions.doActions(context);
 		}
 	}
 }
