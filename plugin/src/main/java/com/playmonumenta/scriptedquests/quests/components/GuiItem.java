@@ -12,16 +12,15 @@ import de.tr7zw.nbtapi.NBTCompoundList;
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.NBTListCompound;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import javax.annotation.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class GuiItem {
 
@@ -96,9 +95,10 @@ public class GuiItem {
 			if (keepGuiOpen != null) {
 				mKeepGuiOpen = keepGuiOpen;
 			}
+			JsonParser jsonParser = new JsonParser();
 			String prerequisites = sqguiCompound.getString(PREREQUISITES_KEY);
 			if (prerequisites != null) {
-				mPrerequisitesJson = JsonParser.parseString(prerequisites);
+				mPrerequisitesJson = jsonParser.parse(prerequisites);
 				if (mPrerequisitesJson.isJsonNull()) {
 					mPrerequisitesJson = null;
 				} else {
@@ -107,7 +107,7 @@ public class GuiItem {
 			}
 			String leftClickActions = sqguiCompound.getString(LEFT_CLICK_ACTIONS_KEY);
 			if (leftClickActions != null) {
-				mLeftClickActionsJson = JsonParser.parseString(leftClickActions);
+				mLeftClickActionsJson = jsonParser.parse(leftClickActions);
 				if (mLeftClickActionsJson.isJsonNull()) {
 					mLeftClickActionsJson = null;
 				} else {
@@ -116,7 +116,7 @@ public class GuiItem {
 			}
 			String rightClickActions = sqguiCompound.getString(RIGHT_CLICK_ACTIONS_KEY);
 			if (rightClickActions != null) {
-				mRightClickActionsJson = JsonParser.parseString(rightClickActions);
+				mRightClickActionsJson = jsonParser.parse(rightClickActions);
 				if (mRightClickActionsJson.isJsonNull()) {
 					mRightClickActionsJson = null;
 				} else {
