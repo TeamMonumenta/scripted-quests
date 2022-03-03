@@ -28,7 +28,7 @@ dependencies {
     compileOnly("com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT")
     compileOnly("dev.jorel.CommandAPI:commandapi-core:6.0.0")
     compileOnly("com.mojang:brigadier:1.0.17")
-    compileOnly("com.google.code.gson:gson:2.8.5")
+    compileOnly("com.google.code.gson:gson:2.8.0")
     compileOnly("org.dynmap:DynmapCoreAPI:2.0")
     compileOnly("com.playmonumenta:redissync:1.7")
     errorprone("com.google.errorprone:error_prone_core:2.10.0")
