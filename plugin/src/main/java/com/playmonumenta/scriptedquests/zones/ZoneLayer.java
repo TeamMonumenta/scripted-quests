@@ -16,9 +16,9 @@ import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.utils.ZoneUtils;
 
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -320,16 +320,12 @@ public class ZoneLayer {
 					continue;
 				}
 				if (inner.splitByOverlap(overlap, outer)) {
-					String errorMessageLegacy = ChatColor.RED + "Total eclipse of zone "
-										+ ChatColor.BOLD + inner.getName()
-										+ ChatColor.RED + " by zone "
-										+ ChatColor.BOLD + outer.getName();
-					if (senders != null) {
-						BaseComponent[] errorMessage = TextComponent.fromLegacyText(errorMessageLegacy);
-						for (@Nullable CommandSender sender : senders) {
-							if (sender != null) {
-								sender.spigot().sendMessage(errorMessage);
-							}
+					for (@Nullable CommandSender sender : senders) {
+						if (sender != null) {
+							sender.sendMessage(Component.text("Total eclipse of zone ", NamedTextColor.RED)
+								.append(Component.text(inner.getName(), NamedTextColor.RED, TextDecoration.BOLD))
+								.append(Component.text(" by zone ", NamedTextColor.RED))
+								.append(Component.text(outer.getName(), NamedTextColor.RED, TextDecoration.BOLD)));
 						}
 					}
 				}

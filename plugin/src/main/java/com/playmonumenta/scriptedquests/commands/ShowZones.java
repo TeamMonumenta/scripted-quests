@@ -101,6 +101,7 @@ public class ShowZones {
 		}
 
 		@Override
+		@SuppressWarnings("ReferenceEquality")
 		public void run() {
 			@Nullable Player player = Bukkit.getPlayer(mPlayerUuid);
 			if (player == null) {

@@ -508,6 +508,7 @@ public class ZoneManager {
 		}
 	}
 
+	@SuppressWarnings("ReferenceEquality")
 	private void applyZoneChange(Player player, String layerName, @Nullable Zone currentZone) {
 		UUID playerUuid = player.getUniqueId();
 		// Null zones are valid - indicates no zone.
