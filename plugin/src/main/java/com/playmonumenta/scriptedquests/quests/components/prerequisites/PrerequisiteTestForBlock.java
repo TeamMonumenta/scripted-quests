@@ -1,14 +1,12 @@
 package com.playmonumenta.scriptedquests.quests.components.prerequisites;
 
-import java.util.Map.Entry;
-import java.util.Set;
-
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.entity.Entity;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.playmonumenta.scriptedquests.quests.QuestContext;
+import java.util.Map.Entry;
+import java.util.Set;
+import org.bukkit.Location;
+import org.bukkit.Material;
 
 public class PrerequisiteTestForBlock implements PrerequisiteBase {
 	private final Location mLoc;
@@ -62,12 +60,8 @@ public class PrerequisiteTestForBlock implements PrerequisiteBase {
 	}
 
 	@Override
-	public boolean prerequisiteMet(Entity entity, Entity npcEntity) {
-		mLoc.setWorld(entity.getWorld());
-
-		if (mLoc.getBlock().getType().equals(mType)) {
-			return true;
-		}
-		return false;
+	public boolean prerequisiteMet(QuestContext context) {
+		mLoc.setWorld(context.getPlayer().getWorld());
+		return mLoc.getBlock().getType().equals(mType);
 	}
 }

@@ -1,55 +1,47 @@
 package com.playmonumenta.scriptedquests.quests.components.actions.dialog;
 
-import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Constants;
-import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.api.JsonObjectBuilder;
 import com.playmonumenta.scriptedquests.point.AreaBounds;
 import com.playmonumenta.scriptedquests.point.Point;
+import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.quests.components.QuestActions;
-import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
-
+import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.Set;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.HoverEvent;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.event.HoverEvent;
-
 public class DialogClickableTextEntry implements DialogBase {
 	public static class PlayerClickableTextEntry {
-		private final QuestPrerequisites mPrerequisites;
+		private final QuestContext mContext;
 		private final QuestActions mActions;
 		private final AreaBounds mValidArea;
-		private final Entity mNpcEntity;
 
-		public PlayerClickableTextEntry(QuestPrerequisites prereqs, QuestActions actions,
-		                                Entity npcEntity, AreaBounds validArea) {
-			mPrerequisites = prereqs;
+		public PlayerClickableTextEntry(QuestContext context, QuestActions actions, AreaBounds validArea) {
+			mContext = context;
 			mActions = actions;
 			mValidArea = validArea;
-			mNpcEntity = npcEntity;
 		}
 
-		public void doActionsIfConditionsMatch(Plugin plugin, Player player) {
+		public void doActionsIfConditionsMatch(Player player) {
 			if (!mValidArea.within(player.getLocation())) {
 				player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 0.7f, 0.3f);
 				player.sendMessage(ChatColor.RED + "You moved too far away to be heard");
-			} else if (mPrerequisites != null && !mPrerequisites.prerequisiteMet(player, mNpcEntity)) {
+			} else if (!mContext.prerequisitesMet()) {
 				player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 0.7f, 0.3f);
 				player.sendMessage(ChatColor.RED + "You no longer meet the requirements for this option");
 			} else {
 				player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 0.7f, 0.9f);
-				mActions.doActions(plugin, player, mNpcEntity, mPrerequisites);
+				mActions.doActions(mContext);
 			}
 		}
 	}
@@ -57,7 +49,7 @@ public class DialogClickableTextEntry implements DialogBase {
 	private String mText;
 	private Double mRadius = 4.0;
 	private QuestActions mActions;
-	private int mIdx;
+	private final int mIdx;
 	private HoverEvent<Component> mHoverEvent = null;
 
 	public DialogClickableTextEntry(String npcName, String displayName, EntityType entityType,
@@ -111,15 +103,16 @@ public class DialogClickableTextEntry implements DialogBase {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void setupTriggersEntries(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
-		PlayerClickableTextEntry newEntry = new PlayerClickableTextEntry(prereqs, mActions, npcEntity,
+	private void setupTriggersEntries(QuestContext context) {
+		Player player = context.getPlayer();
+		PlayerClickableTextEntry newEntry = new PlayerClickableTextEntry(context, mActions,
 			new AreaBounds("", new Point(player.getLocation().subtract(mRadius, mRadius, mRadius)),
 				new Point(player.getLocation().add(mRadius, mRadius, mRadius))));
 
 		/* Get the list of currently available clickable entries */
 		HashMap<Integer, PlayerClickableTextEntry> availTriggers;
 		if (player.hasMetadata(Constants.PLAYER_CLICKABLE_DIALOG_METAKEY)) {
-			availTriggers = (HashMap<Integer, PlayerClickableTextEntry>)player.getMetadata(
+			availTriggers = (HashMap<Integer, PlayerClickableTextEntry>) player.getMetadata(
 				Constants.PLAYER_CLICKABLE_DIALOG_METAKEY).get(0).value();
 		} else {
 			availTriggers = new HashMap<>();
@@ -130,22 +123,22 @@ public class DialogClickableTextEntry implements DialogBase {
 
 		/* Attach the new list of clickable options to the player */
 		player.setMetadata(Constants.PLAYER_CLICKABLE_DIALOG_METAKEY,
-			new FixedMetadataValue(plugin, availTriggers));
+			new FixedMetadataValue(context.getPlugin(), availTriggers));
 	}
 
 	@Override
-	public void sendDialog(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
-		MessagingUtils.sendClickableNPCMessage(plugin, player, mText, "/questtrigger " + mIdx, mHoverEvent);
-		setupTriggersEntries(plugin, player, npcEntity, prereqs);
+	public void sendDialog(QuestContext context) {
+		MessagingUtils.sendClickableNPCMessage(context.getPlugin(), context.getPlayer(), mText, "/questtrigger " + mIdx, mHoverEvent);
+		setupTriggersEntries(context);
 	}
 
 	@Override
-	public JsonElement serializeForClientAPI(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
+	public JsonElement serializeForClientAPI(QuestContext context) {
 		JsonObject tmp = JsonObjectBuilder.get()
 			.add("command", "/questtrigger " + mIdx)
 			.add("text", mText)
 			.build();
-		setupTriggersEntries(plugin, player, npcEntity, prereqs);
+		setupTriggersEntries(context);
 		return tmp;
 	}
 }

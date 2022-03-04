@@ -1,9 +1,8 @@
 package com.playmonumenta.scriptedquests.quests.components.prerequisites;
 
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-
 import com.google.gson.JsonElement;
+import com.playmonumenta.scriptedquests.quests.QuestContext;
+import org.bukkit.entity.Player;
 
 public class PrerequisiteSneaking implements PrerequisiteBase {
 	private final boolean mValue;
@@ -13,9 +12,8 @@ public class PrerequisiteSneaking implements PrerequisiteBase {
 	}
 
 	@Override
-	public boolean prerequisiteMet(Entity entity, Entity npcEntity) {
-		if (entity instanceof Player) {
-			Player player = (Player) entity;
+	public boolean prerequisiteMet(QuestContext context) {
+		if (context.getEntityUsedForPrerequisites() instanceof Player player) {
 			return player.isSneaking() == mValue;
 		}
 		return false;

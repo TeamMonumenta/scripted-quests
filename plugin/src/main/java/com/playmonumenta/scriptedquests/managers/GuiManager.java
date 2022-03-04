@@ -2,6 +2,7 @@ package com.playmonumenta.scriptedquests.managers;
 
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.Gui;
+import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.quests.components.GuiItem;
 import com.playmonumenta.scriptedquests.quests.components.GuiPage;
 import com.playmonumenta.scriptedquests.quests.components.QuestActions;
@@ -10,6 +11,9 @@ import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
+import java.util.HashMap;
+import java.util.Map;
+import javax.annotation.Nullable;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -17,10 +21,6 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
-import javax.annotation.Nullable;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class GuiManager {
 
@@ -87,8 +87,10 @@ public class GuiManager {
 		if (page == null) {
 			return;
 		}
-		GuiPageCustomInventory customInv = new GuiPageCustomInventory(player, gui, page, pageName, edit);
-		page.setupInventory(customInv, player, edit);
+		QuestContext originalContext = QuestContext.getCurrentContext();
+		QuestContext context = new QuestContext(Plugin.getInstance(), player, originalContext != null ? originalContext.getNpcEntity() : null, false, null, originalContext != null ? originalContext.getUsedItem() : null);
+		GuiPageCustomInventory customInv = new GuiPageCustomInventory(player, gui, page, pageName, edit, originalContext);
+		page.setupInventory(customInv, context, edit);
 		customInv.openInventory(player, mPlugin);
 	}
 
@@ -97,12 +99,14 @@ public class GuiManager {
 		private final Gui mGui;
 		private final String mPageName;
 		private final boolean mEditMode;
+		private final @Nullable QuestContext mOriginalContext;
 
-		public GuiPageCustomInventory(Player player, Gui gui, GuiPage page, String pageName, boolean editMode) {
+		public GuiPageCustomInventory(Player player, Gui gui, GuiPage page, String pageName, boolean editMode, @Nullable QuestContext originalContext) {
 			super(player, page.getRows() * 9, page.getTitle());
 			mGui = gui;
 			mPageName = pageName;
 			mEditMode = editMode;
+			mOriginalContext = originalContext;
 		}
 
 		@Override
@@ -112,27 +116,28 @@ public class GuiManager {
 			}
 			event.setCancelled(true);
 			if ((event.getClick() != ClickType.LEFT && event.getClick() != ClickType.RIGHT)
-				    || !(event.getWhoClicked() instanceof Player)
+				    || !(event.getWhoClicked() instanceof Player player)
 				    || event.getClickedInventory() != mInventory) {
 				return;
 			}
-			Player player = (Player) event.getWhoClicked();
 			GuiPage page = mGui.getPage(mPageName);
 			if (page == null) {
 				return;
 			}
-			GuiItem guiItem = page.getItem(event.getSlot(), player);
+			QuestContext context = new QuestContext((Plugin) getPlugin(), player, mOriginalContext != null ? mOriginalContext.getNpcEntity() : null, false, null, mOriginalContext != null ? mOriginalContext.getUsedItem() : null);
+			GuiItem guiItem = page.getItem(event.getSlot(), context);
 			if (guiItem != null) {
+				context = context.withPrerequisites(guiItem.getPrerequisites());
 				if (event.getClick() == ClickType.LEFT && guiItem.getLeftClickActions() != null) {
 					if (!guiItem.getKeepGuiOpen()) {
 						close();
 					}
-					guiItem.getLeftClickActions().doActions((Plugin) getPlugin(), player, null, guiItem.getPrerequisites());
+					guiItem.getLeftClickActions().doActions(context);
 				} else if (event.getClick() == ClickType.RIGHT && guiItem.getRightClickActions() != null) {
 					if (!guiItem.getKeepGuiOpen()) {
 						close();
 					}
-					guiItem.getRightClickActions().doActions((Plugin) getPlugin(), player, null, guiItem.getPrerequisites());
+					guiItem.getRightClickActions().doActions(context);
 				}
 			}
 		}
@@ -167,7 +172,7 @@ public class GuiManager {
 				}
 				QuestActions closeActions = page.getCloseActions();
 				if (closeActions != null) {
-					closeActions.doActions((Plugin) getPlugin(), (Player) event.getPlayer(), null, null);
+					closeActions.doActions(new QuestContext((Plugin) getPlugin(), (Player) event.getPlayer(), null));
 				}
 			}
 		}

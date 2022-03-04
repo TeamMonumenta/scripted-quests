@@ -1,18 +1,13 @@
 package com.playmonumenta.scriptedquests.quests.components.actions.dialog;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
+import com.playmonumenta.scriptedquests.api.JsonObjectBuilder;
+import com.playmonumenta.scriptedquests.quests.QuestContext;
+import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.stream.Collectors;
-
-import com.google.gson.JsonElement;
-import com.google.gson.JsonPrimitive;
-import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.api.JsonObjectBuilder;
-import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
-import com.playmonumenta.scriptedquests.utils.MessagingUtils;
-
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 
 public class DialogText implements DialogBase {
 	private String mDisplayName;
@@ -34,19 +29,19 @@ public class DialogText implements DialogBase {
 	}
 
 	@Override
-	public void sendDialog(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
+	public void sendDialog(QuestContext context) {
 		for (String text : mText) {
 			if (mDisplayName != null && !mDisplayName.isEmpty()) {
-				MessagingUtils.sendNPCMessage(player, mDisplayName, text);
+				MessagingUtils.sendNPCMessage(context.getPlayer(), mDisplayName, text);
 			} else {
-				MessagingUtils.sendRawMessage(player, text);
+				MessagingUtils.sendRawMessage(context.getPlayer(), text);
 			}
 
 		}
 	}
 
 	@Override
-	public JsonElement serializeForClientAPI(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
+	public JsonElement serializeForClientAPI(QuestContext context) {
 		return JsonObjectBuilder.get()
 			.add("type", "text")
 			.add("text", mText.stream().map(JsonPrimitive::new).collect(Collectors.toList()))

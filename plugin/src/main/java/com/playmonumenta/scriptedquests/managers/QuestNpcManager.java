@@ -1,19 +1,17 @@
 package com.playmonumenta.scriptedquests.managers;
 
+import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.quests.QuestNpc;
+import com.playmonumenta.scriptedquests.utils.MetadataUtils;
+import com.playmonumenta.scriptedquests.utils.QuestUtils;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
-
-import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.quests.QuestNpc;
-import com.playmonumenta.scriptedquests.utils.MetadataUtils;
-import com.playmonumenta.scriptedquests.utils.QuestUtils;
 
 public class QuestNpcManager {
 	private final Plugin mPlugin;
@@ -86,10 +84,7 @@ public class QuestNpcManager {
 		return null;
 	}
 
-	/*
-	 * Note: npcEntity might be null
-	 */
-	public boolean interactEvent(Plugin plugin, Player player, String npcName, EntityType entityType, Entity npcEntity, boolean force) {
+	public boolean interactEvent(Plugin plugin, Player player, String npcName, EntityType entityType, @Nullable Entity npcEntity, boolean force) {
 		QuestNpc npc = getInteractNPC(npcName, entityType);
 		if (npc != null) {
 			return interactEvent(plugin, player, npcName, entityType, npcEntity, npc, force);
@@ -97,10 +92,7 @@ public class QuestNpcManager {
 		return false;
 	}
 
-	/*
-	 * Note: npcEntity might be null
-	 */
-	public boolean interactEvent(Plugin plugin, Player player, String npcName, EntityType entityType, Entity npcEntity, QuestNpc npc, boolean force) {
+	public boolean interactEvent(Plugin plugin, Player player, String npcName, EntityType entityType, @Nullable Entity npcEntity, QuestNpc npc, boolean force) {
 		// Only one interaction per player per tick
 		if (!force && !MetadataUtils.checkOnceThisTick(plugin, player, "ScriptedQuestsNPCInteractNonce")) {
 			return false;

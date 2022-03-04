@@ -1,16 +1,12 @@
 package com.playmonumenta.scriptedquests.quests.components.actions;
 
+import com.google.gson.JsonElement;
+import com.playmonumenta.scriptedquests.quests.QuestContext;
+import com.playmonumenta.scriptedquests.utils.ScoreboardUtils;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
-
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-
-import com.google.gson.JsonElement;
-import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
-import com.playmonumenta.scriptedquests.utils.ScoreboardUtils;
 
 public class ActionSetScore implements ActionBase {
 	private static class SetScore {
@@ -113,7 +109,7 @@ public class ActionSetScore implements ActionBase {
 	}
 
 	@Override
-	public void doAction(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
-		mSetScore.apply(player, mScoreName);
+	public void doAction(QuestContext context) {
+		mSetScore.apply(context.getPlayer(), mScoreName);
 	}
 }

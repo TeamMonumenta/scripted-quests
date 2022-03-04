@@ -1,8 +1,7 @@
 package com.playmonumenta.scriptedquests.quests.components.prerequisites;
 
-import org.bukkit.entity.Entity;
-
 import com.google.gson.JsonElement;
+import com.playmonumenta.scriptedquests.quests.QuestContext;
 
 public class PrerequisiteCheckPermissions implements PrerequisiteBase {
 
@@ -26,8 +25,8 @@ public class PrerequisiteCheckPermissions implements PrerequisiteBase {
 	}
 
 	@Override
-	public boolean prerequisiteMet(Entity entity, Entity npcEntity) {
-		return mInverted ^ entity.hasPermission(mPermission);
+	public boolean prerequisiteMet(QuestContext context) {
+		return mInverted ^ context.getEntityUsedForPrerequisites().hasPermission(mPermission);
 	}
 
 }

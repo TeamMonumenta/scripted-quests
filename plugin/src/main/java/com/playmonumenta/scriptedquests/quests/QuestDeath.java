@@ -1,15 +1,5 @@
 package com.playmonumenta.scriptedquests.quests;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.metadata.FixedMetadataValue;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Constants;
@@ -17,6 +7,14 @@ import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.point.Point;
 import com.playmonumenta.scriptedquests.quests.components.QuestActions;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
+import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.metadata.FixedMetadataValue;
 
 /*
  * A QuestDeath object holds all the quest components bound together with a particular
@@ -33,7 +31,7 @@ public class QuestDeath {
 		}
 
 		public void doActions(Plugin plugin, Player player) {
-			mActions.doActions(plugin, player, null, mPrerequisites);
+			mActions.doActions(new QuestContext(plugin, player, null, false, mPrerequisites, null));
 		}
 	}
 
@@ -98,16 +96,16 @@ public class QuestDeath {
 	@SuppressWarnings("unchecked")
 	public boolean deathEvent(Plugin plugin, PlayerDeathEvent event) {
 		Player player = event.getEntity();
-		if (mPrerequisites == null || mPrerequisites.prerequisiteMet(player, null)) {
+		if (mPrerequisites == null || mPrerequisites.prerequisiteMet(new QuestContext(plugin, player, null))) {
 			List<DeathActions> actionsList;
 			if (player.hasMetadata(Constants.PLAYER_RESPAWN_ACTIONS_METAKEY)) {
-				actionsList = (List<DeathActions>)player.getMetadata(Constants.PLAYER_RESPAWN_ACTIONS_METAKEY).get(0).value();
+				actionsList = (List<DeathActions>) player.getMetadata(Constants.PLAYER_RESPAWN_ACTIONS_METAKEY).get(0).value();
 			} else {
 				actionsList = new ArrayList<DeathActions>(5);
 			}
 			actionsList.add(new DeathActions(mActions, mPrerequisites));
 			player.setMetadata(Constants.PLAYER_RESPAWN_ACTIONS_METAKEY,
-			                   new FixedMetadataValue(plugin, actionsList));
+				new FixedMetadataValue(plugin, actionsList));
 
 			event.setKeepInventory(mKeepInv);
 			event.setKeepLevel(mKeepInv);

@@ -1,10 +1,8 @@
 package com.playmonumenta.scriptedquests.quests.components.prerequisites;
 
-import java.util.Set;
-
-import org.bukkit.entity.Entity;
-
 import com.google.gson.JsonElement;
+import com.playmonumenta.scriptedquests.quests.QuestContext;
+import java.util.Set;
 
 public class PrerequisiteCheckTags implements PrerequisiteBase {
 	private boolean mInverted;
@@ -26,8 +24,8 @@ public class PrerequisiteCheckTags implements PrerequisiteBase {
 	}
 
 	@Override
-	public boolean prerequisiteMet(Entity entity, Entity npcEntity) {
-		Set<String> entityTags = entity.getScoreboardTags();
+	public boolean prerequisiteMet(QuestContext context) {
+		Set<String> entityTags = context.getEntityUsedForPrerequisites().getScoreboardTags();
 		return mInverted ^ entityTags.contains(mTag);
 	}
 }

@@ -1,16 +1,14 @@
 package com.playmonumenta.scriptedquests.commands;
 
+import com.playmonumenta.scriptedquests.Constants;
+import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.quests.components.actions.dialog.DialogClickableTextEntry.PlayerClickableTextEntry;
 import java.util.HashMap;
-
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import com.playmonumenta.scriptedquests.Constants;
-import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.quests.components.actions.dialog.DialogClickableTextEntry.PlayerClickableTextEntry;
 
 public class QuestTrigger implements CommandExecutor {
 	private Plugin mPlugin;
@@ -68,7 +66,7 @@ public class QuestTrigger implements CommandExecutor {
 
 			PlayerClickableTextEntry entry = availTriggers.get(triggerIndex);
 			if (entry != null) {
-				entry.doActionsIfConditionsMatch(mPlugin, player);
+				entry.doActionsIfConditionsMatch(player);
 			}
 		}
 

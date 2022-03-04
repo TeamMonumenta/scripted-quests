@@ -1,21 +1,16 @@
 package com.playmonumenta.scriptedquests.quests;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.Map;
-import java.util.Set;
-
-import org.bukkit.Material;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.Map;
+import java.util.Set;
+import org.bukkit.Material;
+import org.bukkit.entity.EntityType;
 
 public class InteractableEntry {
 	public enum InteractType {
@@ -137,11 +132,11 @@ public class InteractableEntry {
 		return mMaterials;
 	}
 
-	public boolean interactEvent(Plugin plugin, Player player, Entity entity, InteractType interactType) {
+	public boolean interactEvent(QuestContext context, InteractType interactType) {
 		boolean cancelEvent = false;
 		if (mInteractTypes.contains(interactType)) {
 			for (QuestComponent component : mComponents) {
-				if (component.doActionsIfPrereqsMet(plugin, player, entity)) {
+				if (component.doActionsIfPrereqsMet(context)) {
 					cancelEvent = mCancelEvent;
 				}
 			}

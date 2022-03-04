@@ -1,14 +1,9 @@
 package com.playmonumenta.scriptedquests.quests.components.actions.dialog;
 
+import com.google.gson.JsonElement;
+import com.playmonumenta.scriptedquests.quests.QuestContext;
 import java.util.ArrayList;
 import java.util.Iterator;
-
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-
-import com.google.gson.JsonElement;
-import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 
 public class DialogAllInOneText implements DialogBase {
 	private ArrayList<DialogAllInOneEntry> mEntries = new ArrayList<DialogAllInOneEntry>();
@@ -27,9 +22,9 @@ public class DialogAllInOneText implements DialogBase {
 	}
 
 	@Override
-	public void sendDialog(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
+	public void sendDialog(QuestContext context) {
 		for (DialogAllInOneEntry ent : mEntries) {
-			ent.sendDialog(plugin, player, npcEntity, prereqs);
+			ent.sendDialog(context);
 		}
 	}
 }

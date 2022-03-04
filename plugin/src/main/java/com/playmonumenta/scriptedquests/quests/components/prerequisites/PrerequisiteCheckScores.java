@@ -1,12 +1,11 @@
 package com.playmonumenta.scriptedquests.quests.components.prerequisites;
 
+import com.google.gson.JsonElement;
+import com.playmonumenta.scriptedquests.quests.QuestContext;
+import com.playmonumenta.scriptedquests.utils.ScoreboardUtils;
 import java.util.Map.Entry;
 import java.util.Set;
-
 import org.bukkit.entity.Entity;
-
-import com.google.gson.JsonElement;
-import com.playmonumenta.scriptedquests.utils.ScoreboardUtils;
 
 public class PrerequisiteCheckScores implements PrerequisiteBase {
 	private static class CheckScore {
@@ -102,7 +101,7 @@ public class PrerequisiteCheckScores implements PrerequisiteBase {
 	}
 
 	@Override
-	public boolean prerequisiteMet(Entity entity, Entity npcEntity) {
-		return mCheckScore.check(entity, mScoreName);
+	public boolean prerequisiteMet(QuestContext context) {
+		return mCheckScore.check(context.getEntityUsedForPrerequisites(), mScoreName);
 	}
 }

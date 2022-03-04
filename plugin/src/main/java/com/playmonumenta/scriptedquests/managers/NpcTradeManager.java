@@ -1,20 +1,19 @@
 package com.playmonumenta.scriptedquests.managers;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.quests.QuestNpc;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import com.playmonumenta.scriptedquests.trades.NpcTrade;
 import com.playmonumenta.scriptedquests.trades.NpcTrader;
 import com.playmonumenta.scriptedquests.trades.TradeWindowOpenEvent;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
-
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -141,7 +140,7 @@ public class NpcTradeManager implements Listener {
 			if (trader != null) {
 				NpcTrade trade = trader.getTrade(i);
 				if (trade != null) {
-					if (!trade.prerequisiteMet(player, villager)) {
+					if (!trade.prerequisiteMet(new QuestContext(plugin, player, villager))) {
 						if (lockedSlots.length() != 0) {
 							lockedSlots.append(", ");
 						}
@@ -274,7 +273,7 @@ public class NpcTradeManager implements Listener {
 		} else {
 			NpcTrade trade = context.getSlotProperties().get(selectedIndex);
 			if (trade != null) {
-				trade.doActions(Plugin.getInstance(), player, context.getVillager());
+				trade.doActions(new QuestContext(Plugin.getInstance(), player, context.getVillager()));
 			}
 		}
 	}

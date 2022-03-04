@@ -1,17 +1,11 @@
 package com.playmonumenta.scriptedquests.quests.components.actions.dialog;
 
-import java.util.Map.Entry;
-import java.util.Set;
-
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
+import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
-
+import java.util.Map.Entry;
+import java.util.Set;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -78,7 +72,7 @@ public class DialogAllInOneEntry implements DialogBase {
 	}
 
 	@Override
-	public void sendDialog(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
-		MessagingUtils.sendNPCMessage(player, mNPCName, mComponent.replaceText(TextReplacementConfig.builder().match("@S").replacement(player.getName()).build()));
+	public void sendDialog(QuestContext context) {
+		MessagingUtils.sendNPCMessage(context.getPlayer(), mNPCName, mComponent.replaceText(TextReplacementConfig.builder().match("@S").replacement(context.getPlayer().getName()).build()));
 	}
 }

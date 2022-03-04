@@ -1,16 +1,9 @@
 package com.playmonumenta.scriptedquests.quests.components;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import org.bukkit.entity.Entity;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteBase;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteCheckAdvancements;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteCheckPermissions;
@@ -29,6 +22,11 @@ import com.playmonumenta.scriptedquests.quests.components.prerequisites.Prerequi
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteTestForBlock;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteUsedItem;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteZoneProperties;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Map.Entry;
+import java.util.Set;
 
 public class QuestPrerequisites implements PrerequisiteBase {
 
@@ -209,14 +207,14 @@ public class QuestPrerequisites implements PrerequisiteBase {
 	}
 
 	@Override
-	public boolean prerequisiteMet(Entity entity, Entity npc) {
+	public boolean prerequisiteMet(QuestContext context) {
 		/*
 		 * This will cause all subsequent checks to use the npc for the entity to run
 		 * prereq checks against
 		 */
 		if (mUseNpcForPrereqs) {
-			if (npc != null) {
-				entity = npc;
+			if (context.getNpcEntity() != null) {
+				context = context.useNpcForPrerequisites();
 			} else {
 				/*
 				 * There is no NPC to use here. This is purely an error with
@@ -230,21 +228,21 @@ public class QuestPrerequisites implements PrerequisiteBase {
 		switch (mOperator) {
 		case NOT_OR:
 			for (PrerequisiteBase prerequisite : mPrerequisites) {
-				if (prerequisite.prerequisiteMet(entity, npc)) {
+				if (prerequisite.prerequisiteMet(context)) {
 					return false;
 				}
 			}
 			return true;
 		case OR:
 			for (PrerequisiteBase prerequisite : mPrerequisites) {
-				if (prerequisite.prerequisiteMet(entity, npc)) {
+				if (prerequisite.prerequisiteMet(context)) {
 					return true;
 				}
 			}
 			return false;
 		case NOT_AND:
 			for (PrerequisiteBase prerequisite : mPrerequisites) {
-				if (!prerequisite.prerequisiteMet(entity, npc)) {
+				if (!prerequisite.prerequisiteMet(context)) {
 					return true;
 				}
 			}
@@ -252,7 +250,7 @@ public class QuestPrerequisites implements PrerequisiteBase {
 		case ONLY_ONE_OF:
 			boolean val = false;
 			for (PrerequisiteBase prerequisite : mPrerequisites) {
-				if (prerequisite.prerequisiteMet(entity, npc)) {
+				if (prerequisite.prerequisiteMet(context)) {
 					if (val) {
 						/*
 						 * Had a true value, then another true value
@@ -270,7 +268,7 @@ public class QuestPrerequisites implements PrerequisiteBase {
 			return val;
 		default: // AND
 			for (PrerequisiteBase prerequisite : mPrerequisites) {
-				if (!prerequisite.prerequisiteMet(entity, npc)) {
+				if (!prerequisite.prerequisiteMet(context)) {
 					return false;
 				}
 			}

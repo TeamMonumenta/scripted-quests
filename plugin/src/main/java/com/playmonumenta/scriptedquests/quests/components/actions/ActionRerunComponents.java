@@ -1,14 +1,10 @@
 package com.playmonumenta.scriptedquests.quests.components.actions;
 
+import com.playmonumenta.scriptedquests.quests.QuestContext;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-
-import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 
 public class ActionRerunComponents implements ActionBase {
 	private final String mNpcName;
@@ -23,17 +19,17 @@ public class ActionRerunComponents implements ActionBase {
 	}
 
 	@Override
-	public void doAction(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
+	public void doAction(QuestContext context) {
 		/*
 		 * Prevent infinite loops by preventing this specific action
 		 * from running itself again
 		 */
-		if (!mLocked.contains(player)) {
-			mLocked.add(player);
-			plugin.mNpcManager.interactEvent(plugin, player, mNpcName, mEntityType, npcEntity, true);
-			mLocked.remove(player);
+		if (!mLocked.contains(context.getPlayer())) {
+			mLocked.add(context.getPlayer());
+			context.getPlugin().mNpcManager.interactEvent(context.getPlugin(), context.getPlayer(), mNpcName, mEntityType, context.getNpcEntity(), true);
+			mLocked.remove(context.getPlayer());
 		} else {
-			plugin.getLogger().severe("Stopped infinite loop for NPC '" + mNpcName + "'");
+			context.getPlugin().getLogger().severe("Stopped infinite loop for NPC '" + mNpcName + "'");
 		}
 	}
 }

@@ -1,9 +1,8 @@
 package com.playmonumenta.scriptedquests.quests.components.prerequisites;
 
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-
 import com.google.gson.JsonElement;
+import com.playmonumenta.scriptedquests.quests.QuestContext;
+import org.bukkit.entity.Player;
 
 public class PrerequisiteItemsInInventory implements PrerequisiteBase {
 	private final PrerequisiteItem mPrereqItem;
@@ -13,9 +12,9 @@ public class PrerequisiteItemsInInventory implements PrerequisiteBase {
 	}
 
 	@Override
-	public boolean prerequisiteMet(Entity entity, Entity npcEntity) {
-		if (entity instanceof Player) {
-			return mPrereqItem.prerequisiteMet(((Player)entity).getInventory().getContents());
+	public boolean prerequisiteMet(QuestContext context) {
+		if (context.getEntityUsedForPrerequisites() instanceof Player player) {
+			return mPrereqItem.prerequisiteMet(player.getInventory().getContents());
 		}
 
 		// Non-player entities can't test for items in their inventory
