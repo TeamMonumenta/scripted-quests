@@ -69,7 +69,7 @@ public class InteractableManager {
 					default:
 						return false;
 				}
-				return handleEvent(plugin, player, item, interact, entries);
+				return handleEvent(new QuestContext(plugin, player, null, false, null, item), interact, entries);
 			}
 		}
 		return false;
@@ -88,7 +88,7 @@ public class InteractableManager {
 	public boolean interactEntityEvent(Plugin plugin, Player player, ItemStack item, Entity target) {
 		List<InteractableEntry> entries = mInteractables.get(item.getType());
 		if (entries != null) {
-			return handleEvent(plugin, player, item, InteractType.RIGHT_CLICK_ENTITY, entries);
+			return handleEvent(new QuestContext(plugin, player, target, false, null, item), InteractType.RIGHT_CLICK_ENTITY, entries);
 		}
 		return false;
 	}
@@ -105,7 +105,7 @@ public class InteractableManager {
 	public boolean attackEntityEvent(Plugin plugin, Player player, ItemStack item, Entity target) {
 		List<InteractableEntry> entries = mInteractables.get(item.getType());
 		if (entries != null) {
-			return handleEvent(plugin, player, item, InteractType.LEFT_CLICK_ENTITY, entries);
+			return handleEvent(new QuestContext(plugin, player, target, false, null, item), InteractType.LEFT_CLICK_ENTITY, entries);
 		}
 		return false;
 	}
@@ -113,14 +113,13 @@ public class InteractableManager {
 	public boolean clickInventoryEvent(Plugin plugin, Player player, ItemStack item, InteractType type) {
 		List<InteractableEntry> entries = mInteractables.get(item.getType());
 		if (entries != null) {
-			return handleEvent(plugin, player, item, type, entries);
+			return handleEvent(new QuestContext(plugin, player, null, false, null, item), type, entries);
 		}
 		return false;
 	}
 
-	private boolean handleEvent(Plugin plugin, Player player, ItemStack item, InteractType type, List<InteractableEntry> entries) {
+	private boolean handleEvent(QuestContext context, InteractType type, List<InteractableEntry> entries) {
 		boolean cancelEvent = false;
-		QuestContext context = new QuestContext(plugin, player, null, false, null, item);
 		for (InteractableEntry entry : entries) {
 			if (entry.interactEvent(context, type)) {
 				cancelEvent = true;
