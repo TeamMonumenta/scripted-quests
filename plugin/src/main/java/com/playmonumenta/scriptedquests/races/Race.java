@@ -107,7 +107,7 @@ public class Race {
 		Location baseLoc = mWaypoints.get(0).getPosition().toLocation(mWorld);
 		for (int angle = 0; angle < NUM_RING_POINTS; angle++) {
 			ArmorStand out = (ArmorStand)mWorld.spawnEntity(baseLoc, EntityType.ARMOR_STAND);
-			out.setHelmet(new ItemStack(Material.DIAMOND_BLOCK));
+			out.getEquipment().setHelmet(new ItemStack(Material.DIAMOND_BLOCK));
 			out.setGlowing(true);
 			out.setGravity(false);
 			out.setInvulnerable(true);

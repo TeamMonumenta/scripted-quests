@@ -4,10 +4,9 @@ import com.google.gson.JsonElement;
 import com.mojang.brigadier.ParseResults;
 import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.utils.NmsUtils;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 
 public class ActionCommand implements ActionBase {
 	private String mCommand;
@@ -35,8 +34,8 @@ public class ActionCommand implements ActionBase {
 		String commandStr = mCommand;
 		if (context.getNpcEntity() == null) {
 			if (commandStr.contains("@N")) {
-				String commandErr = ChatColor.RED + "Cannot run ScriptedQuest command without direct NPC interaction: /" + commandStr;
-				context.getPlayer().spigot().sendMessage(ChatMessageType.SYSTEM, TextComponent.fromLegacyText(commandErr));
+				Component commandErr = Component.text("Cannot run ScriptedQuest command without direct NPC interaction: /" + commandStr, NamedTextColor.RED);
+				context.getPlayer().sendMessage(commandErr);
 				return;
 			}
 		} else {

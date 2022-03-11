@@ -183,7 +183,7 @@ public class NpcTradeManager implements Listener {
 				new BukkitRunnable() {
 					@Override
 					public void run() {
-						Merchant merchant = Bukkit.createMerchant(villager.getName());
+						Merchant merchant = Bukkit.createMerchant(villager.customName());
 						final List<TradeWindowOpenEvent.Trade> newEventTrades = tradeEvent.getTrades();
 						Map<Integer, NpcTrade> newSlotProperties = new HashMap<>();
 						for (int i = 0; i < newEventTrades.size(); i++) {
