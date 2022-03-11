@@ -1,6 +1,7 @@
 package com.playmonumenta.scriptedquests.managers;
 
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.quests.QuestNpc;
 import com.playmonumenta.scriptedquests.utils.MetadataUtils;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
@@ -8,9 +9,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 public class QuestNpcManager {
@@ -84,27 +83,27 @@ public class QuestNpcManager {
 		return null;
 	}
 
-	public boolean interactEvent(Plugin plugin, Player player, String npcName, EntityType entityType, @Nullable Entity npcEntity, boolean force) {
+	public boolean interactEvent(QuestContext context, String npcName, EntityType entityType, boolean force) {
 		QuestNpc npc = getInteractNPC(npcName, entityType);
 		if (npc != null) {
-			return interactEvent(plugin, player, npcName, entityType, npcEntity, npc, force);
+			return interactEvent(context, npcName, entityType, npc, force);
 		}
 		return false;
 	}
 
-	public boolean interactEvent(Plugin plugin, Player player, String npcName, EntityType entityType, @Nullable Entity npcEntity, QuestNpc npc, boolean force) {
+	public boolean interactEvent(QuestContext context, String npcName, EntityType entityType, QuestNpc npc, boolean force) {
 		// Only one interaction per player per tick
-		if (!force && !MetadataUtils.checkOnceThisTick(plugin, player, "ScriptedQuestsNPCInteractNonce")) {
+		if (!force && !MetadataUtils.checkOnceThisTick(context.getPlugin(), context.getPlayer(), "ScriptedQuestsNPCInteractNonce")) {
 			return false;
 		}
 
 		// Check if race allows this
-		if (!plugin.mRaceManager.isNotRacingOrAllowsNpcInteraction(player)) {
+		if (!context.getPlugin().mRaceManager.isNotRacingOrAllowsNpcInteraction(context.getPlayer())) {
 			return false;
 		}
 
 		if (npc != null) {
-			return npc.interactEvent(plugin, player, QuestNpc.squashNpcName(npcName), entityType, npcEntity);
+			return npc.interactEvent(context, QuestNpc.squashNpcName(npcName), entityType);
 		}
 		return false;
 	}

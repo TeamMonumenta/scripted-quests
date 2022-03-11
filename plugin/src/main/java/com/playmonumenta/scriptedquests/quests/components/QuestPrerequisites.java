@@ -214,7 +214,7 @@ public class QuestPrerequisites implements PrerequisiteBase {
 		 */
 		if (mUseNpcForPrereqs) {
 			if (context.getNpcEntity() != null) {
-				context = context.useNpcForPrerequisites();
+				context = context.useNpcForPrerequisites(true);
 			} else {
 				/*
 				 * There is no NPC to use here. This is purely an error with
