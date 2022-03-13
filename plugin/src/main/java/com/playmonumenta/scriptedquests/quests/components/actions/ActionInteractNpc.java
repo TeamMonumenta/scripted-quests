@@ -41,13 +41,9 @@ public class ActionInteractNpc implements ActionBase {
 
 	@Override
 	public void doAction(QuestContext context) {
-		/*
-		 * Important - we are switching the context here to a different entity - so we don't pass
-		 * npcEntity into that interaction
-		 */
-		if (!context.getPlugin().mNpcManager.interactEvent(context.getPlugin(), context.getPlayer(), mName, mType, null, true)) {
+		if (!context.getPlugin().mNpcManager.interactEvent(context.withNpc(null), mName, mType, true)) {
 			context.getPlugin().getLogger().severe("No interaction available for player '" + context.getPlayer().getName() +
-				                                       "' and NPC '" + mName + "'");
+					                                       "' and NPC '" + mName + "'");
 		}
 	}
 }

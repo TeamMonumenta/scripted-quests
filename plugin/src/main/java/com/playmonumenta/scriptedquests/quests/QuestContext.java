@@ -63,6 +63,10 @@ public class QuestContext {
 		return mNpcEntity;
 	}
 
+	public QuestPrerequisites getPrerequisites() {
+		return mPrerequisites;
+	}
+
 	/**
 	 * Checks if the prerequisites are still met. Useful when an action is delayed and thus state may have changed.
 	 * Returns true if there have not been any prerequisites defined or non are applicable for the current context.
@@ -89,8 +93,15 @@ public class QuestContext {
 	/**
 	 * Returns a new {@link QuestContext} that will return the NPC entity from {@link #getEntityUsedForPrerequisites()} (which returns the player by default).
 	 */
-	public QuestContext useNpcForPrerequisites() {
-		return new QuestContext(mPlugin, mPlayer, mNpcEntity, true, mPrerequisites, mUsedItem);
+	public QuestContext useNpcForPrerequisites(boolean useNpc) {
+		return new QuestContext(mPlugin, mPlayer, mNpcEntity, useNpc, mPrerequisites, mUsedItem);
+	}
+
+	/**
+	 * Returns a new {@link QuestContext} with the given NPC set (and {@link #useNpcForPrerequisites(boolean)} will be reset to false)
+	 */
+	public QuestContext withNpc(@Nullable Entity npcEntity) {
+		return new QuestContext(mPlugin, mPlayer, npcEntity, false, mPrerequisites, mUsedItem);
 	}
 
 	// Static thread-local context storage for providing the context to executed commands (e.g. used by GUIs)

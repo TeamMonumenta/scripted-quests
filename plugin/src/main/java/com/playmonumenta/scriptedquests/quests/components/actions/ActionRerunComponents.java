@@ -26,7 +26,7 @@ public class ActionRerunComponents implements ActionBase {
 		 */
 		if (!mLocked.contains(context.getPlayer())) {
 			mLocked.add(context.getPlayer());
-			context.getPlugin().mNpcManager.interactEvent(context.getPlugin(), context.getPlayer(), mNpcName, mEntityType, context.getNpcEntity(), true);
+			context.getPlugin().mNpcManager.interactEvent(context.useNpcForPrerequisites(false), mNpcName, mEntityType, true);
 			mLocked.remove(context.getPlayer());
 		} else {
 			context.getPlugin().getLogger().severe("Stopped infinite loop for NPC '" + mNpcName + "'");

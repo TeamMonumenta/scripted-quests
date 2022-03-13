@@ -11,10 +11,7 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.Nullable;
 
 /*
  * A QuestNpc object holds all the quest components belonging to an NPC with a specific name
@@ -112,10 +109,9 @@ public class QuestNpc {
 
 	// Returns true if any quest components were attempted with this NPC
 	// False otherwise
-	public boolean interactEvent(Plugin plugin, Player player, String npcName, EntityType entityType, @Nullable Entity npcEntity) {
+	public boolean interactEvent(QuestContext context, String npcName, EntityType entityType) {
 		if (mEntityType.equals(entityType) && mNpcName.equals(npcName)) {
-			QuestContext context = new QuestContext(plugin, player, npcEntity);
-			if (ClientChatProtocol.shouldSend(player)) {
+			if (ClientChatProtocol.shouldSend(context.getPlayer())) {
 				ClientChatProtocol.sendPacket(mComponents, context);
 			} else {
 				for (QuestComponent component : mComponents) {

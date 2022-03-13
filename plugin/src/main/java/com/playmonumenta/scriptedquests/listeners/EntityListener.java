@@ -1,5 +1,8 @@
 package com.playmonumenta.scriptedquests.listeners;
 
+import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.quests.QuestContext;
+import com.playmonumenta.scriptedquests.quests.QuestNpc;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -17,9 +20,6 @@ import org.bukkit.event.entity.PlayerLeashEntityEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.potion.PotionEffectType;
 
-import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.quests.QuestNpc;
-
 public class EntityListener implements Listener {
 	private Plugin mPlugin;
 
@@ -32,8 +32,7 @@ public class EntityListener implements Listener {
 		Entity damagee = event.getEntity();
 		Entity damager = event.getDamager();
 
-		if (damager instanceof Player) {
-			Player player = (Player)damager;
+		if (damager instanceof Player player) {
 			if (player.isRiptiding()) {
 				return;
 			}
@@ -48,8 +47,8 @@ public class EntityListener implements Listener {
 
 				/* Only trigger quest interactions via melee attack */
 				if (event.getCause().equals(DamageCause.ENTITY_ATTACK)) {
-					mPlugin.mNpcManager.interactEvent(mPlugin, player, damagee.getCustomName(),
-					                                  damagee.getType(), damagee, npc, false);
+					mPlugin.mNpcManager.interactEvent(new QuestContext(mPlugin, player, damagee, false, null, player.getInventory().getItemInMainHand()),
+						damagee.getCustomName(), damagee.getType(), npc, false);
 				}
 			}
 		}
