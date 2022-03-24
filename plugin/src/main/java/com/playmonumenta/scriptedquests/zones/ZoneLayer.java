@@ -1,7 +1,14 @@
 package com.playmonumenta.scriptedquests.zones;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.utils.ZoneUtils;
+import com.playmonumenta.scriptedquests.zones.event.ZoneEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -9,21 +16,13 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.utils.ZoneUtils;
-
+import javax.annotation.Nullable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.util.Vector;
-import javax.annotation.Nullable;
 import org.dynmap.DynmapCommonAPI;
 import org.dynmap.markers.AreaMarker;
 import org.dynmap.markers.MarkerAPI;
@@ -188,10 +187,14 @@ public class ZoneLayer {
 	 * handle that on its own.
 	 */
 	public boolean addZone(Vector pos1, Vector pos2, String name, Set<String> properties) {
+		return addZone(pos1, pos2, name, properties, Collections.emptyList());
+	}
+
+	public boolean addZone(Vector pos1, Vector pos2, String name, Set<String> properties, List<ZoneEvent> events) {
 		@Nullable Zone zone = null;
 
 		try {
-			zone = new Zone(this, pos1, pos2, name, properties);
+			zone = new Zone(this, pos1, pos2, name, properties, events);
 		} catch (Exception e) {
 			return false;
 		}

@@ -6,6 +6,7 @@ import com.playmonumenta.scriptedquests.listeners.EntityListener;
 import com.playmonumenta.scriptedquests.listeners.InteractablesListener;
 import com.playmonumenta.scriptedquests.listeners.PlayerListener;
 import com.playmonumenta.scriptedquests.listeners.WorldListener;
+import com.playmonumenta.scriptedquests.listeners.ZoneEventListener;
 import com.playmonumenta.scriptedquests.managers.ClickableManager;
 import com.playmonumenta.scriptedquests.managers.CodeManager;
 import com.playmonumenta.scriptedquests.managers.GrowableManager;
@@ -60,6 +61,7 @@ public class Plugin extends JavaPlugin {
 	public WaypointManager mWaypointManager;
 	public GrowableManager mGrowableManager;
 	public GuiManager mGuiManager;
+	public ZoneEventListener mZoneEventListener;
 
 	public World mWorld;
 	public Random mRandom = new Random();
@@ -131,7 +133,9 @@ public class Plugin extends JavaPlugin {
 		mDeathManager = new QuestDeathManager();
 		mRaceManager = new RaceManager(this);
 		mCodeManager = new CodeManager();
+		mZoneEventListener = new ZoneEventListener(this);
 		mZoneManager = new ZoneManager(this);
+		mZoneManager.doReload(this);
 		mZonePropertyManager = new ZonePropertyManager(this);
 		mTimerManager = new CommandTimerManager(this);
 		mWaypointManager = new WaypointManager(this);
@@ -147,6 +151,7 @@ public class Plugin extends JavaPlugin {
 		manager.registerEvents(mTimerManager, this);
 		manager.registerEvents(mZonePropertyManager, this);
 		manager.registerEvents(mTradeManager, this);
+		manager.registerEvents(mZoneEventListener, this);
 
 		getCommand("reloadQuests").setExecutor(new ReloadQuests(this));
 		getCommand("questTrigger").setExecutor(new QuestTrigger(this));

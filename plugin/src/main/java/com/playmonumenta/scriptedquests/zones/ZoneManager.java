@@ -1,6 +1,11 @@
 package com.playmonumenta.scriptedquests.zones;
 
+import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.utils.ArgUtils;
+import com.playmonumenta.scriptedquests.utils.MessagingUtils;
+import com.playmonumenta.scriptedquests.utils.QuestUtils;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -9,12 +14,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
-
-import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.utils.ArgUtils;
-import com.playmonumenta.scriptedquests.utils.MessagingUtils;
-import com.playmonumenta.scriptedquests.utils.QuestUtils;
-
+import javax.annotation.Nullable;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -24,7 +24,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
-import javax.annotation.Nullable;
 
 public class ZoneManager {
 	private Plugin mPlugin;
@@ -44,7 +43,6 @@ public class ZoneManager {
 	public ZoneManager(Plugin plugin) {
 		mPlugin = plugin;
 		mQueuedReloadRequesters.add(Bukkit.getConsoleSender());
-		doReload(plugin);
 	}
 
 	/************************************************************************************
@@ -298,7 +296,7 @@ public class ZoneManager {
 		} while (!mQueuedReloadRequesters.isEmpty());
 	}
 
-	private void doReload(Plugin plugin) {
+	public void doReload(Plugin plugin) {
 		mReloadRequesters = mQueuedReloadRequesters;
 		mQueuedReloadRequesters = new HashSet<CommandSender>();
 		mReloadRequesters.add(Bukkit.getConsoleSender());
@@ -432,6 +430,8 @@ public class ZoneManager {
 		};
 
 		mPlayerTracker.runTaskTimer(plugin, 0, 5);
+
+		mPlugin.mZoneEventListener.update();
 
 		for (@Nullable CommandSender sender : mReloadRequesters) {
 			if (sender != null) {
@@ -704,4 +704,9 @@ public class ZoneManager {
 			}
 		}
 	}
+
+	public Collection<ZoneLayer> getLayers() {
+		return mLayers.values();
+	}
+
 }
