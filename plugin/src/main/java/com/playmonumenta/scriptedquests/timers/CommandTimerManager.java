@@ -56,7 +56,7 @@ public class CommandTimerManager implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
-	public void rntityRemoveFromWorldEvent(EntityRemoveFromWorldEvent event) {
+	public void entityRemoveFromWorldEvent(EntityRemoveFromWorldEvent event) {
 		unload(event.getEntity());
 	}
 
