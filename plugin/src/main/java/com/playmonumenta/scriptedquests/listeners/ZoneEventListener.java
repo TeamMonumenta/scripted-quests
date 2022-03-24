@@ -18,7 +18,6 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.jetbrains.annotations.Nullable;
 
 public class ZoneEventListener implements Listener {
 
@@ -73,16 +72,6 @@ public class ZoneEventListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void blockExplodeEvent(BlockExplodeEvent event) {
-		if (mBlockBreakMaterials.isEmpty()) {
-			return;
-		}
-		for (Block block : event.blockList()) {
-			handleBlockBreak(null, block);
-		}
-	}
-
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void entityExplodeEvent(EntityExplodeEvent event) {
 		if (mBlockBreakMaterials.isEmpty()) {
 			return;
@@ -93,7 +82,7 @@ public class ZoneEventListener implements Listener {
 		}
 	}
 
-	private void handleBlockBreak(@Nullable Entity entity, Block block) {
+	private void handleBlockBreak(Entity entity, Block block) {
 		Material blockType = block.getType();
 		if (!mBlockBreakMaterials.contains(blockType)) {
 			return;
@@ -102,6 +91,24 @@ public class ZoneEventListener implements Listener {
 			zone.getEvents(ZoneBlockBreakEvent.class)
 				.filter(e -> e.appliesTo(blockType))
 				.forEach(e -> e.execute(entity, block));
+		}
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void blockExplodeEvent(BlockExplodeEvent event) {
+		if (mBlockBreakMaterials.isEmpty()) {
+			return;
+		}
+		for (Block block : event.blockList()) {
+			Material blockType = block.getType();
+			if (!mBlockBreakMaterials.contains(blockType)) {
+				return;
+			}
+			for (Zone zone : mPlugin.mZoneManager.getZones(block.getLocation()).values()) {
+				zone.getEvents(ZoneBlockBreakEvent.class)
+					.filter(e -> e.appliesTo(blockType))
+					.forEach(e -> e.execute(event.getBlock(), block));
+			}
 		}
 	}
 

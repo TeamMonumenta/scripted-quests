@@ -9,7 +9,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
-import org.jetbrains.annotations.Nullable;
 
 public class ZoneBlockBreakEvent implements ZoneEvent {
 
@@ -39,14 +38,15 @@ public class ZoneBlockBreakEvent implements ZoneEvent {
 		return mMaterials.contains(type);
 	}
 
-	public void execute(@Nullable Entity entity, Block block) {
-		if (entity != null) {
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
-				"execute as " + entity.getUniqueId() + " at @s positioned "
-					+ block.getX() + " " + block.getY() + " " + block.getZ() + " run " + mCommand);
-		} else {
-			NmsUtils.getVersionAdapter().executeCommandAsBlock(block, mCommand);
-		}
+	public void execute(Entity entity, Block block) {
+		Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
+			"execute as " + entity.getUniqueId() + " at @s positioned "
+				+ block.getX() + " " + block.getY() + " " + block.getZ() + " run " + mCommand);
+	}
+
+	public void execute(Block breaker, Block broken) {
+		NmsUtils.getVersionAdapter().executeCommandAsBlock(breaker,
+			"execute positioned " + broken.getX() + " " + broken.getY() + " " + broken.getZ() + " run " + mCommand);
 	}
 
 }
