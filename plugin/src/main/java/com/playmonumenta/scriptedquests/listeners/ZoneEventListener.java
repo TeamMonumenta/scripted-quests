@@ -1,12 +1,16 @@
 package com.playmonumenta.scriptedquests.listeners;
 
 import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.zones.Zone;
-import com.playmonumenta.scriptedquests.zones.ZoneLayer;
+import com.playmonumenta.scriptedquests.quests.ZoneProperty;
 import com.playmonumenta.scriptedquests.zones.event.ZoneBlockBreakEvent;
 import com.playmonumenta.scriptedquests.zones.event.ZoneBlockInteractEvent;
+import com.playmonumenta.scriptedquests.zones.event.ZoneEvent;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -34,10 +38,21 @@ public class ZoneEventListener implements Listener {
 		mBlockBreakMaterials.clear();
 		mBlockInteractMaterials.clear();
 
-		for (ZoneLayer layer : mPlugin.mZoneManager.getLayers()) {
-			for (Zone zone : layer.getZones()) {
-				zone.getEvents(ZoneBlockBreakEvent.class).forEach(event -> mBlockBreakMaterials.addAll(event.getMaterials()));
-				zone.getEvents(ZoneBlockInteractEvent.class).forEach(event -> mBlockInteractMaterials.addAll(event.getMaterials()));
+		for (Map<String, ZoneProperty> layer : mPlugin.mZonePropertyManager.getZoneProperties().values()) {
+			for (ZoneProperty zoneProperty : layer.values()) {
+				zoneProperty.getEvents(ZoneBlockBreakEvent.class).forEach(event -> mBlockBreakMaterials.addAll(event.getMaterials()));
+				zoneProperty.getEvents(ZoneBlockInteractEvent.class).forEach(event -> mBlockInteractMaterials.addAll(event.getMaterials()));
+			}
+		}
+	}
+
+	private <T extends ZoneEvent> void execute(Location location, Class<T> eventClass, Consumer<Collection<? extends T>> action) {
+		for (Map.Entry<String, Map<String, ZoneProperty>> layer : mPlugin.mZonePropertyManager.getZoneProperties().entrySet()) {
+			for (Map.Entry<String, ZoneProperty> property : layer.getValue().entrySet()) {
+				Collection<? extends T> events = property.getValue().getEvents(eventClass);
+				if (!events.isEmpty() && mPlugin.mZoneManager.hasProperty(location, layer.getKey(), property.getKey())) {
+					action.accept(events);
+				}
 			}
 		}
 	}
@@ -56,11 +71,13 @@ public class ZoneEventListener implements Listener {
 		if (!mBlockInteractMaterials.contains(clickedBlockType)) {
 			return;
 		}
-		for (Zone zone : mPlugin.mZoneManager.getZones(clickedBlock.getLocation()).values()) {
-			zone.getEvents(ZoneBlockInteractEvent.class)
-				.filter(e -> e.appliesTo(event.getAction(), clickedBlockType))
-				.forEach(e -> e.execute(event.getPlayer(), clickedBlock));
-		}
+		execute(clickedBlock.getLocation(), ZoneBlockInteractEvent.class, events -> {
+			for (ZoneBlockInteractEvent e : events) {
+				if (e.appliesTo(event.getAction(), clickedBlockType)) {
+					e.execute(event.getPlayer(), clickedBlock);
+				}
+			}
+		});
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -87,11 +104,13 @@ public class ZoneEventListener implements Listener {
 		if (!mBlockBreakMaterials.contains(blockType)) {
 			return;
 		}
-		for (Zone zone : mPlugin.mZoneManager.getZones(block.getLocation()).values()) {
-			zone.getEvents(ZoneBlockBreakEvent.class)
-				.filter(e -> e.appliesTo(blockType))
-				.forEach(e -> e.execute(entity, block));
-		}
+		execute(block.getLocation(), ZoneBlockBreakEvent.class, events -> {
+			for (ZoneBlockBreakEvent e : events) {
+				if (e.appliesTo(blockType)) {
+					e.execute(entity, block);
+				}
+			}
+		});
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -104,11 +123,13 @@ public class ZoneEventListener implements Listener {
 			if (!mBlockBreakMaterials.contains(blockType)) {
 				return;
 			}
-			for (Zone zone : mPlugin.mZoneManager.getZones(block.getLocation()).values()) {
-				zone.getEvents(ZoneBlockBreakEvent.class)
-					.filter(e -> e.appliesTo(blockType))
-					.forEach(e -> e.execute(event.getBlock(), block));
-			}
+			execute(block.getLocation(), ZoneBlockBreakEvent.class, events -> {
+				for (ZoneBlockBreakEvent e : events) {
+					if (e.appliesTo(blockType)) {
+						e.execute(event.getBlock(), block);
+					}
+				}
+			});
 		}
 	}
 

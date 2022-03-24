@@ -5,10 +5,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.utils.ZoneUtils;
-import com.playmonumenta.scriptedquests.zones.event.ZoneEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -187,14 +185,10 @@ public class ZoneLayer {
 	 * handle that on its own.
 	 */
 	public boolean addZone(Vector pos1, Vector pos2, String name, Set<String> properties) {
-		return addZone(pos1, pos2, name, properties, Collections.emptyList());
-	}
-
-	public boolean addZone(Vector pos1, Vector pos2, String name, Set<String> properties, List<ZoneEvent> events) {
 		@Nullable Zone zone = null;
 
 		try {
-			zone = new Zone(this, pos1, pos2, name, properties, events);
+			zone = new Zone(this, pos1, pos2, name, properties);
 		} catch (Exception e) {
 			return false;
 		}

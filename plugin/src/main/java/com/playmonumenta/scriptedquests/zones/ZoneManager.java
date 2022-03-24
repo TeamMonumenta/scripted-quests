@@ -431,8 +431,6 @@ public class ZoneManager {
 
 		mPlayerTracker.runTaskTimer(plugin, 0, 5);
 
-		mPlugin.mZoneEventListener.update();
-
 		for (@Nullable CommandSender sender : mReloadRequesters) {
 			if (sender != null) {
 				sender.sendMessage(ChatColor.GOLD + "Zones reloaded successfully.");

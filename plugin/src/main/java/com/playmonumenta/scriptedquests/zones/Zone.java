@@ -3,15 +3,11 @@ package com.playmonumenta.scriptedquests.zones;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.playmonumenta.scriptedquests.zones.event.ZoneBlockBreakEvent;
-import com.playmonumenta.scriptedquests.zones.event.ZoneBlockInteractEvent;
-import com.playmonumenta.scriptedquests.zones.event.ZoneEvent;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Stream;
 import javax.annotation.Nullable;
 import org.bukkit.util.Vector;
 
@@ -23,7 +19,6 @@ public class Zone extends ZoneBase {
 	private final ZoneLayer mLayer;
 	private final String mName;
 	private List<ZoneFragment> mFragments = new ArrayList<ZoneFragment>();
-	private final List<ZoneEvent> mEvents = new ArrayList<>();
 	private final Set<String> mProperties = new LinkedHashSet<String>();
 
 	public static Zone constructFromJson(ZoneLayer layer, JsonObject object, Map<String, List<String>> propertyGroups) throws Exception {
@@ -109,24 +104,7 @@ public class Zone extends ZoneBase {
 			applyProperty(propertyGroups, properties, propertyName);
 		}
 
-		List<ZoneEvent> events = new ArrayList<>();
-		JsonObject eventsObject = object.getAsJsonObject("events");
-		if (eventsObject != null) {
-			JsonArray blockBreakEvents = eventsObject.getAsJsonArray("block_break");
-			if (blockBreakEvents != null) {
-				for (JsonElement blockBreakEvent : blockBreakEvents) {
-					events.add(ZoneBlockBreakEvent.fromJson(blockBreakEvent));
-				}
-			}
-			JsonArray blockInteractEvents = eventsObject.getAsJsonArray("block_interact");
-			if (blockInteractEvents != null) {
-				for (JsonElement blockInteractEvent : blockInteractEvents) {
-					events.add(ZoneBlockInteractEvent.fromJson(blockInteractEvent));
-				}
-			}
-		}
-
-		return new Zone(layer, pos1, pos2, name, properties, events);
+		return new Zone(layer, pos1, pos2, name, properties);
 	}
 
 	/*
@@ -134,12 +112,11 @@ public class Zone extends ZoneBase {
 	 * - Both are inclusive coordinates.
 	 * - The minimum/maximum are determined for you.
 	 */
-	public Zone(ZoneLayer layer, Vector pos1, Vector pos2, String name, Set<String> properties, List<ZoneEvent> events) {
+	public Zone(ZoneLayer layer, Vector pos1, Vector pos2, String name, Set<String> properties) {
 		super(pos1, pos2);
 		mLayer = layer;
 		mName = name;
 		mProperties.addAll(properties);
-		mEvents.addAll(events);
 	}
 
 	/*
@@ -234,11 +211,6 @@ public class Zone extends ZoneBase {
 
 	public Set<String> getProperties() {
 		return new LinkedHashSet<String>(mProperties);
-	}
-
-	@SuppressWarnings("unchecked")
-	public <T> Stream<? extends T> getEvents(Class<T> eventClass) {
-		return (Stream<? extends T>) mEvents.stream().filter(eventClass::isInstance);
 	}
 
 	public boolean hasProperty(String propertyName) {

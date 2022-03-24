@@ -5,10 +5,16 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
+import com.playmonumenta.scriptedquests.zones.event.ZoneBlockBreakEvent;
+import com.playmonumenta.scriptedquests.zones.event.ZoneBlockInteractEvent;
+import com.playmonumenta.scriptedquests.zones.event.ZoneEvent;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
@@ -27,10 +33,11 @@ import org.bukkit.entity.Player;
  * code of your own into this system for additional features.
  */
 public class ZoneProperty {
-	private final ArrayList<QuestComponent> mComponents = new ArrayList<QuestComponent>();
 	private final String mLayer;
 	private final String mName;
 	private final String mDisplayName;
+	private final ArrayList<QuestComponent> mComponents = new ArrayList<QuestComponent>();
+	private final List<ZoneEvent> mEvents = new ArrayList<>();
 
 	public ZoneProperty(JsonObject object) throws Exception {
 		//////////////////////////////////////// layer (Required) ////////////////////////////////////////
@@ -80,13 +87,30 @@ public class ZoneProperty {
 			mComponents.add(new QuestComponent(mName, mDisplayName, EntityType.PLAYER, entry));
 		}
 
+		//////////////////////////////////////// events (optional) ////////////////////////////////////////
+		JsonObject eventsObject = object.getAsJsonObject("events");
+		if (eventsObject != null) {
+			JsonArray blockBreakEvents = eventsObject.getAsJsonArray("block_break");
+			if (blockBreakEvents != null) {
+				for (JsonElement blockBreakEvent : blockBreakEvents) {
+					mEvents.add(ZoneBlockBreakEvent.fromJson(blockBreakEvent));
+				}
+			}
+			JsonArray blockInteractEvents = eventsObject.getAsJsonArray("block_interact");
+			if (blockInteractEvents != null) {
+				for (JsonElement blockInteractEvent : blockInteractEvents) {
+					mEvents.add(ZoneBlockInteractEvent.fromJson(blockInteractEvent));
+				}
+			}
+		}
+
 		//////////////////////////////////////// Fail if other keys exist ////////////////////////////////////////
 		Set<Entry<String, JsonElement>> entries = object.entrySet();
 		for (Entry<String, JsonElement> ent : entries) {
 			String key = ent.getKey();
 
 			if (!key.equals("layer") && !key.equals("name") && !key.equals("display_name")
-				&& !key.equals("quest_components")) {
+				    && !key.equals("quest_components") && !key.equals("events")) {
 				throw new Exception("Unknown quest key: " + key);
 			}
 		}
@@ -119,5 +143,10 @@ public class ZoneProperty {
 		for (QuestComponent component : mComponents) {
 			component.doActionsIfPrereqsMet(new QuestContext(plugin, player, null));
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> Collection<? extends T> getEvents(Class<T> eventClass) {
+		return (Collection<? extends T>) mEvents.stream().filter(eventClass::isInstance).collect(Collectors.toList());
 	}
 }

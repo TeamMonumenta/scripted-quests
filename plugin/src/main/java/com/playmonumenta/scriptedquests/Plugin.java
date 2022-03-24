@@ -199,6 +199,7 @@ public class Plugin extends JavaPlugin {
 		mRaceManager.reload(this, sender);
 		mCodeManager.reload(this, sender);
 		mZonePropertyManager.reload(this, sender);
+		mZoneEventListener.update();
 		mGrowableManager.reload(this, sender);
 		mGuiManager.reload(this, sender);
 		TranslationsManager.reload(sender);
