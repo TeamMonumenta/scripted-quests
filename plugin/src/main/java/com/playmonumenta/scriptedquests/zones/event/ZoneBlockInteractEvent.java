@@ -6,23 +6,19 @@ import com.google.gson.JsonPrimitive;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.jetbrains.annotations.Nullable;
 
-public class ZoneBlockInteractEvent implements ZoneEvent {
+public class ZoneBlockInteractEvent extends ZoneEvent {
 
 	private final Set<Material> mMaterials;
 	private final @Nullable Action mClickType;
-	private final String mCommand;
 
 	private ZoneBlockInteractEvent(Set<Material> materials, @Nullable Action clickType, String command) {
+		super(command);
 		mMaterials = materials;
 		mClickType = clickType;
-		mCommand = command;
 	}
 
 	public static ZoneBlockInteractEvent fromJson(JsonElement jsonElement) {
@@ -50,12 +46,6 @@ public class ZoneBlockInteractEvent implements ZoneEvent {
 
 	public boolean appliesTo(Action action, Material type) {
 		return (mClickType == null || action == mClickType) && mMaterials.contains(type);
-	}
-
-	public void execute(Player player, Block block) {
-		Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
-			"execute as " + player.getName() + " at @s positioned "
-				+ block.getX() + " " + block.getY() + " " + block.getZ() + " run " + mCommand);
 	}
 
 }

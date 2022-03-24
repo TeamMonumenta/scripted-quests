@@ -14,7 +14,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
-import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -57,10 +56,10 @@ public class ZoneEventListener implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	// Cancelled PlayerInteractEvents are jank. Checking for denied interactions is similarly jank.
+	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
 	public void playerInteractEvent(PlayerInteractEvent event) {
-		if (mBlockInteractMaterials.isEmpty()
-			    || event.useInteractedBlock() == Event.Result.DENY) {
+		if (mBlockInteractMaterials.isEmpty()) {
 			return;
 		}
 		Block clickedBlock = event.getClickedBlock();
