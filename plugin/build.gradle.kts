@@ -137,7 +137,7 @@ val basicssh = remotes.create("basicssh") {
     user = "epic"
     knownHosts = allowAnyHosts
     agent = System.getenv("IDENTITY_FILE") == null
-    identity = file(System.getenv("IDENTITY_FILE"))
+    identity = if (System.getenv("IDENTITY_FILE") == null) null else file(System.getenv("IDENTITY_FILE"))
 }
 
 val adminssh = remotes.create("adminssh") {
@@ -146,7 +146,7 @@ val adminssh = remotes.create("adminssh") {
     user = "epic"
     knownHosts = allowAnyHosts
     agent = System.getenv("IDENTITY_FILE") == null
-    identity = file(System.getenv("IDENTITY_FILE"))
+    identity = if (System.getenv("IDENTITY_FILE") == null) null else file(System.getenv("IDENTITY_FILE"))
 }
 
 tasks.create("stage-deploy") {
