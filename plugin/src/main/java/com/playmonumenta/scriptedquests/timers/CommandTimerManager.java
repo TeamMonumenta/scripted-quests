@@ -1,11 +1,12 @@
 package com.playmonumenta.scriptedquests.timers;
 
+import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent;
+import com.destroystokyo.paper.event.entity.EntityRemoveFromWorldEvent;
+import com.playmonumenta.scriptedquests.Plugin;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
-
 import javax.annotation.Nullable;
-
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.ArmorStand;
@@ -13,13 +14,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.EntitySpawnEvent;
-import org.bukkit.event.world.ChunkLoadEvent;
-import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.scheduler.BukkitRunnable;
-
-import com.playmonumenta.scriptedquests.Plugin;
 
 public class CommandTimerManager implements Listener {
 	private final Plugin mPlugin;
@@ -56,28 +51,12 @@ public class CommandTimerManager implements Listener {
 	 *******************************************************************************/
 
 	@EventHandler(priority = EventPriority.LOWEST)
-	public void entitySpawnEvent(EntitySpawnEvent event) {
+	public void entityAddToWorldEvent(EntityAddToWorldEvent event) {
 		processEntity(event.getEntity());
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
-	public void chunkLoadEvent(ChunkLoadEvent event) {
-		for (Entity entity : event.getChunk().getEntities()) {
-			processEntity(entity);
-		}
-	}
-
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void chunkUnloadEvent(ChunkUnloadEvent event) {
-		Entity[] entities = event.getChunk().getEntities();
-
-		for (Entity entity : entities) {
-			unload(entity);
-		}
-	}
-
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void entityDeathEvent(EntityDeathEvent event) {
+	public void entityRemoveFromWorldEvent(EntityRemoveFromWorldEvent event) {
 		unload(event.getEntity());
 	}
 
