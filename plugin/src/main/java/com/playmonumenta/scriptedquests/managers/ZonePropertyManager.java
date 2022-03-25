@@ -4,6 +4,7 @@ import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.ZoneProperty;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
 import com.playmonumenta.scriptedquests.zones.ZonePropertyChangeEvent;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.bukkit.command.CommandSender;
@@ -81,6 +82,6 @@ public class ZonePropertyManager implements Listener {
 	}
 
 	public Map<String, Map<String, ZoneProperty>> getZoneProperties() {
-		return mZoneProperties;
+		return Collections.unmodifiableMap(mZoneProperties);
 	}
 }
