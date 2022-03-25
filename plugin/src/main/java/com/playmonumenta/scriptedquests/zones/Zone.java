@@ -1,18 +1,15 @@
 package com.playmonumenta.scriptedquests.zones;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-
-import org.bukkit.util.Vector;
 import javax.annotation.Nullable;
+import org.bukkit.util.Vector;
 
 /*
  * A zone, to be split into fragments. This class holds the name and properties, and the fragments determine
@@ -102,9 +99,7 @@ public class Zone extends ZoneBase {
 		if (propertiesArray == null) {
 			throw new Exception("Failed to parse 'properties'");
 		}
-		Iterator<JsonElement> iter = propertiesArray.iterator();
-		while (iter.hasNext()) {
-			JsonElement element = iter.next();
+		for (JsonElement element : propertiesArray) {
 			String propertyName = element.getAsString();
 			applyProperty(propertyGroups, properties, propertyName);
 		}

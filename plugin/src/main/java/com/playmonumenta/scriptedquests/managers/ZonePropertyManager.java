@@ -1,18 +1,17 @@
 package com.playmonumenta.scriptedquests.managers;
 
+import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.quests.ZoneProperty;
+import com.playmonumenta.scriptedquests.utils.QuestUtils;
+import com.playmonumenta.scriptedquests.zones.ZonePropertyChangeEvent;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-
-import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.quests.ZoneProperty;
-import com.playmonumenta.scriptedquests.utils.QuestUtils;
-import com.playmonumenta.scriptedquests.zones.ZonePropertyChangeEvent;
 
 public class ZonePropertyManager implements Listener {
 	private Plugin mPlugin;
@@ -80,5 +79,9 @@ public class ZonePropertyManager implements Listener {
 		}
 
 		entry.changeEvent(mPlugin, player);
+	}
+
+	public Map<String, Map<String, ZoneProperty>> getZoneProperties() {
+		return Collections.unmodifiableMap(mZoneProperties);
 	}
 }

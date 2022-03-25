@@ -4,20 +4,22 @@ import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.papermc.paper.adventure.AdventureComponent;
 import io.papermc.paper.adventure.PaperAdventure;
+import java.util.UUID;
 import javax.annotation.Nullable;
 import net.kyori.adventure.text.Component;
 import net.minecraft.server.v1_16_R3.ChatComponentUtils;
+import net.minecraft.server.v1_16_R3.TileEntityCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.block.CommandBlock;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_16_R3.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_16_R3.block.CraftCommandBlock;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-
-import java.util.UUID;
 
 public class VersionAdapter_v1_16_R3 implements VersionAdapter {
 
@@ -55,6 +57,12 @@ public class VersionAdapter_v1_16_R3 implements VersionAdapter {
 			e.printStackTrace();
 			return component;
 		}
+	}
+
+	public void executeCommandAsBlock(Block block, String command) {
+		TileEntityCommand tileEntity = new TileEntityCommand();
+		tileEntity.setLocation(((CraftBlock) block).getCraftWorld().getHandle(), ((CraftBlock) block).getPosition());
+		Bukkit.dispatchCommand(tileEntity.getCommandBlock().getBukkitSender(tileEntity.getCommandBlock().getWrapper()), command);
 	}
 
 }
