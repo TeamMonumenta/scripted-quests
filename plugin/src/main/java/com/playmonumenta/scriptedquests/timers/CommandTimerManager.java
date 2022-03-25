@@ -52,7 +52,10 @@ public class CommandTimerManager implements Listener {
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void entityAddToWorldEvent(EntityAddToWorldEvent event) {
-		processEntity(event.getEntity());
+		if (event.getEntity() instanceof ArmorStand armorStand) {
+			// This must be delayed as it accesses blocks in the world, which may not yet be loaded when the entity is, leading to a deadlock
+			Bukkit.getScheduler().runTask(mPlugin, () -> processEntity(armorStand));
+		}
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)

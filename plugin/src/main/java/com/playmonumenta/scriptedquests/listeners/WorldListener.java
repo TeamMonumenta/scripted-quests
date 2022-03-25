@@ -2,7 +2,9 @@ package com.playmonumenta.scriptedquests.listeners;
 
 import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent;
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.managers.RaceManager;
 import com.playmonumenta.scriptedquests.quests.QuestNpc;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -20,7 +22,9 @@ public class WorldListener implements Listener {
 	public void entityAddToWorldEvent(EntityAddToWorldEvent event) {
 		Entity entity = event.getEntity();
 
-		mPlugin.mRaceManager.removeIfNotActive(entity);
+		if (entity.getScoreboardTags().contains(RaceManager.ARMOR_STAND_RACE_TAG)) {
+			Bukkit.getScheduler().runTask(mPlugin, () -> mPlugin.mRaceManager.removeIfNotActive(entity));
+		}
 
 		QuestNpc npc = mPlugin.mNpcManager.getInteractNPC(entity.getName(), entity.getType());
 		if (npc != null) {
