@@ -18,7 +18,7 @@ public class WorldListener implements Listener {
 	}
 
 	//  A Chunk Loaded.
-	@EventHandler(priority = EventPriority.LOWEST)
+	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void entityAddToWorldEvent(EntityAddToWorldEvent event) {
 		Entity entity = event.getEntity();
 
