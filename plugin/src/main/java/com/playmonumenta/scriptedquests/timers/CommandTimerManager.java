@@ -50,7 +50,7 @@ public class CommandTimerManager implements Listener {
 	 * Event Handlers
 	 *******************************************************************************/
 
-	@EventHandler(priority = EventPriority.LOWEST)
+	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void entityAddToWorldEvent(EntityAddToWorldEvent event) {
 		if (event.getEntity() instanceof ArmorStand armorStand) {
 			// This must be delayed as it accesses blocks in the world, which may not yet be loaded when the entity is, leading to a deadlock
@@ -58,7 +58,7 @@ public class CommandTimerManager implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.LOWEST)
+	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void entityRemoveFromWorldEvent(EntityRemoveFromWorldEvent event) {
 		unload(event.getEntity());
 	}
