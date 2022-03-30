@@ -149,6 +149,52 @@
                                     }
                                 }
                             }
+                        },
+                        "remote_click": {
+                            "propertyOrder": 3,
+                            "type": "array",
+                            "title": "Remote Click",
+                            "description": "Fired when a player left or right clicks while looking in the direction of a matching block, even if that block is out of player range. Both the player and the targeted block must be in a zone with this zone property.",
+                            "items": {
+                                "additionalProperties": false,
+                                "properties": {
+                                    "blocks": {
+                                        "propertyOrder": 1,
+                                        "type": "array",
+                                        "required": false,
+                                        "title": "blocks",
+                                        "description": "Block types that trigger this event. Omit to apply to all block types.",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": {
+                                        "propertyOrder": 2,
+                                        "required": false,
+                                        "type": "string",
+                                        "title": "click type",
+                                        "description": "Either LEFT_CLICK, RIGHT_CLICK, or not set for either click type."
+                                    },
+                                    "command": {
+                                        "propertyOrder": 3,
+                                        "title": "command",
+                                        "description": "Command to execute when this event fires. Will be run at the broken block, and as the player, entity, or block that broke the block.",
+                                        "type": "string"
+                                    },
+                                    "max_distance": {
+                                        "propertyOrder": 4,
+                                        "title": "max_distance",
+                                        "description": "Maximum distance to check for blocks.",
+                                        "type": "number"
+                                    },
+                                    "ignore_transparent_blocks": {
+                                        "propertyOrder": 5,
+                                        "title": "ignore_transparent_blocks",
+                                        "description": "Whether to ignore transparent blocks when looking for a targeted block.",
+                                        "type": "boolean"
+                                    }
+                                }
+                            }
                         }
                     }
                 }
