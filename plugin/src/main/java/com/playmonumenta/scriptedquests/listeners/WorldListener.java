@@ -1,14 +1,14 @@
 package com.playmonumenta.scriptedquests.listeners;
 
-import org.bukkit.Chunk;
+import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent;
+import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.managers.RaceManager;
+import com.playmonumenta.scriptedquests.quests.QuestNpc;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.world.ChunkLoadEvent;
-
-import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.quests.QuestNpc;
 
 public class WorldListener implements Listener {
 	private final Plugin mPlugin;
@@ -18,17 +18,18 @@ public class WorldListener implements Listener {
 	}
 
 	//  A Chunk Loaded.
-	@EventHandler(priority = EventPriority.LOWEST)
-	public void chunkLoadEvent(ChunkLoadEvent event) {
-		Chunk chunk = event.getChunk();
-		for (Entity entity : chunk.getEntities()) {
-			mPlugin.mRaceManager.removeIfNotActive(entity);
+	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+	public void entityAddToWorldEvent(EntityAddToWorldEvent event) {
+		Entity entity = event.getEntity();
 
-			QuestNpc npc = mPlugin.mNpcManager.getInteractNPC(entity.getName(), entity.getType());
-			if (npc != null) {
-				// Invulnerable NPCs cannot be interacted with in some versions of Minecraft
-				entity.setInvulnerable(false);
-			}
+		if (entity.getScoreboardTags().contains(RaceManager.ARMOR_STAND_RACE_TAG)) {
+			Bukkit.getScheduler().runTask(mPlugin, () -> mPlugin.mRaceManager.removeIfNotActive(entity));
+		}
+
+		QuestNpc npc = mPlugin.mNpcManager.getInteractNPC(entity.getName(), entity.getType());
+		if (npc != null) {
+			// Invulnerable NPCs cannot be interacted with in some versions of Minecraft
+			entity.setInvulnerable(false);
 		}
 	}
 }
