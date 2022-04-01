@@ -8,6 +8,7 @@ import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
 import com.playmonumenta.scriptedquests.zones.event.ZoneBlockBreakEvent;
 import com.playmonumenta.scriptedquests.zones.event.ZoneBlockInteractEvent;
 import com.playmonumenta.scriptedquests.zones.event.ZoneEvent;
+import com.playmonumenta.scriptedquests.zones.event.ZoneRemoteClickEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -100,6 +101,12 @@ public class ZoneProperty {
 			if (blockInteractEvents != null) {
 				for (JsonElement blockInteractEvent : blockInteractEvents) {
 					mEvents.add(ZoneBlockInteractEvent.fromJson(blockInteractEvent));
+				}
+			}
+			JsonArray remoteClickEvents = eventsObject.getAsJsonArray("remote_click");
+			if (remoteClickEvents != null) {
+				for (JsonElement remoteClickEvent : remoteClickEvents) {
+					mEvents.add(ZoneRemoteClickEvent.fromJson(remoteClickEvent));
 				}
 			}
 		}
