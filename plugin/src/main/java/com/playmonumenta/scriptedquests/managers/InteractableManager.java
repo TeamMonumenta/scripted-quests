@@ -118,6 +118,14 @@ public class InteractableManager {
 		return false;
 	}
 
+	public boolean swapHandsEvent(Plugin plugin, Player player, ItemStack item) {
+		List<InteractableEntry> entries = mInteractables.get(item.getType());
+		if (entries != null) {
+			return handleEvent(new QuestContext(plugin, player, null, false, null, item), InteractType.SWAP_HANDS, entries);
+		}
+		return false;
+	}
+
 	private boolean handleEvent(QuestContext context, InteractType type, List<InteractableEntry> entries) {
 		boolean cancelEvent = false;
 		for (InteractableEntry entry : entries) {
