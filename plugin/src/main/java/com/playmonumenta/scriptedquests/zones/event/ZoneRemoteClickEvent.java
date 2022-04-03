@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import com.playmonumenta.scriptedquests.utils.MaterialUtils;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
@@ -68,7 +69,7 @@ public class ZoneRemoteClickEvent extends ZoneEvent {
 				if (mMaterials != null && mMaterials.contains(type)) {
 					return block;
 				}
-				if (type.isOccluding() || !type.isAir() && !mIgnoreTransparentBlocks) {
+				if (MaterialUtils.isOccluding(type) || !type.isAir() && !mIgnoreTransparentBlocks) {
 					return mMaterials == null ? block : null;
 				}
 			}
