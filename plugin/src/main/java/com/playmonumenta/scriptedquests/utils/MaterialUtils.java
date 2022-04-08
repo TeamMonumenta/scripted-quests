@@ -1,7 +1,6 @@
 package com.playmonumenta.scriptedquests.utils;
 
 import java.util.EnumSet;
-
 import org.bukkit.Material;
 
 public class MaterialUtils {
@@ -152,6 +151,17 @@ public class MaterialUtils {
 
 	public static boolean isInteractableBlock(Material material) {
 		return interactableBlocks.contains(material);
+	}
+
+	/**
+	 * Same as {@link Material#isOccluding()}, but fixes some bugs.
+	 */
+	public static boolean isOccluding(Material type) {
+		return switch (type) {
+			case REDSTONE_BLOCK -> true;
+			case BARRIER -> false;
+			default -> type.isOccluding();
+		};
 	}
 
 }
