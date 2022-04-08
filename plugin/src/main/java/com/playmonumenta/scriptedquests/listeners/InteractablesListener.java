@@ -1,5 +1,8 @@
 package com.playmonumenta.scriptedquests.listeners;
 
+import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.quests.InteractableEntry.InteractType;
+import com.playmonumenta.scriptedquests.utils.MetadataUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -17,12 +20,9 @@ import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerAnimationType;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-
-import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.quests.InteractableEntry.InteractType;
-import com.playmonumenta.scriptedquests.utils.MetadataUtils;
 
 public class InteractablesListener implements Listener {
 	private static final String ADVENTURE_INTERACT_METAKEY = "ScriptedQuestsInteractable";
@@ -163,4 +163,12 @@ public class InteractablesListener implements Listener {
 			event.setCancelled(true);
 		}
 	}
+
+	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+	public void playerSwapHandItemsEvent(PlayerSwapHandItemsEvent event) {
+		if (mPlugin.mInteractableManager.swapHandsEvent(mPlugin, event.getPlayer(), event.getPlayer().getInventory().getItemInMainHand())) {
+			event.setCancelled(true);
+		}
+	}
+
 }

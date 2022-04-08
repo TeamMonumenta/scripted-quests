@@ -22,7 +22,8 @@ public class InteractableEntry {
 		LEFT_CLICK_AIR,
 		LEFT_CLICK_BLOCK,
 		LEFT_CLICK_ENTITY,
-		LEFT_CLICK_INVENTORY;
+		LEFT_CLICK_INVENTORY,
+		SWAP_HANDS;
 
 		public static InteractType fromString(String str) throws Exception {
 			switch (str) {
@@ -44,6 +45,8 @@ public class InteractableEntry {
 					return LEFT_CLICK_ENTITY;
 				case "left_click_inventory":
 					return LEFT_CLICK_INVENTORY;
+				case "swap_hands":
+					return SWAP_HANDS;
 				default:
 					throw new Exception("Unknown click_type: " + str);
 			}
