@@ -20,8 +20,10 @@ import java.util.Optional;
 import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.EntityType;
+import org.jetbrains.annotations.Nullable;
 
 public class QuestActions {
+	private @Nullable QuestPrerequisites mPrerequisites;
 	private ArrayList<ActionBase> mActions = new ArrayList<ActionBase>();
 	private int mDelayTicks = 0;
 
@@ -55,42 +57,45 @@ public class QuestActions {
 				}
 
 				switch (key) {
-				case "command":
-					mActions.add(new ActionCommand(value));
-					break;
-				case "dialog":
-					mActions.add(new ActionDialog(npcName, displayName, entityType, value));
-					break;
-				case "function":
-					mActions.add(new ActionFunction(value));
-					break;
-				case "give_loot":
-					mActions.add(new ActionGiveLoot(value));
-					break;
-				case "interact_npc":
-					mActions.add(new ActionInteractNpc(value));
-					break;
-				case "set_scores":
-					JsonObject scoreObject = value.getAsJsonObject();
-					if (scoreObject == null) {
-						throw new Exception("set_scores value is not an object!");
-					}
+					case "prerequisites":
+						mPrerequisites = new QuestPrerequisites(value);
+						break;
+					case "command":
+						mActions.add(new ActionCommand(value));
+						break;
+					case "dialog":
+						mActions.add(new ActionDialog(npcName, displayName, entityType, value));
+						break;
+					case "function":
+						mActions.add(new ActionFunction(value));
+						break;
+					case "give_loot":
+						mActions.add(new ActionGiveLoot(value));
+						break;
+					case "interact_npc":
+						mActions.add(new ActionInteractNpc(value));
+						break;
+					case "set_scores":
+						JsonObject scoreObject = value.getAsJsonObject();
+						if (scoreObject == null) {
+							throw new Exception("set_scores value is not an object!");
+						}
 
-					Set<Entry<String, JsonElement>> scoreEntries = scoreObject.entrySet();
-					for (Entry<String, JsonElement> scoreEnt : scoreEntries) {
-						mActions.add(new ActionSetScore(scoreEnt.getKey(), scoreEnt.getValue()));
-					}
-					break;
-				case "voice_over":
-					mActions.add(new ActionVoiceOver(entityType, npcName, value));
-					break;
-				case "rerun_components":
-					if (entityType != null) {
-						mActions.add(new ActionRerunComponents(npcName, entityType));
-					}
-					break;
-				default:
-					throw new Exception("Unknown actions key: " + key);
+						Set<Entry<String, JsonElement>> scoreEntries = scoreObject.entrySet();
+						for (Entry<String, JsonElement> scoreEnt : scoreEntries) {
+							mActions.add(new ActionSetScore(scoreEnt.getKey(), scoreEnt.getValue()));
+						}
+						break;
+					case "voice_over":
+						mActions.add(new ActionVoiceOver(entityType, npcName, value));
+						break;
+					case "rerun_components":
+						if (entityType != null) {
+							mActions.add(new ActionRerunComponents(npcName, entityType));
+						}
+						break;
+					default:
+						throw new Exception("Unknown actions key: " + key);
 				}
 			}
 		}
@@ -99,18 +104,21 @@ public class QuestActions {
 	public void doActions(QuestContext context) {
 		if (mDelayTicks <= 0) {
 			// If not delayed, actions can run without restrictions
-			for (ActionBase action : mActions) {
-				action.doAction(context);
-			}
+			executeNow(context);
 		} else {
-			Bukkit.getScheduler().scheduleSyncDelayedTask(context.getPlugin(), new Runnable() {
-				@Override
-				public void run() {
-					for (ActionBase action : mActions) {
-						action.doAction(context);
-					}
-				}
-			}, mDelayTicks);
+			Bukkit.getScheduler().scheduleSyncDelayedTask(context.getPlugin(), () -> executeNow(context), mDelayTicks);
+		}
+	}
+
+	private void executeNow(QuestContext context) {
+		if (mPrerequisites != null) {
+			if (!mPrerequisites.prerequisiteMet(context)) {
+				return;
+			}
+			context = context.withPrerequisites(mPrerequisites);
+		}
+		for (ActionBase action : mActions) {
+			action.doAction(context);
 		}
 	}
 

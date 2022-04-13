@@ -85,9 +85,12 @@ public class QuestContext {
 
 	/**
 	 * Returns a new {@link QuestContext} with the given prerequisites set so that {@link #prerequisitesMet()} will check them.
+	 * If this context already had prerequisites, the given prerequisites will be merged with the existing ones.
+	 * Passing in null will have no effect and return a clone of this context.
 	 */
 	public QuestContext withPrerequisites(@Nullable QuestPrerequisites prerequisites) {
-		return new QuestContext(mPlugin, mPlayer, mNpcEntity, mUseNpcForPrerequisites, prerequisites, mUsedItem);
+		QuestPrerequisites newPrerequisites = prerequisites == null ? mPrerequisites : mPrerequisites == null ? prerequisites : mPrerequisites.union(prerequisites);
+		return new QuestContext(mPlugin, mPlayer, mNpcEntity, mUseNpcForPrerequisites, newPrerequisites, mUsedItem);
 	}
 
 	/**
