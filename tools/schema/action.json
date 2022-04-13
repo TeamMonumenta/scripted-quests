@@ -2,8 +2,26 @@
     "title": "Action",
     "type": "object",
     "additionalProperties": false,
+    "defaultProperties": [
+        "dialog"
+    ],
     "properties": {
+        "prerequisites": {
+            "propertyOrder": 1,
+            "title": "prerequisites",
+            "description": "Additional prerequisites for these actions",
+            "required": false,
+            "$ref": "prerequisites.json"
+        },
+        "delay_actions_by_ticks": {
+            "propertyOrder": 2,
+            "title": "delay_actions_by_ticks",
+            "description": "Additional delay for these actions",
+            "required": false,
+            "$ref": "delay_actions_by_ticks.json"
+        },
         "dialog": {
+            "propertyOrder": 3,
             "title": "dialog",
             "description": "Formatting supported with &amp; and §, and @S becomes the player's name, and @U becomes the player's uuid (lowercase)",
             "type": "object",
@@ -180,6 +198,7 @@
             }
         },
         "set_scores": {
+            "propertyOrder": 4,
             "title": "set_scores",
             "description": "Set the player's specified scoreboard value(s). Click Properties, then type in the scoreboard name in the input box and click the 'add' button. Scoreboards are case-sensitive",
             "type": "object",
@@ -217,21 +236,25 @@
             }
         },
         "function": {
+            "propertyOrder": 5,
             "title": "function",
             "description": "Runs a function via the console as the player (/execute as <playername> at @s run function <function>)",
             "type": "string"
         },
         "command": {
+            "propertyOrder": 6,
             "title": "command",
             "description": "Runs a command via the console. Any instance of '@S' (uppercase!) will be replaced with the player's name. Any instance of '@U' (uppercase!) will be replaced with the player's UUID (lowercase). Any instance of '@N' (uppercase!) will be replaced with the NPC's UUID, which can be used like @e to target a specific entity. The NPC must be selected by trading or punching to use the entity UUID, or the player will receive an error instead.",
             "type": "string"
         },
         "give_loot": {
+            "propertyOrder": 7,
             "title": "give_loot",
             "description": "Gives the player all items from a loot table.",
             "type": "string"
         },
         "interact_npc": {
+            "propertyOrder": 8,
             "title": "interact_npc",
             "description": "Triggers a follow-on interaction with a different NPC.",
             "type": "object",
@@ -252,11 +275,13 @@
             }
         },
         "voice_over": {
+            "propertyOrder": 9,
             "title": "voice_over",
             "description": "Play a sound to the player as an NPC (WIP)",
             "type": "string"
         },
         "rerun_components": {
+            "propertyOrder": 10,
             "title": "rerun_components",
             "description": "Re-runs all quest components tied to this specific NPC (including those specified in other files). To prevent infinite loops, this action will not run itself, even if conditions indicate it should.",
             "type": "null"

@@ -24,6 +24,7 @@ import com.playmonumenta.scriptedquests.quests.components.prerequisites.Prerequi
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteZoneProperties;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -266,13 +267,23 @@ public class QuestPrerequisites implements PrerequisiteBase {
 				}
 			}
 			return val;
-		default: // AND
-			for (PrerequisiteBase prerequisite : mPrerequisites) {
-				if (!prerequisite.prerequisiteMet(context)) {
-					return false;
+			default: // AND
+				for (PrerequisiteBase prerequisite : mPrerequisites) {
+					if (!prerequisite.prerequisiteMet(context)) {
+						return false;
+					}
 				}
-			}
-			return true;
+				return true;
 		}
 	}
+
+	/**
+	 * Creates a new {@link QuestPrerequisites} that is the union of this and the given prerequisite, i.e. it is met if and only if both {@code this} and {@code other} are met.
+	 */
+	public QuestPrerequisites union(QuestPrerequisites other) {
+		QuestPrerequisites result = new QuestPrerequisites();
+		result.mPrerequisites.addAll(List.of(this, other));
+		return result;
+	}
+
 }
