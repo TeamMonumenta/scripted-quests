@@ -14,7 +14,6 @@ import com.playmonumenta.scriptedquests.quests.components.actions.ActionRerunCom
 import com.playmonumenta.scriptedquests.quests.components.actions.ActionSetScore;
 import com.playmonumenta.scriptedquests.quests.components.actions.ActionVoiceOver;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
@@ -37,9 +36,8 @@ public class QuestActions {
 		}
 
 		// Add all array entries
-		Iterator<JsonElement> iter = array.iterator();
-		while (iter.hasNext()) {
-			JsonObject object = iter.next().getAsJsonObject();
+		for (JsonElement jsonElement : array) {
+			JsonObject object = jsonElement.getAsJsonObject();
 			if (object == null) {
 				throw new Exception("actions value is not an object!");
 			}
@@ -59,6 +57,9 @@ public class QuestActions {
 				switch (key) {
 					case "prerequisites":
 						mPrerequisites = new QuestPrerequisites(value);
+						break;
+					case "delay_actions_by_ticks":
+						mDelayTicks += value.getAsInt();
 						break;
 					case "command":
 						mActions.add(new ActionCommand(value));
