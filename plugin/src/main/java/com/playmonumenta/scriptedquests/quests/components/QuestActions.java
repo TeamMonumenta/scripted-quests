@@ -22,9 +22,8 @@ import org.bukkit.entity.EntityType;
 import org.jetbrains.annotations.Nullable;
 
 public class QuestActions {
-	private @Nullable QuestPrerequisites mPrerequisites;
-	private ArrayList<ActionBase> mActions = new ArrayList<ActionBase>();
-	private int mDelayTicks = 0;
+	private final ArrayList<ActionsElement> mActions = new ArrayList<>();
+	private int mDelayTicks;
 
 	public QuestActions(String npcName, String displayName, EntityType entityType,
 	                    int delayTicks, JsonElement element) throws Exception {
@@ -42,6 +41,9 @@ public class QuestActions {
 				throw new Exception("actions value is not an object!");
 			}
 
+			ActionsElement actions = new ActionsElement();
+			mActions.add(actions);
+
 			// Add all actions in each entry object
 			Set<Entry<String, JsonElement>> entries = object.entrySet();
 			for (Entry<String, JsonElement> ent : entries) {
@@ -56,25 +58,25 @@ public class QuestActions {
 
 				switch (key) {
 					case "prerequisites":
-						mPrerequisites = new QuestPrerequisites(value);
+						actions.mPrerequisites = new QuestPrerequisites(value);
 						break;
 					case "delay_actions_by_ticks":
-						mDelayTicks += value.getAsInt();
+						actions.mDelayTicks = value.getAsInt();
 						break;
 					case "command":
-						mActions.add(new ActionCommand(value));
+						actions.mActions.add(new ActionCommand(value));
 						break;
 					case "dialog":
-						mActions.add(new ActionDialog(npcName, displayName, entityType, value));
+						actions.mActions.add(new ActionDialog(npcName, displayName, entityType, value));
 						break;
 					case "function":
-						mActions.add(new ActionFunction(value));
+						actions.mActions.add(new ActionFunction(value));
 						break;
 					case "give_loot":
-						mActions.add(new ActionGiveLoot(value));
+						actions.mActions.add(new ActionGiveLoot(value));
 						break;
 					case "interact_npc":
-						mActions.add(new ActionInteractNpc(value));
+						actions.mActions.add(new ActionInteractNpc(value));
 						break;
 					case "set_scores":
 						JsonObject scoreObject = value.getAsJsonObject();
@@ -84,15 +86,15 @@ public class QuestActions {
 
 						Set<Entry<String, JsonElement>> scoreEntries = scoreObject.entrySet();
 						for (Entry<String, JsonElement> scoreEnt : scoreEntries) {
-							mActions.add(new ActionSetScore(scoreEnt.getKey(), scoreEnt.getValue()));
+							actions.mActions.add(new ActionSetScore(scoreEnt.getKey(), scoreEnt.getValue()));
 						}
 						break;
 					case "voice_over":
-						mActions.add(new ActionVoiceOver(entityType, npcName, value));
+						actions.mActions.add(new ActionVoiceOver(entityType, npcName, value));
 						break;
 					case "rerun_components":
 						if (entityType != null) {
-							mActions.add(new ActionRerunComponents(npcName, entityType));
+							actions.mActions.add(new ActionRerunComponents(npcName, entityType));
 						}
 						break;
 					default:
@@ -112,21 +114,37 @@ public class QuestActions {
 	}
 
 	private void executeNow(QuestContext context) {
-		if (mPrerequisites != null) {
-			if (!mPrerequisites.prerequisiteMet(context)) {
+		for (ActionsElement element : mActions) {
+			if (element.mPrerequisites != null && !element.mPrerequisites.prerequisiteMet(context)) {
 				return;
 			}
-			context = context.withPrerequisites(mPrerequisites);
+			QuestContext elementContext = element.mPrerequisites != null ? context.withPrerequisites(element.mPrerequisites) : context;
+			if (element.mDelayTicks <= 0) {
+				for (ActionBase action : element.mActions) {
+					action.doAction(elementContext);
+				}
+			} else {
+				Bukkit.getScheduler().scheduleSyncDelayedTask(context.getPlugin(), () -> {
+					for (ActionBase action : element.mActions) {
+						action.doAction(elementContext);
+					}
+				}, element.mDelayTicks);
+			}
 		}
-		for (ActionBase action : mActions) {
-			action.doAction(context);
-		}
+	}
+
+	private static class ActionsElement {
+		private @Nullable QuestPrerequisites mPrerequisites;
+		private int mDelayTicks;
+		private final ArrayList<ActionBase> mActions = new ArrayList<>();
 	}
 
 	public Optional<JsonElement> serializeForClientAPI(QuestContext context) {
 		if (mDelayTicks <= 0) {
 			JsonArray a = new JsonArray();
-			mActions.stream().map(v -> v.serializeForClientAPI(context))
+			mActions.stream()
+				.flatMap(e -> e.mActions.stream())
+				.map(v -> v.serializeForClientAPI(context))
 				.forEach(a::add);
 			return Optional.of(a);
 		}
