@@ -93,6 +93,10 @@ public class QuestContext {
 		return new QuestContext(mPlugin, mPlayer, mNpcEntity, mUseNpcForPrerequisites, newPrerequisites, mUsedItem);
 	}
 
+	public QuestContext clearPrerequisites() {
+		return new QuestContext(mPlugin, mPlayer, mNpcEntity, mUseNpcForPrerequisites, null, mUsedItem);
+	}
+
 	/**
 	 * Returns a new {@link QuestContext} that will return the NPC entity from {@link #getEntityUsedForPrerequisites()} (which returns the player by default).
 	 */
