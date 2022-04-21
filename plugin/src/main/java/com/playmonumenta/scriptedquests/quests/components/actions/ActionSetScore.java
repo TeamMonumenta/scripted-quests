@@ -9,50 +9,51 @@ import java.util.Set;
 import org.bukkit.entity.Player;
 
 public class ActionSetScore implements ActionBase {
-	private static class SetScore {
-		// This should be an enum, but idk how to set those up. -Nick
-		private int mOperation;
-		private static final int SET_EXACT = 1;
-		private static final int SET_COPY = 2;
-		private static final int SET_RANDOM = 3;
+	private interface SetScore {
+		void apply(Player player, String targetScore);
+	}
 
-		private String mSourceScore;
-		private int mValue;
-		private int mValueRange; // max - min + 1
-		private Random mRandom = new Random();
+	private static class SetScoreExact implements SetScore {
+		final int mValue;
 
-		SetScore(int value) {
-			mValue = value;
-			mOperation = SET_EXACT;
+		private SetScoreExact(int val) {
+			mValue = val;
 		}
 
-		SetScore(String sourceScore) {
+		@Override
+		public void apply(Player player, String targetScore) {
+			ScoreboardUtils.setScoreboardValue(player, targetScore, mValue);
+		}
+	}
+
+	private static class SetScoreCopy implements SetScore {
+		final String mSourceScore;
+
+		private SetScoreCopy(String sourceScore) {
 			mSourceScore = sourceScore;
-			mOperation = SET_COPY;
 		}
 
-		SetScore(int minValue, int maxValue) {
-			mValue = minValue;
+		@Override
+		public void apply(Player player, String targetScore) {
+			int tempScore = ScoreboardUtils.getScoreboardValue(player, mSourceScore);
+			ScoreboardUtils.setScoreboardValue(player, targetScore, tempScore);
+		}
+	}
+
+	private static class SetScoreRandom implements SetScore {
+		private static final Random RANDOM = new Random();
+		final int mMinValue;
+		final int mValueRange; // max - min + 1
+
+		private SetScoreRandom(int minValue, int maxValue) {
+			mMinValue = minValue;
 			mValueRange = maxValue - minValue + 1;
-			mOperation = SET_RANDOM;
 		}
 
-		void apply(Player player, String targetScore) {
-			int tempScore;
-			switch (mOperation) {
-			case SET_COPY:
-				tempScore = ScoreboardUtils.getScoreboardValue(player, mSourceScore);
-				ScoreboardUtils.setScoreboardValue(player, targetScore, tempScore);
-				break;
-			case SET_RANDOM:
-				tempScore = mValue + mRandom.nextInt(mValueRange);
-				ScoreboardUtils.setScoreboardValue(player, targetScore, tempScore);
-				break;
-			case SET_EXACT:
-			default:
-				ScoreboardUtils.setScoreboardValue(player, targetScore, mValue);
-				break;
-			}
+		@Override
+		public void apply(Player player, String targetScore) {
+			int tempScore = mMinValue + RANDOM.nextInt(mValueRange);
+			ScoreboardUtils.setScoreboardValue(player, targetScore, tempScore);
 		}
 	}
 
@@ -68,12 +69,12 @@ public class ActionSetScore implements ActionBase {
 			// First try to parse the item as an integer
 			try {
 				int valueAsInt = value.getAsInt();
-				mSetScore = new SetScore(valueAsInt);
+				mSetScore = new SetScoreExact(valueAsInt);
 			} catch (Exception e) {
 				// If that failed, try a string instead
 				String valueAsString = value.getAsString();
 				if (valueAsString != null) {
-					mSetScore = new SetScore(valueAsString);
+					mSetScore = new SetScoreCopy(valueAsString);
 				} else {
 					throw new Exception("set_score value for scoreboard '" + mScoreName +
 					                    "' is neither an integer nor a string!");
@@ -104,7 +105,7 @@ public class ActionSetScore implements ActionBase {
 				throw new Exception("Bogus check_score object with no min or max");
 			}
 
-			mSetScore = new SetScore(imin, imax);
+			mSetScore = new SetScoreRandom(imin, imax);
 		}
 	}
 

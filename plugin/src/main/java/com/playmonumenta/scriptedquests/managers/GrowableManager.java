@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.Nullable;
 
 public class GrowableManager {
 	private final Map<String, GrowableStructure> mGrowables = new HashMap<>();
@@ -23,7 +24,7 @@ public class GrowableManager {
 	/*
 	 * If sender is non-null, it will be sent debugging information
 	 */
-	public void reload(Plugin plugin, CommandSender sender) {
+	public void reload(Plugin plugin, @Nullable CommandSender sender) {
 		mGrowables.clear();
 		QuestUtils.loadScriptedQuests(plugin, "growables", sender, (object) -> {
 			GrowableStructure growable = new GrowableStructure(object);

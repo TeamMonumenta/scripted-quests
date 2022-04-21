@@ -16,6 +16,7 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * This code was originally copied from NBTEditor, Copyright (C) 2013-2018 Gonçalo Baltazar (me@goncalomb.com), released under GPLv3.
@@ -24,12 +25,12 @@ import org.bukkit.plugin.Plugin;
  */
 public abstract class CustomInventory {
 
-	private static Listener mMainListener;
-	private static Plugin mPlugin;
+	private static @Nullable Listener mMainListener;
+	private static @Nullable Plugin mPlugin;
 	private static final HashMap<HumanEntity, CustomInventory> mOpenedInvsByPlayer = new HashMap<>();
 	private static final HashMap<Plugin, HashSet<CustomInventory>> mOpenedInvsByPlugin = new HashMap<>();
 
-	private Plugin mOwner;
+	private @Nullable Plugin mOwner = null;
 	protected final Inventory mInventory;
 
 	private static void bindListener(Plugin plugin) {
@@ -78,7 +79,10 @@ public abstract class CustomInventory {
 					public void inventoryClose(InventoryCloseEvent event) {
 						CustomInventory inv = mOpenedInvsByPlayer.remove(event.getPlayer());
 						if (inv != null) {
-							mOpenedInvsByPlugin.get(inv.mOwner).remove(inv);
+							HashSet<CustomInventory> owner = mOpenedInvsByPlugin.get(inv.mOwner);
+							if (owner != null) {
+								owner.remove(inv);
+							}
 							inv.inventoryClose(event);
 						}
 					}
@@ -120,7 +124,7 @@ public abstract class CustomInventory {
 		return mInventory;
 	}
 
-	public Plugin getPlugin() {
+	public @Nullable Plugin getPlugin() {
 		return mOwner;
 	}
 

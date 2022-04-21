@@ -22,6 +22,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
+import org.jetbrains.annotations.Nullable;
 
 public class Leaderboard {
 	@SuppressWarnings("unchecked")
@@ -71,7 +72,7 @@ public class Leaderboard {
 			.register();
 	}
 
-	public static void leaderboard(Plugin plugin, Player player, String objective, boolean descending, int page, Collection<Player> filterPlayers) {
+	public static void leaderboard(Plugin plugin, Player player, String objective, boolean descending, int page, @Nullable Collection<Player> filterPlayers) {
 		List<LeaderboardEntry> entries = new ArrayList<LeaderboardEntry>();
 
 		/* Get the scoreboard objective (might be null) */

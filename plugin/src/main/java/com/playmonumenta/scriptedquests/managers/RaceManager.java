@@ -38,7 +38,7 @@ public class RaceManager {
 	/*
 	 * If sender is non-null, it will be sent debugging information
 	 */
-	public void reload(Plugin plugin, CommandSender sender) {
+	public void reload(Plugin plugin, @Nullable CommandSender sender) {
 		mRaceFactories.clear();
 
 		QuestUtils.loadScriptedQuests(plugin, "races", sender, (object) -> {
@@ -88,7 +88,7 @@ public class RaceManager {
 					}
 				}
 			}
-			if (!isRacing(ownerId)) {
+			if (ownerId != null && !isRacing(ownerId)) {
 				mPlugin.getLogger().fine("Removing stale race ring armor stand.");
 				entity.remove();
 			}

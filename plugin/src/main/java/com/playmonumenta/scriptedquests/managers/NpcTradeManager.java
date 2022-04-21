@@ -35,6 +35,7 @@ import org.bukkit.inventory.Merchant;
 import org.bukkit.inventory.MerchantInventory;
 import org.bukkit.inventory.MerchantRecipe;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.Nullable;
 
 public class NpcTradeManager implements Listener {
 	private final HashMap<String, NpcTrader> mTraders = new HashMap<>();
@@ -73,7 +74,7 @@ public class NpcTradeManager implements Listener {
 	/*
 	 * If sender is non-null, it will be sent debugging information
 	 */
-	public void reload(Plugin plugin, CommandSender sender) {
+	public void reload(Plugin plugin, @Nullable CommandSender sender) {
 		mTraders.clear();
 		QuestUtils.loadScriptedQuests(plugin, "traders", sender, (object) -> {
 			// Load this file into a NpcTrader object

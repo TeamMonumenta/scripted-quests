@@ -5,10 +5,11 @@ import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.quests.components.QuestActions;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.Nullable;
 
 public class RaceWaypoint {
 	private final Vector mPosition;
-	private final QuestActions mActions;
+	private final @Nullable QuestActions mActions;
 
 	public RaceWaypoint(JsonElement element) throws Exception {
 		JsonObject object = element.getAsJsonObject();

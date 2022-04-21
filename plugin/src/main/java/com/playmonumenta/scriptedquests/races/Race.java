@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.Nullable;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -29,6 +28,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.Nullable;
 
 /*
  * A Race is a currently active race a player is doing
@@ -49,7 +49,7 @@ public class Race {
 	private final RaceManager mManager;
 	private final Player mPlayer;
 	private final String mName;
-	private final Objective mScoreboard;
+	private final @Nullable Objective mScoreboard;
 	private final boolean mShowStats;
 	private final boolean mAllowDialogClick;
 	private final boolean mAllowCode;
@@ -57,10 +57,10 @@ public class Race {
 	private final boolean mAllowNpcInteraction;
 	private final boolean mRingless;
 	private final Location mStart;
-	private final QuestActions mStartActions;
+	private final @Nullable QuestActions mStartActions;
 	private final List<RaceWaypoint> mWaypoints;
 	private final List<RaceTime> mTimes;
-	private final QuestActions mLoseActions;
+	private final @Nullable QuestActions mLoseActions;
 
 	/* Local constants */
 	private final List<ArmorStand> mRingEntities = new ArrayList<ArmorStand>(NUM_RING_POINTS);
@@ -78,8 +78,8 @@ public class Race {
 	private int mWRTime = Integer.MAX_VALUE;
 
 	public Race(Plugin plugin, RaceManager manager, Player player, String name,
-	            Objective scoreboard, boolean showStats, boolean ringless, Location start, QuestActions startActions,
-	            List<RaceWaypoint> waypoints, List<RaceTime> times, QuestActions loseActions, boolean allowDialogClick,
+	            @Nullable Objective scoreboard, boolean showStats, boolean ringless, Location start, @Nullable QuestActions startActions,
+	            List<RaceWaypoint> waypoints, List<RaceTime> times, @Nullable QuestActions loseActions, boolean allowDialogClick,
 				boolean allowCode, boolean allowClickables, boolean allowNpcInteraction) {
 		mPlugin = plugin;
 		mManager = manager;
@@ -228,7 +228,9 @@ public class Race {
 			lose();
 			return;
 		}
-		mTimeBar.update(timeElapsed);
+		if (mTimeBar != null) {
+			mTimeBar.update(timeElapsed);
+		}
 
 		if (!mRingless) {
 
@@ -453,12 +455,14 @@ public class Race {
 			return;
 		}
 
+		Objective finalScoreboard = mScoreboard;
+
 		/* If the RedisSync plugin is also present, update the score in the leaderboard cache */
 		if (Bukkit.getServer().getPluginManager().getPlugin("MonumentaRedisSync") != null) {
 			/* Get the lowest value from the redis leaderboard that's not zero */
 			Bukkit.getScheduler().runTaskAsynchronously(mPlugin, () -> {
 				try {
-					Map<String, Integer> values = MonumentaRedisSyncAPI.getLeaderboard(mScoreboard.getName(), 0, -1, true).get();
+					Map<String, Integer> values = MonumentaRedisSyncAPI.getLeaderboard(finalScoreboard.getName(), 0, -1, true).get();
 					for (Map.Entry<String, Integer> entry : values.entrySet()) {
 						// These are already in sorted order - stop at the first non-zero one
 						if (entry.getValue() > 0) {
@@ -467,7 +471,7 @@ public class Race {
 						}
 					}
 				} catch (Exception ex) {
-					mPlugin.getLogger().severe("Failed to get world record time for leaderboard " + mScoreboard.getName() + ": " + ex.getMessage());
+					mPlugin.getLogger().severe("Failed to get world record time for leaderboard " + finalScoreboard.getName() + ": " + ex.getMessage());
 					ex.printStackTrace();
 				}
 			});
@@ -475,8 +479,8 @@ public class Race {
 			/* Get the lowest value from the scoreboard that's not zero */
 			int top = Integer.MAX_VALUE;
 			int score;
-			for (String name : mScoreboard.getScoreboard().getEntries()) {
-				score = mScoreboard.getScore(name).getScore();
+			for (String name : finalScoreboard.getScoreboard().getEntries()) {
+				score = finalScoreboard.getScore(name).getScore();
 				if (score < top && score > 0) {
 					top = score;
 				}

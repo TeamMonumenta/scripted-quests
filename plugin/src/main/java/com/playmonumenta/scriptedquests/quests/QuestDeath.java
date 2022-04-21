@@ -15,6 +15,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.jetbrains.annotations.Nullable;
 
 /*
  * A QuestDeath object holds all the quest components bound together with a particular
@@ -23,9 +24,9 @@ import org.bukkit.metadata.FixedMetadataValue;
 public class QuestDeath {
 	public static class DeathActions {
 		private final QuestActions mActions;
-		private final QuestPrerequisites mPrerequisites;
+		private final @Nullable QuestPrerequisites mPrerequisites;
 
-		public DeathActions(QuestActions actions, QuestPrerequisites prerequisites) {
+		public DeathActions(QuestActions actions, @Nullable QuestPrerequisites prerequisites) {
 			mActions = actions;
 			mPrerequisites = prerequisites;
 		}
@@ -35,10 +36,10 @@ public class QuestDeath {
 		}
 	}
 
-	private Point mRespawnPt = null;
+	private @Nullable Point mRespawnPt = null;
 	private boolean mKeepInv = false;
-	private QuestPrerequisites mPrerequisites = null;
-	private QuestActions mActions = null;
+	private @Nullable QuestPrerequisites mPrerequisites = null;
+	private @Nullable QuestActions mActions = null;
 
 	public QuestDeath(JsonObject object) throws Exception {
 		Set<Entry<String, JsonElement>> entries = object.entrySet();
@@ -103,7 +104,9 @@ public class QuestDeath {
 			} else {
 				actionsList = new ArrayList<DeathActions>(5);
 			}
-			actionsList.add(new DeathActions(mActions, mPrerequisites));
+			if (mActions != null) {
+				actionsList.add(new DeathActions(mActions, mPrerequisites));
+			}
 			player.setMetadata(Constants.PLAYER_RESPAWN_ACTIONS_METAKEY,
 				new FixedMetadataValue(plugin, actionsList));
 

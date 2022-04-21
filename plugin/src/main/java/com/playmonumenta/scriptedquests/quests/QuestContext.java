@@ -63,7 +63,7 @@ public class QuestContext {
 		return mNpcEntity;
 	}
 
-	public QuestPrerequisites getPrerequisites() {
+	public @Nullable QuestPrerequisites getPrerequisites() {
 		return mPrerequisites;
 	}
 

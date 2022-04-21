@@ -8,46 +8,49 @@ import java.util.Set;
 import org.bukkit.entity.Entity;
 
 public class PrerequisiteCheckScores implements PrerequisiteBase {
-	private static class CheckScore {
-		// This should be an enum, but idk how to set those up. -Nick
-		private int mOperation;
-		private static final int CHECK_EXACT = 1;
-		private static final int CHECK_OTHER = 2;
-		private static final int CHECK_RANGE = 3;
+	private interface CheckScore {
+		boolean check(Entity entity, String scoreName);
+	}
 
+	private static class CheckScoreExact implements CheckScore {
+		int mVal;
+
+		private CheckScoreExact(int val) {
+			mVal = val;
+		}
+
+		@Override
+		public boolean check(Entity entity, String scoreName) {
+			return ScoreboardUtils.getScoreboardValue(entity, scoreName) == mVal;
+		}
+	}
+
+	private static class CheckScoreOther implements CheckScore {
 		String mOtherScore;
+
+		private CheckScoreOther(String otherScore) {
+			mOtherScore = otherScore;
+		}
+
+		@Override
+		public boolean check(Entity entity, String scoreName) {
+			return ScoreboardUtils.getScoreboardValue(entity, scoreName) == ScoreboardUtils.getScoreboardValue(entity, mOtherScore);
+		}
+	}
+
+	private static class CheckScoreRange implements CheckScore {
 		int mMin;
 		int mMax;
 
-		CheckScore(int value) {
-			mMin = value;
-			mOperation = CHECK_EXACT;
-		}
-
-		CheckScore(String value) {
-			mOtherScore = value;
-			mOperation = CHECK_OTHER;
-		}
-
-		CheckScore(int min, int max) {
+		private CheckScoreRange(int min, int max) {
 			mMin = min;
 			mMax = max;
-			mOperation = CHECK_RANGE;
 		}
 
-		boolean check(Entity entity, String scoreName) {
+		@Override
+		public boolean check(Entity entity, String scoreName) {
 			int value = ScoreboardUtils.getScoreboardValue(entity, scoreName);
-			switch (mOperation) {
-			case CHECK_EXACT:
-				return value == mMin;
-			case CHECK_OTHER:
-				mMin = ScoreboardUtils.getScoreboardValue(entity, mOtherScore);
-				return value == mMin;
-			case CHECK_RANGE:
-				return value >= mMin && value <= mMax;
-			default:
-				return false;
-			}
+			return value >= mMin && value <= mMax;
 		}
 	}
 
@@ -63,12 +66,12 @@ public class PrerequisiteCheckScores implements PrerequisiteBase {
 			// First try to parse the item as an integer
 			try {
 				int valueAsInt = value.getAsInt();
-				mCheckScore = new CheckScore(valueAsInt);
+				mCheckScore = new CheckScoreExact(valueAsInt);
 			} catch (Exception e) {
 				// If that failed, try a string instead
 				String valueAsString = value.getAsString();
 				if (valueAsString != null) {
-					mCheckScore = new CheckScore(valueAsString);
+					mCheckScore = new CheckScoreOther(valueAsString);
 				} else {
 					throw new Exception("check_score value for scoreboard '" + mScoreName +
 					                    "' is neither an integer nor a string!");
@@ -96,7 +99,7 @@ public class PrerequisiteCheckScores implements PrerequisiteBase {
 				throw new Exception("Bogus check_score object with no min or max");
 			}
 
-			mCheckScore = new CheckScore(imin, imax);
+			mCheckScore = new CheckScoreRange(imin, imax);
 		}
 	}
 

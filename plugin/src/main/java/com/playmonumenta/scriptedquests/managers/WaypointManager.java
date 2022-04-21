@@ -7,12 +7,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import javax.annotation.Nullable;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.Nullable;
 
 public class WaypointManager {
 	/* Number of ticks between re-checking waypoint progress */
@@ -247,7 +247,7 @@ public class WaypointManager {
 		}
 	}
 
-	public void setWaypoint(Player player, QuestLocation questLoc) {
+	public void setWaypoint(Player player, @Nullable QuestLocation questLoc) {
 		if (questLoc == null || questLoc.getWaypoints() == null || questLoc.getWaypoints().isEmpty()) {
 			mPlayers.remove(player);
 			return;

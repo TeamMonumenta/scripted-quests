@@ -8,6 +8,7 @@ import java.util.Map;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 public class CodeManager {
 	private final Map<String, CodeEntry> mCodes = new HashMap<String, CodeEntry>();
@@ -15,7 +16,7 @@ public class CodeManager {
 	/*
 	 * If sender is non-null, it will be sent debugging information
 	 */
-	public void reload(Plugin plugin, CommandSender sender) {
+	public void reload(Plugin plugin, @Nullable CommandSender sender) {
 
 		mCodes.clear();
 

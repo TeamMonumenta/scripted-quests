@@ -14,7 +14,7 @@ public class NpcTrade implements Comparable<NpcTrade> {
 
 	private final int mIndex;
 	private final QuestPrerequisites mPrerequisites;
-	private QuestActions mActions = null;
+	private @Nullable QuestActions mActions = null;
 
 	public NpcTrade(JsonElement element) throws Exception {
 		JsonObject object = element.getAsJsonObject();
@@ -65,7 +65,7 @@ public class NpcTrade implements Comparable<NpcTrade> {
 		return mIndex;
 	}
 
-	public QuestActions getActions() {
+	public @Nullable QuestActions getActions() {
 		return mActions;
 	}
 

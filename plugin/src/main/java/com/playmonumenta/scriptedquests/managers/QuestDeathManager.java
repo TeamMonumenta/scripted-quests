@@ -6,12 +6,13 @@ import com.playmonumenta.scriptedquests.utils.QuestUtils;
 import java.util.ArrayList;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.jetbrains.annotations.Nullable;
 
 public class QuestDeathManager {
 	private final ArrayList<QuestDeath> mDeaths = new ArrayList<QuestDeath>();
 
 	/* If sender is non-null, it will be sent debugging information */
-	public void reload(Plugin plugin, CommandSender sender) {
+	public void reload(Plugin plugin, @Nullable CommandSender sender) {
 		mDeaths.clear();
 		QuestUtils.loadScriptedQuests(plugin, "death", sender, (object) -> {
 			mDeaths.add(new QuestDeath(object));

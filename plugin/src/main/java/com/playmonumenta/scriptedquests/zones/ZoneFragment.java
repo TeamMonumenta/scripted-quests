@@ -242,7 +242,7 @@ public class ZoneFragment extends ZoneBase {
 		return result;
 	}
 
-	public Zone getParent(String layer) {
+	public @Nullable Zone getParent(String layer) {
 		return mParents.get(layer);
 	}
 

@@ -11,9 +11,10 @@ import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 public class CompassLocation implements QuestLocation {
-	private final QuestPrerequisites mPrerequisites;
+	private final @Nullable QuestPrerequisites mPrerequisites;
 	private final String mMessage;
 	private final List<Location> mWaypoints = new ArrayList<Location>();
 
@@ -100,7 +101,7 @@ public class CompassLocation implements QuestLocation {
 	}
 
 	//If QuestPrerequisites is null, prerequisites always met
-	public CompassLocation(QuestPrerequisites questPrereq, String message, List<Location> waypoints) {
+	public CompassLocation(@Nullable QuestPrerequisites questPrereq, String message, List<Location> waypoints) {
 		mPrerequisites = questPrereq;
 		mMessage = message;
 		mWaypoints.addAll(waypoints);

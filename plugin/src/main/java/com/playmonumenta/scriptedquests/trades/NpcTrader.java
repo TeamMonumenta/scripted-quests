@@ -7,6 +7,7 @@ import com.playmonumenta.scriptedquests.quests.QuestNpc;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
+import org.jetbrains.annotations.Nullable;
 
 /*
  * An NpcTrader object holds prerequisites for each trade slot in the NPC's inventory
@@ -59,7 +60,7 @@ public class NpcTrader {
 		return mNpcName;
 	}
 
-	public NpcTrade getTrade(int index) {
+	public @Nullable NpcTrade getTrade(int index) {
 		return mTrades.get(index);
 	}
 }

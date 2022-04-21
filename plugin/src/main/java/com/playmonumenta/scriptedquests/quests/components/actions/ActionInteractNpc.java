@@ -8,7 +8,7 @@ import java.util.Set;
 import org.bukkit.entity.EntityType;
 
 public class ActionInteractNpc implements ActionBase {
-	private String mName;
+	private final String mName;
 	private EntityType mType = EntityType.VILLAGER;
 
 	public ActionInteractNpc(JsonElement element) throws Exception {
@@ -17,13 +17,14 @@ public class ActionInteractNpc implements ActionBase {
 			throw new Exception("interact_npc value is not an object!");
 		}
 
+		String name = null;
 		Set<Entry<String, JsonElement>> entries = object.entrySet();
 		for (Entry<String, JsonElement> ent : entries) {
 			String key = ent.getKey();
 
 			if (key.equals("name")) {
 				try {
-					mName = ent.getValue().getAsString();
+					name = ent.getValue().getAsString();
 				} catch (IllegalArgumentException e) {
 					throw new Exception("interact_npc name is not a string!");
 				}
@@ -37,6 +38,11 @@ public class ActionInteractNpc implements ActionBase {
 				throw new Exception("Unknown interact_npc key: '" + key + "'");
 			}
 		}
+
+		if (name == null) {
+			throw new Exception("Got interact_npc action with null name");
+		}
+		mName = name;
 	}
 
 	@Override

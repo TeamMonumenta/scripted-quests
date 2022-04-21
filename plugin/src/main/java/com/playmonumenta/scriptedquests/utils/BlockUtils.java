@@ -7,6 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 
 public class BlockUtils {
+	@SuppressWarnings("NullAway")
 	public static int drawLine(Location start, Location end, Material mat) {
 		// https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
 		if (start == null || end == null || mat == null) {

@@ -17,6 +17,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 public class InteractableManager {
 	private final Map<Material, List<InteractableEntry>> mInteractables = new EnumMap<>(Material.class);
@@ -24,7 +25,7 @@ public class InteractableManager {
 	/*
 	 * If sender is non-null, it will be sent debugging information
 	 */
-	public void reload(Plugin plugin, CommandSender sender) {
+	public void reload(Plugin plugin, @Nullable CommandSender sender) {
 		mInteractables.clear();
 
 		QuestUtils.loadScriptedQuests(plugin, "interactables", sender, (object) -> {

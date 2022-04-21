@@ -165,7 +165,7 @@ public class PlayerListener implements Listener {
 		 */
 		if (player.hasMetadata(Constants.PLAYER_RESPAWN_POINT_METAKEY)) {
 			Point respawnPoint = (Point)player.getMetadata(Constants.PLAYER_RESPAWN_POINT_METAKEY).get(0).value();
-			event.setRespawnLocation(respawnPoint.toLocation(mPlugin.mWorld));
+			event.setRespawnLocation(respawnPoint.toLocation(player.getWorld()));
 			player.removeMetadata(Constants.PLAYER_RESPAWN_POINT_METAKEY, mPlugin);
 		}
 

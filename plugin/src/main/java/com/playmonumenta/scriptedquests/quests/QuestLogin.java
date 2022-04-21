@@ -10,17 +10,20 @@ import java.util.Set;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.jetbrains.annotations.Nullable;
 
 /*
  * A QuestLogin object holds all the quest components bound together with a particular
  * set of login rules (respawn location, etc.)
  */
 public class QuestLogin {
-	private QuestPrerequisites mPrerequisites = null;
+	private @Nullable QuestPrerequisites mPrerequisites = null;
 	private long mMinLogoutTime = 0;
-	private QuestActions mActions = null;
+	private final QuestActions mActions;
 
 	public QuestLogin(JsonObject object) throws Exception {
+		QuestActions actions = null;
+
 		Set<Entry<String, JsonElement>> entries = object.entrySet();
 		for (Entry<String, JsonElement> ent : entries) {
 			String key = ent.getKey();
@@ -34,12 +37,17 @@ public class QuestLogin {
 				mPrerequisites = new QuestPrerequisites(value);
 				break;
 			case "actions":
-				mActions = new QuestActions("", "", EntityType.VILLAGER, 0, value);
+				actions = new QuestActions("", "", EntityType.VILLAGER, 0, value);
 				break;
 			default:
 				throw new Exception("Unknown login quest key: '" + key + "'");
 			}
 		}
+
+		if (actions == null) {
+			throw new Exception("Login quest file has no actions");
+		}
+		mActions = actions;
 	}
 
 	/* Returns true if prerequisites match and actions were taken, false otherwise */

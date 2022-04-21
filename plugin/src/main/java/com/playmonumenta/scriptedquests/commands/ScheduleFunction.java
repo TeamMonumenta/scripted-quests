@@ -17,6 +17,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ProxiedCommandSender;
 import org.bukkit.entity.Entity;
+import org.jetbrains.annotations.Nullable;
 
 public class ScheduleFunction {
 	private abstract static class DelayedAction {
@@ -82,7 +83,7 @@ public class ScheduleFunction {
 
 	private final List<DelayedAction> mActions = new ArrayList<>();
 	private final Plugin mPlugin;
-	private Integer mTaskId = null;
+	private @Nullable Integer mTaskId = null;
 	private final Runnable mRunnable = new Runnable() {
 		// Re-use the same temporary list each iteration
 		private final List<DelayedAction> mActionsToRun = new ArrayList<>();

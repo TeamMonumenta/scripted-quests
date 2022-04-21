@@ -8,6 +8,7 @@ import java.util.Map;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 public class ClickableManager {
 	private final Map<String, ClickableEntry> mClickables = new HashMap<String, ClickableEntry>();
@@ -15,7 +16,7 @@ public class ClickableManager {
 	/*
 	 * If sender is non-null, it will be sent debugging information
 	 */
-	public void reload(Plugin plugin, CommandSender sender) {
+	public void reload(Plugin plugin, @Nullable CommandSender sender) {
 		mClickables.clear();
 
 		QuestUtils.loadScriptedQuests(plugin, "clickables", sender, (object) -> {

@@ -65,7 +65,7 @@ public class ShowZones {
 
 		Plugin mPlugin;
 		UUID mPlayerUuid;
-		String mLayerName = null;
+		String mLayerName;
 		@Nullable String mPropertyName = null;
 
 		public ShownInfo(Plugin plugin, UUID playerUuid, String layerName, @Nullable String propertyName) {

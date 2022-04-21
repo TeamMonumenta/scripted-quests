@@ -28,20 +28,20 @@ import com.playmonumenta.scriptedquests.zones.ZoneManager;
 import java.io.File;
 import java.util.Random;
 import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.Nullable;
 
 public class Plugin extends JavaPlugin {
-	private static Plugin INSTANCE = null;
+	private static @Nullable Plugin INSTANCE = null;
 
 	private FileConfiguration mConfig;
 	private File mConfigFile;
-	public Boolean mShowTimerNames = null;
+	public @Nullable Boolean mShowTimerNames = null;
 	public boolean mShowZonesDynmap = false;
 	public boolean mFallbackZoneLookup = false;
 
@@ -54,7 +54,7 @@ public class Plugin extends JavaPlugin {
 	public RaceManager mRaceManager;
 	public NpcTradeManager mTradeManager;
 	public CommandTimerManager mTimerManager;
-	private TranslationsManager mTranslationsManager = null;
+	private TranslationsManager mTranslationsManager;
 	public CodeManager mCodeManager;
 	public ZoneManager mZoneManager;
 	public ZonePropertyManager mZonePropertyManager;
@@ -63,7 +63,6 @@ public class Plugin extends JavaPlugin {
 	public GuiManager mGuiManager;
 	public ZoneEventListener mZoneEventListener;
 
-	public World mWorld;
 	public Random mRandom = new Random();
 	private ScheduleFunction mScheduledFunctionsManager;
 
@@ -120,8 +119,6 @@ public class Plugin extends JavaPlugin {
 		INSTANCE = this;
 
 		PluginManager manager = getServer().getPluginManager();
-
-		mWorld = Bukkit.getWorlds().get(0);
 
 		mQuestCompassManager = new QuestCompassManager(this);
 		mNpcManager = new QuestNpcManager(this);
@@ -186,7 +183,7 @@ public class Plugin extends JavaPlugin {
 	}
 
 	/* Sender will be sent debugging info if non-null */
-	public void reloadConfig(CommandSender sender) {
+	public void reloadConfig(@Nullable CommandSender sender) {
 		reloadConfigYaml(sender);
 		mNpcManager.reload(this, sender);
 		mClickableManager.reload(this, sender);
@@ -246,6 +243,7 @@ public class Plugin extends JavaPlugin {
 		}
 	}
 
+	@SuppressWarnings("NullAway") // Never returns null unless the server is horribly broken anyway
 	public static Plugin getInstance() {
 		return INSTANCE;
 	}

@@ -40,10 +40,10 @@ public class RaceFactory {
 	private final boolean mAllowNpcInteraction;
 	private final boolean mRingless;
 	private final Location mStart;
-	private final QuestActions mStartActions;
+	private final @Nullable QuestActions mStartActions;
 	private final List<RaceWaypoint> mWaypoints = new ArrayList<RaceWaypoint>();
 	private final List<RaceTime> mTimes = new ArrayList<RaceTime>();
-	private final QuestActions mLoseActions;
+	private final @Nullable QuestActions mLoseActions;
 	private final Plugin mPlugin;
 	private final RaceManager mManager;
 
@@ -287,6 +287,9 @@ public class RaceFactory {
 				try {
 					/* TODO: Someday it'd be nice to just look up the appropriate range, and the player's value, rather than everything */
 					Map<String, Integer> values = MonumentaRedisSyncAPI.getLeaderboard(mObjective.getName(), 0, -1, true).get();
+					if (values == null) {
+						throw new Exception("Leaderboard retrieved values variable is null");
+					}
 					for (Map.Entry<String, Integer> entry : values.entrySet()) {
 						if (entry.getValue() != 0) {
 							entries.add(new LeaderboardEntry(entry.getKey(), "", entry.getValue(), RaceUtils.msToTimeString(entry.getValue())));

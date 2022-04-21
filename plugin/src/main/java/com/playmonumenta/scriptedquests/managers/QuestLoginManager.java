@@ -6,12 +6,13 @@ import com.playmonumenta.scriptedquests.utils.QuestUtils;
 import java.util.ArrayList;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.jetbrains.annotations.Nullable;
 
 public class QuestLoginManager {
 	private final ArrayList<QuestLogin> mLogins = new ArrayList<QuestLogin>();
 
 	/* If sender is non-null, it will be sent debugging information */
-	public void reload(Plugin plugin, CommandSender sender) {
+	public void reload(Plugin plugin, @Nullable CommandSender sender) {
 		mLogins.clear();
 		QuestUtils.loadScriptedQuests(plugin, "login", sender, (object) -> {
 			mLogins.add(new QuestLogin(object));
