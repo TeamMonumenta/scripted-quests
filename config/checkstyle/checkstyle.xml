@@ -30,7 +30,6 @@
 		<property name="max" value="9000"/>
 		<property name="ignorePattern" value="^package.*|^import.*|a href|href|http://|https://|ftp://"/>
 	</module>
-
 	<module name="TreeWalker">
 		<property name="tabWidth" value="4"/>
 		<module name="OuterTypeFilename"/>
@@ -194,11 +193,6 @@
 			<property name="ignoreComments" value="true"/>
 		</module>
 		<module name="RegexpSinglelineJava">
-			<property name="format" value="[^\n\r\t -~]"/>
-			<property name="message" value="Non-ascii characters should not be used"/>
-			<property name="ignoreComments" value="true"/>
-		</module>
-		<module name="RegexpSinglelineJava">
 			<property name="format" value="@EventHandler(?!.*ignoreCancelled.*)"/>
 			<property name="ignoreComments" value="true"/>
 			<property name="message" value="Event handlers must specify ignoreCancelled"/>
@@ -219,11 +213,6 @@
 			<property name="id" value="AnnotationLocationVariables"/>
 			<property name="tokens" value="VARIABLE_DEF"/>
 			<property name="allowSamelineMultipleAnnotations" value="true"/>
-		</module>
-		<module name="AtclauseOrder">
-			<property name="tagOrder" value="@param, @return, @throws, @deprecated"/>
-			<property name="target"
-					  value="CLASS_DEF, INTERFACE_DEF, ENUM_DEF, METHOD_DEF, CTOR_DEF, VARIABLE_DEF"/>
 		</module>
 		<module name="MethodName">
 			<property name="format" value="^[a-z][a-z0-9][a-zA-Z0-9_]*$"/>

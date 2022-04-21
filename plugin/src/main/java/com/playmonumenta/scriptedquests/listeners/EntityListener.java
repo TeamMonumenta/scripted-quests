@@ -27,7 +27,7 @@ public class EntityListener implements Listener {
 		mPlugin = plugin;
 	}
 
-	@EventHandler(priority = EventPriority.LOWEST)
+	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
 	public void entityDamageByEntityEvent(EntityDamageByEntityEvent event) {
 		Entity damagee = event.getEntity();
 		Entity damager = event.getDamager();
@@ -54,32 +54,26 @@ public class EntityListener implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.LOWEST)
+	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void entityCombustByBlockEvent(EntityCombustByBlockEvent event) {
-		if (!event.isCancelled()) {
-			cancelIfNpc(event.getEntity(), event);
-		}
+		cancelIfNpc(event.getEntity(), event);
 	}
 
-	@EventHandler(priority = EventPriority.LOWEST)
+	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void entityCombustByEntityEvent(EntityCombustByEntityEvent event) {
-		if (!event.isCancelled()) {
-			cancelIfNpc(event.getEntity(), event);
-		}
+		cancelIfNpc(event.getEntity(), event);
 	}
 
-	@EventHandler(priority = EventPriority.LOWEST)
+	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void entityDamageEvent(EntityDamageEvent event) {
-		if (!event.isCancelled()
-			&& event.getCause() != DamageCause.CUSTOM && event.getCause() != DamageCause.VOID) {
+		if (event.getCause() != DamageCause.CUSTOM && event.getCause() != DamageCause.VOID) {
 			cancelIfNpc(event.getEntity(), event);
 		}
 	}
 
-	@EventHandler(priority = EventPriority.LOWEST)
+	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void entityPotionEffectEvent(EntityPotionEffectEvent event) {
-		if (!event.isCancelled() && event.getAction().equals(EntityPotionEffectEvent.Action.ADDED)
-			&& !event.getNewEffect().getType().equals(PotionEffectType.HEAL)) {
+		if (event.getAction().equals(EntityPotionEffectEvent.Action.ADDED) && !event.getNewEffect().getType().equals(PotionEffectType.HEAL)) {
 			cancelIfNpc(event.getEntity(), event);
 		}
 	}
@@ -91,19 +85,19 @@ public class EntityListener implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void potionSplashEvent(PotionSplashEvent event) {
 		// Don't apply potion effects to quest entities
 		event.getAffectedEntities().removeIf(entity -> mPlugin.mNpcManager.getInteractNPC(entity.getCustomName(), entity.getType()) != null);
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void areaEffectCloudApplyEvent(AreaEffectCloudApplyEvent event) {
 		// Don't apply potion effects to quest entities
 		event.getAffectedEntities().removeIf(entity -> mPlugin.mNpcManager.getInteractNPC(entity.getCustomName(), entity.getType()) != null);
 	}
 
-	@EventHandler(priority = EventPriority.LOW)
+	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
 	public void playerLeashEntityEvent(PlayerLeashEntityEvent event) {
 		Entity leashee = event.getEntity();
 		QuestNpc npc = mPlugin.mNpcManager.getInteractNPC(leashee.getCustomName(), leashee.getType());

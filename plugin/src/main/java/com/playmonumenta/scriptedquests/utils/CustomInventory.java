@@ -39,7 +39,7 @@ public abstract class CustomInventory {
 			if (mMainListener == null) {
 				mMainListener = new Listener() {
 
-					@EventHandler
+					@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = false)
 					public void pluginDisable(PluginDisableEvent event) {
 						HashSet<CustomInventory> invs = mOpenedInvsByPlugin.remove(event.getPlugin());
 						if (invs != null) {
@@ -98,7 +98,7 @@ public abstract class CustomInventory {
 	}
 
 	public CustomInventory(Player owner, int size, String title) {
-		mInventory = Bukkit.createInventory(owner, size, title);
+		mInventory = Bukkit.createInventory(owner, size, Component.text(title));
 	}
 
 	public CustomInventory(Player owner, int size, Component title) {

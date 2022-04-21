@@ -33,6 +33,16 @@ public class MessagingUtils {
 	public static final GsonComponentSerializer GSON_COMPONENT_SERIALIZER = GsonComponentSerializer.gson();
 	public static final PlainComponentSerializer PLAIN_SERIALIZER = PlainComponentSerializer.plain();
 
+	public static String plainText(Component formattedText) {
+		// This is only legacy text because we have a bunch of section symbols lying around that need to be updated.
+		String legacyText = PLAIN_SERIALIZER.serialize(formattedText);
+		return plainFromLegacy(legacyText);
+	}
+
+	public static String plainFromLegacy(String legacyText) {
+		return PLAIN_SERIALIZER.serialize(LEGACY_SERIALIZER.deserialize(legacyText));
+	}
+
 	public static String translatePlayerName(Player player, String message) {
 		return message.replaceAll("@S", player.getName()).replaceAll("@U", player.getUniqueId().toString().toLowerCase());
 	}

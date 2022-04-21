@@ -45,7 +45,7 @@ public class QuestLogin {
 	/* Returns true if prerequisites match and actions were taken, false otherwise */
 	public boolean loginEvent(Plugin plugin, PlayerJoinEvent event) {
 		Player player = event.getPlayer();
-		long timeLoggedOut = System.currentTimeMillis() - player.getLastPlayed();
+		long timeLoggedOut = System.currentTimeMillis() - player.getLastSeen();
 
 		if (timeLoggedOut < mMinLogoutTime) {
 			return false;

@@ -43,7 +43,7 @@ public class PlayerListener implements Listener {
 		mPlugin = plugin;
 	}
 
-	@EventHandler(priority = EventPriority.LOWEST)
+	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
 	public void playerInteractEvent(PlayerInteractEvent event) {
 		Action action = event.getAction();
 		Player player = event.getPlayer();
@@ -79,7 +79,7 @@ public class PlayerListener implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.LOWEST)
+	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
 	public void playerAnimationEvent(PlayerAnimationEvent event) {
 
 		Player player = event.getPlayer();
@@ -102,7 +102,7 @@ public class PlayerListener implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.LOWEST)
+	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void playerInteractEntityEvent(PlayerInteractEntityEvent event) {
 		Entity entity = event.getRightClicked();
 		Player player = event.getPlayer();
@@ -111,16 +111,11 @@ public class PlayerListener implements Listener {
 		if (entity instanceof Villager) {
 			Villager villager = (Villager)entity;
 
-			if (event.isCancelled()) {
-				return;
-			}
-
 			if (!villager.isTrading() && MetadataUtils.checkOnceThisTick(mPlugin, player, "ScriptedQuestsTraderNonce")) {
 				mPlugin.mTradeManager.trade(mPlugin, villager, player, event);
 			}
 		}
-		if (!event.isCancelled()
-		    && mPlugin.mInteractableManager.interactEntityEvent(mPlugin, player, item, entity)) {
+		if (mPlugin.mInteractableManager.interactEntityEvent(mPlugin, player, item, entity)) {
 			// interactEntityEvent returning true means this event should be canceled
 			event.setCancelled(true);
 		}
@@ -128,7 +123,7 @@ public class PlayerListener implements Listener {
 
 
 	@SuppressWarnings("unchecked")
-	@EventHandler(priority = EventPriority.LOWEST)
+	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
 	public void playerDeathEvent(PlayerDeathEvent event) {
 		Player player = event.getEntity();
 		mPlugin.mDeathManager.deathEvent(mPlugin, event);
@@ -159,7 +154,7 @@ public class PlayerListener implements Listener {
 	}
 
 	@SuppressWarnings("unchecked")
-	@EventHandler(priority = EventPriority.LOWEST)
+	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
 	public void playerRespawnEvent(PlayerRespawnEvent event) {
 		Player player = event.getPlayer();
 
@@ -194,7 +189,7 @@ public class PlayerListener implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.LOWEST)
+	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
 	public void playerJoinEvent(PlayerJoinEvent event) {
 		// Handle login quest events
 		// TODO: This works around an annoying interaction with Monumenta player data transfer. It should be removed later.
@@ -207,7 +202,7 @@ public class PlayerListener implements Listener {
 		}.runTaskLater(mPlugin, 3);
 	}
 
-	@EventHandler(priority = EventPriority.LOWEST)
+	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
 	public void playerQuitEvent(PlayerQuitEvent event) {
 		// Stop racing (if applicable)
 		mPlugin.mRaceManager.cancelRace(event.getPlayer());

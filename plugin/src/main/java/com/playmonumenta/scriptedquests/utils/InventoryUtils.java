@@ -11,6 +11,8 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.loot.LootContext;
 
+import net.kyori.adventure.text.Component;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
@@ -24,13 +26,12 @@ public class InventoryUtils {
 		if (item != null) {
 			ItemMeta meta = item.getItemMeta();
 			if (meta != null) {
-				List<String> lore = meta.getLore();
+				List<Component> lore = meta.lore();
 				if (lore != null && !lore.isEmpty()) {
-					for (String loreEntry : lore) {
-						if (exactMatch ? ChatColor.stripColor(loreEntry).equals(loreText) : loreEntry.contains(loreText)) {
-							return true;
-						}
-					}
+					return lore.stream().anyMatch((entry) -> {
+						String loreEntry = MessagingUtils.plainText(entry);
+						return exactMatch ? loreEntry.equals(loreText) : loreEntry.contains(loreText);
+					});
 				}
 			}
 		}
@@ -47,11 +48,10 @@ public class InventoryUtils {
 		if (item != null) {
 			ItemMeta meta = item.getItemMeta();
 			if (meta != null) {
-				String displayName = meta.getDisplayName();
-				if (displayName != null
-					    && !displayName.isEmpty()
-					    && (exactMatch ? ChatColor.stripColor(displayName).equals(nameText) : displayName.contains(nameText))) {
-					return true;
+				Component displayComponent = meta.displayName();
+				if (displayComponent != null) {
+					String displayName = MessagingUtils.plainText(displayComponent);
+					return exactMatch ? displayName.equals(nameText) : displayName.contains(nameText);
 				}
 			}
 		}

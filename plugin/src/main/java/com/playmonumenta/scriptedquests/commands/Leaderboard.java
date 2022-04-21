@@ -24,6 +24,7 @@ import dev.jorel.commandapi.arguments.EntitySelectorArgument;
 import dev.jorel.commandapi.arguments.IntegerArgument;
 import dev.jorel.commandapi.arguments.MultiLiteralArgument;
 import dev.jorel.commandapi.arguments.StringArgument;
+import net.kyori.adventure.text.Component;
 
 public class Leaderboard {
 	@SuppressWarnings("unchecked")
@@ -80,11 +81,11 @@ public class Leaderboard {
 		final Objective obj = Bukkit.getScoreboardManager().getMainScoreboard().getObjective(objective);
 
 		/* If the scoreboard objective exists, use its display name */
-		final String displayName;
+		final Component displayName;
 		if (obj != null) {
-			 displayName = obj.getDisplayName();
+			 displayName = obj.displayName();
 		} else {
-			 displayName = objective;
+			 displayName = Component.text(objective);
 		}
 
 		if (filterPlayers != null || Bukkit.getServer().getPluginManager().getPlugin("MonumentaRedisSync") == null) {
