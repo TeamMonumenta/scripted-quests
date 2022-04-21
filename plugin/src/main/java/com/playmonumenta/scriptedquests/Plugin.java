@@ -86,7 +86,6 @@ public class Plugin extends JavaPlugin {
 		InteractNpc.register(this);
 		Clickable.register(this);
 		GiveLootTable.register(mRandom);
-		GiveItemWithLore.register();
 		RaceCommand.register(this);
 		Leaderboard.register(this);
 		Line.register();
