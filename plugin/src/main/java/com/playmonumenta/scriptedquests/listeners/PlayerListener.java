@@ -1,16 +1,13 @@
 package com.playmonumenta.scriptedquests.listeners;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.playmonumenta.scriptedquests.Constants;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.point.Point;
 import com.playmonumenta.scriptedquests.quests.QuestDeath.DeathActions;
 import com.playmonumenta.scriptedquests.quests.components.DeathLocation;
 import com.playmonumenta.scriptedquests.utils.MetadataUtils;
-
-import org.bukkit.Bukkit;
+import java.util.ArrayList;
+import java.util.List;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
