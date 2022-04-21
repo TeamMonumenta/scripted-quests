@@ -1,16 +1,13 @@
 package com.playmonumenta.scriptedquests.commands;
 
 import com.playmonumenta.scriptedquests.Plugin;
-
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.LocationArgument;
 import dev.jorel.commandapi.arguments.MultiLiteralArgument;
 import dev.jorel.commandapi.arguments.TextArgument;
-
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-
 import org.bukkit.Location;
 
 public class TestZone {

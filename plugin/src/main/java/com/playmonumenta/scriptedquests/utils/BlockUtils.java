@@ -2,7 +2,6 @@ package com.playmonumenta.scriptedquests.utils;
 
 import java.util.EnumMap;
 import java.util.Map;
-
 import org.bukkit.Axis;
 import org.bukkit.Location;
 import org.bukkit.Material;

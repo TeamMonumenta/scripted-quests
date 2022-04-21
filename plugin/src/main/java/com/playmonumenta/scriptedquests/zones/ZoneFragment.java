@@ -1,15 +1,13 @@
 package com.playmonumenta.scriptedquests.zones;
 
+import com.playmonumenta.scriptedquests.utils.VectorUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.playmonumenta.scriptedquests.utils.VectorUtils;
-
+import javax.annotation.Nullable;
 import org.bukkit.Axis;
 import org.bukkit.util.Vector;
-import javax.annotation.Nullable;
 
 /*
  * A fragment of a zone; this is used to find zones quickly, but not hold their properties.

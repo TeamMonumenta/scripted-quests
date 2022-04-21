@@ -1,14 +1,12 @@
 package com.playmonumenta.scriptedquests.commands;
 
-import java.util.Collection;
-
-import org.bukkit.entity.Damageable;
-
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.BooleanArgument;
 import dev.jorel.commandapi.arguments.DoubleArgument;
 import dev.jorel.commandapi.arguments.EntitySelectorArgument;
+import java.util.Collection;
+import org.bukkit.entity.Damageable;
 
 public class Damage {
 	public static void register() {

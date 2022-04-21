@@ -1,15 +1,14 @@
 package com.playmonumenta.scriptedquests.commands;
 
-import org.bukkit.Location;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.util.Consumer;
-
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.IntegerArgument;
 import dev.jorel.commandapi.arguments.LocationArgument;
 import dev.jorel.commandapi.arguments.LocationType;
 import dev.jorel.commandapi.arguments.MultiLiteralArgument;
+import org.bukkit.Location;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.util.Consumer;
 
 public class Clock {
 	static class SummonTimerConsumer implements Consumer<ArmorStand> {

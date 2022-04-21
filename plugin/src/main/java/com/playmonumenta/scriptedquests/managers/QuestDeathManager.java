@@ -1,13 +1,11 @@
 package com.playmonumenta.scriptedquests.managers;
 
-import java.util.ArrayList;
-
-import org.bukkit.command.CommandSender;
-import org.bukkit.event.entity.PlayerDeathEvent;
-
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.QuestDeath;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
+import java.util.ArrayList;
+import org.bukkit.command.CommandSender;
+import org.bukkit.event.entity.PlayerDeathEvent;
 
 public class QuestDeathManager {
 	private final ArrayList<QuestDeath> mDeaths = new ArrayList<QuestDeath>();

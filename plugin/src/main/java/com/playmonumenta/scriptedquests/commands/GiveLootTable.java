@@ -1,21 +1,18 @@
 package com.playmonumenta.scriptedquests.commands;
 
-import java.util.Collection;
-import java.util.Random;
-
 import com.playmonumenta.scriptedquests.utils.InventoryUtils;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
-
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.Player;
-
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.EntitySelectorArgument;
 import dev.jorel.commandapi.arguments.IntegerArgument;
 import dev.jorel.commandapi.arguments.TextArgument;
+import java.util.Collection;
+import java.util.Random;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.Player;
 
 public class GiveLootTable {
 	@SuppressWarnings("unchecked")

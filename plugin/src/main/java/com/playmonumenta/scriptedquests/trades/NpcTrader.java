@@ -1,13 +1,12 @@
 package com.playmonumenta.scriptedquests.trades;
 
-import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.quests.QuestNpc;
+import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.Set;
 
 /*
  * An NpcTrader object holds prerequisites for each trade slot in the NPC's inventory

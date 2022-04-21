@@ -1,17 +1,14 @@
 package com.playmonumenta.scriptedquests.trades;
 
+import com.playmonumenta.scriptedquests.quests.components.QuestActions;
 import java.util.List;
-
 import javax.annotation.Nullable;
-
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.MerchantRecipe;
 import org.jetbrains.annotations.NotNull;
-
-import com.playmonumenta.scriptedquests.quests.components.QuestActions;
 
 /**
  * This event is called when a player right-clicks a villager to start trading.

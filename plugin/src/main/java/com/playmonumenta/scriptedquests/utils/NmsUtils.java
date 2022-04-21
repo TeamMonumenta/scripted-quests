@@ -1,7 +1,6 @@
 package com.playmonumenta.scriptedquests.utils;
 
 import com.playmonumenta.scriptedquests.adapters.VersionAdapter;
-
 import java.util.logging.Logger;
 
 public class NmsUtils {

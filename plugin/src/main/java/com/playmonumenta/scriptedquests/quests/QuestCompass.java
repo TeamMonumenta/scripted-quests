@@ -1,16 +1,14 @@
 package com.playmonumenta.scriptedquests.quests;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.quests.components.CompassLocation;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
 
 public class QuestCompass {
 	private String mQuestName;

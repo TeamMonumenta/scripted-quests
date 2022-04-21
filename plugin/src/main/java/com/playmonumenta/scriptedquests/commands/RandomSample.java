@@ -1,11 +1,5 @@
 package com.playmonumenta.scriptedquests.commands;
 
-import java.util.Collection;
-import java.util.SplittableRandom;
-import java.util.TreeSet;
-
-import org.bukkit.entity.Entity;
-
 import com.playmonumenta.scriptedquests.utils.ScoreboardUtils;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPICommand;
@@ -14,6 +8,10 @@ import dev.jorel.commandapi.arguments.EntitySelectorArgument;
 import dev.jorel.commandapi.arguments.IntegerArgument;
 import dev.jorel.commandapi.arguments.MultiLiteralArgument;
 import dev.jorel.commandapi.arguments.ObjectiveArgument;
+import java.util.Collection;
+import java.util.SplittableRandom;
+import java.util.TreeSet;
+import org.bukkit.entity.Entity;
 
 public class RandomSample {
 	private static final SplittableRandom mRandom = new SplittableRandom();

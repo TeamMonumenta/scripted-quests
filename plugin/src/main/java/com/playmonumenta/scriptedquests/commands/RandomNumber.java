@@ -1,11 +1,10 @@
 package com.playmonumenta.scriptedquests.commands;
 
-import java.util.SplittableRandom;
-
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.IntegerArgument;
+import java.util.SplittableRandom;
 
 public class RandomNumber {
 	private static final SplittableRandom mRandom = new SplittableRandom();

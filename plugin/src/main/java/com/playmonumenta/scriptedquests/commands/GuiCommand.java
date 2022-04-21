@@ -1,19 +1,16 @@
 package com.playmonumenta.scriptedquests.commands;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Optional;
-
-import org.bukkit.entity.Player;
-
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.managers.GuiManager;
 import com.playmonumenta.scriptedquests.quests.Gui;
-
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.Argument;
 import dev.jorel.commandapi.arguments.EntitySelectorArgument;
 import dev.jorel.commandapi.arguments.StringArgument;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Optional;
+import org.bukkit.entity.Player;
 
 public class GuiCommand {
 

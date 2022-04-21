@@ -1,11 +1,10 @@
 package com.playmonumenta.scriptedquests.zones;
 
 import com.playmonumenta.scriptedquests.utils.VectorUtils;
-
+import javax.annotation.Nullable;
 import org.bukkit.Axis;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
-import javax.annotation.Nullable;
 
 public class ZoneBase {
 	protected Vector mPosition;

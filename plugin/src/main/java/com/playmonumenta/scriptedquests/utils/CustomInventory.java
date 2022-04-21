@@ -2,7 +2,7 @@ package com.playmonumenta.scriptedquests.utils;
 
 import java.util.HashMap;
 import java.util.HashSet;
-
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -16,8 +16,6 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.Plugin;
-
-import net.kyori.adventure.text.Component;
 
 /**
  * This code was originally copied from NBTEditor, Copyright (C) 2013-2018 Gonçalo Baltazar (me@goncalomb.com), released under GPLv3.

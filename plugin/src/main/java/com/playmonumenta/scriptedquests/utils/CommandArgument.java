@@ -1,18 +1,16 @@
 package com.playmonumenta.scriptedquests.utils;
 
+import dev.jorel.commandapi.SuggestionInfo;
+import dev.jorel.commandapi.arguments.GreedyStringArgument;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.util.StringUtil;
-
-import dev.jorel.commandapi.SuggestionInfo;
-import dev.jorel.commandapi.arguments.GreedyStringArgument;
 
 public class CommandArgument extends GreedyStringArgument {
 

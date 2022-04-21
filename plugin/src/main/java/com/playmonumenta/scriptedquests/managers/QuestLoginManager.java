@@ -1,13 +1,11 @@
 package com.playmonumenta.scriptedquests.managers;
 
-import java.util.ArrayList;
-
-import org.bukkit.command.CommandSender;
-import org.bukkit.event.player.PlayerJoinEvent;
-
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.QuestLogin;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
+import java.util.ArrayList;
+import org.bukkit.command.CommandSender;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 public class QuestLoginManager {
 	private final ArrayList<QuestLogin> mLogins = new ArrayList<QuestLogin>();

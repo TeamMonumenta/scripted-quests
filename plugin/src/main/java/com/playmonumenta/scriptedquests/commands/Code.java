@@ -2,15 +2,13 @@ package com.playmonumenta.scriptedquests.commands;
 
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.CodeEntry;
-
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.TextArgument;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 public class Code {
 	public static void register(Plugin plugin) {

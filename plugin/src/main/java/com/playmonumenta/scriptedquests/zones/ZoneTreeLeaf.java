@@ -2,13 +2,12 @@ package com.playmonumenta.scriptedquests.zones;
 
 import java.util.HashSet;
 import java.util.Set;
-
+import javax.annotation.Nullable;
 import org.bukkit.Bukkit;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
-import javax.annotation.Nullable;
-import org.dynmap.markers.MarkerSet;
 import org.dynmap.markers.AreaMarker;
+import org.dynmap.markers.MarkerSet;
 
 public class ZoneTreeLeaf extends ZoneTreeBase {
 	private ZoneFragment mFragment;

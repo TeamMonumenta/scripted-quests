@@ -1,30 +1,27 @@
 package com.playmonumenta.scriptedquests.utils;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.regex.Pattern;
-
-import com.playmonumenta.scriptedquests.managers.TranslationsManager;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.playmonumenta.scriptedquests.Plugin;
-
+import com.playmonumenta.scriptedquests.managers.TranslationsManager;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.regex.Pattern;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 public class MessagingUtils {
 	private static final Pattern RE_NUMERIC = Pattern.compile("[0-9]+");

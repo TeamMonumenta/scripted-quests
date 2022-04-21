@@ -2,7 +2,6 @@ package com.playmonumenta.scriptedquests.races;
 
 import java.util.Arrays;
 import java.util.List;
-
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
