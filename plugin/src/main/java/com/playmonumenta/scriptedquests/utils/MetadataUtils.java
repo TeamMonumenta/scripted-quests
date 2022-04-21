@@ -35,7 +35,7 @@ public class MetadataUtils {
 	 * @param tickOffset Offsets the tick amount checked
 	 * @return A true/false. If true, this has been called already. If false, it has not been called.
 	 */
-	@SuppressWarnings({"unused", "BooleanMethodIsAlwaysInverted"})
+	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
 	public static boolean happenedThisTick(Entity entity, String metakey, int tickOffset) {
 		return entity.hasMetadata(metakey)
 		       && entity.getMetadata(metakey).get(0).asInt() == entity.getTicksLived() + tickOffset;
@@ -51,7 +51,7 @@ public class MetadataUtils {
 	 * @param tickOffset Offsets the tick amount checked
 	 * @return A true/false. If true, this has been called already. If false, it has not been called.
 	 */
-	@SuppressWarnings({"unused", "BooleanMethodIsAlwaysInverted"})
+	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
 	public static boolean happenedInRecentTicks(Entity entity, String metakey, int tickOffset) {
 		return entity.hasMetadata(metakey)
 			&& entity.getMetadata(metakey).get(0).asInt() + tickOffset >= entity.getTicksLived();
