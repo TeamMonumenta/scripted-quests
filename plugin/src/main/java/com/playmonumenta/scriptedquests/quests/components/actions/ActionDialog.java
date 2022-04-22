@@ -15,12 +15,13 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.bukkit.entity.EntityType;
+import org.jetbrains.annotations.Nullable;
 
 public class ActionDialog implements ActionBase {
 	private ArrayList<DialogBase> mDialogs = new ArrayList<DialogBase>();
 
-	public ActionDialog(String npcName, String displayName,
-	             EntityType entityType, JsonElement element) throws Exception {
+	public ActionDialog(@Nullable String npcName, @Nullable String displayName,
+	             @Nullable EntityType entityType, JsonElement element) throws Exception {
 		JsonObject object = element.getAsJsonObject();
 		if (object == null) {
 			throw new Exception("dialog value is not an object!");
@@ -31,12 +32,18 @@ public class ActionDialog implements ActionBase {
 			String key = ent.getKey();
 
 			if (key.equals("text")) {
+				if (displayName == null) {
+					throw new Exception("Tried to create text dialog but displayName was null");
+				}
 				mDialogs.add(new DialogText(displayName, ent.getValue()));
 			} else if (key.equals("raw_text")) {
 				mDialogs.add(new DialogRawText(ent.getValue()));
 			} else if (key.equals("clickable_text")) {
 				mDialogs.add(new DialogClickableText(npcName, displayName, entityType, ent.getValue()));
 			} else if (key.equals("random_text")) {
+				if (displayName == null) {
+					throw new Exception("Tried to create random text dialog but displayName was null");
+				}
 				mDialogs.add(new DialogRandomText(displayName, ent.getValue()));
 			} else if (key.equals("all_in_one_text")) {
 				mDialogs.add(new DialogAllInOneText(npcName, ent.getValue()));

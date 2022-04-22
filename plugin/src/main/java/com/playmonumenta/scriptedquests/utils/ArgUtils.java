@@ -3,6 +3,7 @@ package com.playmonumenta.scriptedquests.utils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.regex.Pattern;
+import org.jetbrains.annotations.Nullable;
 
 public class ArgUtils {
 	private static final Pattern RE_ALLOWED_WITHOUT_QUOTES = Pattern.compile("[0-9A-Za-z_.+-]+");
@@ -14,7 +15,7 @@ public class ArgUtils {
 		return !RE_ALLOWED_WITHOUT_QUOTES.matcher(arg).matches();
 	}
 
-	public static String quoteIfNeeded(String arg) {
+	public static @Nullable String quoteIfNeeded(@Nullable String arg) {
 		if (arg == null) {
 			return null;
 		}

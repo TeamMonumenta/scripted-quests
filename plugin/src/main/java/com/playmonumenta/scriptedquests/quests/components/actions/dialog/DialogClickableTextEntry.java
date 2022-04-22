@@ -19,6 +19,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.jetbrains.annotations.Nullable;
 
 public class DialogClickableTextEntry implements DialogBase {
 	public static class PlayerClickableTextEntry {
@@ -46,11 +47,11 @@ public class DialogClickableTextEntry implements DialogBase {
 		}
 	}
 
-	private String mText;
+	private final String mText;
 	private Double mRadius = 4.0;
-	private QuestActions mActions;
+	private final QuestActions mActions;
 	private final int mIdx;
-	private HoverEvent<Component> mHoverEvent = null;
+	private @Nullable HoverEvent<Component> mHoverEvent = null;
 
 	public DialogClickableTextEntry(String npcName, String displayName, EntityType entityType,
 	                                JsonElement element, int elementIdx) throws Exception {
@@ -68,6 +69,9 @@ public class DialogClickableTextEntry implements DialogBase {
 			delayTicks = delayElement.getAsInt();
 		}
 
+		String text = null;
+		QuestActions actions = null;
+
 		Set<Entry<String, JsonElement>> entries = object.entrySet();
 		for (Entry<String, JsonElement> ent : entries) {
 			String key = ent.getKey();
@@ -84,22 +88,27 @@ public class DialogClickableTextEntry implements DialogBase {
 			}
 
 			if (key.equals("player_text")) {
-				mText = value.getAsString();
-				if (mText == null) {
+				text = value.getAsString();
+				if (text == null) {
 					throw new Exception("clickable_text player_text entry is not a string!");
 				}
 			} else if (key.equals("player_valid_radius")) {
 				mRadius = value.getAsDouble();
 			} else if (key.equals("actions")) {
-				mActions = new QuestActions(npcName, displayName, entityType, delayTicks, value);
+				actions = new QuestActions(npcName, displayName, entityType, delayTicks, value);
 			} else if (key.equals("hover_text")) {
 				mHoverEvent = HoverEvent.showText(MessagingUtils.AMPERSAND_SERIALIZER.deserialize(value.getAsString().replace("§", "&")));
 			}
 		}
 
-		if (mActions == null) {
+		if (actions == null) {
 			throw new Exception("clickable_text value without an action!");
 		}
+		if (text == null) {
+			throw new Exception("clickable_text value without player_text!");
+		}
+		mText = text;
+		mActions = actions;
 	}
 
 	@SuppressWarnings("unchecked")

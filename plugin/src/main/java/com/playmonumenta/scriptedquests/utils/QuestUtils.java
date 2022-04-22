@@ -8,10 +8,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Set;
-import javax.annotation.Nullable;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.Nullable;
 
 public class QuestUtils {
 	@FunctionalInterface
@@ -20,10 +20,10 @@ public class QuestUtils {
 		 * Called with each file loaded into a JSON object
 		 * Return value is identifying string to return to the user or null
 		 */
-		String load(JsonObject object) throws Exception;
+		@Nullable String load(JsonObject object) throws Exception;
 
 		@Override
-		default String load(JsonObject object, File file) throws Exception {
+		default @Nullable String load(JsonObject object, File file) throws Exception {
 			return load(object);
 		}
 	}
@@ -37,19 +37,19 @@ public class QuestUtils {
 		String load(JsonObject object, File file) throws Exception;
 	}
 
-	public static void loadScriptedQuests(Plugin plugin, String folderName, CommandSender sender, JsonLoadAction action) {
+	public static void loadScriptedQuests(Plugin plugin, String folderName, @Nullable CommandSender sender, JsonLoadAction action) {
 		loadScriptedQuests(plugin, folderName, sender, (JsonLoadActionWithFile) action);
 	}
 
-	public static void loadScriptedQuests(Plugin plugin, String folderName, CommandSender sender, JsonLoadActionWithFile action) {
+	public static void loadScriptedQuests(Plugin plugin, String folderName, @Nullable CommandSender sender, JsonLoadActionWithFile action) {
 		loadScriptedQuests(plugin, folderName, Collections.singleton(sender), action);
 	}
 
-	public static void loadScriptedQuests(Plugin plugin, String folderName, Set<CommandSender> senders, JsonLoadAction action) {
+	public static void loadScriptedQuests(Plugin plugin, String folderName, Set<@Nullable CommandSender> senders, JsonLoadAction action) {
 		loadScriptedQuests(plugin, folderName, senders, (JsonLoadActionWithFile) action);
 	}
 
-	public static void loadScriptedQuests(Plugin plugin, String folderName, Set<CommandSender> senders, JsonLoadActionWithFile action) {
+	public static void loadScriptedQuests(Plugin plugin, String folderName, Set<@Nullable CommandSender> senders, JsonLoadActionWithFile action) {
 		String folderLocation = plugin.getDataFolder() + File.separator + folderName;
 		ArrayList<File> listOfFiles;
 		ArrayList<String> listOfLabels = new ArrayList<String>();
@@ -174,5 +174,4 @@ public class QuestUtils {
 			}
 		}
 	}
-
 }

@@ -22,6 +22,7 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 public class MessagingUtils {
 	private static final Pattern RE_NUMERIC = Pattern.compile("[0-9]+");
@@ -112,7 +113,7 @@ public class MessagingUtils {
 	}
 
 	public static void sendClickableNPCMessage(Plugin plugin, Player player, String message,
-	                                           String commandStr, HoverEvent hoverEvent) {
+	                                           String commandStr, @Nullable HoverEvent<?> hoverEvent) {
 		message = TranslationsManager.translate(player, message);
 		message = translatePlayerName(player, message);
 		Component formattedMessage = LEGACY_SERIALIZER.deserialize("[" + message + "]");

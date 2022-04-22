@@ -34,7 +34,7 @@ public class GuiManager {
 		reload(plugin, null);
 	}
 
-	public void reload(Plugin plugin, CommandSender sender) {
+	public void reload(Plugin plugin, @Nullable CommandSender sender) {
 		mGuis.clear();
 		QuestUtils.loadScriptedQuests(plugin, "guis", sender, (object, file) -> {
 			Gui gui = new Gui(object, file);
@@ -124,7 +124,7 @@ public class GuiManager {
 			if (page == null) {
 				return;
 			}
-			QuestContext context = new QuestContext((Plugin) getPlugin(), player, mOriginalContext != null ? mOriginalContext.getNpcEntity() : null, false, null, mOriginalContext != null ? mOriginalContext.getUsedItem() : null);
+			QuestContext context = new QuestContext(Plugin.getInstance(), player, mOriginalContext != null ? mOriginalContext.getNpcEntity() : null, false, null, mOriginalContext != null ? mOriginalContext.getUsedItem() : null);
 			GuiItem guiItem = page.getItem(event.getSlot(), context);
 			if (guiItem != null) {
 				context = context.withPrerequisites(guiItem.getPrerequisites());
@@ -160,7 +160,7 @@ public class GuiManager {
 				try {
 					GuiPage updated = page.createUpdated(getInventory());
 					mGui.setPage(mPageName, updated);
-					QuestUtils.save(getPlugin(), event.getPlayer(), mGui.toJson(), mGui.getFile());
+					QuestUtils.save(Plugin.getInstance(), event.getPlayer(), mGui.toJson(), mGui.getFile());
 					event.getPlayer().sendMessage(ChatColor.GOLD + "GUI updated.");
 				} catch (Exception e) {
 					event.getPlayer().sendMessage(ChatColor.RED + "Failed to update GUI.");
@@ -172,7 +172,7 @@ public class GuiManager {
 				}
 				QuestActions closeActions = page.getCloseActions();
 				if (closeActions != null) {
-					closeActions.doActions(new QuestContext((Plugin) getPlugin(), (Player) event.getPlayer(), null));
+					closeActions.doActions(new QuestContext(Plugin.getInstance(), (Player) event.getPlayer(), null));
 				}
 			}
 		}

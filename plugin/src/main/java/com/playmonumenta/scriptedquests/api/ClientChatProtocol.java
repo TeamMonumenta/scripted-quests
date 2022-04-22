@@ -29,10 +29,8 @@ public class ClientChatProtocol implements PluginMessageListener, CommandExecuto
 	private static final Gson GSON = new Gson();
 	private final Set<UUID> mShouldSendMessage = new HashSet<>();
 	private boolean mOverride = false;
-	private static Plugin mPlugin;
 
 	private ClientChatProtocol(Plugin plugin) {
-		mPlugin = plugin;
 		plugin.getCommand("toggleclientchatapi").setExecutor(this);
 
 		plugin.getServer().getMessenger().registerOutgoingPluginChannel(plugin, Constants.API_CHANNEL_ID);
@@ -48,8 +46,9 @@ public class ClientChatProtocol implements PluginMessageListener, CommandExecuto
 	}
 
 	public void deinitialize() {
-		mPlugin.getServer().getMessenger().unregisterOutgoingPluginChannel(mPlugin);
-		mPlugin.getServer().getMessenger().unregisterIncomingPluginChannel(mPlugin);
+		Plugin plugin = Plugin.getInstance();
+		plugin.getServer().getMessenger().unregisterOutgoingPluginChannel(plugin);
+		plugin.getServer().getMessenger().unregisterIncomingPluginChannel(plugin);
 	}
 
 	private static void sendJson(Player player, JsonObject object) {
@@ -57,7 +56,7 @@ public class ClientChatProtocol implements PluginMessageListener, CommandExecuto
 		StandardByteWriter out = new StandardByteWriter(stream);
 		try {
 			out.write(GSON.toJson(object));
-			player.sendPluginMessage(mPlugin, Constants.API_CHANNEL_ID, stream.toByteArray());
+			player.sendPluginMessage(Plugin.getInstance(), Constants.API_CHANNEL_ID, stream.toByteArray());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

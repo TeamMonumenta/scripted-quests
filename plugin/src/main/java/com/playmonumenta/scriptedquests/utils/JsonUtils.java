@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import org.bukkit.Material;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class JsonUtils {
 
@@ -46,7 +47,7 @@ public abstract class JsonUtils {
 		return element.getAsString();
 	}
 
-	public static String getString(JsonObject object, String property, String defaultValue) throws Exception {
+	public static @Nullable String getString(JsonObject object, String property, @Nullable String defaultValue) throws Exception {
 		JsonElement element = object.get(property);
 		if (element == null) {
 			return defaultValue;
@@ -111,7 +112,7 @@ public abstract class JsonUtils {
 		return array;
 	}
 
-	public static Material getMaterial(JsonObject object, String property, Material defaultValue) throws Exception {
+	public static @Nullable Material getMaterial(JsonObject object, String property, @Nullable Material defaultValue) throws Exception {
 		JsonElement element = object.get(property);
 		if (element == null) {
 			return defaultValue;

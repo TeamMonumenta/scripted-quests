@@ -54,9 +54,14 @@ class ZoneDefragmenter {
 	}
 
 	private void mergeTwoLevels(FragCombos fragCombos, Integer mergeLevel, Integer lowerLevel, Integer upperLevel) {
-		// Previous code ensures null will not appear.
 		FragCombos upperGroup = mMergedCombos.get(upperLevel);
 		FragCombos lowerGroup = mMergedCombos.get(lowerLevel);
+		// Previous code ensures null will not appear.
+		if (upperGroup == null) {
+			throw new RuntimeException("upperGroup is somehow null, definitely a bug");
+		} else if (lowerGroup == null) {
+			throw new RuntimeException("lowerGroup is somehow null, definitely a bug");
+		}
 		for (Map.Entry<Set<Integer>, ZoneFragment> upperEntry : upperGroup.entrySet()) {
 			Set<Integer> upperIds = upperEntry.getKey();
 			ZoneFragment upperZone = upperEntry.getValue();

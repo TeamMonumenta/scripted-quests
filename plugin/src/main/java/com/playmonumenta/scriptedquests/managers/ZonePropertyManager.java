@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.jetbrains.annotations.Nullable;
 
 public class ZonePropertyManager implements Listener {
 	private Plugin mPlugin;
@@ -33,7 +34,7 @@ public class ZonePropertyManager implements Listener {
 	/*
 	 * If sender is non-null, it will be sent debugging information
 	 */
-	public void reload(Plugin plugin, CommandSender sender) {
+	public void reload(Plugin plugin, @Nullable CommandSender sender) {
 		mZoneProperties.clear();
 
 		QuestUtils.loadScriptedQuests(plugin, "zone_properties", sender, (object) -> {

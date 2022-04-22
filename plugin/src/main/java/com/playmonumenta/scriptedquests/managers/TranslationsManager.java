@@ -48,20 +48,21 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.Nullable;
 
 public class TranslationsManager implements Listener {
 	private static final int WRITE_DELAY_TICKS = 100;
 
-	private static TranslationsManager INSTANCE = null;
+	private static @Nullable TranslationsManager INSTANCE = null;
 
 	private final Plugin mPlugin;
 	private final TreeMap<UUID, String> mPlayerLanguageMap;
 	private TreeMap<String, TreeMap<String, String>> mTranslationsMap;
-	private ConfigurationSection mGSheetConfig = null;
+	private @Nullable ConfigurationSection mGSheetConfig = null;
 
 	private boolean mWriting = false;
 	private boolean mReading = false;
-	private BukkitRunnable mWriteAndReloadRunnable = null;
+	private @Nullable BukkitRunnable mWriteAndReloadRunnable = null;
 	private int mWriteDelayTicks = 0;
 
 	public TranslationsManager(Plugin plugin, ConfigurationSection translationsConfig) {
@@ -239,9 +240,11 @@ public class TranslationsManager implements Listener {
 			});
 
 			Bukkit.getScheduler().runTask(Plugin.getInstance(), () -> {
-				INSTANCE.mTranslationsMap.clear();
-				INSTANCE.mTranslationsMap = newTranslations;
-				INSTANCE.mReading = false;
+				if (INSTANCE != null) {
+					INSTANCE.mTranslationsMap.clear();
+					INSTANCE.mTranslationsMap = newTranslations;
+					INSTANCE.mReading = false;
+				}
 			});
 		});
 

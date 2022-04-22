@@ -7,10 +7,11 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import org.bukkit.entity.EntityType;
+import org.jetbrains.annotations.Nullable;
 
 public class QuestComponent {
-	private QuestPrerequisites mPrerequisites = null;
-	private QuestActions mActions = null;
+	private @Nullable QuestPrerequisites mPrerequisites = null;
+	private QuestActions mActions;
 
 	public QuestComponent(String npcName, String displayName,
 	                      EntityType entityType, JsonElement element) throws Exception {
@@ -25,6 +26,8 @@ public class QuestComponent {
 		if (delayElement != null) {
 			delayTicks = delayElement.getAsInt();
 		}
+
+		QuestActions actions = null;
 
 		Set<Entry<String, JsonElement>> entries = object.entrySet();
 		for (Entry<String, JsonElement> ent : entries) {
@@ -45,13 +48,15 @@ public class QuestComponent {
 			if (key.equals("prerequisites")) {
 				mPrerequisites = new QuestPrerequisites(value);
 			} else if (key.equals("actions")) {
-				mActions = new QuestActions(npcName, displayName, entityType, delayTicks, value);
+				actions = new QuestActions(npcName, displayName, entityType, delayTicks, value);
 			}
 		}
 
-		if (mActions == null) {
+		if (actions == null) {
 			throw new Exception("quest_components value without an action!");
 		}
+
+		mActions = actions;
 	}
 
 	public boolean doActionsIfPrereqsMet(QuestContext context) {

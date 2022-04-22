@@ -20,7 +20,7 @@ public class QuestNpcManager {
 	/*
 	 * If sender is non-null, it will be sent debugging information
 	 */
-	public void reload(Plugin plugin, CommandSender sender) {
+	public void reload(Plugin plugin, @Nullable CommandSender sender) {
 		mNpcs.clear();
 		mEntityTypes.clear();
 

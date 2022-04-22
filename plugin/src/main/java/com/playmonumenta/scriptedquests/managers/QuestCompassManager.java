@@ -18,6 +18,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 public class QuestCompassManager {
 	private static class ValidCompassEntry {
@@ -67,10 +68,10 @@ public class QuestCompassManager {
 	/*
 	 * If sender is non-null, it will be sent debugging information
 	 */
-	public void reload(Plugin plugin, CommandSender sender) {
+	public void reload(Plugin plugin, @Nullable CommandSender sender) {
 		mQuests.clear();
 		QuestUtils.loadScriptedQuests(plugin, "compass", sender, (object) -> {
-			QuestCompass quest = new QuestCompass(plugin.mWorld, object);
+			QuestCompass quest = new QuestCompass(object);
 			mQuests.add(quest);
 			return quest.getQuestName() + ":" + Integer.toString(quest.getMarkers().size());
 		});

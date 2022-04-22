@@ -5,12 +5,13 @@ import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.quests.components.QuestActions;
 import org.bukkit.ChatColor;
+import org.jetbrains.annotations.Nullable;
 
 public class RaceTime implements Comparable<RaceTime> {
 	private final String mLabel;
 	protected final int mTime;
 	private final String mColor;
-	private final QuestActions mActions;
+	private final @Nullable QuestActions mActions;
 
 	public RaceTime(JsonElement element) throws Exception {
 		JsonObject object = element.getAsJsonObject();

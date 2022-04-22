@@ -25,7 +25,7 @@ public class QuestActions {
 	private final ArrayList<ActionsElement> mActions = new ArrayList<>();
 	private int mDelayTicks;
 
-	public QuestActions(String npcName, String displayName, EntityType entityType,
+	public QuestActions(@Nullable String npcName, @Nullable String displayName, @Nullable EntityType entityType,
 	                    int delayTicks, JsonElement element) throws Exception {
 		mDelayTicks = delayTicks;
 
@@ -90,7 +90,11 @@ public class QuestActions {
 						}
 						break;
 					case "voice_over":
-						actions.mActions.add(new ActionVoiceOver(entityType, npcName, value));
+						if (entityType == null) {
+							throw new Exception("Tried to create voiceover action but entityType is null");
+						} else {
+							actions.mActions.add(new ActionVoiceOver(entityType, npcName, value));
+						}
 						break;
 					case "rerun_components":
 						if (entityType != null) {

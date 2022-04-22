@@ -2,10 +2,12 @@ package com.playmonumenta.scriptedquests.utils;
 
 import com.playmonumenta.scriptedquests.adapters.VersionAdapter;
 import java.util.logging.Logger;
+import org.jetbrains.annotations.Nullable;
 
 public class NmsUtils {
-	private static VersionAdapter mVersionAdapter = null;
+	private static @Nullable VersionAdapter mVersionAdapter = null;
 
+	@SuppressWarnings("NullAway") // Suppress null warnings here because this will never return null if the server is actually usable
 	public static VersionAdapter getVersionAdapter() {
 		return mVersionAdapter;
 	}

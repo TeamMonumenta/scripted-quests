@@ -11,13 +11,14 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.jetbrains.annotations.Nullable;
 
 public class ActionVoiceOver implements ActionBase {
 	private final int mMaxVOPerPlayer = 12;
 	private final String mNpcKey;
 	private final String mSound;
 
-	public ActionVoiceOver(EntityType entityType, String npcName, JsonElement element) throws Exception {
+	public ActionVoiceOver(EntityType entityType, @Nullable String npcName, JsonElement element) throws Exception {
 		mNpcKey = entityType.toString() + ", " + npcName;
 		mSound = element.getAsString();
 		if (mSound == null) {
