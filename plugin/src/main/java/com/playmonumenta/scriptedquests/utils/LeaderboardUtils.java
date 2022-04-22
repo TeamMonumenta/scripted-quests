@@ -3,11 +3,10 @@ package com.playmonumenta.scriptedquests.utils;
 import java.util.List;
 import javax.annotation.Nullable;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-
-import net.kyori.adventure.text.Component;
 
 public class LeaderboardUtils {
 
@@ -72,7 +71,7 @@ public class LeaderboardUtils {
 		}
 
 		// print header
-		player.sendMessage(ChatColor.AQUA + " Leaderboard - " + ChatColor.YELLOW + title);
+		player.sendMessage(Component.text(" Leaderboard - ", NamedTextColor.AQUA).append(title.colorIfAbsent(NamedTextColor.YELLOW)));
 		player.sendMessage(" ");
 
 		// print leaderboard itself
