@@ -1,15 +1,13 @@
 package com.playmonumenta.scriptedquests.listeners;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.playmonumenta.scriptedquests.Constants;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.point.Point;
 import com.playmonumenta.scriptedquests.quests.QuestDeath.DeathActions;
 import com.playmonumenta.scriptedquests.quests.components.DeathLocation;
 import com.playmonumenta.scriptedquests.utils.MetadataUtils;
-
+import java.util.ArrayList;
+import java.util.List;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -209,11 +207,20 @@ public class PlayerListener implements Listener {
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void playerQuitEvent(PlayerQuitEvent event) {
+		Player player = event.getPlayer();
+
 		// Stop racing (if applicable)
-		mPlugin.mRaceManager.cancelRace(event.getPlayer());
+		mPlugin.mRaceManager.cancelRace(player);
 
 		// Remove all zone properties from the player
-		mPlugin.mZoneManager.unregisterPlayer(event.getPlayer());
+		mPlugin.mZoneManager.unregisterPlayer(player);
+
+		// Remove all metadata set by this plugin for the player
+		player.removeMetadata(Constants.PLAYER_DEATH_LOCATION_METAKEY, mPlugin);
+		player.removeMetadata(Constants.PLAYER_RESPAWN_ACTIONS_METAKEY, mPlugin);
+		player.removeMetadata(Constants.PLAYER_RESPAWN_POINT_METAKEY, mPlugin);
+		player.removeMetadata(Constants.PLAYER_CLICKABLE_DIALOG_METAKEY, mPlugin);
+		player.removeMetadata(Constants.PLAYER_VOICE_OVER_METAKEY, mPlugin);
 	}
 
 }
