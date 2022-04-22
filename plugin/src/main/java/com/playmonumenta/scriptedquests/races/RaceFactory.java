@@ -16,6 +16,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 
+import net.kyori.adventure.text.Component;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -279,7 +281,7 @@ public class RaceFactory {
 
 			colorizeEntries(entries, player.getName());
 
-			LeaderboardUtils.sendLeaderboard(player, mName, entries, page,
+			LeaderboardUtils.sendLeaderboard(player, Component.text(mName), entries, page,
 			                                 "/race leaderboard " + player.getName() + " " + mLabel);
 		} else {
 			/* Redis sync plugin is available - use it instead */
@@ -298,7 +300,7 @@ public class RaceFactory {
 
 					/* Send the leaderboard to the player back on the main thread */
 					Bukkit.getScheduler().runTask(mPlugin, () -> {
-						LeaderboardUtils.sendLeaderboard(player, mName, entries, page,
+						LeaderboardUtils.sendLeaderboard(player, Component.text(mName), entries, page,
 						                                 "/race leaderboard " + player.getName() + " " + mLabel);
 					});
 				} catch (Exception ex) {

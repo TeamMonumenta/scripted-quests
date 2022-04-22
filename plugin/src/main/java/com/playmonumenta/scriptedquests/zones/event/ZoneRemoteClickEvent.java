@@ -59,8 +59,8 @@ public class ZoneRemoteClickEvent extends ZoneEvent {
 	public @Nullable Block getBlock(PlayerInteractEvent event) {
 		if (mClickType == null
 			    || event.getAction() == mClickType
-			    || event.getAction() == Action.RIGHT_CLICK_AIR && mClickType == Action.RIGHT_CLICK_BLOCK
-			    || event.getAction() == Action.LEFT_CLICK_AIR && mClickType == Action.LEFT_CLICK_BLOCK) {
+			    || (event.getAction() == Action.RIGHT_CLICK_AIR && mClickType == Action.RIGHT_CLICK_BLOCK)
+			    || (event.getAction() == Action.LEFT_CLICK_AIR && mClickType == Action.LEFT_CLICK_BLOCK)) {
 			Player player = event.getPlayer();
 			BlockIterator iter = new BlockIterator(player.getWorld(), player.getEyeLocation().toVector(), player.getEyeLocation().getDirection(), 0, mMaxDistance);
 			while (iter.hasNext()) {
@@ -69,7 +69,7 @@ public class ZoneRemoteClickEvent extends ZoneEvent {
 				if (mMaterials != null && mMaterials.contains(type)) {
 					return block;
 				}
-				if (MaterialUtils.isOccluding(type) || !type.isAir() && !mIgnoreTransparentBlocks) {
+				if (MaterialUtils.isOccluding(type) || (!type.isAir() && !mIgnoreTransparentBlocks)) {
 					return mMaterials == null ? block : null;
 				}
 			}

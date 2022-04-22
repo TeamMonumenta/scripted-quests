@@ -8,6 +8,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import net.kyori.adventure.text.Component;
+
 public class LeaderboardUtils {
 
 	public static class LeaderboardEntry implements Comparable<LeaderboardEntry> {
@@ -60,11 +62,11 @@ public class LeaderboardUtils {
 		}
 	}
 
-	public static void sendLeaderboard(Player player, String title, List<LeaderboardEntry> values, int page, String baseCommand) {
+	public static void sendLeaderboard(Player player, Component title, List<LeaderboardEntry> values, int page, String baseCommand) {
 		sendLeaderboard(player, title, values, page, baseCommand, true);
 	}
 
-	public static void sendLeaderboard(Player player, String title, List<LeaderboardEntry> values, int page, String baseCommand, boolean allowChangePages) {
+	public static void sendLeaderboard(Player player, Component title, List<LeaderboardEntry> values, int page, String baseCommand, boolean allowChangePages) {
 		// Page starts at 1
 		if (page < 1) {
 			page = 1;

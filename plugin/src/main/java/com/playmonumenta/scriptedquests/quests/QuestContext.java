@@ -2,7 +2,8 @@ package com.playmonumenta.scriptedquests.quests;
 
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
-import java.util.LinkedList;
+
+import java.util.ArrayDeque;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -112,7 +113,7 @@ public class QuestContext {
 	}
 
 	// Static thread-local context storage for providing the context to executed commands (e.g. used by GUIs)
-	private static final ThreadLocal<LinkedList<QuestContext>> CURRENT_CONTEXT = ThreadLocal.withInitial(LinkedList::new);
+	private static final ThreadLocal<ArrayDeque<QuestContext>> CURRENT_CONTEXT = ThreadLocal.withInitial(ArrayDeque::new);
 
 	/**
 	 * Pushes the given {@link QuestContext} onto the static thread-local context stack so that the context is available to executed commands.

@@ -361,12 +361,12 @@ public class TranslationsManager implements Listener {
 	 *
 	 */
 
-	@EventHandler(priority = EventPriority.LOWEST)
+	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
 	public void playerJoinEvent(PlayerJoinEvent event) {
 		playerJoin(event.getPlayer(), true);
 	}
 
-	@EventHandler(priority = EventPriority.LOWEST)
+	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
 	public void playerQuitEvent(PlayerQuitEvent event) {
 		mPlayerLanguageMap.remove(event.getPlayer().getUniqueId());
 	}

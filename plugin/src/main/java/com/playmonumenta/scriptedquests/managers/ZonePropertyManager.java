@@ -21,7 +21,7 @@ public class ZonePropertyManager implements Listener {
 		mPlugin = plugin;
 	}
 
-	@EventHandler(priority = EventPriority.LOWEST)
+	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
 	public void zonePropertyChangeEvent(ZonePropertyChangeEvent event) {
 		Player player = event.getPlayer();
 		String layer = event.getLayer();

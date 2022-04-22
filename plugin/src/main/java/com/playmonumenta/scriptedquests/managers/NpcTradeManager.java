@@ -199,7 +199,7 @@ public class NpcTradeManager implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
 	public void inventoryCloseEvent(InventoryCloseEvent event) {
 		if (!event.getInventory().getType().equals(InventoryType.MERCHANT)) {
 			return;
@@ -208,9 +208,9 @@ public class NpcTradeManager implements Listener {
 		mOpenTrades.remove(event.getPlayer().getUniqueId());
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void inventoryClickEvent(InventoryClickEvent event) {
-		if (event.isCancelled() || event.getResult().equals(Event.Result.DENY) || !event.getInventory().getType().equals(InventoryType.MERCHANT) || !(event.getWhoClicked() instanceof Player)) {
+		if (event.getResult().equals(Event.Result.DENY) || !event.getInventory().getType().equals(InventoryType.MERCHANT) || !(event.getWhoClicked() instanceof Player)) {
 			/* Already cancelled, or not a merchant inventory, or not a click by a player */
 			return;
 		}
