@@ -1,7 +1,6 @@
 package com.playmonumenta.scriptedquests.commands;
 
 import com.playmonumenta.scriptedquests.utils.DateUtils;
-
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.TextArgument;

@@ -4,11 +4,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.api.JsonObjectBuilder;
-import org.bukkit.Material;
-
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import org.bukkit.Material;
 
 public abstract class JsonUtils {
 

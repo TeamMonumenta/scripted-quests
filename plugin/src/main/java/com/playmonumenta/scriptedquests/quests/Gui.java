@@ -1,16 +1,14 @@
 package com.playmonumenta.scriptedquests.quests;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.annotation.Nullable;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.api.JsonObjectBuilder;
 import com.playmonumenta.scriptedquests.quests.components.GuiPage;
 import com.playmonumenta.scriptedquests.utils.JsonUtils;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+import javax.annotation.Nullable;
 
 public class Gui {
 

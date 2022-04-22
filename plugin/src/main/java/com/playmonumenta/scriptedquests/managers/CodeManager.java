@@ -1,15 +1,13 @@
 package com.playmonumenta.scriptedquests.managers;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.CodeEntry;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
+import java.util.HashMap;
+import java.util.Map;
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 public class CodeManager {
 	private final Map<String, CodeEntry> mCodes = new HashMap<String, CodeEntry>();

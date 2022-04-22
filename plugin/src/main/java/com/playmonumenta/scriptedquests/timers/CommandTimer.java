@@ -1,12 +1,12 @@
 package com.playmonumenta.scriptedquests.timers;
 
+import com.playmonumenta.scriptedquests.Plugin;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
-
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -15,8 +15,6 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitRunnable;
-
-import com.playmonumenta.scriptedquests.Plugin;
 
 public class CommandTimer implements Listener {
 	private final TreeMap<TimerCoords, ArmorStand> mCoords = new TreeMap<>();

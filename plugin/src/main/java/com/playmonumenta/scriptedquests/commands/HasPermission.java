@@ -1,11 +1,10 @@
 package com.playmonumenta.scriptedquests.commands;
 
-import org.bukkit.entity.Player;
-
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.EntitySelectorArgument;
 import dev.jorel.commandapi.arguments.TextArgument;
+import org.bukkit.entity.Player;
 
 public class HasPermission {
 	public static void register() {

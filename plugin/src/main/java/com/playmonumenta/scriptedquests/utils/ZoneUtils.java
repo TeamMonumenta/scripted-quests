@@ -1,8 +1,8 @@
 package com.playmonumenta.scriptedquests.utils;
 
-import static java.awt.Color.HSBtoRGB;
-
 import org.bukkit.Color;
+
+import static java.awt.Color.HSBtoRGB;
 
 public class ZoneUtils {
 	public static float floatFloorMod(float x, float y) {

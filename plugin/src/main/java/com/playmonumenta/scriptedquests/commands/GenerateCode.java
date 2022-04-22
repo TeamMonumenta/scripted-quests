@@ -1,15 +1,12 @@
 package com.playmonumenta.scriptedquests.commands;
 
-import java.util.Collection;
-
 import com.playmonumenta.scriptedquests.Plugin;
-
-import org.bukkit.entity.Player;
-
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.EntitySelectorArgument;
 import dev.jorel.commandapi.arguments.TextArgument;
+import java.util.Collection;
+import org.bukkit.entity.Player;
 
 public class GenerateCode {
 	@SuppressWarnings("unchecked")

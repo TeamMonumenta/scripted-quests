@@ -1,11 +1,9 @@
 package com.playmonumenta.scriptedquests.commands;
 
-import org.bukkit.ChatColor;
-
+import com.playmonumenta.scriptedquests.Plugin;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
-
-import com.playmonumenta.scriptedquests.Plugin;
+import org.bukkit.ChatColor;
 
 public class ReloadZones {
 	public static void register(Plugin plugin) {

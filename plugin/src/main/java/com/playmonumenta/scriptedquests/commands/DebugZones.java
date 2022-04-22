@@ -1,14 +1,12 @@
 package com.playmonumenta.scriptedquests.commands;
 
 import com.playmonumenta.scriptedquests.Plugin;
-
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
-
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.EntitySelectorArgument;
 import dev.jorel.commandapi.arguments.LocationArgument;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 public class DebugZones {
 	public static void register(Plugin plugin) {

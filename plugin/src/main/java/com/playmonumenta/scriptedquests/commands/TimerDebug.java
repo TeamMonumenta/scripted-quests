@@ -1,13 +1,11 @@
 package com.playmonumenta.scriptedquests.commands;
 
 import com.playmonumenta.scriptedquests.Plugin;
-
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.BooleanArgument;
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 
 public class TimerDebug {
 	public static void register(Plugin plugin) {

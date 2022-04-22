@@ -1,15 +1,13 @@
 package com.playmonumenta.scriptedquests.managers;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.google.gson.GsonBuilder;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.GrowableStructure;
 import com.playmonumenta.scriptedquests.utils.FileUtils;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
-
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 

@@ -1,6 +1,10 @@
 package com.playmonumenta.scriptedquests.utils;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Random;
 import javax.annotation.Nullable;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -10,12 +14,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.loot.LootContext;
-
-import net.kyori.adventure.text.Component;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Random;
 
 public class InventoryUtils {
 	public static boolean testForItemWithLore(ItemStack item, @Nullable String loreText, boolean exactMatch) {

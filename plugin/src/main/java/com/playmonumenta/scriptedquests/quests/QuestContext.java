@@ -2,7 +2,6 @@ package com.playmonumenta.scriptedquests.quests;
 
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
-
 import java.util.ArrayDeque;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;

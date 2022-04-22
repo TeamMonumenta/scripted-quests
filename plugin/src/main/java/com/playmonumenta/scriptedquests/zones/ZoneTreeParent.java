@@ -1,16 +1,14 @@
 package com.playmonumenta.scriptedquests.zones;
 
+import com.playmonumenta.scriptedquests.utils.VectorUtils;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import com.playmonumenta.scriptedquests.utils.VectorUtils;
-
+import javax.annotation.Nullable;
 import org.bukkit.Axis;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
-import javax.annotation.Nullable;
 import org.dynmap.markers.MarkerSet;
 
 public class ZoneTreeParent extends ZoneTreeBase {

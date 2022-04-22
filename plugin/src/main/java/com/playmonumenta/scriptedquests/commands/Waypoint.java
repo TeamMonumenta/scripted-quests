@@ -1,13 +1,6 @@
 package com.playmonumenta.scriptedquests.commands;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.playmonumenta.scriptedquests.Plugin;
-
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
-
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
@@ -16,7 +9,11 @@ import dev.jorel.commandapi.arguments.EntitySelectorArgument.EntitySelector;
 import dev.jorel.commandapi.arguments.LocationArgument;
 import dev.jorel.commandapi.arguments.LocationType;
 import dev.jorel.commandapi.arguments.TextArgument;
+import java.util.ArrayList;
+import java.util.List;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 public class Waypoint {
 	public static void register(Plugin plugin) {

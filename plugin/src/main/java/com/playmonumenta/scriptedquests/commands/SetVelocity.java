@@ -1,14 +1,12 @@
 package com.playmonumenta.scriptedquests.commands;
 
-import java.util.Collection;
-
-import org.bukkit.entity.Entity;
-import org.bukkit.util.Vector;
-
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.DoubleArgument;
 import dev.jorel.commandapi.arguments.EntitySelectorArgument;
+import java.util.Collection;
+import org.bukkit.entity.Entity;
+import org.bukkit.util.Vector;
 
 public class SetVelocity {
 	@SuppressWarnings("unchecked")
