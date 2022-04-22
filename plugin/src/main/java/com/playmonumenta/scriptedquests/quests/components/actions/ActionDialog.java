@@ -18,7 +18,7 @@ import org.bukkit.entity.EntityType;
 import org.jetbrains.annotations.Nullable;
 
 public class ActionDialog implements ActionBase {
-	private ArrayList<DialogBase> mDialogs = new ArrayList<DialogBase>();
+	private final ArrayList<DialogBase> mDialogs = new ArrayList<>();
 
 	public ActionDialog(@Nullable String npcName, @Nullable String displayName,
 	             @Nullable EntityType entityType, JsonElement element) throws Exception {
@@ -30,25 +30,13 @@ public class ActionDialog implements ActionBase {
 		Set<Entry<String, JsonElement>> entries = object.entrySet();
 		for (Entry<String, JsonElement> ent : entries) {
 			String key = ent.getKey();
-
-			if (key.equals("text")) {
-				if (displayName == null) {
-					throw new Exception("Tried to create text dialog but displayName was null");
-				}
-				mDialogs.add(new DialogText(displayName, ent.getValue()));
-			} else if (key.equals("raw_text")) {
-				mDialogs.add(new DialogRawText(ent.getValue()));
-			} else if (key.equals("clickable_text")) {
-				mDialogs.add(new DialogClickableText(npcName, displayName, entityType, ent.getValue()));
-			} else if (key.equals("random_text")) {
-				if (displayName == null) {
-					throw new Exception("Tried to create random text dialog but displayName was null");
-				}
-				mDialogs.add(new DialogRandomText(displayName, ent.getValue()));
-			} else if (key.equals("all_in_one_text")) {
-				mDialogs.add(new DialogAllInOneText(npcName, ent.getValue()));
-			} else {
-				throw new Exception("Unknown dialog key: '" + key + "'");
+			switch (key) {
+				case "text" -> mDialogs.add(new DialogText(displayName, ent.getValue()));
+				case "raw_text" -> mDialogs.add(new DialogRawText(ent.getValue()));
+				case "clickable_text" -> mDialogs.add(new DialogClickableText(npcName, displayName, entityType, ent.getValue()));
+				case "random_text" -> mDialogs.add(new DialogRandomText(displayName, ent.getValue()));
+				case "all_in_one_text" -> mDialogs.add(new DialogAllInOneText(npcName, ent.getValue()));
+				default -> throw new Exception("Unknown dialog key: '" + key + "'");
 			}
 		}
 	}
