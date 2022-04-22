@@ -202,11 +202,20 @@ public class PlayerListener implements Listener {
 
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
 	public void playerQuitEvent(PlayerQuitEvent event) {
+		Player player = event.getPlayer();
+
 		// Stop racing (if applicable)
-		mPlugin.mRaceManager.cancelRace(event.getPlayer());
+		mPlugin.mRaceManager.cancelRace(player);
 
 		// Remove all zone properties from the player
-		mPlugin.mZoneManager.unregisterPlayer(event.getPlayer());
+		mPlugin.mZoneManager.unregisterPlayer(player);
+
+		// Remove all metadata set by this plugin for the player
+		player.removeMetadata(Constants.PLAYER_DEATH_LOCATION_METAKEY, mPlugin);
+		player.removeMetadata(Constants.PLAYER_RESPAWN_ACTIONS_METAKEY, mPlugin);
+		player.removeMetadata(Constants.PLAYER_RESPAWN_POINT_METAKEY, mPlugin);
+		player.removeMetadata(Constants.PLAYER_CLICKABLE_DIALOG_METAKEY, mPlugin);
+		player.removeMetadata(Constants.PLAYER_VOICE_OVER_METAKEY, mPlugin);
 	}
 
 }
