@@ -90,6 +90,7 @@
                     "required": false,
                     "title": "Events",
                     "additionalProperties": false,
+                    "defaultProperties": [],
                     "properties": {
                         "block_break": {
                             "propertyOrder": 1,
@@ -157,6 +158,7 @@
                             "description": "Fired when a player left or right clicks while looking in the direction of a matching block, even if that block is out of player range. Both the player and the targeted block must be in a zone with this zone property.",
                             "items": {
                                 "additionalProperties": false,
+                                "defaultProperties": ["blocks", "type", "command", "max_distance", "ignore_transparent_blocks"],
                                 "properties": {
                                     "blocks": {
                                         "propertyOrder": 1,
@@ -192,6 +194,15 @@
                                         "title": "ignore_transparent_blocks",
                                         "description": "Whether to ignore transparent blocks when looking for a targeted block.",
                                         "type": "boolean"
+                                    },
+                                    "min_ticks_between_clicks": {
+                                        "propertyOrder": 6,
+                                        "title": "min_ticks_between_clicks",
+                                        "description": "Minimum delay in ticks between two clicks. Clicks happening faster than this value will not count. This prevents the occasional double clicks that Minecraft does, as well as accidental double clicks. Defaults to 1 if not set. The minimum value of 0 only prevents multiple clicks in the same tick.",
+                                        "type": "number",
+                                        "minimum": 0,
+                                        "maximum": 1200,
+                                        "required": false
                                     }
                                 }
                             }

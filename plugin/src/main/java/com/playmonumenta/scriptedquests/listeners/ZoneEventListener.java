@@ -2,6 +2,7 @@ package com.playmonumenta.scriptedquests.listeners;
 
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.ZoneProperty;
+import com.playmonumenta.scriptedquests.utils.MetadataUtils;
 import com.playmonumenta.scriptedquests.zones.event.ZoneBlockBreakEvent;
 import com.playmonumenta.scriptedquests.zones.event.ZoneBlockInteractEvent;
 import com.playmonumenta.scriptedquests.zones.event.ZoneEvent;
@@ -17,9 +18,11 @@ import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public class ZoneEventListener implements Listener {
@@ -29,6 +32,7 @@ public class ZoneEventListener implements Listener {
 	private final Set<Material> mBlockBreakMaterials = new HashSet<>();
 	private final Set<Material> mBlockInteractMaterials = new HashSet<>();
 	private boolean mHasRemoteClickEvent = false;
+	private static final String ENTITY_INTERACT_METAKEY = "ScriptedQuests_RemoteClickEntityInteract";
 
 	public ZoneEventListener(Plugin plugin) {
 		mPlugin = plugin;
@@ -65,18 +69,35 @@ public class ZoneEventListener implements Listener {
 		}
 	}
 
-	// Cancelled PlayerInteractEvents are jank. Checking for denied interactions is similarly jank.
-	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
-	public void playerInteractEvent(PlayerInteractEvent event) {
+	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+	public void playerInteractEntityEvent(PlayerInteractEntityEvent event) {
 		if (mHasRemoteClickEvent) {
+			MetadataUtils.checkOnceThisTick(mPlugin, event.getPlayer(), ENTITY_INTERACT_METAKEY);
 			execute(event.getPlayer().getLocation(), ZoneRemoteClickEvent.class, (events, layer, propertyName) -> {
 				for (ZoneRemoteClickEvent e : events) {
-					Block block = e.getBlock(event);
+					Block block = e.getBlock(event.getPlayer(), Action.RIGHT_CLICK_AIR);
 					if (block != null && mPlugin.mZoneManager.hasProperty(block.getLocation(), layer, propertyName)) {
 						e.execute(event.getPlayer(), block);
 					}
 				}
 			});
+		}
+	}
+
+	// Cancelled PlayerInteractEvents are jank. Checking for denied interactions is similarly jank.
+	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
+	public void playerInteractEvent(PlayerInteractEvent event) {
+		if (mHasRemoteClickEvent) {
+			if (!MetadataUtils.happenedThisTick(event.getPlayer(), ENTITY_INTERACT_METAKEY, 0)) { // entity interact events also cause a left click event that must be ignored
+				execute(event.getPlayer().getLocation(), ZoneRemoteClickEvent.class, (events, layer, propertyName) -> {
+					for (ZoneRemoteClickEvent e : events) {
+						Block block = e.getBlock(event.getPlayer(), event.getAction());
+						if (block != null && mPlugin.mZoneManager.hasProperty(block.getLocation(), layer, propertyName)) {
+							e.execute(event.getPlayer(), block);
+						}
+					}
+				});
+			}
 		}
 		if (mBlockInteractMaterials.isEmpty()) {
 			return;
