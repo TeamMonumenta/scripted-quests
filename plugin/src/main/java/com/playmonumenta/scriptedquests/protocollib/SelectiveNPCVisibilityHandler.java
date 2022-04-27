@@ -51,7 +51,7 @@ public class SelectiveNPCVisibilityHandler extends PacketAdapter implements List
 			PacketType.Play.Server.REL_ENTITY_MOVE,
 			PacketType.Play.Server.REL_ENTITY_MOVE_LOOK,
 			PacketType.Play.Server.ENTITY_TELEPORT,
-//			PacketType.Play.Server.ATTACH_ENTITY, // not supported
+			//PacketType.Play.Server.ATTACH_ENTITY, // not supported
 			PacketType.Play.Server.REMOVE_ENTITY_EFFECT);
 		mPlugin = plugin;
 		mProtocolManager = protocolManager;
@@ -67,8 +67,8 @@ public class SelectiveNPCVisibilityHandler extends PacketAdapter implements List
 	 */
 	private final EnumSet<EntityType> mEnabledEntityTypes = EnumSet.noneOf(EntityType.class);
 
-	private @Nullable BukkitTask despawnTask = null;
-	private @Nullable BukkitTask spawnTask = null;
+	private @Nullable BukkitTask mDespawnTask = null;
+	private @Nullable BukkitTask mSpawnTask = null;
 
 	public void reload() {
 		mEnabledEntityTypes.clear();
@@ -79,20 +79,20 @@ public class SelectiveNPCVisibilityHandler extends PacketAdapter implements List
 		if (!mEnabledEntityTypes.isEmpty()) {
 			mProtocolManager.addPacketListener(this);
 			Bukkit.getPluginManager().registerEvents(this, plugin);
-			if (despawnTask == null) {
-				despawnTask = Bukkit.getScheduler().runTaskTimer(plugin, this::repeatedDespawnCheck, 10, 10);
+			if (mDespawnTask == null) {
+				mDespawnTask = Bukkit.getScheduler().runTaskTimer(plugin, this::repeatedDespawnCheck, 10, 10);
 			}
-			if (spawnTask == null) {
-				spawnTask = Bukkit.getScheduler().runTaskTimer(plugin, this::repeatedSpawnCheck, 40, 40);
+			if (mSpawnTask == null) {
+				mSpawnTask = Bukkit.getScheduler().runTaskTimer(plugin, this::repeatedSpawnCheck, 40, 40);
 			}
 		} else {
-			if (despawnTask != null) {
-				despawnTask.cancel();
-				despawnTask = null;
+			if (mDespawnTask != null) {
+				mDespawnTask.cancel();
+				mDespawnTask = null;
 			}
-			if (spawnTask != null) {
-				spawnTask.cancel();
-				spawnTask = null;
+			if (mSpawnTask != null) {
+				mSpawnTask.cancel();
+				mSpawnTask = null;
 			}
 		}
 	}
