@@ -8,7 +8,6 @@ import com.playmonumenta.scriptedquests.api.ClientChatProtocol;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 import org.bukkit.ChatColor;
@@ -28,7 +27,7 @@ public class QuestNpc {
 	private final String mNpcName;
 	private final String mDisplayName;
 	private final EntityType mEntityType;
-	private final @Nullable QuestPrerequisites mVisibilityPrerequisites;
+	private @Nullable QuestPrerequisites mVisibilityPrerequisites;
 
 	public QuestNpc(JsonObject object) throws Exception {
 		// Read the npc's name first
@@ -61,8 +60,6 @@ public class QuestNpc {
 		JsonElement visibilityPrerequisites = object.get("visibility_prerequisites");
 		if (visibilityPrerequisites != null) {
 			mVisibilityPrerequisites = new QuestPrerequisites(visibilityPrerequisites);
-		} else {
-			mVisibilityPrerequisites = null;
 		}
 
 		Set<Entry<String, JsonElement>> entries = object.entrySet();
@@ -81,10 +78,7 @@ public class QuestNpc {
 					throw new Exception("Failed to parse 'quest_components'");
 				}
 
-				Iterator<JsonElement> iter = array.iterator();
-				while (iter.hasNext()) {
-					JsonElement entry = iter.next();
-
+				for (JsonElement entry : array) {
 					mComponents.add(new QuestComponent(mNpcName, mDisplayName, mEntityType, entry));
 				}
 			}
@@ -114,6 +108,7 @@ public class QuestNpc {
 	public void addFromQuest(Plugin plugin, QuestNpc quest) {
 		if (quest.getNpcName().equals(mNpcName)) {
 			mComponents.addAll(quest.getComponents());
+			mVisibilityPrerequisites = mVisibilityPrerequisites == null ? quest.mVisibilityPrerequisites : mVisibilityPrerequisites.union(quest.mVisibilityPrerequisites);
 		} else {
 			plugin.getLogger().severe("Attempted to add two quests together with different NPCs!");
 		}
@@ -122,7 +117,7 @@ public class QuestNpc {
 	// Returns true if any quest components were attempted with this NPC
 	// False otherwise
 	public boolean interactEvent(QuestContext context, String npcName, EntityType entityType) {
-		if (mEntityType.equals(entityType) && mNpcName.equals(npcName)) {
+		if (mEntityType.equals(entityType) && mNpcName.equals(npcName) && isVisibleToPlayer(context)) {
 			if (ClientChatProtocol.shouldSend(context.getPlayer())) {
 				ClientChatProtocol.sendPacket(mComponents, context);
 			} else {
@@ -144,7 +139,11 @@ public class QuestNpc {
 	}
 
 	public boolean isVisibleToPlayer(Player player, Entity npcEntity) {
-		return mVisibilityPrerequisites == null || mVisibilityPrerequisites.prerequisiteMet(new QuestContext(Plugin.getInstance(), player, npcEntity, false, mVisibilityPrerequisites, player.getInventory().getItemInMainHand()));
+		return isVisibleToPlayer(new QuestContext(Plugin.getInstance(), player, npcEntity, false, mVisibilityPrerequisites, player.getInventory().getItemInMainHand()));
+	}
+
+	public boolean isVisibleToPlayer(QuestContext context) {
+		return mVisibilityPrerequisites == null || mVisibilityPrerequisites.prerequisiteMet(context);
 	}
 
 }
