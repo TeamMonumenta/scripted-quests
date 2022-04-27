@@ -40,20 +40,7 @@ public class SelectiveNPCVisibilityHandler extends PacketAdapter implements List
 		super(plugin, ListenerPriority.NORMAL,
 			PacketType.Play.Server.SPAWN_ENTITY,
 			PacketType.Play.Server.SPAWN_ENTITY_LIVING,
-			PacketType.Play.Server.ENTITY_STATUS,
-			PacketType.Play.Server.ENTITY_EQUIPMENT,
-			PacketType.Play.Server.ENTITY_METADATA,
-			PacketType.Play.Server.ENTITY_DESTROY,
-			PacketType.Play.Server.ENTITY_EFFECT,
-			PacketType.Play.Server.ENTITY_SOUND,
-			PacketType.Play.Server.ENTITY_VELOCITY,
-			PacketType.Play.Server.ENTITY_HEAD_ROTATION,
-			PacketType.Play.Server.ENTITY_LOOK,
-			PacketType.Play.Server.REL_ENTITY_MOVE,
-			PacketType.Play.Server.REL_ENTITY_MOVE_LOOK,
-			PacketType.Play.Server.ENTITY_TELEPORT,
-			//PacketType.Play.Server.ATTACH_ENTITY, // not supported
-			PacketType.Play.Server.REMOVE_ENTITY_EFFECT);
+			PacketType.Play.Server.ENTITY_DESTROY);
 		mPlugin = plugin;
 		mProtocolManager = protocolManager;
 	}
