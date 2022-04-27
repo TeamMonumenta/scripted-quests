@@ -89,7 +89,7 @@
                 visibility_prerequisites: {
                     propertyOrder: 5,
                     title: "visibility_prerequisites",
-                    description: "Prerequisites for the NPC to appear to a player. Note that an entity with such a prerequisite must not be riding another entity or have passengers itself.",
+                    description: "Prerequisites for the NPC to appear to a player. This is checked often, so should preferably be a simple check like a single score or tag test. Players in creative or spectator mode will always see all NPCs. An entity with such a prerequisite must not be riding another entity or have passengers itself.",
                     $ref: "schema/prerequisites.json"
                 }
             }

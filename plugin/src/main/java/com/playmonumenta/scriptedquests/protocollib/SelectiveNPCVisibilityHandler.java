@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -137,6 +138,9 @@ public class SelectiveNPCVisibilityHandler extends PacketAdapter implements List
 	}
 
 	private boolean isVisible(Entity entity, Player player) {
+		if (player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR) {
+			return true;
+		}
 		QuestNpc npc = mPlugin.mNpcManager.getInteractNPC(entity);
 		return npc == null || npc.isVisibleToPlayer(player, entity);
 	}
