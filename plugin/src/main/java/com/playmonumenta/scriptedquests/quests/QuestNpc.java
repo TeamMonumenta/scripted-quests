@@ -6,12 +6,16 @@ import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.api.ClientChatProtocol;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
+import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 /*
  * A QuestNpc object holds all the quest components belonging to an NPC with a specific name
@@ -24,6 +28,7 @@ public class QuestNpc {
 	private final String mNpcName;
 	private final String mDisplayName;
 	private final EntityType mEntityType;
+	private final @Nullable QuestPrerequisites mVisibilityPrerequisites;
 
 	public QuestNpc(JsonObject object) throws Exception {
 		// Read the npc's name first
@@ -53,12 +58,19 @@ public class QuestNpc {
 			mEntityType = EntityType.valueOf(entityType.getAsString());
 		}
 
+		JsonElement visibilityPrerequisites = object.get("visibility_prerequisites");
+		if (visibilityPrerequisites != null) {
+			mVisibilityPrerequisites = new QuestPrerequisites(visibilityPrerequisites);
+		} else {
+			mVisibilityPrerequisites = null;
+		}
+
 		Set<Entry<String, JsonElement>> entries = object.entrySet();
 		for (Entry<String, JsonElement> ent : entries) {
 			String key = ent.getKey();
 
 			if (!key.equals("npc") && !key.equals("display_name")
-				&& !key.equals("quest_components") && !key.equals("entity_type")) {
+				    && !key.equals("quest_components") && !key.equals("entity_type") && !key.equals("visibility_prerequisites")) {
 				throw new Exception("Unknown quest key: " + key);
 			}
 
@@ -126,4 +138,13 @@ public class QuestNpc {
 	public static String squashNpcName(String name) {
 		return ChatColor.stripColor(name).replaceAll("[^a-zA-Z0-9-]", "");
 	}
+
+	public boolean hasVisibilityPrerequisites() {
+		return mVisibilityPrerequisites != null;
+	}
+
+	public boolean isVisibleToPlayer(Player player, Entity npcEntity) {
+		return mVisibilityPrerequisites == null || mVisibilityPrerequisites.prerequisiteMet(new QuestContext(Plugin.getInstance(), player, npcEntity, false, mVisibilityPrerequisites, player.getInventory().getItemInMainHand()));
+	}
+
 }

@@ -85,6 +85,12 @@
                         title: "Quest component",
                         $ref: "schema/quest_component.json",
                     }
+                },
+                visibility_prerequisites: {
+                    propertyOrder: 5,
+                    title: "visibility_prerequisites",
+                    description: "Prerequisites for the NPC to appear to a player. Note that an entity with such a prerequisite must not be riding another entity or have passengers itself.",
+                    $ref: "schema/prerequisites.json"
                 }
             }
         }
