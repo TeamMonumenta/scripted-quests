@@ -112,7 +112,11 @@ public abstract class JsonUtils {
 		return array;
 	}
 
-	public static @Nullable Material getMaterial(JsonObject object, String property, @Nullable Material defaultValue) throws Exception {
+	public static <T> T parse(JsonObject object, String property, Function<String, T> parser) throws Exception {
+		return parser.apply(getString(object, property));
+	}
+
+	public static <T> T parse(JsonObject object, String property, Function<String, T> parser, T defaultValue) throws Exception {
 		JsonElement element = object.get(property);
 		if (element == null) {
 			return defaultValue;
@@ -120,12 +124,18 @@ public abstract class JsonUtils {
 		if (!element.isJsonPrimitive() || !element.getAsJsonPrimitive().isString()) {
 			throw new Exception("'" + property + "' entry must be a string");
 		}
-		try {
-			return Material.valueOf(element.getAsString());
-		} catch (IllegalArgumentException e) {
-			throw new Exception("Unknown Material '" + element.getAsString() +
-				                    "' - it should be one of the values in this list: " +
-				                    "https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html");
-		}
+		return parser.apply(element.getAsString());
+	}
+
+	public static @Nullable Material getMaterial(JsonObject object, String property, @Nullable Material defaultValue) throws Exception {
+		return parse(object, property, val -> {
+			try {
+				return Material.valueOf(val);
+			} catch (IllegalArgumentException e) {
+				throw new RuntimeException("Unknown Material '" + val +
+					                           "' - it should be one of the values in this list: " +
+					                           "https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html");
+			}
+		}, defaultValue);
 	}
 }
