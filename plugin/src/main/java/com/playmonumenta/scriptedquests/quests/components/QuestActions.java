@@ -120,7 +120,7 @@ public class QuestActions {
 	private void executeNow(QuestContext context) {
 		for (ActionsElement element : mActions) {
 			if (element.mPrerequisites != null && !element.mPrerequisites.prerequisiteMet(context)) {
-				return;
+				continue;
 			}
 			QuestContext elementContext = element.mPrerequisites != null ? context.withPrerequisites(element.mPrerequisites) : context;
 			if (element.mDelayTicks <= 0) {
