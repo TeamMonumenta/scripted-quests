@@ -94,8 +94,14 @@ public class SelectiveNPCVisibilityHandler extends PacketAdapter implements List
 		if (packet.getType().equals(PacketType.Play.Server.ENTITY_DESTROY)) {
 			Set<Integer> hiddenEntities = mHiddenEntities.get(player.getUniqueId());
 			if (hiddenEntities != null) {
-				for (int id : packet.getIntegerArrays().read(0)) {
-					hiddenEntities.remove(id);
+				if (packet.getIntegerArrays().size() > 0) { // 1.16
+					for (int id : packet.getIntegerArrays().read(0)) {
+						hiddenEntities.remove(id);
+					}
+				} else { // 1.18
+					for (Integer id : packet.getIntLists().read(0)) {
+						hiddenEntities.remove(id);
+					}
 				}
 			}
 			return;
@@ -191,7 +197,11 @@ public class SelectiveNPCVisibilityHandler extends PacketAdapter implements List
 
 	private void sendEntityDestroyPacket(Entity entity, Player player) {
 		PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
-		packet.getIntegerArrays().write(0, new int[] {entity.getEntityId()});
+		if (packet.getIntegerArrays().size() > 0) { // 1.16
+			packet.getIntegerArrays().write(0, new int[] {entity.getEntityId()});
+		} else { // 1.18
+			packet.getIntLists().write(0, List.of(entity.getEntityId()));
+		}
 		try {
 			mProtocolManager.sendServerPacket(player, packet, false);
 		} catch (InvocationTargetException e) {
