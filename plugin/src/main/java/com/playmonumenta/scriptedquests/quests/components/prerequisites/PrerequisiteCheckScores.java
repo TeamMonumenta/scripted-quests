@@ -5,7 +5,6 @@ import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.utils.ScoreboardUtils;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.regex.Pattern;
 import javax.annotation.Nullable;
 import org.bukkit.entity.Entity;
 
