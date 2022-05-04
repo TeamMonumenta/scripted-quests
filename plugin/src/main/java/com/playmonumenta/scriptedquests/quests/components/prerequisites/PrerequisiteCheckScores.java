@@ -72,14 +72,14 @@ public class PrerequisiteCheckScores implements PrerequisiteBase {
 
 		private CheckScoreRange(@Nullable JsonElement min, @Nullable JsonElement max) throws Exception {
 			if (min == null) {
-				mMin = parseTestValue(min);
-			} else {
 				mMin = new TestValueConst(Integer.MIN_VALUE);
+			} else {
+				mMin = parseTestValue(min);
 			}
 			if (max == null) {
-				mMax = parseTestValue(max);
-			} else {
 				mMax = new TestValueConst(Integer.MAX_VALUE);
+			} else {
+				mMax = parseTestValue(max);
 			}
 
 			if (mMin instanceof TestValueConst cMin &&
@@ -130,7 +130,7 @@ public class PrerequisiteCheckScores implements PrerequisiteBase {
 	}
 
 	private static TestValue parseTestValue(JsonElement value) throws Exception {
-		if (!value.isJsonPrimitive()) {
+		if (value == null || !value.isJsonPrimitive()) {
 			throw new Exception("Test value is not a primitive");
 		}
 
