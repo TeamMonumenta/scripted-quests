@@ -5,52 +5,96 @@ import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.utils.ScoreboardUtils;
 import java.util.Map.Entry;
 import java.util.Set;
+import javax.annotation.Nullable;
 import org.bukkit.entity.Entity;
 
 public class PrerequisiteCheckScores implements PrerequisiteBase {
+	private interface TestValue {
+		int get(@Nullable Entity entity);
+	}
+
+	private static class TestValueConst implements TestValue {
+		int mVal;
+
+		private TestValueConst(int val) {
+			mVal = val;
+		}
+
+		@Override
+		public int get(@Nullable Entity entity) {
+			return mVal;
+		}
+
+		public int get() {
+			return mVal;
+		}
+	}
+
+	private static class TestValueObjective implements TestValue {
+		String mObjective;
+
+		private TestValueObjective(String objective) throws Exception {
+			if (!ScoreboardUtils.isValidObjective(objective)) {
+				throw new Exception("Invalid objective name '" + objective + "'");
+			}
+			mObjective = objective;
+		}
+
+		@Override
+		public int get(@Nullable Entity entity) {
+			if (entity == null) {
+				return 0;
+			}
+			return ScoreboardUtils.getScoreboardValue(entity, mObjective);
+		}
+	}
+
 	private interface CheckScore {
 		boolean check(Entity entity, String scoreName);
 	}
 
 	private static class CheckScoreExact implements CheckScore {
-		int mVal;
+		TestValue mVal;
 
-		private CheckScoreExact(int val) {
-			mVal = val;
+		private CheckScoreExact(JsonElement val) throws Exception {
+			mVal = parseTestValue(val);
 		}
 
 		@Override
 		public boolean check(Entity entity, String scoreName) {
-			return ScoreboardUtils.getScoreboardValue(entity, scoreName) == mVal;
-		}
-	}
-
-	private static class CheckScoreOther implements CheckScore {
-		String mOtherScore;
-
-		private CheckScoreOther(String otherScore) {
-			mOtherScore = otherScore;
-		}
-
-		@Override
-		public boolean check(Entity entity, String scoreName) {
-			return ScoreboardUtils.getScoreboardValue(entity, scoreName) == ScoreboardUtils.getScoreboardValue(entity, mOtherScore);
+			return ScoreboardUtils.getScoreboardValue(entity, scoreName) == mVal.get(entity);
 		}
 	}
 
 	private static class CheckScoreRange implements CheckScore {
-		int mMin;
-		int mMax;
+		TestValue mMin;
+		TestValue mMax;
 
-		private CheckScoreRange(int min, int max) {
-			mMin = min;
-			mMax = max;
+		private CheckScoreRange(@Nullable JsonElement min, @Nullable JsonElement max) throws Exception {
+			if (min == null) {
+				mMin = new TestValueConst(Integer.MIN_VALUE);
+			} else {
+				mMin = parseTestValue(min);
+			}
+			if (max == null) {
+				mMax = new TestValueConst(Integer.MAX_VALUE);
+			} else {
+				mMax = parseTestValue(max);
+			}
+
+			if (mMin instanceof TestValueConst cMin &&
+				mMax instanceof TestValueConst cMax) {
+				if (cMin.get() == Integer.MIN_VALUE &&
+					cMax.get() == Integer.MAX_VALUE) {
+					throw new Exception("Bogus check_score object with no min or max");
+				}
+			}
 		}
 
 		@Override
 		public boolean check(Entity entity, String scoreName) {
 			int value = ScoreboardUtils.getScoreboardValue(entity, scoreName);
-			return value >= mMin && value <= mMax;
+			return value >= mMin.get(entity) && value <= mMax.get(entity);
 		}
 	}
 
@@ -62,44 +106,51 @@ public class PrerequisiteCheckScores implements PrerequisiteBase {
 
 		if (value.isJsonPrimitive()) {
 			//  Single value
-
-			// First try to parse the item as an integer
-			try {
-				int valueAsInt = value.getAsInt();
-				mCheckScore = new CheckScoreExact(valueAsInt);
-			} catch (Exception e) {
-				// If that failed, try a string instead
-				String valueAsString = value.getAsString();
-				if (valueAsString != null) {
-					mCheckScore = new CheckScoreOther(valueAsString);
-				} else {
-					throw new Exception("check_score value for scoreboard '" + mScoreName +
-					                    "' is neither an integer nor a string!");
-				}
-			}
+			mCheckScore = new CheckScoreExact(value);
 		} else {
 			// Range of values
-			Integer imin = Integer.MIN_VALUE;
-			Integer imax = Integer.MAX_VALUE;
+			@Nullable JsonElement rangeMin = null;
+			@Nullable JsonElement rangeMax = null;
 
 			Set<Entry<String, JsonElement>> subentries = value.getAsJsonObject().entrySet();
 			for (Entry<String, JsonElement> subent : subentries) {
 				String rangeKey = subent.getKey();
 
 				if (rangeKey.equals("min")) {
-					imin = subent.getValue().getAsInt();
+					rangeMin = subent.getValue();
 				} else if (rangeKey.equals("max")) {
-					imax = subent.getValue().getAsInt();
+					rangeMax = subent.getValue();
 				} else {
-					throw new Exception("Unknown check_score value: '" + rangeKey + "'");
+					throw new Exception("Unknown check_score range key: '" + rangeKey + "'");
 				}
 			}
 
-			if (imin == Integer.MIN_VALUE && imax == Integer.MAX_VALUE) {
-				throw new Exception("Bogus check_score object with no min or max");
-			}
+			mCheckScore = new CheckScoreRange(rangeMin, rangeMax);
+		}
+	}
 
-			mCheckScore = new CheckScoreRange(imin, imax);
+	private static TestValue parseTestValue(JsonElement value) throws Exception {
+		if (value == null || !value.isJsonPrimitive()) {
+			throw new Exception("Test value is not a primitive");
+		}
+
+		// First try to parse the item as an integer
+		@Nullable Integer valueAsInt;
+		try {
+			valueAsInt = value.getAsInt();
+		} catch (Exception e) {
+			valueAsInt = null;
+		}
+		if (valueAsInt != null) {
+			return new TestValueConst(valueAsInt);
+		}
+
+		// If that failed, try a string instead
+		@Nullable String valueAsString = value.getAsString();
+		if (valueAsString != null) {
+			return new TestValueObjective(valueAsString);
+		} else {
+			throw new Exception("Test value is neither an integer nor a string!");
 		}
 	}
 

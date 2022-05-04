@@ -18,7 +18,7 @@
                     "oneOf": [
                         {
                             "title": "Exactly",
-                            "$ref": "score.json"
+                            "$ref": "score_or_objective.json"
                         },
                         {
                             "title": "Range",
@@ -26,17 +26,13 @@
                             "properties": {
                                 "min": {
                                     "title": "Minimum",
-                                    "$ref": "score.json"
+                                    "$ref": "score_or_objective.json"
                                 },
                                 "max": {
                                     "title": "Maximum",
-                                    "$ref": "score.json"
+                                    "$ref": "score_or_objective.json"
                                 }
                             }
-                        },
-                        {
-                            "title": "Matches score",
-                            "type": "string"
                         }
                     ]
                 }
