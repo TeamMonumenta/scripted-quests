@@ -1,7 +1,35 @@
 package com.playmonumenta.scriptedquests;
 
 import com.playmonumenta.scriptedquests.api.ClientChatProtocol;
-import com.playmonumenta.scriptedquests.commands.*;
+import com.playmonumenta.scriptedquests.commands.Clickable;
+import com.playmonumenta.scriptedquests.commands.Clock;
+import com.playmonumenta.scriptedquests.commands.Code;
+import com.playmonumenta.scriptedquests.commands.Cooldown;
+import com.playmonumenta.scriptedquests.commands.Damage;
+import com.playmonumenta.scriptedquests.commands.DebugZones;
+import com.playmonumenta.scriptedquests.commands.GenerateCode;
+import com.playmonumenta.scriptedquests.commands.GetDate;
+import com.playmonumenta.scriptedquests.commands.GiveLootTable;
+import com.playmonumenta.scriptedquests.commands.Growable;
+import com.playmonumenta.scriptedquests.commands.GuiCommand;
+import com.playmonumenta.scriptedquests.commands.HasPermission;
+import com.playmonumenta.scriptedquests.commands.Heal;
+import com.playmonumenta.scriptedquests.commands.ImprovedClear;
+import com.playmonumenta.scriptedquests.commands.InteractNpc;
+import com.playmonumenta.scriptedquests.commands.Leaderboard;
+import com.playmonumenta.scriptedquests.commands.Line;
+import com.playmonumenta.scriptedquests.commands.QuestTrigger;
+import com.playmonumenta.scriptedquests.commands.RaceCommand;
+import com.playmonumenta.scriptedquests.commands.RandomNumber;
+import com.playmonumenta.scriptedquests.commands.RandomSample;
+import com.playmonumenta.scriptedquests.commands.ReloadQuests;
+import com.playmonumenta.scriptedquests.commands.ReloadZones;
+import com.playmonumenta.scriptedquests.commands.ScheduleFunction;
+import com.playmonumenta.scriptedquests.commands.SetVelocity;
+import com.playmonumenta.scriptedquests.commands.ShowZones;
+import com.playmonumenta.scriptedquests.commands.TestZone;
+import com.playmonumenta.scriptedquests.commands.TimerDebug;
+import com.playmonumenta.scriptedquests.commands.Waypoint;
 import com.playmonumenta.scriptedquests.listeners.EntityListener;
 import com.playmonumenta.scriptedquests.listeners.InteractablesListener;
 import com.playmonumenta.scriptedquests.listeners.PlayerListener;
@@ -21,6 +49,7 @@ import com.playmonumenta.scriptedquests.managers.RaceManager;
 import com.playmonumenta.scriptedquests.managers.TranslationsManager;
 import com.playmonumenta.scriptedquests.managers.WaypointManager;
 import com.playmonumenta.scriptedquests.managers.ZonePropertyManager;
+import com.playmonumenta.scriptedquests.protocollib.ProtocolLibIntegration;
 import com.playmonumenta.scriptedquests.timers.CommandTimerManager;
 import com.playmonumenta.scriptedquests.utils.MetadataUtils;
 import com.playmonumenta.scriptedquests.utils.NmsUtils;
@@ -62,6 +91,7 @@ public class Plugin extends JavaPlugin {
 	public GrowableManager mGrowableManager;
 	public GuiManager mGuiManager;
 	public ZoneEventListener mZoneEventListener;
+	public @Nullable ProtocolLibIntegration mProtocolLibIntegration;
 
 	public Random mRandom = new Random();
 	private ScheduleFunction mScheduledFunctionsManager;
@@ -149,6 +179,11 @@ public class Plugin extends JavaPlugin {
 		manager.registerEvents(mTradeManager, this);
 		manager.registerEvents(mZoneEventListener, this);
 
+		// Hook into ProtocolLib if present
+		if (Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) {
+			mProtocolLibIntegration = new ProtocolLibIntegration(this);
+		}
+
 		getCommand("reloadQuests").setExecutor(new ReloadQuests(this));
 		getCommand("questTrigger").setExecutor(new QuestTrigger(this));
 
@@ -198,6 +233,9 @@ public class Plugin extends JavaPlugin {
 		mZoneEventListener.update();
 		mGrowableManager.reload(this, sender);
 		mGuiManager.reload(this, sender);
+		if (mProtocolLibIntegration != null) {
+			mProtocolLibIntegration.reload();
+		}
 		TranslationsManager.reload(sender);
 	}
 

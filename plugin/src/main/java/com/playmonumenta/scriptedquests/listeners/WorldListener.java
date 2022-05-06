@@ -26,7 +26,7 @@ public class WorldListener implements Listener {
 			Bukkit.getScheduler().runTask(mPlugin, () -> mPlugin.mRaceManager.removeIfNotActive(entity));
 		}
 
-		QuestNpc npc = mPlugin.mNpcManager.getInteractNPC(entity.getName(), entity.getType());
+		QuestNpc npc = mPlugin.mNpcManager.getInteractNPC(entity);
 		if (npc != null) {
 			// Invulnerable NPCs cannot be interacted with in some versions of Minecraft
 			entity.setInvulnerable(false);

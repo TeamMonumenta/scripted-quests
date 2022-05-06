@@ -8,13 +8,15 @@ import com.playmonumenta.scriptedquests.utils.QuestUtils;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Stream;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.jetbrains.annotations.Nullable;
 
 public class QuestNpcManager {
 	private final Plugin mPlugin;
-	private final Map<EntityType, Map<String, QuestNpc>> mNpcs = new HashMap<EntityType, Map<String, QuestNpc>>();
+	private final Map<EntityType, Map<String, QuestNpc>> mNpcs = new HashMap<>();
 	private final EnumSet<EntityType> mEntityTypes = EnumSet.noneOf(EntityType.class);
 
 	/*
@@ -54,6 +56,10 @@ public class QuestNpcManager {
 
 	public QuestNpcManager(Plugin plugin) {
 		mPlugin = plugin;
+	}
+
+	public @Nullable QuestNpc getInteractNPC(Entity entity) {
+		return getInteractNPC(entity.getCustomName(), entity.getType());
 	}
 
 	public @Nullable QuestNpc getInteractNPC(String npcName, EntityType entityType) {
@@ -106,5 +112,9 @@ public class QuestNpcManager {
 			return npc.interactEvent(context, QuestNpc.squashNpcName(npcName), entityType);
 		}
 		return false;
+	}
+
+	public Stream<QuestNpc> getNpcsStream() {
+		return mNpcs.values().stream().flatMap(e -> e.values().stream());
 	}
 }

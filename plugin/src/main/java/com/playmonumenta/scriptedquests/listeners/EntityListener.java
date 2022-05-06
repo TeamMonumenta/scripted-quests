@@ -37,7 +37,7 @@ public class EntityListener implements Listener {
 				return;
 			}
 
-			QuestNpc npc = mPlugin.mNpcManager.getInteractNPC(damagee.getCustomName(), damagee.getType());
+			QuestNpc npc = mPlugin.mNpcManager.getInteractNPC(damagee);
 			if (npc != null) {
 				/*
 				 * This is definitely a quest NPC, even if the player might not be able to interact with it
@@ -79,7 +79,7 @@ public class EntityListener implements Listener {
 	}
 
 	private void cancelIfNpc(Entity damagee, Cancellable event) {
-		QuestNpc npc = mPlugin.mNpcManager.getInteractNPC(damagee.getCustomName(), damagee.getType());
+		QuestNpc npc = mPlugin.mNpcManager.getInteractNPC(damagee);
 		if (npc != null) {
 			event.setCancelled(true);
 		}
@@ -88,19 +88,19 @@ public class EntityListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void potionSplashEvent(PotionSplashEvent event) {
 		// Don't apply potion effects to quest entities
-		event.getAffectedEntities().removeIf(entity -> mPlugin.mNpcManager.getInteractNPC(entity.getCustomName(), entity.getType()) != null);
+		event.getAffectedEntities().removeIf(entity -> mPlugin.mNpcManager.getInteractNPC(entity) != null);
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void areaEffectCloudApplyEvent(AreaEffectCloudApplyEvent event) {
 		// Don't apply potion effects to quest entities
-		event.getAffectedEntities().removeIf(entity -> mPlugin.mNpcManager.getInteractNPC(entity.getCustomName(), entity.getType()) != null);
+		event.getAffectedEntities().removeIf(entity -> mPlugin.mNpcManager.getInteractNPC(entity) != null);
 	}
 
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
 	public void playerLeashEntityEvent(PlayerLeashEntityEvent event) {
 		Entity leashee = event.getEntity();
-		QuestNpc npc = mPlugin.mNpcManager.getInteractNPC(leashee.getCustomName(), leashee.getType());
+		QuestNpc npc = mPlugin.mNpcManager.getInteractNPC(leashee);
 
 		if (npc != null) {
 			event.setCancelled(true);

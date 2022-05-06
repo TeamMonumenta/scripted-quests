@@ -6,12 +6,15 @@ import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.api.ClientChatProtocol;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
+import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 /*
  * A QuestNpc object holds all the quest components belonging to an NPC with a specific name
@@ -24,6 +27,7 @@ public class QuestNpc {
 	private final String mNpcName;
 	private final String mDisplayName;
 	private final EntityType mEntityType;
+	private @Nullable QuestPrerequisites mVisibilityPrerequisites;
 
 	public QuestNpc(JsonObject object) throws Exception {
 		// Read the npc's name first
@@ -53,12 +57,17 @@ public class QuestNpc {
 			mEntityType = EntityType.valueOf(entityType.getAsString());
 		}
 
+		JsonElement visibilityPrerequisites = object.get("visibility_prerequisites");
+		if (visibilityPrerequisites != null) {
+			mVisibilityPrerequisites = new QuestPrerequisites(visibilityPrerequisites);
+		}
+
 		Set<Entry<String, JsonElement>> entries = object.entrySet();
 		for (Entry<String, JsonElement> ent : entries) {
 			String key = ent.getKey();
 
 			if (!key.equals("npc") && !key.equals("display_name")
-				&& !key.equals("quest_components") && !key.equals("entity_type")) {
+				    && !key.equals("quest_components") && !key.equals("entity_type") && !key.equals("visibility_prerequisites")) {
 				throw new Exception("Unknown quest key: " + key);
 			}
 
@@ -69,10 +78,7 @@ public class QuestNpc {
 					throw new Exception("Failed to parse 'quest_components'");
 				}
 
-				Iterator<JsonElement> iter = array.iterator();
-				while (iter.hasNext()) {
-					JsonElement entry = iter.next();
-
+				for (JsonElement entry : array) {
 					mComponents.add(new QuestComponent(mNpcName, mDisplayName, mEntityType, entry));
 				}
 			}
@@ -102,6 +108,7 @@ public class QuestNpc {
 	public void addFromQuest(Plugin plugin, QuestNpc quest) {
 		if (quest.getNpcName().equals(mNpcName)) {
 			mComponents.addAll(quest.getComponents());
+			mVisibilityPrerequisites = mVisibilityPrerequisites == null ? quest.mVisibilityPrerequisites : mVisibilityPrerequisites.union(quest.mVisibilityPrerequisites);
 		} else {
 			plugin.getLogger().severe("Attempted to add two quests together with different NPCs!");
 		}
@@ -110,7 +117,7 @@ public class QuestNpc {
 	// Returns true if any quest components were attempted with this NPC
 	// False otherwise
 	public boolean interactEvent(QuestContext context, String npcName, EntityType entityType) {
-		if (mEntityType.equals(entityType) && mNpcName.equals(npcName)) {
+		if (mEntityType.equals(entityType) && mNpcName.equals(npcName) && isVisibleToPlayer(context)) {
 			if (ClientChatProtocol.shouldSend(context.getPlayer())) {
 				ClientChatProtocol.sendPacket(mComponents, context);
 			} else {
@@ -126,4 +133,17 @@ public class QuestNpc {
 	public static String squashNpcName(String name) {
 		return ChatColor.stripColor(name).replaceAll("[^a-zA-Z0-9-]", "");
 	}
+
+	public boolean hasVisibilityPrerequisites() {
+		return mVisibilityPrerequisites != null;
+	}
+
+	public boolean isVisibleToPlayer(Player player, Entity npcEntity) {
+		return isVisibleToPlayer(new QuestContext(Plugin.getInstance(), player, npcEntity, false, mVisibilityPrerequisites, player.getInventory().getItemInMainHand()));
+	}
+
+	public boolean isVisibleToPlayer(QuestContext context) {
+		return mVisibilityPrerequisites == null || mVisibilityPrerequisites.prerequisiteMet(context);
+	}
+
 }
