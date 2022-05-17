@@ -11,7 +11,7 @@ public class DateUtils {
 	// Offset server time to UTC-17 to change when the new day arrives.
 	// getDaysSinceEpoch() uses its own perceived epoch
 	// so it should sync up nicely with changes in getDayOfWeek().
-	// With this, quest stuff should match play's daily changes at 5pm UTC
+	// With this, quest stuff should match play's daily changes at noon EST / 1 PM EDT
 	public static ZoneId TIMEZONE = ZoneOffset.ofHours(-17);
 
 	public static int getYear() {
