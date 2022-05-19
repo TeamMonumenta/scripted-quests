@@ -3,7 +3,6 @@ package com.playmonumenta.scriptedquests.quests.components;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.playmonumenta.scriptedquests.api.JsonObjectBuilder;
 import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.utils.JsonUtils;
@@ -95,10 +94,10 @@ public class GuiItem {
 			if (keepGuiOpen != null) {
 				mKeepGuiOpen = keepGuiOpen;
 			}
-			JsonParser jsonParser = new JsonParser();
+			Gson gson = new Gson();
 			String prerequisites = sqguiCompound.getString(PREREQUISITES_KEY);
 			if (prerequisites != null) {
-				mPrerequisitesJson = jsonParser.parse(prerequisites);
+				mPrerequisitesJson = gson.fromJson(prerequisites, JsonElement.class);
 				if (mPrerequisitesJson.isJsonNull()) {
 					mPrerequisitesJson = null;
 				} else {
@@ -107,7 +106,7 @@ public class GuiItem {
 			}
 			String leftClickActions = sqguiCompound.getString(LEFT_CLICK_ACTIONS_KEY);
 			if (leftClickActions != null) {
-				mLeftClickActionsJson = jsonParser.parse(leftClickActions);
+				mLeftClickActionsJson = gson.fromJson(leftClickActions, JsonElement.class);
 				if (mLeftClickActionsJson.isJsonNull()) {
 					mLeftClickActionsJson = null;
 				} else {
@@ -116,7 +115,7 @@ public class GuiItem {
 			}
 			String rightClickActions = sqguiCompound.getString(RIGHT_CLICK_ACTIONS_KEY);
 			if (rightClickActions != null) {
-				mRightClickActionsJson = jsonParser.parse(rightClickActions);
+				mRightClickActionsJson = gson.fromJson(rightClickActions, JsonElement.class);
 				if (mRightClickActionsJson.isJsonNull()) {
 					mRightClickActionsJson = null;
 				} else {
