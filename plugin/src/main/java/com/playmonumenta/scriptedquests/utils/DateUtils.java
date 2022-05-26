@@ -8,11 +8,11 @@ import java.time.ZoneOffset;
 public class DateUtils {
 	//TODO Read from config, default to system time zone aka ZoneId.systemDefault() - Tim
 
-	// Offset server time to UTC-9 to change when the new day arrives.
+	// Offset server time to UTC-17 to change when the new day arrives.
 	// getDaysSinceEpoch() uses its own perceived epoch
 	// so it should sync up nicely with changes in getDayOfWeek().
-	// With this, quest stuff should match play's daily resets & daily reboots at 9am UTC
-	public static ZoneId TIMEZONE = ZoneOffset.of("-9");
+	// With this, quest stuff should match play's daily changes at noon EST / 1 PM EDT
+	public static ZoneId TIMEZONE = ZoneOffset.ofHours(-17);
 
 	public static int getYear() {
 		return LocalDateTime.now(TIMEZONE).getYear();
