@@ -58,11 +58,7 @@ public class InventoryUtils {
 	}
 
 	public static NamespacedKey getNamespacedKey(String path) throws Exception {
-		String[] str = path.split(":", 2);
-		if (str[1].contains(":")) {
-			throw new Exception("Path '" + path + "' is not a valid minecraft namespace!");
-		}
-		return new NamespacedKey(str[0], str[1]);
+		return NamespacedKey.fromString(path);
 	}
 
 	public static boolean giveLootTableContents(Player player, String lootPath, Random random, boolean alreadyDone) throws Exception {
