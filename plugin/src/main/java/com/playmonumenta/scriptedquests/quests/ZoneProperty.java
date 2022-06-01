@@ -11,7 +11,6 @@ import com.playmonumenta.scriptedquests.zones.event.ZoneEvent;
 import com.playmonumenta.scriptedquests.zones.event.ZoneRemoteClickEvent;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -80,10 +79,7 @@ public class ZoneProperty {
 			throw new Exception("Failed to parse 'quest_components' as JSON array");
 		}
 
-		Iterator<JsonElement> iter = array.iterator();
-		while (iter.hasNext()) {
-			JsonElement entry = iter.next();
-
+		for (JsonElement entry : array) {
 			// TODO: Refactor so that components only require a linkage to the top-level item, not a name/entity type
 			mComponents.add(new QuestComponent(mName, mDisplayName, EntityType.PLAYER, entry));
 		}

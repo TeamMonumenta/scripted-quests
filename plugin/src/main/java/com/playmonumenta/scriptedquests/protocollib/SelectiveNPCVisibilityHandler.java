@@ -6,6 +6,7 @@ import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
+import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.QuestNpc;
 import java.lang.reflect.InvocationTargetException;
@@ -19,6 +20,7 @@ import java.util.Set;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -40,7 +42,9 @@ public class SelectiveNPCVisibilityHandler extends PacketAdapter implements List
 		super(plugin, ListenerPriority.NORMAL,
 			PacketType.Play.Server.SPAWN_ENTITY,
 			PacketType.Play.Server.SPAWN_ENTITY_LIVING,
-			PacketType.Play.Server.ENTITY_DESTROY);
+			PacketType.Play.Server.ENTITY_DESTROY,
+			PacketType.Play.Server.ENTITY_SOUND,
+			PacketType.Play.Server.NAMED_SOUND_EFFECT);
 		mPlugin = plugin;
 		mProtocolManager = protocolManager;
 	}
@@ -90,6 +94,37 @@ public class SelectiveNPCVisibilityHandler extends PacketAdapter implements List
 
 		PacketContainer packet = event.getPacket();
 		Player player = event.getPlayer();
+
+		if (packet.getType().equals(PacketType.Play.Server.ENTITY_SOUND)) {
+			Set<Integer> hiddenEntities = mHiddenEntities.get(player.getUniqueId());
+			if (hiddenEntities != null) {
+				if (hiddenEntities.contains(packet.getIntegers().read(0))) {
+					event.setCancelled(true);
+				}
+			}
+			return;
+		}
+		if (packet.getType().equals(PacketType.Play.Server.NAMED_SOUND_EFFECT)) {
+			Set<Integer> hiddenEntities = mHiddenEntities.get(player.getUniqueId());
+			if (hiddenEntities != null) {
+				EnumWrappers.SoundCategory category = packet.getSoundCategories().read(0);
+				if (category == EnumWrappers.SoundCategory.HOSTILE || category == EnumWrappers.SoundCategory.NEUTRAL) {
+					int rawX = packet.getIntegers().read(0);
+					int rawY = packet.getIntegers().read(1);
+					int rawZ = packet.getIntegers().read(2);
+					for (Entity entity : player.getWorld().getNearbyEntities(new Location(player.getWorld(), rawX / 8f, rawY / 8f, rawZ / 8f), 0.1, 0.1, 0.1)) {
+						if (hiddenEntities.contains(entity.getEntityId())
+							    && (int) (entity.getLocation().getX() * 8.0) == rawX
+							    && (int) (entity.getLocation().getY() * 8.0) == rawY
+							    && (int) (entity.getLocation().getZ() * 8.0) == rawZ) {
+							event.setCancelled(true);
+							return;
+						}
+					}
+				}
+			}
+			return;
+		}
 
 		if (packet.getType().equals(PacketType.Play.Server.ENTITY_DESTROY)) {
 			Set<Integer> hiddenEntities = mHiddenEntities.get(player.getUniqueId());
