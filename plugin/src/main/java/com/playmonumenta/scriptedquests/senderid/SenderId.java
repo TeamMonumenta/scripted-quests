@@ -44,7 +44,14 @@ public abstract class SenderId {
 
 	public abstract SenderId callerId();
 
+	@Override
 	public abstract boolean equals(Object other);
 
+	@Override
+	public int hashCode() {
+		return toString().hashCode();
+	}
+
+	@Override
 	public abstract String toString();
 }

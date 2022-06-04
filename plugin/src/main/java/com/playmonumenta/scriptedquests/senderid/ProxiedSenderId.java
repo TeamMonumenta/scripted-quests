@@ -15,30 +15,37 @@ public class ProxiedSenderId extends SenderId {
 		mName = sender.getName();
 	}
 
+	@Override
 	public String getName() {
 		return mName;
 	}
 
+	@Override
 	public boolean isLoaded() {
 		return mCalleeId.isLoaded() && mCallerId.isLoaded();
 	}
 
+	@Override
 	public @Nullable CommandSender callee() {
 		return mCalleeId.callee();
 	}
 
+	@Override
 	public SenderId calleeId() {
 		return mCalleeId;
 	}
 
+	@Override
 	public @Nullable CommandSender caller() {
 		return mCallerId.caller();
 	}
 
+	@Override
 	public SenderId callerId() {
 		return mCallerId;
 	}
 
+	@Override
 	public boolean equals(Object other) {
 		if (other instanceof ProxiedSenderId otherProxiedSenderId) {
 			return mCalleeId.equals(otherProxiedSenderId.mCalleeId)
@@ -47,6 +54,7 @@ public class ProxiedSenderId extends SenderId {
 		return false;
 	}
 
+	@Override
 	public String toString() {
 		return "ProxiedSenderId "
 			+ getName()

@@ -37,10 +37,12 @@ public class BlockSenderId extends SenderId {
 		}
 	}
 
+	@Override
 	public String getName() {
 		return mSender.getName();
 	}
 
+	@Override
 	public boolean isLoaded() {
 		if (mCommand == null) {
 			return false;
@@ -64,22 +66,27 @@ public class BlockSenderId extends SenderId {
 		}
 	}
 
+	@Override
 	public @Nullable CommandSender callee() {
 		return mSender;
 	}
 
+	@Override
 	public SenderId calleeId() {
 		return this;
 	}
 
+	@Override
 	public @Nullable CommandSender caller() {
 		return mSender;
 	}
 
+	@Override
 	public SenderId callerId() {
 		return this;
 	}
 
+	@Override
 	public boolean equals(Object other) {
 		if (other instanceof BlockSenderId otherBlockSenderId) {
 			return getLocation().equals(otherBlockSenderId.getLocation());
@@ -87,6 +94,7 @@ public class BlockSenderId extends SenderId {
 		return false;
 	}
 
+	@Override
 	public String toString() {
 		return "BlockSenderId " +
 			getName() +

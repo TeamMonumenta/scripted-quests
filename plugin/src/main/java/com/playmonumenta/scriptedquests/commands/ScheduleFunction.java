@@ -52,6 +52,9 @@ public class ScheduleFunction implements EventListener {
 		}
 
 		protected abstract void run();
+
+		@Override
+		public abstract String toString();
 	}
 
 	private static class DelayedFunction extends DelayedAction {
@@ -116,7 +119,7 @@ public class ScheduleFunction implements EventListener {
 
 	private final static PriorityQueue<DelayedAction> mActions = new PriorityQueue<>();
 	private final static Map<SenderId, PriorityQueue<DelayedAction>> mSenderActions = new HashMap<>();
-	private final Plugin mPlugin;
+	private static Plugin mPlugin;
 	private @Nullable Integer mTaskId = null;
 	private final Runnable mRunnable = new Runnable() {
 		// Re-use the same temporary list each iteration
@@ -208,7 +211,9 @@ public class ScheduleFunction implements EventListener {
 		@Nullable PriorityQueue<DelayedAction> senderActions;
 		senderActions = mSenderActions.remove(senderId);
 		if (senderActions != null) {
+			mPlugin.getLogger().fine("Cancelling scheduled actions for " + senderId);
 			for (DelayedAction action : senderActions) {
+				mPlugin.getLogger().fine("- Cancelling action: " + action);
 				action.setCancelled();
 			}
 		}

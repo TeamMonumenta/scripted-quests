@@ -15,6 +15,7 @@ public class EntitySenderId extends SenderId {
 		mName = sender.getName();
 	}
 
+	@Override
 	public String getName() {
 		@Nullable Entity entity = Bukkit.getEntity(mUuid);
 		if (entity != null) {
@@ -23,27 +24,33 @@ public class EntitySenderId extends SenderId {
 		return mName;
 	}
 
+	@Override
 	public boolean isLoaded() {
 		@Nullable Entity entity = Bukkit.getEntity(mUuid);
 		return entity != null;
 	}
 
+	@Override
 	public @Nullable CommandSender callee() {
 		return Bukkit.getEntity(mUuid);
 	}
 
+	@Override
 	public SenderId calleeId() {
 		return this;
 	}
 
+	@Override
 	public @Nullable CommandSender caller() {
 		return Bukkit.getEntity(mUuid);
 	}
 
+	@Override
 	public SenderId callerId() {
 		return this;
 	}
 
+	@Override
 	public boolean equals(Object other) {
 		if (other instanceof EntitySenderId otherEntitySenderId) {
 			return mUuid.equals(otherEntitySenderId.mUuid);
@@ -51,6 +58,7 @@ public class EntitySenderId extends SenderId {
 		return false;
 	}
 
+	@Override
 	public String toString() {
 		return "EntitySenderId "
 			+ mUuid
