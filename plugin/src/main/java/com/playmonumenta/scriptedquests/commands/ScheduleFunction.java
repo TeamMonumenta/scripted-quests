@@ -1,6 +1,7 @@
 package com.playmonumenta.scriptedquests.commands;
 
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.senderid.SenderId;
 import com.playmonumenta.scriptedquests.utils.CommandArgument;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPICommand;
@@ -10,27 +11,44 @@ import dev.jorel.commandapi.arguments.IntegerArgument;
 import dev.jorel.commandapi.wrappers.FunctionWrapper;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EventListener;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ProxiedCommandSender;
 import org.bukkit.entity.Entity;
-import org.jetbrains.annotations.Nullable;
 
-public class ScheduleFunction {
+public class ScheduleFunction implements EventListener {
 	private abstract static class DelayedAction implements Comparable<DelayedAction> {
-		private int mTargetTick;
+		private final SenderId mSenderId;
+		private final int mTargetTick;
+		private boolean mCancelled = false;
 
 		@Override
 		public int compareTo(DelayedAction other) {
 			return mTargetTick - other.mTargetTick;
 		}
 
-		private DelayedAction(int ticksDelay) {
+		private DelayedAction(CommandSender sender, int ticksDelay) {
+			mSenderId = SenderId.of(sender);
 			mTargetTick = ticksDelay + Bukkit.getCurrentTick();
+		}
+
+		public SenderId senderId() {
+			return mSenderId;
+		}
+
+		public void setCancelled() {
+			mCancelled = true;
+		}
+
+		public boolean isCancelled() {
+			return mCancelled;
 		}
 
 		protected abstract void run();
@@ -39,13 +57,20 @@ public class ScheduleFunction {
 	private static class DelayedFunction extends DelayedAction {
 		private final FunctionWrapper[] mFunction;
 
-		private DelayedFunction(int ticksDelay, FunctionWrapper[] functionIn) {
-			super(ticksDelay);
+		private DelayedFunction(int ticksDelay, CommandSender sender, FunctionWrapper[] functionIn) {
+			super(sender, ticksDelay);
 			mFunction = functionIn;
 		}
 
 		@Override
 		protected void run() {
+			if (isCancelled()) {
+				return;
+			}
+			if (!senderId().isLoaded()) {
+				return;
+			}
+
 			for (FunctionWrapper func : mFunction) {
 				func.run();
 			}
@@ -60,34 +85,37 @@ public class ScheduleFunction {
 	}
 
 	private static class DelayedCommand extends DelayedAction {
-		private final CommandSender mSender;
 		private final String mCommand;
 
 		private DelayedCommand(int ticksDelay, CommandSender sender, String command) {
-			super(ticksDelay);
-			mSender = sender;
+			super(sender, ticksDelay);
 			mCommand = command;
 		}
 
 		@Override
 		protected void run() {
-			CommandSender sender = mSender;
-			if (sender instanceof ProxiedCommandSender) {
-				sender = ((ProxiedCommandSender) sender).getCallee();
+			if (isCancelled()) {
+				return;
 			}
+			if (!senderId().isLoaded()) {
+				return;
+			}
+
+			CommandSender sender = senderId().callee();
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), sender instanceof Entity ? "execute as " + ((Entity) sender).getUniqueId() + " at @s run " + mCommand : mCommand);
 		}
 
 		@Override
 		public String toString() {
 			return "DelayedCommand{" +
-				       "mSender=" + mSender +
+				       "mSenderId=" + senderId() +
 				       ", mCommand='" + mCommand + '\'' +
 				       '}';
 		}
 	}
 
-	private final PriorityQueue<DelayedAction> mActions = new PriorityQueue<>();
+	private final static PriorityQueue<DelayedAction> mActions = new PriorityQueue<>();
+	private final static Map<SenderId, PriorityQueue<DelayedAction>> mSenderActions = new HashMap<>();
 	private final Plugin mPlugin;
 	private @Nullable Integer mTaskId = null;
 	private final Runnable mRunnable = new Runnable() {
@@ -113,6 +141,14 @@ public class ScheduleFunction {
 
 			for (DelayedAction entry : mActionsToRun) {
 				entry.run();
+				SenderId senderId = entry.senderId();
+				@Nullable PriorityQueue<DelayedAction> senderActions = mSenderActions.get(senderId);
+				if (senderActions != null) {
+					senderActions.remove(entry);
+					if (senderActions.isEmpty()) {
+						mSenderActions.remove(senderId);
+					}
+				}
 			}
 			mActionsToRun.clear();
 
@@ -141,7 +177,7 @@ public class ScheduleFunction {
 					.withArguments(new FunctionArgument("function"),
 					               new IntegerArgument("ticks", 0))
 					.executes((sender, args) -> {
-						addDelayedFunction((FunctionWrapper[]) args[0], (Integer) args[1]);
+						addDelayedFunction(sender, (FunctionWrapper[]) args[0], (Integer) args[1]);
 					}))
 			.withSubcommand(
 				new CommandAPICommand("command")
@@ -157,14 +193,29 @@ public class ScheduleFunction {
 
 	private void addDelayedAction(DelayedAction action) {
 		mActions.add(action);
+		SenderId senderId = action.senderId();
+		PriorityQueue<DelayedAction> senderActions;
+		senderActions = mSenderActions.computeIfAbsent(senderId, k -> new PriorityQueue<>());
+		senderActions.add(action);
 
 		if (mTaskId == null) {
 			mTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(mPlugin, mRunnable, 0, 1);
 		}
 	}
 
-	private void addDelayedFunction(FunctionWrapper[] function, int ticks) {
-		addDelayedAction(new DelayedFunction(ticks, function));
+	public static void cancelSenderActions(CommandSender sender) {
+		SenderId senderId = SenderId.of(sender);
+		@Nullable PriorityQueue<DelayedAction> senderActions;
+		senderActions = mSenderActions.remove(senderId);
+		if (senderActions != null) {
+			for (DelayedAction action : senderActions) {
+				action.setCancelled();
+			}
+		}
+	}
+
+	private void addDelayedFunction(CommandSender sender, FunctionWrapper[] function, int ticks) {
+		addDelayedAction(new DelayedFunction(ticks, sender, function));
 	}
 
 	private void addDelayedCommand(CommandSender sender, String command, int ticks) {
@@ -178,6 +229,7 @@ public class ScheduleFunction {
 			entry.run();
 		}
 		mActions.clear();
+		mSenderActions.clear();
 
 		if (mTaskId != null) {
 			Bukkit.getScheduler().cancelTask(mTaskId);

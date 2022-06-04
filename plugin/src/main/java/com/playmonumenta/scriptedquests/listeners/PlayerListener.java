@@ -2,6 +2,7 @@ package com.playmonumenta.scriptedquests.listeners;
 
 import com.playmonumenta.scriptedquests.Constants;
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.commands.ScheduleFunction;
 import com.playmonumenta.scriptedquests.point.Point;
 import com.playmonumenta.scriptedquests.quests.QuestDeath.DeathActions;
 import com.playmonumenta.scriptedquests.quests.components.DeathLocation;
@@ -35,7 +36,7 @@ public class PlayerListener implements Listener {
 
 	private static final String ADVENTURE_INTERACT_METAKEY = "ScriptedQuestsInteractable";
 
-	private Plugin mPlugin;
+	private final Plugin mPlugin;
 
 	public PlayerListener(Plugin plugin) {
 		mPlugin = plugin;
@@ -91,7 +92,7 @@ public class PlayerListener implements Listener {
 			return;
 		}
 
-		//Now we have definitely left clicked a block in adventure mode
+		//Now we have definitely left-clicked a block in adventure mode
 		ItemStack item = player.getInventory().getItemInMainHand();
 
 		//Compass
@@ -106,8 +107,7 @@ public class PlayerListener implements Listener {
 		Player player = event.getPlayer();
 		ItemStack item = event.getHand() == EquipmentSlot.HAND ? player.getInventory().getItemInMainHand() : player.getInventory().getItemInOffHand();
 
-		if (entity instanceof Villager) {
-			Villager villager = (Villager)entity;
+		if (entity instanceof Villager villager) {
 
 			if (!villager.isTrading() && MetadataUtils.checkOnceThisTick(mPlugin, player, "ScriptedQuestsTraderNonce")) {
 				mPlugin.mTradeManager.trade(mPlugin, villager, player, event);
@@ -131,9 +131,10 @@ public class PlayerListener implements Listener {
 		if (player.hasMetadata(Constants.PLAYER_DEATH_LOCATION_METAKEY)) {
 			// Yes - need to get previous list of death locations from metadata
 			deathEntries = (List<DeathLocation>)player.getMetadata(Constants.PLAYER_DEATH_LOCATION_METAKEY).get(0).value();
+			assert deathEntries != null;
 		} else {
 			// No - need a new list to keep track.
-			deathEntries = new ArrayList<DeathLocation>(4);
+			deathEntries = new ArrayList<>(4);
 		}
 
 		// Prevent safe deaths from being counted
@@ -165,6 +166,7 @@ public class PlayerListener implements Listener {
 		 */
 		if (player.hasMetadata(Constants.PLAYER_RESPAWN_POINT_METAKEY)) {
 			Point respawnPoint = (Point)player.getMetadata(Constants.PLAYER_RESPAWN_POINT_METAKEY).get(0).value();
+			assert respawnPoint != null;
 			event.setRespawnLocation(respawnPoint.toLocation(player.getWorld()));
 			player.removeMetadata(Constants.PLAYER_RESPAWN_POINT_METAKEY, mPlugin);
 		}
@@ -178,6 +180,7 @@ public class PlayerListener implements Listener {
 				@Override
 				public void run() {
 					List<DeathActions> actions = (List<DeathActions>)player.getMetadata(Constants.PLAYER_RESPAWN_ACTIONS_METAKEY).get(0).value();
+					assert actions != null;
 					for (DeathActions action : actions) {
 						action.doActions(mPlugin, player);
 					}
@@ -209,6 +212,9 @@ public class PlayerListener implements Listener {
 
 		// Remove all zone properties from the player
 		mPlugin.mZoneManager.unregisterPlayer(player);
+
+		// Cancel any scheduled commands/functions
+		ScheduleFunction.cancelSenderActions(player);
 
 		// Remove all metadata set by this plugin for the player
 		player.removeMetadata(Constants.PLAYER_DEATH_LOCATION_METAKEY, mPlugin);

@@ -1,8 +1,10 @@
 package com.playmonumenta.scriptedquests.listeners;
 
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.commands.ScheduleFunction;
 import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.quests.QuestNpc;
+import javax.annotation.Nullable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -15,13 +17,15 @@ import org.bukkit.event.entity.EntityCombustByEntityEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.entity.PlayerLeashEntityEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 public class EntityListener implements Listener {
-	private Plugin mPlugin;
+	private final Plugin mPlugin;
 
 	public EntityListener(Plugin plugin) {
 		mPlugin = plugin;
@@ -73,7 +77,8 @@ public class EntityListener implements Listener {
 
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void entityPotionEffectEvent(EntityPotionEffectEvent event) {
-		if (event.getAction().equals(EntityPotionEffectEvent.Action.ADDED) && !event.getNewEffect().getType().equals(PotionEffectType.HEAL)) {
+		@Nullable PotionEffect potionEffect = event.getNewEffect();
+		if (event.getAction().equals(EntityPotionEffectEvent.Action.ADDED) && potionEffect != null && !potionEffect.getType().equals(PotionEffectType.HEAL)) {
 			cancelIfNpc(event.getEntity(), event);
 		}
 	}
@@ -104,6 +109,14 @@ public class EntityListener implements Listener {
 
 		if (npc != null) {
 			event.setCancelled(true);
+		}
+	}
+
+	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+	public void entityDeathEvent(EntityDeathEvent event) {
+		Entity entity = event.getEntity();
+		if (!(entity instanceof Player)) {
+			ScheduleFunction.cancelSenderActions(entity);
 		}
 	}
 }
