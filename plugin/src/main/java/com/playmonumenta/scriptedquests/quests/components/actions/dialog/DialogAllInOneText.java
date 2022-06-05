@@ -3,7 +3,6 @@ package com.playmonumenta.scriptedquests.quests.components.actions.dialog;
 import com.google.gson.JsonElement;
 import com.playmonumenta.scriptedquests.api.JsonObjectBuilder;
 import com.playmonumenta.scriptedquests.quests.QuestContext;
-import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 
 import java.util.ArrayList;
 import java.util.Iterator;
