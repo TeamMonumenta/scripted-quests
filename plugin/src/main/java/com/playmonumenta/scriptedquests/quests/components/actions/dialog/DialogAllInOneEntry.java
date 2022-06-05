@@ -2,11 +2,16 @@ package com.playmonumenta.scriptedquests.quests.components.actions.dialog;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+import com.playmonumenta.scriptedquests.api.JsonObjectBuilder;
 import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
+
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -74,5 +79,14 @@ public class DialogAllInOneEntry implements DialogBase {
 	@Override
 	public void sendDialog(QuestContext context) {
 		MessagingUtils.sendNPCMessage(context.getPlayer(), mNPCName, mComponent.replaceText(TextReplacementConfig.builder().match("@S").replacement(context.getPlayer().getName()).build()));
+	}
+
+	@Override
+	public JsonElement serializeForClientAPI(QuestContext context) {
+		return JsonObjectBuilder.get()
+			.add("text", TextComponent.ofChildren(mComponent.replaceText(TextReplacementConfig.builder()
+				.match("@S").replacement(context.getPlayer().getName()).build())).content())
+			.add("npc_name", mNPCName)
+			.build();
 	}
 }

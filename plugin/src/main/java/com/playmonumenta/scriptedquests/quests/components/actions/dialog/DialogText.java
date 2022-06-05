@@ -42,7 +42,11 @@ public class DialogText implements DialogBase {
 	public JsonElement serializeForClientAPI(QuestContext context) {
 		return JsonObjectBuilder.get()
 			.add("type", "text")
-			.add("text", mText.stream().map(JsonPrimitive::new).collect(Collectors.toList()))
+			.add("text", mText.stream()
+				.map((t) -> MessagingUtils.serializeRawMessage(context.getPlayer(), t, true).content())
+				.map(JsonPrimitive::new)
+				.collect(Collectors.toList())
+			)
 			.add("npc_name", mDisplayName)
 			.build();
 	}

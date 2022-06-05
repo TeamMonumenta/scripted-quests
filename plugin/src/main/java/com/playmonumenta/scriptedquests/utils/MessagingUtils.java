@@ -103,13 +103,16 @@ public class MessagingUtils {
 	}
 
 	public static void sendRawMessage(Player player, String message, boolean allowTranslations) {
+		player.sendMessage(serializeRawMessage(player, message, allowTranslations));
+	}
+
+	public static TextComponent serializeRawMessage(Player player, String message, boolean allowTranslations) {
 		if (allowTranslations) {
 			message = TranslationsManager.translate(player, message);
 		}
 		message = translatePlayerName(player, message);
 		message = message.replace('§', '&');
-		TextComponent formattedMessage = AMPERSAND_SERIALIZER.deserialize(message);
-		player.sendMessage(formattedMessage);
+		return AMPERSAND_SERIALIZER.deserialize(message);
 	}
 
 	public static void sendClickableNPCMessage(Plugin plugin, Player player, String message,
