@@ -30,10 +30,6 @@
 		"damage_values": {
 			"propertyOrder": 3,
 			"title": "damage_values",
-			"defaultProperties": [
-				"physical_damage"
-			],
-			"minItems": 1,
 			"$ref": "damage_ranges.json"
 		},
 	    "melee_radius": {

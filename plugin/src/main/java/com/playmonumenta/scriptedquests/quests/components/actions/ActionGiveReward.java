@@ -239,7 +239,9 @@ public class ActionGiveReward implements ActionBase {
 						public void run() {
 							player.closeInventory();
 							PlayerData data = Core.getInstance().mPlayerManager.getPlayerData(player.getUniqueId());
-							mOnOK.run();
+							if (mOnOK != null) {
+								mOnOK.run();
+							}
 
 							if (!mDisplayOnly) {
 								player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1.15f);

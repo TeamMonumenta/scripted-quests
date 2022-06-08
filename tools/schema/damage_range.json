@@ -7,7 +7,7 @@
 		},
 		{
 			"title": "formulaic",
-			"description": "Generates the mob's Damage based on a series of parameters given. The range generated will be a 10% difference from the result of this formula for both min and max damage. Use this for easy calculations and accurate math.",
+			"description": "Generates the mob's Damage based on a series of parameters given. The range generated will be a 5% difference from the result of this formula for both min and max damage. Use this for easy calculations and accurate math.",
 			"type": "object",
 			"properties": {
 				"playerLevel": {

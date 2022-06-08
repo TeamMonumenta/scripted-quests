@@ -2,6 +2,10 @@
     "title": "Damage Ranges",
     "type": "object",
     "additionalProperties": false,
+	"defaultProperties": [
+		"damage",
+		"magical"
+	],
     "properties": {
         "physical_damage": {
             "title": "physical_damage",
@@ -12,6 +16,17 @@
             "title": "magical_damage",
             "description": "The range of Magical Damage a mob deals",
 			"$ref": "damage_range.json"
+        },
+        "damage": {
+            "title": "damage",
+            "description": "The damage that the mob deals.",
+			"$ref": "damage_range.json"
+        },
+        "magical": {
+            "title": "magical",
+            "description": "Determines whether or not the damage is Magical-type instead of Physical-type, which will make it reduced by Resistance instead of Armor.",
+			"type": "boolean",
+			"default": false
         }
     }
 }
