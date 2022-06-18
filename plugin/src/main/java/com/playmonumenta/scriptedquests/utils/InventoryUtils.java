@@ -2,6 +2,7 @@ package com.playmonumenta.scriptedquests.utils;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import javax.annotation.Nullable;
 import net.kyori.adventure.text.Component;
@@ -14,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.loot.LootContext;
+import org.bukkit.loot.LootTable;
 
 public class InventoryUtils {
 	public static boolean testForItemWithLore(ItemStack item, @Nullable String loreText, boolean exactMatch) {
@@ -61,11 +63,22 @@ public class InventoryUtils {
 		return NamespacedKey.fromString(path);
 	}
 
+	public static LootTable getLootTable(String path) throws Exception {
+		return getLootTable(getNamespacedKey(path));
+	}
+
+	public static @Nullable LootTable getLootTable(NamespacedKey lootNamespace) {
+		return Bukkit.getLootTable(lootNamespace);
+	}
+
 	public static boolean giveLootTableContents(Player player, String lootPath, Random random, boolean alreadyDone) throws Exception {
-		NamespacedKey lootNamespace = getNamespacedKey(lootPath);
+		return giveLootTableContents(player, Objects.requireNonNull(getLootTable(lootPath)), random, alreadyDone);
+	}
+
+	public static boolean giveLootTableContents(Player player, LootTable lootTable, Random random, boolean alreadyDone) {
 		LootContext lootContext = new LootContext.Builder(player.getLocation()).build();
 
-		alreadyDone = giveItems(player, Bukkit.getLootTable(lootNamespace).populateLoot(random, lootContext), alreadyDone);
+		alreadyDone = giveItems(player, lootTable.populateLoot(random, lootContext), alreadyDone);
 		return alreadyDone;
 	}
 
