@@ -6,7 +6,7 @@ import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.EntitySelectorArgument;
 import dev.jorel.commandapi.arguments.EntityTypeArgument;
-import dev.jorel.commandapi.arguments.StringArgument;
+import dev.jorel.commandapi.arguments.TextArgument;
 import java.util.Collection;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -26,7 +26,7 @@ public class InteractNpc {
 		new CommandAPICommand("interactnpc")
 			.withPermission(CommandPermission.fromString("scriptedquests.interactnpc"))
 			.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
-			.withArguments(new StringArgument("npcName"))
+			.withArguments(new TextArgument("npcName"))
 			.withArguments(new EntityTypeArgument("npcType"))
 			.executes((sender, args) -> {
 				interact(plugin, sender, (Collection<Player>)args[0],
@@ -49,7 +49,7 @@ public class InteractNpc {
 		new CommandAPICommand("interactnpc")
 			.withPermission(CommandPermission.fromString("scriptedquests.interactnpc"))
 			.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
-			.withArguments(new StringArgument("npcName"))
+			.withArguments(new TextArgument("npcName"))
 			.executes((sender, args) -> {
 				interact(plugin, sender, (Collection<Player>)args[0],
 					(String)args[1], EntityType.VILLAGER);
