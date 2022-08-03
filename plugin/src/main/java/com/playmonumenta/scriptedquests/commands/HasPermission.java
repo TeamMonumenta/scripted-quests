@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.Argument;
+import dev.jorel.commandapi.arguments.EntitySelector;
 import dev.jorel.commandapi.arguments.EntitySelectorArgument;
 import dev.jorel.commandapi.arguments.TextArgument;
 import org.bukkit.entity.Player;
@@ -15,7 +16,7 @@ public class HasPermission {
 		new CommandAPICommand("haspermission")
 			.withPermission(CommandPermission.fromString("scriptedquests.haspermission"))
 			.withArguments(
-				new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.ONE_PLAYER),
+				new EntitySelectorArgument("players", EntitySelector.ONE_PLAYER),
 				new TextArgument("permission")
 			)
 			.executes((sender, args) -> {

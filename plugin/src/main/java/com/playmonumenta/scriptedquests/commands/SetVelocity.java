@@ -5,10 +5,7 @@ import java.util.LinkedHashMap;
 
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
-import dev.jorel.commandapi.arguments.Argument;
-import dev.jorel.commandapi.arguments.BooleanArgument;
-import dev.jorel.commandapi.arguments.DoubleArgument;
-import dev.jorel.commandapi.arguments.EntitySelectorArgument;
+import dev.jorel.commandapi.arguments.*;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -19,7 +16,7 @@ public class SetVelocity {
 			.withPermission(CommandPermission.fromString("scriptedquests.setvelocity"))
 			.withSubcommand(new CommandAPICommand("directional")
 				.withArguments(
-					new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS),
+					new EntitySelectorArgument("players", EntitySelector.MANY_PLAYERS),
 					new DoubleArgument("magnitude"),
 					new BooleanArgument("inverted")
 				)
@@ -33,7 +30,7 @@ public class SetVelocity {
 						}
 					})
 			)
-			.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
+			.withArguments(new EntitySelectorArgument("players", EntitySelector.MANY_PLAYERS))
 			.withArguments(new DoubleArgument("xvel"))
 			.withArguments(new DoubleArgument("yvel"))
 			.withArguments(new DoubleArgument("zvel"))

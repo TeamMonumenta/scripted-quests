@@ -21,7 +21,7 @@ public class ScrollingTextActive {
 
 	private Plugin mPlugin;
 	private int mIndex = -1;
-	private List<String> mText;
+	private List<DialogScrollingText.ScrollingTextEntry> mText;
 	private Player mPlayer;
 	private Entity mEntity;
 	private QuestActions mActions;
@@ -34,7 +34,7 @@ public class ScrollingTextActive {
 	private BukkitRunnable mScrollRunnable = null;
 	private int mScrollTime = (int) (20 * 4.5);
 	public ScrollingTextActive(Plugin plugin, Player player, Entity npcEntity,
-							   List<String> text, QuestActions actions, QuestPrerequisites prerequisites,
+							   List<DialogScrollingText.ScrollingTextEntry> text, QuestActions actions, QuestPrerequisites prerequisites,
 							   AreaBounds validArea, boolean raw, boolean autoScroll, boolean triggerActionsLast) {
 		mPlugin = plugin;
 		mPlayer = player;
@@ -78,13 +78,14 @@ public class ScrollingTextActive {
 		}
 		mIndex++;
 		if (mIndex < mText.size()) {
-			String text = mText.get(mIndex);
+			DialogScrollingText.ScrollingTextEntry entry = mText.get(mIndex);
+			String text = entry.getText();
 			if (!text.trim().isEmpty()) {
 				mPlayer.sendMessage("");
-				if (mRaw) {
+				if (entry.isRaw()) {
 					MessagingUtils.sendScrollableRawMessage(mPlayer, text);
 				} else {
-					MessagingUtils.sendScrollableNPCMessage(mPlayer, name, text);
+					MessagingUtils.sendScrollableNPCMessage(mPlayer, entry.getSpeaker(), text);
 				}
 			} else {
 				next();

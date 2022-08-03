@@ -14,7 +14,7 @@
         <maven.build.timestamp.format>yyyyMMdd-HHmmss</maven.build.timestamp.format>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <minecraft.server.version>1.18.2-R0.1-SNAPSHOT</minecraft.server.version>
+        <minecraft.server.version>1.19-R0.1-SNAPSHOT</minecraft.server.version>
     </properties>
 
     <distributionManagement>
@@ -54,9 +54,21 @@
             <name>Minecraft Libraries</name>
             <url>https://libraries.minecraft.net</url>
         </repository>
+
+		<repository>
+			<id>nexus</id>
+			<name>Lumine Public</name>
+			<url>https://mvn.lumine.io/repository/maven-public/</url>
+		</repository>
     </repositories>
 
     <dependencies>
+		<dependency>
+			<groupId>com.ticxo.modelengine</groupId>
+			<artifactId>api</artifactId>
+			<version>R2.5.0</version>
+			<scope>provided</scope>
+		</dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
@@ -65,9 +77,9 @@
         </dependency>
 
 		<dependency>
-			<groupId>dev.jorel.CommandAPI</groupId>
+			<groupId>dev.jorel</groupId>
 			<artifactId>commandapi-core</artifactId>
-			<version>6.4.0</version>
+			<version>8.4.1</version>
 			<scope>provided</scope>
 		</dependency>
 

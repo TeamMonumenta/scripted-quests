@@ -19,7 +19,7 @@ public class Growable {
 			.withArguments(
 				new LiteralArgument("grow"),
 				new LocationArgument("location", LocationType.BLOCK_POSITION),
-				new StringArgument("label").overrideSuggestions(manager.getLabels()),
+				new StringArgument("label").replaceSuggestions(ArgumentSuggestions.strings(manager.getLabels())),
 				new IntegerArgument("ticksPerStep", 1),
 				new IntegerArgument("blocksPerStep", 1),
 				new BooleanArgument("callStructureGrowEvent")

@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.Argument;
+import dev.jorel.commandapi.arguments.EntitySelector;
 import dev.jorel.commandapi.arguments.EntitySelectorArgument;
 import dev.jorel.commandapi.arguments.LocationArgument;
 import org.bukkit.Location;
@@ -17,7 +18,7 @@ public class DebugZones {
 
 		new CommandAPICommand("debugzones")
 			.withPermission(CommandPermission.fromString("scriptedquests.debugzones"))
-			.withArguments(new EntitySelectorArgument("player", EntitySelectorArgument.EntitySelector.ONE_PLAYER))
+			.withArguments(new EntitySelectorArgument("player", EntitySelector.ONE_PLAYER))
 			.executes((sender, args) -> {
 				plugin.mZoneManager.sendDebug(sender, (Player) args[0]);
 			})

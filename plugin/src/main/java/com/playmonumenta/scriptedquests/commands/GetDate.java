@@ -6,6 +6,7 @@ import com.playmonumenta.scriptedquests.utils.DateUtils;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.Argument;
+import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.TextArgument;
 
 public class GetDate {
@@ -17,7 +18,7 @@ public class GetDate {
 
 		new CommandAPICommand("getdate")
 			.withPermission(CommandPermission.fromString("scriptedquests.getdate"))
-			.withArguments(new TextArgument("field").overrideSuggestions(FIELDS))
+			.withArguments(new TextArgument("field").replaceSuggestions(ArgumentSuggestions.strings(FIELDS)))
 			.executes((sender, args) -> {
 					return getField((String)args[0]);
 				})

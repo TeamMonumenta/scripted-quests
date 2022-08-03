@@ -6,6 +6,7 @@ import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.Argument;
+import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.TextArgument;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import org.bukkit.command.CommandSender;
@@ -21,9 +22,9 @@ public class Code {
 		new CommandAPICommand("code")
 			.withPermission(perms)
 			.withArguments(
-				new TextArgument("word1").overrideSuggestions(CodeEntry.words),
-				new TextArgument("word2").overrideSuggestions(CodeEntry.words),
-				new TextArgument("word3").overrideSuggestions(CodeEntry.words)
+				new TextArgument("word1").replaceSuggestions(ArgumentSuggestions.strings(CodeEntry.words)),
+				new TextArgument("word2").replaceSuggestions(ArgumentSuggestions.strings(CodeEntry.words)),
+				new TextArgument("word3").replaceSuggestions(ArgumentSuggestions.strings(CodeEntry.words))
 			)
 			.executes((sender, args) -> {
 				submitCode(plugin, sender, (String)args[0], (String)args[1], (String)args[2]);

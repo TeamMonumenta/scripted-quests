@@ -26,7 +26,7 @@ public class Leaderboard {
 	public static void register(Plugin plugin) {
 		new CommandAPICommand("leaderboard")
 			.withPermission(CommandPermission.fromString("scriptedquests.leaderboard"))
-			.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
+			.withArguments(new EntitySelectorArgument("players", EntitySelector.MANY_PLAYERS))
 			.withArguments(new StringArgument("objective"))
 			.withArguments(new BooleanArgument("descending"))
 			.withArguments(new IntegerArgument("page", 1))
@@ -40,10 +40,10 @@ public class Leaderboard {
 
 		new CommandAPICommand("leaderboard")
 			.withPermission(CommandPermission.fromString("scriptedquests.leaderboard"))
-			.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
+			.withArguments(new EntitySelectorArgument("players", EntitySelector.MANY_PLAYERS))
 			.withArguments(new StringArgument("objective"))
 			.withArguments(new BooleanArgument("descending"))
-			.withArguments(new EntitySelectorArgument("filterPlayers", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
+			.withArguments(new EntitySelectorArgument("filterPlayers", EntitySelector.MANY_PLAYERS))
 			.executes((sender, args) -> {
 				for (Player player : (Collection<Player>)args[0]) {
 					leaderboard(plugin, player, (String)args[1],
@@ -59,7 +59,7 @@ public class Leaderboard {
 		new CommandAPICommand("leaderboard")
 			.withPermission(CommandPermission.fromString("scriptedquests.leaderboard"))
 			.withArguments(new MultiLiteralArgument("update"))
-			.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
+			.withArguments(new EntitySelectorArgument("players", EntitySelector.MANY_PLAYERS))
 			.withArguments(new StringArgument("objective"))
 			.executes((sender, args) -> {
 				for (Player player : (Collection<Player>)args[1]) {

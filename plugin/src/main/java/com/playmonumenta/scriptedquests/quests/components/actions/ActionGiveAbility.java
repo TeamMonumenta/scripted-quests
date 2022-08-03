@@ -6,6 +6,7 @@ import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import me.Novalescent.Core;
 import me.Novalescent.abilities.core.Ability;
 import me.Novalescent.player.PlayerData;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -22,11 +23,11 @@ public class ActionGiveAbility implements ActionBase {
 
 	@Override
 	public void doAction(Plugin plugin, Player player, Entity npcEntity, QuestPrerequisites prereqs) {
+		player.sendMessage(ChatColor.RED + "ERROR: GiveAbility is an old action, and is no longer used/functional. Please report this.");
 		Ability ability = Core.getInstance().mAbilityManager.getAbility(mAbilityId, player);
 
 		if (ability != null) {
 			PlayerData data = Core.getInstance().mPlayerManager.getPlayerData(player.getUniqueId());
-			data.mAbilities.addAbility(ability, true);
 		}
 
 	}

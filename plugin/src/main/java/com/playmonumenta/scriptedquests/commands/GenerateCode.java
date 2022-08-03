@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.Argument;
+import dev.jorel.commandapi.arguments.EntitySelector;
 import dev.jorel.commandapi.arguments.EntitySelectorArgument;
 import dev.jorel.commandapi.arguments.TextArgument;
 import org.bukkit.entity.Player;
@@ -20,7 +21,7 @@ public class GenerateCode {
 		new CommandAPICommand("generatecode")
 			.withPermission(perms)
 			.withArguments(
-				new EntitySelectorArgument("players",EntitySelectorArgument.EntitySelector.MANY_PLAYERS),
+				new EntitySelectorArgument("players", EntitySelector.MANY_PLAYERS),
 				new TextArgument("seed")
 			)
 			.executes((sender, args) -> {

@@ -5,10 +5,7 @@ import java.util.LinkedHashMap;
 
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
-import dev.jorel.commandapi.arguments.Argument;
-import dev.jorel.commandapi.arguments.EntitySelectorArgument;
-import dev.jorel.commandapi.arguments.IntegerArgument;
-import dev.jorel.commandapi.arguments.ItemStackArgument;
+import dev.jorel.commandapi.arguments.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -21,7 +18,7 @@ public class Cooldown {
 		new CommandAPICommand("cooldown")
 			.withPermission(perms)
 			.withArguments(
-				new EntitySelectorArgument("player", EntitySelectorArgument.EntitySelector.MANY_PLAYERS),
+				new EntitySelectorArgument("player", EntitySelector.MANY_PLAYERS),
 				new ItemStackArgument("material"),
 				new IntegerArgument("ticks")
 			)

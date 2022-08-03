@@ -17,7 +17,7 @@ public class Race {
 		new CommandAPICommand("race")
 			.withSubcommand(new CommandAPICommand("start")
 				.withPermission(CommandPermission.fromString("scriptedquests.race.start"))
-				.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
+				.withArguments(new EntitySelectorArgument("players", EntitySelector.MANY_PLAYERS))
 				.withArguments(new StringArgument("raceLabel"))
 				.executes((sender, args) -> {
 					raceStart(plugin, sender, (Collection<Player>)args[0],
@@ -25,19 +25,19 @@ public class Race {
 				}))
 			.withSubcommand(new CommandAPICommand("stop")
 				.withPermission(CommandPermission.fromString("scriptedquests.race.stop"))
-				.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
+				.withArguments(new EntitySelectorArgument("players", EntitySelector.MANY_PLAYERS))
 				.executes((sender, args) -> {
 					raceStop(plugin, sender, (Collection<Player>)args[0]);
 				}))
 			.withSubcommand(new CommandAPICommand("win")
 				.withPermission(CommandPermission.fromString("scriptedquests.race.win"))
-				.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
+				.withArguments(new EntitySelectorArgument("players", EntitySelector.MANY_PLAYERS))
 				.executes((sender, args) -> {
 					raceWin(plugin, sender, (Collection<Player>)args[0]);
 				}))
 			.withSubcommand(new CommandAPICommand("leaderboard")
 				.withPermission(CommandPermission.fromString("scriptedquests.race.leaderboard"))
-				.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
+				.withArguments(new EntitySelectorArgument("players", EntitySelector.MANY_PLAYERS))
 				.withArguments(new StringArgument("raceLabel"))
 				.withArguments(new IntegerArgument("page", 1))
 				.executes((sender, args) -> {

@@ -6,10 +6,7 @@ import java.util.Random;
 
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
-import dev.jorel.commandapi.arguments.Argument;
-import dev.jorel.commandapi.arguments.EntitySelectorArgument;
-import dev.jorel.commandapi.arguments.IntegerArgument;
-import dev.jorel.commandapi.arguments.TextArgument;
+import dev.jorel.commandapi.arguments.*;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
@@ -26,7 +23,7 @@ public class GiveLootTable {
 		new CommandAPICommand("giveloottable")
 			.withPermission(perms)
 			.withArguments(
-				new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS),
+				new EntitySelectorArgument("players", EntitySelector.MANY_PLAYERS),
 				new TextArgument("lootTablePath")
 			)
 			.executes((sender, args) -> {
@@ -37,7 +34,7 @@ public class GiveLootTable {
 		new CommandAPICommand("giveloottable")
 			.withPermission(perms)
 			.withArguments(
-				new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS),
+				new EntitySelectorArgument("players", EntitySelector.MANY_PLAYERS),
 				new TextArgument("lootTablePath"),
 				new IntegerArgument("count", 1, 1000)
 			)
@@ -51,9 +48,9 @@ public class GiveLootTable {
 		new CommandAPICommand("giveloottable")
 			.withPermission(perms)
 			.withArguments(
-				new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS),
+				new EntitySelectorArgument("players", EntitySelector.MANY_PLAYERS),
 				new TextArgument("lootTablePath"),
-				new EntitySelectorArgument("countItems", EntitySelectorArgument.EntitySelector.ONE_ENTITY)
+				new EntitySelectorArgument("countItems", EntitySelector.ONE_ENTITY)
 				)
 			.executes((sender, args) -> {
 				giveLootCountFromItemEntity((Collection<Player>)args[0], (String)args[1], (Entity)args[2], random);

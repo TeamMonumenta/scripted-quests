@@ -34,13 +34,46 @@ import java.util.List;
 public class DialogScrollingText extends ActionQuestMarker implements DialogBase, ActionNested {
 	private Double mRadius = 4.0;
 	private String mDisplayName;
-	private ArrayList<String> mText = new ArrayList<String>();
+	private ArrayList<ScrollingTextEntry> mText = new ArrayList<>();
 	private QuestActions mActions;
 	public int mClickType = 0;
 	private boolean mRaw = false;
 	private boolean mAutoScroll = false;
 	private boolean mTriggerActionsOnLastDialog = false;
 	private final ActionNested mParent;
+
+	public class ScrollingTextEntry {
+
+		private String mName;
+		private boolean mRaw;
+		private String mText;
+		public ScrollingTextEntry(String name, JsonObject object) {
+			mName = object.get("speaker").getAsString();
+			if (mName.trim().isEmpty()) {
+				mName = name;
+			}
+			mRaw = object.get("raw").getAsBoolean();
+			mText = object.get("text").getAsString();
+		}
+
+		public ScrollingTextEntry(String name, String string) {
+			mName = name;
+			mText = string;
+		}
+
+		public String getSpeaker() {
+			return mName;
+		}
+
+		public String getText() {
+			return mText;
+		}
+
+		public boolean isRaw() {
+			return mRaw;
+		}
+
+	}
 
 	public DialogScrollingText(String displayName, JsonElement element, ActionNested parent) throws Exception {
 		super(element.getAsJsonObject());
@@ -54,7 +87,11 @@ public class DialogScrollingText extends ActionQuestMarker implements DialogBase
 
 		JsonArray array = jsonObject.get("text").getAsJsonArray();
 		for (JsonElement jsonElement : array) {
-			mText.add(jsonElement.getAsString());
+			if (jsonElement.isJsonPrimitive()) {
+				mText.add(new ScrollingTextEntry(mDisplayName, jsonElement.getAsString()));
+			} else if (jsonElement.isJsonObject()) {
+				mText.add(new ScrollingTextEntry(mDisplayName, jsonElement.getAsJsonObject()));
+			}
 		}
 
 		mActions = new QuestActions("", displayName, EntityType.VILLAGER, 0, jsonObject.get("actions"), parent);

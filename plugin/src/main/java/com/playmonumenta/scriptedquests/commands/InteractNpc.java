@@ -5,10 +5,7 @@ import java.util.LinkedHashMap;
 
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
-import dev.jorel.commandapi.arguments.Argument;
-import dev.jorel.commandapi.arguments.EntitySelectorArgument;
-import dev.jorel.commandapi.arguments.EntityTypeArgument;
-import dev.jorel.commandapi.arguments.StringArgument;
+import dev.jorel.commandapi.arguments.*;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
@@ -24,7 +21,7 @@ public class InteractNpc {
 		new CommandAPICommand("interactnpc")
 			.withPermission(CommandPermission.fromString("scriptedquests.interactnpc"))
 			.withArguments(
-				new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS),
+				new EntitySelectorArgument("players", EntitySelector.MANY_PLAYERS),
 				new StringArgument("npcName"),
 				new EntityTypeArgument("npcType")
 			)
@@ -39,7 +36,7 @@ public class InteractNpc {
 		new CommandAPICommand("interactnpc")
 			.withPermission(CommandPermission.fromString("scriptedquests.interactnpc"))
 			.withArguments(
-				new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS),
+				new EntitySelectorArgument("players", EntitySelector.MANY_PLAYERS),
 				new StringArgument("npcName")
 			)
 			.executes((sender, args) -> {

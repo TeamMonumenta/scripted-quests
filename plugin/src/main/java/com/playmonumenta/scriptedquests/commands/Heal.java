@@ -7,6 +7,7 @@ import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.Argument;
 import dev.jorel.commandapi.arguments.DoubleArgument;
+import dev.jorel.commandapi.arguments.EntitySelector;
 import dev.jorel.commandapi.arguments.EntitySelectorArgument;
 import org.bukkit.attribute.Attributable;
 import org.bukkit.attribute.Attribute;
@@ -19,7 +20,7 @@ public class Heal {
 		new CommandAPICommand("heal")
 			.withPermission(CommandPermission.fromString("scriptedquests.heal"))
 			.withArguments(
-				new EntitySelectorArgument("entities", EntitySelectorArgument.EntitySelector.MANY_ENTITIES),
+				new EntitySelectorArgument("entities", EntitySelector.MANY_ENTITIES),
 				new DoubleArgument("amount")
 			)
 			.executes((sender, args) -> {

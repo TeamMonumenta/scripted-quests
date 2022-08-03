@@ -25,7 +25,7 @@ public class GiveItemWithLore {
 		new CommandAPICommand("giveitemwithlore")
 			.withPermission(perms)
 			.withArguments(
-				new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS),
+				new EntitySelectorArgument("players", EntitySelector.MANY_PLAYERS),
 				new ItemStackArgument("item"),
 				new IntegerArgument("count"),
 				new TextArgument("lore")

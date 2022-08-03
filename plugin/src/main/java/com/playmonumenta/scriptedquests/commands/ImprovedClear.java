@@ -24,7 +24,7 @@ public class ImprovedClear {
 		new CommandAPICommand("improvedclear")
 			.withPermission(perms)
 			.withArguments(
-				new EntitySelectorArgument("target", EntitySelectorArgument.EntitySelector.ONE_PLAYER),
+				new EntitySelectorArgument("target", EntitySelector.ONE_PLAYER),
 				new TextArgument("name"),
 				new BooleanArgument("rpgItem")
 			)
@@ -40,7 +40,7 @@ public class ImprovedClear {
 		new CommandAPICommand("improvedclear")
 			.withPermission(perms)
 			.withArguments(
-				new EntitySelectorArgument("target", EntitySelectorArgument.EntitySelector.ONE_PLAYER),
+				new EntitySelectorArgument("target", EntitySelector.ONE_PLAYER),
 				new TextArgument("name"),
 				new BooleanArgument("rpgItem"),
 				new IntegerArgument("maxAmount")
@@ -57,7 +57,7 @@ public class ImprovedClear {
 		new CommandAPICommand("improvedclear")
 			.withPermission(perms)
 			.withArguments(
-				new EntitySelectorArgument("target", EntitySelectorArgument.EntitySelector.ONE_PLAYER),
+				new EntitySelectorArgument("target", EntitySelector.ONE_PLAYER),
 				new TextArgument("name"),
 				new BooleanArgument("rpgItem"),
 				new IntegerArgument("maxAmount"),
@@ -75,7 +75,7 @@ public class ImprovedClear {
 		new CommandAPICommand("improvedclear")
 			.withPermission(perms)
 			.withArguments(
-				new EntitySelectorArgument("target", EntitySelectorArgument.EntitySelector.ONE_PLAYER),
+				new EntitySelectorArgument("target", EntitySelector.ONE_PLAYER),
 				new TextArgument("name"),
 				new BooleanArgument("rpgItem"),
 				new IntegerArgument("maxAmount"),
