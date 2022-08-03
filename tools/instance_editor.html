@@ -63,7 +63,8 @@
 				"onComplete",
 				"shard_objectives",
 				"worldborder",
-				"bossRegions"
+				"bossRegions",
+				"questRegions"
             ],
             additionalProperties:false,
             properties: {
@@ -386,32 +387,36 @@
 					description: "Regions used for playing Quest Components. These regions will execute quest components whenever the player enters them.",
 					type: "array",
 					items: {
-						region: {
-							title: "region",
-							description: "The cubic region that the boss is contained in, defining 2 corners. The y-axis of the corners are ignored.",
-							type: "object",
-							properties: {
-								corner1: {
-									title: "corner1",
-									description: "The first corner in x,y,z format",
-									type: "string",
-									default: "0,0,0"
+						title: "Quest Region",
+						type: "object",
+						properties: {
+							region: {
+								title: "region",
+								description: "The cubic region that the boss is contained in, defining 2 corners. The y-axis of the corners are ignored.",
+								type: "object",
+								properties: {
+									corner1: {
+										title: "corner1",
+										description: "The first corner in x,y,z format",
+										type: "string",
+										default: "0,0,0"
+									},
+									corner2: {
+										title: "corner2",
+										description: "The second corner in x,y,z format",
+										type: "string",
+										default: "0,0,0"
+									}
 								},
-								corner2: {
-									title: "corner2",
-									description: "The second corner in x,y,z format",
-									type: "string",
-									default: "0,0,0"
-								}
-							},
-							quest_components: {
-								title: "quest_components",
-								description: "The Quest Components to run upon entering this region",
-								type: "array",
-								format: "tabs",
-								items: {
-									title: "Quest Component",
-									$ref: "schema/quest_component.json"
+								quest_components: {
+									title: "quest_components",
+									description: "The Quest Components to run upon entering this region",
+									type: "array",
+									format: "tabs",
+									items: {
+										title: "Quest Component",
+										$ref: "schema/quest_component.json"
+									}
 								}
 							}
 						}
