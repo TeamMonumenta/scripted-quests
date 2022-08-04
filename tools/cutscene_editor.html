@@ -52,6 +52,7 @@
             defaultProperties: [
                 "id",
 				"name",
+				"fade_in",
 				"actors",
 				"scene_script",
 				"setup_script"
@@ -73,6 +74,13 @@
                     description: "The name of the Cutscene for display purposes.",
                     type: "string",
                     default: "Cutscene Name"
+                },
+				fade_in: {
+                    propertyOrder: 2,
+                    title: "fade_in",
+                    description: "Chooses if when the cutscene starts, the system will automatically handle the fade-in effects. Otherwise, turn to false if the cutscene script should do a custom fade-in.",
+                    type: "boolean",
+                    default: true
                 },
 				actors: {
                     required: true,
