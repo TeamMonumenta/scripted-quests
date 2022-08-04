@@ -85,7 +85,7 @@ public class MessagingUtils {
 
 	public static void sendScrollableRawMessage(Player player, String message) {
 		message = ChatColor.translateAlternateColorCodes('&',translatePlayerName(player, message));;
-		TextComponent formattedMessage = new TextComponent(TextComponent.fromLegacyText(message + " "));
+		TextComponent formattedMessage = new TextComponent(TextComponent.fromLegacyText("  " + message));
 		formattedMessage.setColor(ChatColor.WHITE);
 
 		player.spigot().sendMessage(ChatMessageType.SYSTEM, formattedMessage);

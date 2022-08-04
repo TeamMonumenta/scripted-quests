@@ -127,6 +127,12 @@
 				}
 			}
 		},
+		"rotate_camera": {
+			"title": "rotate_camera",
+			"description": "Rotates the camera using a custom camera rotation that is recorded in-game. This rotation takes priority over the rotations of path_camera. If another rotate_camera action players, the current one is cancelled. Specify the ID of the camera rotation.",
+			"type": "string",
+			"default": "id"
+		},
 		"play_music": {
 			"title": "play_music",
 			"description": "Plays the specified music track on loop. If this field is empty, then any music being played is canceled, including music that was playing when the player entered the cutscene. All custom cutscene music that is playing is stopped when the cutscene is over.",
