@@ -158,6 +158,28 @@
 				}
 			}
 		},
+		"potion_effect": {
+			"title": "potion_effect",
+			"description": "The Potion Effect to apply to the target",
+			"type": "object",
+			"properties": {
+				"effect": {
+					"title": "effect",
+					"description": "The name of the potion effect. Get the name from /effect in-game",
+					"type": "string"
+				},
+				"ticks": {
+					"title": "ticks",
+					"description": "The amount of ticks that the effect lasts",
+					"type": "integer"
+				},
+				"amplifier": {
+					"title": "amplifier",
+					"description": "The amplifier of the effect",
+					"type": "integer"
+				}
+			}
+		},
 		"setblock": {
 			"title": "setblock",
 			"description": "Sets a block at a given location to the new block type.",
