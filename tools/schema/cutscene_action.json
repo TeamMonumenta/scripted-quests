@@ -221,6 +221,16 @@
 					"type": "string",
 					"default": "0,0,0"
 				},
+				"rate": {
+					"description": "The rate at which to play the effects at periodically. This is in ticks.",
+					"type": "integer",
+					"default": 1
+				},
+				"iterations": {
+					"description": "The amount of iterations to do for these effects.",
+					"type": "integer",
+					"default": 1
+				},
 				"effects": {
 					"title": "effects",
 					"description": "The effects to play at the location",
