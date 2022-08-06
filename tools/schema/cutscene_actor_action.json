@@ -144,6 +144,12 @@
 			"type": "boolean",
 			"default": false
 		},
+		"crouch": {
+			"title": "crouch",
+			"description": "Toggles crouching whether it's true or false.",
+			"type": "boolean",
+			"default": true
+		},
 		"equipment": {
 			"title": "equipment",
 			"description": "Changes the equipment that the NPC wears. This affects all armor slots, and both hand slots.",
