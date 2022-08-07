@@ -204,6 +204,25 @@
 				}
 			}
 		},
+		"sheathe": {
+			"title": "sheathe",
+			"description": "Sheathes the actor's current mainhand and offhand items.",
+			"type": "object",
+			"properties": {
+				"sheathe": {
+					"title": "sheathe",
+					"description": "Toggle on or off if their items are sheathed",
+					"type": "boolean",
+					"default": true
+				},
+				"silent": {
+					"title": "silent",
+					"description": "If the item is a weapon, toggle on or off if it'll play a sheathing sound",
+					"type": "boolean",
+					"default": false
+				}
+			}
+		},
 		"wait": {
 			"title": "wait",
 			"description": "Causes the actor script to wait the specified amount of time before continuing to execute actions. Any in-progress actions are not halted. This is in SECONDS and can be a decimal.",
