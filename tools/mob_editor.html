@@ -548,10 +548,45 @@
 				abilities: {
                     propertyOrder: 33,
                     title: "ability",
-                    description: "The abilities for this mob. Must specify the mob ability ID",
+                    description: "The abilities for this mob.",
                     type: "array",
                     items: {
-                        type: "string"
+                        oneOf: [
+							{
+								title: "Simple",
+								description: "An ability specified by a ability ID.",
+								type: "string",
+								default: "ability"
+							},
+							{
+								title: "Complex",
+								description: "Allows for customization of the ability specified. Open the Properties button to see more options",
+								defaultProperties: [
+									"id"
+								],
+								properties: {
+									id: {
+										title: "id",
+										description: "The ID of the ability. This can be a player skill.",
+										type: "string",
+										default: "Common"
+									},
+									potency: {
+										title: "potency",
+										description: "The base potency of the ability if applicable. This will affect its overall power. 1 = 100% potency",
+										type: "number",
+										default: 1
+									},
+									channel_time: {
+										title: "channel_time",
+										description: "The channel time of the skill. This is in TICKS. 0 = instant cast",
+										type: "integer",
+										default: 0
+									}
+								},
+								type: "object"
+							}
+						]
                     }
                 },
 				ranged: {
