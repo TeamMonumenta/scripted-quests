@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>ScriptedQuests Mob Model Editor</title>
+
+    <!-- Foundation CSS framework (Bootstrap and jQueryUI also supported) -->
+    <link rel='stylesheet' href='//cdn.jsdelivr.net/bootstrap/3.2.0/css/bootstrap.css'>
+    <!-- Font Awesome icons (Bootstrap, Foundation, and jQueryUI also supported) -->
+    <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.6.1/css/all.css'>
+
+    <script src="https://cdn.jsdelivr.net/npm/@json-editor/json-editor@1.3.5/dist/jsoneditor.min.js"></script>
+</head>
+<body>
+<div class='container'>
+    <div class='row' style='padding-bottom: 15px;'>
+        <div class='col-md-12'>
+            <h1>ScriptedQuests Mob Model Editor</h1>
+            <p>For the SFRPG Project, by Nova/Fire.</p>
+			<br>
+			<p>Used for creating Mob Models.</p>
+        </div>
+    </div>
+    <div class='row' style='padding-bottom: 15px;'>
+        <div class='col-md-12'>
+            <button id='restore' class='btn btn-info'>Restore to Default</button>
+            <span id='valid_indicator' class='label label-success'></span>
+        </div>
+    </div>
+    <div class='row'>
+        <div class='col-md-12'>
+            <div id='editor_holder'></div>
+        </div>
+    </div>
+</div>
+
+<script>
+       // Initialize the editor
+    var editor = new JSONEditor(document.getElementById('editor_holder'),{
+        theme: 'bootstrap3',
+        iconlib: 'fontawesome5',
+
+        // Enable fetching schemas via ajax
+        ajax: true,
+
+        // The schema for the editor
+        schema: {
+            title: "Mob Model Editor",
+            defaultProperties: [
+                "id",
+				"model_id",
+				"melee_states",
+				"internal_states"
+            ],
+            additionalProperties:false,
+            properties: {
+                 id: {
+                    required: true,
+                    propertyOrder: 1,
+                    title: "id",
+                    description: "The ID of the Mob Model. This needs to be unique.",
+                    type: "string",
+                    default: "mob_model"
+                },
+				model_id: {
+                    required: true,
+                    propertyOrder: 2,
+                    title: "model_id",
+                    description: "The ID of the model. This is the ModelEngine ID for the model.",
+                    type: "string",
+                    default: "model_engine_id"
+                },
+				melee_states: {
+                    required: true,
+                    propertyOrder: 3,
+                    title: "melee_states",
+                    description: "The states that the mob uses whenever they auto-attack/melee an enemy. The model will randomly choose which state to use. If there are no states, it will not do an animation on meleeing.",
+                    type: "array",
+                    items: {
+						title: "Melee State",
+						type: "object",
+						properties: {
+							state: {
+								title: "state",
+								description: "The ModelEngine state to use. This is an ID",
+								type: "string",
+								default: "state_id"
+							},
+							hit_delay: {
+								title: "hit_delay",
+								description: "The hit delay on the animation before the damage is dealt. The hit delay is meant for syncing up the animation with the damage. The player will always take damage when this animation is in motion, regardless of distance. This delay is in TICKS.",
+								type: "integer",
+								default: 0
+							},
+							sounds: {
+								title: "sounds",
+								description: "The sounds to play during the animation. These are based on the frames of the animation.",
+								type: "array",
+								items: {
+									title: "Sound Frame",
+									type: "object",
+									properties: {
+										frame: {
+											title: "frame",
+											description: "The frame number to play the sound on.",
+											type: "integer",
+											default: 1
+										},
+										sound: {
+											title: "sound",
+											description: "The sound to play. Get this from /playsound",
+											type: "string"
+										},
+										volume: {
+											title: "volume",
+											description: "The volume of the sound. This is a decimal.",
+											type: "number",
+											default: 1.0
+										},
+										pitch: {
+											title: "pitch",
+											description: "The pitch of the sound. This is a decimal.",
+											type: "number",
+											default: 1.0
+										}
+									}
+								}
+							},
+							impact_sounds: {
+								title: "impact_sounds",
+								description: "The impact sounds to make upon landing the hit.",
+								type: "array",
+								items: {
+									title: "Sound Frame",
+									type: "object",
+									properties: {
+										sound: {
+											title: "sound",
+											description: "The sound to play. Get this from /playsound",
+											type: "string"
+										},
+										volume: {
+											title: "volume",
+											description: "The volume of the sound. This is a decimal.",
+											type: "number",
+											default: 1.0
+										},
+										pitch: {
+											title: "pitch",
+											description: "The pitch of the sound. This is a decimal.",
+											type: "number",
+											default: 1.0
+										}
+									}
+								}
+							}
+						}
+					}
+                },
+				internal_states: {
+					required: true,
+                    propertyOrder: 4,
+                    title: "internal_states",
+                    description: "The states that are used internally by other systems and internal mob spells.",
+					type: "array",
+					items: {
+						title: "Internal State",
+						type: "object",
+						properties: {
+							id: {
+								title: "id",
+								description: "The ID of the internal state. This has to be unique within this list of states.",
+								type: "string",
+								default: "internal_state"
+							},
+							state: {
+								title: "state",
+								description: "The animation state ID. This is found in the ModelEngine file.",
+								type: "string",
+								default: "mm_state"
+							}
+						}
+					}
+                }
+            }
+        }
+    });
+
+    // Hook up the Restore to Default button
+    document.getElementById('restore').addEventListener('click',function() {
+        editor.setValue(starting_value);
+    });
+
+    // Hook up the validation indicator to update its
+    // status whenever the editor changes
+    editor.on('change',function() {
+        // Get an array of errors from the validator
+        var errors = editor.validate();
+
+        var indicator = document.getElementById('valid_indicator');
+
+        // Not valid
+        if(errors.length) {
+            indicator.className = 'label label-danger'
+            indicator.textContent = "not valid";
+        }
+        // Valid
+        else {
+            indicator.className = 'label label-success'
+            indicator.textContent = "valid";
+        }
+    });
+</script>
+</body>
+</html>
