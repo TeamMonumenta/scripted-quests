@@ -865,6 +865,32 @@
 					"type": "integer"
 				}
 			}
+        },
+		"play_cutscene_v2": {
+            "title": "play_cutscene_v2",
+            "description": "Plays the specified cutscene for the player. This will play the cutscene for the player. Be sure that they're in the correct world when playing the cutscene.",
+            "type": "object",
+			"defaultProperties": [
+				"cutscene_id",
+				"quest_components"
+			],
+			"properties": {
+				"cutscene_id": {
+					"title": "cutscene_id",
+					"description": "The ID of the Cutscene.",
+					"type": "string"
+				},
+				"quest_components": {
+					"title": "quest_components",
+					"description": "The quest components to run whenever the player finishes or skips the cutscene.",
+					"type": "array",
+					"format": "tabs",
+					"items": {
+						"title": "Quest Component",
+						"$ref": "quest_component.json"
+					}
+				}
+			}
         }
     }
 }

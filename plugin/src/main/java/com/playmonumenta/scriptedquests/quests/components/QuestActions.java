@@ -148,6 +148,10 @@ public class QuestActions implements ActionNested {
 						mActions.add(new ActionPlayCutscene(npcName, displayName, entityType, value, this));
 						break;
 
+					case "play_cutscene_v2":
+						mActions.add(new ActionPlayCutsceneNew(npcName, displayName, entityType, value, this));
+						break;
+
 					case "rerun_components":
 						if (entityType != null) {
 							mActions.add(new ActionRerunComponents(npcName, entityType));
