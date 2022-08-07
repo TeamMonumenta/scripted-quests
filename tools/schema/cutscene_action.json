@@ -49,6 +49,12 @@
 					"description": "Toggles on/off if the player is required to click the 'Next Dialogue' button in order to progress. If this option is toggled on, then the dialogue will act similar to a 'wait' function, in which the scene will not continue to execute actions until the player clicks to view the next dialogue. It is recommended to leave this toggled on for self-paced readability.",
 					"type": "boolean",
 					"default": true
+				},
+				"raw": {
+					"title": "raw",
+					"description": "Toggles on whether or not this text is raw or not. If it is raw, use the & symbol for color codes.",
+					"type": "boolean",
+					"default": false
 				}
 			}
 		},
