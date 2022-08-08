@@ -1,0 +1,19 @@
+{
+	"type": "object",
+	"defaultProperties": [],
+	"additionalProperties": false,
+	"properties": {
+		"cast_spell": {
+			"title": "cast_spell",
+			"description": "Casts the specified spell by its ID. The spell has to be in the mob's ability list.",
+			"type": "string",
+			"default": "spell_id"
+		},
+		"wait": {
+			"title": "wait",
+			"description": "Causes the pattern script to wait before proceeding to the next action. This is in SECONDS and can be a decimal.",
+			"type": "number",
+			"default": 0.0
+		}
+	}
+}

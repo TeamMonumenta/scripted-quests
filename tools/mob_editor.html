@@ -69,7 +69,8 @@
 				"ranged",
 				"targetTags",
 				"abilities",
-				"on_spawn",
+				"ability_pattern",
+				"phases",
                 "quest_components"
             ],
             additionalProperties:false,
@@ -644,6 +645,34 @@
 						]
                     }
                 },
+				ability_pattern: {
+					title: "ability_pattern",
+					description: "The ability/spell pattern for this mob comprised of the abilities defined in the abilities list.",
+					$ref: "schema/ability_pattern.json"
+				},
+				phases: {
+					title: "phases",
+					description: "Used to create phases for the mob that lets you change its ability patterns. Use this when you need to add skill patterns to the mob",
+					type: "array",
+					items: {
+						title: "Pattern Phase",
+						type: "object",
+						properties: {
+							percentage: {
+								title: "percentage",
+								description: "The percentage of health for the phase change to occur. This is an integer, where 90 = 90% max health",
+								type: "integer",
+								default: 90
+							},
+							ability_pattern: {
+								title: "ability_pattern",
+								description: "The new ability pattern for this phase",
+								$ref: "schema/ability_pattern.json"
+							}
+						}
+					}
+				},
+				
 				ranged: {
 				    title: "ranged",
                     description: "Use if you want to give the mob a ranged property",
