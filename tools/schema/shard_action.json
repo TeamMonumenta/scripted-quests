@@ -39,20 +39,20 @@
 		},
 		"target": {
 			"title": "target",
-			"description": "Causes mobs with the specified tag to target mobs with the specifiedtag.",
+			"description": "Causes mobs with the specified tag to target mobs with the specified tag.",
 			"type": "object",
 			"properties": {
-				"targeter_tag": {
-					"title": "targeter_tag",
+				"selector_tag": {
+					"title": "selector_tag",
 					"description": "The mobs with the tag that will be targeting."
 					"type": "string",
-					"default": "mob_Tag"
+					"default": "selector_tag"
 				},
-				"targeted_tag": {
-					"title": "targeted_tag",
+				"target_tag": {
+					"title": "target_tag",
 					"description": "The mobs with the tag that will be targeted",
 					"type": "string",
-					"default": "0,0,0,0,0"
+					"default": "target_tag"
 				},
 				"range": {
 					"title": "range",
