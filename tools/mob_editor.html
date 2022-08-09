@@ -668,6 +668,15 @@
 								title: "ability_pattern",
 								description: "The new ability pattern for this phase",
 								$ref: "schema/ability_pattern.json"
+							},
+							quest_components: {
+								description: "A list of quest components to perform whenever the phase change occurs.",
+								type: "array",
+								format: "tabs",
+								items: {
+									title: "Quest component",
+									$ref: "schema/quest_component.json",
+								}
 							}
 						}
 					}
