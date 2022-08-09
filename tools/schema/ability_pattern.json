@@ -1,21 +1,24 @@
 {
 	"type": "object",
-	"defaultProperties": [],
 	"additionalProperties": false,
 	"properties": {
 		"starting_script": {
+			"required": true,
 			"title": "starting_script",
 			"description": "Plays this script at the start of the pattern. This is only played once. If the starting script is empty, it will move over to the main script.",
 			"type": "array",
 			"items": {
+				"title": "Ability Script Line",
 				"$ref": "ability_pattern_action.json"
 			}
 		},
 		"script": {
+			"required": true,
 			"title": "script",
 			"description": "Plays this script on loop.",
 			"type": "array",
 			"items": {
+				"title": "Ability Script Line",
 				"$ref": "ability_pattern_action.json"
 			}
 		}
