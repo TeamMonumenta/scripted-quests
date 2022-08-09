@@ -1,0 +1,63 @@
+{
+	"type": "object",
+	"defaultProperties": [],
+	"additionalProperties": false,
+	"properties": {
+		"spawn_mob": {
+			"title": "spawn_mob",
+			"description": "Spawns the mob at the specified location. You can specify a tag to the mob for later use.",
+			"type": "object",
+			"properties": {
+				"mob": {
+					"title": "mob",
+					"description": "The mob to spawn. Give a mob ID."
+					"type": "string",
+					"default": "mob_id"
+				},
+				"location": {
+					"title": "location",
+					"description": "The location to spawn the mob. This is in x,y,z,yaw,pitch format.",
+					"type": "string",
+					"default": "0,0,0,0,0"
+				},
+				"tag": {
+					"title": "tag",
+					"description": "The tag to give the mob, which can be used for other actions",
+					"type": "string",
+					"default": ""
+				},
+				"frozen": {
+					"title": "frozen",
+					"description": "If frozen, the mob will not idly move or rotate once spawned.",
+					"type": "boolean",
+					"default": false
+				}
+			}
+		},
+		"target": {
+			"title": "target",
+			"description": "Causes mobs with the specified tag to target mobs with the specifiedtag.",
+			"type": "object",
+			"properties": {
+				"targeter_tag": {
+					"title": "targeter_tag",
+					"description": "The mobs with the tag that will be targeting."
+					"type": "string",
+					"default": "mob_Tag"
+				},
+				"targeted_tag": {
+					"title": "targeted_tag",
+					"description": "The mobs with the tag that will be targeted",
+					"type": "string",
+					"default": "0,0,0,0,0"
+				},
+				"range": {
+					"title": "range",
+					"description": "The range of the targeting from the mobs.",
+					"type": "int",
+					"default": 12
+				}
+			}
+		}
+	}
+}

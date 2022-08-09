@@ -422,6 +422,33 @@
 						}
 					}
 				},
+				events: {
+					title: "events",
+					description: "Events that are used to execute shard actions. Events can only be played once.",
+					type: "array",
+					items: {
+						title: "Shard Event",
+						type: "object",
+						properties: {
+							id: {
+								title: "id",
+								description: "The ID of the event. This must be unique to this list of events.",
+								type: "string",
+								default: "event_id"
+							},
+							shard_actions: {
+								title: "shard_actions",
+								description: "The list of shard actions to perform upon triggering this event.",
+								type: "array",
+								format: "tabs",
+								items: {
+									title: "Shard Action",
+									$ref: "schema/shard_action.json"
+								}
+							}
+						}
+					}
+				},
                 onFieldChange: {
                     propertyOrder: 9,
                     title: "onFieldChange [DEPRECATED]",
