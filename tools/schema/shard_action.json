@@ -20,11 +20,14 @@
 					"type": "string",
 					"default": "0,0,0,0,0"
 				},
-				"tag": {
-					"title": "tag",
-					"description": "The tag to give the mob, which can be used for other actions",
-					"type": "string",
-					"default": ""
+				"tags": {
+					"title": "tags",
+					"description": "The list of tags to give the mob, which can be used for other actions",
+					"type": "array",
+					"items": {
+						"title": "Tag",
+						"type": "string"
+					}
 				},
 				"frozen": {
 					"title": "frozen",
