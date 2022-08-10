@@ -294,7 +294,25 @@
                     title: "damage_ranges",
                     description: "The damage value for the mob.",
                     $ref: "schema/damage_ranges.json"
-                },
+                }, 
+				attacks: {
+					propertyOrder: 7,
+					title: "attacks",
+					description: "The melee attacks that this mob has. You can use this to attach Attack Strings to the mainhand and offhand of the mob.",
+					type: "object",
+					properties: {
+						mainhand: {
+							title: "mainhand",
+							description: "The attack used for the mainhand",
+							$ref: "schema/attack.json"
+						},
+						offhand: {
+							title: "offhand",
+							description: "The attack used for the offhand",
+							$ref: "schema/attack.json"
+						}
+					}
+				},
 				speed: {
                     propertyOrder: 8,
                     title: "speed",
