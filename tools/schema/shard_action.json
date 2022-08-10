@@ -44,7 +44,7 @@
 			"properties": {
 				"selector_tag": {
 					"title": "selector_tag",
-					"description": "The mobs with the tag that will be targeting."
+					"description": "The mobs with the tag that will be targeting.",
 					"type": "string",
 					"default": "selector_tag"
 				},
