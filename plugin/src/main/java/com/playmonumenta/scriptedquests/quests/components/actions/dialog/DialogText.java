@@ -28,6 +28,7 @@ public class DialogText implements DialogBase {
 			while (iter.hasNext()) {
 				mText.add(iter.next().getAsString());
 			}
+		} 
 		} else {
 			throw new Exception("text value is neither an array nor a string!");
 		}
