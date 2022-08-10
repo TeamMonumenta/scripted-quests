@@ -10,7 +10,7 @@
 			"properties": {
 				"mob": {
 					"title": "mob",
-					"description": "The mob to spawn. Give a mob ID."
+					"description": "The mob to spawn. Give a mob ID.",
 					"type": "string",
 					"default": "mob_id"
 				},
