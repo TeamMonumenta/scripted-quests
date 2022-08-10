@@ -51,7 +51,7 @@
 				"name",
 				"level",
 				"entityType",
-				"chestLoc",
+				"equipment",
 				"knockbackResistance",
 				"unpushable",
 				"ai",
@@ -107,12 +107,43 @@
                     type: "string",
                     default: "ZOMBIE"
                 },
-				chestLoc: {
-                    propertyOrder: 5,
-                    title: "chestLoc",
-                    description: "The location of the chest for the mob's equipment. format is 'world,x,y,z'",
-                    type: "string"
-                },
+				equipment: {
+					title: "equipment",
+					description: "Sets the equipment that the mob wears. This does not affect the stats of the mob.",
+					type: "object",
+					properties: {
+						head: {
+							title: "head",
+							description: "Sets the offhand slot to the new item. To use vanilla Minecraft items, include the vanilla Minecraft namespace (ex. minecraft:stone_sword). Otherwise, it will default to an actual SF Item by searching for it by ID. If this field is blank, the slot is left empty.",
+							type: "string"
+						},
+						chestplate: {
+							title: "chestplate",
+							description: "Sets the offhand slot to the new item. To use vanilla Minecraft items, include the vanilla Minecraft namespace (ex. minecraft:stone_sword). Otherwise, it will default to an actual SF Item by searching for it by ID. If this field is blank, the slot is left empty.",
+							type: "string"
+						},
+						leggings: {
+							title: "leggings",
+							description: "Sets the offhand slot to the new item. To use vanilla Minecraft items, include the vanilla Minecraft namespace (ex. minecraft:stone_sword). Otherwise, it will default to an actual SF Item by searching for it by ID. If this field is blank, the slot is left empty.",
+							type: "string"
+						},
+						boots: {
+							title: "boots",
+							description: "Sets the offhand slot to the new item. To use vanilla Minecraft items, include the vanilla Minecraft namespace (ex. minecraft:stone_sword). Otherwise, it will default to an actual SF Item by searching for it by ID. If this field is blank, the slot is left empty.",
+							type: "string"
+						},
+						mainhand: {
+							title: "mainhand",
+							description: "Sets the offhand slot to the new item. To use vanilla Minecraft items, include the vanilla Minecraft namespace (ex. minecraft:stone_sword). Otherwise, it will default to an actual SF Item by searching for it by ID. If this field is blank, the slot is left empty.",
+							type: "string"
+						},
+						offhand: {
+							title: "offhand",
+							description: "Sets the offhand slot to the new item. To use vanilla Minecraft items, include the vanilla Minecraft namespace (ex. minecraft:stone_sword). Otherwise, it will default to an actual SF Item by searching for it by ID. If this field is blank, the slot is left empty.",
+							type: "string"
+						}
+					}
+				},
                 knockbackResistance: {
                     propertyOrder: 5,
                     title: "knockbackResistance",
