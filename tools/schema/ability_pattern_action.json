@@ -9,6 +9,25 @@
 			"type": "string",
 			"default": "spell_id"
 		},
+		"toggle_stance": {
+			"title": "toggle_stance",
+			"description": "Toggles the stance for the specified spell if applicable.",
+			"type": "object",
+			"properties": {
+				"spell": {
+					"title": "spell",
+					"description": "The spell to toggle the stance for.",
+					"type": "string",
+					"default": "spell_id"
+				},
+				"toggled": {
+					"title": "toggled",
+					"description": "True if the stance should be toggled on, false if it should be toggled off.",
+					"type": "boolean",
+					"default": true
+				}
+			}
+		},
 		"wait": {
 			"title": "wait",
 			"description": "Causes the pattern script to wait before proceeding to the next action. This is in SECONDS and can be a decimal.",
