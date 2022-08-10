@@ -57,7 +57,7 @@
 				"range": {
 					"title": "range",
 					"description": "The range of the targeting from the mobs.",
-					"type": "int",
+					"type": "integer",
 					"default": 12
 				}
 			}
