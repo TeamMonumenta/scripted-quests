@@ -61,6 +61,34 @@
 					"default": 12
 				}
 			}
+		},
+		"run_actions": {
+			"title": "run_actions",
+			"description": "Runs the actions at the specified location.",
+			"type": "object",
+			"properties": {
+				"location": {
+					"title": "location",
+					"description": "The location to run the actions at. This is in x,y,z format",
+					"type": "string",
+					"default": "0,0,0"
+				},
+				"spell_actions": {
+					"title": "spell_actions",
+					"description": "The actions to run",
+					"$ref": "ability_actions.json"
+				}
+			}
+		},
+		"quest_components": {
+			"title": "quest_components",
+			"description": "Runs quests components for all players inside the shard.",
+			"type": "array",
+			"format": "tabs",
+			"items": {
+				"title": "Quest Component",
+				"$ref": "quest_component.json"
+			}
 		}
 	}
 }
