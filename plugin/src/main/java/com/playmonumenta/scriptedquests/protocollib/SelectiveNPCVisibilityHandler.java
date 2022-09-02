@@ -145,7 +145,7 @@ public class SelectiveNPCVisibilityHandler extends PacketAdapter implements List
 		// all used packets have the entity id as first integer (except destroy which is handled above)
 		Entity entity = packet.getEntityModifier(event).read(0);
 
-		if (!mEnabledEntityTypes.contains(entity.getType())) {
+		if (entity == null || !mEnabledEntityTypes.contains(entity.getType())) {
 			return;
 		}
 
