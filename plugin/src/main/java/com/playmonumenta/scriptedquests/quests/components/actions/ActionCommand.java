@@ -22,7 +22,8 @@ public class ActionCommand implements ActionBase {
 			mCommand = mCommand.substring(1);
 		}
 
-		ParseResults<?> pr = NmsUtils.getVersionAdapter().parseCommand(mCommand);
+		String commandToTest = mCommand.replaceAll("@S", "dummy").replaceAll("@N", "00000000-0000-0000-0000-000000000000").replaceAll("@U", "00000000-0000-0000-0000-000000000000");
+		ParseResults<?> pr = NmsUtils.getVersionAdapter().parseCommand(commandToTest);
 		if (pr != null && pr.getReader().canRead()) {
 			throw new Exception("Invalid command: '" + mCommand + "'");
 		}
