@@ -127,11 +127,15 @@ public class InteractablesListener implements Listener {
 
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
 	public void inventoryClickEvent(InventoryClickEvent event) {
-		if (!(event.getWhoClicked() instanceof Player)) {
+		if (!(event.getWhoClicked() instanceof Player player)) {
 			return;
 		}
 
-		Player player = (Player)event.getWhoClicked();
+		if (event.getCursor() != null && event.getCursor().getType() != Material.AIR) {
+			// don't trigger when clicking while having an item on the cursor
+			return;
+		}
+
 		ItemStack item = event.getCurrentItem();
 		ClickType type = event.getClick();
 		InteractType interactType = null;
