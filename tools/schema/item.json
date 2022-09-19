@@ -15,7 +15,7 @@
 		"exact_name": {
 			"propertyOrder": 2,
 			"title": "exact name",
-			"description": "Matches if the item name matches this string exactly (ignoring formatting).",
+			"description": "Matches if the item name matches this string exactly (ignoring formatting). If empty, will match items without a name.",
 			"type": "string"
 		},
 		"name": {
