@@ -39,9 +39,8 @@ public class InventoryUtils {
 		return false;
 	}
 
-	// TODO: This will *not* match items that don't have an NBT name (stick, stone sword, etc.)
 	public static boolean testForItemWithName(ItemStack item, @Nullable String nameText, boolean exactMatch) {
-		if (nameText == null || nameText.isEmpty()) {
+		if (nameText == null || !exactMatch && nameText.isEmpty()) {
 			return true;
 		}
 
@@ -56,14 +55,14 @@ public class InventoryUtils {
 			}
 		}
 
-		return false;
+		return exactMatch && nameText.isEmpty();
 	}
 
-	public static NamespacedKey getNamespacedKey(String path) throws Exception {
+	public static NamespacedKey getNamespacedKey(String path) {
 		return NamespacedKey.fromString(path);
 	}
 
-	public static LootTable getLootTable(String path) throws Exception {
+	public static LootTable getLootTable(String path) {
 		return getLootTable(getNamespacedKey(path));
 	}
 
@@ -71,7 +70,7 @@ public class InventoryUtils {
 		return Bukkit.getLootTable(lootNamespace);
 	}
 
-	public static boolean giveLootTableContents(Player player, String lootPath, Random random, boolean alreadyDone) throws Exception {
+	public static boolean giveLootTableContents(Player player, String lootPath, Random random, boolean alreadyDone) {
 		return giveLootTableContents(player, Objects.requireNonNull(getLootTable(lootPath)), random, alreadyDone);
 	}
 
