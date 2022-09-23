@@ -10,6 +10,7 @@ import com.playmonumenta.scriptedquests.quests.components.actions.ActionDialog;
 import com.playmonumenta.scriptedquests.quests.components.actions.ActionFunction;
 import com.playmonumenta.scriptedquests.quests.components.actions.ActionGiveLoot;
 import com.playmonumenta.scriptedquests.quests.components.actions.ActionInteractNpc;
+import com.playmonumenta.scriptedquests.quests.components.actions.ActionRemoveItem;
 import com.playmonumenta.scriptedquests.quests.components.actions.ActionRerunComponents;
 import com.playmonumenta.scriptedquests.quests.components.actions.ActionSetScore;
 import com.playmonumenta.scriptedquests.quests.components.actions.ActionVoiceOver;
@@ -74,6 +75,15 @@ public class QuestActions {
 						break;
 					case "give_loot":
 						actions.mActions.add(new ActionGiveLoot(value));
+						break;
+					case "remove_items":
+						if (value.isJsonArray()) {
+							for (JsonElement arrayElement : value.getAsJsonArray()) {
+								actions.mActions.add(new ActionRemoveItem(arrayElement));
+							}
+						} else {
+							actions.mActions.add(new ActionRemoveItem(value));
+						}
 						break;
 					case "interact_npc":
 						actions.mActions.add(new ActionInteractNpc(value));
