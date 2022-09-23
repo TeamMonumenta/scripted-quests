@@ -11,9 +11,12 @@ import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.Nullable;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -21,6 +24,7 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.inventory.ItemStack;
 
 public class GuiManager {
 
@@ -90,7 +94,7 @@ public class GuiManager {
 		QuestContext originalContext = QuestContext.getCurrentContext();
 		QuestContext context = new QuestContext(Plugin.getInstance(), player, originalContext != null ? originalContext.getNpcEntity() : null, false, null, originalContext != null ? originalContext.getUsedItem() : null);
 		GuiPageCustomInventory customInv = new GuiPageCustomInventory(player, gui, page, pageName, edit, originalContext);
-		page.setupInventory(customInv, context, edit);
+		customInv.setupInventory(page, context, edit);
 		customInv.openInventory(player, mPlugin);
 	}
 
@@ -100,6 +104,7 @@ public class GuiManager {
 		private final String mPageName;
 		private final boolean mEditMode;
 		private final @Nullable QuestContext mOriginalContext;
+		private final GuiItem[] mGuiItems;
 
 		public GuiPageCustomInventory(Player player, Gui gui, GuiPage page, String pageName, boolean editMode, @Nullable QuestContext originalContext) {
 			super(player, page.getRows() * 9, page.getTitle());
@@ -107,6 +112,38 @@ public class GuiManager {
 			mPageName = pageName;
 			mEditMode = editMode;
 			mOriginalContext = originalContext;
+			mGuiItems = new GuiItem[page.getRows() * 9];
+		}
+
+		private void setupInventory(GuiPage page, QuestContext context, boolean edit) {
+			mInventory.clear();
+			Arrays.fill(mGuiItems, null);
+			for (GuiItem item : page.getItems()) {
+				int index = item.getRow() * 9 + item.getCol();
+				ItemStack existingItem = mInventory.getItem(index);
+				ItemStack displayItem;
+				if (existingItem != null) {
+					if (edit) {
+						displayItem = item.combineDisplayItem(context, existingItem);
+					} else {
+						// When multiple items are visible in the same slot, show only the first one.
+						continue;
+					}
+				} else {
+					displayItem = item.getDisplayItem(context, edit);
+				}
+				if (displayItem != null) {
+					mInventory.setItem(index, displayItem);
+					mGuiItems[index] = item;
+				}
+			}
+			if (!edit && page.getFillerItem() != null) {
+				for (int i = 0; i < mInventory.getSize(); i++) {
+					if (mInventory.getItem(i) == null) {
+						mInventory.setItem(i, page.getFillerItem());
+					}
+				}
+			}
 		}
 
 		@Override
@@ -120,14 +157,14 @@ public class GuiManager {
 				    || event.getClickedInventory() != mInventory) {
 				return;
 			}
-			GuiPage page = mGui.getPage(mPageName);
-			if (page == null) {
-				return;
-			}
-			QuestContext context = new QuestContext(Plugin.getInstance(), player, mOriginalContext != null ? mOriginalContext.getNpcEntity() : null, false, null, mOriginalContext != null ? mOriginalContext.getUsedItem() : null);
-			GuiItem guiItem = page.getItem(event.getSlot(), context);
+			GuiItem guiItem = event.getSlot() < 0 || event.getSlot() >= mGuiItems.length ? null : mGuiItems[event.getSlot()];
 			if (guiItem != null) {
-				context = context.withPrerequisites(guiItem.getPrerequisites());
+				QuestContext context = new QuestContext(Plugin.getInstance(), player, mOriginalContext != null ? mOriginalContext.getNpcEntity() : null, false, guiItem.getPrerequisites(), mOriginalContext != null ? mOriginalContext.getUsedItem() : null);
+				if (!context.prerequisitesMet()) {
+					player.sendMessage(Component.text("You no longer meet the requirements for this option", NamedTextColor.RED));
+					close();
+					return;
+				}
 				if (event.getClick() == ClickType.LEFT && guiItem.getLeftClickActions() != null) {
 					if (!guiItem.getKeepGuiOpen()) {
 						close();

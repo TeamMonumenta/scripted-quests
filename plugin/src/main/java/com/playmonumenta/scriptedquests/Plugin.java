@@ -1,6 +1,7 @@
 package com.playmonumenta.scriptedquests;
 
 import com.playmonumenta.scriptedquests.api.ClientChatProtocol;
+import com.playmonumenta.scriptedquests.commands.ChangeLogLevel;
 import com.playmonumenta.scriptedquests.commands.Clickable;
 import com.playmonumenta.scriptedquests.commands.Clock;
 import com.playmonumenta.scriptedquests.commands.Code;
@@ -56,6 +57,9 @@ import com.playmonumenta.scriptedquests.utils.NmsUtils;
 import com.playmonumenta.scriptedquests.zones.ZoneManager;
 import java.io.File;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -95,9 +99,14 @@ public class Plugin extends JavaPlugin {
 
 	public Random mRandom = new Random();
 	private ScheduleFunction mScheduledFunctionsManager;
+	private @Nullable CustomLogger mLogger = null;
 
 	@Override
 	public void onLoad() {
+		if (mLogger == null) {
+			mLogger = new CustomLogger(super.getLogger(), Level.INFO);
+		}
+
 		NmsUtils.loadVersionAdapter(this.getServer().getClass(), getLogger());
 
 		/*
@@ -112,6 +121,7 @@ public class Plugin extends JavaPlugin {
 			mTranslationsManager = new TranslationsManager(this, mConfig.getConfigurationSection("translations"));
 		}
 
+		ChangeLogLevel.register();
 		InteractNpc.register(this);
 		Clickable.register(this);
 		GiveLootTable.register(mRandom);
@@ -284,5 +294,13 @@ public class Plugin extends JavaPlugin {
 	@SuppressWarnings("NullAway") // Never returns null unless the server is horribly broken anyway
 	public static Plugin getInstance() {
 		return INSTANCE;
+	}
+
+	@Override
+	public Logger getLogger() {
+		if (mLogger == null) {
+			mLogger = new CustomLogger(super.getLogger(), Level.INFO);
+		}
+		return mLogger;
 	}
 }

@@ -29,6 +29,10 @@ public class PrerequisiteItem {
 
 	/* Note this is not the standard check - can't be used as a generic PrerequisiteBase */
 	public boolean prerequisiteMet(ItemStack[] items) {
+		return check(items, false);
+	}
+
+	public boolean check(ItemStack[] items, boolean remove) {
 		int matchCount = 0;
 
 		if (items != null) {
@@ -46,6 +50,10 @@ public class PrerequisiteItem {
 
 					matchCount += item.getAmount();
 
+					if (remove && mCount > 0) {
+						int remaining = mCount - matchCount;
+						item.setAmount(remaining < 0 ? -remaining : 0);
+					}
 					if (mCount <= 0 && matchCount > 0) {
 						// Found an item where none should be - fail
 						return false;
@@ -58,11 +66,7 @@ public class PrerequisiteItem {
 			}
 		}
 
-		// didn't find item when didn't expect to
-		if (mCount <= 0 && matchCount <= 0) {
-			return true;
-		}
-
-		return false;
+		// didn't find enough items, return success only if we didn't want to find any
+		return mCount <= 0;
 	}
 }

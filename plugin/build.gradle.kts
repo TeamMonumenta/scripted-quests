@@ -22,6 +22,7 @@ dependencies {
     implementation(project(":adapter_unsupported"))
     implementation(project(":adapter_v1_16_R3"))
     implementation(project(":adapter_v1_18_R1", "reobf"))
+    implementation(project(":adapter_v1_18_R2", "reobf"))
     implementation("com.google.api-client:google-api-client:1.31.4")
     implementation("com.google.apis:google-api-services-sheets:v4-rev1-1.21.0")
     implementation("com.google.auth:google-auth-library-oauth2-http:0.1.0")
@@ -184,8 +185,10 @@ tasks.create("play-deploy") {
             session(adminssh) {
                 put(shadowJar.archiveFile.get().getAsFile(), "/home/epic/play/m8/server_config/plugins")
                 put(shadowJar.archiveFile.get().getAsFile(), "/home/epic/play/m11/server_config/plugins")
+                put(shadowJar.archiveFile.get().getAsFile(), "/home/epic/play/m13/server_config/plugins")
                 execute("cd /home/epic/play/m8/server_config/plugins && rm -f ScriptedQuests.jar && ln -s " + shadowJar.archiveFileName.get() + " ScriptedQuests.jar")
                 execute("cd /home/epic/play/m11/server_config/plugins && rm -f ScriptedQuests.jar && ln -s " + shadowJar.archiveFileName.get() + " ScriptedQuests.jar")
+                execute("cd /home/epic/play/m13/server_config/plugins && rm -f ScriptedQuests.jar && ln -s " + shadowJar.archiveFileName.get() + " ScriptedQuests.jar")
             }
         }
     }

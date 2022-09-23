@@ -253,8 +253,30 @@
             "description": "Gives the player all items from a loot table.",
             "type": "string"
         },
-        "interact_npc": {
+        "remove_items": {
             "propertyOrder": 8,
+            "title": "remove_items",
+            "oneOf": [
+                {
+                    "title": "remove item",
+                    "description": "An item to remove. All conditions given here must match to succeed. All fields are optional, but at least one of (lore|name|type) must be specified. Will remove a maximum of 'count' items.",
+                    "$ref": "item.json"
+                },
+                {
+                    "title": "remove items",
+                    "description": "Removes matching items from the player's inventory.",
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "title": "Item",
+                        "description": "An item to remove. All conditions given here must match to succeed. All fields are optional, but at least one of (lore|name|type) must be specified. Will remove a maximum of 'count' items.",
+                        "$ref": "item.json"
+                    }
+                }
+            ]
+        },
+        "interact_npc": {
+            "propertyOrder": 9,
             "title": "interact_npc",
             "description": "Triggers a follow-on interaction with a different NPC.",
             "type": "object",
@@ -275,13 +297,13 @@
             }
         },
         "voice_over": {
-            "propertyOrder": 9,
+            "propertyOrder": 10,
             "title": "voice_over",
             "description": "Play a sound to the player as an NPC (WIP)",
             "type": "string"
         },
         "rerun_components": {
-            "propertyOrder": 10,
+            "propertyOrder": 11,
             "title": "rerun_components",
             "description": "Re-runs all quest components tied to this specific NPC (including those specified in other files). To prevent infinite loops, this action will not run itself, even if conditions indicate it should.",
             "type": "null"

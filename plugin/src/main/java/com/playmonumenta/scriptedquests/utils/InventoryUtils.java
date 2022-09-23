@@ -2,6 +2,7 @@ package com.playmonumenta.scriptedquests.utils;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import javax.annotation.Nullable;
 import net.kyori.adventure.text.Component;
@@ -14,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.loot.LootContext;
+import org.bukkit.loot.LootTable;
 
 public class InventoryUtils {
 	public static boolean testForItemWithLore(ItemStack item, @Nullable String loreText, boolean exactMatch) {
@@ -37,9 +39,8 @@ public class InventoryUtils {
 		return false;
 	}
 
-	// TODO: This will *not* match items that don't have an NBT name (stick, stone sword, etc.)
 	public static boolean testForItemWithName(ItemStack item, @Nullable String nameText, boolean exactMatch) {
-		if (nameText == null || nameText.isEmpty()) {
+		if (nameText == null || !exactMatch && nameText.isEmpty()) {
 			return true;
 		}
 
@@ -54,18 +55,29 @@ public class InventoryUtils {
 			}
 		}
 
-		return false;
+		return exactMatch && nameText.isEmpty();
 	}
 
-	public static NamespacedKey getNamespacedKey(String path) throws Exception {
+	public static NamespacedKey getNamespacedKey(String path) {
 		return NamespacedKey.fromString(path);
 	}
 
-	public static boolean giveLootTableContents(Player player, String lootPath, Random random, boolean alreadyDone) throws Exception {
-		NamespacedKey lootNamespace = getNamespacedKey(lootPath);
+	public static LootTable getLootTable(String path) {
+		return getLootTable(getNamespacedKey(path));
+	}
+
+	public static @Nullable LootTable getLootTable(NamespacedKey lootNamespace) {
+		return Bukkit.getLootTable(lootNamespace);
+	}
+
+	public static boolean giveLootTableContents(Player player, String lootPath, Random random, boolean alreadyDone) {
+		return giveLootTableContents(player, Objects.requireNonNull(getLootTable(lootPath)), random, alreadyDone);
+	}
+
+	public static boolean giveLootTableContents(Player player, LootTable lootTable, Random random, boolean alreadyDone) {
 		LootContext lootContext = new LootContext.Builder(player.getLocation()).build();
 
-		alreadyDone = giveItems(player, Bukkit.getLootTable(lootNamespace).populateLoot(random, lootContext), alreadyDone);
+		alreadyDone = giveItems(player, lootTable.populateLoot(random, lootContext), alreadyDone);
 		return alreadyDone;
 	}
 

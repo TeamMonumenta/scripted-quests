@@ -3,12 +3,9 @@ package com.playmonumenta.scriptedquests.quests.components;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.api.JsonObjectBuilder;
-import com.playmonumenta.scriptedquests.quests.QuestContext;
-import com.playmonumenta.scriptedquests.utils.CustomInventory;
 import com.playmonumenta.scriptedquests.utils.JsonUtils;
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTItem;
-import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
@@ -63,37 +60,6 @@ public final class GuiPage {
 			.build();
 	}
 
-	public void setupInventory(CustomInventory customInventory, QuestContext context, boolean edit) throws WrapperCommandSyntaxException {
-		Inventory inventory = customInventory.getInventory();
-		inventory.clear();
-		for (GuiItem item : mItems) {
-			int index = item.getRow() * 9 + item.getCol();
-			ItemStack existingItem = inventory.getItem(index);
-			ItemStack displayItem;
-			if (existingItem != null) {
-				if (edit) {
-					displayItem = item.combineDisplayItem(context, existingItem);
-				} else {
-					// When multiple items are visible in the same slot, show only the first one.
-					// This matches the click behaviour where only the first visible item's actions are executed.
-					continue;
-				}
-			} else {
-				displayItem = item.getDisplayItem(context, edit);
-			}
-			if (displayItem != null) {
-				inventory.setItem(index, displayItem);
-			}
-		}
-		if (!edit && mFillerItem != null) {
-			for (int i = 0; i < inventory.getSize(); i++) {
-				if (inventory.getItem(i) == null) {
-					inventory.setItem(i, mFillerItem);
-				}
-			}
-		}
-	}
-
 	/**
 	 * Creates a new {@link GuiPage} that is a copy of this one with items replaced by the ones in the given inventory.
 	 *
@@ -113,16 +79,6 @@ public final class GuiPage {
 		return clone;
 	}
 
-	public @Nullable GuiItem getItem(int index, QuestContext context) {
-		for (GuiItem item : mItems) {
-			if (item.getCol() + item.getRow() * 9 == index
-				    && (item.getPrerequisites() == null || item.getPrerequisites().prerequisiteMet(context))) {
-				return item;
-			}
-		}
-		return null;
-	}
-
 	public int getRows() {
 		return mRows;
 	}
@@ -134,4 +90,14 @@ public final class GuiPage {
 	public QuestActions getCloseActions() {
 		return mCloseActions;
 	}
+
+	public List<GuiItem> getItems() {
+		return mItems;
+	}
+
+	@Nullable
+	public ItemStack getFillerItem() {
+		return mFillerItem;
+	}
+
 }

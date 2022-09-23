@@ -26,13 +26,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Particle;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ProxiedCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 
 public class ShowZones {
-	private static final String[] EXECUTE_FALLBACK_SUGGESTION = {"\"Suggestions unavaible through /execute\""};
+	private static final String[] EXECUTE_FALLBACK_SUGGESTION = {"\"Suggestions unavailable through /execute\""};
 
 	enum FragmentFace {
 		X_MIN,
@@ -66,7 +67,7 @@ public class ShowZones {
 		Plugin mPlugin;
 		UUID mPlayerUuid;
 		String mLayerName;
-		@Nullable String mPropertyName = null;
+		@Nullable String mPropertyName;
 
 		public ShownInfo(Plugin plugin, UUID playerUuid, String layerName, @Nullable String propertyName) {
 			mPlugin = plugin;
@@ -239,52 +240,44 @@ public class ShowZones {
 
 						double area;
 						switch (face) {
-						case X_MIN:
-						case X_MAX:
-							if (face == FragmentFace.X_MIN) {
-								partMaxXShown = fragMinXShown;
-							} else {
-								partMinXShown = fragMaxXShown;
+							case X_MIN, X_MAX -> {
+								if (face == FragmentFace.X_MIN) {
+									partMaxXShown = fragMinXShown;
+								} else {
+									partMinXShown = fragMaxXShown;
+								}
+								area = fragSizeYShown * fragSizeZShown;
 							}
-							area = fragSizeYShown * fragSizeZShown;
-							break;
-						case Y_MIN:
-						case Y_MAX:
-							if (face == FragmentFace.Y_MIN) {
-								partMaxYShown = fragMinYShown;
-							} else {
-								partMinYShown = fragMaxYShown;
+							case Y_MIN, Y_MAX -> {
+								if (face == FragmentFace.Y_MIN) {
+									partMaxYShown = fragMinYShown;
+								} else {
+									partMinYShown = fragMaxYShown;
+								}
+								area = fragSizeXShown * fragSizeZShown;
 							}
-							area = fragSizeXShown * fragSizeZShown;
-							break;
-						default:
-							if (face == FragmentFace.Z_MIN) {
-								partMaxZShown = fragMinZShown;
-							} else {
-								partMinZShown = fragMaxZShown;
+							default -> {
+								if (face == FragmentFace.Z_MIN) {
+									partMaxZShown = fragMinZShown;
+								} else {
+									partMinZShown = fragMaxZShown;
+								}
+								area = fragSizeXShown * fragSizeYShown;
 							}
-							area = fragSizeXShown * fragSizeYShown;
 						}
 
-						Double faceParticleCount = 1.0 + 25.0 * area / maxPossibleTotalArea;
-						for (int i = faceParticleCount.intValue(); i != 0; --i) {
+						double faceParticleCount = 1.0 + 25.0 * area / maxPossibleTotalArea;
+						for (int i = (int) faceParticleCount; i != 0; --i) {
 							x = randRange(partMinXShown, partMaxXShown);
 							y = randRange(partMinYShown, partMaxYShown);
 							z = randRange(partMinZShown, partMaxZShown);
 
-							switch (face) {
-							case X_MIN:
-								testZone = mPlugin.mZoneManager.getZone(new Vector(x - DELTA_POS, y, z), mLayerName);
-								break;
-							case Y_MIN:
-								testZone = mPlugin.mZoneManager.getZone(new Vector(x, y - DELTA_POS, z), mLayerName);
-								break;
-							case Z_MIN:
-								testZone = mPlugin.mZoneManager.getZone(new Vector(x, y, z - DELTA_POS), mLayerName);
-								break;
-							default:
-								testZone = mPlugin.mZoneManager.getZone(new Vector(x, y, z), mLayerName);
-							}
+							testZone = switch (face) {
+								case X_MIN -> mPlugin.mZoneManager.getZone(new Vector(x - DELTA_POS, y, z), mLayerName);
+								case Y_MIN -> mPlugin.mZoneManager.getZone(new Vector(x, y - DELTA_POS, z), mLayerName);
+								case Z_MIN -> mPlugin.mZoneManager.getZone(new Vector(x, y, z - DELTA_POS), mLayerName);
+								default -> mPlugin.mZoneManager.getZone(new Vector(x, y, z), mLayerName);
+							};
 							// Intentionally testing if these are the same object
 							if (targetZone == testZone) {
 								continue;
@@ -300,25 +293,16 @@ public class ShowZones {
 					double maxWeight = 0.0;
 					for (FragmentEdge edge : FragmentEdge.values()) {
 						switch (edge) {
-						case X_YMIN_ZMIN:
-						case X_YMIN_ZMAX:
-						case X_YMAX_ZMIN:
-						case X_YMAX_ZMAX:
-							maxWeight += DELTA_POS + fragSizeXShown;
-							break;
-						case Y_XMIN_ZMIN:
-						case Y_XMIN_ZMAX:
-						case Y_XMAX_ZMIN:
-						case Y_XMAX_ZMAX:
-							maxWeight += DELTA_POS + fragSizeYShown;
-							break;
-						default:
-							maxWeight += DELTA_POS + fragSizeZShown;
+							case X_YMIN_ZMIN, X_YMIN_ZMAX, X_YMAX_ZMIN, X_YMAX_ZMAX ->
+								maxWeight += DELTA_POS + fragSizeXShown;
+							case Y_XMIN_ZMIN, Y_XMIN_ZMAX, Y_XMAX_ZMIN, Y_XMAX_ZMAX ->
+								maxWeight += DELTA_POS + fragSizeYShown;
+							default -> maxWeight += DELTA_POS + fragSizeZShown;
 						}
 						edgeWeights.put(maxWeight, edge);
 					}
-					Double edgeParticleCount = 1.0 + 50.0 * maxWeight / maxPossibleTotalLength;
-					for (int i = edgeParticleCount.intValue(); i != 0; --i) {
+					double edgeParticleCount = 1.0 + 50.0 * maxWeight / maxPossibleTotalLength;
+					for (int i = (int) edgeParticleCount; i != 0; --i) {
 						@Nullable Entry<Double, FragmentEdge> edgeEntry = edgeWeights.higherEntry(maxWeight * RANDOM.nextDouble());
 						if (edgeEntry == null) {
 							continue;
@@ -326,60 +310,33 @@ public class ShowZones {
 						FragmentEdge edge = edgeEntry.getValue();
 
 						switch (edge) {
-						case X_YMIN_ZMIN:
-						case X_YMIN_ZMAX:
-						case X_YMAX_ZMIN:
-						case X_YMAX_ZMAX:
-							x = randRange(fragMinXShown, fragMaxXShown);
-							testPointOffset1 = new Vector(0.0, DELTA_POS, 0.0);
-							testPointOffset2 = new Vector(0.0, 0.0, DELTA_POS);
-							break;
-						case Y_XMIN_ZMIN:
-						case Y_XMIN_ZMAX:
-						case Z_XMIN_YMIN:
-						case Z_XMIN_YMAX:
-							x = fragMinXShown;
-							break;
-						default:
-							x = fragMaxXShown;
+							case X_YMIN_ZMIN, X_YMIN_ZMAX, X_YMAX_ZMIN, X_YMAX_ZMAX -> {
+								x = randRange(fragMinXShown, fragMaxXShown);
+								testPointOffset1 = new Vector(0.0, DELTA_POS, 0.0);
+								testPointOffset2 = new Vector(0.0, 0.0, DELTA_POS);
+							}
+							case Y_XMIN_ZMIN, Y_XMIN_ZMAX, Z_XMIN_YMIN, Z_XMIN_YMAX -> x = fragMinXShown;
+							default -> x = fragMaxXShown;
 						}
 
 						switch (edge) {
-						case Y_XMIN_ZMIN:
-						case Y_XMIN_ZMAX:
-						case Y_XMAX_ZMIN:
-						case Y_XMAX_ZMAX:
-							y = randRange(fragMinYShown, fragMaxYShown);
-							testPointOffset1 = new Vector(DELTA_POS, 0.0, 0.0);
-							testPointOffset2 = new Vector(0.0, 0.0, DELTA_POS);
-							break;
-						case X_YMIN_ZMIN:
-						case X_YMIN_ZMAX:
-						case Z_XMIN_YMIN:
-						case Z_XMAX_YMIN:
-							y = fragMinYShown;
-							break;
-						default:
-							y = fragMaxYShown;
+							case Y_XMIN_ZMIN, Y_XMIN_ZMAX, Y_XMAX_ZMIN, Y_XMAX_ZMAX -> {
+								y = randRange(fragMinYShown, fragMaxYShown);
+								testPointOffset1 = new Vector(DELTA_POS, 0.0, 0.0);
+								testPointOffset2 = new Vector(0.0, 0.0, DELTA_POS);
+							}
+							case X_YMIN_ZMIN, X_YMIN_ZMAX, Z_XMIN_YMIN, Z_XMAX_YMIN -> y = fragMinYShown;
+							default -> y = fragMaxYShown;
 						}
 
 						switch (edge) {
-						case Z_XMIN_YMIN:
-						case Z_XMIN_YMAX:
-						case Z_XMAX_YMIN:
-						case Z_XMAX_YMAX:
-							z = randRange(fragMinZShown, fragMaxZShown);
-							testPointOffset1 = new Vector(DELTA_POS, 0.0, 0.0);
-							testPointOffset2 = new Vector(0.0, DELTA_POS, 0.0);
-							break;
-						case X_YMIN_ZMIN:
-						case X_YMAX_ZMIN:
-						case Y_XMIN_ZMIN:
-						case Y_XMAX_ZMIN:
-							z = fragMinZShown;
-							break;
-						default:
-							z = fragMaxZShown;
+							case Z_XMIN_YMIN, Z_XMIN_YMAX, Z_XMAX_YMIN, Z_XMAX_YMAX -> {
+								z = randRange(fragMinZShown, fragMaxZShown);
+								testPointOffset1 = new Vector(DELTA_POS, 0.0, 0.0);
+								testPointOffset2 = new Vector(0.0, DELTA_POS, 0.0);
+							}
+							case X_YMIN_ZMIN, X_YMAX_ZMIN, Y_XMIN_ZMIN, Y_XMAX_ZMIN -> z = fragMinZShown;
+							default -> z = fragMaxZShown;
 						}
 
 						/*
@@ -456,9 +413,7 @@ public class ShowZones {
 		new CommandAPICommand("showzones")
 			.withPermission(CommandPermission.fromString("scriptedquests.showzones"))
 			.withArguments(new MultiLiteralArgument("show"))
-			.withArguments(new TextArgument("layer").replaceSuggestions(info -> {
-				return plugin.mZoneManager.getLayerNameSuggestions();
-			}))
+			.withArguments(new TextArgument("layer").replaceSuggestions(info -> plugin.mZoneManager.getLayerNameSuggestions()))
 			.executes((sender, args) -> {
 				String layerName = (String) args[1];
 				return show(plugin, sender, layerName, null);
@@ -468,9 +423,7 @@ public class ShowZones {
 		new CommandAPICommand("showzones")
 			.withPermission(CommandPermission.fromString("scriptedquests.showzones"))
 			.withArguments(new MultiLiteralArgument("show"))
-			.withArguments(new TextArgument("layer").replaceSuggestions(info -> {
-				return plugin.mZoneManager.getLayerNameSuggestions();
-			}))
+			.withArguments(new TextArgument("layer").replaceSuggestions(info -> plugin.mZoneManager.getLayerNameSuggestions()))
 			.withArguments(new TextArgument("property").replaceSuggestions(info -> {
 				Object[] args = info.previousArgs();
 				if (args.length == 0) {
@@ -487,43 +440,52 @@ public class ShowZones {
 	}
 
 	private static int hide(CommandSender sender) throws WrapperCommandSyntaxException {
-		if (!(sender instanceof Player)) {
-			CommandAPI.fail("This command can only be run as a player.");
+		CommandSender callee = sender;
+		if (sender instanceof ProxiedCommandSender proxiedCommandSender) {
+			callee = proxiedCommandSender.getCallee();
 		}
-		Player player = (Player)sender;
-		UUID playerUuid = player.getUniqueId();
-		@Nullable ShownInfo shownInfo = mShownInfo.get(playerUuid);
-		if (shownInfo == null) {
-			player.sendMessage(Component.text("Zones already hidden.", NamedTextColor.AQUA));
+		if (!(callee instanceof Player player)) {
+			CommandAPI.fail("This command can only be run as a player.");
+			return 0;
+		} else {
+			UUID playerUuid = player.getUniqueId();
+			@Nullable ShownInfo shownInfo = mShownInfo.get(playerUuid);
+			if (shownInfo == null) {
+				sender.sendMessage(Component.text("Zones already hidden.", NamedTextColor.AQUA));
+				return 1;
+			}
+			shownInfo.cancel();
+			mShownInfo.remove(playerUuid);
+			sender.sendMessage(Component.text("Zones hidden.", NamedTextColor.AQUA));
 			return 1;
 		}
-		shownInfo.cancel();
-		mShownInfo.remove(playerUuid);
-		player.sendMessage(Component.text("Zones hidden.", NamedTextColor.AQUA));
-		return 1;
 	}
 
 	private static int show(Plugin plugin, CommandSender sender, String layerName, @Nullable String propertyName) throws WrapperCommandSyntaxException {
-		if (!(sender instanceof Player)) {
+		CommandSender callee = sender;
+		if (sender instanceof ProxiedCommandSender proxiedCommandSender) {
+			callee = proxiedCommandSender.getCallee();
+		}
+		if (!(callee instanceof Player player)) {
 			CommandAPI.fail("This command can only be run as a player.");
-		}
-		Player player = (Player)sender;
-
-		UUID playerUuid = player.getUniqueId();
-		@Nullable ShownInfo shownInfo = mShownInfo.get(playerUuid);
-		if (shownInfo == null) {
-			shownInfo = new ShownInfo(plugin, playerUuid, layerName, propertyName);
-			mShownInfo.put(playerUuid, shownInfo);
-			shownInfo.runTaskTimer(plugin, 0, 1);
+			return 0;
 		} else {
-			shownInfo.layerName(layerName);
-			shownInfo.propertyName(propertyName);
+			UUID playerUuid = player.getUniqueId();
+			@Nullable ShownInfo shownInfo = mShownInfo.get(playerUuid);
+			if (shownInfo == null) {
+				shownInfo = new ShownInfo(plugin, playerUuid, layerName, propertyName);
+				mShownInfo.put(playerUuid, shownInfo);
+				shownInfo.runTaskTimer(plugin, 0, 1);
+			} else {
+				shownInfo.layerName(layerName);
+				shownInfo.propertyName(propertyName);
+			}
+			if (propertyName == null) {
+				sender.sendMessage(Component.text("Showing all " + layerName + " zones.", NamedTextColor.AQUA));
+			} else {
+				sender.sendMessage(Component.text("Showing all " + layerName + " zones with property " + propertyName + ".", NamedTextColor.AQUA));
+			}
+			return 1;
 		}
-		if (propertyName == null) {
-			player.sendMessage(Component.text("Showing all " + layerName + " zones.", NamedTextColor.AQUA));
-		} else {
-			player.sendMessage(Component.text("Showing all " + layerName + " zones with property " + propertyName + ".", NamedTextColor.AQUA));
-		}
-		return 1;
 	}
 }

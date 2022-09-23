@@ -14,6 +14,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerAnimationEvent;
@@ -107,13 +108,11 @@ public class InteractablesListener implements Listener {
 		Entity damagee = event.getEntity();
 		Entity damager = event.getDamager();
 
-		if (damager instanceof Player) {
-			Player player = (Player)damager;
-			ItemStack item = player.getInventory().getItemInMainHand();
-			if (player.isRiptiding()) {
-				return;
-			}
+		if (damager instanceof Player player
+			    && event.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK
+			    && !player.isRiptiding()) {
 
+			ItemStack item = player.getInventory().getItemInMainHand();
 			if (item != null && !item.getType().isAir() && player.getCooldown(item.getType()) > 0) {
 				/* Player's item is on cooldown, don't use it to interact to trigger interactions */
 				return;
@@ -128,11 +127,15 @@ public class InteractablesListener implements Listener {
 
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
 	public void inventoryClickEvent(InventoryClickEvent event) {
-		if (!(event.getWhoClicked() instanceof Player)) {
+		if (!(event.getWhoClicked() instanceof Player player)) {
 			return;
 		}
 
-		Player player = (Player)event.getWhoClicked();
+		if (event.getCursor() != null && event.getCursor().getType() != Material.AIR) {
+			// don't trigger when clicking while having an item on the cursor
+			return;
+		}
+
 		ItemStack item = event.getCurrentItem();
 		ClickType type = event.getClick();
 		InteractType interactType = null;
