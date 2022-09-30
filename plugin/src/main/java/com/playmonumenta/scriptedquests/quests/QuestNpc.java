@@ -108,7 +108,11 @@ public class QuestNpc {
 	public void addFromQuest(Plugin plugin, QuestNpc quest) {
 		if (quest.getNpcName().equals(mNpcName)) {
 			mComponents.addAll(quest.getComponents());
-			mVisibilityPrerequisites = mVisibilityPrerequisites == null ? quest.mVisibilityPrerequisites : mVisibilityPrerequisites.union(quest.mVisibilityPrerequisites);
+			if (mVisibilityPrerequisites == null) {
+				mVisibilityPrerequisites = quest.mVisibilityPrerequisites;
+			} else if (quest.mVisibilityPrerequisites != null) {
+				mVisibilityPrerequisites = mVisibilityPrerequisites.union(quest.mVisibilityPrerequisites);
+			}
 		} else {
 			plugin.getLogger().severe("Attempted to add two quests together with different NPCs!");
 		}
