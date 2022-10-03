@@ -26,19 +26,19 @@ import org.bukkit.util.Vector;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
 public class ZoneManager {
-	private Plugin mPlugin;
+	private final Plugin mPlugin;
 	static @MonotonicNonNull BukkitRunnable mPlayerTracker = null;
 	static @Nullable BukkitRunnable mAsyncReloadHandler = null;
 
-	private Map<String, ZoneLayer> mLayers = new HashMap<String, ZoneLayer>();
-	private Map<String, ZoneLayer> mPluginLayers = new HashMap<String, ZoneLayer>();
+	private final Map<String, ZoneLayer> mLayers = new HashMap<>();
+	private final Map<String, ZoneLayer> mPluginLayers = new HashMap<>();
 	private @MonotonicNonNull ZoneTreeBase mZoneTree = null;
 
-	private Map<UUID, ZoneFragment> mLastPlayerZoneFragment = new HashMap<UUID, ZoneFragment>();
-	private Map<UUID, Map<String, Zone>> mLastPlayerZones = new HashMap<UUID, Map<String, Zone>>();
+	private final Map<UUID, ZoneFragment> mLastPlayerZoneFragment = new HashMap<>();
+	private final Map<UUID, Map<String, Zone>> mLastPlayerZones = new HashMap<>();
 
-	private Set<CommandSender> mReloadRequesters = new HashSet<CommandSender>();
-	private Set<CommandSender> mQueuedReloadRequesters = new HashSet<CommandSender>();
+	private Set<CommandSender> mReloadRequesters = new HashSet<>();
+	private Set<CommandSender> mQueuedReloadRequesters = new HashSet<>();
 
 	public ZoneManager(Plugin plugin) {
 		mPlugin = plugin;
@@ -138,7 +138,7 @@ public class ZoneManager {
 
 	public Map<String, Zone> getZones(Location loc) {
 		if (loc == null) {
-			return new HashMap<String, Zone>();
+			return new HashMap<>();
 		}
 
 		return mZoneTree.getZones(loc.toVector());
@@ -220,24 +220,24 @@ public class ZoneManager {
 	}
 
 	public Set<String> getLayerNames() {
-		return new HashSet<String>(mLayers.keySet());
+		return new HashSet<>(mLayers.keySet());
 	}
 
 	public String[] getLayerNameSuggestions() {
-		return ArgUtils.quoteIfNeeded(new TreeSet<String>(getLayerNames()));
+		return ArgUtils.quoteIfNeeded(new TreeSet<>(getLayerNames()));
 	}
 
 	public Set<String> getLoadedProperties(String layerName) {
 		@Nullable ZoneLayer layer = mLayers.get(layerName);
 		if (layer == null) {
-			return new HashSet<String>();
+			return new HashSet<>();
 		}
 		return layer.getLoadedProperties();
 	}
 
 	public String[] getLoadedPropertySuggestions(String layerName) {
 		Set<String> properties = getLoadedProperties(layerName);
-		Set<String> suggestions = new TreeSet<String>(properties);
+		Set<String> suggestions = new TreeSet<>(properties);
 		for (String property : properties) {
 			suggestions.add("!" + property);
 		}
@@ -298,7 +298,7 @@ public class ZoneManager {
 
 	public void doReload(Plugin plugin) {
 		mReloadRequesters = mQueuedReloadRequesters;
-		mQueuedReloadRequesters = new HashSet<CommandSender>();
+		mQueuedReloadRequesters = new HashSet<>();
 		mReloadRequesters.add(Bukkit.getConsoleSender());
 
 		for (ZoneLayer layer : mLayers.values()) {
@@ -307,6 +307,8 @@ public class ZoneManager {
 		}
 		mLayers.clear();
 		ZoneLayer.clearDynmapLayers();
+
+		plugin.mZonePropertyGroupManager.reload(plugin, mReloadRequesters);
 
 		// Refresh plugin layers
 		for (ZoneLayer layer : mPluginLayers.values()) {
@@ -325,7 +327,7 @@ public class ZoneManager {
 
 			mLayers.put(layerName, layer);
 
-			return layerName + ":" + Integer.toString(layer.getZones().size());
+			return layerName + ":" + layer.getZones().size();
 		});
 
 		for (@Nullable CommandSender sender : mReloadRequesters) {
@@ -338,7 +340,7 @@ public class ZoneManager {
 		mergeLayers();
 
 		// Create list of zones
-		List<Zone> zones = new ArrayList<Zone>();
+		List<Zone> zones = new ArrayList<>();
 		for (ZoneLayer layer : mLayers.values()) {
 			zones.addAll(layer.getZones());
 		}
@@ -349,7 +351,7 @@ public class ZoneManager {
 		}
 
 		// Create list of all zone fragments.
-		List<ZoneFragment> zoneFragments = new ArrayList<ZoneFragment>();
+		List<ZoneFragment> zoneFragments = new ArrayList<>();
 		for (Zone zone : zones) {
 			zoneFragments.addAll(zone.getZoneFragments());
 		}
@@ -366,9 +368,9 @@ public class ZoneManager {
 			return;
 		}
 		String message = ChatColor.GOLD + "Zone tree dev stats - fragments: "
-		               + Integer.toString(newTree.fragmentCount())
+		               + newTree.fragmentCount()
 		               + ", max depth: "
-		               + Integer.toString(newTree.maxDepth())
+		               + newTree.maxDepth()
 		               + ", ave depth: "
 		               + String.format("%.2f", newTree.averageDepth());
 		for (@Nullable CommandSender sender : mReloadRequesters) {
@@ -441,7 +443,7 @@ public class ZoneManager {
 	// For a given location, return the zones that contain it.
 	private Map<String, Zone> getZonesInternal(Vector loc, boolean fallbackZoneLookup) {
 		if (fallbackZoneLookup) {
-			Map<String, Zone> result = new HashMap<String, Zone>();
+			Map<String, Zone> result = new HashMap<>();
 			for (Map.Entry<String, ZoneLayer> entry : mLayers.entrySet()) {
 				String layerName = entry.getKey();
 				ZoneLayer zoneLayer = entry.getValue();
@@ -462,7 +464,7 @@ public class ZoneManager {
 		applyFragmentChange(player, null);
 		if (mPlugin.mFallbackZoneLookup && mLastPlayerZones.get(playerUuid) != null) {
 			// Copy key set, as we are modifying the map during iteration
-			Set<String> layerNames = new LinkedHashSet<String>(mLastPlayerZones.get(playerUuid).keySet());
+			Set<String> layerNames = new LinkedHashSet<>(mLastPlayerZones.get(playerUuid).keySet());
 			for (String layerName : layerNames) {
 				applyZoneChange(player, layerName, null);
 			}
@@ -475,12 +477,12 @@ public class ZoneManager {
 		UUID playerUuid = player.getUniqueId();
 		@Nullable ZoneFragment lastZoneFragment = mLastPlayerZoneFragment.get(playerUuid);
 
-		Map<String, Zone> lastZones = new HashMap<String, Zone>();
+		Map<String, Zone> lastZones = new HashMap<>();
 		if (lastZoneFragment != null) {
 			lastZones = lastZoneFragment.getParents();
 		}
 
-		Map<String, Zone> currentZones = new HashMap<String, Zone>();
+		Map<String, Zone> currentZones = new HashMap<>();
 		if (currentZoneFragment != null) {
 			currentZones = currentZoneFragment.getParents();
 		}
@@ -496,7 +498,7 @@ public class ZoneManager {
 
 		if (!mPlugin.mFallbackZoneLookup) {
 			// Zones changed, send an event for each layer.
-			Set<String> mentionedLayerNames = new LinkedHashSet<String>(lastZones.keySet());
+			Set<String> mentionedLayerNames = new LinkedHashSet<>(lastZones.keySet());
 			mentionedLayerNames.addAll(currentZones.keySet());
 			for (String layerName : mentionedLayerNames) {
 				// Null zones are valid - indicates no zone.
@@ -510,11 +512,7 @@ public class ZoneManager {
 	private void applyZoneChange(Player player, String layerName, @Nullable Zone currentZone) {
 		UUID playerUuid = player.getUniqueId();
 		// Null zones are valid - indicates no zone.
-		@Nullable Map<String, Zone> lastZones = mLastPlayerZones.get(playerUuid);
-		if (lastZones == null) {
-			lastZones = new HashMap<String, Zone>();
-			mLastPlayerZones.put(playerUuid, lastZones);
-		}
+		@Nullable Map<String, Zone> lastZones = mLastPlayerZones.computeIfAbsent(playerUuid, k -> new HashMap<>());
 
 		@Nullable Zone lastZone = lastZones.get(layerName);
 		if (lastZone == currentZone) {
@@ -527,19 +525,19 @@ public class ZoneManager {
 
 		Set<String> lastProperties;
 		if (lastZone == null) {
-			lastProperties = new LinkedHashSet<String>();
+			lastProperties = new LinkedHashSet<>();
 		} else {
 			lastProperties = lastZone.getProperties();
 		}
 
 		Set<String> currentProperties;
 		if (currentZone == null) {
-			currentProperties = new LinkedHashSet<String>();
+			currentProperties = new LinkedHashSet<>();
 		} else {
 			currentProperties = currentZone.getProperties();
 		}
 
-		Set<String> removedProperties = new LinkedHashSet<String>(lastProperties);
+		Set<String> removedProperties = new LinkedHashSet<>(lastProperties);
 		removedProperties.removeAll(currentProperties);
 		for (String property : removedProperties) {
 			ZonePropertyChangeEvent event;
@@ -547,7 +545,7 @@ public class ZoneManager {
 			Bukkit.getPluginManager().callEvent(event);
 		}
 
-		Set<String> addedProperties = new LinkedHashSet<String>(currentProperties);
+		Set<String> addedProperties = new LinkedHashSet<>(currentProperties);
 		addedProperties.removeAll(lastProperties);
 		for (String property : addedProperties) {
 			ZonePropertyChangeEvent event;
@@ -566,7 +564,7 @@ public class ZoneManager {
 	}
 
 	private void mergeLayers() {
-		List<ZoneLayer> layers = new ArrayList<ZoneLayer>(mLayers.values());
+		List<ZoneLayer> layers = new ArrayList<>(mLayers.values());
 
 		int numLayers = layers.size();
 		for (int i = 0; i < numLayers; i++) {
@@ -594,7 +592,7 @@ public class ZoneManager {
 	}
 
 	/*
-	 * sender recieves the debug info, player is the target and sees nothing
+	 * sender receives the debug info, player is the target and sees nothing
 	 */
 	public void sendDebug(CommandSender sender, Player player) {
 		if (sender == null) {
@@ -657,7 +655,7 @@ public class ZoneManager {
 		@Nullable Map<String, Zone> fastZones = getZonesInternal(loc, false);
 		if (fallbackZones == null && fastZones == null) {
 			sender.sendMessage("Fast lookup matches slow/reliable lookup (both null)");
-		} else if (fallbackZones == null || fastZones == null || !fallbackZones.equals(fastZones)) {
+		} else if (fallbackZones == null || !fallbackZones.equals(fastZones)) {
 			sender.sendMessage("Fast lookup DOES NOT match slow/reliable lookup");
 
 			sender.sendMessage("Slow/reliable lookup version:");

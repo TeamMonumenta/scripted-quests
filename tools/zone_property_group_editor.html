@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>ScriptedQuests Zone Layer Editor</title>
+    <title>ScriptedQuests Zone Property Group Editor</title>
 
     <!-- Foundation CSS framework (Bootstrap and jQueryUI also supported) -->
     <link rel='stylesheet' href='//cdn.jsdelivr.net/bootstrap/3.2.0/css/bootstrap.css'>
@@ -15,10 +15,8 @@
 <div class='container'>
     <div class='row' style='padding-bottom: 15px;'>
         <div class='col-md-12'>
-            <h1>ScriptedQuests Zone Layer Editor</h1>
-            <p>Each of these is a layer of zones, with independent properties. Zones higher up in a layer override zones lower down in the same layer, but layers are independent of each other - overlapping zones in separate layers will both be in effect.</p>
-            <br>
-            <a href="https://minecraft.gamepedia.com/Formatting_codes">Minecraft Formatting Codes</a>
+            <h1>ScriptedQuests Zone Property Group Editor</h1>
+            <p>Named lists of properties, to be applied or canceled in order. May contain other property groups.</p>
         </div>
     </div>
     <div class='row' style='padding-bottom: 15px;'>
@@ -45,38 +43,36 @@
 
         // The schema for the editor
         schema: {
-            title: "Zone Layer",
+            title: "Zone Property",
             defaultProperties: [
+                "layer",
                 "name",
-                "property_groups",
-                "zones"
+                "properties"
             ],
             additionalProperties:false,
             properties: {
-                name: {
+                layer: {
                     required: true,
                     propertyOrder: 1,
-                    title: "name",
-                    description: "Unique layer name.",
+                    title: "layer",
+                    description: "A property layer; different layers do not interact or override each other",
                     type: "string",
                     default: "default"
                 },
-                hidden: {
+                name: {
+                    required: true,
                     propertyOrder: 2,
-                    title: "hidden",
-                    description: "Whether to hide by default on the dynmap.",
-                    type: "boolean"
+                    title: "name",
+                    description: "Unique property group name (without # prefix).",
+                    type: "string"
                 },
-                zones: {
+                properties: {
                     propertyOrder: 3,
-                    title: "zones",
-                    description: "A list of zones; if two zones overlap, the one higher up the list takes priority.",
+                    title: "properties",
+                    description: "A list of properties for this zone, in order. Property groups are identified by the prefix '#'. Properties that are not desired from a group can be removed with the prefix '!', as if it was never there.",
                     type: "array",
-                    format: "tabs",
-                    minItems: 1,
                     items: {
-                        headerTemplate: "{{i1}}: {{self.name}}",
-                        $ref: "schema/zone.json"
+                        type: "string"
                     }
                 }
             }

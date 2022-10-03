@@ -43,7 +43,7 @@ public class InventoryUtils {
 	}
 
 	public static boolean testForItemWithName(ItemStack item, @Nullable String nameText, boolean exactMatch) {
-		if (nameText == null || !exactMatch && nameText.isEmpty()) {
+		if (nameText == null || (!exactMatch && nameText.isEmpty())) {
 			return true;
 		}
 
