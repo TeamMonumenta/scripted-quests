@@ -3,8 +3,10 @@ package com.playmonumenta.scriptedquests.zones.event;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.mojang.brigadier.ParseResults;
 import com.playmonumenta.scriptedquests.utils.JsonUtils;
 import com.playmonumenta.scriptedquests.utils.MaterialUtils;
+import com.playmonumenta.scriptedquests.utils.NmsUtils;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
@@ -53,6 +55,10 @@ public class ZoneRemoteClickEvent extends ZoneEvent {
 			default -> throw new RuntimeException("Invalid click type " + type);
 		}, null);
 		String command = JsonUtils.getString(jsonObject, "command");
+		ParseResults<?> pr = NmsUtils.getVersionAdapter().parseCommand(command);
+		if (pr != null && pr.getReader().canRead()) {
+			throw new Exception("Invalid command: '" + command + "'");
+		}
 		int maxDistance = JsonUtils.getInt(jsonObject, "max_distance");
 		boolean ignoreTransparentBlocks = JsonUtils.getBoolean(jsonObject, "ignore_transparent_blocks");
 		int minTicksBetweenClicks = JsonUtils.getInt(jsonObject, "min_ticks_between_clicks", 1);
