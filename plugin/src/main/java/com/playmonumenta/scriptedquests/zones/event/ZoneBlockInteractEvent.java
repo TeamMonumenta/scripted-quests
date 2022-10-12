@@ -3,6 +3,8 @@ package com.playmonumenta.scriptedquests.zones.event;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import com.mojang.brigadier.ParseResults;
+import com.playmonumenta.scriptedquests.utils.NmsUtils;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
@@ -21,7 +23,7 @@ public class ZoneBlockInteractEvent extends ZoneEvent {
 		mClickType = clickType;
 	}
 
-	public static ZoneBlockInteractEvent fromJson(JsonElement jsonElement) {
+	public static ZoneBlockInteractEvent fromJson(JsonElement jsonElement) throws Exception {
 		JsonObject jsonObject = jsonElement.getAsJsonObject();
 		Set<Material> materials = new HashSet<>();
 		for (JsonElement block : jsonObject.getAsJsonArray("blocks")) {
@@ -37,6 +39,10 @@ public class ZoneBlockInteractEvent extends ZoneEvent {
 			};
 		}
 		String command = jsonObject.getAsJsonPrimitive("command").getAsString();
+		ParseResults<?> pr = NmsUtils.getVersionAdapter().parseCommand(command);
+		if (pr != null && pr.getReader().canRead()) {
+			throw new Exception("Invalid command: '" + command + "'");
+		}
 		return new ZoneBlockInteractEvent(materials, clickType, command);
 	}
 
