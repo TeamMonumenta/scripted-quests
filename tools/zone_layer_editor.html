@@ -48,7 +48,6 @@
             title: "Zone Layer",
             defaultProperties: [
                 "name",
-                "property_groups",
                 "zones"
             ],
             additionalProperties:false,
@@ -67,8 +66,24 @@
                     description: "Whether to hide by default on the dynmap.",
                     type: "boolean"
                 },
-                zones: {
+                property_groups: {
                     propertyOrder: 3,
+                    title: "property_groups",
+                    description: "Named lists of properties, to be applied or canceled in order. May contain other property groups. Do not include the '#' in the property group name here, it is implied. Please use the zone property group editor instead!",
+                    type: "object",
+                    patternProperties: {
+                        ".*": {
+                            headerTemplate: "#{{i}}",
+                            description: "The header here should only have one '#' - if that's all set, please continue to use # for property group names inside this list of properties.",
+                            type: "array",
+                            items: {
+                                type: "string"
+                            }
+                        }
+                    }
+                },
+                zones: {
+                    propertyOrder: 4,
                     title: "zones",
                     description: "A list of zones; if two zones overlap, the one higher up the list takes priority.",
                     type: "array",
