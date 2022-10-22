@@ -1,6 +1,8 @@
 package com.playmonumenta.scriptedquests.utils;
 
+import com.playmonumenta.scriptedquests.Plugin;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
@@ -10,6 +12,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -85,12 +88,10 @@ public class InventoryUtils {
 		PlayerInventory inv = player.getInventory();
 		boolean itemsDropped = false;
 		for (ItemStack item : items) {
-			if (inv.firstEmpty() == -1) {
+			HashMap<Integer, ItemStack> overflow = inv.addItem(item);
+			if (!overflow.isEmpty()) {
 				itemsDropped = true;
-				Location ploc = player.getLocation();
-				ploc.getWorld().dropItem(ploc, item);
-			} else {
-				inv.addItem(item);
+				dropTempOwnedItem(overflow.get(0), player.getLocation(), player);
 			}
 		}
 
@@ -99,5 +100,19 @@ public class InventoryUtils {
 			alreadyDone = true;
 		}
 		return alreadyDone;
+	}
+
+	public static Item dropTempOwnedItem(final ItemStack item, Location location, final Player player) {
+		Item droppedItem = location.getWorld().dropItem(location, item);
+		droppedItem.setPickupDelay(0);
+		droppedItem.setCanMobPickup(false);
+		droppedItem.setOwner(player.getUniqueId());
+		droppedItem.setThrower(player.getUniqueId());
+		Bukkit.getScheduler().runTaskLater(Plugin.getInstance(), () -> {
+			if (droppedItem.isValid()) {
+				droppedItem.setOwner(null);
+			}
+		}, 200);
+		return droppedItem;
 	}
 }
