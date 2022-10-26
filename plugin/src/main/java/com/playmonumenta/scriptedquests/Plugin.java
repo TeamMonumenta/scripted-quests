@@ -26,6 +26,7 @@ import com.playmonumenta.scriptedquests.timers.CommandTimerManager;
 import com.playmonumenta.scriptedquests.utils.MetadataUtils;
 import com.playmonumenta.scriptedquests.utils.NmsUtils;
 import com.playmonumenta.scriptedquests.zones.ZoneManager;
+import com.playmonumenta.scriptedquests.zones.ZonePropertyGroupManager;
 import java.io.File;
 import java.util.Random;
 import java.util.logging.Level;
@@ -61,6 +62,7 @@ public class Plugin extends JavaPlugin {
 	public CodeManager mCodeManager;
 	public ZoneManager mZoneManager;
 	public ZonePropertyManager mZonePropertyManager;
+	public ZonePropertyGroupManager mZonePropertyGroupManager;
 	public WaypointManager mWaypointManager;
 	public GrowableManager mGrowableManager;
 	public GuiManager mGuiManager;
@@ -141,8 +143,8 @@ public class Plugin extends JavaPlugin {
 		mCodeManager = new CodeManager();
 		mZoneEventListener = new ZoneEventListener(this);
 		mZoneManager = new ZoneManager(this);
-		mZoneManager.doReload(this);
 		mZonePropertyManager = new ZonePropertyManager(this);
+		mZonePropertyGroupManager = new ZonePropertyGroupManager();
 		mTimerManager = new CommandTimerManager(this);
 		mWaypointManager = new WaypointManager(this);
 		mGuiManager = new GuiManager(this);
@@ -168,6 +170,7 @@ public class Plugin extends JavaPlugin {
 		getCommand("questTrigger").setExecutor(new QuestTrigger(this));
 
 		ClientChatProtocol.initialize(this);
+		mZoneManager.doReload(this);
 
 		/* Load the config 1 tick later to let other plugins load */
 		new BukkitRunnable() {
@@ -233,7 +236,7 @@ public class Plugin extends JavaPlugin {
 		if (mConfig.isBoolean("show_timer_names")) {
 			mShowTimerNames = mConfig.getBoolean("show_timer_names", false);
 			if (sender != null) {
-				sender.sendMessage("show_timer_names: " + mShowTimerNames.toString());
+				sender.sendMessage("show_timer_names: " + mShowTimerNames);
 			}
 		} else {
 			mShowTimerNames = null;
@@ -248,7 +251,7 @@ public class Plugin extends JavaPlugin {
 			mShowZonesDynmap = false;
 		}
 		if (sender != null) {
-			sender.sendMessage("show_zones_dynmap: " + Boolean.toString(mShowZonesDynmap));
+			sender.sendMessage("show_zones_dynmap: " + mShowZonesDynmap);
 		}
 
 		if (mConfig.isBoolean("fallback_zone_lookup")) {
@@ -257,7 +260,7 @@ public class Plugin extends JavaPlugin {
 			mFallbackZoneLookup = false;
 		}
 		if (sender != null) {
-			sender.sendMessage("fallback_zone_lookup: " + Boolean.toString(mFallbackZoneLookup));
+			sender.sendMessage("fallback_zone_lookup: " + mFallbackZoneLookup);
 		}
 	}
 

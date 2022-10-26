@@ -3,7 +3,9 @@ package com.playmonumenta.scriptedquests.zones;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.playmonumenta.scriptedquests.Plugin;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -18,8 +20,8 @@ import org.bukkit.util.Vector;
 public class Zone extends ZoneBase {
 	private final ZoneLayer mLayer;
 	private final String mName;
-	private List<ZoneFragment> mFragments = new ArrayList<ZoneFragment>();
-	private final Set<String> mProperties = new LinkedHashSet<String>();
+	private List<ZoneFragment> mFragments = new ArrayList<>();
+	private final Set<String> mProperties = new LinkedHashSet<>();
 
 	public static Zone constructFromJson(ZoneLayer layer, JsonObject object, Map<String, List<String>> propertyGroups) throws Exception {
 		if (layer == null) {
@@ -34,7 +36,6 @@ public class Zone extends ZoneBase {
 
 		Double[] corners = new Double[6];
 		@Nullable String name;
-		Set<String> properties = new LinkedHashSet<String>();
 
 		// Load the zone name
 		@Nullable JsonElement nameElement = object.get("name");
@@ -60,26 +61,13 @@ public class Zone extends ZoneBase {
 			String key = ent.getKey();
 			JsonElement value = ent.getValue();
 			switch (key) {
-			case "x1":
-				corners[0] = value.getAsDouble();
-				break;
-			case "y1":
-				corners[1] = value.getAsDouble();
-				break;
-			case "z1":
-				corners[2] = value.getAsDouble();
-				break;
-			case "x2":
-				corners[3] = value.getAsDouble();
-				break;
-			case "y2":
-				corners[4] = value.getAsDouble();
-				break;
-			case "z2":
-				corners[5] = value.getAsDouble();
-				break;
-			default:
-				throw new Exception("Unknown location key: '" + key + "'");
+				case "x1" -> corners[0] = value.getAsDouble();
+				case "y1" -> corners[1] = value.getAsDouble();
+				case "z1" -> corners[2] = value.getAsDouble();
+				case "x2" -> corners[3] = value.getAsDouble();
+				case "y2" -> corners[4] = value.getAsDouble();
+				case "z2" -> corners[5] = value.getAsDouble();
+				default -> throw new Exception("Unknown location key: '" + key + "'");
 			}
 		}
 		for (Double cornerAxis : corners) {
@@ -99,10 +87,15 @@ public class Zone extends ZoneBase {
 		if (propertiesArray == null) {
 			throw new Exception("Failed to parse 'properties'");
 		}
+		List<String> rawProperties = new ArrayList<>();
 		for (JsonElement element : propertiesArray) {
 			String propertyName = element.getAsString();
-			applyProperty(propertyGroups, properties, propertyName);
+			if (propertyName == null || propertyName.isBlank()) {
+				throw new Exception("Property may not be empty");
+			}
+			rawProperties.add(propertyName);
 		}
+		Set<String> properties = Plugin.getInstance().mZonePropertyGroupManager.resolveProperties(layer.getName(), rawProperties);
 
 		return new Zone(layer, pos1, pos2, name, properties);
 	}
@@ -156,7 +149,7 @@ public class Zone extends ZoneBase {
 	 * eclipsed by the other zone.
 	 */
 	protected boolean splitByOverlap(ZoneBase overlap, Zone otherZone, boolean includeOther) {
-		List<ZoneFragment> newFragments = new ArrayList<ZoneFragment>();
+		List<ZoneFragment> newFragments = new ArrayList<>();
 		for (ZoneFragment fragment : mFragments) {
 			@Nullable ZoneBase subOverlap = fragment.overlappingZone(overlap);
 
@@ -189,7 +182,7 @@ public class Zone extends ZoneBase {
 		// Invalidate all current fragments.
 		invalidate();
 
-		// Get fewest fragments that represent the same thing (mostly large combos)
+		// Merge fragments into the smallest combination possible
 		mFragments = defragmenter.optimalMerge();
 	}
 
@@ -206,11 +199,11 @@ public class Zone extends ZoneBase {
 	}
 
 	public List<ZoneFragment> getZoneFragments() {
-		return new ArrayList<ZoneFragment>(mFragments);
+		return new ArrayList<>(mFragments);
 	}
 
 	public Set<String> getProperties() {
-		return new LinkedHashSet<String>(mProperties);
+		return Collections.unmodifiableSet(mProperties);
 	}
 
 	public boolean hasProperty(String propertyName) {
@@ -221,54 +214,15 @@ public class Zone extends ZoneBase {
 		return negate ^ mProperties.contains(propertyName);
 	}
 
-	private static void applyProperty(Map<String, List<String>> propertyGroups, Set<String> currentProperties, String propertyName) throws Exception {
-		applyProperty(propertyGroups, currentProperties, propertyName, false);
-	}
-
-	private static void applyProperty(Map<String, List<String>> propertyGroups, Set<String> currentProperties, String propertyName, boolean remove) throws Exception {
-		if (propertyName == null) {
-			throw new Exception("propertyName may not be null.");
-		}
-		if (propertyName.isEmpty()) {
-			throw new Exception("propertyName may not be empty (including after the prefix # or !).");
-		}
-		if (currentProperties == null) {
-			throw new Exception("currentProperties may not be null.");
-		}
-		if (propertyGroups == null) {
-			throw new Exception("propertyGroups may not be null (but may be empty).");
-		}
-
-		char prefix = propertyName.charAt(0);
-		if (prefix == '#') {
-			@Nullable List<String> propertyGroup = propertyGroups.get(propertyName.substring(1));
-			if (propertyGroup == null) {
-				throw new Exception("No such property group: " + propertyName);
-			}
-
-			for (String subPropertyName : propertyGroup) {
-				applyProperty(propertyGroups, currentProperties, subPropertyName, remove);
-			}
-		} else if (prefix == '!') {
-			applyProperty(propertyGroups, currentProperties, propertyName.substring(1), true);
-		} else if (remove) {
-			currentProperties.remove(propertyName);
-		} else {
-			currentProperties.add(propertyName);
-		}
-	}
-
 	@Override
-	@SuppressWarnings("unchecked")
 	public boolean equals(Object o) {
-		if (!(o instanceof Zone)) {
+		if (o instanceof Zone other) {
+			return (super.equals(other) &&
+				getLayerName().equals(other.getLayerName()) &&
+				getName().equals(other.getName()));
+		} else {
 			return false;
 		}
-
-		Zone other = (Zone)o;
-		return (super.equals(other) &&
-		        getLayerName().equals(other.getLayerName()) &&
-		        getName().equals(other.getName()));
 	}
 
 	@Override

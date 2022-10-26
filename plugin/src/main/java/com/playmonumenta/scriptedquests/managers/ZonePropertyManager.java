@@ -15,8 +15,8 @@ import org.bukkit.event.Listener;
 import org.jetbrains.annotations.Nullable;
 
 public class ZonePropertyManager implements Listener {
-	private Plugin mPlugin;
-	private final Map<String, Map<String, ZoneProperty>> mZoneProperties = new HashMap<String, Map<String, ZoneProperty>>();
+	private final Plugin mPlugin;
+	private final Map<String, Map<String, ZoneProperty>> mZoneProperties = new HashMap<>();
 
 	public ZonePropertyManager(Plugin plugin) {
 		mPlugin = plugin;
@@ -38,13 +38,13 @@ public class ZonePropertyManager implements Listener {
 		mZoneProperties.clear();
 
 		QuestUtils.loadScriptedQuests(plugin, "zone_properties", sender, (object) -> {
-			// Load this file into a NpcTrader object
+			// Load this file into a ZoneProperty object
 			ZoneProperty property = new ZoneProperty(object);
 			String layerName = property.getLayer();
 			String name = property.getName();
 
 			if (!mZoneProperties.containsKey(layerName)) {
-				mZoneProperties.put(layerName, new HashMap<String, ZoneProperty>());
+				mZoneProperties.put(layerName, new HashMap<>());
 			}
 			Map<String, ZoneProperty> layer = mZoneProperties.get(layerName);
 
@@ -56,7 +56,7 @@ public class ZonePropertyManager implements Listener {
 				layer.put(name, property);
 			}
 
-			return name + ":" + Integer.toString(property.getComponents().size());
+			return name + ":" + property.getComponents().size();
 		});
 	}
 

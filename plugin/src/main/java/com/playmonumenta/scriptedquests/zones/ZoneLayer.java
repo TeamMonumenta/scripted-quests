@@ -6,17 +6,18 @@ import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.utils.ZoneUtils;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import javax.annotation.Nullable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -29,16 +30,16 @@ import org.dynmap.markers.MarkerSet;
 public class ZoneLayer {
 	public static final String DYNMAP_PREFIX = "SQZone";
 
-	private String mName;
+	private final String mName;
 	private boolean mHidden = false;
-	private List<Zone> mZones = new ArrayList<Zone>();
-	private Set<String> mLoadedProperties = new HashSet<String>();
+	private final List<Zone> mZones = new ArrayList<>();
+	private final Set<String> mLoadedProperties = new TreeSet<>();
 
 	/*
 	 * This should only be called by the ZoneManager.
 	 */
 	public ZoneLayer(CommandSender sender, JsonObject object) throws Exception {
-		this(new HashSet<CommandSender>(Arrays.asList(sender)), object);
+		this(new HashSet<>(Collections.singletonList(sender)), object);
 	}
 
 	public ZoneLayer(Set<CommandSender> senders, JsonObject object) throws Exception {
@@ -68,15 +69,22 @@ public class ZoneLayer {
 		// Load the property groups - why yes, this section is rather long.
 		@Nullable JsonElement propertyGroupsElement = object.get("property_groups");
 		if (propertyGroupsElement == null) {
-			throw new Exception("Failed to parse 'property_groups'");
+			propertyGroupsElement = new JsonObject();
+		} else {
+			Component warningComponent = Component.text("Warning: Layer " + name
+				+ " has property groups built-in. Support for this is deprecated - use zone property group files instead.",
+				TextColor.color(255, 63, 0));
+			for (CommandSender sender : senders) {
+				sender.sendMessage(warningComponent);
+			}
 		}
 		@Nullable JsonObject propertyGroupsJson = propertyGroupsElement.getAsJsonObject();
 		if (propertyGroupsJson == null) {
 			throw new Exception("Failed to parse 'property_groups'");
 		}
 
-		Map<String, List<String>> propertyGroups = new HashMap<String, List<String>>();
-		Map<String, Set<String>> groupReferences = new HashMap<String, Set<String>>();
+		Map<String, List<String>> propertyGroups = new HashMap<>();
+		Map<String, Set<String>> groupReferences = new HashMap<>();
 
 		for (Map.Entry<String, JsonElement> ent : propertyGroupsJson.entrySet()) {
 			String propertyGroupName = ent.getKey();
@@ -90,19 +98,16 @@ public class ZoneLayer {
 				throw new Exception("Failed to parse 'property_groups." + propertyGroupName + "'");
 			}
 
-			List<String> propertyGroup = new ArrayList<String>();
-			Set<String> ownGroupReferences = new LinkedHashSet<String>();
+			List<String> propertyGroup = new ArrayList<>();
+			Set<String> ownGroupReferences = new LinkedHashSet<>();
+			int propertyGroupIndex = 0;
 
-			Integer propertyGroupIndex = 0;
-			Iterator<JsonElement> propertyGroupIter = propertyGroupJsonArray.iterator();
-
-			while (propertyGroupIter.hasNext()) {
-				JsonElement propertyNameElement = propertyGroupIter.next();
+			for (JsonElement propertyNameElement : propertyGroupJsonArray) {
 				String propertyName = propertyNameElement.getAsString();
 
 				if (propertyName == null) {
 					throw new Exception("Failed to parse 'property_groups." + propertyGroupName +
-					                    "[" + Integer.toString(propertyGroupIndex) + "]'");
+						"[" + propertyGroupIndex + "]'");
 				}
 
 				propertyGroup.add(propertyName);
@@ -138,14 +143,12 @@ public class ZoneLayer {
 			throw new Exception("Failed to parse 'zones'");
 		}
 
-		Integer zoneIndex = 0;
-		Iterator<JsonElement> zonesIter = zonesArray.iterator();
+		int zoneIndex = 0;
 
-		while (zonesIter.hasNext()) {
-			JsonElement zoneElement = zonesIter.next();
+		for (JsonElement zoneElement : zonesArray) {
 			@Nullable JsonObject zoneObject = zoneElement.getAsJsonObject();
 			if (zoneObject == null) {
-				throw new Exception("Failed to parse 'zones[" + Integer.toString(zoneIndex) + "]'");
+				throw new Exception("Failed to parse 'zones[" + zoneIndex + "]'");
 			}
 			Zone zone = Zone.constructFromJson(this, zoneObject, propertyGroups);
 			mLoadedProperties.addAll(zone.getProperties());
@@ -185,7 +188,7 @@ public class ZoneLayer {
 	 * handle that on its own.
 	 */
 	public boolean addZone(Vector pos1, Vector pos2, String name, Set<String> properties) {
-		@Nullable Zone zone = null;
+		@Nullable Zone zone;
 
 		try {
 			zone = new Zone(this, pos1, pos2, name, properties);
@@ -214,7 +217,7 @@ public class ZoneLayer {
 	 * Returns a subclass of ZoneTreeBase.
 	 */
 	public ZoneTreeBase createZoneTree(CommandSender sender) throws Exception {
-		Set<CommandSender> senders = new HashSet<CommandSender>();
+		Set<CommandSender> senders = new HashSet<>();
 		senders.add(sender);
 		return createZoneTree(senders);
 	}
@@ -223,7 +226,7 @@ public class ZoneLayer {
 		reloadFragments(senders);
 
 		// Create list of all zone fragments.
-		List<ZoneFragment> zoneFragments = new ArrayList<ZoneFragment>();
+		List<ZoneFragment> zoneFragments = new ArrayList<>();
 		for (Zone zone : mZones) {
 			zoneFragments.addAll(zone.getZoneFragments());
 		}
@@ -240,7 +243,7 @@ public class ZoneLayer {
 	 * Return the list of properties found in this zone layer.
 	 */
 	public Set<String> getLoadedProperties() {
-		return new HashSet<String>(mLoadedProperties);
+		return Collections.unmodifiableSet(mLoadedProperties);
 	}
 
 	/************************************************************************************
@@ -248,12 +251,12 @@ public class ZoneLayer {
 	 ************************************************************************************/
 
 	/*
-	 * Reset the fragments of this ZoneLayer so they can be recalculated without reloading the zones.
+	 * Reset the fragments of this ZoneLayer, so they can be recalculated without reloading the zones.
 	 * Used to handle ZoneLayers from other plugins. This should only be called by the ZoneManager
 	 * and the ZoneLayer constructor.
 	 */
 	protected void reloadFragments(CommandSender sender) {
-		Set<CommandSender> senders = new HashSet<CommandSender>();
+		Set<CommandSender> senders = new HashSet<>();
 		senders.add(sender);
 		reloadFragments(senders);
 	}
@@ -290,9 +293,7 @@ public class ZoneLayer {
 	}
 
 	public List<Zone> getZones() {
-		List<Zone> result = new ArrayList<Zone>();
-		result.addAll(mZones);
-		return result;
+		return Collections.unmodifiableList(mZones);
 	}
 
 	/*
@@ -370,8 +371,7 @@ public class ZoneLayer {
 		}
 
 		// Duplicate set of MarkerSets in case the return value is a view, not a copy.
-		Set<MarkerSet> allMarkerSets = new LinkedHashSet<MarkerSet>();
-		allMarkerSets.addAll(markerHook.getMarkerSets());
+		Set<MarkerSet> allMarkerSets = new LinkedHashSet<>(markerHook.getMarkerSets());
 		for (MarkerSet markerSet : allMarkerSets) {
 			if (markerSet != null &&
 			    markerSet.getMarkerSetID().startsWith(DYNMAP_PREFIX) &&

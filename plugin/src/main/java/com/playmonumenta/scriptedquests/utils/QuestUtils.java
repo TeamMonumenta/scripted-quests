@@ -6,8 +6,8 @@ import com.google.gson.JsonObject;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.Set;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
@@ -45,14 +45,14 @@ public class QuestUtils {
 		loadScriptedQuests(plugin, folderName, Collections.singleton(sender), action);
 	}
 
-	public static void loadScriptedQuests(Plugin plugin, String folderName, Set<@Nullable CommandSender> senders, JsonLoadAction action) {
+	public static void loadScriptedQuests(Plugin plugin, String folderName, Collection<@Nullable CommandSender> senders, JsonLoadAction action) {
 		loadScriptedQuests(plugin, folderName, senders, (JsonLoadActionWithFile) action);
 	}
 
-	public static void loadScriptedQuests(Plugin plugin, String folderName, Set<@Nullable CommandSender> senders, JsonLoadActionWithFile action) {
+	public static void loadScriptedQuests(Plugin plugin, String folderName, Collection<@Nullable CommandSender> senders, JsonLoadActionWithFile action) {
 		String folderLocation = plugin.getDataFolder() + File.separator + folderName;
 		ArrayList<File> listOfFiles;
-		ArrayList<String> listOfLabels = new ArrayList<String>();
+		ArrayList<String> listOfLabels = new ArrayList<>();
 		int numFiles = 0;
 
 		// Attempt to load all JSON files in subdirectories
@@ -101,34 +101,34 @@ public class QuestUtils {
 		if (senders != null) {
 			for (CommandSender sender : senders) {
 				if (sender != null) {
-					sender.sendMessage(ChatColor.GOLD + "Loaded " + Integer.toString(numFiles) + " " + folderName + " files");
+					sender.sendMessage(ChatColor.GOLD + "Loaded " + numFiles + " " + folderName + " files");
 				}
 			}
 
 			if (numFiles <= 20) {
 				Collections.sort(listOfLabels);
-				String outMsg = "";
+				StringBuilder outMsg = new StringBuilder();
 				for (String label : listOfLabels) {
-					if (outMsg.isEmpty()) {
-						outMsg = label;
+					if (outMsg.length() == 0) {
+						outMsg = new StringBuilder(label);
 					} else {
-						outMsg = outMsg + ", " + label;
+						outMsg.append(", ").append(label);
 					}
 
 					if (outMsg.length() > 1000) {
 						for (CommandSender sender : senders) {
 							if (sender != null) {
-								sender.sendMessage(ChatColor.GOLD + outMsg);
+								sender.sendMessage(ChatColor.GOLD + outMsg.toString());
 							}
 						}
-						outMsg = "";
+						outMsg = new StringBuilder();
 					}
 				}
 
-				if (!outMsg.isEmpty()) {
+				if (outMsg.length() > 0) {
 					for (CommandSender sender : senders) {
 						if (sender != null) {
-							sender.sendMessage(ChatColor.GOLD + outMsg);
+							sender.sendMessage(ChatColor.GOLD + outMsg.toString());
 						}
 					}
 				}
@@ -146,7 +146,7 @@ public class QuestUtils {
 	 */
 	public static @Nullable String loadScriptedQuestsFile(File file, JsonLoadActionWithFile action) throws Exception {
 		String content = FileUtils.readFile(file.getPath());
-		if (content == null || content.isEmpty()) {
+		if (content.isEmpty()) {
 			throw new Exception("Failed to parse file as JSON object");
 		}
 
