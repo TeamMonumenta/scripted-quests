@@ -109,6 +109,7 @@ the various quest options
 - Interactable Items Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/interactable_editor.html
 - Zone Layers Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/zone_layer_editor.html
 - Zone Properties Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/zone_property_editor.html
+- Zone Property Groups Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/zone_property_group_editor.html
 
 ## <a name="structure"></a>Structure of a Quests File:
 Each quest file has the following info:
