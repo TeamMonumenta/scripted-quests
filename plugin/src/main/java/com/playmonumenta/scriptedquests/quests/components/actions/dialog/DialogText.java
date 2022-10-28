@@ -39,7 +39,7 @@ public class DialogText implements DialogBase {
 	}
 
 	@Override
-	public JsonElement serializeForClientAPI(QuestContext context) {
+	public JsonElement serializeForClientAPI(final QuestContext context) {
 		return JsonObjectBuilder.get()
 			.add("type", "text")
 			.add("text", mText.stream()

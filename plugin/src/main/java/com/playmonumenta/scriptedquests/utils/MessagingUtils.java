@@ -102,14 +102,12 @@ public class MessagingUtils {
 		sendRawMessage(player, message, true);
 	}
 
-	public static void sendRawMessage(Player player, String message, boolean allowTranslations) {
+	public static void sendRawMessage(final Player player,final String message,final boolean allowTranslations) {
 		player.sendMessage(serializeRawMessage(player, message, allowTranslations));
 	}
 
-	public static TextComponent serializeRawMessage(Player player, String message, boolean allowTranslations) {
-		if (allowTranslations) {
-			message = TranslationsManager.translate(player, message);
-		}
+	public static TextComponent serializeRawMessage(final Player player,final String message,final boolean allowTranslations) {
+		if (allowTranslations) message = TranslationsManager.translate(player, message);
 		message = translatePlayerName(player, message);
 		message = message.replace('§', '&');
 		return AMPERSAND_SERIALIZER.deserialize(message);

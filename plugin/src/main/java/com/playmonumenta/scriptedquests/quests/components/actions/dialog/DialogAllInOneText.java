@@ -8,7 +8,7 @@ import java.util.Iterator;
 import java.util.stream.Collectors;
 
 public class DialogAllInOneText implements DialogBase {
-	private ArrayList<DialogAllInOneEntry> mEntries = new ArrayList<DialogAllInOneEntry>();
+	private Collection<DialogAllInOneEntry> mEntries = new ArrayList<DialogAllInOneEntry>();
 
 	public DialogAllInOneText(String npcName, JsonElement element) throws Exception {
 		if (element.isJsonObject()) {
@@ -31,7 +31,7 @@ public class DialogAllInOneText implements DialogBase {
 	}
 
 	@Override
-	public JsonElement serializeForClientAPI(QuestContext context) {
+	public JsonElement serializeForClientAPI(final QuestContext context) {
 		return JsonObjectBuilder.get()
 			.add("type", "all_in_one_text")
 			.add("entries", mEntries.stream().map(v -> v.serializeForClientAPI(context)).collect(Collectors.toList()))
