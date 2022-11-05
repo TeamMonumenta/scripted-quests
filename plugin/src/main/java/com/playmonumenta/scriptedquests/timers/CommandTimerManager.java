@@ -68,7 +68,7 @@ public class CommandTimerManager implements Listener {
 
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void worldUnloadEvent(WorldUnloadEvent event) {
-		MMLog.fine("Unloading all command timers in world '" + event.getWorld().getName() + '"');
+		MMLog.fine("Unloading all command timers in unloading world '" + event.getWorld().getName() + '"');
 		for (CommandTimer timer : mCommandTimers.values()) {
 			timer.unloadAllInWorld(event.getWorld());
 		}

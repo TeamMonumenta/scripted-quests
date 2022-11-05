@@ -31,6 +31,7 @@ public class CommandTimerInstance {
 	private boolean mRepeaterEnabled = true;
 
 	public CommandTimerInstance(Location loc, TimerCoords coords, String periodStr, int playerRange, boolean playerOnline, boolean repeat) {
+		MMLog.finer("Adding new timer with coords=" + coords + " period=" + periodStr + " range=" + playerRange + " playerOnline=" + playerOnline + " repeat=" + repeat);
 		mLoc = loc;
 		mCoords = coords;
 		mPeriodStr = periodStr;
