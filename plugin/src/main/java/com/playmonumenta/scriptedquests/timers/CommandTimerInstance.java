@@ -1,11 +1,13 @@
 package com.playmonumenta.scriptedquests.timers;
 
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.utils.MMLog;
 import com.playmonumenta.scriptedquests.utils.NmsUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.CommandBlock;
@@ -67,6 +69,7 @@ public class CommandTimerInstance {
 	}
 
 	public void unload(Plugin plugin) {
+		MMLog.finer("Unloading timer at " + mLoc);
 		if (mRepeat && mRepeaterEnabled) {
 			/* Turn repeaters back off when unloading timer */
 			setAutoState(plugin, mLoc, false);
@@ -96,6 +99,10 @@ public class CommandTimerInstance {
 			name += ChatColor.GREEN + "range=" + Integer.toString(mPlayerRange);
 		}
 		return name;
+	}
+
+	public World getWorld() {
+		return mLoc.getWorld();
 	}
 
 	@Override
