@@ -114,9 +114,10 @@ public class ZonePropertyGroupManager {
 	public Set<String> resolveProperties(String layerName, List<String> originalProperties) {
 		Set<String> result = new TreeSet<>();
 		@Nullable Map<String, ZonePropertyGroup> layerGroups = mZonePropertyGroups.get(layerName);
-		if (layerGroups != null) {
-			resolveProperties(layerGroups, result, originalProperties, false);
+		if (layerGroups == null) {
+			layerGroups = new HashMap<>();
 		}
+		resolveProperties(layerGroups, result, originalProperties, false);
 		return result;
 	}
 
