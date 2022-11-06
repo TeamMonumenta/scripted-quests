@@ -2,6 +2,7 @@ package com.playmonumenta.scriptedquests.timers;
 
 import com.playmonumenta.scriptedquests.Plugin;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -10,6 +11,7 @@ import java.util.UUID;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -47,13 +49,30 @@ public class CommandTimer implements Listener {
 		} else {
 			mPeriodStr = ChatColor.BLUE + Integer.toString(mPeriod) + "t";
 		}
-
-
 	}
 
 	/********************************************************************************
 	 * Public Methods
 	 *******************************************************************************/
+
+	public void unloadAllInWorld(World world) {
+		Iterator<Map.Entry<UUID, CommandTimerInstance>> iter = mTimers.entrySet().iterator();
+		while (iter.hasNext()) {
+			Map.Entry<UUID, CommandTimerInstance> entry = iter.next();
+			UUID uuid = entry.getKey();
+			CommandTimerInstance timer = entry.getValue();
+
+			if (entry.getValue().getWorld().equals(world)) {
+				mCoords.remove(timer.getCoords());
+				timer.unload(mPlugin);
+				iter.remove();
+
+				for (LinkedHashMap<UUID, CommandTimerInstance> map: mTickTimers) {
+					map.remove(uuid);
+				}
+			}
+		}
+	}
 
 	public void unload(Entity entity) {
 		CommandTimerInstance timer = mTimers.get(entity.getUniqueId());

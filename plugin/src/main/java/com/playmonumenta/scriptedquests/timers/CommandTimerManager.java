@@ -3,6 +3,8 @@ package com.playmonumenta.scriptedquests.timers;
 import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent;
 import com.destroystokyo.paper.event.entity.EntityRemoveFromWorldEvent;
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.utils.MMLog;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -14,6 +16,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class CommandTimerManager implements Listener {
@@ -63,6 +66,13 @@ public class CommandTimerManager implements Listener {
 		unload(event.getEntity());
 	}
 
+	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+	public void worldUnloadEvent(WorldUnloadEvent event) {
+		MMLog.fine("Unloading all command timers in unloading world '" + event.getWorld().getName() + '"');
+		for (CommandTimer timer : mCommandTimers.values()) {
+			timer.unloadAllInWorld(event.getWorld());
+		}
+	}
 
 	/********************************************************************************
 	 * Public Methods

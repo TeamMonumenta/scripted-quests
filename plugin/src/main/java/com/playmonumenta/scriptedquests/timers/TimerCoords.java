@@ -30,5 +30,9 @@ public class TimerCoords implements Comparable<TimerCoords> {
 
 		return ret;
 	}
-}
 
+	@Override
+	public String toString() {
+		return "TimerCoords(" + mWorldName + " " + mX + " " + mY + " " + mZ + ")";
+	}
+}
