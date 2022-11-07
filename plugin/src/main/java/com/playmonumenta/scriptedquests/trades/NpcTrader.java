@@ -3,7 +3,9 @@ package com.playmonumenta.scriptedquests.trades;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.quests.QuestNpc;
+import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -11,11 +13,11 @@ import org.jetbrains.annotations.Nullable;
 
 /*
  * An NpcTrader object holds prerequisites for each trade slot in the NPC's inventory
- * Only one NpcTrader object exists per NPC name
  */
 public class NpcTrader {
 	private final HashMap<Integer, NpcTrade> mTrades = new HashMap<>();
 	private final String mNpcName;
+	private final @Nullable QuestPrerequisites mFilePrerequisites;
 
 	public NpcTrader(JsonObject object) throws Exception {
 		// Read the npc's name first
@@ -27,6 +29,13 @@ public class NpcTrader {
 			throw new Exception("Failed to parse 'npc' name as string");
 		}
 		mNpcName = QuestNpc.squashNpcName(npc.getAsString());
+
+		JsonElement prerequisites = object.get("file_prerequisites");
+		if (prerequisites != null) {
+			mFilePrerequisites = new QuestPrerequisites(prerequisites);
+		} else {
+			mFilePrerequisites = null;
+		}
 
 		// Read the npc's trades
 		JsonArray array = object.getAsJsonArray("trades");
@@ -47,7 +56,7 @@ public class NpcTrader {
 		for (Entry<String, JsonElement> ent : entries) {
 			String key = ent.getKey();
 
-			if (!key.equals("npc") && !key.equals("trades")) {
+			if (!key.equals("npc") && !key.equals("trades") && !key.equals("file_prerequisites")) {
 				throw new Exception("Unknown NpcTrader key: " + key);
 			}
 		}
@@ -63,4 +72,9 @@ public class NpcTrader {
 	public @Nullable NpcTrade getTrade(int index) {
 		return mTrades.get(index);
 	}
+
+	public boolean areFilePrerequisitesMet(QuestContext context) {
+		return mFilePrerequisites == null || mFilePrerequisites.prerequisiteMet(context);
+	}
+
 }

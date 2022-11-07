@@ -3,6 +3,7 @@ package com.playmonumenta.scriptedquests.listeners;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.quests.QuestNpc;
+import java.util.List;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -37,7 +38,7 @@ public class EntityListener implements Listener {
 				return;
 			}
 
-			QuestNpc npc = mPlugin.mNpcManager.getInteractNPC(damagee);
+			List<QuestNpc> npc = mPlugin.mNpcManager.getInteractNPC(damagee);
 			if (npc != null) {
 				/*
 				 * This is definitely a quest NPC, even if the player might not be able to interact with it
@@ -79,8 +80,7 @@ public class EntityListener implements Listener {
 	}
 
 	private void cancelIfNpc(Entity damagee, Cancellable event) {
-		QuestNpc npc = mPlugin.mNpcManager.getInteractNPC(damagee);
-		if (npc != null) {
+		if (mPlugin.mNpcManager.isQuestNPC(damagee)) {
 			event.setCancelled(true);
 		}
 	}
@@ -88,22 +88,17 @@ public class EntityListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void potionSplashEvent(PotionSplashEvent event) {
 		// Don't apply potion effects to quest entities
-		event.getAffectedEntities().removeIf(entity -> mPlugin.mNpcManager.getInteractNPC(entity) != null);
+		event.getAffectedEntities().removeIf(entity -> mPlugin.mNpcManager.isQuestNPC(entity));
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void areaEffectCloudApplyEvent(AreaEffectCloudApplyEvent event) {
 		// Don't apply potion effects to quest entities
-		event.getAffectedEntities().removeIf(entity -> mPlugin.mNpcManager.getInteractNPC(entity) != null);
+		event.getAffectedEntities().removeIf(entity -> mPlugin.mNpcManager.isQuestNPC(entity));
 	}
 
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
 	public void playerLeashEntityEvent(PlayerLeashEntityEvent event) {
-		Entity leashee = event.getEntity();
-		QuestNpc npc = mPlugin.mNpcManager.getInteractNPC(leashee);
-
-		if (npc != null) {
-			event.setCancelled(true);
-		}
+		cancelIfNpc(event.getEntity(), event);
 	}
 }

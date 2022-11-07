@@ -8,6 +8,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.quests.QuestNpc;
 import java.lang.reflect.InvocationTargetException;
 import java.util.EnumSet;
@@ -169,8 +170,12 @@ public class SelectiveNPCVisibilityHandler extends PacketAdapter implements List
 		if (player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR) {
 			return true;
 		}
-		QuestNpc npc = mPlugin.mNpcManager.getInteractNPC(entity);
-		return npc == null || npc.isVisibleToPlayer(player, entity);
+		List<QuestNpc> npcFiles = mPlugin.mNpcManager.getInteractNPC(entity);
+		if (npcFiles == null || npcFiles.stream().noneMatch(QuestNpc::hasVisibilityPrerequisites)) {
+			return true;
+		}
+		QuestContext questContext = new QuestContext(mPlugin, player, entity, false, null, player.getInventory().getItemInMainHand());
+		return npcFiles.stream().anyMatch(npc -> npc.areFilePrerequisitesMet(questContext) && npc.isVisibleToPlayer(questContext));
 	}
 
 	/**
