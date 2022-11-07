@@ -13,19 +13,26 @@
 			"description": "NPC's name - same as when used in quests",
 			"type": "string"
 		},
-        "trades": {
-            "required": true,
-            "propertyOrder": 4,
+		"file_prerequisites": {
+			"required": false,
+			"propertyOrder": 2,
+			"$ref": "prerequisites.json",
+			"title": "file_prerequisites",
+			"description": "Prerequisites for this trader file. If these prerequisites exist and are not met, none of the trade prerequisites and actions defined in this file will be considered. Note that in particular this means that unmet prerequisites does not block any trades!<br/>You might want to use <b>use_npc_for_prereqs</b> for these prerequisites."
+		},
+		"trades": {
+			"required": true,
+			"propertyOrder": 4,
 			"description": "List of trades that are restricted. Unrestricted trades need not be specified.",
-            "title": "trades",
-            "type": "array",
-            "minItems": 1,
-            "items": {
-                "defaultProperties": [
-                    "index",
-                    "prerequisites"
+			"title": "trades",
+			"type": "array",
+			"minItems": 1,
+			"items": {
+				"defaultProperties": [
+					"index",
+					"prerequisites"
 				],
-				"additionalProperties":false,
+				"additionalProperties": false,
 				"properties": {
 					"index": {
 						"propertyOrder": 1,

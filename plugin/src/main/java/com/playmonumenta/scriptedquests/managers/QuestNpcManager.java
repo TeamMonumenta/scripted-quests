@@ -5,8 +5,10 @@ import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.quests.QuestNpc;
 import com.playmonumenta.scriptedquests.utils.MetadataUtils;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
-import java.util.EnumSet;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 import org.bukkit.command.CommandSender;
@@ -16,41 +18,23 @@ import org.jetbrains.annotations.Nullable;
 
 public class QuestNpcManager {
 	private final Plugin mPlugin;
-	private final Map<EntityType, Map<String, QuestNpc>> mNpcs = new HashMap<>();
-	private final EnumSet<EntityType> mEntityTypes = EnumSet.noneOf(EntityType.class);
+	private final Map<EntityType, Map<String, List<QuestNpc>>> mNpcs = new HashMap<>();
 
 	/*
 	 * If sender is non-null, it will be sent debugging information
 	 */
 	public void reload(Plugin plugin, @Nullable CommandSender sender) {
 		mNpcs.clear();
-		mEntityTypes.clear();
 
 		QuestUtils.loadScriptedQuests(plugin, "npcs", sender, (object) -> {
 			// Load this file into a QuestNpc object
 			QuestNpc npc = new QuestNpc(object);
 
-			// Track this type of entity from now on when entities are interacted with
-			EntityType type = npc.getEntityType();
-			mEntityTypes.add(type);
+			mNpcs.computeIfAbsent(npc.getEntityType(), key -> new HashMap<>())
+				.computeIfAbsent(npc.getNpcName(), key -> new ArrayList<>())
+				.add(npc);
 
-			// Check if an existing NPC already exists with quest components
-			Map<String, QuestNpc> entityNpcMap = mNpcs.get(type);
-			if (entityNpcMap == null) {
-				// This is the first NPC of this type - create the map for it
-				entityNpcMap = new HashMap<String, QuestNpc>();
-				mNpcs.put(type, entityNpcMap);
-			}
-
-			QuestNpc existingNpc = entityNpcMap.get(npc.getNpcName());
-			if (existingNpc != null) {
-				// Existing NPC - add the new quest components to it
-				existingNpc.addFromQuest(plugin, npc);
-			} else {
-				entityNpcMap.put(npc.getNpcName(), npc);
-			}
-
-			return npc.getNpcName() + ":" + Integer.toString(npc.getComponents().size());
+			return npc.getNpcName() + ":" + npc.getComponents().size();
 		});
 	}
 
@@ -58,46 +42,43 @@ public class QuestNpcManager {
 		mPlugin = plugin;
 	}
 
-	public @Nullable QuestNpc getInteractNPC(Entity entity) {
+	public boolean isQuestNPC(Entity entity) {
+		return isQuestNPC(entity.getCustomName(), entity.getType());
+	}
+
+	public boolean isQuestNPC(String npcName, EntityType entityType) {
+		List<QuestNpc> npcList = getInteractNPC(npcName, entityType);
+		return npcList != null && !npcList.isEmpty();
+	}
+
+	public @Nullable List<QuestNpc> getInteractNPC(Entity entity) {
 		return getInteractNPC(entity.getCustomName(), entity.getType());
 	}
 
-	public @Nullable QuestNpc getInteractNPC(String npcName, EntityType entityType) {
-		// Only search for the entity's name if we have a quest with that entity type
-		if (!mEntityTypes.contains(entityType)) {
-			return null;
-		}
-
+	public @Nullable List<QuestNpc> getInteractNPC(String npcName, EntityType entityType) {
 		// Only entities with custom names
 		if (npcName == null || npcName.isEmpty()) {
 			return null;
 		}
 
 		// Return the NPC if we have an NPC with that name
-		Map<String, QuestNpc> entityNpcMap = mNpcs.get(entityType);
+		Map<String, List<QuestNpc>> entityNpcMap = mNpcs.get(entityType);
 		if (entityNpcMap == null) {
-			mPlugin.getLogger().severe("BUG! EntityTypes contains type '" +
-			                          entityType.toString() + "' but there is no map for it!");
 			return null;
 		} else {
-			QuestNpc npc = entityNpcMap.get(QuestNpc.squashNpcName(npcName));
-			if (npc != null) {
-				return npc;
-			}
+			return entityNpcMap.get(QuestNpc.squashNpcName(npcName));
 		}
-
-		return null;
 	}
 
 	public boolean interactEvent(QuestContext context, String npcName, EntityType entityType, boolean force) {
-		QuestNpc npc = getInteractNPC(npcName, entityType);
+		List<QuestNpc> npc = getInteractNPC(npcName, entityType);
 		if (npc != null) {
 			return interactEvent(context, npcName, entityType, npc, force);
 		}
 		return false;
 	}
 
-	public boolean interactEvent(QuestContext context, String npcName, EntityType entityType, QuestNpc npc, boolean force) {
+	public boolean interactEvent(QuestContext context, String npcName, EntityType entityType, List<QuestNpc> npcFiles, boolean force) {
 		// Only one interaction per player per tick
 		if (!force && !MetadataUtils.checkOnceThisTick(context.getPlugin(), context.getPlayer(), "ScriptedQuestsNPCInteractNonce")) {
 			return false;
@@ -108,13 +89,18 @@ public class QuestNpcManager {
 			return false;
 		}
 
-		if (npc != null) {
-			return npc.interactEvent(context, QuestNpc.squashNpcName(npcName), entityType);
+		if (npcFiles != null) {
+			boolean interactionFound = false;
+			String squashedNpcName = QuestNpc.squashNpcName(npcName);
+			for (QuestNpc file : npcFiles) {
+				interactionFound |= file.interactEvent(context, squashedNpcName, entityType);
+			}
+			return interactionFound;
 		}
 		return false;
 	}
 
 	public Stream<QuestNpc> getNpcsStream() {
-		return mNpcs.values().stream().flatMap(e -> e.values().stream());
+		return mNpcs.values().stream().flatMap(e -> e.values().stream().flatMap(Collection::stream));
 	}
 }

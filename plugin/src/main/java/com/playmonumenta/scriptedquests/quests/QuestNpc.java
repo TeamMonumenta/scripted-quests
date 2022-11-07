@@ -26,6 +26,7 @@ public class QuestNpc {
 	private final ArrayList<QuestComponent> mComponents = new ArrayList<QuestComponent>();
 	private final String mNpcName;
 	private final String mDisplayName;
+	private final @Nullable QuestPrerequisites mFilePrerequisites;
 	private final EntityType mEntityType;
 	private @Nullable QuestPrerequisites mVisibilityPrerequisites;
 
@@ -48,6 +49,13 @@ public class QuestNpc {
 			mDisplayName = displayName.getAsString();
 		}
 
+		JsonElement prerequisites = object.get("file_prerequisites");
+		if (prerequisites != null) {
+			mFilePrerequisites = new QuestPrerequisites(prerequisites);
+		} else {
+			mFilePrerequisites = null;
+		}
+
 		// Read the npc's entity_type
 		// Default to villager
 		JsonElement entityType = object.get("entity_type");
@@ -66,7 +74,7 @@ public class QuestNpc {
 		for (Entry<String, JsonElement> ent : entries) {
 			String key = ent.getKey();
 
-			if (!key.equals("npc") && !key.equals("display_name")
+			if (!key.equals("npc") && !key.equals("display_name") && !key.equals("file_prerequisites")
 				    && !key.equals("quest_components") && !key.equals("entity_type") && !key.equals("visibility_prerequisites")) {
 				throw new Exception("Unknown quest key: " + key);
 			}
@@ -104,24 +112,10 @@ public class QuestNpc {
 		return mEntityType;
 	}
 
-	// Combines another quest using the same NPC into this one
-	public void addFromQuest(Plugin plugin, QuestNpc quest) {
-		if (quest.getNpcName().equals(mNpcName)) {
-			mComponents.addAll(quest.getComponents());
-			if (mVisibilityPrerequisites == null) {
-				mVisibilityPrerequisites = quest.mVisibilityPrerequisites;
-			} else if (quest.mVisibilityPrerequisites != null) {
-				mVisibilityPrerequisites = mVisibilityPrerequisites.union(quest.mVisibilityPrerequisites);
-			}
-		} else {
-			plugin.getLogger().severe("Attempted to add two quests together with different NPCs!");
-		}
-	}
-
 	// Returns true if any quest components were attempted with this NPC
 	// False otherwise
 	public boolean interactEvent(QuestContext context, String npcName, EntityType entityType) {
-		if (mEntityType.equals(entityType) && mNpcName.equals(npcName) && isVisibleToPlayer(context)) {
+		if (mEntityType.equals(entityType) && mNpcName.equals(npcName) && areFilePrerequisitesMet(context) && isVisibleToPlayer(context)) {
 			if (ClientChatProtocol.shouldSend(context.getPlayer())) {
 				ClientChatProtocol.sendPacket(mComponents, context);
 			} else {
@@ -136,6 +130,10 @@ public class QuestNpc {
 
 	public static String squashNpcName(String name) {
 		return ChatColor.stripColor(name).replaceAll("[^a-zA-Z0-9-]", "");
+	}
+
+	public boolean areFilePrerequisitesMet(QuestContext context) {
+		return mFilePrerequisites == null || mFilePrerequisites.prerequisiteMet(context);
 	}
 
 	public boolean hasVisibilityPrerequisites() {

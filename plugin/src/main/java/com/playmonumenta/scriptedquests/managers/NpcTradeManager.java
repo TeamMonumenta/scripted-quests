@@ -9,6 +9,7 @@ import com.playmonumenta.scriptedquests.trades.NpcTrader;
 import com.playmonumenta.scriptedquests.trades.TradeWindowOpenEvent;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +39,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.Nullable;
 
 public class NpcTradeManager implements Listener {
-	private final HashMap<String, NpcTrader> mTraders = new HashMap<>();
+	private final HashMap<String, List<NpcTrader>> mTraders = new HashMap<>();
 
 	private static class PlayerTradeContext {
 		private final Map<Integer, NpcTrade> mSlotProperties;
@@ -80,11 +81,7 @@ public class NpcTradeManager implements Listener {
 			// Load this file into a NpcTrader object
 			NpcTrader trader = new NpcTrader(object);
 
-			if (mTraders.containsKey(trader.getNpcName())) {
-				throw new Exception(trader.getNpcName() + "' already exists!");
-			}
-
-			mTraders.put(trader.getNpcName(), trader);
+			mTraders.computeIfAbsent(trader.getNpcName(), key -> new ArrayList<>()).add(trader);
 
 			return trader.getNpcName();
 		});
@@ -103,7 +100,10 @@ public class NpcTradeManager implements Listener {
 	 */
 	public void trade(Plugin plugin, Villager villager, Player player, PlayerInteractEntityEvent event) {
 		ArrayList<MerchantRecipe> trades = new ArrayList<>();
-		NpcTrader trader = mTraders.get(QuestNpc.squashNpcName(villager.getName()));
+		QuestContext context = new QuestContext(plugin, player, villager, false, null, player.getInventory().getItemInMainHand());
+		List<NpcTrader> traderFiles = mTraders.getOrDefault(QuestNpc.squashNpcName(villager.getName()), Collections.emptyList()).stream()
+			                              .filter(trader -> trader.areFilePrerequisitesMet(context))
+			                              .toList();
 		StringBuilder lockedSlots = new StringBuilder();
 		StringBuilder vanillaSlots = new StringBuilder();
 		boolean modified = false;
@@ -138,7 +138,7 @@ public class NpcTradeManager implements Listener {
 			}
 
 			// Remove unmatched prereq trades
-			if (trader != null) {
+			for (NpcTrader trader : traderFiles) {
 				NpcTrade trade = trader.getTrade(i);
 				if (trade != null) {
 					if (!trade.prerequisiteMet(new QuestContext(plugin, player, villager))) {
@@ -147,12 +147,13 @@ public class NpcTradeManager implements Listener {
 						}
 						lockedSlots.append(i);
 						modified = true;
-						continue;
+						continue recipes;
 					} else {
 						slotProperties.put(trades.size(), trade);
 					}
 				}
 			}
+
 			// This trade was not filtered by any of the above checks. Add to the fake merchant
 			trades.add(recipe);
 		}
