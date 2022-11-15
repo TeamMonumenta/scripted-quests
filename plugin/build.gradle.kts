@@ -20,13 +20,11 @@ plugins {
 dependencies {
     implementation(project(":adapter_api"))
     implementation(project(":adapter_unsupported"))
-    implementation(project(":adapter_v1_16_R3"))
-    implementation(project(":adapter_v1_18_R1", "reobf"))
     implementation(project(":adapter_v1_18_R2", "reobf"))
     implementation("com.google.api-client:google-api-client:1.31.4")
     implementation("com.google.apis:google-api-services-sheets:v4-rev1-1.21.0")
     implementation("com.google.auth:google-auth-library-oauth2-http:0.1.0")
-    compileOnly("com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT")
     compileOnly("dev.jorel.CommandAPI:commandapi-core:6.0.0")
     compileOnly("com.mojang:brigadier:1.0.17")
     compileOnly("com.google.code.gson:gson:2.8.0")
@@ -45,7 +43,7 @@ version = rootProject.version
 bukkit {
     load = BukkitPluginDescription.PluginLoadOrder.POSTWORLD
     main = "com.playmonumenta.scriptedquests.Plugin"
-    apiVersion = "1.16"
+    apiVersion = "1.18"
     name = "ScriptedQuests"
     authors = listOf("The Monumenta Team")
     depend = listOf("CommandAPI")
