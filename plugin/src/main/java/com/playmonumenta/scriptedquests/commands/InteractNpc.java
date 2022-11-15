@@ -2,7 +2,6 @@ package com.playmonumenta.scriptedquests.commands;
 
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.QuestContext;
-import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.EntitySelectorArgument;
@@ -31,11 +30,6 @@ public class InteractNpc {
 			.withArguments(new EntityTypeArgument("npcType"))
 			.executes((sender, args) -> {
 				Collection<Player> targets = (Collection<Player>) args[0];
-				if (sender instanceof Player player) {
-					if (!player.isOp() && (targets.size() > 1 || !targets.contains(player))) {
-						CommandAPI.fail("You do not have permission to run this as another player.");
-					}
-				}
 				String npcName = (String) args[1];
 				EntityType npcType = (EntityType) args[2];
 				interact(plugin, sender, targets, npcName, npcType);
@@ -49,11 +43,6 @@ public class InteractNpc {
 			.withArguments(new EntitySelectorArgument("npc", EntitySelectorArgument.EntitySelector.ONE_ENTITY))
 			.executes((sender, args) -> {
 				Collection<Player> targets = (Collection<Player>) args[0];
-				if (sender instanceof Player player) {
-					if (!player.isOp() && (targets.size() > 1 || !targets.contains(player))) {
-						CommandAPI.fail("You do not have permission to run this as another player.");
-					}
-				}
 				Entity npc = (Entity) args[1];
 				interact(plugin, sender, targets, npc);
 			})
@@ -66,11 +55,6 @@ public class InteractNpc {
 			.withArguments(new TextArgument("npcName"))
 			.executes((sender, args) -> {
 				Collection<Player> targets = (Collection<Player>) args[0];
-				if (sender instanceof Player player) {
-					if (!player.isOp() && (targets.size() > 1 || !targets.contains(player))) {
-						CommandAPI.fail("You do not have permission to run this as another player.");
-					}
-				}
 				String npcName = (String) args[1];
 				interact(plugin, sender, targets, npcName, EntityType.VILLAGER);
 			})

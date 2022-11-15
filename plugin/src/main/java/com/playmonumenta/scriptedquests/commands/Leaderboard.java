@@ -37,7 +37,7 @@ public class Leaderboard {
 			.executes((sender, args) -> {
 				Collection<Player> targets = (Collection<Player>) args[0];
 				if (sender instanceof Player player) {
-					if (!player.isOp() && (targets.size() > 1 || !targets.contains(player))) {
+					if (!player.hasPermission("scriptedquests.leaderboard.others") && (targets.size() > 1 || !targets.contains(player))) {
 						CommandAPI.fail("You do not have permission to run this as another player.");
 					}
 				}
@@ -57,9 +57,12 @@ public class Leaderboard {
 			.withArguments(new BooleanArgument("descending"))
 			.withArguments(new EntitySelectorArgument("filterPlayers", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
 			.executes((sender, args) -> {
-				for (Player player : (Collection<Player>)args[0]) {
-					leaderboard(plugin, player, (String)args[1],
-						(Boolean)args[2], 1, (Collection<Player>)args[3]);
+				Collection<Player> targets = (Collection<Player>) args[0];
+				String objective = (String) args[1];
+				Boolean descending = (Boolean) args[2];
+				Collection<Player> filterPlayers = (Collection<Player>) args[3];
+				for (Player player : targets) {
+					leaderboard(plugin, player, objective, descending, 1, filterPlayers);
 				}
 			})
 			.register();

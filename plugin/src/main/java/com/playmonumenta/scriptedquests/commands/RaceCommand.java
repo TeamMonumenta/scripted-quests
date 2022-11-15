@@ -42,7 +42,7 @@ public class RaceCommand {
 				.executes((sender, args) -> {
 					Collection<Player> targets = (Collection<Player>) args[0];
 					if (sender instanceof Player player) {
-						if (!player.isOp() && (targets.size() > 1 || !targets.contains(player))) {
+						if (!player.hasPermission("scriptedquests.race.leaderboard.others") && (targets.size() > 1 || !targets.contains(player))) {
 							CommandAPI.fail("You do not have permission to run this as another player.");
 						}
 					}
