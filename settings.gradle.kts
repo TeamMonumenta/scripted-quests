@@ -1,4 +1,4 @@
-rootProject.name = "parent"
+rootProject.name = "ScriptedQuests"
 include(":adapter_api")
 include(":adapter_unsupported")
 include(":adapter_v1_18_R2")
