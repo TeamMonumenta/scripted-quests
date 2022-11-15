@@ -11,6 +11,7 @@ import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.managers.RaceManager;
 import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.quests.QuestNpc;
+import com.playmonumenta.scriptedquests.races.RaceFactory;
 import java.lang.reflect.InvocationTargetException;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -67,6 +68,10 @@ public class SelectiveNPCVisibilityHandler extends PacketAdapter implements List
 	public void reload() {
 		mEnabledEntityTypes.clear();
 		mPlugin.mNpcManager.getNpcsStream().filter(QuestNpc::hasVisibilityPrerequisites).map(QuestNpc::getEntityType).forEach(mEnabledEntityTypes::add);
+		if (!mEnabledEntityTypes.contains(EntityType.ARMOR_STAND)
+			&& mPlugin.mRaceManager.getRaceFactoryStream().anyMatch(RaceFactory::ringsVisible)) {
+			mEnabledEntityTypes.add(EntityType.ARMOR_STAND);
+		}
 
 		mProtocolManager.removePacketListener(this);
 		PlayerChangedWorldEvent.getHandlerList().unregister(this);
