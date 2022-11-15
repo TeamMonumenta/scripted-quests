@@ -2,6 +2,7 @@ package com.playmonumenta.scriptedquests.commands;
 
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.QuestContext;
+import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.EntitySelectorArgument;
@@ -29,8 +30,15 @@ public class InteractNpc {
 			.withArguments(new TextArgument("npcName"))
 			.withArguments(new EntityTypeArgument("npcType"))
 			.executes((sender, args) -> {
-				interact(plugin, sender, (Collection<Player>)args[0],
-					(String)args[1], (EntityType)args[2]);
+				Collection<Player> targets = (Collection<Player>) args[0];
+				if (sender instanceof Player player) {
+					if (!player.isOp() && (targets.size() > 1 || !targets.contains(player))) {
+						CommandAPI.fail("You do not have permission to run this as another player.");
+					}
+				}
+				String npcName = (String) args[1];
+				EntityType npcType = (EntityType) args[2];
+				interact(plugin, sender, targets, npcName, npcType);
 			})
 			.register();
 
@@ -40,8 +48,14 @@ public class InteractNpc {
 			.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
 			.withArguments(new EntitySelectorArgument("npc", EntitySelectorArgument.EntitySelector.ONE_ENTITY))
 			.executes((sender, args) -> {
-				interact(plugin, sender, (Collection<Player>)args[0],
-					(Entity)args[1]);
+				Collection<Player> targets = (Collection<Player>) args[0];
+				if (sender instanceof Player player) {
+					if (!player.isOp() && (targets.size() > 1 || !targets.contains(player))) {
+						CommandAPI.fail("You do not have permission to run this as another player.");
+					}
+				}
+				Entity npc = (Entity) args[1];
+				interact(plugin, sender, targets, npc);
 			})
 			.register();
 
@@ -51,8 +65,14 @@ public class InteractNpc {
 			.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
 			.withArguments(new TextArgument("npcName"))
 			.executes((sender, args) -> {
-				interact(plugin, sender, (Collection<Player>)args[0],
-					(String)args[1], EntityType.VILLAGER);
+				Collection<Player> targets = (Collection<Player>) args[0];
+				if (sender instanceof Player player) {
+					if (!player.isOp() && (targets.size() > 1 || !targets.contains(player))) {
+						CommandAPI.fail("You do not have permission to run this as another player.");
+					}
+				}
+				String npcName = (String) args[1];
+				interact(plugin, sender, targets, npcName, EntityType.VILLAGER);
 			})
 			.register();
 	}
