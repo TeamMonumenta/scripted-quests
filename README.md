@@ -42,7 +42,7 @@ hope others will find it useful too.
 
 ## <a name="download"></a>Download
 
-ScriptedQuests works on Paper 1.16.5 or higher. It also requires
+ScriptedQuests works on Paper 1.18.2 or higher. It also requires
 [CommandAPI](https://github.com/JorelAli/1.13-Command-API) version 6.x. Other
 CommandAPI versions may also work, worth giving it a shot. It'll be immediately
 obvious as if the version is incompatible, the plugin won't load or no commands
@@ -77,7 +77,7 @@ pre-requisites. This can involve keeping the player's inventory, respawning at
 a different location than normal, etc.
 
 ## <a name="get-started"></a>Getting Started / Tutorial
-This plugin requires Paper 1.16.5+.
+This plugin requires Paper 1.18.2+.
 
 - Install it like all spigot/paper plugins by placing it in your plugins folder.
 - Start your server. This should create some folders under

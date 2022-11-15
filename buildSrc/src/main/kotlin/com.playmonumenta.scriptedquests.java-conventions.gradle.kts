@@ -8,7 +8,7 @@ plugins {
 repositories {
     mavenLocal()
     maven {
-        url = uri("https://papermc.io/repo/repository/maven-public/")
+        url = uri("https://repo.papermc.io/repository/maven-public/")
     }
 
     maven {
@@ -38,8 +38,8 @@ repositories {
 }
 
 group = "com.playmonumenta.scriptedquests"
-java.sourceCompatibility = JavaVersion.VERSION_16
-java.targetCompatibility = JavaVersion.VERSION_16
+java.sourceCompatibility = JavaVersion.VERSION_17
+java.targetCompatibility = JavaVersion.VERSION_17
 
 tasks.withType<JavaCompile>() {
     options.encoding = "UTF-8"
