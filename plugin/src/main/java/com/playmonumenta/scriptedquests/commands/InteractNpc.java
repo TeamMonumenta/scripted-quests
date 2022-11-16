@@ -29,8 +29,10 @@ public class InteractNpc {
 			.withArguments(new TextArgument("npcName"))
 			.withArguments(new EntityTypeArgument("npcType"))
 			.executes((sender, args) -> {
-				interact(plugin, sender, (Collection<Player>)args[0],
-					(String)args[1], (EntityType)args[2]);
+				Collection<Player> targets = (Collection<Player>) args[0];
+				String npcName = (String) args[1];
+				EntityType npcType = (EntityType) args[2];
+				interact(plugin, sender, targets, npcName, npcType);
 			})
 			.register();
 
@@ -40,8 +42,9 @@ public class InteractNpc {
 			.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
 			.withArguments(new EntitySelectorArgument("npc", EntitySelectorArgument.EntitySelector.ONE_ENTITY))
 			.executes((sender, args) -> {
-				interact(plugin, sender, (Collection<Player>)args[0],
-					(Entity)args[1]);
+				Collection<Player> targets = (Collection<Player>) args[0];
+				Entity npc = (Entity) args[1];
+				interact(plugin, sender, targets, npc);
 			})
 			.register();
 
@@ -51,8 +54,9 @@ public class InteractNpc {
 			.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
 			.withArguments(new TextArgument("npcName"))
 			.executes((sender, args) -> {
-				interact(plugin, sender, (Collection<Player>)args[0],
-					(String)args[1], EntityType.VILLAGER);
+				Collection<Player> targets = (Collection<Player>) args[0];
+				String npcName = (String) args[1];
+				interact(plugin, sender, targets, npcName, EntityType.VILLAGER);
 			})
 			.register();
 	}

@@ -3,6 +3,7 @@ package com.playmonumenta.scriptedquests.commands;
 import com.playmonumenta.redissync.MonumentaRedisSyncAPI;
 import com.playmonumenta.scriptedquests.utils.LeaderboardUtils;
 import com.playmonumenta.scriptedquests.utils.LeaderboardUtils.LeaderboardEntry;
+import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.BooleanArgument;
@@ -34,9 +35,17 @@ public class Leaderboard {
 			.withArguments(new BooleanArgument("descending"))
 			.withArguments(new IntegerArgument("page", 1))
 			.executes((sender, args) -> {
-				for (Player player : (Collection<Player>)args[0]) {
-					leaderboard(plugin, player, (String)args[1],
-						(Boolean)args[2], (Integer)args[3], null);
+				Collection<Player> targets = (Collection<Player>) args[0];
+				if (sender instanceof Player player) {
+					if (!player.hasPermission("scriptedquests.leaderboard.others") && (targets.size() > 1 || !targets.contains(player))) {
+						CommandAPI.fail("You do not have permission to run this as another player.");
+					}
+				}
+				String objective = (String) args[1];
+				Boolean descending = (Boolean) args[2];
+				Integer pageNumber = (Integer) args[3];
+				for (Player player : targets) {
+					leaderboard(plugin, player, objective, descending, pageNumber, null);
 				}
 			})
 			.register();
@@ -48,9 +57,17 @@ public class Leaderboard {
 			.withArguments(new BooleanArgument("descending"))
 			.withArguments(new EntitySelectorArgument("filterPlayers", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
 			.executes((sender, args) -> {
-				for (Player player : (Collection<Player>)args[0]) {
-					leaderboard(plugin, player, (String)args[1],
-						(Boolean)args[2], 1, (Collection<Player>)args[3]);
+				Collection<Player> targets = (Collection<Player>) args[0];
+				if (sender instanceof Player player) {
+					if (!player.hasPermission("scriptedquests.leaderboard.others") && (targets.size() > 1 || !targets.contains(player))) {
+						CommandAPI.fail("You do not have permission to run this as another player.");
+					}
+				}
+				String objective = (String) args[1];
+				Boolean descending = (Boolean) args[2];
+				Collection<Player> filterPlayers = (Collection<Player>) args[3];
+				for (Player player : targets) {
+					leaderboard(plugin, player, objective, descending, 1, filterPlayers);
 				}
 			})
 			.register();

@@ -1,6 +1,7 @@
 package com.playmonumenta.scriptedquests.commands;
 
 import com.playmonumenta.scriptedquests.Plugin;
+import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.EntitySelectorArgument;
@@ -39,8 +40,15 @@ public class RaceCommand {
 				.withArguments(new StringArgument("raceLabel"))
 				.withArguments(new IntegerArgument("page", 1))
 				.executes((sender, args) -> {
-					raceLeaderboard(plugin, (Collection<Player>)args[0],
-						(String)args[1], (Integer)args[2]);
+					Collection<Player> targets = (Collection<Player>) args[0];
+					if (sender instanceof Player player) {
+						if (!player.hasPermission("scriptedquests.race.leaderboard.others") && (targets.size() > 1 || !targets.contains(player))) {
+							CommandAPI.fail("You do not have permission to run this as another player.");
+						}
+					}
+					String raceLabel = (String) args[1];
+					Integer pageNumber = (Integer) args[2];
+					raceLeaderboard(plugin, targets, raceLabel, pageNumber);
 				}))
 			.register();
 	}
