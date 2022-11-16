@@ -56,6 +56,7 @@ public class Race {
 	private final boolean mAllowClickables;
 	private final boolean mAllowNpcInteraction;
 	private final boolean mRingless;
+	private final double mMaxDistance;
 	private final Location mStart;
 	private final @Nullable QuestActions mStartActions;
 	private final List<RaceWaypoint> mWaypoints;
@@ -80,7 +81,7 @@ public class Race {
 	public Race(Plugin plugin, RaceManager manager, Player player, String name,
 	            @Nullable Objective scoreboard, boolean showStats, boolean ringless, Location start, @Nullable QuestActions startActions,
 	            List<RaceWaypoint> waypoints, List<RaceTime> times, @Nullable QuestActions loseActions, boolean allowDialogClick,
-				boolean allowCode, boolean allowClickables, boolean allowNpcInteraction) {
+				boolean allowCode, boolean allowClickables, boolean allowNpcInteraction, double maxDistance) {
 		mPlugin = plugin;
 		mManager = manager;
 		mPlayer = player;
@@ -92,6 +93,7 @@ public class Race {
 		mAllowClickables = allowClickables;
 		mAllowNpcInteraction = allowNpcInteraction;
 		mRingless = ringless;
+		mMaxDistance = maxDistance;
 		mStart = start;
 		mStartActions = startActions;
 		mWaypoints = waypoints;
@@ -235,11 +237,11 @@ public class Race {
 		if (!mRingless) {
 
 			// Check if player went too far away
-			if (distance > 100) {
+			if (distance > mMaxDistance) {
 				mPlayer.sendMessage("" + ChatColor.RED + ChatColor.BOLD + "You went too far away from the race path!");
 				lose();
 				return;
-			} else if (distance < 4) {
+			} else if (distance < mNextWaypoint.getRadius()) {
 				// TODO: Tell the player if they are going faster or slower than before
 				/*
 				possibleRingTimes.add(timeElapsed);
@@ -283,7 +285,7 @@ public class Race {
 		// Ring location faces player
 		rloc.setDirection(mPlayer.getLocation().toVector().subtract(mNextWaypoint.getPosition()));
 		int i = 0;
-		for (Location loc : RaceUtils.transformPoints(rloc, RING_SHAPE, rloc.getYaw(), -rloc.getPitch(), 0d, 4 + 0.5 * Math.cos(Math.toRadians(mFrame * 20)))) {
+		for (Location loc : RaceUtils.transformPoints(rloc, RING_SHAPE, rloc.getYaw(), -rloc.getPitch(), 0d, mNextWaypoint.getRadius() + 0.5 * Math.cos(Math.toRadians(mFrame * 20)))) {
 			loc.subtract(0, 0.5, 0);
 			mRingEntities.get(i).teleport(loc);
 			i++;

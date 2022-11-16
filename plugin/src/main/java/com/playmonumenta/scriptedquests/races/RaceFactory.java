@@ -39,6 +39,7 @@ public class RaceFactory {
 	private final boolean mAllowClickables;
 	private final boolean mAllowNpcInteraction;
 	private final boolean mRingless;
+	private final double mMaxDistance;
 	private final Location mStart;
 	private final @Nullable QuestActions mStartActions;
 	private final List<RaceWaypoint> mWaypoints = new ArrayList<RaceWaypoint>();
@@ -130,6 +131,14 @@ public class RaceFactory {
 			mRingless = false;
 		} else {
 			mRingless = showStats.getAsBoolean();
+		}
+
+		// max_distance
+		JsonElement maxDistance = object.get("max_distance");
+		if (maxDistance == null) {
+			mMaxDistance = 100;
+		} else {
+			mMaxDistance = maxDistance.getAsDouble();
 		}
 
 		// start
@@ -248,7 +257,7 @@ public class RaceFactory {
 	public Race createRace(Player player) {
 		return new Race(mPlugin, mManager, player, mName, mObjective,
 		                mShowStats, mRingless, mStart, mStartActions, mWaypoints, mTimes, mLoseActions,
-						mAllowDialogClick, mAllowCode, mAllowClickables, mAllowNpcInteraction);
+						mAllowDialogClick, mAllowCode, mAllowClickables, mAllowNpcInteraction, mMaxDistance);
 	}
 
 	public void sendLeaderboard(Player player, int page) {

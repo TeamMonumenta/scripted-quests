@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class RaceWaypoint {
 	private final Vector mPosition;
+	private final double mRadius;
 	private final @Nullable QuestActions mActions;
 
 	public RaceWaypoint(JsonElement element) throws Exception {
@@ -46,6 +47,14 @@ public class RaceWaypoint {
 
 		mPosition = new Vector(x, y, z);
 
+		// radius
+		JsonElement radiusElement = object.get("radius");
+		if (radiusElement != null) {
+			mRadius = radiusElement.getAsDouble();
+		} else {
+			mRadius = 4;
+		}
+
 		// actions
 		JsonElement actionsElement = object.get("actions");
 		if (actionsElement != null) {
@@ -58,6 +67,10 @@ public class RaceWaypoint {
 
 	public Vector getPosition() {
 		return mPosition.clone();
+	}
+
+	public double getRadius() {
+		return mRadius;
 	}
 
 	public void doActions(QuestContext context) {
