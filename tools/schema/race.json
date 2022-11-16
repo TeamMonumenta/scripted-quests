@@ -107,6 +107,16 @@
             "format": "checkbox",
             "default": "false"
         },
+		"max_distance": {
+			"required": false,
+			"propertyOrder": 10,
+			"title": "max_distance",
+			"description": "If not ringless, the distance from next waypoint before the race is forfeit. Default 100",
+			"type": "number",
+			"minimum": 1,
+			"maximum": 1000,
+			"default": 100
+		},
         "waypoints": {
             "required": true,
             "propertyOrder": 11,
@@ -140,6 +150,16 @@
                         "$ref": "coordinate.json",
                         "propertyOrder": 3
                     },
+					"radius": {
+						"required": false,
+						"propertyOrder": 4,
+						"title": "radius",
+						"description": "The radius of this waypoint's hitbox and ring. Default 4",
+						"type": "number",
+						"minimum": 1,
+						"maximum": 100,
+						"default": 4
+					},
                     "actions": {
                         "required": false,
                         "description": "Actions to take immediately after player reaches this point",
