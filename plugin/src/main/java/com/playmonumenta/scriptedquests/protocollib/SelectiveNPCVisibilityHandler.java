@@ -8,8 +8,10 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.managers.RaceManager;
 import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.quests.QuestNpc;
+import com.playmonumenta.scriptedquests.races.RaceFactory;
 import java.lang.reflect.InvocationTargetException;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -66,6 +68,10 @@ public class SelectiveNPCVisibilityHandler extends PacketAdapter implements List
 	public void reload() {
 		mEnabledEntityTypes.clear();
 		mPlugin.mNpcManager.getNpcsStream().filter(QuestNpc::hasVisibilityPrerequisites).map(QuestNpc::getEntityType).forEach(mEnabledEntityTypes::add);
+		if (!mEnabledEntityTypes.contains(EntityType.ARMOR_STAND)
+			&& mPlugin.mRaceManager.getRaceFactoryStream().anyMatch(RaceFactory::ringsVisible)) {
+			mEnabledEntityTypes.add(EntityType.ARMOR_STAND);
+		}
 
 		mProtocolManager.removePacketListener(this);
 		PlayerChangedWorldEvent.getHandlerList().unregister(this);
@@ -169,6 +175,10 @@ public class SelectiveNPCVisibilityHandler extends PacketAdapter implements List
 	private boolean isVisible(Entity entity, Player player) {
 		if (player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR) {
 			return true;
+		}
+		if (entity.getType() == EntityType.ARMOR_STAND
+		    && entity.getScoreboardTags().contains(RaceManager.ARMOR_STAND_RACE_TAG)) {
+			return entity.getScoreboardTags().contains(RaceManager.ARMOR_STAND_ID_PREFIX_TAG + player.getUniqueId());
 		}
 		List<QuestNpc> npcFiles = mPlugin.mNpcManager.getInteractNPC(entity);
 		if (npcFiles == null || npcFiles.stream().noneMatch(QuestNpc::hasVisibilityPrerequisites)) {

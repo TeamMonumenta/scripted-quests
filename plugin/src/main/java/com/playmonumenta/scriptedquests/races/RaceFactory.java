@@ -354,4 +354,8 @@ public class RaceFactory {
 			}
 		}
 	}
+
+	public boolean ringsVisible() {
+		return !mRingless;
+	}
 }

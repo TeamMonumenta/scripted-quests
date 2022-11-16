@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Stream;
 import javax.annotation.Nullable;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -219,5 +220,9 @@ public class RaceManager {
 		}
 
 		mActiveRaces.put(player.getUniqueId(), raceFactory.createRace(player));
+	}
+
+	public Stream<RaceFactory> getRaceFactoryStream() {
+		return mRaceFactories.values().stream();
 	}
 }
