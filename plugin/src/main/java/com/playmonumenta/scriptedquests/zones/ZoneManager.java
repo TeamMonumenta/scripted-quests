@@ -34,6 +34,7 @@ public class ZoneManager {
 	private final Map<String, ZoneLayer> mPluginLayers = new HashMap<>();
 	private @MonotonicNonNull ZoneTreeBase mZoneTree = null;
 
+	private final Set<UUID> mTransferringPlayers = new HashSet<>();
 	private final Map<UUID, ZoneFragment> mLastPlayerZoneFragment = new HashMap<>();
 	private final Map<UUID, Map<String, Zone>> mLastPlayerZones = new HashMap<>();
 
@@ -471,10 +472,24 @@ public class ZoneManager {
 		}
 		mLastPlayerZoneFragment.remove(playerUuid);
 		mLastPlayerZones.remove(playerUuid);
+		mTransferringPlayers.remove(playerUuid);
+	}
+
+	public void setTransferring(Player player, boolean isTransferring) {
+		UUID playerUuid = player.getUniqueId();
+		if (isTransferring) {
+			mTransferringPlayers.add(playerUuid);
+		} else {
+			mTransferringPlayers.remove(playerUuid);
+		}
 	}
 
 	private void applyFragmentChange(Player player, @Nullable ZoneFragment currentZoneFragment) {
 		UUID playerUuid = player.getUniqueId();
+		if (currentZoneFragment != null && mTransferringPlayers.contains(playerUuid)) {
+			return;
+		}
+
 		@Nullable ZoneFragment lastZoneFragment = mLastPlayerZoneFragment.get(playerUuid);
 
 		Map<String, Zone> lastZones = new HashMap<>();
@@ -704,5 +719,4 @@ public class ZoneManager {
 	public Collection<ZoneLayer> getLayers() {
 		return mLayers.values();
 	}
-
 }

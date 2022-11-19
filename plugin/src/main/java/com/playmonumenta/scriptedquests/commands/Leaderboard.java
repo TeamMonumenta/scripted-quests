@@ -90,7 +90,7 @@ public class Leaderboard {
 	}
 
 	public static void leaderboard(Plugin plugin, Player player, String objective, boolean descending, int page, @Nullable Collection<Player> filterPlayers) {
-		List<LeaderboardEntry> entries = new ArrayList<LeaderboardEntry>();
+		List<LeaderboardEntry> entries = new ArrayList<>();
 
 		/* Get the scoreboard objective (might be null) */
 		final Objective obj = Bukkit.getScoreboardManager().getMainScoreboard().getObjective(objective);
@@ -103,7 +103,7 @@ public class Leaderboard {
 			 displayName = Component.text(objective);
 		}
 
-		if (filterPlayers != null || Bukkit.getServer().getPluginManager().getPlugin("MonumentaRedisSync") == null) {
+		if (filterPlayers != null || !Bukkit.getServer().getPluginManager().isPluginEnabled("MonumentaRedisSync")) {
 			/* Redis sync plugin not found - need to loop over scoreboards to compute leaderboard */
 
 			if (obj == null) {
@@ -137,7 +137,7 @@ public class Leaderboard {
 			}
 
 			if (descending) {
-				Collections.sort(entries, Collections.reverseOrder());
+				entries.sort(Collections.reverseOrder());
 			} else {
 				Collections.sort(entries);
 			}
@@ -161,11 +161,8 @@ public class Leaderboard {
 					colorizeEntries(entries, player.getName(), 0);
 
 					/* Send the leaderboard to the player back on the main thread */
-					Bukkit.getScheduler().runTask(plugin, () -> {
-						LeaderboardUtils.sendLeaderboard(player, displayName, entries, page,
-						                                 "/leaderboard " + player.getName() + " " + objective + (descending ? " true" : " false"));
-
-					});
+					Bukkit.getScheduler().runTask(plugin, () -> LeaderboardUtils.sendLeaderboard(player, displayName, entries, page,
+					                                 "/leaderboard " + player.getName() + " " + objective + (descending ? " true" : " false")));
 				} catch (Exception ex) {
 					plugin.getLogger().severe("Failed to generate leaderboard: " + ex.getMessage());
 					ex.printStackTrace();
@@ -175,7 +172,7 @@ public class Leaderboard {
 	}
 
 	public static void leaderboardUpdate(Player player, String objective) {
-		if (Bukkit.getServer().getPluginManager().getPlugin("MonumentaRedisSync") != null) {
+		if (Bukkit.getServer().getPluginManager().isPluginEnabled("MonumentaRedisSync")) {
 			/* This command only does something if leaderboards are stored in Redis */
 
 			/* Get the scoreboard objective */
@@ -192,20 +189,12 @@ public class Leaderboard {
 
 	private static void colorizeEntries(List<LeaderboardEntry> entries, String playerName, int index) {
 		for (LeaderboardEntry entry : entries) {
-			String color;
-			switch (index) {
-			case 0:
-				color = "" + ChatColor.GOLD + ChatColor.BOLD;
-				break;
-			case 1:
-				color = "" + ChatColor.WHITE + ChatColor.BOLD;
-				break;
-			case 2:
-				color = "" + ChatColor.DARK_RED + ChatColor.BOLD;
-				break;
-			default:
-				color = "" + ChatColor.GRAY + ChatColor.BOLD;
-			}
+			String color = switch (index) {
+				case 0 -> "" + ChatColor.GOLD + ChatColor.BOLD;
+				case 1 -> "" + ChatColor.WHITE + ChatColor.BOLD;
+				case 2 -> "" + ChatColor.DARK_RED + ChatColor.BOLD;
+				default -> "" + ChatColor.GRAY + ChatColor.BOLD;
+			};
 			if (entry.getName().equals(playerName)) {
 				color = "" + ChatColor.BLUE + ChatColor.BOLD;
 			}

@@ -12,7 +12,6 @@ import com.playmonumenta.scriptedquests.utils.LeaderboardUtils.LeaderboardEntry;
 import com.playmonumenta.scriptedquests.utils.RaceUtils;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
@@ -42,8 +41,8 @@ public class RaceFactory {
 	private final double mMaxDistance;
 	private final Location mStart;
 	private final @Nullable QuestActions mStartActions;
-	private final List<RaceWaypoint> mWaypoints = new ArrayList<RaceWaypoint>();
-	private final List<RaceTime> mTimes = new ArrayList<RaceTime>();
+	private final List<RaceWaypoint> mWaypoints = new ArrayList<>();
+	private final List<RaceTime> mTimes = new ArrayList<>();
 	private final @Nullable QuestActions mLoseActions;
 	private final Plugin mPlugin;
 	private final RaceManager mManager;
@@ -153,9 +152,7 @@ public class RaceFactory {
 		if (waypointsArray == null) {
 			throw new Exception("Failed to parse 'waypoints' as JSON array");
 		}
-		Iterator<JsonElement> waypointsIter = waypointsArray.iterator();
-		while (waypointsIter.hasNext()) {
-			JsonElement entry = waypointsIter.next();
+		for (JsonElement entry : waypointsArray) {
 			mWaypoints.add(new RaceWaypoint(entry));
 		}
 
@@ -164,9 +161,7 @@ public class RaceFactory {
 		if (timesArray == null) {
 			throw new Exception("Failed to parse 'times' as JSON array");
 		}
-		Iterator<JsonElement> timesIter = timesArray.iterator();
-		while (timesIter.hasNext()) {
-			JsonElement entry = timesIter.next();
+		for (JsonElement entry : timesArray) {
 			mTimes.add(new RaceTime(entry));
 		}
 		// Sort the medal times in case they weren't specified in the right order
@@ -208,7 +203,7 @@ public class RaceFactory {
 
 		// x
 		JsonElement xElement = object.get("x");
-		double x = 0;
+		double x;
 		if (xElement != null) {
 			x = xElement.getAsDouble();
 		} else {
@@ -217,7 +212,7 @@ public class RaceFactory {
 
 		// y
 		JsonElement yElement = object.get("y");
-		double y = 0;
+		double y;
 		if (yElement != null) {
 			y = yElement.getAsDouble();
 		} else {
@@ -226,7 +221,7 @@ public class RaceFactory {
 
 		// z
 		JsonElement zElement = object.get("z");
-		double z = 0;
+		double z;
 		if (zElement != null) {
 			z = zElement.getAsDouble();
 		} else {
@@ -235,7 +230,7 @@ public class RaceFactory {
 
 		// yaw
 		JsonElement yawElement = object.get("yaw");
-		float yaw = 0;
+		float yaw;
 		if (yawElement != null) {
 			yaw = yawElement.getAsFloat();
 		} else {
@@ -244,7 +239,7 @@ public class RaceFactory {
 
 		// pitch
 		JsonElement pitchElement = object.get("pitch");
-		float pitch = 0;
+		float pitch;
 		if (pitchElement != null) {
 			pitch = pitchElement.getAsFloat();
 		} else {
@@ -266,9 +261,9 @@ public class RaceFactory {
 			return;
 		}
 
-		List<LeaderboardEntry> entries = new ArrayList<LeaderboardEntry>();
+		List<LeaderboardEntry> entries = new ArrayList<>();
 
-		if (Bukkit.getServer().getPluginManager().getPlugin("MonumentaRedisSync") == null) {
+		if (!Bukkit.getServer().getPluginManager().isPluginEnabled("MonumentaRedisSync")) {
 			/* Redis sync plugin not found - need to loop over scoreboards to compute leaderboard */
 
 			for (String name : mObjective.getScoreboard().getEntries()) {
@@ -307,10 +302,8 @@ public class RaceFactory {
 					colorizeEntries(entries, player.getName());
 
 					/* Send the leaderboard to the player back on the main thread */
-					Bukkit.getScheduler().runTask(mPlugin, () -> {
-						LeaderboardUtils.sendLeaderboard(player, Component.text(mName), entries, page,
-						                                 "/race leaderboard " + player.getName() + " " + mLabel);
-					});
+					Bukkit.getScheduler().runTask(mPlugin, () -> LeaderboardUtils.sendLeaderboard(player, Component.text(mName), entries, page,
+					                                 "/race leaderboard " + player.getName() + " " + mLabel));
 				} catch (Exception ex) {
 					mPlugin.getLogger().severe("Failed to generate leaderboard: " + ex.getMessage());
 					ex.printStackTrace();
@@ -322,7 +315,7 @@ public class RaceFactory {
 	private void colorizeEntries(List<LeaderboardEntry> entries, String playerName) {
 		/*
 		 * As we iterate through the leaderboard entries (sorted),
-		 * also walk through this sorted list so we only traverse each
+		 * also walk through this sorted list, so we only traverse each
 		 * list once
 		 */
 		int timeIdx = 0;

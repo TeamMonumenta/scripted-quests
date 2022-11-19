@@ -23,13 +23,13 @@ public class RaceManager {
 	public static final String ARMOR_STAND_RACE_TAG = "RaceRing";
 	public static final String ARMOR_STAND_ID_PREFIX_TAG = "RacerId_";
 
-	private Plugin mPlugin;
+	private final Plugin mPlugin;
 
 	/*
 	 * A race factory is an already-parsed JSON object that is used to build a race object for a player
 	 */
-	private final HashMap<String, RaceFactory> mRaceFactories = new HashMap<String, RaceFactory>();
-	private final HashMap<UUID, Race> mActiveRaces = new HashMap<UUID, Race>();
+	private final HashMap<String, RaceFactory> mRaceFactories = new HashMap<>();
+	private final HashMap<UUID, Race> mActiveRaces = new HashMap<>();
 	private @Nullable BukkitRunnable mRunnable = null;
 
 	public RaceManager(Plugin plugin) {
@@ -44,14 +44,14 @@ public class RaceManager {
 
 		QuestUtils.loadScriptedQuests(plugin, "races", sender, (object) -> {
 			// Load this file into a raceFactory
-			RaceFactory racef = new RaceFactory(object, plugin, this);
+			RaceFactory raceFactory = new RaceFactory(object, plugin, this);
 
-			if (mRaceFactories.containsKey(racef.getLabel())) {
-				throw new Exception(racef.getLabel() + "' already exists!");
+			if (mRaceFactories.containsKey(raceFactory.getLabel())) {
+				throw new Exception(raceFactory.getLabel() + "' already exists!");
 			}
 
-			mRaceFactories.put(racef.getLabel(), racef);
-			return racef.getLabel();
+			mRaceFactories.put(raceFactory.getLabel(), raceFactory);
+			return raceFactory.getLabel();
 		});
 
 		/* Tick all the currently active races */
@@ -60,7 +60,7 @@ public class RaceManager {
 		}
 		mRunnable = new BukkitRunnable() {
 			/* This temporary list is necessary to avoid ConcurrentModificationException's */
-			private List<Race> mRaceTemp = new ArrayList<Race>();
+			private final List<Race> mRaceTemp = new ArrayList<>();
 
 			@Override
 			public void run() {

@@ -5,6 +5,7 @@ import com.playmonumenta.scriptedquests.commands.*;
 import com.playmonumenta.scriptedquests.listeners.EntityListener;
 import com.playmonumenta.scriptedquests.listeners.InteractablesListener;
 import com.playmonumenta.scriptedquests.listeners.PlayerListener;
+import com.playmonumenta.scriptedquests.listeners.RedisSyncListener;
 import com.playmonumenta.scriptedquests.listeners.WorldListener;
 import com.playmonumenta.scriptedquests.listeners.ZoneEventListener;
 import com.playmonumenta.scriptedquests.managers.ClickableManager;
@@ -152,6 +153,9 @@ public class Plugin extends JavaPlugin {
 		manager.registerEvents(new EntityListener(this), this);
 		manager.registerEvents(new InteractablesListener(this), this);
 		manager.registerEvents(new PlayerListener(this), this);
+		if (manager.isPluginEnabled("MonumentaRedisSync")) {
+			manager.registerEvents(new RedisSyncListener(this), this);
+		}
 		manager.registerEvents(new WorldListener(this), this);
 		if (mTranslationsManager != null) {
 			manager.registerEvents(mTranslationsManager, this);
@@ -264,8 +268,10 @@ public class Plugin extends JavaPlugin {
 		}
 	}
 
-	@SuppressWarnings("NullAway") // Never returns null unless the server is horribly broken anyway
 	public static Plugin getInstance() {
+		if (INSTANCE == null) {
+			throw new RuntimeException("Attempted to access ScriptedQuests plugin before it loaded.");
+		}
 		return INSTANCE;
 	}
 
