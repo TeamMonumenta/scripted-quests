@@ -479,6 +479,7 @@ public class ZoneManager {
 		UUID playerUuid = player.getUniqueId();
 		if (isTransferring) {
 			mTransferringPlayers.add(playerUuid);
+			unregisterPlayer(player);
 		} else {
 			mTransferringPlayers.remove(playerUuid);
 		}
