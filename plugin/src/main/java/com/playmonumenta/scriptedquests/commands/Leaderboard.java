@@ -77,7 +77,7 @@ public class Leaderboard {
 		 * If using scoreboards for leaderboards, this command does nothing
 		 */
 		new CommandAPICommand("leaderboard")
-			.withPermission(CommandPermission.fromString("scriptedquests.leaderboard"))
+			.withPermission(CommandPermission.fromString("scriptedquests.leaderboard.update"))
 			.withArguments(new MultiLiteralArgument("update"))
 			.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
 			.withArguments(new StringArgument("objective"))
