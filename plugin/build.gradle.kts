@@ -29,7 +29,7 @@ dependencies {
     compileOnly("com.mojang:brigadier:1.0.17")
     compileOnly("com.google.code.gson:gson:2.8.0")
     compileOnly("org.dynmap:DynmapCoreAPI:2.0")
-    compileOnly("com.playmonumenta:redissync:1.7")
+    compileOnly("com.playmonumenta:redissync:3.5")
     compileOnly("com.comphenix.protocol:ProtocolLib:4.7.0")
     errorprone("com.google.errorprone:error_prone_core:2.10.0")
     errorprone("com.uber.nullaway:nullaway:0.9.5")

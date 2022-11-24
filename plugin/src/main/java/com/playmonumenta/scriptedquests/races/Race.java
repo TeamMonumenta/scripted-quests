@@ -35,12 +35,12 @@ import org.jetbrains.annotations.Nullable;
  */
 public class Race {
 	private static final int NUM_RING_POINTS = 18;
-	private static final List<Vector> RING_SHAPE = new ArrayList<Vector>(NUM_RING_POINTS);
+	private static final List<Vector> RING_SHAPE = new ArrayList<>(NUM_RING_POINTS);
 
 	static {
 		for (int angle = 0; angle < NUM_RING_POINTS; angle++) {
-			RING_SHAPE.add(new Vector(Math.cos(Math.toRadians(angle * 360 / NUM_RING_POINTS)),
-			Math.sin(Math.toRadians(angle * 360 / NUM_RING_POINTS)), 0));
+			RING_SHAPE.add(new Vector(Math.cos(Math.toRadians(angle * 360.0 / NUM_RING_POINTS)),
+			Math.sin(Math.toRadians(angle * 360.0 / NUM_RING_POINTS)), 0));
 		}
 	}
 
@@ -64,7 +64,7 @@ public class Race {
 	private final @Nullable QuestActions mLoseActions;
 
 	/* Local constants */
-	private final List<ArmorStand> mRingEntities = new ArrayList<ArmorStand>(NUM_RING_POINTS);
+	private final List<ArmorStand> mRingEntities = new ArrayList<>(NUM_RING_POINTS);
 	private final World mWorld;
 	private final Location mStopLoc; // Location where player should tp back to on lose
 
@@ -117,7 +117,7 @@ public class Race {
 			out.setSmall(true);
 			out.setMarker(true);
 			out.addScoreboardTag(RaceManager.ARMOR_STAND_RACE_TAG);
-			out.addScoreboardTag(RaceManager.ARMOR_STAND_ID_PREFIX_TAG + mPlayer.getUniqueId().toString());
+			out.addScoreboardTag(RaceManager.ARMOR_STAND_ID_PREFIX_TAG + mPlayer.getUniqueId());
 			mRingEntities.add(out);
 		}
 
@@ -146,10 +146,10 @@ public class Race {
 		mMaxTime = mTimes.get(mTimes.size() - 1).getTime();
 
 		// Copy the waypoints to something local to work with
-		mRemainingWaypoints = new ArrayDeque<RaceWaypoint>(mWaypoints);
+		mRemainingWaypoints = new ArrayDeque<>(mWaypoints);
 		mNextWaypoint = mRemainingWaypoints.removeFirst();
 
-		// Create the timetracking bar
+		// Create the time-tracking bar
 		mTimeBar = new TimeBar(mPlayer, mTimes);
 
 		countdownStart();
@@ -280,12 +280,12 @@ public class Race {
 	private void animation() {
 		mFrame++;
 
-		Location rloc = mNextWaypoint.getPosition().toLocation(mWorld);
+		Location rLoc = mNextWaypoint.getPosition().toLocation(mWorld);
 
 		// Ring location faces player
-		rloc.setDirection(mPlayer.getLocation().toVector().subtract(mNextWaypoint.getPosition()));
+		rLoc.setDirection(mPlayer.getLocation().toVector().subtract(mNextWaypoint.getPosition()));
 		int i = 0;
-		for (Location loc : RaceUtils.transformPoints(rloc, RING_SHAPE, rloc.getYaw(), -rloc.getPitch(), 0d, mNextWaypoint.getRadius() + 0.5 * Math.cos(Math.toRadians(mFrame * 20)))) {
+		for (Location loc : RaceUtils.transformPoints(rLoc, RING_SHAPE, rLoc.getYaw(), -rLoc.getPitch(), 0d, mNextWaypoint.getRadius() + 0.5 * Math.cos(Math.toRadians(mFrame * 20)))) {
 			loc.subtract(0, 0.5, 0);
 			mRingEntities.get(i).teleport(loc);
 			i++;
@@ -341,7 +341,7 @@ public class Race {
 				score.setScore(endTime);
 
 				/* If the RedisSync plugin is also present, update the score in the leaderboard cache */
-				if (Bukkit.getServer().getPluginManager().getPlugin("MonumentaRedisSync") != null) {
+				if (Bukkit.getServer().getPluginManager().isPluginEnabled("MonumentaRedisSync")) {
 					MonumentaRedisSyncAPI.updateLeaderboardAsync(mScoreboard.getName(), mPlayer.getName(), endTime);
 				}
 
@@ -362,7 +362,7 @@ public class Race {
 		//TODO: Ring times
 		/*
 		int pb = (has_ring_times ? ringTimes.get(ringTimes.size() - 1) : possibleRingTimes.get(possibleRingTimes.size() - 1));
-		if (!has_ring_times || endTime < pb) { // if time beated
+		if (!has_ring_times || endTime < pb) { // if time beaten
 			pb = endTime;
 			//rewrite recoded ringtimes
 			Path path = Paths.get(plugin.getDataFolder().toString() +  "/speedruns" + File.separator + "playerdata/recorded_ring_times" + File.separator + baseFileName.toLowerCase() + File.separator + mPlayer.getName() + ".recorded");
@@ -460,7 +460,7 @@ public class Race {
 		Objective finalScoreboard = mScoreboard;
 
 		/* If the RedisSync plugin is also present, update the score in the leaderboard cache */
-		if (Bukkit.getServer().getPluginManager().getPlugin("MonumentaRedisSync") != null) {
+		if (Bukkit.getServer().getPluginManager().isPluginEnabled("MonumentaRedisSync")) {
 			/* Get the lowest value from the redis leaderboard that's not zero */
 			Bukkit.getScheduler().runTaskAsynchronously(mPlugin, () -> {
 				try {
