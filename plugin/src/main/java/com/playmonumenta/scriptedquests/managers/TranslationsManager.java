@@ -38,6 +38,8 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ProxiedCommandSender;
 import org.bukkit.configuration.ConfigurationSection;
@@ -263,9 +265,10 @@ public class TranslationsManager implements Listener {
 		}
 
 		TreeMap<String, String> translations = mTranslationsMap.get(message);
-		if (translations == null) {
+		if (translations == null && !player.getWorld().getName().contains("build")) {
 			// no translations for this message. means its new in the system. needs to be added.
 			// do not attempt to translate afterwards, since there will be no translation for that new string anyway
+			// do not add a new entry if the world is build shard
 			addNewEntry(message);
 			return message;
 		}
