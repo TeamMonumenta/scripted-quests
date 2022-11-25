@@ -26,6 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -266,6 +267,10 @@ public class TranslationsManager implements Listener {
 			return message;
 		}
 
+		// add a timestamp to the fake 'language' to see how fresh the line is
+		// helps remove old unused lines from the gsheet
+		translations.put("ts", LocalDate.now().toString());
+
 		String lang = mPlayerLanguageMap.get(player.getUniqueId());
 		if (lang == null || lang.equals("en.US")) {
 			// base language, no need to translate
@@ -282,8 +287,14 @@ public class TranslationsManager implements Listener {
 	}
 
 	private void addNewEntry(String message) {
+		TreeMap<String, String> translations = new TreeMap<>();
+
+		// add a timestamp to the fake 'language' to see how fresh the line is
+		// helps remove old unused lines from the gsheet
+		translations.put("ts", LocalDate.now().toString());
+
 		// update the loaded translation map
-		mTranslationsMap.put(message, new TreeMap<>());
+		mTranslationsMap.put(message, translations);
 
 		mPlugin.getLogger().info("Added new entry for translations: " + message);
 
