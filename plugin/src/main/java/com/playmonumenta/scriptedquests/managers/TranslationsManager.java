@@ -259,10 +259,11 @@ public class TranslationsManager implements Listener {
 	private String translatePriv(String message, Player player) {
 
 		TreeMap<String, String> translations = mTranslationsMap.get(message);
-		if (translations == null && !player.getWorld().getName().contains("build")) {
+		if (translations == null) {
 			// no translations for this message. means its new in the system. needs to be added.
 			// do not attempt to translate afterwards, since there will be no translation for that new string anyway
 			// do not add a new entry if the world is build shard
+			if (!player.getWorld().getName().contains("build"))
 			addNewEntry(message);
 			return message;
 		}
