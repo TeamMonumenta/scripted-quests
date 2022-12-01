@@ -169,7 +169,7 @@ public class Race {
 				// Compute the distance manually, with y distance counting only 1/3 as much as X and Z
 				double dist = Math.sqrt(Math.pow(pLoc.getX() - mStart.getX(), 2) + Math.pow((pLoc.getY() - mStart.getY()) / 3, 2) + Math.pow(pLoc.getZ() - mStart.getZ(), 2));
 
-				if (mTicks < 60 && dist > 0.8 && !mRingless) {
+				if (mTicks < 60 && dist > 0.8 && !mRingless && mCountdownActive) {
 					mPlayer.teleport(mStart);
 				}
 
@@ -208,7 +208,13 @@ public class Race {
 					this.cancel();
 				}
 
-				mTicks++;
+				// Cancel the task if the countdown is deactivated, to prevent
+				// the titles to keep appearing even if a player left the race.
+				if (mCountdownActive) {
+					mTicks++;
+				} else {
+					this.cancel();
+				}
 			}
 		}.runTaskTimer(mPlugin, 0, 1);
 	}
@@ -297,6 +303,9 @@ public class Race {
 	 */
 	private void end() {
 		mManager.removeRace(mPlayer);
+		// Make sure the countdown is stopped, in case someone wants
+		// to leave a race during the countdown.
+		mCountdownActive = false;
 
 		if (mTimeBar != null) {
 			mTimeBar.cancel();
