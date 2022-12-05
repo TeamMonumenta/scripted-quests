@@ -98,13 +98,13 @@ tasks.withType<JavaCompile>().configureEach {
     options.compilerArgs.add("-Xlint:deprecation")
 
     options.errorprone {
-        // TODO This must be turned back on as soon as some of the other warnings are under control
-        option("NullAway:AnnotatedPackages", "com.playmonumenta.DISABLE")
+        option("NullAway:AnnotatedPackages", "com.playmonumenta.scriptedquests")
 
         allErrorsAsWarnings.set(true)
 
         /*** Disabled checks ***/
         // These we almost certainly don't want
+        check("InlineMeSuggester", CheckSeverity.OFF) // We won't keep deprecated stuff around long enough for this to matter
         check("CatchAndPrintStackTrace", CheckSeverity.OFF) // This is the primary way a lot of exceptions are handled
         check("FutureReturnValueIgnored", CheckSeverity.OFF) // This one is dumb and doesn't let you check return values with .whenComplete()
         check("ImmutableEnumChecker", CheckSeverity.OFF) // Would like to turn this on but we'd have to annotate a bunch of base classes

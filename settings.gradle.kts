@@ -1,9 +1,9 @@
-rootProject.name = "ScriptedQuests"
+rootProject.name = "scripted-quests"
 include(":adapter_api")
 include(":adapter_unsupported")
 include(":adapter_v1_18_R2")
-include(":ScriptedQuests")
-project(":ScriptedQuests").projectDir = file("plugin")
+include(":scripted-quests")
+project(":scripted-quests").projectDir = file("plugin")
 
 pluginManagement {
   repositories {
