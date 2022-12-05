@@ -1,8 +1,9 @@
-package com.playmonumenta.scriptedquests.quests;
+package com.playmonumenta.scriptedquests.growables;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.playmonumenta.scriptedquests.Plugin;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -10,17 +11,17 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.TreeType;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
+/**
+ * Encapsulates a growable structure that could be grown later.
+ */
 public class GrowableStructure {
+
 	private static class GrowableElement {
 		private final int mDX;
 		private final int mDY;
@@ -97,10 +98,13 @@ public class GrowableStructure {
 	                                                     );
 	private static final String METAKEY = "GrowableMetakey";
 
+	private final String mPath;
 	private final String mLabel;
 	private final List<GrowableElement> mElements;
 
-	public GrowableStructure(JsonObject object) throws Exception {
+	public GrowableStructure(String growablePath, JsonObject object) throws Exception {
+		mPath = growablePath;
+
 		JsonElement label = object.get("label");
 		if (label == null) {
 			throw new Exception("'label' entry is required");
@@ -128,7 +132,10 @@ public class GrowableStructure {
 		}
 	}
 
-	public GrowableStructure(Plugin plugin, Location origin, String label, int maxDepth) throws Exception {
+	public GrowableStructure(String growablePath, Location origin, String label, int maxDepth) throws Exception {
+		mPath = growablePath;
+		Plugin plugin = Plugin.getInstance();
+
 		if (origin.getBlock().isEmpty()) {
 			throw new Exception("Starting block is empty");
 		}
@@ -146,7 +153,10 @@ public class GrowableStructure {
 
 		/* The current list of locations being processed */
 		List<Location> worklist = new ArrayList<>();
+
+		/* Add the first block to the list, and don't visit it again */
 		worklist.add(origin);
+		origin.getBlock().setMetadata(METAKEY, new FixedMetadataValue(plugin, true));
 
 		int depth = 0;
 		while (!worklist.isEmpty() || !pending.isEmpty()) {
@@ -210,41 +220,14 @@ public class GrowableStructure {
 		return mElements.size();
 	}
 
-	public int grow(Plugin plugin, Location origin, int ticksPerStep, int blocksPerStep, boolean callStructureGrowEvent) {
+	public GrowableProgress grow(Location origin, int ticksPerStep, int blocksPerStep, boolean callStructureGrowEvent) {
 		List<BlockState> states = new ArrayList<>(mElements.size());
 
 		for (GrowableElement element : mElements) {
 			states.add(element.getBlockState(origin));
 		}
 
-		if (callStructureGrowEvent) {
-			StructureGrowEvent event = new StructureGrowEvent(origin, TreeType.TREE, false, null, states);
-			Bukkit.getPluginManager().callEvent(event);
-			if (event.isCancelled()) {
-				return 0;
-			}
-			states = event.getBlocks();
-		}
-
-		List<BlockState> blocks = states;
-		new BukkitRunnable() {
-			int mIdx = 0;
-
-			@Override
-			public void run() {
-				for (int i = 0; i < blocksPerStep; i++) {
-					if (mIdx >= blocks.size()) {
-						this.cancel();
-						return;
-					}
-
-					blocks.get(mIdx).update(true);
-					mIdx++;
-				}
-			}
-		}.runTaskTimer(plugin, 0, ticksPerStep);
-
-		return blocks.size();
+		return new GrowableProgress(states, origin, ticksPerStep, blocksPerStep, callStructureGrowEvent);
 	}
 
 	public JsonElement getAsJsonObject() {
@@ -258,5 +241,9 @@ public class GrowableStructure {
 		obj.add("elements", array);
 
 		return obj;
+	}
+
+	public String getPath() {
+		return mPath;
 	}
 }
