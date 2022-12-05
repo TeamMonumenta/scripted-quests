@@ -17,7 +17,6 @@ import org.bukkit.entity.EntityType;
 import org.jetbrains.annotations.Nullable;
 
 public class QuestNpcManager {
-	private final Plugin mPlugin;
 	private final Map<EntityType, Map<String, List<QuestNpc>>> mNpcs = new HashMap<>();
 
 	/*
@@ -36,10 +35,6 @@ public class QuestNpcManager {
 
 			return npc.getNpcName() + ":" + npc.getComponents().size();
 		});
-	}
-
-	public QuestNpcManager(Plugin plugin) {
-		mPlugin = plugin;
 	}
 
 	public boolean isQuestNPC(Entity entity) {
