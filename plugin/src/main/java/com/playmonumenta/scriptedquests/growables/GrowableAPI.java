@@ -28,8 +28,8 @@ public class GrowableAPI {
 	private final Map<String, GrowableStructure> mGrowables = new HashMap<>();
 
 	private GrowableAPI() {
-		reload(null);
 		INSTANCE = this;
+		reload(null);
 	}
 
 	/**
