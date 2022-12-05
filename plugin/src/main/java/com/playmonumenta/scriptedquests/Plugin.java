@@ -216,7 +216,7 @@ public class Plugin extends JavaPlugin {
 		mCodeManager.reload(this, sender);
 		mZonePropertyManager.reload(this, sender);
 		mZoneEventListener.update();
-		GrowableAPI.getInstance().reload(sender);
+		GrowableAPI.reload(sender);
 		mGuiManager.reload(this, sender);
 		if (mProtocolLibIntegration != null) {
 			mProtocolLibIntegration.reload();

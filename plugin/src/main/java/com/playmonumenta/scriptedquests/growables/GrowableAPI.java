@@ -45,7 +45,7 @@ public class GrowableAPI {
 			.withSubcommand(new CommandAPICommand("grow")
 				.withArguments(new LocationArgument("location", LocationType.BLOCK_POSITION))
 				.withArguments(new StringArgument("label").replaceSuggestions(info -> {
-					return getInstance().getLabels();
+					return getLabels();
 				}))
 				.withArguments(new IntegerArgument("ticksPerStep", 1))
 				.withArguments(new IntegerArgument("blocksPerStep", 1))
@@ -54,7 +54,7 @@ public class GrowableAPI {
 					try {
 						String label = (String)args[1];
 						sender.sendMessage("Started growing '" + label);
-						getInstance().grow(label, (Location)args[0], (Integer)args[2], (Integer)args[3], (Boolean)args[4]).whenComplete((growable) -> {
+						grow(label, (Location)args[0], (Integer)args[2], (Integer)args[3], (Boolean)args[4]).whenComplete((growable) -> {
 							if (growable.wasCancelled()) {
 								sender.sendMessage("Growable '" + label + "' was cancelled after placing " + growable.getBlocksPlaced() + " blocks");
 							} else {
@@ -72,7 +72,7 @@ public class GrowableAPI {
 				.executes((sender, args) -> {
 					try {
 						String label = (String)args[1];
-						GrowableStructure growable = getInstance().add(label, (Location)args[0], (Integer)args[2]);
+						GrowableStructure growable = add(label, (Location)args[0], (Integer)args[2]);
 						sender.sendMessage("Successfully saved '" + label + "' containing " + growable.getSize() + " blocks");
 					} catch (Exception e) {
 						CommandAPI.fail(e.getMessage());
@@ -86,11 +86,11 @@ public class GrowableAPI {
 	 *
 	 * If sender is non-null, it will be sent debugging information.
 	 */
-	public void reload(@Nullable CommandSender sender) {
-		mGrowables.clear();
+	public static void reload(@Nullable CommandSender sender) {
+		getInstance().mGrowables.clear();
 		QuestUtils.loadScriptedQuests(Plugin.getInstance(), "growables", sender, (object, file) -> {
 			GrowableStructure growable = new GrowableStructure(file.getPath(), object);
-			mGrowables.put(growable.getLabel(), growable);
+			getInstance().mGrowables.put(growable.getLabel(), growable);
 			return growable.getLabel() + ":" + Integer.toString(growable.getSize());
 		});
 	}
@@ -102,8 +102,8 @@ public class GrowableAPI {
 	 *
 	 * Throws an exception if the growable isn't loaded.
 	 */
-	public GrowableProgress grow(String label, Location origin, int ticksPerStep, int blocksPerStep, boolean callStructureGrowEvent) throws IllegalArgumentException {
-		GrowableStructure growable = mGrowables.get(label);
+	public static GrowableProgress grow(String label, Location origin, int ticksPerStep, int blocksPerStep, boolean callStructureGrowEvent) throws IllegalArgumentException {
+		GrowableStructure growable = getInstance().mGrowables.get(label);
 		if (growable == null) {
 			throw new IllegalArgumentException("Growable '" + label + "' does not exist");
 		}
@@ -116,11 +116,11 @@ public class GrowableAPI {
 	 *
 	 * Throws an exception if saving the growable to the auto-computed path fails.
 	 */
-	public GrowableStructure add(String label, Location origin, int maxDepth) throws Exception {
+	public static GrowableStructure add(String label, Location origin, int maxDepth) throws Exception {
 		String path = Paths.get(Plugin.getInstance().getDataFolder().getPath(), "growables", "common", label + ".json").toString();
 
 		GrowableStructure growable = new GrowableStructure(path, origin, label, maxDepth);
-		mGrowables.put(label, growable);
+		getInstance().mGrowables.put(label, growable);
 
 		try {
 			FileUtils.writeFile(path, new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create().toJson(growable.getAsJsonObject()));
@@ -134,8 +134,8 @@ public class GrowableAPI {
 	/**
 	 * Gets a list of all currently loaded growables.
 	 */
-	public String[] getLabels() {
-		return mGrowables.keySet().toArray(new String[mGrowables.size()]);
+	public static String[] getLabels() {
+		return getInstance().mGrowables.keySet().toArray(new String[getInstance().mGrowables.size()]);
 	}
 
 	/**
