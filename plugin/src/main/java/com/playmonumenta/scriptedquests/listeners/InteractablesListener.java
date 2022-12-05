@@ -47,11 +47,6 @@ public class InteractablesListener implements Listener {
 			ItemStack item = event.getItem();
 			Block block = event.getClickedBlock();
 
-			if (item != null && !item.getType().isAir() && player.getCooldown(item.getType()) > 0) {
-				/* Player's item is on cooldown, don't use it to interact to trigger interactions */
-				return;
-			}
-
 			if (mPlugin.mInteractableManager.interactEvent(mPlugin, player, item, block, action)) {
 				// interactEvent returning true means this event should be canceled
 				event.setCancelled(true);
@@ -76,11 +71,6 @@ public class InteractablesListener implements Listener {
 		//Now we have definitely left clicked a block in adventure mode
 		ItemStack item = player.getInventory().getItemInMainHand();
 
-		if (item != null && !item.getType().isAir() && player.getCooldown(item.getType()) > 0) {
-			/* Player's item is on cooldown, don't use it to interact to trigger interactions */
-			return;
-		}
-
 		if (mPlugin.mInteractableManager.interactEvent(mPlugin, player, item, player.getTargetBlock(null, 4), Action.LEFT_CLICK_BLOCK)) {
 			event.setCancelled(true);
 		}
@@ -91,11 +81,6 @@ public class InteractablesListener implements Listener {
 		Entity entity = event.getRightClicked();
 		Player player = event.getPlayer();
 		ItemStack item = event.getHand() == EquipmentSlot.HAND ? player.getInventory().getItemInMainHand() : player.getInventory().getItemInOffHand();
-
-		if (item != null && !item.getType().isAir() && player.getCooldown(item.getType()) > 0) {
-			/* Player's item is on cooldown, don't use it to interact to trigger interactions */
-			return;
-		}
 
 		if (mPlugin.mInteractableManager.interactEntityEvent(mPlugin, player, item, entity)) {
 			// interactEntityEvent returning true means this event should be canceled
@@ -113,11 +98,6 @@ public class InteractablesListener implements Listener {
 			    && !player.isRiptiding()) {
 
 			ItemStack item = player.getInventory().getItemInMainHand();
-			if (item != null && !item.getType().isAir() && player.getCooldown(item.getType()) > 0) {
-				/* Player's item is on cooldown, don't use it to interact to trigger interactions */
-				return;
-			}
-
 			if (mPlugin.mInteractableManager.attackEntityEvent(mPlugin, player, item, damagee)) {
 				// interactEntityEvent returning true means this event should be canceled
 				event.setCancelled(true);
@@ -153,11 +133,6 @@ public class InteractablesListener implements Listener {
 
 		if (item == null || item.getType() == Material.AIR || interactType == null) {
 			// No point continuing
-			return;
-		}
-
-		if (item != null && !item.getType().isAir() && player.getCooldown(item.getType()) > 0) {
-			/* Player's item is on cooldown, don't use it to interact to trigger interactions */
 			return;
 		}
 
