@@ -49,6 +49,15 @@ public class Music {
 			mVolume = volume;
 			mPitch = pitch;
 		}
+
+		public boolean equals(Song song) {
+			return mIsLoop == song.mIsLoop
+				&& mSongDuration == song.mSongDuration
+				&& mVolume == song.mVolume
+				&& mPitch == song.mPitch
+				&& mCategory.equals(song.mCategory)
+				&& mSongPath.equals(song.mSongPath);
+		}
 	}
 
 	private static class PlayerState implements Runnable {
@@ -109,7 +118,9 @@ public class Music {
 
 		public void playNow(Song song) {
 			cancelNext();
-			cancelNow();
+			if (mNow != null && !mNow.equals(song)) {
+				cancelNow();
+			}
 			playNext(song);
 		}
 
