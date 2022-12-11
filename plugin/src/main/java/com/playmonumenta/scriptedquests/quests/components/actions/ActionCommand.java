@@ -34,7 +34,7 @@ public class ActionCommand implements ActionBase {
 	}
 
 	@Override
-	public void doAction(QuestContext context) {
+	public void doActions(QuestContext context) {
 		// Because there's no currently good way to run commands we need to run them via the console....janky....I know.
 		String commandStr = mCommand;
 		if (context.getNpcEntity() == null) {

@@ -307,6 +307,13 @@
             "title": "rerun_components",
             "description": "Re-runs all quest components tied to this specific NPC (including those specified in other files). To prevent infinite loops, this action will not run itself, even if conditions indicate it should.",
             "type": "null"
+        },
+        "actions": {
+            "propertyOrder": 12,
+            "title": "actions",
+            "description": "Chained actions, useful for applying actions prereqs to multiple actions at once",
+            "required": false,
+            "$ref": "actions.json"
         }
     }
 }

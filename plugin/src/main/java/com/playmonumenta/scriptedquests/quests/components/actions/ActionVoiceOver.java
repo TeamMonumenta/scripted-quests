@@ -28,7 +28,7 @@ public class ActionVoiceOver implements ActionBase {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public void doAction(QuestContext context) {
+	public void doActions(QuestContext context) {
 		Player player = context.getPlayer();
 		Map<String, String> playerLastSounds;
 		if (player.hasMetadata(Constants.PLAYER_VOICE_OVER_METAKEY)) {

@@ -42,7 +42,7 @@ public class ActionDialog implements ActionBase {
 	}
 
 	@Override
-	public void doAction(QuestContext context) {
+	public void doActions(QuestContext context) {
 		// handle packet stuff
 		for (DialogBase dialog : mDialogs) {
 			dialog.sendDialog(context);
