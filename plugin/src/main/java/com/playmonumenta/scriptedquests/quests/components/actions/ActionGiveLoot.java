@@ -20,7 +20,7 @@ public class ActionGiveLoot implements ActionBase {
 	}
 
 	@Override
-	public void doAction(QuestContext context) {
+	public void doActions(QuestContext context) {
 		try {
 			InventoryUtils.giveLootTableContents(context.getPlayer(), mLootPath, mRandom, false);
 		} catch (Exception e) {

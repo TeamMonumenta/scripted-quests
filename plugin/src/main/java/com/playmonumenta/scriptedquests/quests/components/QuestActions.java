@@ -2,6 +2,7 @@ package com.playmonumenta.scriptedquests.quests.components;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.quests.components.actions.ActionBase;
@@ -16,13 +17,12 @@ import com.playmonumenta.scriptedquests.quests.components.actions.ActionSetScore
 import com.playmonumenta.scriptedquests.quests.components.actions.ActionVoiceOver;
 import java.util.ArrayList;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.EntityType;
 import org.jetbrains.annotations.Nullable;
 
-public class QuestActions {
+public class QuestActions implements ActionBase {
 	private final ArrayList<ActionsElement> mActions = new ArrayList<>();
 	private int mDelayTicks;
 
@@ -60,6 +60,9 @@ public class QuestActions {
 				switch (key) {
 					case "prerequisites":
 						actions.mPrerequisites = new QuestPrerequisites(value);
+						break;
+					case "actions":
+						actions.mActions.add(new QuestActions(npcName, displayName, entityType, delayTicks, value));
 						break;
 					case "delay_actions_by_ticks":
 						actions.mDelayTicks = value.getAsInt();
@@ -107,7 +110,7 @@ public class QuestActions {
 						}
 						break;
 					case "rerun_components":
-						if (entityType != null) {
+						if (entityType != null && npcName != null) {
 							actions.mActions.add(new ActionRerunComponents(npcName, entityType));
 						}
 						break;
@@ -118,6 +121,7 @@ public class QuestActions {
 		}
 	}
 
+	@Override
 	public void doActions(QuestContext context) {
 		if (mDelayTicks <= 0) {
 			// If not delayed, actions can run without restrictions
@@ -135,12 +139,12 @@ public class QuestActions {
 			QuestContext elementContext = element.mPrerequisites != null ? context.withPrerequisites(element.mPrerequisites) : context;
 			if (element.mDelayTicks <= 0) {
 				for (ActionBase action : element.mActions) {
-					action.doAction(elementContext);
+					action.doActions(elementContext);
 				}
 			} else {
 				Bukkit.getScheduler().scheduleSyncDelayedTask(context.getPlugin(), () -> {
 					for (ActionBase action : element.mActions) {
-						action.doAction(elementContext);
+						action.doActions(elementContext);
 					}
 				}, element.mDelayTicks);
 			}
@@ -153,16 +157,17 @@ public class QuestActions {
 		private final ArrayList<ActionBase> mActions = new ArrayList<>();
 	}
 
-	public Optional<JsonElement> serializeForClientAPI(QuestContext context) {
+	@Override
+	public JsonElement serializeForClientAPI(QuestContext context) {
 		if (mDelayTicks <= 0) {
 			JsonArray a = new JsonArray();
 			mActions.stream()
 				.flatMap(e -> e.mActions.stream())
 				.map(v -> v.serializeForClientAPI(context))
 				.forEach(a::add);
-			return Optional.of(a);
+			return a;
 		}
 
-		return Optional.empty();
+		return JsonNull.INSTANCE;
 	}
 }

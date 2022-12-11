@@ -15,7 +15,7 @@ public class ActionFunction implements ActionBase {
 	}
 
 	@Override
-	public void doAction(QuestContext context) {
+	public void doActions(QuestContext context) {
 		// Because there's no currently good way to run functions we need to run them via the console....janky....I know.
 		String commandStr = String.format("execute as %s at @s run function %s", context.getPlayer().getName(), mFunctionFileName);
 		QuestContext.pushCurrentContext(context);

@@ -19,7 +19,7 @@ public class ActionRerunComponents implements ActionBase {
 	}
 
 	@Override
-	public void doAction(QuestContext context) {
+	public void doActions(QuestContext context) {
 		/*
 		 * Prevent infinite loops by preventing this specific action
 		 * from running itself again
