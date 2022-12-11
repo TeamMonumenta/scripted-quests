@@ -118,18 +118,12 @@ public class InteractablesListener implements Listener {
 
 		ItemStack item = event.getCurrentItem();
 		ClickType type = event.getClick();
-		InteractType interactType = null;
-
-		switch (type) {
-		case RIGHT:
-			interactType = InteractType.RIGHT_CLICK_INVENTORY;
-			break;
-		case LEFT:
-			interactType = InteractType.LEFT_CLICK_INVENTORY;
-			break;
-		default:
-			break;
-		}
+		InteractType interactType = switch (type) {
+			case RIGHT -> InteractType.RIGHT_CLICK_INVENTORY;
+			case LEFT -> InteractType.LEFT_CLICK_INVENTORY;
+			case SWAP_OFFHAND -> InteractType.SWAP_HANDS_INVENTORY;
+			default -> null;
+		};
 
 		if (item == null || item.getType() == Material.AIR || interactType == null) {
 			// No point continuing
