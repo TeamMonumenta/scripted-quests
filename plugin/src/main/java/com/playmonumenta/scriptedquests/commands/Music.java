@@ -50,7 +50,7 @@ public class Music {
 			mPitch = pitch;
 		}
 
-		public boolean equals(Song song) {
+		public boolean equalsSong(Song song) {
 			return mIsLoop == song.mIsLoop
 				&& mSongDuration == song.mSongDuration
 				&& mVolume == song.mVolume
@@ -99,6 +99,14 @@ public class Music {
 			mRealTimePool.schedule(this, millisToRefresh(), TimeUnit.of(ChronoUnit.MILLIS));
 		}
 
+		public void playNow(Song song) {
+			cancelNext();
+			if (mNow != null && !mNow.equalsSong(song)) {
+				cancelNow();
+			}
+			playNext(song);
+		}
+
 		public void cancelNow() {
 			if (mNow == null) {
 				return;
@@ -112,23 +120,15 @@ public class Music {
 			mNextTime = LocalDateTime.MAX;
 		}
 
-		public void cancelNext() {
-			mNext = null;
-		}
-
-		public void playNow(Song song) {
-			cancelNext();
-			if (mNow != null && !mNow.equals(song)) {
-				cancelNow();
-			}
-			playNext(song);
-		}
-
 		public void playNext(Song song) {
 			mNext = song;
 			if (mNow == null || millisToRefresh() <= 0) {
 				playNow();
 			}
+		}
+
+		public void cancelNext() {
+			mNext = null;
 		}
 
 		public long millisToRefresh() {
