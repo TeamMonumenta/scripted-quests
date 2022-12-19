@@ -59,7 +59,7 @@ public class InteractablesListener implements Listener {
 
 		Player player = event.getPlayer();
 		//This only applies to players in adventure mode looking at blocks (not air)
-		if (player.getGameMode() != GameMode.ADVENTURE || event.getAnimationType() != PlayerAnimationType.ARM_SWING || player.getTargetBlock(null, 4).getType() == Material.AIR) {
+		if (player.getGameMode() != GameMode.ADVENTURE || event.getAnimationType() != PlayerAnimationType.ARM_SWING) {
 			return;
 		}
 
@@ -68,10 +68,16 @@ public class InteractablesListener implements Listener {
 			return;
 		}
 
+		// get target block and abort if air
+		Block targetBlock = player.getTargetBlockExact(4);
+		if (targetBlock == null || targetBlock.getType().isAir()) {
+			return;
+		}
+
 		//Now we have definitely left clicked a block in adventure mode
 		ItemStack item = player.getInventory().getItemInMainHand();
 
-		if (mPlugin.mInteractableManager.interactEvent(mPlugin, player, item, player.getTargetBlock(null, 4), Action.LEFT_CLICK_BLOCK)) {
+		if (mPlugin.mInteractableManager.interactEvent(mPlugin, player, item, targetBlock, Action.LEFT_CLICK_BLOCK)) {
 			event.setCancelled(true);
 		}
 	}
