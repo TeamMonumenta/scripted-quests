@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
@@ -82,12 +83,18 @@ public class PlayerListener implements Listener {
 
 		Player player = event.getPlayer();
 		//This only applies to players in adventure mode looking at blocks (not air)
-		if (player.getGameMode() != GameMode.ADVENTURE || event.getAnimationType() != PlayerAnimationType.ARM_SWING || player.getTargetBlock(null, 4).getType() == Material.AIR) {
+		if (player.getGameMode() != GameMode.ADVENTURE || event.getAnimationType() != PlayerAnimationType.ARM_SWING) {
 			return;
 		}
 
 		//If the player recently used a right click or left click air
 		if (MetadataUtils.happenedInRecentTicks(player, ADVENTURE_INTERACT_METAKEY, 4)) {
+			return;
+		}
+
+		// abort if targeting nothing/air
+		Block targetBlock = player.getTargetBlockExact(4);
+		if (targetBlock == null || targetBlock.getType().isAir()) {
 			return;
 		}
 
