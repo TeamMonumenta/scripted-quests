@@ -5,8 +5,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
+import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 import org.bukkit.entity.EntityType;
@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 /**
  * A CodeEntry is a container for an interaction the player can trigger at any time
  * by typing /code <words>
- *
+ * <p>
  * Labels must be globally unique
  */
 public class CodeEntry {
@@ -86,7 +86,9 @@ public class CodeEntry {
 		"witch",
 	};
 
-	private final ArrayList<QuestComponent> mComponents = new ArrayList<QuestComponent>();
+	public static final ArgumentSuggestions SUGGESTIONS_WORDS = ArgumentSuggestions.strings(words);
+
+	private final ArrayList<QuestComponent> mComponents = new ArrayList<>();
 	private final String mSeed;
 
 	public CodeEntry(JsonObject object) throws Exception {
@@ -110,10 +112,7 @@ public class CodeEntry {
 			throw new Exception("Failed to parse 'quest_components' as JSON array");
 		}
 
-		Iterator<JsonElement> iter = array.iterator();
-		while (iter.hasNext()) {
-			JsonElement entry = iter.next();
-
+		for (JsonElement entry : array) {
 			// TODO: Refactor so that components only require a linkage to the top-level item, not a name/entity type
 			mComponents.add(new QuestComponent("", "", EntityType.PLAYER, entry));
 		}
@@ -144,11 +143,11 @@ public class CodeEntry {
 
 	public static String getCodeForPlayer(Player player, String seed) {
 		int hash = (player.getUniqueId().toString() + seed).hashCode();
-		int hashkey1 = hash & 0B111111;
-		int hashkey2 = (hash >> 6) & 0B111111;
-		int hashkey3 = (hash >> 12) & 0B111111;
+		int hashKey1 = hash & 0B111111;
+		int hashKey2 = (hash >> 6) & 0B111111;
+		int hashKey3 = (hash >> 12) & 0B111111;
 
-		return words[hashkey1] + " " + words[hashkey2] + " " + words[hashkey3];
+		return words[hashKey1] + " " + words[hashKey2] + " " + words[hashKey3];
 	}
 
 	public boolean doActionsIfCodeMatches(Plugin plugin, Player player, String code) {

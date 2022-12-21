@@ -21,7 +21,7 @@ public class RandomSample {
 		new CommandAPICommand("random")
 			.withPermission(CommandPermission.fromString("scriptedquests.random.sample"))
 			.withArguments(new MultiLiteralArgument("sample"))
-			.withArguments(new EntitySelectorArgument("entities", EntitySelectorArgument.EntitySelector.MANY_ENTITIES))
+			.withArguments(new EntitySelectorArgument.ManyEntities("entities"))
 			.withArguments(new ObjectiveArgument("objective"))
 			.withArguments(new IntegerArgument("min"))
 			.withArguments(new IntegerArgument("max"))
@@ -29,13 +29,13 @@ public class RandomSample {
 				int min = (Integer)args[3];
 				int max = (Integer)args[4];
 				if (max < min) {
-					CommandAPI.fail("max < min");
+					throw CommandAPI.failWithString("max < min");
 				}
 
 				long rangeSize = (long) max - (long) min + 1;
 				Collection<Entity> entities = (Collection<Entity>)args[1];
 				if (entities.size() > rangeSize) {
-					CommandAPI.fail("Entity count exceeds range from min to max");
+					throw CommandAPI.failWithString("Entity count exceeds range from min to max");
 				}
 
 				String objective = (String)args[2];

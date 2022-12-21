@@ -5,6 +5,7 @@ import com.playmonumenta.scriptedquests.managers.GuiManager;
 import com.playmonumenta.scriptedquests.quests.Gui;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.Argument;
+import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.EntitySelectorArgument;
 import dev.jorel.commandapi.arguments.StringArgument;
 import java.util.Arrays;
@@ -17,14 +18,15 @@ public class GuiCommand {
 	@SuppressWarnings("unchecked")
 	public static void register(Plugin plugin) {
 
-		Argument guiNameArgument = new StringArgument("name")
-			.replaceSuggestions(i -> plugin.mGuiManager.getGuiNames());
+		Argument<?> guiNameArgument = new StringArgument("name")
+			.replaceSuggestions(ArgumentSuggestions.strings(info -> plugin.mGuiManager.getGuiNames()));
 
-		Argument guiPageArgument = new StringArgument("page")
-			.replaceSuggestions(i -> {
-				Optional<Gui> gui = Arrays.stream(i.previousArgs()).filter(a -> a instanceof String).findFirst().map(label -> plugin.mGuiManager.getGui((String) label));
+		Argument<?> guiPageArgument = new StringArgument("page")
+			.replaceSuggestions(ArgumentSuggestions.strings(info -> {
+				Optional<Gui> gui = Arrays.stream(info.previousArgs()).filter(arg -> arg instanceof String).findFirst().map(label ->
+					plugin.mGuiManager.getGui((String) label));
 				return gui.isPresent() ? gui.get().getPages() : new String[0];
-			});
+			}));
 
 		new CommandAPICommand("sqgui")
 			.withPermission("scriptedquests.gui")
@@ -32,7 +34,7 @@ public class GuiCommand {
 				new CommandAPICommand("show")
 					.withPermission("scriptedquests.gui.show")
 					.withArguments(guiNameArgument,
-					               new EntitySelectorArgument("player", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
+					               new EntitySelectorArgument.ManyPlayers("player"))
 					.executes((sender, args) -> {
 						for (Player player : (Collection<Player>) args[1]) {
 							plugin.mGuiManager.showGui((String) args[0], player, GuiManager.MAIN_PAGE);
@@ -43,7 +45,7 @@ public class GuiCommand {
 				new CommandAPICommand("show")
 					.withPermission("scriptedquests.gui.show")
 					.withArguments(guiNameArgument,
-					               new EntitySelectorArgument("player", EntitySelectorArgument.EntitySelector.MANY_PLAYERS),
+					               new EntitySelectorArgument.ManyPlayers("player"),
 					               guiPageArgument)
 					.executes((sender, args) -> {
 						for (Player player : (Collection<Player>) args[1]) {

@@ -5,6 +5,7 @@ import com.playmonumenta.scriptedquests.utils.ArgUtils;
 import com.playmonumenta.scriptedquests.utils.MMLog;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
+import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -28,6 +29,7 @@ import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
 public class ZoneManager {
 	private static final int DEFRAGMENT_ON_MERGE_THRESHOLD = 64;
+	private static final String[] SUGGESTIONS_EXECUTE_FALLBACK = {"\"Suggestions unavailable through /execute\""};
 
 	private final Plugin mPlugin;
 	static @MonotonicNonNull BukkitRunnable mPlayerTracker = null;
@@ -231,6 +233,10 @@ public class ZoneManager {
 		return ArgUtils.quoteIfNeeded(new TreeSet<>(getLayerNames()));
 	}
 
+	public ArgumentSuggestions getLayerNameArgumentSuggestions() {
+		return ArgumentSuggestions.strings(info -> getLayerNameSuggestions());
+	}
+
 	public Set<String> getLoadedProperties(String layerName) {
 		@Nullable ZoneLayer layer = mLayers.get(layerName);
 		if (layer == null) {
@@ -246,6 +252,30 @@ public class ZoneManager {
 			suggestions.add("!" + property);
 		}
 		return ArgUtils.quoteIfNeeded(suggestions);
+	}
+
+	public ArgumentSuggestions getLoadedPropertyArgumentSuggestions(String layerName) {
+		return ArgumentSuggestions.strings(info -> getLoadedPropertySuggestions(layerName));
+	}
+
+	public ArgumentSuggestions getLoadedPropertyArgumentSuggestions(int layerNameArgIndex) {
+		return ArgumentSuggestions.strings(info -> {
+			Object[] args = info.previousArgs();
+			if (args.length == 0) {
+				return SUGGESTIONS_EXECUTE_FALLBACK;
+			}
+
+			int index = layerNameArgIndex;
+			if (index < 0) {
+				index += args.length;
+			}
+
+			if (index < 0 || index >= args.length) {
+				return new String[]{"\"Invalid argument index for layer name: " + index + "\""};
+			}
+
+			return getLoadedPropertySuggestions((String) args[index]);
+		});
 	}
 
 	/************************************************************************************

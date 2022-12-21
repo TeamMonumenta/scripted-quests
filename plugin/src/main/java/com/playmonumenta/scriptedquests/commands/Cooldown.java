@@ -15,7 +15,7 @@ public class Cooldown {
 	public static void register() {
 		new CommandAPICommand("cooldown")
 			.withPermission(CommandPermission.fromString("scriptedquests.cooldown"))
-			.withArguments(new EntitySelectorArgument("player", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
+			.withArguments(new EntitySelectorArgument.ManyPlayers("player"))
 			.withArguments(new ItemStackArgument("material"))
 			.withArguments(new IntegerArgument("ticks"))
 			.executes((sender, args) -> {

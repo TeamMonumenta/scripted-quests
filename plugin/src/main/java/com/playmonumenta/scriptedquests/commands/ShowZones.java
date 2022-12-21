@@ -33,8 +33,6 @@ import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 
 public class ShowZones {
-	private static final String[] EXECUTE_FALLBACK_SUGGESTION = {"\"Suggestions unavailable through /execute\""};
-
 	enum FragmentFace {
 		X_MIN,
 		Y_MIN,
@@ -413,7 +411,7 @@ public class ShowZones {
 		new CommandAPICommand("showzones")
 			.withPermission(CommandPermission.fromString("scriptedquests.showzones"))
 			.withArguments(new MultiLiteralArgument("show"))
-			.withArguments(new TextArgument("layer").replaceSuggestions(info -> plugin.mZoneManager.getLayerNameSuggestions()))
+			.withArguments(new TextArgument("layer").replaceSuggestions(plugin.mZoneManager.getLayerNameArgumentSuggestions()))
 			.executes((sender, args) -> {
 				String layerName = (String) args[1];
 				return show(plugin, sender, layerName, null);
@@ -423,14 +421,8 @@ public class ShowZones {
 		new CommandAPICommand("showzones")
 			.withPermission(CommandPermission.fromString("scriptedquests.showzones"))
 			.withArguments(new MultiLiteralArgument("show"))
-			.withArguments(new TextArgument("layer").replaceSuggestions(info -> plugin.mZoneManager.getLayerNameSuggestions()))
-			.withArguments(new TextArgument("property").replaceSuggestions(info -> {
-				Object[] args = info.previousArgs();
-				if (args.length == 0) {
-					return EXECUTE_FALLBACK_SUGGESTION;
-				}
-				return plugin.mZoneManager.getLoadedPropertySuggestions((String) args[1]);
-			}))
+			.withArguments(new TextArgument("layer").replaceSuggestions(plugin.mZoneManager.getLayerNameArgumentSuggestions()))
+			.withArguments(new TextArgument("property").replaceSuggestions(plugin.mZoneManager.getLoadedPropertyArgumentSuggestions(1)))
 			.executes((sender, args) -> {
 				String layerName = (String) args[1];
 				String propertyName = (String) args[2];
@@ -445,8 +437,7 @@ public class ShowZones {
 			callee = proxiedCommandSender.getCallee();
 		}
 		if (!(callee instanceof Player player)) {
-			CommandAPI.fail("This command can only be run as a player.");
-			return 0;
+			throw CommandAPI.failWithString("This command can only be run as a player.");
 		} else {
 			UUID playerUuid = player.getUniqueId();
 			@Nullable ShownInfo shownInfo = mShownInfo.get(playerUuid);
@@ -467,8 +458,7 @@ public class ShowZones {
 			callee = proxiedCommandSender.getCallee();
 		}
 		if (!(callee instanceof Player player)) {
-			CommandAPI.fail("This command can only be run as a player.");
-			return 0;
+			throw CommandAPI.failWithString("This command can only be run as a player.");
 		} else {
 			UUID playerUuid = player.getUniqueId();
 			@Nullable ShownInfo shownInfo = mShownInfo.get(playerUuid);

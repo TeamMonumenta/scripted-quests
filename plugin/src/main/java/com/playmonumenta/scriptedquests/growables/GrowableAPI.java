@@ -7,6 +7,7 @@ import com.playmonumenta.scriptedquests.utils.QuestUtils;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
+import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.BooleanArgument;
 import dev.jorel.commandapi.arguments.IntegerArgument;
 import dev.jorel.commandapi.arguments.LocationArgument;
@@ -44,9 +45,7 @@ public class GrowableAPI {
 			.withPermission(perm)
 			.withSubcommand(new CommandAPICommand("grow")
 				.withArguments(new LocationArgument("location", LocationType.BLOCK_POSITION))
-				.withArguments(new StringArgument("label").replaceSuggestions(info -> {
-					return getLabels();
-				}))
+				.withArguments(new StringArgument("label").replaceSuggestions(ArgumentSuggestions.strings(info -> getLabels())))
 				.withArguments(new IntegerArgument("ticksPerStep", 1))
 				.withArguments(new IntegerArgument("blocksPerStep", 1))
 				.withArguments(new BooleanArgument("callStructureGrowEvent"))
@@ -62,7 +61,7 @@ public class GrowableAPI {
 							}
 						});
 					} catch (Exception e) {
-						CommandAPI.fail(e.getMessage());
+						throw CommandAPI.failWithString(e.getMessage());
 					}
 				}))
 			.withSubcommand(new CommandAPICommand("add")
@@ -75,7 +74,7 @@ public class GrowableAPI {
 						GrowableStructure growable = add(label, (Location)args[0], (Integer)args[2]);
 						sender.sendMessage("Successfully saved '" + label + "' containing " + growable.getSize() + " blocks");
 					} catch (Exception e) {
-						CommandAPI.fail(e.getMessage());
+						throw CommandAPI.failWithString(e.getMessage());
 					}
 				}))
 			.register();

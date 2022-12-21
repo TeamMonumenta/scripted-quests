@@ -25,7 +25,7 @@ public class InteractNpc {
 		/* First one of these has both required arguments */
 		new CommandAPICommand("interactnpc")
 			.withPermission(CommandPermission.fromString("scriptedquests.interactnpc"))
-			.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
+			.withArguments(new EntitySelectorArgument.ManyPlayers("players"))
 			.withArguments(new TextArgument("npcName"))
 			.withArguments(new EntityTypeArgument("npcType"))
 			.executes((sender, args) -> {
@@ -39,8 +39,8 @@ public class InteractNpc {
 		/* Second one accepts a single NPC entity, and goes earlier to take priority over entity names */
 		new CommandAPICommand("interactnpc")
 			.withPermission(CommandPermission.fromString("scriptedquests.interactnpc"))
-			.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
-			.withArguments(new EntitySelectorArgument("npc", EntitySelectorArgument.EntitySelector.ONE_ENTITY))
+			.withArguments(new EntitySelectorArgument.ManyPlayers("players"))
+			.withArguments(new EntitySelectorArgument.OneEntity("npc"))
 			.executes((sender, args) -> {
 				Collection<Player> targets = (Collection<Player>) args[0];
 				Entity npc = (Entity) args[1];
@@ -51,7 +51,7 @@ public class InteractNpc {
 		/* Third one just has the npc name with VILLAGER as default */
 		new CommandAPICommand("interactnpc")
 			.withPermission(CommandPermission.fromString("scriptedquests.interactnpc"))
-			.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
+			.withArguments(new EntitySelectorArgument.ManyPlayers("players"))
 			.withArguments(new TextArgument("npcName"))
 			.executes((sender, args) -> {
 				Collection<Player> targets = (Collection<Player>) args[0];

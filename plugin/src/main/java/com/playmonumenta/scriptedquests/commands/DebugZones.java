@@ -12,7 +12,7 @@ public class DebugZones {
 	public static void register(Plugin plugin) {
 		new CommandAPICommand("debugzones")
 			.withPermission(CommandPermission.fromString("scriptedquests.debugzones"))
-			.withArguments(new EntitySelectorArgument("player", EntitySelectorArgument.EntitySelector.ONE_PLAYER))
+			.withArguments(new EntitySelectorArgument.OnePlayer("player"))
 			.executes((sender, args) -> {
 				plugin.mZoneManager.sendDebug(sender, (Player) args[0]);
 			})

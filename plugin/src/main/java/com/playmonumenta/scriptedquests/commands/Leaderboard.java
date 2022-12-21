@@ -23,6 +23,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
+import org.bukkit.scoreboard.Scoreboard;
 import org.jetbrains.annotations.Nullable;
 
 public class Leaderboard {
@@ -30,7 +31,7 @@ public class Leaderboard {
 	public static void register(Plugin plugin) {
 		new CommandAPICommand("leaderboard")
 			.withPermission(CommandPermission.fromString("scriptedquests.leaderboard"))
-			.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
+			.withArguments(new EntitySelectorArgument.ManyPlayers("players"))
 			.withArguments(new StringArgument("objective"))
 			.withArguments(new BooleanArgument("descending"))
 			.withArguments(new IntegerArgument("page", 1))
@@ -38,7 +39,7 @@ public class Leaderboard {
 				Collection<Player> targets = (Collection<Player>) args[0];
 				if (sender instanceof Player player) {
 					if (!player.hasPermission("scriptedquests.leaderboard.others") && (targets.size() > 1 || !targets.contains(player))) {
-						CommandAPI.fail("You do not have permission to run this as another player.");
+						throw CommandAPI.failWithString("You do not have permission to run this as another player.");
 					}
 				}
 				String objective = (String) args[1];
@@ -52,15 +53,15 @@ public class Leaderboard {
 
 		new CommandAPICommand("leaderboard")
 			.withPermission(CommandPermission.fromString("scriptedquests.leaderboard"))
-			.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
+			.withArguments(new EntitySelectorArgument.ManyPlayers("players"))
 			.withArguments(new StringArgument("objective"))
 			.withArguments(new BooleanArgument("descending"))
-			.withArguments(new EntitySelectorArgument("filterPlayers", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
+			.withArguments(new EntitySelectorArgument.ManyPlayers("filterPlayers"))
 			.executes((sender, args) -> {
 				Collection<Player> targets = (Collection<Player>) args[0];
 				if (sender instanceof Player player) {
 					if (!player.hasPermission("scriptedquests.leaderboard.others") && (targets.size() > 1 || !targets.contains(player))) {
-						CommandAPI.fail("You do not have permission to run this as another player.");
+						throw CommandAPI.failWithString("You do not have permission to run this as another player.");
 					}
 				}
 				String objective = (String) args[1];
@@ -79,7 +80,7 @@ public class Leaderboard {
 		new CommandAPICommand("leaderboard")
 			.withPermission(CommandPermission.fromString("scriptedquests.leaderboard.update"))
 			.withArguments(new MultiLiteralArgument("update"))
-			.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
+			.withArguments(new EntitySelectorArgument.ManyPlayers("players"))
 			.withArguments(new StringArgument("objective"))
 			.executes((sender, args) -> {
 				for (Player player : (Collection<Player>)args[1]) {
@@ -93,7 +94,8 @@ public class Leaderboard {
 		List<LeaderboardEntry> entries = new ArrayList<>();
 
 		/* Get the scoreboard objective (might be null) */
-		final Objective obj = Bukkit.getScoreboardManager().getMainScoreboard().getObjective(objective);
+		final Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
+		final Objective obj = scoreboard.getObjective(objective);
 
 		/* If the scoreboard objective exists, use its display name */
 		final Component displayName;
@@ -112,7 +114,7 @@ public class Leaderboard {
 			}
 			if (filterPlayers == null) {
 				/* Not filtering by players, get everyone on the scoreboard */
-				for (String name : obj.getScoreboard().getEntries()) {
+				for (String name : scoreboard.getEntries()) {
 					Score score = obj.getScore(name);
 					if (score.isScoreSet()) {
 						int value = score.getScore();

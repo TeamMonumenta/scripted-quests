@@ -13,7 +13,7 @@ public class GenerateCode {
 	public static void register(Plugin plugin) {
 		new CommandAPICommand("generatecode")
 			.withPermission(CommandPermission.fromString("scriptedquests.generatecode"))
-			.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
+			.withArguments(new EntitySelectorArgument.ManyPlayers("players"))
 			.withArguments(new TextArgument("seed"))
 			.executes((sender, args) -> {
 				generateCode(plugin, (Collection<Player>)args[0], (String)args[1]);

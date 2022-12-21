@@ -21,7 +21,7 @@ public class ImprovedClear {
 
 		new CommandAPICommand("improvedclear")
 			.withPermission(perms)
-			.withArguments(new EntitySelectorArgument("target", EntitySelectorArgument.EntitySelector.ONE_PLAYER))
+			.withArguments(new EntitySelectorArgument.OnePlayer("target"))
 			.withArguments(new TextArgument("name"))
 			.withAliases(aliases)
 			.executes((sender, args) -> {
@@ -33,43 +33,55 @@ public class ImprovedClear {
 
 		new CommandAPICommand("improvedclear")
 			.withPermission(perms)
-			.withArguments(new EntitySelectorArgument("target", EntitySelectorArgument.EntitySelector.ONE_PLAYER))
+			.withArguments(new EntitySelectorArgument.OnePlayer("target"))
 			.withArguments(new TextArgument("name"))
 			.withArguments(new IntegerArgument("maxAmount"))
 			.withAliases(aliases)
 			.executes((sender, args) -> {
-				// Make sure shulker boxes are closed so they can be clear'd
-				((Player)args[0]).closeInventory();
-				return clearInventory(((Player)args[0]).getInventory(), (String)args[1], (Integer)args[2], true, "", 0);
+				Player player = (Player) args[0];
+				String itemName = (String) args[1];
+				int maxAmount = (int) args[2];
+				// Make sure shulker boxes are closed, so they can be cleared
+				player.closeInventory();
+				return clearInventory(player.getInventory(), itemName, maxAmount, true, "", 0);
 			})
 			.register();
 
 		new CommandAPICommand("improvedclear")
 			.withPermission(perms)
-			.withArguments(new EntitySelectorArgument("target", EntitySelectorArgument.EntitySelector.ONE_PLAYER))
+			.withArguments(new EntitySelectorArgument.OnePlayer("target"))
 			.withArguments(new TextArgument("name"))
 			.withArguments(new IntegerArgument("maxAmount"))
 			.withArguments(new BooleanArgument("clearShulkers"))
 			.withAliases(aliases)
 			.executes((sender, args) -> {
-				// Make sure shulker boxes are closed so they can be clear'd
-				((Player)args[0]).closeInventory();
-				return clearInventory(((Player)args[0]).getInventory(), (String)args[1], (Integer)args[2], (Boolean)args[3], "", 0);
+				Player player = (Player) args[0];
+				String itemName = (String) args[1];
+				int maxAmount = (int) args[2];
+				boolean clearShulkers = (boolean) args[3];
+				// Make sure shulker boxes are closed, so they can be cleared
+				player.closeInventory();
+				return clearInventory(player.getInventory(), itemName, maxAmount, clearShulkers, "", 0);
 			})
 			.register();
 
 		new CommandAPICommand("improvedclear")
 			.withPermission(perms)
-			.withArguments(new EntitySelectorArgument("target", EntitySelectorArgument.EntitySelector.ONE_PLAYER))
+			.withArguments(new EntitySelectorArgument.OnePlayer("target"))
 			.withArguments(new TextArgument("name"))
 			.withArguments(new IntegerArgument("maxAmount"))
 			.withArguments(new BooleanArgument("clearShulkers"))
 			.withArguments(new TextArgument("shulkerLore"))
 			.withAliases(aliases)
 			.executes((sender, args) -> {
-				// Make sure shulker boxes are closed so they can be clear'd
-				((Player)args[0]).closeInventory();
-				return clearInventory(((Player)args[0]).getInventory(), (String)args[1], (Integer)args[2], (Boolean)args[3], (String)args[4], 0);
+				Player player = (Player) args[0];
+				String itemName = (String) args[1];
+				int maxAmount = (int) args[2];
+				boolean clearShulkers = (boolean) args[3];
+				String shulkerLore = (String) args[4];
+				// Make sure shulker boxes are closed, so they can be cleared
+				player.closeInventory();
+				return clearInventory(player.getInventory(), itemName, maxAmount, clearShulkers, shulkerLore, 0);
 			})
 			.register();
 	}
@@ -88,7 +100,7 @@ public class ImprovedClear {
 						ShulkerBox shulkerBox = (ShulkerBox) shulkerMeta.getBlockState();
 
 						// Recurse!
-						count = clearInventory(shulkerBox.getInventory(), itemName, maxAmount, clearShulkers, shulkerLore, count);
+						count = clearInventory(shulkerBox.getInventory(), itemName, maxAmount, true, shulkerLore, count);
 
 						shulkerMeta.setBlockState(shulkerBox);
 						item.setItemMeta(shulkerMeta);
@@ -99,7 +111,7 @@ public class ImprovedClear {
 						// Item matches
 						if (maxAmount != 0 && (count < maxAmount || maxAmount == -1)) {
 							// Clear the item
-							if (inv.getItem(i).getAmount() > maxAmount - count && maxAmount != -1) {
+							if (item.getAmount() > maxAmount - count && maxAmount != -1) {
 								item.setAmount(item.getAmount() - (maxAmount - count));
 								count += (maxAmount - count);
 							} else {
