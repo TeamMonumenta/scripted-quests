@@ -159,11 +159,10 @@ public class ZoneBase {
 
 	@Override
 	public boolean equals(Object o) {
-		if (!(o instanceof ZoneBase)) {
+		if (!(o instanceof ZoneBase other)) {
 			return false;
 		}
 
-		ZoneBase other = (ZoneBase)o;
 		return (mPosition.equals(other.mPosition) &&
 		        mSize.equals(other.mSize));
 	}

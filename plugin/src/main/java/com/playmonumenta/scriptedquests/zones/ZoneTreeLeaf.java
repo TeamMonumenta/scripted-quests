@@ -10,7 +10,7 @@ import org.dynmap.markers.AreaMarker;
 import org.dynmap.markers.MarkerSet;
 
 public class ZoneTreeLeaf extends ZoneTreeBase {
-	private ZoneFragment mFragment;
+	private final ZoneFragment mFragment;
 
 	public ZoneTreeLeaf(ZoneFragment zone) {
 		mFragmentCount = 1;
@@ -63,7 +63,7 @@ public class ZoneTreeLeaf extends ZoneTreeBase {
 		}
 
 		String world = Bukkit.getWorlds().get(0).getName();
-		String fragmentId = "zone_fragment_hash_" + Integer.toString(hashCode());
+		String fragmentId = "zone_fragment_hash_" + hashCode();
 		String fragmentLabel = "zone fragment";
 
 		Vector minCorner = mFragment.minCorner();
