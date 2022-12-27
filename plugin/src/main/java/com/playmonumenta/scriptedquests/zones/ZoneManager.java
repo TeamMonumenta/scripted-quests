@@ -27,6 +27,8 @@ import org.bukkit.util.Vector;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
 public class ZoneManager {
+	private static final int DEFRAGMENT_ON_MERGE_THRESHOLD = 64;
+
 	private final Plugin mPlugin;
 	static @MonotonicNonNull BukkitRunnable mPlayerTracker = null;
 	static @Nullable BukkitRunnable mAsyncReloadHandler = null;
@@ -612,9 +614,13 @@ public class ZoneManager {
 					continue;
 				}
 				outerZone.splitByOverlap(overlap, innerZone, true);
-				outerZone.defragment();
+				if (outerZone.getZoneFragments().size() >= DEFRAGMENT_ON_MERGE_THRESHOLD) {
+					outerZone.defragment();
+				}
 				innerZone.splitByOverlap(overlap, outerZone);
-				innerZone.defragment();
+				if (innerZone.getZoneFragments().size() >= DEFRAGMENT_ON_MERGE_THRESHOLD) {
+					innerZone.defragment();
+				}
 			}
 		}
 	}

@@ -105,34 +105,6 @@ public class ZoneFragment extends ZoneBase {
 			@Nullable ZoneFragment lower;
 			@Nullable ZoneFragment upper;
 
-			List<ZoneFragment> workZones = result;
-			result = new ArrayList<>();
-
-			for (@Nullable ZoneFragment workZone : workZones) {
-				if (workZone == null) {
-					continue;
-				}
-
-				// Add zones split from existing split zones
-				tempSplitResult = workZone.splitAxis(otherMin, axis);
-				lower = tempSplitResult[0];
-				workZone = tempSplitResult[1];
-
-				tempSplitResult = workZone.splitAxis(otherMax, axis);
-				workZone = tempSplitResult[0];
-				upper = tempSplitResult[1];
-
-				if (lower != null && lower.isValid()) {
-					result.add(lower);
-				}
-				if (workZone != null && workZone.isValid()) {
-					result.add(workZone);
-				}
-				if (upper != null && upper.isValid()) {
-					result.add(upper);
-				}
-			}
-
 			// Add zones split from center, but not the center (overlap) itself
 			tempSplitResult = centerZone.splitAxis(otherMin, axis);
 			lower = tempSplitResult[0];
