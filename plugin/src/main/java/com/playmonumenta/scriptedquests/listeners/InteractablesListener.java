@@ -27,6 +27,8 @@ import org.bukkit.inventory.ItemStack;
 
 public class InteractablesListener implements Listener {
 	private static final String ADVENTURE_INTERACT_METAKEY = "ScriptedQuestsInteractable";
+	private static final String ATTACK_INTERACT_METAKEY = "ScriptedQuestsAttackInteraction";
+	private static final String ATTACK_INTERACT_CANCEL_METAKEY = "ScriptedQuestsAttackInteractionCancel";
 	private final Plugin mPlugin;
 
 	public InteractablesListener(Plugin plugin) {
@@ -35,7 +37,7 @@ public class InteractablesListener implements Listener {
 
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
 	public void playerInteractEvent(PlayerInteractEvent event) {
-		if (event.useItemInHand() != Event.Result.DENY) {
+		if (event.useItemInHand() != Event.Result.DENY && event.getAction() != Action.PHYSICAL) {
 			Action action = event.getAction();
 			Player player = event.getPlayer();
 
@@ -46,6 +48,14 @@ public class InteractablesListener implements Listener {
 
 			ItemStack item = event.getItem();
 			Block block = event.getClickedBlock();
+
+			// If a left click was handled by an attack already, don't handle it again
+			if (event.getAction() == Action.LEFT_CLICK_AIR && MetadataUtils.happenedThisTick(player, ATTACK_INTERACT_METAKEY, 0)) {
+				if (MetadataUtils.happenedThisTick(player, ATTACK_INTERACT_CANCEL_METAKEY, 0)) {
+					event.setCancelled(true);
+				}
+				return;
+			}
 
 			if (mPlugin.mInteractableManager.interactEvent(mPlugin, player, item, block, action)) {
 				// interactEvent returning true means this event should be canceled
@@ -107,6 +117,13 @@ public class InteractablesListener implements Listener {
 			if (mPlugin.mInteractableManager.attackEntityEvent(mPlugin, player, item, damagee)) {
 				// interactEntityEvent returning true means this event should be canceled
 				event.setCancelled(true);
+			}
+
+			// Handle attacks as left clicks on air, as no interact event will be fired if a block would have been hit if the mob wasn't there
+			MetadataUtils.checkOnceThisTick(Plugin.getInstance(), player, ATTACK_INTERACT_METAKEY);
+			if (mPlugin.mInteractableManager.interactEvent(mPlugin, player, item, null, Action.LEFT_CLICK_AIR)) {
+				// interactEvent returning true does NOT mean that this event should be canceled, but that the following interact event should be cancelled.
+				MetadataUtils.checkOnceThisTick(Plugin.getInstance(), player, ATTACK_INTERACT_CANCEL_METAKEY);
 			}
 		}
 	}
