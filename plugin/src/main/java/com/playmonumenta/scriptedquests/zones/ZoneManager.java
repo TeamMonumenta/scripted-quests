@@ -2,6 +2,7 @@ package com.playmonumenta.scriptedquests.zones;
 
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.utils.ArgUtils;
+import com.playmonumenta.scriptedquests.utils.MMLog;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
 import java.util.ArrayList;
@@ -26,6 +27,8 @@ import org.bukkit.util.Vector;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
 public class ZoneManager {
+	private static final int DEFRAGMENT_ON_MERGE_THRESHOLD = 64;
+
 	private final Plugin mPlugin;
 	static @MonotonicNonNull BukkitRunnable mPlayerTracker = null;
 	static @Nullable BukkitRunnable mAsyncReloadHandler = null;
@@ -298,17 +301,21 @@ public class ZoneManager {
 	}
 
 	public void doReload(Plugin plugin) {
+		MMLog.fine("[Zone Reload] Begin");
 		mReloadRequesters = mQueuedReloadRequesters;
 		mQueuedReloadRequesters = new HashSet<>();
 		mReloadRequesters.add(Bukkit.getConsoleSender());
 
+		long cpuNanos = System.nanoTime();
 		for (ZoneLayer layer : mLayers.values()) {
 			// Cause zones to stop tracking their fragments; speeds up garbage collection.
 			layer.invalidate();
 		}
 		mLayers.clear();
 		ZoneLayer.clearDynmapLayers();
+		MMLog.fine("[Zone Reload] " + String.format("%13.9f", (System.nanoTime() - cpuNanos) / 1000000000.0) + "s Resetting old data");
 
+		cpuNanos = System.nanoTime();
 		plugin.mZonePropertyGroupManager.reload(plugin, mReloadRequesters);
 
 		// Refresh plugin layers
@@ -330,6 +337,7 @@ public class ZoneManager {
 
 			return layerName + ":" + layer.getZones().size();
 		});
+		MMLog.fine("[Zone Reload] " + String.format("%13.9f", (System.nanoTime() - cpuNanos) / 1000000000.0) + "s Loading new data");
 
 		for (@Nullable CommandSender sender : mReloadRequesters) {
 			if (sender != null) {
@@ -338,7 +346,9 @@ public class ZoneManager {
 		}
 
 		// Merge zone fragments within layers to prevent overlaps
+		cpuNanos = System.nanoTime();
 		mergeLayers();
+		MMLog.fine("[Zone Reload] " + String.format("%13.9f", (System.nanoTime() - cpuNanos) / 1000000000.0) + "s Merging layer data");
 
 		// Create list of zones
 		List<Zone> zones = new ArrayList<>();
@@ -347,9 +357,11 @@ public class ZoneManager {
 		}
 
 		// Defragment to reduce fragment count (approx 2-3x on average). This takes a long time.
+		cpuNanos = System.nanoTime();
 		for (Zone zone : zones) {
 			zone.defragment();
 		}
+		MMLog.fine("[Zone Reload] " + String.format("%13.9f", (System.nanoTime() - cpuNanos) / 1000000000.0) + "s Defragmenting zones");
 
 		// Create list of all zone fragments.
 		List<ZoneFragment> zoneFragments = new ArrayList<>();
@@ -360,7 +372,9 @@ public class ZoneManager {
 		// Create the new tree. This could take a long time with enough fragments.
 		ZoneTreeBase newTree;
 		try {
+			cpuNanos = System.nanoTime();
 			newTree = ZoneTreeBase.createZoneTree(zoneFragments);
+			MMLog.fine("[Zone Reload] " + String.format("%13.9f", (System.nanoTime() - cpuNanos) / 1000000000.0) + "s Creating tree");
 			if (mPlugin.mShowZonesDynmap) {
 				newTree.refreshDynmapTree();
 			}
@@ -600,9 +614,13 @@ public class ZoneManager {
 					continue;
 				}
 				outerZone.splitByOverlap(overlap, innerZone, true);
-				outerZone.defragment();
+				if (outerZone.getZoneFragments().size() >= DEFRAGMENT_ON_MERGE_THRESHOLD) {
+					outerZone.defragment();
+				}
 				innerZone.splitByOverlap(overlap, outerZone);
-				innerZone.defragment();
+				if (innerZone.getZoneFragments().size() >= DEFRAGMENT_ON_MERGE_THRESHOLD) {
+					innerZone.defragment();
+				}
 			}
 		}
 	}
