@@ -119,7 +119,7 @@ public class Plugin extends JavaPlugin {
 		Code.register(this);
 		SetVelocity.register();
 		DebugZones.register(this);
-		TestZone.register(this);
+		TestZone.register();
 		Heal.register();
 		Damage.register();
 		Cooldown.register();
@@ -154,7 +154,7 @@ public class Plugin extends JavaPlugin {
 		mRaceManager = new RaceManager(this);
 		mCodeManager = new CodeManager();
 		mZoneEventListener = new ZoneEventListener(this);
-		mZoneManager = new ZoneManager(this);
+		mZoneManager = ZoneManager.getInstance(this);
 		mZonePropertyManager = new ZonePropertyManager(this);
 		mZonePropertyGroupManager = new ZonePropertyGroupManager();
 		mTimerManager = new CommandTimerManager(this);

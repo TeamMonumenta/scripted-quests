@@ -6,6 +6,7 @@ import com.playmonumenta.scriptedquests.point.Point;
 import com.playmonumenta.scriptedquests.quests.QuestDeath.DeathActions;
 import com.playmonumenta.scriptedquests.quests.components.DeathLocation;
 import com.playmonumenta.scriptedquests.utils.MetadataUtils;
+import com.playmonumenta.scriptedquests.zones.ZoneManager;
 import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.GameMode;
@@ -225,7 +226,7 @@ public class PlayerListener implements Listener {
 		mPlugin.mRaceManager.cancelRace(player);
 
 		// Remove all zone properties from the player
-		mPlugin.mZoneManager.unregisterPlayer(player);
+		ZoneManager.getInstance().unregisterPlayer(player);
 
 		// Remove all metadata set by this plugin for the player
 		player.removeMetadata(Constants.PLAYER_DEATH_LOCATION_METAKEY, mPlugin);
