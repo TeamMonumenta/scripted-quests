@@ -52,7 +52,7 @@ public class ZoneManager {
 		mQueuedReloadRequesters.add(Bukkit.getConsoleSender());
 	}
 
-	public static ZoneManager getInstance(Plugin plugin) {
+	public static ZoneManager createInstance(Plugin plugin) {
 		INSTANCE = new ZoneManager(plugin);
 		return INSTANCE;
 	}

@@ -154,7 +154,7 @@ public class Plugin extends JavaPlugin {
 		mRaceManager = new RaceManager(this);
 		mCodeManager = new CodeManager();
 		mZoneEventListener = new ZoneEventListener(this);
-		mZoneManager = ZoneManager.getInstance(this);
+		mZoneManager = ZoneManager.createInstance(this);
 		mZonePropertyManager = new ZonePropertyManager(this);
 		mZonePropertyGroupManager = new ZonePropertyGroupManager();
 		mTimerManager = new CommandTimerManager(this);
