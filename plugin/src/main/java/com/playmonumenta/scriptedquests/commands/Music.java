@@ -26,7 +26,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.Nullable;
 import org.bukkit.Bukkit;
-import org.bukkit.Sound;
+import org.bukkit.NamespacedKey;
 import org.bukkit.SoundCategory;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -34,14 +34,14 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class Music {
 	private static class Song {
-		public Sound mSongPath;
+		public String mSongPath;
 		public SoundCategory mCategory;
 		public long mSongDuration;
 		public boolean mIsLoop;
 		public float mVolume;
 		public float mPitch;
 
-		public Song(Sound path, SoundCategory category, double durationSeconds, boolean isLoop, float volume, float pitch) {
+		public Song(String path, SoundCategory category, double durationSeconds, boolean isLoop, float volume, float pitch) {
 			mSongPath = path;
 			mCategory = category;
 			mSongDuration = (long) (1000.0f * durationSeconds);
@@ -156,15 +156,15 @@ public class Music {
 	private static final ConcurrentMap<UUID, PlayerState> mPlayerStates = new ConcurrentHashMap<>();
 
 	public static void register() {
-		List<Argument> arguments = new ArrayList<>();
+		List<Argument<?>> arguments = new ArrayList<>();
 		arguments.add(new MultiLiteralArgument("music"));
 		arguments.add(new MultiLiteralArgument("play"));
 		arguments.add(new MultiLiteralArgument("now", "next"));
-		arguments.add(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS));
-		arguments.add(new SoundArgument("music path"));
+		arguments.add(new EntitySelectorArgument.ManyPlayers("players"));
+		arguments.add(new SoundArgument.NamespacedKey("music path"));
 		arguments.add(new DoubleArgument("duration in seconds", 0.001));
 
-		List<Argument> optionalArguments = new ArrayList<>();
+		List<Argument<?>> optionalArguments = new ArrayList<>();
 		optionalArguments.add(new BooleanArgument("is loop"));
 		optionalArguments.add(new MultiLiteralArgument("master", "music", "record", "weather", "block", "hostile", "neutral", "player", "ambient", "voice"));
 		optionalArguments.add(new FloatArgument("volume", 0.0f, 1.0f));
@@ -176,7 +176,7 @@ public class Music {
 			.executes(Music::runPlay)
 			.register();
 
-		for (Argument argument : optionalArguments) {
+		for (Argument<?> argument : optionalArguments) {
 			arguments.add(argument);
 			new CommandAPICommand("monumenta")
 				.withPermission(CommandPermission.fromString("scriptedquests.music.play"))
@@ -190,7 +190,7 @@ public class Music {
 			.withArguments(new MultiLiteralArgument("music"))
 			.withArguments(new MultiLiteralArgument("cancel"))
 			.withArguments(new MultiLiteralArgument("now", "next"))
-			.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
+			.withArguments(new EntitySelectorArgument.ManyPlayers("players"))
 			.executes(Music::runStop)
 			.register();
 	}
@@ -203,11 +203,11 @@ public class Music {
 
 		if (sender instanceof Player player) {
 			if (!player.hasPermission("scriptedquests.music.play.others") && (players.size() > 1 || !players.contains(player))) {
-				CommandAPI.fail("You do not have permission to run this as another player.");
+				throw CommandAPI.failWithString("You do not have permission to run this as another player.");
 			}
 		}
 
-		Sound musicPath = (Sound) args[4];
+		NamespacedKey musicPath = (NamespacedKey) args[4];
 		double duration = (Double) args[5];
 		boolean isLoop;
 		if (args.length > 6) {
@@ -245,7 +245,7 @@ public class Music {
 		} else {
 			pitch = 1.0f;
 		}
-		Song song = new Song(musicPath, category, duration, isLoop, volume, pitch);
+		Song song = new Song(musicPath.asString(), category, duration, isLoop, volume, pitch);
 
 		for (Player player : players) {
 			UUID playerId = player.getUniqueId();
@@ -269,7 +269,7 @@ public class Music {
 
 		if (sender instanceof Player player) {
 			if (!player.hasPermission("scriptedquests.music.cancel.others") && (players.size() > 1 || !players.contains(player))) {
-				CommandAPI.fail("You do not have permission to run this as another player.");
+				throw  CommandAPI.failWithString("You do not have permission to run this as another player.");
 			}
 		}
 
