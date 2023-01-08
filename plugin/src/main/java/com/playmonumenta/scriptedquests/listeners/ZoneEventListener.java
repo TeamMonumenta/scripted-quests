@@ -3,6 +3,7 @@ package com.playmonumenta.scriptedquests.listeners;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.ZoneProperty;
 import com.playmonumenta.scriptedquests.utils.MetadataUtils;
+import com.playmonumenta.scriptedquests.zones.ZoneManager;
 import com.playmonumenta.scriptedquests.zones.event.ZoneBlockBreakEvent;
 import com.playmonumenta.scriptedquests.zones.event.ZoneBlockInteractEvent;
 import com.playmonumenta.scriptedquests.zones.event.ZoneEvent;
@@ -63,7 +64,7 @@ public class ZoneEventListener implements Listener {
 		for (Map.Entry<String, Map<String, ZoneProperty>> layer : mPlugin.mZonePropertyManager.getZoneProperties().entrySet()) {
 			for (Map.Entry<String, ZoneProperty> property : layer.getValue().entrySet()) {
 				Collection<? extends T> events = property.getValue().getEvents(eventClass);
-				if (!events.isEmpty() && mPlugin.mZoneManager.hasProperty(location, layer.getKey(), property.getKey())) {
+				if (!events.isEmpty() && ZoneManager.getInstance().hasProperty(location, layer.getKey(), property.getKey())) {
 					action.execute(events, layer.getKey(), property.getKey());
 				}
 			}
@@ -77,7 +78,7 @@ public class ZoneEventListener implements Listener {
 			execute(event.getPlayer().getLocation(), ZoneRemoteClickEvent.class, (events, layer, propertyName) -> {
 				for (ZoneRemoteClickEvent e : events) {
 					Block block = e.getBlock(event.getPlayer(), Action.RIGHT_CLICK_AIR);
-					if (block != null && mPlugin.mZoneManager.hasProperty(block.getLocation(), layer, propertyName)) {
+					if (block != null && ZoneManager.getInstance().hasProperty(block.getLocation(), layer, propertyName)) {
 						e.execute(event.getPlayer(), block);
 					}
 				}
@@ -93,7 +94,7 @@ public class ZoneEventListener implements Listener {
 				execute(event.getPlayer().getLocation(), ZoneRemoteClickEvent.class, (events, layer, propertyName) -> {
 					for (ZoneRemoteClickEvent e : events) {
 						Block block = e.getBlock(event.getPlayer(), event.getAction());
-						if (block != null && mPlugin.mZoneManager.hasProperty(block.getLocation(), layer, propertyName)) {
+						if (block != null && ZoneManager.getInstance().hasProperty(block.getLocation(), layer, propertyName)) {
 							e.execute(event.getPlayer(), block);
 						}
 					}

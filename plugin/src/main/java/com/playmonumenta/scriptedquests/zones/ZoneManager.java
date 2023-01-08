@@ -32,6 +32,7 @@ public class ZoneManager {
 	private static final String[] SUGGESTIONS_EXECUTE_FALLBACK = {"\"Suggestions unavailable through /execute\""};
 
 	private final Plugin mPlugin;
+	private static ZoneManager INSTANCE = null;
 	static @MonotonicNonNull BukkitRunnable mPlayerTracker = null;
 	static @Nullable BukkitRunnable mAsyncReloadHandler = null;
 
@@ -46,9 +47,21 @@ public class ZoneManager {
 	private Set<CommandSender> mReloadRequesters = new HashSet<>();
 	private Set<CommandSender> mQueuedReloadRequesters = new HashSet<>();
 
-	public ZoneManager(Plugin plugin) {
+	private ZoneManager(Plugin plugin) {
 		mPlugin = plugin;
 		mQueuedReloadRequesters.add(Bukkit.getConsoleSender());
+	}
+
+	public static ZoneManager createInstance(Plugin plugin) {
+		INSTANCE = new ZoneManager(plugin);
+		return INSTANCE;
+	}
+
+	public static ZoneManager getInstance() {
+		if (INSTANCE == null) {
+			throw new RuntimeException("Attempted to access ZoneManager before initialization");
+		}
+		return INSTANCE;
 	}
 
 	/************************************************************************************
@@ -233,8 +246,8 @@ public class ZoneManager {
 		return ArgUtils.quoteIfNeeded(new TreeSet<>(getLayerNames()));
 	}
 
-	public ArgumentSuggestions getLayerNameArgumentSuggestions() {
-		return ArgumentSuggestions.strings(info -> getLayerNameSuggestions());
+	public static ArgumentSuggestions getLayerNameArgumentSuggestions() {
+		return ArgumentSuggestions.strings(info -> getInstance().getLayerNameSuggestions());
 	}
 
 	public Set<String> getLoadedProperties(String layerName) {
@@ -254,11 +267,11 @@ public class ZoneManager {
 		return ArgUtils.quoteIfNeeded(suggestions);
 	}
 
-	public ArgumentSuggestions getLoadedPropertyArgumentSuggestions(String layerName) {
-		return ArgumentSuggestions.strings(info -> getLoadedPropertySuggestions(layerName));
+	public static ArgumentSuggestions getLoadedPropertyArgumentSuggestions(String layerName) {
+		return ArgumentSuggestions.strings(info -> getInstance().getLoadedPropertySuggestions(layerName));
 	}
 
-	public ArgumentSuggestions getLoadedPropertyArgumentSuggestions(int layerNameArgIndex) {
+	public static ArgumentSuggestions getLoadedPropertyArgumentSuggestions(int layerNameArgIndex) {
 		return ArgumentSuggestions.strings(info -> {
 			Object[] args = info.previousArgs();
 			if (args.length == 0) {
@@ -274,7 +287,7 @@ public class ZoneManager {
 				return new String[]{"\"Invalid argument index for layer name: " + index + "\""};
 			}
 
-			return getLoadedPropertySuggestions((String) args[index]);
+			return getInstance().getLoadedPropertySuggestions((String) args[index]);
 		});
 	}
 

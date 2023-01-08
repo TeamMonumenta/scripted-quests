@@ -3,10 +3,10 @@ package com.playmonumenta.scriptedquests.quests.components.prerequisites;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.zones.Zone;
 import com.playmonumenta.scriptedquests.zones.ZoneFragment;
+import com.playmonumenta.scriptedquests.zones.ZoneManager;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -70,7 +70,7 @@ public class PrerequisiteZoneProperties implements PrerequisiteBase {
 	@Override
 	public boolean prerequisiteMet(QuestContext context) {
 		Location loc = context.getEntityUsedForPrerequisites().getLocation();
-		ZoneFragment fragment = Plugin.getInstance().mZoneManager.getZoneFragment(loc);
+		ZoneFragment fragment = ZoneManager.getInstance().getZoneFragment(loc);
 
 		// If no fragment exists here, neither do zones or layers.
 		if (fragment == null) {
