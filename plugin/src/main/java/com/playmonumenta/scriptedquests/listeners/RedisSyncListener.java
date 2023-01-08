@@ -3,6 +3,7 @@ package com.playmonumenta.scriptedquests.listeners;
 import com.playmonumenta.redissync.event.PlayerServerTransferEvent;
 import com.playmonumenta.redissync.event.PlayerTransferFailEvent;
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.zones.ZoneManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -19,12 +20,12 @@ public class RedisSyncListener implements Listener {
 	public void playerServerTransferEvent(PlayerServerTransferEvent event) {
 		Player player = event.getPlayer();
 		mPlugin.mRaceManager.cancelRace(player);
-		mPlugin.mZoneManager.setTransferring(player, true);
+		ZoneManager.getInstance().setTransferring(player, true);
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
 	public void playerTransferFailEvent(PlayerTransferFailEvent event) {
 		Player player = event.getPlayer();
-		mPlugin.mZoneManager.setTransferring(player, false);
+		ZoneManager.getInstance().setTransferring(player, false);
 	}
 }
