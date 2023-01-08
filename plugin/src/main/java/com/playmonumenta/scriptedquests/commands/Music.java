@@ -269,7 +269,7 @@ public class Music {
 
 		if (sender instanceof Player player) {
 			if (!player.hasPermission("scriptedquests.music.cancel.others") && (players.size() > 1 || !players.contains(player))) {
-				throw  CommandAPI.failWithString("You do not have permission to run this as another player.");
+				throw CommandAPI.failWithString("You do not have permission to run this as another player.");
 			}
 		}
 
