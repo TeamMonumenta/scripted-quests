@@ -1,6 +1,7 @@
 package com.playmonumenta.scriptedquests.quests.components;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.quests.QuestContext;
 import java.util.Map.Entry;
@@ -69,7 +70,10 @@ public class QuestComponent {
 
 	public Optional<JsonElement> serializeForClientAPI(QuestContext context) {
 		if (mPrerequisites == null || mPrerequisites.prerequisiteMet(context)) {
-			return mActions.serializeForClientAPI(context);
+			JsonElement sub = mActions.serializeForClientAPI(context);
+			if (!sub.equals(JsonNull.INSTANCE)) {
+				return Optional.of(sub);
+			}
 		}
 		return Optional.empty();
 	}

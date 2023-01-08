@@ -17,6 +17,7 @@ import com.playmonumenta.scriptedquests.utils.FileUtils;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
+import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.StringArgument;
 import java.io.File;
 import java.io.FileInputStream;
@@ -86,9 +87,8 @@ public class TranslationsManager implements Listener {
 		new CommandAPICommand("changelanguage")
 			.withPermission(CommandPermission.fromString("scriptedquests.translations.changelanguage"))
 			.withAliases("cl")
-			.withArguments(new StringArgument("language").replaceSuggestions(info -> {
-				return getListOfAvailableLanguages(true).values().toArray(new String[0]);
-			}))
+			.withArguments(new StringArgument("language").replaceSuggestions(ArgumentSuggestions.strings(info ->
+				getListOfAvailableLanguages(true).values().toArray(new String[0]))))
 			.executes((sender, args) -> {
 				changeLanguage(sender, (String)args[0]);
 			}).register();
@@ -111,7 +111,7 @@ public class TranslationsManager implements Listener {
 		if (INSTANCE == null) {
 			return message;
 		}
-		return INSTANCE.translatePriv(message, player);
+		return INSTANCE.translatePrivate(message, player);
 	}
 
 	public static String getLanguageOfPlayer(Player player) {
@@ -124,15 +124,13 @@ public class TranslationsManager implements Listener {
 	}
 
 	private void changeLanguage(CommandSender sender, String arg) {
-		if (sender instanceof ProxiedCommandSender) {
-			ProxiedCommandSender target = (ProxiedCommandSender)sender;
+		if (sender instanceof ProxiedCommandSender target) {
 			sender = target.getCallee();
 		}
-		if (!(sender instanceof Player)) {
+		if (!(sender instanceof Player player)) {
 			sender.sendMessage("This command can only be run by players");
 			return;
 		}
-		Player player = (Player)sender;
 
 		String wantedLang = null;
 		// go through the language list for a matching argument
@@ -253,7 +251,7 @@ public class TranslationsManager implements Listener {
 		}
 	}
 
-	private String translatePriv(String message, Player player) {
+	private String translatePrivate(String message, Player player) {
 
 		String lang = mPlayerLanguageMap.get(player.getUniqueId());
 
@@ -264,7 +262,7 @@ public class TranslationsManager implements Listener {
 
 		TreeMap<String, String> translations = mTranslationsMap.get(message);
 		if (translations == null) {
-			// no translations for this message. means its new in the system. needs to be added.
+			// no translations for this message. means it's new in the system. needs to be added.
 			// do not attempt to translate afterwards, since there will be no translation for that new string anyway
 			addNewEntry(message);
 			return message;
@@ -293,7 +291,7 @@ public class TranslationsManager implements Listener {
 		mWriteDelayTicks = WRITE_DELAY_TICKS;
 
 		if (mWriteAndReloadRunnable != null && !mWriteAndReloadRunnable.isCancelled()) {
-			/* A write is already scheduled, don't need to do anything */
+			/* A write operation is already scheduled, don't need to do anything */
 			return;
 		}
 
@@ -437,6 +435,11 @@ public class TranslationsManager implements Listener {
 				return;
 			}
 
+			if (mGSheetConfig == null) {
+				sender.sendMessage("Failed initialize Google Sheets: no Google Sheets config file");
+				return;
+			}
+
 			TranslationGSheet gSheet;
 			try {
 				sender.sendMessage("Initializing Google Sheets");
@@ -451,7 +454,7 @@ public class TranslationsManager implements Listener {
 			try {
 				sender.sendMessage("Reading values");
 				rows = gSheet.readSheet();
-				sender.sendMessage("Recieved " + rows.size() + " rows from the GSheet");
+				sender.sendMessage("Received " + rows.size() + " rows from the GSheet");
 			} catch (IOException e) {
 				sender.sendMessage("Failed to read values from sheet. Abort. error: " + e.getMessage());
 				e.printStackTrace();
@@ -523,7 +526,7 @@ public class TranslationsManager implements Listener {
 	}
 
 	public TreeMap<String, String> getListOfAvailableLanguages(boolean includeDefault) {
-		// if null, a lot of things will break. its good that nullpointers will show up then.
+		// if null, a lot of things will break. it's good that null pointers will show up then.
 		TreeMap<String, String> out = new TreeMap<>();
 		if (includeDefault) {
 			out.put("en | English", "English");

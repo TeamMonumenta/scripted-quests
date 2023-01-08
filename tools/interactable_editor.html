@@ -105,15 +105,24 @@
                 cancel_event: {
                     required: false,
                     propertyOrder: 3,
-                    title: "cancel_event",
+                    title: "cancel event",
                     description: "If any component has all of its prerequisites succeed, stop actions such as opening chests, clicking buttons, throwing ender pearls, etc.",
+                    type: "boolean",
+                    format: "checkbox",
+                    default: false
+                },
+                allow_item_on_cooldown: {
+                    required: false,
+                    propertyOrder: 4,
+                    title: "allow item on cooldown",
+                    description: "If false (the default), will ignore this interactible if the base material is on cooldown for the player.",
                     type: "boolean",
                     format: "checkbox",
                     default: false
                 },
                 quest_components: {
                     required: true,
-                    propertyOrder: 4,
+                    propertyOrder: 5,
                     title: "quest_components",
                     description: "A list of actions with associated prerequisites",
                     type: "array",

@@ -110,7 +110,7 @@ public class ActionSetScore implements ActionBase {
 	}
 
 	@Override
-	public void doAction(QuestContext context) {
+	public void doActions(QuestContext context) {
 		mSetScore.apply(context.getPlayer(), mScoreName);
 	}
 }

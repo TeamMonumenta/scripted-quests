@@ -5,6 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
+import com.playmonumenta.scriptedquests.utils.JsonUtils;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Map;
@@ -23,7 +24,8 @@ public class InteractableEntry {
 		LEFT_CLICK_BLOCK,
 		LEFT_CLICK_ENTITY,
 		LEFT_CLICK_INVENTORY,
-		SWAP_HANDS;
+		SWAP_HANDS,
+		SWAP_HANDS_INVENTORY;
 
 		public static InteractType fromString(String str) throws Exception {
 			switch (str) {
@@ -47,6 +49,8 @@ public class InteractableEntry {
 					return LEFT_CLICK_INVENTORY;
 				case "swap_hands":
 					return SWAP_HANDS;
+				case "swap_hands_inventory":
+					return SWAP_HANDS_INVENTORY;
 				default:
 					throw new Exception("Unknown click_type: " + str);
 			}
@@ -56,7 +60,8 @@ public class InteractableEntry {
 	private final ArrayList<QuestComponent> mComponents = new ArrayList<>();
 	private final EnumSet<InteractType> mInteractTypes = EnumSet.noneOf(InteractType.class);
 	private final ImmutableSet<Material> mMaterials;
-	private final Boolean mCancelEvent;
+	private final boolean mCancelEvent;
+	private final boolean mAllowItemOnCooldown;
 
 	public InteractableEntry(JsonObject object) throws Exception {
 		//////////////////////////////////////// material (Required) ////////////////////////////////////////
@@ -115,13 +120,16 @@ public class InteractableEntry {
 		JsonElement cancelEvent = object.get("cancel_event");
 		mCancelEvent = cancelEvent != null && cancelEvent.getAsBoolean();
 
+		//////////////////////////////////////// allow_item_on_cooldown (Optional) ////////////////////////////////////////
+		mAllowItemOnCooldown = JsonUtils.getBoolean(object, "allow_item_on_cooldown", false);
+
 		//////////////////////////////////////// Fail if other keys exist ////////////////////////////////////////
 		Set<Map.Entry<String, JsonElement>> entries = object.entrySet();
 		for (Map.Entry<String, JsonElement> ent : entries) {
 			String key = ent.getKey();
 
 			if (!key.equals("material") && !key.equals("click_types") && !key.equals("cancel_event")
-				    && !key.equals("quest_components")) {
+				    && !key.equals("quest_components") && !key.equals("allow_item_on_cooldown")) {
 				throw new Exception("Unknown quest key: " + key);
 			}
 		}
@@ -136,6 +144,12 @@ public class InteractableEntry {
 	}
 
 	public boolean interactEvent(QuestContext context, InteractType interactType) {
+		if (!mAllowItemOnCooldown
+			    && context.getUsedItem() != null
+			    && !context.getUsedItem().getType().isAir()
+			    && context.getPlayer().getCooldown(context.getUsedItem().getType()) > 0) {
+			return false;
+		}
 		boolean cancelEvent = false;
 		if (mInteractTypes.contains(interactType)) {
 			for (QuestComponent component : mComponents) {

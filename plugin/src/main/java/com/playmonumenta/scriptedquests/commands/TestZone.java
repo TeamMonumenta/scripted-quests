@@ -11,15 +11,11 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 
 public class TestZone {
-	private static final String[] EXECUTE_FALLBACK_SUGGESTION = {"\"Suggestions unavaible through /execute\""};
-
 	public static void register(Plugin plugin) {
 		new CommandAPICommand("testzones")
 			.withPermission(CommandPermission.fromString("scriptedquests.testzones"))
 			.withArguments(new LocationArgument("location"))
-			.withArguments(new TextArgument("layer").replaceSuggestions(info -> {
-				return plugin.mZoneManager.getLayerNameSuggestions();
-			}))
+			.withArguments(new TextArgument("layer").replaceSuggestions(plugin.mZoneManager.getLayerNameArgumentSuggestions()))
 			.executes((sender, args) -> {
 				return inLayer(plugin, (Location) args[0], (String) args[1]);
 			})
@@ -28,16 +24,8 @@ public class TestZone {
 		new CommandAPICommand("testzones")
 			.withPermission(CommandPermission.fromString("scriptedquests.testzones"))
 			.withArguments(new LocationArgument("location"))
-			.withArguments(new TextArgument("layer").replaceSuggestions(info -> {
-				return plugin.mZoneManager.getLayerNameSuggestions();
-			}))
-			.withArguments(new TextArgument("property").replaceSuggestions(info -> {
-				Object[] args = info.previousArgs();
-				if (args.length == 0) {
-					return EXECUTE_FALLBACK_SUGGESTION;
-				}
-				return plugin.mZoneManager.getLoadedPropertySuggestions((String) args[1]);
-			}))
+			.withArguments(new TextArgument("layer").replaceSuggestions(plugin.mZoneManager.getLayerNameArgumentSuggestions()))
+			.withArguments(new TextArgument("property").replaceSuggestions(plugin.mZoneManager.getLoadedPropertyArgumentSuggestions(1)))
 			.executes((sender, args) -> {
 				return hasProperty(plugin, (Location) args[0], (String) args[1], (String) args[2]);
 			})
@@ -46,16 +34,8 @@ public class TestZone {
 		new CommandAPICommand("testzones")
 			.withPermission(CommandPermission.fromString("scriptedquests.testzones"))
 			.withArguments(new LocationArgument("location"))
-			.withArguments(new TextArgument("layer").replaceSuggestions(info -> {
-				return plugin.mZoneManager.getLayerNameSuggestions();
-			}))
-			.withArguments(new TextArgument("property").replaceSuggestions(info -> {
-				Object[] args = info.previousArgs();
-				if (args.length == 0) {
-					return EXECUTE_FALLBACK_SUGGESTION;
-				}
-				return plugin.mZoneManager.getLoadedPropertySuggestions((String) args[1]);
-			}))
+			.withArguments(new TextArgument("layer").replaceSuggestions(plugin.mZoneManager.getLayerNameArgumentSuggestions()))
+			.withArguments(new TextArgument("property").replaceSuggestions(plugin.mZoneManager.getLoadedPropertyArgumentSuggestions(1)))
 			.withArguments(new MultiLiteralArgument("tellresult"))
 			.executes((sender, args) -> {
 				String layerName = (String) args[1];

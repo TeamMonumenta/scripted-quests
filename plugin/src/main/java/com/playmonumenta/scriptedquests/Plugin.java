@@ -2,6 +2,7 @@ package com.playmonumenta.scriptedquests;
 
 import com.playmonumenta.scriptedquests.api.ClientChatProtocol;
 import com.playmonumenta.scriptedquests.commands.*;
+import com.playmonumenta.scriptedquests.growables.GrowableAPI;
 import com.playmonumenta.scriptedquests.listeners.EntityListener;
 import com.playmonumenta.scriptedquests.listeners.InteractablesListener;
 import com.playmonumenta.scriptedquests.listeners.PlayerListener;
@@ -10,7 +11,6 @@ import com.playmonumenta.scriptedquests.listeners.WorldListener;
 import com.playmonumenta.scriptedquests.listeners.ZoneEventListener;
 import com.playmonumenta.scriptedquests.managers.ClickableManager;
 import com.playmonumenta.scriptedquests.managers.CodeManager;
-import com.playmonumenta.scriptedquests.managers.GrowableManager;
 import com.playmonumenta.scriptedquests.managers.GuiManager;
 import com.playmonumenta.scriptedquests.managers.InteractableManager;
 import com.playmonumenta.scriptedquests.managers.NpcTradeManager;
@@ -28,6 +28,8 @@ import com.playmonumenta.scriptedquests.utils.MetadataUtils;
 import com.playmonumenta.scriptedquests.utils.NmsUtils;
 import com.playmonumenta.scriptedquests.zones.ZoneManager;
 import com.playmonumenta.scriptedquests.zones.ZonePropertyGroupManager;
+import dev.jorel.commandapi.CommandAPI;
+import dev.jorel.commandapi.CommandAPIConfig;
 import java.io.File;
 import java.util.Random;
 import java.util.logging.Level;
@@ -65,7 +67,6 @@ public class Plugin extends JavaPlugin {
 	public ZonePropertyManager mZonePropertyManager;
 	public ZonePropertyGroupManager mZonePropertyGroupManager;
 	public WaypointManager mWaypointManager;
-	public GrowableManager mGrowableManager;
 	public GuiManager mGuiManager;
 	public ZoneEventListener mZoneEventListener;
 	public @Nullable ProtocolLibIntegration mProtocolLibIntegration;
@@ -76,6 +77,14 @@ public class Plugin extends JavaPlugin {
 
 	@Override
 	public void onLoad() {
+		// Load the CommandAPI. We enable verbose logging and allow the CommandAPI
+		// to generate a file command_registration.json for debugging purposes
+		CommandAPI.onLoad(
+			new CommandAPIConfig()
+				.verboseOutput(true)
+				.dispatcherFile(new File(getDataFolder(), "scripted_quests_command_registration.json"))
+		);
+
 		if (mLogger == null) {
 			mLogger = new CustomLogger(super.getLogger(), Level.INFO);
 		}
@@ -122,9 +131,8 @@ public class Plugin extends JavaPlugin {
 		Music.register();
 
 		mScheduledFunctionsManager = new ScheduleFunction(this);
-		mGrowableManager = new GrowableManager(this);
 
-		Growable.register(mGrowableManager);
+		GrowableAPI.registerCommands();
 		Waypoint.register(this);
 	}
 
@@ -132,10 +140,13 @@ public class Plugin extends JavaPlugin {
 	public void onEnable() {
 		INSTANCE = this;
 
+		// Enable the CommandAPI
+		CommandAPI.onEnable(this);
+
 		PluginManager manager = getServer().getPluginManager();
 
 		mQuestCompassManager = new QuestCompassManager(this);
-		mNpcManager = new QuestNpcManager(this);
+		mNpcManager = new QuestNpcManager();
 		mClickableManager = new ClickableManager();
 		mInteractableManager = new InteractableManager();
 		mTradeManager = new NpcTradeManager();
@@ -219,7 +230,7 @@ public class Plugin extends JavaPlugin {
 		mCodeManager.reload(this, sender);
 		mZonePropertyManager.reload(this, sender);
 		mZoneEventListener.update();
-		mGrowableManager.reload(this, sender);
+		GrowableAPI.reload(sender);
 		mGuiManager.reload(this, sender);
 		if (mProtocolLibIntegration != null) {
 			mProtocolLibIntegration.reload();

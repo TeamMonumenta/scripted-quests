@@ -137,7 +137,7 @@ public class DialogClickableTextEntry implements DialogBase {
 
 	@Override
 	public void sendDialog(QuestContext context) {
-		MessagingUtils.sendClickableNPCMessage(context.getPlugin(), context.getPlayer(), mText, "/questtrigger " + mIdx, mHoverEvent);
+		MessagingUtils.sendClickableNPCMessage(context.getPlayer(), mText, "/questtrigger " + mIdx, mHoverEvent);
 		setupTriggersEntries(context);
 	}
 

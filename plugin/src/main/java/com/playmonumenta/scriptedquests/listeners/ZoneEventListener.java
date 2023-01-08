@@ -15,6 +15,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -99,7 +100,8 @@ public class ZoneEventListener implements Listener {
 				});
 			}
 		}
-		if (mBlockInteractMaterials.isEmpty()) {
+		if (event.useInteractedBlock() == Event.Result.DENY
+			    || mBlockInteractMaterials.isEmpty()) {
 			return;
 		}
 		Block clickedBlock = event.getClickedBlock();

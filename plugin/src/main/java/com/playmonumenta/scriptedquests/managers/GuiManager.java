@@ -57,7 +57,7 @@ public class GuiManager {
 			});
 		} catch (Exception e) {
 			MessagingUtils.sendStackTrace(sender, e);
-			CommandAPI.fail("Failed to reload GUI: error in quest file '" + gui.getFile().getPath() + "'");
+			throw CommandAPI.failWithString("Failed to reload GUI: error in quest file '" + gui.getFile().getPath() + "'");
 		}
 	}
 

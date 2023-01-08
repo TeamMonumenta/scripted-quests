@@ -12,7 +12,7 @@ public class Damage {
 	public static void register() {
 		new CommandAPICommand("damage")
 			.withPermission(CommandPermission.fromString("scriptedquests.damage"))
-			.withArguments(new EntitySelectorArgument("entities", EntitySelectorArgument.EntitySelector.MANY_ENTITIES))
+			.withArguments(new EntitySelectorArgument.ManyEntities("entities"))
 			.withArguments(new DoubleArgument("amount"))
 			.withArguments(new BooleanArgument("respect_armor"))
 			.executes((sender, args) -> {

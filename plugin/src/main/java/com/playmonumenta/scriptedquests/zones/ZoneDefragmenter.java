@@ -12,8 +12,8 @@ class ZoneDefragmenter {
 	static class FragCombos extends HashMap<Set<Integer>, ZoneFragment> {
 	}
 
-	private Map<Integer, FragCombos> mMergedCombos = new HashMap<Integer, FragCombos>();
-	private Set<Integer> mAllIds = new LinkedHashSet<Integer>();
+	private final Map<Integer, FragCombos> mMergedCombos = new HashMap<>();
+	private final Set<Integer> mAllIds = new LinkedHashSet<>();
 
 	protected ZoneDefragmenter(List<ZoneFragment> fragments) {
 		FragCombos fragCombos = new FragCombos();
@@ -22,7 +22,7 @@ class ZoneDefragmenter {
 		mAllIds.clear();
 		for (ZoneFragment fragment : fragments) {
 			// Individual fragments are groups of 1
-			Set<Integer> mergedIds = new LinkedHashSet<Integer>();
+			Set<Integer> mergedIds = new LinkedHashSet<>();
 			mergedIds.add(i);
 			fragCombos.put(mergedIds, new ZoneFragment(fragment));
 
@@ -39,7 +39,7 @@ class ZoneDefragmenter {
 		 * and C = A + B, C is level 2 (contains 2 original fragments).
 		 * If D = C + A, D is level 3 (upperLevel = 2, lowerLevel = 1, 2 + 1)
 		 */
-		for (Integer mergeLevel = 2; mergeLevel <= mAllIds.size(); mergeLevel++) {
+		for (int mergeLevel = 2; mergeLevel <= mAllIds.size(); mergeLevel++) {
 			mergeAtLevel(mergeLevel);
 		}
 	}
@@ -69,7 +69,7 @@ class ZoneDefragmenter {
 				Set<Integer> lowerIds = lowerEntry.getKey();
 				ZoneFragment lowerZone = lowerEntry.getValue();
 
-				Set<Integer> mergedIds = new LinkedHashSet<Integer>(lowerIds);
+				Set<Integer> mergedIds = new LinkedHashSet<>(lowerIds);
 				mergedIds.addAll(upperIds);
 				if (mergedIds.size() != mergeLevel) {
 					// Some IDs were in common, so this isn't the merge_level we're looking for
@@ -91,7 +91,7 @@ class ZoneDefragmenter {
 	}
 
 	protected List<ZoneFragment> optimalMerge() {
-		List<ZoneFragment> resultsSoFar = new ArrayList<ZoneFragment>();
+		List<ZoneFragment> resultsSoFar = new ArrayList<>();
 		if (mAllIds.size() == 0) {
 			return resultsSoFar;
 		}
@@ -101,28 +101,28 @@ class ZoneDefragmenter {
 	/*
 	 * Minimal zones are returned by searching for the largest merged zones first,
 	 * and returning the first result to have exactly one of each part.
-	 * In a worst case scenario, the original parts are returned.
+	 * In the worst case scenario, the original parts are returned.
 	 *
 	 * Returns the best solution (list of zones), or null (to continue searching).
 	 */
 	private @Nullable List<ZoneFragment> optimalMerge(List<ZoneFragment> resultsSoFar, Set<Integer> remainingIds) {
-		for (Integer mergeLevel = remainingIds.size(); mergeLevel >= 1; mergeLevel--) {
+		for (int mergeLevel = remainingIds.size(); mergeLevel >= 1; mergeLevel--) {
 			FragCombos fragCombos = mMergedCombos.get(mergeLevel);
 			for (Map.Entry<Set<Integer>, ZoneFragment> entry : fragCombos.entrySet()) {
 				Set<Integer> mergedIds = entry.getKey();
 				ZoneFragment mergedZone = entry.getValue();
 
-				@Nullable List<ZoneFragment> result = new ArrayList<ZoneFragment>(resultsSoFar);
+				@Nullable List<ZoneFragment> result = new ArrayList<>(resultsSoFar);
 				result.add(mergedZone);
 
-				Set<Integer> overlappedIds = new LinkedHashSet<Integer>(mergedIds);
+				Set<Integer> overlappedIds = new LinkedHashSet<>(mergedIds);
 				overlappedIds.removeAll(remainingIds);
 				if (!overlappedIds.isEmpty()) {
 					// Overlap detected; not allowed even in the same ID
 					continue;
 				}
 
-				Set<Integer> newRemaining = new LinkedHashSet<Integer>(remainingIds);
+				Set<Integer> newRemaining = new LinkedHashSet<>(remainingIds);
 				newRemaining.removeAll(mergedIds);
 				if (newRemaining.isEmpty()) {
 					//Best possible result!

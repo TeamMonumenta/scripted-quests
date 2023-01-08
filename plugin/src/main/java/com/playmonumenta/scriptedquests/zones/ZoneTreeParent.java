@@ -13,23 +13,23 @@ import org.dynmap.markers.MarkerSet;
 
 public class ZoneTreeParent extends ZoneTreeBase {
 	// The axis this node is split over.
-	private Axis mAxis;
+	private final Axis mAxis;
 	// The pivot for mMore/mLess
-	private double mPivot;
+	private final double mPivot;
 	// Lowest/highest value for this node and its children; allows returning null early
-	private double mMin;
-	private double mMax;
+	private final double mMin;
+	private final double mMax;
 	// Branch that is Less/More than pivot
-	private ZoneTreeBase mLess;
-	private ZoneTreeBase mMore;
+	private final ZoneTreeBase mLess;
+	private final ZoneTreeBase mMore;
 
 	// Some zones may overlap the pivot
 	// Min coordinate of middle zones
-	private double mMidMin;
+	private final double mMidMin;
 	// Max coordinate of middle zones
-	private double mMidMax;
+	private final double mMidMax;
 	// Branch that contains the pivot
-	private ZoneTreeBase mMid;
+	private final ZoneTreeBase mMid;
 
 	private static final Axis[] AXIS_ORDER = {Axis.X, Axis.Z, Axis.Y};
 
@@ -45,9 +45,9 @@ public class ZoneTreeParent extends ZoneTreeBase {
 			public double mPivot;
 			public double mMidMin;
 			public double mMidMax;
-			public List<ZoneFragment> mLess = new ArrayList<ZoneFragment>();
-			public List<ZoneFragment> mMid = new ArrayList<ZoneFragment>();
-			public List<ZoneFragment> mMore = new ArrayList<ZoneFragment>();
+			public final List<ZoneFragment> mLess = new ArrayList<>();
+			public final List<ZoneFragment> mMid = new ArrayList<>();
+			public final List<ZoneFragment> mMore = new ArrayList<>();
 		}
 
 		mFragmentCount = zones.size();
@@ -55,7 +55,7 @@ public class ZoneTreeParent extends ZoneTreeBase {
 		Vector minVector = zones.get(0).minCorner();
 		Vector maxVector = zones.get(0).maxCornerExclusive();
 
-		// Default is an impossibly worst case scenario so it will never be chosen.
+		// Default is an impossibly worst case scenario, so it will never be chosen.
 		ParentData bestSplit = new ParentData();
 		bestSplit.mPriority = mFragmentCount;
 
@@ -114,9 +114,9 @@ public class ZoneTreeParent extends ZoneTreeBase {
 			 * sections of code. If this occurs, then somehow zone fragments are not being divided
 			 * or handled properly.
 			 */
-			StringBuilder message = new StringBuilder("A serious plugin error has occured. Zones involved:");
+			StringBuilder message = new StringBuilder("A serious plugin error has occurred. Zones involved:");
 			for (ZoneFragment zone : zones) {
-				message.append("\n- " + zone.toString());
+				message.append("\n- ").append(zone.toString());
 			}
 			throw new Exception(message.toString());
 		} else {
@@ -156,7 +156,7 @@ public class ZoneTreeParent extends ZoneTreeBase {
 			return null;
 		}
 
-		@Nullable ZoneFragment result = null;
+		@Nullable ZoneFragment result;
 		double test = VectorUtils.vectorAxis(loc, mAxis);
 
 		// If the test point is outside this node, return null immediately.
@@ -215,13 +215,13 @@ public class ZoneTreeParent extends ZoneTreeBase {
 	public String toString() {
 		return ("(ZoneTreeParent(<List<ZoneFragment>>): "
 		        + "mAxis=" + mAxis.toString() + ", "
-		        + "mPivot=" + Double.toString(mPivot) + ", "
-		        + "mMin=" + Double.toString(mMin) + ", "
-		        + "mMax=" + Double.toString(mMax) + ", "
+		        + "mPivot=" + mPivot + ", "
+		        + "mMin=" + mMin + ", "
+		        + "mMax=" + mMax + ", "
 		        + "mLess=<ZoneTreeBase>, "
 		        + "mMore=<ZoneTreeBase>, "
-		        + "mMidMin=" + Double.toString(mMidMin) + ", "
-		        + "mMidMax=" + Double.toString(mMidMax) + ", "
+		        + "mMidMin=" + mMidMin + ", "
+		        + "mMidMax=" + mMidMax + ", "
 		        + "mMid=<ZoneTreeBase>)");
 	}
 }
