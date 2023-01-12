@@ -211,7 +211,7 @@ public class NpcTradeManager implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-	public void PlayerPurchaseEvent(PlayerPurchaseEvent event) {
+	public void playerPurchaseEvent(PlayerPurchaseEvent event) {
 		// Runs once for every successful trade, ie can run multiple times within a single inventory click
 		Player player = event.getPlayer();
 
