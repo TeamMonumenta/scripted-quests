@@ -15,10 +15,12 @@ public class VersionAdapter_unsupported implements VersionAdapter {
 
 	}
 
+	@Override
 	public void removeAllMetadata(Plugin plugin) {
 
 	}
 
+	@Override
 	public @Nullable ParseResults<?> parseCommand(String command) {
 		return null;
 	}
@@ -28,6 +30,7 @@ public class VersionAdapter_unsupported implements VersionAdapter {
 		return component;
 	}
 
+	@Override
 	public void executeCommandAsBlock(Block block, String command) {
 	}
 
