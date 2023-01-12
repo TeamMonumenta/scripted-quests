@@ -15,8 +15,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -109,7 +110,7 @@ public class NpcTradeManager implements Listener {
 		boolean modified = false;
 
 		// We don't want any vanilla trades to occur, regardless of if trades were changed or not.
-		// As a side-effect, right-clicking a villager will not activate interactables
+		// As a side effect, right-clicking a villager will not activate interactables
 		// This is fine for now, but if we ever want interactables to work on villagers, we need to change this
 		event.setCancelled(true);
 
@@ -159,14 +160,14 @@ public class NpcTradeManager implements Listener {
 		}
 
 		if (modified && player.getGameMode() == GameMode.CREATIVE && player.isOp()) {
-			player.sendMessage(ChatColor.GOLD + "Some trader slots were not shown to you:");
+			player.sendMessage(Component.text("Some trader slots were not shown to you:", NamedTextColor.GOLD));
 			if (lockedSlots.length() > 0) {
-				player.sendMessage(ChatColor.GOLD + "These slots were locked by quest scores: " + lockedSlots);
+				player.sendMessage(Component.text("These slots were locked by quest scores: " + lockedSlots, NamedTextColor.GOLD));
 			}
 			if (vanillaSlots.length() > 0) {
-				player.sendMessage(ChatColor.GOLD + "These slots contained a vanilla emerald: " + vanillaSlots);
+				player.sendMessage(Component.text("These slots contained a vanilla emerald: " + vanillaSlots, NamedTextColor.GOLD));
 			}
-			player.sendMessage(ChatColor.GOLD + "This message only appears to operators in creative mode");
+			player.sendMessage(Component.text("This message only appears to operators in creative mode", NamedTextColor.GOLD));
 		}
 
 		/*
@@ -212,18 +213,17 @@ public class NpcTradeManager implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void inventoryClickEvent(InventoryClickEvent event) {
-		if (event.getResult().equals(Event.Result.DENY) || !event.getInventory().getType().equals(InventoryType.MERCHANT) || !(event.getWhoClicked() instanceof Player)) {
+		if (event.getResult().equals(Event.Result.DENY) || !event.getInventory().getType().equals(InventoryType.MERCHANT) || !(event.getWhoClicked() instanceof Player player)) {
 			/* Already cancelled, or not a merchant inventory, or not a click by a player */
 			return;
 		}
 
-		Player player = (Player)event.getWhoClicked();
 		MerchantInventory merchInv = (MerchantInventory)event.getInventory();
 		PlayerTradeContext context = mOpenTrades.get(player.getUniqueId());
 		int hotbarButton = event.getHotbarButton();
 
 		if (context == null || !merchInv.getMerchant().equals(context.getMerchant())) {
-			player.sendMessage(ChatColor.RED + "DENIED: You should not have been able to view this interface. If this is a bug, please report it, and try trading with the villager again.");
+			player.sendMessage(Component.text("DENIED: You should not have been able to view this interface. If this is a bug, please report it, and try trading with the villager again.", NamedTextColor.RED));
 			event.setCancelled(true);
 			event.setResult(Event.Result.DENY);
 			Bukkit.getScheduler().runTask(Plugin.getInstance(), () -> player.closeInventory());
@@ -246,8 +246,11 @@ public class NpcTradeManager implements Listener {
 			}
 		} else {
 			// If they use the swap hands key on the trade item and their offhand is not empty, do not trigger a successful trade
-			if (event.getClick().equals(ClickType.SWAP_OFFHAND) && player.getInventory().getItemInOffHand() != null && !player.getInventory().getItemInOffHand().getType().isAir()) {
-				return;
+			if (event.getClick().equals(ClickType.SWAP_OFFHAND)) {
+				player.getInventory().getItemInOffHand();
+				if (!player.getInventory().getItemInOffHand().getType().isAir()) {
+					return;
+				}
 			}
 			if ((event.getCursor() == null || event.getCursor().getType().isAir()) && clickedItem != null && !clickedItem.getType().isAir()) {
 				onSuccessfulTrade(event);
@@ -271,7 +274,7 @@ public class NpcTradeManager implements Listener {
 		int selectedIndex = recipes.indexOf(recipe);
 
 		if (selectedIndex < 0) {
-			player.sendMessage(ChatColor.YELLOW + "BUG! Somehow the recipe you selected couldn't be found. Please report this, and include which villager and what you were trading for");
+			player.sendMessage(Component.text("BUG! Somehow the recipe you selected couldn't be found. Please report this, and include which villager and what you were trading for", NamedTextColor.YELLOW));
 		} else {
 			NpcTrade trade = context.getSlotProperties().get(selectedIndex);
 			if (trade != null) {
