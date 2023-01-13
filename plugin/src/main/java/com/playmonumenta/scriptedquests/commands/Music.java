@@ -63,6 +63,7 @@ public class Music {
 			.executes(Music::runStop)
 			.register();
 
+		arguments.add(new MultiLiteralArgument("if", "unless"));
 		arguments.add(new SoundArgument.NamespacedKey("music path"));
 		new CommandAPICommand("monumenta")
 			.withPermission(CommandPermission.fromString("scriptedquests.music.cancel"))
@@ -147,21 +148,25 @@ public class Music {
 			}
 		}
 
-		if (args.length > 4) {
-			String musicPath = ((NamespacedKey) args[4]).asString();
+		if (args.length > 5) {
+			String conditionType = (String) args[2];
+			boolean conditionIsUnless = "unless".equals(conditionType);
+			String musicPath = ((NamespacedKey) args[5]).asString();
 			int result = 0;
 			for (Player player : players) {
 				boolean wasCancelled = false;
 
 				Song nextSong = SongManager.getNextSong(player);
-				if (nextSong != null && nextSong.songPath().equals(musicPath)) {
+				boolean isPlayingNext = nextSong != null && nextSong.songPath().equals(musicPath);
+				if (conditionIsUnless ^ isPlayingNext) {
 					SongManager.stopSong(player, false);
 					wasCancelled = true;
 				}
 
 				if (cancelNow) {
 					Song currentSong = SongManager.getCurrentSong(player);
-					if (currentSong != null && currentSong.songPath().equals(musicPath)) {
+					boolean isPlayingNow = currentSong != null && currentSong.songPath().equals(musicPath);
+					if (conditionIsUnless ^ isPlayingNow) {
 						SongManager.stopSong(player, true);
 						wasCancelled = true;
 					}
