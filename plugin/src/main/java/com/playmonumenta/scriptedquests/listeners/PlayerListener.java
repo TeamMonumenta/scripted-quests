@@ -2,7 +2,7 @@ package com.playmonumenta.scriptedquests.listeners;
 
 import com.playmonumenta.scriptedquests.Constants;
 import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.commands.Music;
+import com.playmonumenta.scriptedquests.managers.SongManager;
 import com.playmonumenta.scriptedquests.point.Point;
 import com.playmonumenta.scriptedquests.quests.QuestDeath.DeathActions;
 import com.playmonumenta.scriptedquests.quests.components.DeathLocation;
@@ -230,7 +230,7 @@ public class PlayerListener implements Listener {
 		ZoneManager.getInstance().unregisterPlayer(player);
 
 		// Stop any scheduled music for this player
-		Music.onLogout(player);
+		SongManager.onLogout(player);
 
 		// Remove all metadata set by this plugin for the player
 		player.removeMetadata(Constants.PLAYER_DEATH_LOCATION_METAKEY, mPlugin);
