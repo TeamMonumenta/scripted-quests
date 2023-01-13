@@ -28,7 +28,6 @@ import org.bukkit.util.Vector;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
 public class ZoneManager {
-	private static final int DEFRAGMENT_ON_MERGE_THRESHOLD = 64;
 	private static final String[] SUGGESTIONS_EXECUTE_FALLBACK = {"\"Suggestions unavailable through /execute\""};
 
 	private final Plugin mPlugin;
@@ -399,13 +398,6 @@ public class ZoneManager {
 			zones.addAll(layer.getZones());
 		}
 
-		// Defragment to reduce fragment count (approx 2-3x on average). This takes a long time.
-		cpuNanos = System.nanoTime();
-		for (Zone zone : zones) {
-			zone.defragment();
-		}
-		MMLog.fine("[Zone Reload] " + String.format("%13.9f", (System.nanoTime() - cpuNanos) / 1000000000.0) + "s Defragmenting zones");
-
 		// Create list of all zone fragments.
 		List<ZoneFragment> zoneFragments = new ArrayList<>();
 		for (Zone zone : zones) {
@@ -657,13 +649,7 @@ public class ZoneManager {
 					continue;
 				}
 				outerZone.splitByOverlap(overlap, innerZone, true);
-				if (outerZone.getZoneFragments().size() >= DEFRAGMENT_ON_MERGE_THRESHOLD) {
-					outerZone.defragment();
-				}
 				innerZone.splitByOverlap(overlap, outerZone);
-				if (innerZone.getZoneFragments().size() >= DEFRAGMENT_ON_MERGE_THRESHOLD) {
-					innerZone.defragment();
-				}
 			}
 		}
 	}
