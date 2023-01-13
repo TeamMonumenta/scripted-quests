@@ -139,12 +139,7 @@ public class SongManager {
 		@Override
 		public void run() {
 			if (millisToRefresh() <= 0) {
-				new BukkitRunnable() {
-					@Override
-					public void run() {
-						playNow();
-					}
-				}.runTask(Plugin.getInstance());
+				Bukkit.getScheduler().runTask(Plugin.getInstance(), () -> playNow());
 			}
 		}
 	}
