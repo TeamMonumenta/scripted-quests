@@ -43,6 +43,10 @@ public class SongManager {
 				&& mCategory.equals(song.mCategory)
 				&& mSongPath.equals(song.mSongPath);
 		}
+
+		public String songPath() {
+			return mSongPath;
+		}
 	}
 
 	private static class PlayerState implements Runnable {
@@ -116,6 +120,14 @@ public class SongManager {
 			mNext = null;
 		}
 
+		public @Nullable Song currentSong() {
+			return mNow;
+		}
+
+		public @Nullable Song nextSong() {
+			return mNext;
+		}
+
 		public long millisToRefresh() {
 			try {
 				return LocalDateTime.now(TIMEZONE).until(mNextTime, ChronoUnit.MILLIS);
@@ -177,6 +189,22 @@ public class SongManager {
 			state.cancelNow();
 		}
 		return true;
+	}
+
+	public static @Nullable Song getCurrentSong(Player player) {
+		PlayerState state = mPlayerStates.get(player.getUniqueId());
+		if (state == null) {
+			return null;
+		}
+		return state.currentSong();
+	}
+
+	public static @Nullable Song getNextSong(Player player) {
+		PlayerState state = mPlayerStates.get(player.getUniqueId());
+		if (state == null) {
+			return null;
+		}
+		return state.nextSong();
 	}
 
 	public static void onLogout(Player player) {
