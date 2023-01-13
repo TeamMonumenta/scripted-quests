@@ -14,7 +14,8 @@ public interface VersionAdapter {
 
 	void removeAllMetadata(Plugin plugin);
 
-	@Nullable ParseResults<?> parseCommand(String command);
+	@Nullable
+	ParseResults<?> parseCommand(String command);
 
 	Component resolveComponents(Component displayName, Player player);
 
