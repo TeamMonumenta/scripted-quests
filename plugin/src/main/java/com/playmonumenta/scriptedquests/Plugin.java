@@ -128,6 +128,7 @@ public class Plugin extends JavaPlugin {
 		ReloadZones.register(this);
 		GuiCommand.register(this);
 		ShowZones.register(this);
+		Music.register();
 
 		mScheduledFunctionsManager = new ScheduleFunction(this);
 
