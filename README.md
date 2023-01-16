@@ -150,7 +150,7 @@ an NPC, quest components are run in-order (more than one may be executed).
   objective. `descending` specifies order of results, page specifies which page to show.
   **For players to be able to use the << >> arrows, they need to have this permission**.
   This of course also lets them generate leaderboards for any scoreboard on the server.
-  
+
 
 `/monumenta music play <now or next> <players> <music path> <duration in seconds> [<is loop, default false>] [<music category, default record>] [<volume>] [<pitch>]`
 `/monumenta music cancel <now or next> <players>`
@@ -309,7 +309,7 @@ actions:
         <dependency>
             <groupId>com.playmonumenta</groupId>
             <artifactId>scripted-quests</artifactId>
-            <version>4.5</version>
+            <version>6.2</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
