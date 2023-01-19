@@ -34,7 +34,7 @@ public class Music {
 		List<Argument<?>> optionalArguments = new ArrayList<>();
 		optionalArguments.add(new BooleanArgument("is loop"));
 		optionalArguments.add(new MultiLiteralArgument("master", "music", "record", "weather", "block", "hostile", "neutral", "player", "ambient", "voice"));
-		optionalArguments.add(new FloatArgument("volume", 0.0f, 1.0f));
+		optionalArguments.add(new FloatArgument("volume", 0.0f));
 		optionalArguments.add(new FloatArgument("pitch", 0.5f, 2.0f));
 
 		new CommandAPICommand("monumenta")
@@ -52,13 +52,33 @@ public class Music {
 				.register();
 		}
 
+		arguments.clear();
+		arguments.add(new MultiLiteralArgument("music"));
+		arguments.add(new MultiLiteralArgument("cancel"));
+		arguments.add(new MultiLiteralArgument("now", "next"));
+		arguments.add(new EntitySelectorArgument.ManyPlayers("players"));
 		new CommandAPICommand("monumenta")
 			.withPermission(CommandPermission.fromString("scriptedquests.music.cancel"))
-			.withArguments(new MultiLiteralArgument("music"))
-			.withArguments(new MultiLiteralArgument("cancel"))
-			.withArguments(new MultiLiteralArgument("now", "next"))
-			.withArguments(new EntitySelectorArgument.ManyPlayers("players"))
+			.withArguments(arguments)
 			.executes(Music::runStop)
+			.register();
+
+		arguments.add(new MultiLiteralArgument("if", "unless"));
+		arguments.add(new SoundArgument.NamespacedKey("music path"));
+		new CommandAPICommand("monumenta")
+			.withPermission(CommandPermission.fromString("scriptedquests.music.cancel"))
+			.withArguments(arguments)
+			.executes(Music::runStop)
+			.register();
+
+		new CommandAPICommand("monumenta")
+			.withPermission(CommandPermission.fromString("scriptedquests.music.isplaying"))
+			.withArguments(new MultiLiteralArgument("music"))
+			.withArguments(new MultiLiteralArgument("isplaying"))
+			.withArguments(new MultiLiteralArgument("now", "next"))
+			.withArguments(new EntitySelectorArgument.OnePlayer("players"))
+			.withArguments(new SoundArgument.NamespacedKey("music path"))
+			.executes(Music::runIsPlaying)
 			.register();
 	}
 
@@ -127,6 +147,61 @@ public class Music {
 				throw CommandAPI.failWithString("You do not have permission to run this as another player.");
 			}
 		}
+
+		if (args.length > 5) {
+			String conditionType = (String) args[2];
+			boolean conditionIsUnless = "unless".equals(conditionType);
+			String musicPath = ((NamespacedKey) args[5]).asString();
+			int result = 0;
+			for (Player player : players) {
+				boolean wasCancelled = false;
+
+				Song nextSong = SongManager.getNextSong(player);
+				boolean isPlayingNext = nextSong != null && nextSong.songPath().equals(musicPath);
+				if (conditionIsUnless ^ isPlayingNext) {
+					SongManager.stopSong(player, false);
+					wasCancelled = true;
+				}
+
+				if (cancelNow) {
+					Song currentSong = SongManager.getCurrentSong(player);
+					boolean isPlayingNow = currentSong != null && currentSong.songPath().equals(musicPath);
+					if (conditionIsUnless ^ isPlayingNow) {
+						SongManager.stopSong(player, true);
+						wasCancelled = true;
+					}
+				}
+
+				if (wasCancelled) {
+					++result;
+				}
+			}
+			return result;
+		}
+
 		return SongManager.stopSong(players, cancelNow);
+	}
+
+	public static int runIsPlaying(CommandSender sender, Object[] args) throws WrapperCommandSyntaxException {
+		String when = (String) args[2];
+		boolean isPlayingNow = "now".equals(when);
+		Player player = (Player) args[3];
+
+		if (sender instanceof Player playerSender) {
+			if (!playerSender.hasPermission("scriptedquests.music.isplaying.others") && !playerSender.equals(player)) {
+				throw CommandAPI.failWithString("You do not have permission to run this as another player.");
+			}
+		}
+
+		String musicPath = ((NamespacedKey) args[4]).asString();
+
+		Song song;
+		if (isPlayingNow) {
+			song = SongManager.getCurrentSong(player);
+		} else {
+			song = SongManager.getNextSong(player);
+		}
+
+		return song != null && song.songPath().equals(musicPath) ? 1 : 0;
 	}
 }
