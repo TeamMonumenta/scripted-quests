@@ -25,7 +25,7 @@ dependencies {
     implementation("com.google.apis:google-api-services-sheets:v4-rev1-1.21.0")
     implementation("com.google.auth:google-auth-library-oauth2-http:0.1.0")
     compileOnly("io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT")
-    implementation("dev.jorel.CommandAPI:commandapi-shade:8.7.0")
+    compileOnly("dev.jorel.CommandAPI:commandapi-core:8.7.0")
     compileOnly("de.tr7zw:item-nbt-api-plugin:2.3.1")
     compileOnly("com.mojang:brigadier:1.0.17")
     compileOnly("com.google.code.gson:gson:2.8.0")
@@ -47,7 +47,7 @@ bukkit {
     apiVersion = "1.18"
     name = "ScriptedQuests"
     authors = listOf("The Monumenta Team")
-    depend = listOf()
+    depend = listOf("CommandAPI")
     softDepend = listOf("dynmap", "MonumentaRedisSync", "ProtocolLib")
     commands {
         register("questtrigger") {
@@ -87,7 +87,6 @@ tasks {
         }
         relocate("io.grpc", "com.playmonumenta.scriptedquests.internal.io.grpc")
         relocate("io.opencensus", "com.playmonumenta.scriptedquests.internal.io.opencensus")
-        relocate("dev.jorel.commandapi", "com.playmonumenta.scriptedquests.internal.dev.jorel.commandapi")
         minimize {
             exclude(dependency("com.playmonumenta.*:.*:.*"))
             exclude(dependency("dev.jorel.commandapi.*:.*:.*"))
