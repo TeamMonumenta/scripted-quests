@@ -1,0 +1,23 @@
+{
+	"type": "object",
+    "defaultProperties": [
+        "attack_string",
+		"string_delay"
+    ],
+	"additionalProperties": false,
+	"properties": {
+		"attack_string": {
+			"propertyOrder": 1,
+			"title": "attack_string",
+			"description": "The Attack String to give. This needs to be the ID of the attack string internally. Leave blank if you don't want this to be used. Valid inputs: sword_light, sword_heavy, axe_light, axe_heavy, bow_long, bow_short, catalyst_wand, catalyst_tome, catalyst_staff, scythe_normal, spear_normal, dagger_normal, dagger_throw (For dagger_throw, be sure they have a SF Dagger equipped)",
+			"type": "string"
+		},
+		"string_delay": {
+			"propertyOrder": 2,
+			"title": "string_delay",
+			"description": "The amount of delay of attack after they successfully finish 1 attack string combo. This is in ticks.",
+			"type": "integer",
+			"default": 0
+		}
+	}
+}

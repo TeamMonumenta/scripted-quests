@@ -1,0 +1,94 @@
+{
+	"type": "object",
+	"defaultProperties": [],
+	"additionalProperties": false,
+	"properties": {
+		"spawn_mob": {
+			"title": "spawn_mob",
+			"description": "Spawns the mob at the specified location. You can specify a tag to the mob for later use.",
+			"type": "object",
+			"properties": {
+				"mob": {
+					"title": "mob",
+					"description": "The mob to spawn. Give a mob ID.",
+					"type": "string",
+					"default": "mob_id"
+				},
+				"location": {
+					"title": "location",
+					"description": "The location to spawn the mob. This is in x,y,z,yaw,pitch format.",
+					"type": "string",
+					"default": "0,0,0,0,0"
+				},
+				"tags": {
+					"title": "tags",
+					"description": "The list of tags to give the mob, which can be used for other actions",
+					"type": "array",
+					"items": {
+						"title": "Tag",
+						"type": "string"
+					}
+				},
+				"frozen": {
+					"title": "frozen",
+					"description": "If frozen, the mob will not idly move or rotate once spawned.",
+					"type": "boolean",
+					"default": false
+				}
+			}
+		},
+		"target": {
+			"title": "target",
+			"description": "Causes mobs with the specified tag to target mobs with the specified tag.",
+			"type": "object",
+			"properties": {
+				"selector_tag": {
+					"title": "selector_tag",
+					"description": "The mobs with the tag that will be targeting.",
+					"type": "string",
+					"default": "selector_tag"
+				},
+				"target_tag": {
+					"title": "target_tag",
+					"description": "The mobs with the tag that will be targeted",
+					"type": "string",
+					"default": "target_tag"
+				},
+				"range": {
+					"title": "range",
+					"description": "The range of the targeting from the mobs.",
+					"type": "integer",
+					"default": 12
+				}
+			}
+		},
+		"run_actions": {
+			"title": "run_actions",
+			"description": "Runs the actions at the specified location.",
+			"type": "object",
+			"properties": {
+				"location": {
+					"title": "location",
+					"description": "The location to run the actions at. This is in x,y,z format",
+					"type": "string",
+					"default": "0,0,0"
+				},
+				"spell_actions": {
+					"title": "spell_actions",
+					"description": "The actions to run",
+					"$ref": "ability_actions.json"
+				}
+			}
+		},
+		"quest_components": {
+			"title": "quest_components",
+			"description": "Runs quests components for all players inside the shard.",
+			"type": "array",
+			"format": "tabs",
+			"items": {
+				"title": "Quest Component",
+				"$ref": "quest_component.json"
+			}
+		}
+	}
+}

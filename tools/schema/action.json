@@ -128,6 +128,24 @@
                                 "title": "A line",
                                 "type": "string"
                             }
+                        },
+                        {
+                            "title": "Complex",
+                            "type": "object",
+							"properties": {
+								"speaker": {
+									"title": "speaker",
+									"description": "The speaker for this dialogue line, which is shown up as the person who is speaking this line. Leave blank if you wish to use the current NPC's name.",
+									"type": "string",
+									"default": ""
+								},
+								"text": {
+									"title": "text",
+									"description": "The text to speak.",
+									"type": "string",
+									"default": ""
+								}
+							}
                         }
                     ]
                 },
@@ -439,6 +457,12 @@
 					"type": "integer"
 				}
 			}
+        },
+		"trigger_shard_event": {
+            "title": "trigger_shard_event",
+            "description": "Triggers the specified shard event.",
+            "type": "string",
+			"default": "shard_event_id"
         },
 		"set_questdata": {
             "title": "set_questdata",

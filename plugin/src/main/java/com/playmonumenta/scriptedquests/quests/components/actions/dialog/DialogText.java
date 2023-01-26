@@ -3,6 +3,7 @@ package com.playmonumenta.scriptedquests.quests.components.actions.dialog;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import com.google.gson.JsonObject;
 import me.Novalescent.Constants;
 import me.Novalescent.mobs.npcs.RPGNPC;
 import org.bukkit.ChatColor;
@@ -16,7 +17,7 @@ import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 
 public class DialogText implements DialogBase {
 	private String mDisplayName;
-	private ArrayList<String> mText = new ArrayList<String>();
+	private final ArrayList<String> mText = new ArrayList<>();
 
 	public DialogText(String displayName, JsonElement element) throws Exception {
 		mDisplayName = displayName;
@@ -28,6 +29,10 @@ public class DialogText implements DialogBase {
 			while (iter.hasNext()) {
 				mText.add(iter.next().getAsString());
 			}
+		} else if (element.isJsonObject()) {
+			JsonObject object = element.getAsJsonObject();
+			mDisplayName = object.get("speaker").getAsString();
+			mText.add(object.get("text").getAsString());
 		} else {
 			throw new Exception("text value is neither an array nor a string!");
 		}

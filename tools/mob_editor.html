@@ -51,7 +51,7 @@
 				"name",
 				"level",
 				"entityType",
-				"chestLoc",
+				"equipment",
 				"knockbackResistance",
 				"unpushable",
 				"ai",
@@ -64,12 +64,14 @@
 				"visible",
 				"defense_values",
 				"damage_values",
+				"attacks",
 				"xp_values",
 				"sounds",
 				"ranged",
 				"targetTags",
 				"abilities",
-				"on_spawn",
+				"ability_pattern",
+				"phases",
                 "quest_components"
             ],
             additionalProperties:false,
@@ -106,12 +108,51 @@
                     type: "string",
                     default: "ZOMBIE"
                 },
-				chestLoc: {
-                    propertyOrder: 5,
-                    title: "chestLoc",
-                    description: "The location of the chest for the mob's equipment. format is 'world,x,y,z'",
-                    type: "string"
-                },
+				equipment: {
+					required: true,
+					propertyOrder: 4,
+					title: "equipment",
+					description: "Sets the equipment that the mob wears. This does not affect the stats of the mob.",
+					type: "object",
+					properties: {
+						head: {
+							required: true,
+							title: "head",
+							description: "Sets the head slot to the new item. To use vanilla Minecraft items, include the vanilla Minecraft namespace (ex. minecraft:stone_sword). Otherwise, it will default to an actual SF Item by searching for it by ID. If this field is blank, the slot is left empty.",
+							type: "string"
+						},
+						chestplate: {
+							required: true,
+							title: "chestplate",
+							description: "Sets the chestplate slot to the new item. To use vanilla Minecraft items, include the vanilla Minecraft namespace (ex. minecraft:stone_sword). Otherwise, it will default to an actual SF Item by searching for it by ID. If this field is blank, the slot is left empty.",
+							type: "string"
+						},
+						leggings: {
+							required: true,
+							title: "leggings",
+							description: "Sets the leggings slot to the new item. To use vanilla Minecraft items, include the vanilla Minecraft namespace (ex. minecraft:stone_sword). Otherwise, it will default to an actual SF Item by searching for it by ID. If this field is blank, the slot is left empty.",
+							type: "string"
+						},
+						boots: {
+							required: true,
+							title: "boots",
+							description: "Sets the boots slot to the new item. To use vanilla Minecraft items, include the vanilla Minecraft namespace (ex. minecraft:stone_sword). Otherwise, it will default to an actual SF Item by searching for it by ID. If this field is blank, the slot is left empty.",
+							type: "string"
+						},
+						mainhand: {
+							required: true,
+							title: "mainhand",
+							description: "Sets the mainhand slot to the new item. To use vanilla Minecraft items, include the vanilla Minecraft namespace (ex. minecraft:stone_sword). Otherwise, it will default to an actual SF Item by searching for it by ID. If this field is blank, the slot is left empty.",
+							type: "string"
+						},
+						offhand: {
+							required: true,
+							title: "offhand",
+							description: "Sets the offhand slot to the new item. To use vanilla Minecraft items, include the vanilla Minecraft namespace (ex. minecraft:stone_sword). Otherwise, it will default to an actual SF Item by searching for it by ID. If this field is blank, the slot is left empty.",
+							type: "string"
+						}
+					}
+				},
                 knockbackResistance: {
                     propertyOrder: 5,
                     title: "knockbackResistance",
@@ -254,7 +295,32 @@
                     title: "damage_ranges",
                     description: "The damage value for the mob.",
                     $ref: "schema/damage_ranges.json"
-                },
+                }, 
+				attacks: {
+					propertyOrder: 7,
+					title: "attacks",
+					description: "The melee attacks that this mob has. You can use this to attach Attack Strings to the mainhand and offhand of the mob.",
+					type: "object",
+					properties: {
+						mainhand: {
+							title: "mainhand",
+							description: "The attack used for the mainhand",
+							$ref: "schema/attack.json"
+						},
+						offhand: {
+							title: "offhand",
+							description: "The attack used for the offhand",
+							$ref: "schema/attack.json"
+						},
+						no_offhand: {
+							propertyOrder: 8,
+							title: "no_offhand",
+							description: "Toggles on whether or not to swing with the offhand.",
+							type: "boolean",
+							default: false
+						}
+					}
+				},
 				speed: {
                     propertyOrder: 8,
                     title: "speed",
@@ -548,12 +614,139 @@
 				abilities: {
                     propertyOrder: 33,
                     title: "ability",
-                    description: "The abilities for this mob. Must specify the mob ability ID",
+                    description: "The abilities for this mob.",
                     type: "array",
                     items: {
-                        type: "string"
+						title: "Ability",
+                        oneOf: [
+							{
+								title: "Simple",
+								description: "An ability specified by a ability ID.",
+								type: "string",
+								default: "ability"
+							},
+							{
+								title: "Complex",
+								description: "Allows for customization of the ability specified. Open the Properties button to see more options",
+								defaultProperties: [
+									"id"
+								],
+								properties: {
+									id: {
+										title: "id",
+										description: "The ID of the ability. This can be a player skill.",
+										type: "string",
+										default: "Ability ID"
+									},
+									range: {
+										title: "range",
+										description: "The range of the ability. This is used to override the attack range of the mob.",
+										type: "number",
+										default: 3
+									},
+									channel_time: {
+										title: "channel_time",
+										description: "The channel time of the skill. This is in TICKS. 0 = instant cast",
+										type: "integer",
+										default: 0
+									},
+									multipliers: {
+										title: "multipliers",
+										description: "The multipliers for this ability. This can either be a base potency multiplier, or customization for the individual multipliers done by indexing.",
+										oneOf: [
+											{
+												title: "Base Potency",
+												description: "The base potency of this ability to multiply the multipliers by. 1 = 100% base potency.",
+												type: "number",
+												default: 1
+											},
+											{
+												title: "Custom Values",
+												description: "Custom Values for the multipliers defined by the index. If using player skills, refer to their in-game multipliers for indexes and values.",
+												type: "array",
+												items: {
+													title: "Custom Multiplier Value",
+													description: "A value calculated by the parameters described.",
+													type: "object",
+													properties: {
+														playerLevel: {
+															title: "playerLevel",
+															description: "The level of the player being targeted.",
+															type: "integer",
+															default: 1
+														},
+														armorType: {
+															title: "armorType",
+															description: "The type of armor being used. This is to calculate the damage reduction and health. Valid types: ADEPT, AGILE, WARDING, DEFENSIVE",
+															type: "string",
+															default: "AGILE"
+														},
+														itemLevel: {
+															title: "itemLevel",
+															description: "The item level of the armor being used.",
+															type: "integer",
+															default: 1
+														},
+														additionalDR: {
+															title: "additionalDR",
+															description: "The additional damage reduction expected. Used for taking into account multiplicative damage reduction bonuses from buffs. This is a decimal from 0 to 1, with 1 = 100% damage reduction.",
+															type: "number",
+															default: 0
+														},
+														damage: {
+															title: "damage",
+															description: "The damage to be dealt as a percentage of the maximum EHP calculated for the target. This should be a decimal, with 1 = 100%",
+															type: "number",
+															default: 0.1
+														}
+													}
+												}
+											}
+										]
+									}
+								},
+								type: "object"
+							}
+						]
                     }
                 },
+				ability_pattern: {
+					title: "ability_pattern",
+					description: "The ability/spell pattern for this mob comprised of the abilities defined in the abilities list.",
+					$ref: "schema/ability_pattern.json"
+				},
+				phases: {
+					title: "phases",
+					description: "Used to create phases for the mob that lets you change its ability patterns. Use this when you need to add skill patterns to the mob",
+					type: "array",
+					items: {
+						title: "Pattern Phase",
+						type: "object",
+						properties: {
+							percentage: {
+								title: "percentage",
+								description: "The percentage of health for the phase change to occur. This is an integer, where 90 = 90% max health",
+								type: "integer",
+								default: 90
+							},
+							ability_pattern: {
+								title: "ability_pattern",
+								description: "The new ability pattern for this phase",
+								$ref: "schema/ability_pattern.json"
+							},
+							quest_components: {
+								description: "A list of quest components to perform whenever the phase change occurs.",
+								type: "array",
+								format: "tabs",
+								items: {
+									title: "Quest component",
+									$ref: "schema/quest_component.json",
+								}
+							}
+						}
+					}
+				},
+				
 				ranged: {
 				    title: "ranged",
                     description: "Use if you want to give the mob a ranged property",

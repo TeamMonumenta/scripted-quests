@@ -5,6 +5,7 @@ import java.util.Map.Entry;
 
 import com.playmonumenta.scriptedquests.quests.components.actions.*;
 import com.playmonumenta.scriptedquests.quests.components.actions.quest.*;
+import com.playmonumenta.scriptedquests.quests.components.actions.shard.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -181,6 +182,9 @@ public class QuestActions implements ActionNested {
 						break;
 					case "play_shard_title":
 						mActions.add(new ActionPlayDungeonTitle(value));
+						break;
+					case "trigger_shard_event":
+						mActions.add(new ActionTriggerShardEvent(value));
 						break;
 					case "remove_questdata":
 						mActions.add(new ActionRemoveQuestData(value));
