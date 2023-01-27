@@ -1,6 +1,7 @@
 package com.playmonumenta.scriptedquests;
 
 import com.playmonumenta.scriptedquests.api.ClientChatProtocol;
+import com.playmonumenta.scriptedquests.benchmark.BenchmarkZones;
 import com.playmonumenta.scriptedquests.commands.*;
 import com.playmonumenta.scriptedquests.growables.GrowableAPI;
 import com.playmonumenta.scriptedquests.listeners.EntityListener;
@@ -34,6 +35,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.PluginManager;
@@ -89,8 +91,9 @@ public class Plugin extends JavaPlugin {
 
 		reloadConfigYaml(null);
 
-		if (mConfig.contains("translations")) {
-			mTranslationsManager = new TranslationsManager(this, mConfig.getConfigurationSection("translations"));
+		ConfigurationSection translationsConfig = mConfig.getConfigurationSection("translations");
+		if (translationsConfig != null) {
+			mTranslationsManager = new TranslationsManager(this, translationsConfig);
 		}
 
 		ChangeLogLevel.register();
@@ -119,6 +122,8 @@ public class Plugin extends JavaPlugin {
 		GuiCommand.register(this);
 		ShowZones.register(this);
 		Music.register();
+
+		BenchmarkZones.register();
 
 		mScheduledFunctionsManager = new ScheduleFunction(this);
 

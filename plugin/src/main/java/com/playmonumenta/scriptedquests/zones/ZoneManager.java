@@ -38,6 +38,7 @@ public class ZoneManager {
 	private final Map<String, ZoneLayer> mLayers = new HashMap<>();
 	private final Map<String, ZoneLayer> mPluginLayers = new HashMap<>();
 	private @MonotonicNonNull ZoneTreeBase mZoneTree = null;
+	private @Nullable BoundingBox mAllZoneBoundingBox = null;
 
 	private final Set<UUID> mTransferringPlayers = new HashSet<>();
 	private final Map<UUID, ZoneFragment> mLastPlayerZoneFragment = new HashMap<>();
@@ -393,9 +394,30 @@ public class ZoneManager {
 		MMLog.fine("[Zone Reload] " + String.format("%13.9f", (System.nanoTime() - cpuNanos) / 1000000000.0) + "s Merging layer data");
 
 		// Create list of zones
+		double globalMinX = Double.POSITIVE_INFINITY;
+		double globalMinY = Double.POSITIVE_INFINITY;
+		double globalMinZ = Double.POSITIVE_INFINITY;
+		double globalMaxX = Double.NEGATIVE_INFINITY;
+		double globalMaxY = Double.NEGATIVE_INFINITY;
+		double globalMaxZ = Double.NEGATIVE_INFINITY;
 		List<Zone> zones = new ArrayList<>();
 		for (ZoneLayer layer : mLayers.values()) {
-			zones.addAll(layer.getZones());
+			List<Zone> layerZones = layer.getZones();
+			zones.addAll(layerZones);
+			for (Zone zone : layerZones) {
+				globalMinX = Double.min(globalMinX, zone.minCorner().getX());
+				globalMinY = Double.min(globalMinY, zone.minCorner().getY());
+				globalMinZ = Double.min(globalMinZ, zone.minCorner().getZ());
+				globalMaxX = Double.max(globalMaxX, zone.maxCorner().getX());
+				globalMaxY = Double.max(globalMaxY, zone.maxCorner().getY());
+				globalMaxZ = Double.max(globalMaxZ, zone.maxCorner().getZ());
+			}
+		}
+		@Nullable BoundingBox globalBoundingBox;
+		if (globalMinX == Double.POSITIVE_INFINITY) {
+			globalBoundingBox = null;
+		} else {
+			globalBoundingBox = new BoundingBox(globalMinX, globalMinY, globalMinZ, globalMaxX, globalMaxY, globalMaxZ);
 		}
 
 		// Create list of all zone fragments.
@@ -437,6 +459,7 @@ public class ZoneManager {
 		// Swap the tree out; this is really fast!
 		@Nullable ZoneTreeBase oldTree = mZoneTree;
 		mZoneTree = newTree;
+		mAllZoneBoundingBox = globalBoundingBox;
 		if (oldTree != null) {
 			// Force all fragments to consider all locations as outside themselves
 			oldTree.invalidate();
@@ -488,6 +511,13 @@ public class ZoneManager {
 				sender.sendMessage(ChatColor.GOLD + "Zones reloaded successfully.");
 			}
 		}
+	}
+
+	public @Nullable BoundingBox getAllZoneBoundingBox() {
+		if (mAllZoneBoundingBox == null) {
+			return null;
+		}
+		return mAllZoneBoundingBox.clone();
 	}
 
 	// For a given location, return the zones that contain it.
