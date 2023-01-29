@@ -5,11 +5,11 @@ import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.quests.components.QuestActions;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
-import com.playmonumenta.scriptedquests.utils.MMLog;
 import java.util.Map.Entry;
 import java.util.Set;
 import javax.annotation.Nullable;
 import org.bukkit.entity.EntityType;
+import org.bukkit.inventory.ItemStack;
 
 public class NpcTrade implements Comparable<NpcTrade> {
 
@@ -17,6 +17,7 @@ public class NpcTrade implements Comparable<NpcTrade> {
 	private final QuestPrerequisites mPrerequisites;
 	private @Nullable QuestActions mActions = null;
 	private int mCount = -1;
+	private @Nullable ItemStack mOriginalResult = null;
 
 	public NpcTrade(JsonElement element) throws Exception {
 		JsonObject object = element.getAsJsonObject();
@@ -62,15 +63,16 @@ public class NpcTrade implements Comparable<NpcTrade> {
 		}
 	}
 
-	public NpcTrade(int mIndex, QuestPrerequisites mPrerequisites, TradeWindowOpenEvent.Trade trade) {
-		this(mIndex, mPrerequisites, trade.getActions(), trade.getCount());
+	public NpcTrade(int mIndex, QuestPrerequisites mPrerequisites, TradeWindowOpenEvent.Trade trade, @Nullable ItemStack mOriginalResult) {
+		this(mIndex, mPrerequisites, trade.getActions(), trade.getCount(), mOriginalResult);
 	}
 
-	public NpcTrade(int mIndex, QuestPrerequisites mPrerequisites, @Nullable QuestActions mActions, int mCount) {
+	public NpcTrade(int mIndex, QuestPrerequisites mPrerequisites, @Nullable QuestActions mActions, int mCount, @Nullable ItemStack mOriginalResult) {
 		this.mIndex = mIndex;
 		this.mPrerequisites = mPrerequisites;
 		this.mActions = mActions;
 		this.mCount = mCount;
+		this.mOriginalResult = mOriginalResult;
 	}
 
 	public int getIndex() {
@@ -93,6 +95,10 @@ public class NpcTrade implements Comparable<NpcTrade> {
 
 	public int getCount() {
 		return mCount;
+	}
+
+	public @Nullable ItemStack getOriginalResult() {
+		return mOriginalResult;
 	}
 
 	@Override

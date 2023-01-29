@@ -11,7 +11,6 @@ import com.playmonumenta.scriptedquests.utils.InventoryUtils;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
 import io.papermc.paper.event.player.PlayerPurchaseEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -48,23 +47,17 @@ public class NpcTradeManager implements Listener {
 
 	private static class PlayerTradeContext {
 		private final Map<Integer, NpcTrade> mSlotProperties;
-		private final Map<Integer, ItemStack> mOriginalResults;
 		private final Villager mVillager;
 		private final Merchant mMerchant;
 
-		private PlayerTradeContext(Map<Integer, NpcTrade> slotProperties, Map<Integer, ItemStack> originalResults, Villager villager, Merchant merchant) {
+		private PlayerTradeContext(Map<Integer, NpcTrade> slotProperties, Villager villager, Merchant merchant) {
 			mSlotProperties = slotProperties;
-			mOriginalResults = originalResults;
 			mVillager = villager;
 			mMerchant = merchant;
 		}
 
 		public Map<Integer, NpcTrade> getSlotProperties() {
 			return mSlotProperties;
-		}
-
-		public Map<Integer, ItemStack> getOriginalResults() {
-			return mOriginalResults;
 		}
 
 		public Villager getVillager() {
@@ -229,11 +222,11 @@ public class NpcTradeManager implements Listener {
 						final List<TradeWindowOpenEvent.Trade> newEventTrades = tradeEvent.getTrades();
 						Map<Integer, NpcTrade> newSlotProperties = new HashMap<>();
 						for (int i = 0; i < newEventTrades.size(); i++) {
-							NpcTrade npcTrade = new NpcTrade(i, new QuestPrerequisites(), newEventTrades.get(i));
+							NpcTrade npcTrade = new NpcTrade(i, new QuestPrerequisites(), newEventTrades.get(i), originalResults.get(i));
 							newSlotProperties.put(i, npcTrade);
 						}
 						merchant.setRecipes(newEventTrades.stream().map(TradeWindowOpenEvent.Trade::getRecipe).collect(Collectors.toList()));
-						mOpenTrades.put(player.getUniqueId(), new PlayerTradeContext(newSlotProperties, originalResults, villager, merchant));
+						mOpenTrades.put(player.getUniqueId(), new PlayerTradeContext(newSlotProperties, villager, merchant));
 						player.openMerchant(merchant, true);
 					}
 				}.runTaskLater(plugin, 1);
@@ -296,32 +289,40 @@ public class NpcTradeManager implements Listener {
 
 		int count = trade.getCount();
 		if (count > 0) {
-			ItemStack result = new ItemStack(context.getOriginalResults().getOrDefault(selectedIndex, recipe.getResult()));
-			int maxStackSize = result.getMaxStackSize();
-			List<ItemStack> items = new ArrayList<>();
-			while (count > 0) {
-				int amount = count;
-				if (amount > maxStackSize) {
-					amount = maxStackSize;
+			ItemStack result = trade.getOriginalResult();
+			if (result != null) {
+				int maxStackSize = result.getMaxStackSize();
+				List<ItemStack> items = new ArrayList<>();
+				while (count > 0) {
+					int amount = count;
+					if (amount > maxStackSize) {
+						amount = maxStackSize;
+					}
+					ItemStack resultCopy = new ItemStack(result);
+					resultCopy.setAmount(amount);
+					items.add(resultCopy);
+
+					count -= amount;
 				}
-				ItemStack resultCopy = new ItemStack(result);
-				resultCopy.setAmount(amount);
-				items.add(resultCopy);
 
-				count -= amount;
-			}
-
-			InventoryUtils.giveItems(player, items, false);
-
-			player.setItemOnCursor(null);
-			Bukkit.getScheduler().runTask(Plugin.getInstance(), () -> {
-				for (int i = 0; i < player.getInventory().getSize(); i++) {
-					ItemStack invItem = player.getInventory().getItem(i);
-					if (recipe.getResult().isSimilar(invItem)) {
-						player.getInventory().setItem(i, null);
+				InventoryUtils.giveItems(player, items, false);
+				event.setCancelled(true);
+				ingredient: for (ItemStack recipeItem : recipe.getIngredients()) {
+					int amountToDecrement = recipeItem.getAmount();
+					for (ItemStack merchItem : merchInv) {
+						if (merchItem.isSimilar(recipeItem)) {
+							int merchAmount = merchItem.getAmount();
+							if (merchAmount >= amountToDecrement) {
+								merchItem.setAmount(merchAmount - amountToDecrement);
+								continue ingredient;
+							} else {
+								merchItem.setAmount(0);
+								amountToDecrement -= merchAmount;
+							}
+						}
 					}
 				}
-			});
+			}
 		}
 	}
 }
