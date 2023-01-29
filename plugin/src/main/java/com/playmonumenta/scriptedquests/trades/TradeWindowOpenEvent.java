@@ -25,12 +25,14 @@ public class TradeWindowOpenEvent extends Event implements Cancellable {
 	private boolean mCancelled;
 
 	public static class Trade {
-		private MerchantRecipe mRecipe;
-		private @Nullable QuestActions mActions;
+		private final MerchantRecipe mRecipe;
+		private final @Nullable QuestActions mActions;
+		private final int mCount;
 
-		public Trade(MerchantRecipe recipe, @Nullable QuestActions actions) {
+		public Trade(MerchantRecipe recipe, @Nullable QuestActions actions, int count) {
 			this.mRecipe = recipe;
 			this.mActions = actions;
+			this.mCount = count;
 		}
 
 		public MerchantRecipe getRecipe() {
@@ -39,6 +41,10 @@ public class TradeWindowOpenEvent extends Event implements Cancellable {
 
 		public @Nullable QuestActions getActions() {
 			return mActions;
+		}
+
+		public int getCount() {
+			return mCount;
 		}
 	}
 

@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.quests.components.QuestActions;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
+import com.playmonumenta.scriptedquests.utils.MMLog;
 import java.util.Map.Entry;
 import java.util.Set;
 import javax.annotation.Nullable;
@@ -15,6 +16,7 @@ public class NpcTrade implements Comparable<NpcTrade> {
 	private final int mIndex;
 	private final QuestPrerequisites mPrerequisites;
 	private @Nullable QuestActions mActions = null;
+	private int mCount = -1;
 
 	public NpcTrade(JsonElement element) throws Exception {
 		JsonObject object = element.getAsJsonObject();
@@ -44,21 +46,31 @@ public class NpcTrade implements Comparable<NpcTrade> {
 			mActions = new QuestActions("", "", EntityType.VILLAGER, 0, actionsElement);
 		}
 
+		JsonElement countElement = object.get("count");
+		if (countElement != null) {
+			mCount = countElement.getAsInt();
+		}
+
 		// Iterate through the remaining keys and throw an error if any are found
 		Set<Entry<String, JsonElement>> entries = object.entrySet();
 		for (Entry<String, JsonElement> ent : entries) {
 			String key = ent.getKey();
 
-			if (!key.equals("index") && !key.equals("prerequisites") && !key.equals("actions")) {
+			if (!key.equals("index") && !key.equals("prerequisites") && !key.equals("actions") && !key.equals("count")) {
 				throw new Exception("Unknown trade key: " + key);
 			}
 		}
 	}
 
-	public NpcTrade(int mIndex, QuestPrerequisites mPrerequisites, @Nullable QuestActions mActions) {
+	public NpcTrade(int mIndex, QuestPrerequisites mPrerequisites, TradeWindowOpenEvent.Trade trade) {
+		this(mIndex, mPrerequisites, trade.getActions(), trade.getCount());
+	}
+
+	public NpcTrade(int mIndex, QuestPrerequisites mPrerequisites, @Nullable QuestActions mActions, int mCount) {
 		this.mIndex = mIndex;
 		this.mPrerequisites = mPrerequisites;
 		this.mActions = mActions;
+		this.mCount = mCount;
 	}
 
 	public int getIndex() {
@@ -77,6 +89,10 @@ public class NpcTrade implements Comparable<NpcTrade> {
 		if (mActions != null) {
 			mActions.doActions(context);
 		}
+	}
+
+	public int getCount() {
+		return mCount;
 	}
 
 	@Override

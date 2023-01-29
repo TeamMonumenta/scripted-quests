@@ -7,17 +7,21 @@ import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import com.playmonumenta.scriptedquests.trades.NpcTrade;
 import com.playmonumenta.scriptedquests.trades.NpcTrader;
 import com.playmonumenta.scriptedquests.trades.TradeWindowOpenEvent;
+import com.playmonumenta.scriptedquests.utils.InventoryUtils;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
 import io.papermc.paper.event.player.PlayerPurchaseEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -35,6 +39,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Merchant;
 import org.bukkit.inventory.MerchantInventory;
 import org.bukkit.inventory.MerchantRecipe;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,17 +48,23 @@ public class NpcTradeManager implements Listener {
 
 	private static class PlayerTradeContext {
 		private final Map<Integer, NpcTrade> mSlotProperties;
+		private final Map<Integer, ItemStack> mOriginalResults;
 		private final Villager mVillager;
 		private final Merchant mMerchant;
 
-		private PlayerTradeContext(Map<Integer, NpcTrade> slotProperties, Villager villager, Merchant merchant) {
+		private PlayerTradeContext(Map<Integer, NpcTrade> slotProperties, Map<Integer, ItemStack> originalResults, Villager villager, Merchant merchant) {
 			mSlotProperties = slotProperties;
+			mOriginalResults = originalResults;
 			mVillager = villager;
 			mMerchant = merchant;
 		}
 
 		public Map<Integer, NpcTrade> getSlotProperties() {
 			return mSlotProperties;
+		}
+
+		public Map<Integer, ItemStack> getOriginalResults() {
+			return mOriginalResults;
 		}
 
 		public Villager getVillager() {
@@ -114,6 +125,7 @@ public class NpcTradeManager implements Listener {
 		event.setCancelled(true);
 
 		Map<Integer, NpcTrade> slotProperties = new HashMap<>();
+		Map<Integer, ItemStack> originalResults = new HashMap<>();
 
 		// Iterate over the villager recipes and filter out what shouldn't be there
 		// We need to tag the outer loop so inner loops can continue it
@@ -149,6 +161,34 @@ public class NpcTradeManager implements Listener {
 						modified = true;
 						continue recipes;
 					} else {
+						// Set custom count if applicable
+						int count = trade.getCount();
+						if (count > 0) {
+							ItemStack originalResult = recipe.getResult();
+							originalResults.put(trades.size(), originalResult);
+
+							ItemStack result = new ItemStack(originalResult);
+							int maxStackSize = result.getMaxStackSize();
+
+							String countString;
+							if (maxStackSize > 1 && count % maxStackSize == 0) {
+								countString = count / maxStackSize + " Stacks of ";
+							} else {
+								countString = count + " ";
+							}
+
+							result.setAmount(1);
+							ItemMeta meta = result.getItemMeta();
+							if (meta.hasDisplayName()) {
+								meta.displayName(Component.text(countString, NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false).append(Objects.requireNonNull(meta.displayName())));
+								result.setItemMeta(meta);
+							}
+							// make a new recipe with the replaced item
+							MerchantRecipe newRecipe = new MerchantRecipe(result, recipe.getUses(), recipe.getMaxUses(), recipe.hasExperienceReward(), recipe.getVillagerExperience(), recipe.getPriceMultiplier(), recipe.getDemand(), recipe.getSpecialPrice(), recipe.shouldIgnoreDiscounts());
+							newRecipe.setIngredients(recipe.getIngredients());
+							recipe = newRecipe;
+						}
+
 						slotProperties.put(trades.size(), trade);
 					}
 				}
@@ -177,7 +217,7 @@ public class NpcTradeManager implements Listener {
 			List<TradeWindowOpenEvent.Trade> eventTrades = new ArrayList<>();
 			for (int i = 0; i < trades.size(); i++) {
 				NpcTrade npcTrade = slotProperties.get(i);
-				eventTrades.add(new TradeWindowOpenEvent.Trade(trades.get(i), npcTrade != null ? npcTrade.getActions() : null));
+				eventTrades.add(new TradeWindowOpenEvent.Trade(trades.get(i), npcTrade != null ? npcTrade.getActions() : null, npcTrade != null ? npcTrade.getCount() : -1));
 			}
 			TradeWindowOpenEvent tradeEvent = new TradeWindowOpenEvent(player, eventTrades);
 			Bukkit.getPluginManager().callEvent(tradeEvent);
@@ -189,11 +229,11 @@ public class NpcTradeManager implements Listener {
 						final List<TradeWindowOpenEvent.Trade> newEventTrades = tradeEvent.getTrades();
 						Map<Integer, NpcTrade> newSlotProperties = new HashMap<>();
 						for (int i = 0; i < newEventTrades.size(); i++) {
-							NpcTrade npcTrade = new NpcTrade(i, new QuestPrerequisites(), newEventTrades.get(i).getActions());
+							NpcTrade npcTrade = new NpcTrade(i, new QuestPrerequisites(), newEventTrades.get(i));
 							newSlotProperties.put(i, npcTrade);
 						}
 						merchant.setRecipes(newEventTrades.stream().map(TradeWindowOpenEvent.Trade::getRecipe).collect(Collectors.toList()));
-						mOpenTrades.put(player.getUniqueId(), new PlayerTradeContext(newSlotProperties, villager, merchant));
+						mOpenTrades.put(player.getUniqueId(), new PlayerTradeContext(newSlotProperties, originalResults, villager, merchant));
 						player.openMerchant(merchant, true);
 					}
 				}.runTaskLater(plugin, 1);
@@ -253,6 +293,36 @@ public class NpcTradeManager implements Listener {
 		}
 
 		trade.doActions(new QuestContext(Plugin.getInstance(), player, context.getVillager()));
+
+		int count = trade.getCount();
+		if (count > 0) {
+			ItemStack result = new ItemStack(context.getOriginalResults().getOrDefault(selectedIndex, recipe.getResult()));
+			int maxStackSize = result.getMaxStackSize();
+			List<ItemStack> items = new ArrayList<>();
+			while (count > 0) {
+				int amount = count;
+				if (amount > maxStackSize) {
+					amount = maxStackSize;
+				}
+				ItemStack resultCopy = new ItemStack(result);
+				resultCopy.setAmount(amount);
+				items.add(resultCopy);
+
+				count -= amount;
+			}
+
+			InventoryUtils.giveItems(player, items, false);
+
+			player.setItemOnCursor(null);
+			Bukkit.getScheduler().runTask(Plugin.getInstance(), () -> {
+				for (int i = 0; i < player.getInventory().getSize(); i++) {
+					ItemStack invItem = player.getInventory().getItem(i);
+					if (recipe.getResult().isSimilar(invItem)) {
+						player.getInventory().setItem(i, null);
+					}
+				}
+			});
+		}
 	}
 }
 
