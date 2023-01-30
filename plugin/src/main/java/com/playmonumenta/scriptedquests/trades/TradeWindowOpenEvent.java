@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MerchantRecipe;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,26 +26,56 @@ public class TradeWindowOpenEvent extends Event implements Cancellable {
 	private boolean mCancelled;
 
 	public static class Trade {
-		private final MerchantRecipe mRecipe;
-		private final @Nullable QuestActions mActions;
-		private final int mCount;
+		private MerchantRecipe mRecipe;
+		private @Nullable QuestActions mActions;
+		private int mCount;
+		private @Nullable ItemStack mOriginalResult;
 
-		public Trade(MerchantRecipe recipe, @Nullable QuestActions actions, int count) {
+		public Trade(Trade original) {
+			this(original.getRecipe(), original.getActions(), original.getCount(), original.getOriginalResult());
+		}
+		
+		public Trade(MerchantRecipe recipe, @Nullable NpcTrade npcTrade) {
+			this(recipe, npcTrade == null ? null : npcTrade.getActions(), npcTrade == null ? -1 : npcTrade.getCount(), npcTrade == null ? null : npcTrade.getOriginalResult());
+		}
+
+		public Trade(MerchantRecipe recipe, @Nullable QuestActions actions, int count, @Nullable ItemStack originalResult) {
 			this.mRecipe = recipe;
 			this.mActions = actions;
 			this.mCount = count;
+			this.mOriginalResult = originalResult;
+		}
+
+		public void setRecipe(MerchantRecipe recipe) {
+			mRecipe = recipe;
 		}
 
 		public MerchantRecipe getRecipe() {
 			return mRecipe;
 		}
 
+		public void setActions(@Nullable QuestActions actions) {
+			mActions = actions;
+		}
+
 		public @Nullable QuestActions getActions() {
 			return mActions;
 		}
 
+		public void setCount(int count) {
+			mCount = count;
+		}
+
 		public int getCount() {
 			return mCount;
+		}
+
+		public void setOriginalResult(@Nullable ItemStack originalResult) {
+			mOriginalResult = originalResult;
+		}
+
+		public @Nullable ItemStack getOriginalResult() {
+			return mOriginalResult;
 		}
 	}
 

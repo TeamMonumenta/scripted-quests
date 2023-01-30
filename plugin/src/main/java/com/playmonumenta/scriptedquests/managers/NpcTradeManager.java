@@ -210,7 +210,9 @@ public class NpcTradeManager implements Listener {
 			List<TradeWindowOpenEvent.Trade> eventTrades = new ArrayList<>();
 			for (int i = 0; i < trades.size(); i++) {
 				NpcTrade npcTrade = slotProperties.get(i);
-				eventTrades.add(new TradeWindowOpenEvent.Trade(trades.get(i), npcTrade != null ? npcTrade.getActions() : null, npcTrade != null ? npcTrade.getCount() : -1));
+				TradeWindowOpenEvent.Trade trade = new TradeWindowOpenEvent.Trade(trades.get(i), npcTrade);
+				trade.setOriginalResult(originalResults.get(i));
+				eventTrades.add(trade);
 			}
 			TradeWindowOpenEvent tradeEvent = new TradeWindowOpenEvent(player, eventTrades);
 			Bukkit.getPluginManager().callEvent(tradeEvent);
@@ -222,7 +224,7 @@ public class NpcTradeManager implements Listener {
 						final List<TradeWindowOpenEvent.Trade> newEventTrades = tradeEvent.getTrades();
 						Map<Integer, NpcTrade> newSlotProperties = new HashMap<>();
 						for (int i = 0; i < newEventTrades.size(); i++) {
-							NpcTrade npcTrade = new NpcTrade(i, new QuestPrerequisites(), newEventTrades.get(i), originalResults.get(i));
+							NpcTrade npcTrade = new NpcTrade(i, new QuestPrerequisites(), newEventTrades.get(i));
 							newSlotProperties.put(i, npcTrade);
 						}
 						merchant.setRecipes(newEventTrades.stream().map(TradeWindowOpenEvent.Trade::getRecipe).collect(Collectors.toList()));

@@ -63,8 +63,8 @@ public class NpcTrade implements Comparable<NpcTrade> {
 		}
 	}
 
-	public NpcTrade(int mIndex, QuestPrerequisites mPrerequisites, TradeWindowOpenEvent.Trade trade, @Nullable ItemStack mOriginalResult) {
-		this(mIndex, mPrerequisites, trade.getActions(), trade.getCount(), mOriginalResult);
+	public NpcTrade(int mIndex, QuestPrerequisites mPrerequisites, TradeWindowOpenEvent.Trade trade) {
+		this(mIndex, mPrerequisites, trade.getActions(), trade.getCount(), trade.getOriginalResult());
 	}
 
 	public NpcTrade(int mIndex, QuestPrerequisites mPrerequisites, @Nullable QuestActions mActions, int mCount, @Nullable ItemStack mOriginalResult) {
