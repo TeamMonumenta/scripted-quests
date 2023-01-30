@@ -34,7 +34,7 @@ public class TradeWindowOpenEvent extends Event implements Cancellable {
 		public Trade(Trade original) {
 			this(original.getRecipe(), original.getActions(), original.getCount(), original.getOriginalResult());
 		}
-		
+
 		public Trade(MerchantRecipe recipe, @Nullable NpcTrade npcTrade) {
 			this(recipe, npcTrade == null ? null : npcTrade.getActions(), npcTrade == null ? -1 : npcTrade.getCount(), npcTrade == null ? null : npcTrade.getOriginalResult());
 		}
