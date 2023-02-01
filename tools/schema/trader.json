@@ -51,6 +51,14 @@
 						"required": false,
 						"propertyOrder": 3,
 						"$ref": "actions.json"
+					},
+					"count": {
+						"propertyOrder": 4,
+						"required": false,
+						"type": "number",
+						"minimum": 1,
+						"maximum": 29999984,
+						"description": "When set, completing the trade awards this many of the result item. The item's name in the trade displays the count, or the number of stacks if it is a whole number."
 					}
 				}
             }
