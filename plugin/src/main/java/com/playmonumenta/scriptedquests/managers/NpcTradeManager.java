@@ -312,7 +312,7 @@ public class NpcTradeManager implements Listener {
 				ingredient: for (ItemStack recipeItem : recipe.getIngredients()) {
 					int amountToDecrement = recipeItem.getAmount();
 					for (ItemStack merchItem : merchInv) {
-						if (merchItem.isSimilar(recipeItem)) {
+						if (merchItem != null && merchItem.isSimilar(recipeItem)) {
 							int merchAmount = merchItem.getAmount();
 							if (merchAmount >= amountToDecrement) {
 								merchItem.setAmount(merchAmount - amountToDecrement);
