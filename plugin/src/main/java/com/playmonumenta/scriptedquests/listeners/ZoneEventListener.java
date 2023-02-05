@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -89,6 +90,9 @@ public class ZoneEventListener implements Listener {
 	// Cancelled PlayerInteractEvents are jank. Checking for denied interactions is similarly jank.
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
 	public void playerInteractEvent(PlayerInteractEvent event) {
+		if (event.getPlayer().getGameMode() == GameMode.SPECTATOR) {
+			return;
+		}
 		if (mHasRemoteClickEvent) {
 			if (!MetadataUtils.happenedThisTick(event.getPlayer(), ENTITY_INTERACT_METAKEY, 0)) { // entity interact events also cause a left click event that must be ignored
 				execute(event.getPlayer().getLocation(), ZoneRemoteClickEvent.class, (events, layer, propertyName) -> {
