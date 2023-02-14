@@ -481,7 +481,7 @@ public class ZoneManager {
 			}
 		};
 
-		mPlayerTracker.runTaskTimer(plugin, 0, 5);
+		mPlayerTracker.runTaskTimer(plugin, 0, 1);
 
 		for (@Nullable CommandSender sender : mReloadRequesters) {
 			if (sender != null) {
