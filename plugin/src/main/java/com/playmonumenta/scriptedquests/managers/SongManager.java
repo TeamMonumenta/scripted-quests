@@ -267,8 +267,10 @@ public class SongManager {
 	}
 
 	public static void onDeath(Player player) {
-		PlayerState state = mPlayerStates.remove(player.getUniqueId());
+		UUID uuid = player.getUniqueId();
+		PlayerState state = mPlayerStates.get(uuid);
 		if (state != null && state.mNow != null && state.mNow.mStopOnDeath) {
+			mPlayerStates.remove(uuid);
 			state.cancelNext();
 			state.cancelNow();
 		}
