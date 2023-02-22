@@ -36,6 +36,7 @@ public class Music {
 		optionalArguments.add(new MultiLiteralArgument("master", "music", "record", "weather", "block", "hostile", "neutral", "player", "ambient", "voice"));
 		optionalArguments.add(new FloatArgument("volume", 0.0f));
 		optionalArguments.add(new FloatArgument("pitch", 0.5f, 2.0f));
+		optionalArguments.add(new BooleanArgument("stop on death"));
 
 		new CommandAPICommand("monumenta")
 			.withPermission(CommandPermission.fromString("scriptedquests.music.play"))
@@ -132,7 +133,11 @@ public class Music {
 		} else {
 			pitch = 1.0f;
 		}
-		Song song = new Song(musicPath.asString(), category, duration, isLoop, volume, pitch);
+		boolean stopOnDeath = false;
+		if (args.length > 10) {
+			stopOnDeath = (boolean) args[10];
+		}
+		Song song = new Song(musicPath.asString(), category, duration, isLoop, volume, pitch, stopOnDeath);
 		return SongManager.playSong(players, song, playNow);
 	}
 

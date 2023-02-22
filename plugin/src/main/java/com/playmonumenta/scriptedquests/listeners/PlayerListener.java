@@ -133,6 +133,7 @@ public class PlayerListener implements Listener {
 	public void playerDeathEvent(PlayerDeathEvent event) {
 		Player player = event.getEntity();
 		mPlugin.mDeathManager.deathEvent(mPlugin, event);
+		SongManager.onDeath(player);
 
 		List<DeathLocation> deathEntries;
 		// Check if the player has died already since last plugin load

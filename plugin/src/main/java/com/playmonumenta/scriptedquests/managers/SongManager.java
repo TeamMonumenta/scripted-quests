@@ -5,15 +5,19 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BooleanSupplier;
 import javax.annotation.Nullable;
 import org.bukkit.Bukkit;
 import org.bukkit.SoundCategory;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -25,18 +29,25 @@ public class SongManager {
 		public boolean mIsLoop;
 		public float mVolume;
 		public float mPitch;
+		public boolean mStopOnDeath;
 
 		public Song(String path, SoundCategory category, double durationSeconds, boolean isLoop, float volume, float pitch) {
+			this(path, category, durationSeconds, isLoop, volume, pitch, false);
+		}
+
+		public Song(String path, SoundCategory category, double durationSeconds, boolean isLoop, float volume, float pitch, boolean stopOnDeath) {
 			mSongPath = path;
 			mCategory = category;
 			mSongDuration = (long) (1000.0f * durationSeconds);
 			mIsLoop = isLoop;
 			mVolume = volume;
 			mPitch = pitch;
+			mStopOnDeath = stopOnDeath;
 		}
 
 		public boolean equalsSong(Song song) {
 			return mIsLoop == song.mIsLoop
+				&& mStopOnDeath == song.mStopOnDeath
 				&& mSongDuration == song.mSongDuration
 				&& mVolume == song.mVolume
 				&& mPitch == song.mPitch
@@ -207,9 +218,59 @@ public class SongManager {
 		return state.nextSong();
 	}
 
+	public static void playSongWhile(Collection<Player> players, Song song, boolean playNow, BooleanSupplier shouldPlay, boolean cancelNow, int cancelDelay, int checkInterval) {
+		Collection<Player> songPlayers = new ArrayList<>(players);
+		if (shouldPlay.getAsBoolean()) {
+			playSong(songPlayers, song, playNow);
+
+			new BukkitRunnable() {
+				@Override
+				public void run() {
+					// Remove players whose song was canceled by something else
+					songPlayers.removeIf(p -> {
+						Song current = getCurrentSong(p);
+						return current == null || !song.equalsSong(current);
+					});
+
+					if (songPlayers.isEmpty()) {
+						this.cancel();
+						return;
+					}
+
+					if (!shouldPlay.getAsBoolean()) {
+						Bukkit.getScheduler().runTaskLater(Plugin.getInstance(), () -> stopSong(songPlayers, cancelNow), cancelDelay);
+						this.cancel();
+					}
+				}
+			}.runTaskTimer(Plugin.getInstance(), checkInterval, checkInterval);
+		}
+	}
+
+	public static void playSongWhile(Player player, Song song, boolean playNow, BooleanSupplier shouldPlay, boolean cancelNow, int cancelDelay, int checkInterval) {
+		playSongWhile(List.of(player), song, playNow, shouldPlay, cancelNow, cancelDelay, checkInterval);
+	}
+
+	public static void playBossSong(Collection<Player> players, Song song, boolean playNow, LivingEntity boss, boolean cancelNow, int cancelDelay, int checkInterval) {
+		playSongWhile(players, song, playNow, () -> boss.isValid() && !boss.isDead(), cancelNow, cancelDelay, checkInterval);
+	}
+
+	public static void playBossSong(Player player, Song song, boolean playNow, LivingEntity boss, boolean cancelNow, int cancelDelay, int checkInterval) {
+		playBossSong(List.of(player), song, playNow, boss, cancelNow, cancelDelay, checkInterval);
+	}
+
 	public static void onLogout(Player player) {
 		PlayerState state = mPlayerStates.remove(player.getUniqueId());
 		if (state != null) {
+			state.cancelNext();
+			state.cancelNow();
+		}
+	}
+
+	public static void onDeath(Player player) {
+		UUID uuid = player.getUniqueId();
+		PlayerState state = mPlayerStates.get(uuid);
+		if (state != null && state.mNow != null && state.mNow.mStopOnDeath) {
+			mPlayerStates.remove(uuid);
 			state.cancelNext();
 			state.cancelNow();
 		}
