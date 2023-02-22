@@ -309,7 +309,7 @@ actions:
         <dependency>
             <groupId>com.playmonumenta</groupId>
             <artifactId>scripted-quests</artifactId>
-            <version>6.4</version>
+            <version>6.6</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
