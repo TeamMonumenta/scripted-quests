@@ -1,6 +1,7 @@
 package com.playmonumenta.scriptedquests.utils;
 
 import dev.jorel.commandapi.SuggestionInfo;
+import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.GreedyStringArgument;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,7 +17,7 @@ public class CommandArgument extends GreedyStringArgument {
 
 	public CommandArgument(String nodeName) {
 		super(nodeName);
-		replaceSuggestions(this::suggestions);
+		replaceSuggestions(ArgumentSuggestions.strings(this::suggestions));
 	}
 
 	private String[] suggestions(SuggestionInfo info) {

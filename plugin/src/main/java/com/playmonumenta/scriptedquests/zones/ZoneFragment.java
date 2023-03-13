@@ -15,15 +15,15 @@ import org.bukkit.util.Vector;
  * Each zone also keeps track of its fragments.
  */
 public class ZoneFragment extends ZoneBase {
-	private Map<String, Zone> mParents = new HashMap<String, Zone>();
-	private Map<String, List<Zone>> mParentsAndEclipsed = new HashMap<String, List<Zone>>();
+	private final Map<String, Zone> mParents = new HashMap<>();
+	private final Map<String, List<Zone>> mParentsAndEclipsed = new HashMap<>();
 	private boolean mValid;
 
 	protected ZoneFragment(ZoneFragment other) {
 		super(other);
 		mParents.putAll(other.mParents);
 		for (Map.Entry<String, List<Zone>> entry : other.mParentsAndEclipsed.entrySet()) {
-			mParentsAndEclipsed.put(entry.getKey(), new ArrayList<Zone>(entry.getValue()));
+			mParentsAndEclipsed.put(entry.getKey(), new ArrayList<>(entry.getValue()));
 		}
 		mValid = other.mValid;
 	}
@@ -31,7 +31,7 @@ public class ZoneFragment extends ZoneBase {
 	protected ZoneFragment(Zone other) {
 		super(other);
 		mParents.put(other.getLayerName(), other);
-		List<Zone> zones = new ArrayList<Zone>();
+		List<Zone> zones = new ArrayList<>();
 		zones.add(other);
 		mParentsAndEclipsed.put(other.getLayerName(), zones);
 		mValid = true;
@@ -44,7 +44,7 @@ public class ZoneFragment extends ZoneBase {
 	 */
 	@SuppressWarnings("unchecked")
 	private ZoneFragment[] splitAxis(Vector pos, Axis axis) {
-		ZoneFragment[] result = (ZoneFragment[]) new ZoneFragment[2];
+		ZoneFragment[] result = new ZoneFragment[2];
 
 		ZoneFragment lower = new ZoneFragment(this);
 		ZoneFragment upper = new ZoneFragment(this);
@@ -53,17 +53,18 @@ public class ZoneFragment extends ZoneBase {
 		Vector upperMin = upper.minCorner();
 
 		switch (axis) {
-		case X:
-			lowerMax.setX(pos.getX());
-			upperMin.setX(pos.getX());
-			break;
-		case Z:
-			lowerMax.setZ(pos.getZ());
-			upperMin.setZ(pos.getZ());
-			break;
-		default:
-			lowerMax.setY(pos.getY());
-			upperMin.setY(pos.getY());
+			case X -> {
+				lowerMax.setX(pos.getX());
+				upperMin.setX(pos.getX());
+			}
+			case Z -> {
+				lowerMax.setZ(pos.getZ());
+				upperMin.setZ(pos.getZ());
+			}
+			default -> {
+				lowerMax.setY(pos.getY());
+				upperMin.setY(pos.getY());
+			}
 		}
 
 		lower.maxCornerExclusive(lowerMax);
@@ -98,35 +99,11 @@ public class ZoneFragment extends ZoneBase {
 		Vector otherMax = overlap.maxCornerExclusive();
 
 		ZoneFragment[] tempSplitResult;
-		List<ZoneFragment> result = new ArrayList<ZoneFragment>();
+		List<ZoneFragment> result = new ArrayList<>();
 
 		for (Axis axis : Axis.values()) {
 			@Nullable ZoneFragment lower;
 			@Nullable ZoneFragment upper;
-
-			List<ZoneFragment> workZones = result;
-			result = new ArrayList<ZoneFragment>();
-
-			for (@Nullable ZoneFragment workZone : workZones) {
-				// Add zones split from existing split zones
-				tempSplitResult = workZone.splitAxis(otherMin, axis);
-				lower = tempSplitResult[0];
-				workZone = tempSplitResult[1];
-
-				tempSplitResult = workZone.splitAxis(otherMax, axis);
-				workZone = tempSplitResult[0];
-				upper = tempSplitResult[1];
-
-				if (lower != null && lower.isValid()) {
-					result.add(lower);
-				}
-				if (workZone != null && workZone.isValid()) {
-					result.add(workZone);
-				}
-				if (upper != null && upper.isValid()) {
-					result.add(upper);
-				}
-			}
 
 			// Add zones split from center, but not the center (overlap) itself
 			tempSplitResult = centerZone.splitAxis(otherMin, axis);
@@ -153,11 +130,8 @@ public class ZoneFragment extends ZoneBase {
 		}
 
 		// Track the new parent zone of the center fragment, even if it's eclipsed.
-		@Nullable List<Zone> newParentLayerZones = centerZone.mParentsAndEclipsed.get(newParentLayer);
-		if (newParentLayerZones == null) {
-			newParentLayerZones = new ArrayList<Zone>();
-			centerZone.mParentsAndEclipsed.put(newParentLayer, newParentLayerZones);
-		}
+		@Nullable List<Zone> newParentLayerZones = centerZone.mParentsAndEclipsed.computeIfAbsent(newParentLayer,
+			k -> new ArrayList<>());
 		newParentLayerZones.add(newParent);
 
 		// If registering a new parent, it may be added now that the center zone is the size of the overlap.
@@ -221,12 +195,7 @@ public class ZoneFragment extends ZoneBase {
 		}
 
 		// Merging is possible, go for it.
-		ZoneFragment result;
-		try {
-			result = new ZoneFragment(this);
-		} catch (Exception e) {
-			throw e;
-		}
+		ZoneFragment result = new ZoneFragment(this);
 
 		Vector resultMin = Vector.getMinimum(aMin, bMin);
 		Vector resultMax = Vector.getMaximum(aMax, bMax);
@@ -237,9 +206,7 @@ public class ZoneFragment extends ZoneBase {
 	}
 
 	public Map<String, Zone> getParents() {
-		Map<String, Zone> result = new HashMap<String, Zone>();
-		result.putAll(mParents);
-		return result;
+		return new HashMap<>(mParents);
 	}
 
 	public @Nullable Zone getParent(String layer) {
@@ -247,21 +214,19 @@ public class ZoneFragment extends ZoneBase {
 	}
 
 	public Map<String, List<Zone>> getParentsAndEclipsed() {
-		Map<String, List<Zone>> result = new HashMap<String, List<Zone>>();
+		Map<String, List<Zone>> result = new HashMap<>();
 		for (Map.Entry<String, List<Zone>> entry : mParentsAndEclipsed.entrySet()) {
 			String layerName = entry.getKey();
 			List<Zone> zones = entry.getValue();
 
-			List<Zone> resultZones = new ArrayList<Zone>();
-			resultZones.addAll(zones);
-			result.put(layerName, resultZones);
+			result.put(layerName, new ArrayList<>(zones));
 		}
 		return result;
 	}
 
 	public List<Zone> getParentAndEclipsed(String layer) {
 		@Nullable List<Zone> zones = mParentsAndEclipsed.get(layer);
-		List<Zone> result = new ArrayList<Zone>();
+		List<Zone> result = new ArrayList<>();
 		if (zones != null) {
 			result.addAll(zones);
 		}
@@ -306,10 +271,9 @@ public class ZoneFragment extends ZoneBase {
 	@Override
 	@SuppressWarnings("unchecked")
 	public boolean equals(Object o) {
-		if (!(o instanceof ZoneFragment)) {
+		if (!(o instanceof ZoneFragment other)) {
 			return false;
 		}
-		ZoneFragment other = (ZoneFragment)o;
 		return (super.equals(other) &&
 		        mParents.equals(other.mParents) &&
 		        mParentsAndEclipsed.equals(other.mParentsAndEclipsed));

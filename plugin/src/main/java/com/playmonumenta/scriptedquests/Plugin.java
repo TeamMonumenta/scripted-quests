@@ -2,6 +2,7 @@ package com.playmonumenta.scriptedquests;
 
 import com.playmonumenta.scriptedquests.api.ClientChatProtocol;
 import com.playmonumenta.scriptedquests.commands.*;
+import com.playmonumenta.scriptedquests.growables.GrowableAPI;
 import com.playmonumenta.scriptedquests.listeners.EntityListener;
 import com.playmonumenta.scriptedquests.listeners.InteractablesListener;
 import com.playmonumenta.scriptedquests.listeners.PlayerListener;
@@ -10,7 +11,6 @@ import com.playmonumenta.scriptedquests.listeners.WorldListener;
 import com.playmonumenta.scriptedquests.listeners.ZoneEventListener;
 import com.playmonumenta.scriptedquests.managers.ClickableManager;
 import com.playmonumenta.scriptedquests.managers.CodeManager;
-import com.playmonumenta.scriptedquests.managers.GrowableManager;
 import com.playmonumenta.scriptedquests.managers.GuiManager;
 import com.playmonumenta.scriptedquests.managers.InteractableManager;
 import com.playmonumenta.scriptedquests.managers.NpcTradeManager;
@@ -65,7 +65,6 @@ public class Plugin extends JavaPlugin {
 	public ZonePropertyManager mZonePropertyManager;
 	public ZonePropertyGroupManager mZonePropertyGroupManager;
 	public WaypointManager mWaypointManager;
-	public GrowableManager mGrowableManager;
 	public GuiManager mGuiManager;
 	public ZoneEventListener mZoneEventListener;
 	public @Nullable ProtocolLibIntegration mProtocolLibIntegration;
@@ -110,7 +109,7 @@ public class Plugin extends JavaPlugin {
 		Code.register(this);
 		SetVelocity.register();
 		DebugZones.register(this);
-		TestZone.register(this);
+		TestZone.register();
 		Heal.register();
 		Damage.register();
 		Cooldown.register();
@@ -119,11 +118,11 @@ public class Plugin extends JavaPlugin {
 		ReloadZones.register(this);
 		GuiCommand.register(this);
 		ShowZones.register(this);
+		Music.register();
 
 		mScheduledFunctionsManager = new ScheduleFunction(this);
-		mGrowableManager = new GrowableManager(this);
 
-		Growable.register(mGrowableManager);
+		GrowableAPI.registerCommands();
 		Waypoint.register(this);
 	}
 
@@ -134,7 +133,7 @@ public class Plugin extends JavaPlugin {
 		PluginManager manager = getServer().getPluginManager();
 
 		mQuestCompassManager = new QuestCompassManager(this);
-		mNpcManager = new QuestNpcManager(this);
+		mNpcManager = new QuestNpcManager();
 		mClickableManager = new ClickableManager();
 		mInteractableManager = new InteractableManager();
 		mTradeManager = new NpcTradeManager();
@@ -143,7 +142,7 @@ public class Plugin extends JavaPlugin {
 		mRaceManager = new RaceManager(this);
 		mCodeManager = new CodeManager();
 		mZoneEventListener = new ZoneEventListener(this);
-		mZoneManager = new ZoneManager(this);
+		mZoneManager = ZoneManager.createInstance(this);
 		mZonePropertyManager = new ZonePropertyManager(this);
 		mZonePropertyGroupManager = new ZonePropertyGroupManager();
 		mTimerManager = new CommandTimerManager(this);
@@ -218,7 +217,7 @@ public class Plugin extends JavaPlugin {
 		mCodeManager.reload(this, sender);
 		mZonePropertyManager.reload(this, sender);
 		mZoneEventListener.update();
-		mGrowableManager.reload(this, sender);
+		GrowableAPI.reload(sender);
 		mGuiManager.reload(this, sender);
 		if (mProtocolLibIntegration != null) {
 			mProtocolLibIntegration.reload();

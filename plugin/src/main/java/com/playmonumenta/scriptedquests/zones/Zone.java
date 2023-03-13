@@ -165,27 +165,6 @@ public class Zone extends ZoneBase {
 		return newFragments.size() == 0;
 	}
 
-	/*
-	 * Minimize the number of uneclipsed fragments.
-	 *
-	 * This works with only one zone's fragments at a time, and doesn't
-	 * need to be run again. This reduces n significantly for runtime.
-	 */
-	protected void defragment() {
-		if (mFragments.size() < 2) {
-			return;
-		}
-
-		// Load current fragments into defragmenter
-		ZoneDefragmenter defragmenter = new ZoneDefragmenter(mFragments);
-
-		// Invalidate all current fragments.
-		invalidate();
-
-		// Merge fragments into the smallest combination possible
-		mFragments = defragmenter.optimalMerge();
-	}
-
 	public ZoneLayer getLayer() {
 		return mLayer;
 	}

@@ -4,6 +4,7 @@ import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.utils.ZoneUtils;
 import com.playmonumenta.scriptedquests.zones.Zone;
 import com.playmonumenta.scriptedquests.zones.ZoneFragment;
+import com.playmonumenta.scriptedquests.zones.ZoneManager;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
@@ -33,8 +34,6 @@ import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 
 public class ShowZones {
-	private static final String[] EXECUTE_FALLBACK_SUGGESTION = {"\"Suggestions unavailable through /execute\""};
-
 	enum FragmentFace {
 		X_MIN,
 		Y_MIN,
@@ -130,7 +129,7 @@ public class ShowZones {
 					y = randRange(minY, maxY);
 					z = randRange(minZ, maxZ);
 
-					@Nullable Zone zone = mPlugin.mZoneManager.getZone(new Vector(x, y, z), mLayerName);
+					@Nullable Zone zone = ZoneManager.getInstance().getZone(new Vector(x, y, z), mLayerName);
 					if (zone == null) {
 						continue;
 					}
@@ -157,7 +156,7 @@ public class ShowZones {
 				 * estimate the space those particles are spread over to make
 				 * the number of particles sent more consistent.
 				 */
-				Set<ZoneFragment> fragments = mPlugin.mZoneManager.getZoneFragments(bbVisible);
+				Set<ZoneFragment> fragments = ZoneManager.getInstance().getZoneFragments(bbVisible);
 				Iterator<ZoneFragment> it = fragments.iterator();
 				double maxPossibleTotalArea = 0.0;
 				double maxPossibleTotalLength = 0.0;
@@ -273,10 +272,10 @@ public class ShowZones {
 							z = randRange(partMinZShown, partMaxZShown);
 
 							testZone = switch (face) {
-								case X_MIN -> mPlugin.mZoneManager.getZone(new Vector(x - DELTA_POS, y, z), mLayerName);
-								case Y_MIN -> mPlugin.mZoneManager.getZone(new Vector(x, y - DELTA_POS, z), mLayerName);
-								case Z_MIN -> mPlugin.mZoneManager.getZone(new Vector(x, y, z - DELTA_POS), mLayerName);
-								default -> mPlugin.mZoneManager.getZone(new Vector(x, y, z), mLayerName);
+								case X_MIN -> ZoneManager.getInstance().getZone(new Vector(x - DELTA_POS, y, z), mLayerName);
+								case Y_MIN -> ZoneManager.getInstance().getZone(new Vector(x, y - DELTA_POS, z), mLayerName);
+								case Z_MIN -> ZoneManager.getInstance().getZone(new Vector(x, y, z - DELTA_POS), mLayerName);
+								default -> ZoneManager.getInstance().getZone(new Vector(x, y, z), mLayerName);
 							};
 							// Intentionally testing if these are the same object
 							if (targetZone == testZone) {
@@ -364,7 +363,7 @@ public class ShowZones {
 						for (int offset1 = -1; offset1 <= 1; ++offset1) {
 							Vector testPoint1 = particlePosition.clone().add(testPointOffset1.clone().multiply(offset1));
 							for (int offset2 = -1; offset2 <= 1; ++offset2) {
-								testZone = mPlugin.mZoneManager.getZone(testPoint1.clone().add(testPointOffset2.clone().multiply(offset2)), mLayerName);
+								testZone = ZoneManager.getInstance().getZone(testPoint1.clone().add(testPointOffset2.clone().multiply(offset2)), mLayerName);
 								// Intentionally testing if these are not the same object
 								if (targetZone != testZone) {
 									testAxis1[1 + offset2] |= 1 << (1 + offset1);
@@ -413,7 +412,7 @@ public class ShowZones {
 		new CommandAPICommand("showzones")
 			.withPermission(CommandPermission.fromString("scriptedquests.showzones"))
 			.withArguments(new MultiLiteralArgument("show"))
-			.withArguments(new TextArgument("layer").replaceSuggestions(info -> plugin.mZoneManager.getLayerNameSuggestions()))
+			.withArguments(new TextArgument("layer").replaceSuggestions(ZoneManager.getLayerNameArgumentSuggestions()))
 			.executes((sender, args) -> {
 				String layerName = (String) args[1];
 				return show(plugin, sender, layerName, null);
@@ -423,14 +422,8 @@ public class ShowZones {
 		new CommandAPICommand("showzones")
 			.withPermission(CommandPermission.fromString("scriptedquests.showzones"))
 			.withArguments(new MultiLiteralArgument("show"))
-			.withArguments(new TextArgument("layer").replaceSuggestions(info -> plugin.mZoneManager.getLayerNameSuggestions()))
-			.withArguments(new TextArgument("property").replaceSuggestions(info -> {
-				Object[] args = info.previousArgs();
-				if (args.length == 0) {
-					return EXECUTE_FALLBACK_SUGGESTION;
-				}
-				return plugin.mZoneManager.getLoadedPropertySuggestions((String) args[1]);
-			}))
+			.withArguments(new TextArgument("layer").replaceSuggestions(ZoneManager.getLayerNameArgumentSuggestions()))
+			.withArguments(new TextArgument("property").replaceSuggestions(ZoneManager.getLoadedPropertyArgumentSuggestions(1)))
 			.executes((sender, args) -> {
 				String layerName = (String) args[1];
 				String propertyName = (String) args[2];
@@ -445,8 +438,7 @@ public class ShowZones {
 			callee = proxiedCommandSender.getCallee();
 		}
 		if (!(callee instanceof Player player)) {
-			CommandAPI.fail("This command can only be run as a player.");
-			return 0;
+			throw CommandAPI.failWithString("This command can only be run as a player.");
 		} else {
 			UUID playerUuid = player.getUniqueId();
 			@Nullable ShownInfo shownInfo = mShownInfo.get(playerUuid);
@@ -467,8 +459,7 @@ public class ShowZones {
 			callee = proxiedCommandSender.getCallee();
 		}
 		if (!(callee instanceof Player player)) {
-			CommandAPI.fail("This command can only be run as a player.");
-			return 0;
+			throw CommandAPI.failWithString("This command can only be run as a player.");
 		} else {
 			UUID playerUuid = player.getUniqueId();
 			@Nullable ShownInfo shownInfo = mShownInfo.get(playerUuid);

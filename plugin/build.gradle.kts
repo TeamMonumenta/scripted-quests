@@ -25,7 +25,8 @@ dependencies {
     implementation("com.google.apis:google-api-services-sheets:v4-rev1-1.21.0")
     implementation("com.google.auth:google-auth-library-oauth2-http:0.1.0")
     compileOnly("io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT")
-    compileOnly("dev.jorel.CommandAPI:commandapi-core:6.0.0")
+    compileOnly("dev.jorel.CommandAPI:commandapi-core:8.7.0")
+    compileOnly("de.tr7zw:item-nbt-api-plugin:2.3.1")
     compileOnly("com.mojang:brigadier:1.0.17")
     compileOnly("com.google.code.gson:gson:2.8.0")
     compileOnly("org.dynmap:DynmapCoreAPI:2.0")
@@ -88,6 +89,7 @@ tasks {
         relocate("io.opencensus", "com.playmonumenta.scriptedquests.internal.io.opencensus")
         minimize {
             exclude(dependency("com.playmonumenta.*:.*:.*"))
+            exclude(dependency("dev.jorel.commandapi.*:.*:.*"))
         }
     }
 }
@@ -98,13 +100,13 @@ tasks.withType<JavaCompile>().configureEach {
     options.compilerArgs.add("-Xlint:deprecation")
 
     options.errorprone {
-        // TODO This must be turned back on as soon as some of the other warnings are under control
-        option("NullAway:AnnotatedPackages", "com.playmonumenta.DISABLE")
+        option("NullAway:AnnotatedPackages", "com.playmonumenta.scriptedquests")
 
         allErrorsAsWarnings.set(true)
 
         /*** Disabled checks ***/
         // These we almost certainly don't want
+        check("InlineMeSuggester", CheckSeverity.OFF) // We won't keep deprecated stuff around long enough for this to matter
         check("CatchAndPrintStackTrace", CheckSeverity.OFF) // This is the primary way a lot of exceptions are handled
         check("FutureReturnValueIgnored", CheckSeverity.OFF) // This one is dumb and doesn't let you check return values with .whenComplete()
         check("ImmutableEnumChecker", CheckSeverity.OFF) // Would like to turn this on but we'd have to annotate a bunch of base classes

@@ -3,6 +3,7 @@ package com.playmonumenta.scriptedquests.listeners;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.ZoneProperty;
 import com.playmonumenta.scriptedquests.utils.MetadataUtils;
+import com.playmonumenta.scriptedquests.zones.ZoneManager;
 import com.playmonumenta.scriptedquests.zones.event.ZoneBlockBreakEvent;
 import com.playmonumenta.scriptedquests.zones.event.ZoneBlockInteractEvent;
 import com.playmonumenta.scriptedquests.zones.event.ZoneEvent;
@@ -11,10 +12,12 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -62,7 +65,7 @@ public class ZoneEventListener implements Listener {
 		for (Map.Entry<String, Map<String, ZoneProperty>> layer : mPlugin.mZonePropertyManager.getZoneProperties().entrySet()) {
 			for (Map.Entry<String, ZoneProperty> property : layer.getValue().entrySet()) {
 				Collection<? extends T> events = property.getValue().getEvents(eventClass);
-				if (!events.isEmpty() && mPlugin.mZoneManager.hasProperty(location, layer.getKey(), property.getKey())) {
+				if (!events.isEmpty() && ZoneManager.getInstance().hasProperty(location, layer.getKey(), property.getKey())) {
 					action.execute(events, layer.getKey(), property.getKey());
 				}
 			}
@@ -76,7 +79,7 @@ public class ZoneEventListener implements Listener {
 			execute(event.getPlayer().getLocation(), ZoneRemoteClickEvent.class, (events, layer, propertyName) -> {
 				for (ZoneRemoteClickEvent e : events) {
 					Block block = e.getBlock(event.getPlayer(), Action.RIGHT_CLICK_AIR);
-					if (block != null && mPlugin.mZoneManager.hasProperty(block.getLocation(), layer, propertyName)) {
+					if (block != null && ZoneManager.getInstance().hasProperty(block.getLocation(), layer, propertyName)) {
 						e.execute(event.getPlayer(), block);
 					}
 				}
@@ -87,19 +90,23 @@ public class ZoneEventListener implements Listener {
 	// Cancelled PlayerInteractEvents are jank. Checking for denied interactions is similarly jank.
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
 	public void playerInteractEvent(PlayerInteractEvent event) {
+		if (event.getPlayer().getGameMode() == GameMode.SPECTATOR) {
+			return;
+		}
 		if (mHasRemoteClickEvent) {
 			if (!MetadataUtils.happenedThisTick(event.getPlayer(), ENTITY_INTERACT_METAKEY, 0)) { // entity interact events also cause a left click event that must be ignored
 				execute(event.getPlayer().getLocation(), ZoneRemoteClickEvent.class, (events, layer, propertyName) -> {
 					for (ZoneRemoteClickEvent e : events) {
 						Block block = e.getBlock(event.getPlayer(), event.getAction());
-						if (block != null && mPlugin.mZoneManager.hasProperty(block.getLocation(), layer, propertyName)) {
+						if (block != null && ZoneManager.getInstance().hasProperty(block.getLocation(), layer, propertyName)) {
 							e.execute(event.getPlayer(), block);
 						}
 					}
 				});
 			}
 		}
-		if (mBlockInteractMaterials.isEmpty()) {
+		if (event.useInteractedBlock() == Event.Result.DENY
+			    || mBlockInteractMaterials.isEmpty()) {
 			return;
 		}
 		Block clickedBlock = event.getClickedBlock();

@@ -10,7 +10,7 @@ public class HasPermission {
 	public static void register() {
 		new CommandAPICommand("haspermission")
 			.withPermission(CommandPermission.fromString("scriptedquests.haspermission"))
-			.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.ONE_PLAYER))
+			.withArguments(new EntitySelectorArgument.OnePlayer("players"))
 			.withArguments(new TextArgument("permission"))
 			.executes((sender, args) -> {
 				Player player = (Player)args[0];

@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.api.JsonObjectBuilder;
 import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.utils.JsonUtils;
+import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 import com.playmonumenta.scriptedquests.utils.NmsUtils;
 import de.tr7zw.nbtapi.NBTCompound;
 import de.tr7zw.nbtapi.NBTCompoundList;
@@ -126,7 +127,7 @@ public class GuiItem {
 			itemStack = nbtItem.getItem();
 			List<Component> lore = itemStack.lore();
 			if (lore != null) {
-				itemStack.lore(lore.stream().filter(s -> !PlainComponentSerializer.plain().serialize(s).startsWith("[SQGUI]")).collect(Collectors.toList()));
+				itemStack.lore(lore.stream().filter(s -> !MessagingUtils.plainText(s).startsWith("[SQGUI]")).collect(Collectors.toList()));
 			}
 		}
 

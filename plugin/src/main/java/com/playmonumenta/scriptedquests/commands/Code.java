@@ -14,15 +14,9 @@ public class Code {
 	public static void register(Plugin plugin) {
 		new CommandAPICommand("code")
 			.withPermission(CommandPermission.fromString("scriptedquests.code"))
-			.withArguments(new TextArgument("word1").replaceSuggestions(info -> {
-				return CodeEntry.words;
-			}))
-			.withArguments(new TextArgument("word2").replaceSuggestions(info -> {
-				return CodeEntry.words;
-			}))
-			.withArguments(new TextArgument("word3").replaceSuggestions(info -> {
-				return CodeEntry.words;
-			}))
+			.withArguments(new TextArgument("word1").replaceSuggestions(CodeEntry.SUGGESTIONS_WORDS))
+			.withArguments(new TextArgument("word2").replaceSuggestions(CodeEntry.SUGGESTIONS_WORDS))
+			.withArguments(new TextArgument("word3").replaceSuggestions(CodeEntry.SUGGESTIONS_WORDS))
 			.executes((sender, args) -> {
 				submitCode(plugin, sender, (String)args[0], (String)args[1], (String)args[2]);
 			})
@@ -34,7 +28,7 @@ public class Code {
 
 		// Check if race allows this
 		if (!plugin.mRaceManager.isNotRacingOrAllowsCode(player)) {
-			CommandAPI.fail("You can not enter a code while you are racing");
+			throw CommandAPI.failWithString("You can not enter a code while you are racing");
 		}
 
 		plugin.mCodeManager.playerEnteredCodeEvent(plugin, player, word1 + " " + word2 + " " + word3);

@@ -145,10 +145,22 @@ an NPC, quest components are run in-order (more than one may be executed).
 
 `/leaderboard <@a> <objective> <descending> <page>`
 - permission: `scriptedquests.leaderboard`
+- permission: `scriptedquests.leaderboard.others` (show other players a leaderboard)
 - Shows the targeted players a leaderboard (sorted scoreboard) for the specified
   objective. `descending` specifies order of results, page specifies which page to show.
   **For players to be able to use the << >> arrows, they need to have this permission**.
   This of course also lets them generate leaderboards for any scoreboard on the server.
+
+
+`/monumenta music play <now or next> <players> <music path> <duration in seconds> [<is loop, default false>] [<music category, default record>] [<volume>] [<pitch>]`
+`/monumenta music cancel <now or next> <players>`
+- permission: `scriptedquests.music.play`
+- permission: `scriptedquests.music.play.others` (play music to other players)
+- permission: `scriptedquests.music.cancel`
+- permission: `scriptedquests.music.cancel.others` (cancel music for other players)
+- Controls music loops for targeted players. Music can be scheduled to play after the current song,
+  or to play immediately. Cancelling the currently playing song also cancels the next song. If a song
+  is set to loop, it will repeat until cancelled or another song replaces it.
 
 `/questTrigger`
 - permission: `scriptedquests.questtrigger`
@@ -161,6 +173,7 @@ an NPC, quest components are run in-order (more than one may be executed).
 
 `/race leaderboard <players> <raceLabel> <page>`
 - permission: `scriptedquests.race`
+- permission: `scriptedquests.race.leaderboard.others`
 - Send <players> page <page> of the leaderboard for <raceLabel>
 ### Quest developer commands
 
@@ -296,7 +309,7 @@ actions:
         <dependency>
             <groupId>com.playmonumenta</groupId>
             <artifactId>scripted-quests</artifactId>
-            <version>4.5</version>
+            <version>6.6</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

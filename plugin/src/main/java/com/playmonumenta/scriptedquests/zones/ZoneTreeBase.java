@@ -53,7 +53,7 @@ public abstract class ZoneTreeBase {
 		@Nullable ZoneFragment fragment = getZoneFragment(loc);
 
 		if (fragment == null) {
-			return new HashMap<String, Zone>();
+			return new HashMap<>();
 		}
 
 		return fragment.getParents();

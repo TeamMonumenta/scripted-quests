@@ -15,7 +15,7 @@ public class ActionRemoveItem implements ActionBase {
 	}
 
 	@Override
-	public void doAction(QuestContext context) {
+	public void doActions(QuestContext context) {
 		PlayerInventory inventory = context.getPlayer().getInventory();
 		ItemStack[] contents = inventory.getContents();
 		mPrereqItem.check(contents, true);

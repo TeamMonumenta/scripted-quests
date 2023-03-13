@@ -2,8 +2,10 @@ package com.playmonumenta.scriptedquests.zones;
 
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.utils.ArgUtils;
+import com.playmonumenta.scriptedquests.utils.MMLog;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
+import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -26,7 +28,10 @@ import org.bukkit.util.Vector;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
 public class ZoneManager {
+	private static final String[] SUGGESTIONS_EXECUTE_FALLBACK = {"\"Suggestions unavailable through /execute\""};
+
 	private final Plugin mPlugin;
+	private static ZoneManager INSTANCE = null;
 	static @MonotonicNonNull BukkitRunnable mPlayerTracker = null;
 	static @Nullable BukkitRunnable mAsyncReloadHandler = null;
 
@@ -41,9 +46,21 @@ public class ZoneManager {
 	private Set<CommandSender> mReloadRequesters = new HashSet<>();
 	private Set<CommandSender> mQueuedReloadRequesters = new HashSet<>();
 
-	public ZoneManager(Plugin plugin) {
+	private ZoneManager(Plugin plugin) {
 		mPlugin = plugin;
 		mQueuedReloadRequesters.add(Bukkit.getConsoleSender());
+	}
+
+	public static ZoneManager createInstance(Plugin plugin) {
+		INSTANCE = new ZoneManager(plugin);
+		return INSTANCE;
+	}
+
+	public static ZoneManager getInstance() {
+		if (INSTANCE == null) {
+			throw new RuntimeException("Attempted to access ZoneManager before initialization");
+		}
+		return INSTANCE;
 	}
 
 	/************************************************************************************
@@ -228,6 +245,10 @@ public class ZoneManager {
 		return ArgUtils.quoteIfNeeded(new TreeSet<>(getLayerNames()));
 	}
 
+	public static ArgumentSuggestions getLayerNameArgumentSuggestions() {
+		return ArgumentSuggestions.strings(info -> getInstance().getLayerNameSuggestions());
+	}
+
 	public Set<String> getLoadedProperties(String layerName) {
 		@Nullable ZoneLayer layer = mLayers.get(layerName);
 		if (layer == null) {
@@ -243,6 +264,30 @@ public class ZoneManager {
 			suggestions.add("!" + property);
 		}
 		return ArgUtils.quoteIfNeeded(suggestions);
+	}
+
+	public static ArgumentSuggestions getLoadedPropertyArgumentSuggestions(String layerName) {
+		return ArgumentSuggestions.strings(info -> getInstance().getLoadedPropertySuggestions(layerName));
+	}
+
+	public static ArgumentSuggestions getLoadedPropertyArgumentSuggestions(int layerNameArgIndex) {
+		return ArgumentSuggestions.strings(info -> {
+			Object[] args = info.previousArgs();
+			if (args.length == 0) {
+				return SUGGESTIONS_EXECUTE_FALLBACK;
+			}
+
+			int index = layerNameArgIndex;
+			if (index < 0) {
+				index += args.length;
+			}
+
+			if (index < 0 || index >= args.length) {
+				return new String[]{"\"Invalid argument index for layer name: " + index + "\""};
+			}
+
+			return getInstance().getLoadedPropertySuggestions((String) args[index]);
+		});
 	}
 
 	/************************************************************************************
@@ -298,17 +343,21 @@ public class ZoneManager {
 	}
 
 	public void doReload(Plugin plugin) {
+		MMLog.fine("[Zone Reload] Begin");
 		mReloadRequesters = mQueuedReloadRequesters;
 		mQueuedReloadRequesters = new HashSet<>();
 		mReloadRequesters.add(Bukkit.getConsoleSender());
 
+		long cpuNanos = System.nanoTime();
 		for (ZoneLayer layer : mLayers.values()) {
 			// Cause zones to stop tracking their fragments; speeds up garbage collection.
 			layer.invalidate();
 		}
 		mLayers.clear();
 		ZoneLayer.clearDynmapLayers();
+		MMLog.fine("[Zone Reload] " + String.format("%13.9f", (System.nanoTime() - cpuNanos) / 1000000000.0) + "s Resetting old data");
 
+		cpuNanos = System.nanoTime();
 		plugin.mZonePropertyGroupManager.reload(plugin, mReloadRequesters);
 
 		// Refresh plugin layers
@@ -330,6 +379,7 @@ public class ZoneManager {
 
 			return layerName + ":" + layer.getZones().size();
 		});
+		MMLog.fine("[Zone Reload] " + String.format("%13.9f", (System.nanoTime() - cpuNanos) / 1000000000.0) + "s Loading new data");
 
 		for (@Nullable CommandSender sender : mReloadRequesters) {
 			if (sender != null) {
@@ -338,17 +388,14 @@ public class ZoneManager {
 		}
 
 		// Merge zone fragments within layers to prevent overlaps
+		cpuNanos = System.nanoTime();
 		mergeLayers();
+		MMLog.fine("[Zone Reload] " + String.format("%13.9f", (System.nanoTime() - cpuNanos) / 1000000000.0) + "s Merging layer data");
 
 		// Create list of zones
 		List<Zone> zones = new ArrayList<>();
 		for (ZoneLayer layer : mLayers.values()) {
 			zones.addAll(layer.getZones());
-		}
-
-		// Defragment to reduce fragment count (approx 2-3x on average). This takes a long time.
-		for (Zone zone : zones) {
-			zone.defragment();
 		}
 
 		// Create list of all zone fragments.
@@ -360,7 +407,9 @@ public class ZoneManager {
 		// Create the new tree. This could take a long time with enough fragments.
 		ZoneTreeBase newTree;
 		try {
+			cpuNanos = System.nanoTime();
 			newTree = ZoneTreeBase.createZoneTree(zoneFragments);
+			MMLog.fine("[Zone Reload] " + String.format("%13.9f", (System.nanoTime() - cpuNanos) / 1000000000.0) + "s Creating tree");
 			if (mPlugin.mShowZonesDynmap) {
 				newTree.refreshDynmapTree();
 			}
@@ -432,7 +481,7 @@ public class ZoneManager {
 			}
 		};
 
-		mPlayerTracker.runTaskTimer(plugin, 0, 5);
+		mPlayerTracker.runTaskTimer(plugin, 0, 1);
 
 		for (@Nullable CommandSender sender : mReloadRequesters) {
 			if (sender != null) {
@@ -600,9 +649,7 @@ public class ZoneManager {
 					continue;
 				}
 				outerZone.splitByOverlap(overlap, innerZone, true);
-				outerZone.defragment();
 				innerZone.splitByOverlap(overlap, outerZone);
-				innerZone.defragment();
 			}
 		}
 	}

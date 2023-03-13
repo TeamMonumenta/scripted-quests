@@ -23,7 +23,7 @@ public class GiveLootTable {
 
 		new CommandAPICommand("giveloottable")
 			.withPermission(perms)
-			.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
+			.withArguments(new EntitySelectorArgument.ManyPlayers("players"))
 			.withArguments(new LootTableArgument("loot_table"))
 			.executes((sender, args) -> {
 				giveLoot((Collection<Player>)args[0], (LootTable)args[1], 1, random);
@@ -32,7 +32,7 @@ public class GiveLootTable {
 
 		new CommandAPICommand("giveloottable")
 			.withPermission(perms)
-			.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
+			.withArguments(new EntitySelectorArgument.ManyPlayers("players"))
 			.withArguments(new TextArgument("lootTablePath"))
 			.executes((sender, args) -> {
 				giveLoot((Collection<Player>)args[0], (String)args[1], 1, random);
@@ -41,7 +41,7 @@ public class GiveLootTable {
 
 		new CommandAPICommand("giveloottable")
 			.withPermission(perms)
-			.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
+			.withArguments(new EntitySelectorArgument.ManyPlayers("players"))
 			.withArguments(new LootTableArgument("loot_table"))
 			.withArguments(new IntegerArgument("count", 1, 1000))
 			.executes((sender, args) -> {
@@ -51,7 +51,7 @@ public class GiveLootTable {
 
 		new CommandAPICommand("giveloottable")
 			.withPermission(perms)
-			.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
+			.withArguments(new EntitySelectorArgument.ManyPlayers("players"))
 			.withArguments(new TextArgument("lootTablePath"))
 			.withArguments(new IntegerArgument("count", 1, 1000))
 			.executes((sender, args) -> {
@@ -62,9 +62,9 @@ public class GiveLootTable {
 		/* Rather than take a specified count, take an item entity - and give loot from the loot table once for each item in the stack */
 		new CommandAPICommand("giveloottable")
 			.withPermission(perms)
-			.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
+			.withArguments(new EntitySelectorArgument.ManyPlayers("players"))
 			.withArguments(new LootTableArgument("loot_table"))
-			.withArguments(new EntitySelectorArgument("countItems", EntitySelectorArgument.EntitySelector.ONE_ENTITY))
+			.withArguments(new EntitySelectorArgument.OneEntity("countItems"))
 			.executes((sender, args) -> {
 				giveLootCountFromItemEntity((Collection<Player>)args[0], (LootTable)args[1], (Entity)args[2], random);
 			})
@@ -72,9 +72,9 @@ public class GiveLootTable {
 
 		new CommandAPICommand("giveloottable")
 			.withPermission(perms)
-			.withArguments(new EntitySelectorArgument("players", EntitySelectorArgument.EntitySelector.MANY_PLAYERS))
+			.withArguments(new EntitySelectorArgument.ManyPlayers("players"))
 			.withArguments(new TextArgument("lootTablePath"))
-			.withArguments(new EntitySelectorArgument("countItems", EntitySelectorArgument.EntitySelector.ONE_ENTITY))
+			.withArguments(new EntitySelectorArgument.OneEntity("countItems"))
 			.executes((sender, args) -> {
 				giveLootCountFromItemEntity((Collection<Player>)args[0], (String)args[1], (Entity)args[2], random);
 			})

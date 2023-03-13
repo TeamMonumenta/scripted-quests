@@ -2,14 +2,17 @@ package com.playmonumenta.scriptedquests.listeners;
 
 import com.playmonumenta.scriptedquests.Constants;
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.managers.SongManager;
 import com.playmonumenta.scriptedquests.point.Point;
 import com.playmonumenta.scriptedquests.quests.QuestDeath.DeathActions;
 import com.playmonumenta.scriptedquests.quests.components.DeathLocation;
 import com.playmonumenta.scriptedquests.utils.MetadataUtils;
+import com.playmonumenta.scriptedquests.zones.ZoneManager;
 import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
@@ -82,12 +85,18 @@ public class PlayerListener implements Listener {
 
 		Player player = event.getPlayer();
 		//This only applies to players in adventure mode looking at blocks (not air)
-		if (player.getGameMode() != GameMode.ADVENTURE || event.getAnimationType() != PlayerAnimationType.ARM_SWING || player.getTargetBlock(null, 4).getType() == Material.AIR) {
+		if (player.getGameMode() != GameMode.ADVENTURE || event.getAnimationType() != PlayerAnimationType.ARM_SWING) {
 			return;
 		}
 
 		//If the player recently used a right click or left click air
 		if (MetadataUtils.happenedInRecentTicks(player, ADVENTURE_INTERACT_METAKEY, 4)) {
+			return;
+		}
+
+		// abort if targeting nothing/air
+		Block targetBlock = player.getTargetBlockExact(4);
+		if (targetBlock == null || targetBlock.getType().isAir()) {
 			return;
 		}
 
@@ -124,6 +133,7 @@ public class PlayerListener implements Listener {
 	public void playerDeathEvent(PlayerDeathEvent event) {
 		Player player = event.getEntity();
 		mPlugin.mDeathManager.deathEvent(mPlugin, event);
+		SongManager.onDeath(player);
 
 		List<DeathLocation> deathEntries;
 		// Check if the player has died already since last plugin load
@@ -218,7 +228,10 @@ public class PlayerListener implements Listener {
 		mPlugin.mRaceManager.cancelRace(player);
 
 		// Remove all zone properties from the player
-		mPlugin.mZoneManager.unregisterPlayer(player);
+		ZoneManager.getInstance().unregisterPlayer(player);
+
+		// Stop any scheduled music for this player
+		SongManager.onLogout(player);
 
 		// Remove all metadata set by this plugin for the player
 		player.removeMetadata(Constants.PLAYER_DEATH_LOCATION_METAKEY, mPlugin);

@@ -18,7 +18,7 @@ public class RandomNumber {
 				int min = (Integer)args[0];
 				int max = (Integer)args[1];
 				if (max < min) {
-					CommandAPI.fail("max < min");
+					throw CommandAPI.failWithString("max < min");
 				}
 				return mRandom.nextInt(min, max + 1);
 			})

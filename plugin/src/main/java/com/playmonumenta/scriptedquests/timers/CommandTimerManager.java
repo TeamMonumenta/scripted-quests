@@ -4,7 +4,6 @@ import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent;
 import com.destroystokyo.paper.event.entity.EntityRemoveFromWorldEvent;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.utils.MMLog;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;

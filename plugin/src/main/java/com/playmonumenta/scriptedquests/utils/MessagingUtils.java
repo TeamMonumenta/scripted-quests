@@ -4,7 +4,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.managers.TranslationsManager;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -19,7 +18,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
@@ -29,7 +28,7 @@ public class MessagingUtils {
 	public static final LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.legacySection();
 	public static final LegacyComponentSerializer AMPERSAND_SERIALIZER = LegacyComponentSerializer.legacyAmpersand();
 	public static final GsonComponentSerializer GSON_COMPONENT_SERIALIZER = GsonComponentSerializer.gson();
-	public static final PlainComponentSerializer PLAIN_SERIALIZER = PlainComponentSerializer.plain();
+	public static final PlainTextComponentSerializer PLAIN_SERIALIZER = PlainTextComponentSerializer.plainText();
 
 	public static String plainText(Component formattedText) {
 		// This is only legacy text because we have a bunch of section symbols lying around that need to be updated.
@@ -112,7 +111,7 @@ public class MessagingUtils {
 		player.sendMessage(formattedMessage);
 	}
 
-	public static void sendClickableNPCMessage(Plugin plugin, Player player, String message,
+	public static void sendClickableNPCMessage(Player player, String message,
 	                                           String commandStr, @Nullable HoverEvent<?> hoverEvent) {
 		message = TranslationsManager.translate(player, message);
 		message = translatePlayerName(player, message);
@@ -129,7 +128,7 @@ public class MessagingUtils {
 	}
 
 	public static void sendStackTrace(CommandSender sender, Exception e) {
-		Set<CommandSender> senders = new HashSet<CommandSender>();
+		Set<CommandSender> senders = new HashSet<>();
 		senders.add(sender);
 		sendStackTrace(senders, e);
 	}
@@ -140,7 +139,7 @@ public class MessagingUtils {
 		if (errorMessage != null) {
 			formattedMessage = LEGACY_SERIALIZER.deserialize(errorMessage);
 		} else {
-			formattedMessage = Component.text("An error occured without a set message. Hover for stack trace.");
+			formattedMessage = Component.text("An error occurred without a set message. Hover for stack trace.");
 		}
 		formattedMessage = Component.empty().color(NamedTextColor.RED).append(formattedMessage);
 
@@ -170,8 +169,7 @@ public class MessagingUtils {
 
 	private static JsonElement translateJson(Player player, JsonElement message) {
 		String messageStr;
-		if (message instanceof JsonPrimitive) {
-			JsonPrimitive messagePrimitive = (JsonPrimitive) message;
+		if (message instanceof JsonPrimitive messagePrimitive) {
 			messageStr = messagePrimitive.getAsString();
 			if (messageStr.isEmpty()) {
 				return messagePrimitive;
@@ -179,8 +177,7 @@ public class MessagingUtils {
 				return messagePrimitive;
 			}
 			return new JsonPrimitive(TranslationsManager.translate(player, messageStr));
-		} else if (message instanceof JsonArray) {
-			JsonArray messageArray = (JsonArray) message;
+		} else if (message instanceof JsonArray messageArray) {
 			int size = messageArray.size();
 			for (int i = 0; i < size; ++i) {
 				JsonElement childMessage = messageArray.get(i);
@@ -188,8 +185,7 @@ public class MessagingUtils {
 				messageArray.set(i, childMessage);
 			}
 			return message;
-		} else if (message instanceof JsonObject) {
-			JsonObject messageObject = (JsonObject) message;
+		} else if (message instanceof JsonObject messageObject) {
 			JsonObject hoverEvent = messageObject.getAsJsonObject("hoverEvent");
 			if (hoverEvent != null) {
 				JsonPrimitive actionPrimitive = hoverEvent.getAsJsonPrimitive("action");

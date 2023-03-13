@@ -82,7 +82,7 @@ public class SelectiveNPCVisibilityHandler extends PacketAdapter implements List
 				mDespawnTask = Bukkit.getScheduler().runTaskTimer(plugin, this::repeatedDespawnCheck, 10, 10);
 			}
 			if (mSpawnTask == null) {
-				mSpawnTask = Bukkit.getScheduler().runTaskTimer(plugin, this::repeatedSpawnCheck, 40, 40);
+				mSpawnTask = Bukkit.getScheduler().runTaskTimer(plugin, this::repeatedSpawnCheck, 10, 10);
 			}
 		} else {
 			if (mDespawnTask != null) {
@@ -177,7 +177,7 @@ public class SelectiveNPCVisibilityHandler extends PacketAdapter implements List
 			return true;
 		}
 		if (entity.getType() == EntityType.ARMOR_STAND
-		    && entity.getScoreboardTags().contains(RaceManager.ARMOR_STAND_RACE_TAG)) {
+			    && entity.getScoreboardTags().contains(RaceManager.ARMOR_STAND_RACE_TAG)) {
 			return entity.getScoreboardTags().contains(RaceManager.ARMOR_STAND_ID_PREFIX_TAG + player.getUniqueId());
 		}
 		List<QuestNpc> npcFiles = mPlugin.mNpcManager.getInteractNPC(entity);
@@ -185,7 +185,11 @@ public class SelectiveNPCVisibilityHandler extends PacketAdapter implements List
 			return true;
 		}
 		QuestContext questContext = new QuestContext(mPlugin, player, entity, false, null, player.getInventory().getItemInMainHand());
-		return npcFiles.stream().anyMatch(npc -> npc.areFilePrerequisitesMet(questContext) && npc.isVisibleToPlayer(questContext));
+		return npcFiles.stream()
+			       .filter(npc -> npc.areFilePrerequisitesMet(questContext))
+			       .map(npc -> npc.isVisibleToPlayer(questContext))
+			       .reduce(Boolean::logicalOr)
+			       .orElse(true);
 	}
 
 	/**
@@ -216,7 +220,6 @@ public class SelectiveNPCVisibilityHandler extends PacketAdapter implements List
 
 	/**
 	 * Periodically checks if visible entities near the player should still be visible, and sends a despawn packet if not.
-	 * This has to loop over a lot of entities so is executed less often than {@link #repeatedSpawnCheck()}.
 	 */
 	private void repeatedDespawnCheck() {
 		for (World world : Bukkit.getWorlds()) {

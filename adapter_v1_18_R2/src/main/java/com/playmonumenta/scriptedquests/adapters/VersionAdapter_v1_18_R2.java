@@ -8,6 +8,7 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 import net.kyori.adventure.text.Component;
 import net.minecraft.network.chat.ComponentUtils;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.block.entity.CommandBlockEntity;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -29,6 +30,7 @@ public class VersionAdapter_v1_18_R2 implements VersionAdapter {
 		((CraftCommandBlock) state).getTileEntity().setAutomatic(auto);
 	}
 
+	@Override
 	public void removeAllMetadata(Plugin plugin) {
 		CraftServer server = (CraftServer) plugin.getServer();
 		server.getEntityMetadata().removeAll(plugin);
@@ -39,6 +41,7 @@ public class VersionAdapter_v1_18_R2 implements VersionAdapter {
 		}
 	}
 
+	@Override
 	public @Nullable ParseResults<?> parseCommand(String command) {
 		try {
 			String testCommandStr = command.replaceAll("@S", "testuser").replaceAll("@N", "testnpc").replaceAll("@U", UUID.randomUUID().toString().toLowerCase());
@@ -53,7 +56,8 @@ public class VersionAdapter_v1_18_R2 implements VersionAdapter {
 	@Override
 	public Component resolveComponents(Component component, Player player) {
 		try {
-			return PaperAdventure.asAdventure(ComponentUtils.updateForEntity(((CraftPlayer) player).getHandle().createCommandSourceStack(),
+			return PaperAdventure.asAdventure(ComponentUtils.updateForEntity(
+				((CraftPlayer) player).getHandle().createCommandSourceStack().withSource(MinecraftServer.getServer()).withPermission(4),
 				new AdventureComponent(component).deepConverted(), ((CraftPlayer) player).getHandle(), 0));
 		} catch (CommandSyntaxException e) {
 			e.printStackTrace();
@@ -61,6 +65,7 @@ public class VersionAdapter_v1_18_R2 implements VersionAdapter {
 		}
 	}
 
+	@Override
 	public void executeCommandAsBlock(Block block, String command) {
 		CommandBlockEntity tileEntity = new CommandBlockEntity(((CraftBlock) block).getPosition(), ((CraftBlockState) block.getState()).getHandle());
 		Bukkit.dispatchCommand(tileEntity.getCommandBlock().getBukkitSender(tileEntity.getCommandBlock().createCommandSourceStack()), command);
