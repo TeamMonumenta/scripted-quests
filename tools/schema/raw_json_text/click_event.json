@@ -1,0 +1,128 @@
+{
+    "options": {
+        "keep_oneof_values": false
+    },
+    "oneOf": [
+        {
+            "title": "Open URL",
+            "type": "object",
+            "additionalProperties": false,
+            "defaultProperties": [
+                "action",
+                "value"
+            ],
+            "properties": {
+                "action": {
+                    "required": true,
+                    "type": "string",
+                    "default": "open_url",
+                    "enum": [
+                        "open_url"
+                    ]
+                },
+                "value": {
+                    "required": true,
+                    "type": "string",
+                    "format": "url",
+                    "pattern": "^https?://.*"
+                }
+            }
+        },
+        {
+            "title": "Run Command",
+            "description": "This works as if you entered the text directly into chat - so a leading / is recommended, and permission to run the desired command is required.",
+            "type": "object",
+            "additionalProperties": false,
+            "defaultProperties": [
+                "action",
+                "value"
+            ],
+            "properties": {
+                "action": {
+                    "required": true,
+                    "type": "string",
+                    "default": "run_command",
+                    "enum": [
+                        "run_command"
+                    ]
+                },
+                "value": {
+                    "required": true,
+                    "type": "string"
+                }
+            }
+        },
+        {
+            "title": "Suggest Command",
+            "description": "Puts the text into the player's chat bar exactly as shown, without running the command.",
+            "type": "object",
+            "additionalProperties": false,
+            "defaultProperties": [
+                "action",
+                "value"
+            ],
+            "properties": {
+                "action": {
+                    "required": true,
+                    "type": "string",
+                    "default": "suggest_command",
+                    "enum": [
+                        "suggest_command"
+                    ]
+                },
+                "value": {
+                    "required": true,
+                    "type": "string"
+                }
+            }
+        },
+        {
+            "title": "Change Page",
+            "description": "Only works in books",
+            "type": "object",
+            "additionalProperties": false,
+            "defaultProperties": [
+                "action",
+                "value"
+            ],
+            "properties": {
+                "action": {
+                    "required": true,
+                    "type": "string",
+                    "default": "change_page",
+                    "enum": [
+                        "change_page"
+                    ]
+                },
+                "value": {
+                    "required": true,
+                    "type": "string",
+                    "pattern": "^[0-9]+$"
+                }
+            }
+        },
+        {
+            "title": "Copy to Clipboard",
+            "type": "object",
+            "additionalProperties": false,
+            "defaultProperties": [
+                "action",
+                "value"
+            ],
+            "properties": {
+                "action": {
+                    "required": true,
+                    "type": "string",
+                    "default": "copy_to_clipboard",
+                    "enum": [
+                        "copy_to_clipboard"
+                    ]
+                },
+                "value": {
+                    "required": true,
+                    "type": "string"
+                }
+            }
+        }
+    ]
+}

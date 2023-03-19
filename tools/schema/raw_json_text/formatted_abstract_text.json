@@ -1,0 +1,67 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "color": {
+            "$ref": "color.json",
+            "propertyOrder": 10
+        },
+        "font": {
+            "title": "Font",
+            "description": "Vanilla values are minecraft:default, minecraft:uniform, minecraft:alt, and minecraft:illageralt",
+            "type": "string",
+            "propertyOrder": 11
+        },
+        "bold": {
+            "title": "Bold",
+            "$ref": "lenient_boolean.json",
+            "propertyOrder": 12
+        },
+        "italic": {
+            "title": "Italic",
+            "$ref": "lenient_boolean.json",
+            "propertyOrder": 13
+        },
+        "underlined": {
+            "title": "Underlined",
+            "$ref": "lenient_boolean.json",
+            "propertyOrder": 14
+        },
+        "strikethrough": {
+            "title": "Strikethrough",
+            "$ref": "lenient_boolean.json",
+            "propertyOrder": 15
+        },
+        "obfuscated": {
+            "title": "Obfuscated",
+            "$ref": "lenient_boolean.json",
+            "propertyOrder": 16
+        },
+        "insertion": {
+            "title": "Insertion",
+            "description": "Inserts this text into chat when shift+clicked",
+            "type": "string",
+            "propertyOrder": 17
+        },
+        "clickEvent": {
+            "title": "Click Event",
+            "$ref": "click_event.json",
+            "propertyOrder": 18
+        },
+        "hoverEvent": {
+            "title": "Hover Event",
+            "$ref": "hover_event.json",
+            "propertyOrder": 19
+        },
+        "extra": {
+            "title": "Extra Raw Json Text",
+            "description": "Formatting from this element is the default for extra elements",
+            "type": "array",
+            "propertyOrder": 20,
+            "minItems": 1,
+            "items": {
+                "$ref": "../raw_json_text.json"
+            }
+        }
+    }
+}

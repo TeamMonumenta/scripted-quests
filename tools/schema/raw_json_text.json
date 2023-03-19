@@ -1,0 +1,230 @@
+{
+    "options": {
+        "keep_oneof_values": false
+    },
+    "oneOf": [
+        {
+            "title": "Plain Text",
+            "type": "string"
+        },
+        {
+            "title": "Plain Boolean",
+            "type": "boolean"
+        },
+        {
+            "title": "Plain Number",
+            "type": "number"
+        },
+        {
+            "title": "Raw Json List",
+            "description": "Formatting from the first element is the default for the remaining elements",
+            "type": "array",
+            "minItems": 1,
+            "items": {
+                "$ref": "raw_json_text.json"
+            }
+        },
+        {
+            "title": "Formatted Text",
+            "$ref": "raw_json_text/formatted_abstract_text.json",
+            "additionalProperties": false,
+            "defaultProperties": [
+                "text"
+            ],
+            "properties": {
+                "text": {
+                    "required": true,
+                    "options": {
+                        "keep_oneof_values": false
+                    },
+                    "oneOf": [
+                        {
+                            "title": "Plain Text",
+                            "type": "string"
+                        },
+                        {
+                            "title": "Plain Boolean",
+                            "type": "boolean"
+                        },
+                        {
+                            "title": "Plain Number",
+                            "type": "number"
+                        }
+                    ],
+                    "propertyOrder": 1
+                }
+            }
+        },
+        {
+            "title": "Formatted Translated Text",
+            "$ref": "raw_json_text/formatted_abstract_text.json",
+            "additionalProperties": false,
+            "defaultProperties": [
+                "translate"
+            ],
+            "properties": {
+                "translate": {
+                    "title": "Translation Identifier",
+                    "description": "A namespaced translation identifier, translated by the language files included with resource packs and with optional placeholders. If no translation is found, the translation identifier is shown instead.",
+                    "required": true,
+                    "type": "string",
+                    "propertyOrder": 1
+                },
+                "with": {
+                    "title": "Translation Placeholder Values",
+                    "description": "These values are put into placeholder slots in different translation IDs. They may or may not be used.",
+                    "type": "array",
+                    "propertyOrder": 2,
+                    "minItems": 1,
+                    "items": {
+                        "$ref": "raw_json_text.json"
+                    }
+                }
+            }
+        },
+        {
+            "title": "Formatted Scoreboard Value",
+            "description": "A scoreboard value to display. Must be resolved into its final value before it can be shown.",
+            "$ref": "raw_json_text/formatted_abstract_text.json",
+            "additionalProperties": false,
+            "defaultProperties": [
+                "score"
+            ],
+            "properties": {
+                "score": {
+                    "title": "Scoreboard Value",
+                    "required": true,
+                    "type": "object",
+                    "propertyOrder": 1,
+                    "additionalProperties": false,
+                    "defaultProperties": [
+                        "name",
+                        "objective"
+                    ],
+                    "properties": {
+                        "name": {
+                            "title": "Score Holder",
+                            "description": "The owner of the score. \"*\" shows the person this is shown to, and any player, entity UUID, selector, or fake player is valid.",
+                            "required": true,
+                            "type": "string",
+                            "propertyOrder": 1
+                        },
+                        "objective": {
+                            "title": "Objective",
+                            "required": true,
+                            "type": "string",
+                            "propertyOrder": 2,
+                            "pattern": "^[-+._A-Za-z0-9]+$"
+                        },
+                        "value": {
+                            "title": "Value",
+                            "description": "If present, this is shown instead of looking up a score",
+                            "type": "integer",
+                            "propertyOrder": 3,
+                            "minimum": -2147483648,
+                            "maximum": 2147483647
+                        }
+                    }
+                },
+                "separator": {
+                    "title": "Separator",
+                    "$ref": "raw_json_text.json"
+                }
+            }
+        },
+        {
+            "title": "Formatted Entity Names",
+            "description": "A list of entity names. Must be resolved into its final value before it can be shown.",
+            "$ref": "raw_json_text/formatted_abstract_text.json",
+            "additionalProperties": false,
+            "defaultProperties": [
+                "selector"
+            ],
+            "properties": {
+                "selector": {
+                    "title": "Selector",
+                    "description": "Displays the display names for all entities matched, formatting included, such as \"@a\" becoming \"Dinnerbone, Grumm, and Notch\"",
+                    "required": true,
+                    "type": "string",
+                    "propertyOrder": 1
+                }
+            }
+        },
+        {
+            "title": "Formatted Keybind",
+            "$ref": "raw_json_text/formatted_abstract_text.json",
+            "additionalProperties": false,
+            "defaultProperties": [
+                "keybind"
+            ],
+            "properties": {
+                "keybind": {
+                    "title": "Keybind",
+                    "description": "Check your .minecraft/options.txt file for a full list.",
+                    "required": true,
+                    "type": "string",
+                    "propertyOrder": 1,
+                    "default": "key.chat"
+                }
+            }
+        },
+        {
+            "title": "Formatted Block NBT Values",
+            "description": "NBT values from a block. Must be resolved into its final value before it can be shown.",
+            "$ref": "raw_json_text/formatted_nbt_values.json",
+            "additionalProperties": false,
+            "defaultProperties": [
+                "block",
+                "nbt"
+            ],
+            "properties": {
+                "block": {
+                    "title": "Block",
+                    "description": "The block coordinates to get NBT from - may be formatted as \"1 2 3.14\", \"~1 ~2 ~3\", or \"^1 ^2 ^3\".",
+                    "required": true,
+                    "type": "string",
+                    "propertyOrder": 1,
+                    "default": "~ 1 ~2"
+                }
+            }
+        },
+        {
+            "title": "Formatted Entity NBT Values",
+            "description": "NBT values from entities. Must be resolved into its final value before it can be shown.",
+            "$ref": "raw_json_text/formatted_nbt_values.json",
+            "additionalProperties": false,
+            "defaultProperties": [
+                "entity",
+                "nbt"
+            ],
+            "properties": {
+                "entity": {
+                    "title": "Entity Selector",
+                    "description": "The player, entity, or entity selector to target. If multiple entities are selected, all matching values will be displayed with a separator.",
+                    "required": true,
+                    "type": "string",
+                    "propertyOrder": 1
+                }
+            }
+        },
+        {
+            "title": "Formatted Storage NBT Values",
+            "description": "NBT values from command storage. Must be resolved into its final value before it can be shown.",
+            "$ref": "raw_json_text/formatted_nbt_values.json",
+            "additionalProperties": false,
+            "defaultProperties": [
+                "storage",
+                "nbt"
+            ],
+            "properties": {
+                "storage": {
+                    "title": "Storage",
+                    "description": "The resource location of the command storage from which to display NBT.",
+                    "required": true,
+                    "type": "string",
+                    "propertyOrder": 1
+                }
+            }
+        }
+    ]
+}

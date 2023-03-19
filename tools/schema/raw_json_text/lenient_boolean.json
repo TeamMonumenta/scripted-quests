@@ -1,0 +1,18 @@
+{
+    "options": {
+        "keep_oneof_values": false
+    },
+    "oneOf": [
+        {
+            "type": "boolean"
+        },
+        {
+            "type": "string",
+            "description": "You should use the mode that looks like a checkbox, but you can also use \"true\" and \"false\" here.",
+            "enum": [
+                "true",
+                "false"
+            ]
+        }
+    ]
+}

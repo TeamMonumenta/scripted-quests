@@ -1,0 +1,197 @@
+{
+    "options": {
+        "keep_oneof_values": false
+    },
+    "oneOf": [
+        {
+            "title": "Show Text",
+            "type": "object",
+            "additionalProperties": false,
+            "defaultProperties": [
+                "action",
+                "contents"
+            ],
+            "properties": {
+                "action": {
+                    "required": true,
+                    "type": "string",
+                    "default": "show_text",
+                    "enum": [
+                        "show_text"
+                    ]
+                },
+                "contents": {
+                    "required": true,
+                    "$ref": "../raw_json_text.json"
+                }
+            }
+        },
+        {
+            "title": "Show Text (Legacy)",
+            "type": "object",
+            "additionalProperties": false,
+            "defaultProperties": [
+                "action",
+                "value"
+            ],
+            "properties": {
+                "action": {
+                    "required": true,
+                    "type": "string",
+                    "default": "show_text",
+                    "enum": [
+                        "show_text"
+                    ]
+                },
+                "value": {
+                    "required": true,
+                    "$ref": "../raw_json_text.json"
+                }
+            }
+        },
+        {
+            "title": "Show Item",
+            "type": "object",
+            "additionalProperties": false,
+            "defaultProperties": [
+                "action",
+                "contents"
+            ],
+            "properties": {
+                "action": {
+                    "required": true,
+                    "type": "string",
+                    "default": "show_item",
+                    "enum": [
+                        "show_item"
+                    ]
+                },
+                "contents": {
+                    "required": true,
+                    "type": "object",
+                    "additionalProperties": false,
+                    "defaultProperties": [
+                        "id"
+                    ],
+                    "properties": {
+                        "id": {
+                            "required": true,
+                            "type": "string",
+                            "propertyOrder": 1,
+                            "default": "minecraft:stone"
+                        },
+                        "count": {
+                            "type": "integer",
+                            "propertyOrder": 2,
+                            "minimum": 1,
+                            "maximum": 127
+                        },
+                        "tag": {
+                            "type": "string",
+                            "propertyOrder": 3,
+                            "default": "{display:{Name:\"{\\\"text\\\":\\\"Example Stone\\\"}\"}}"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "title": "Show Item (Legacy)",
+            "type": "object",
+            "additionalProperties": false,
+            "defaultProperties": [
+                "action",
+                "value"
+            ],
+            "properties": {
+                "action": {
+                    "required": true,
+                    "type": "string",
+                    "default": "show_item",
+                    "enum": [
+                        "show_item"
+                    ]
+                },
+                "value": {
+                    "required": true,
+                    "type": "string",
+                    "description": "An NBT string, as if viewing an item slot (legacy)",
+                    "default": "{id:\"minecraft:stone\",\"Count\":1b,\"tag\":{display:{Name:\"{\\\"text\\\":\\\"Example Stone\\\"}\"}}}"
+                }
+            }
+        },
+        {
+            "title": "Show Entity",
+            "type": "object",
+            "additionalProperties": false,
+            "defaultProperties": [
+                "action",
+                "contents"
+            ],
+            "properties": {
+                "action": {
+                    "required": true,
+                    "type": "string",
+                    "default": "show_entity",
+                    "enum": [
+                        "show_entity"
+                    ]
+                },
+                "contents": {
+                    "required": true,
+                    "type": "object",
+                    "additionalProperties": false,
+                    "defaultProperties": [
+                        "type",
+                        "id"
+                    ],
+                    "properties": {
+                        "name": {
+                            "$ref": "../raw_json_text.json",
+                            "propertyOrder": 1
+                        },
+                        "type": {
+                            "required": true,
+                            "type": "string",
+                            "description": "Entity type",
+                            "propertyOrder": 2,
+                            "default": "minecraft:pig"
+                        },
+                        "id": {
+                            "required": true,
+                            "type": "string",
+                            "description": "Entity UUID",
+                            "propertyOrder": 3,
+                            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "title": "Show Entity (Legacy)",
+            "type": "object",
+            "additionalProperties": false,
+            "defaultProperties": [
+                "action",
+                "value"
+            ],
+            "properties": {
+                "action": {
+                    "required": true,
+                    "type": "string",
+                    "default": "show_entity",
+                    "enum": [
+                        "show_entity"
+                    ]
+                },
+                "value": {
+                    "required": true,
+                    "type": "string",
+                    "description": "Partial entity NBT; only the name, type, and ID can be listed here.",
+                    "default": "{name:\"{\\\"text\\\":\\\"Bob\\\"}\",type:\"minecraft:zombie\",id:\"553d6b11-d0b0-4ca6-85af-751ee0fc1229\"}"
+                }
+            }
+        }
+    ]
+}

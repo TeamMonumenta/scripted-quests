@@ -1,0 +1,24 @@
+{
+    "$ref": "formatted_abstract_text.json",
+    "additionalProperties": false,
+    "properties": {
+        "nbt": {
+            "required": true,
+            "title": "NBT Path",
+            "description": "The NBT path to display. Supports multiple array values.",
+            "type": "string",
+            "propertyOrder": 7
+        },
+        "interpret": {
+            "title": "Interpret raw json text",
+            "description": "If true, attempts to display NBT string tags as raw json text",
+            "type": "boolean",
+            "propertyOrder": 8
+        },
+        "separator": {
+            "title": "Separator",
+            "$ref": "../raw_json_text.json",
+            "propertyOrder": 9
+        }
+    }
+}
