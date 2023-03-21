@@ -116,9 +116,12 @@ public class PlayerListener implements Listener {
 		ItemStack item = event.getHand() == EquipmentSlot.HAND ? player.getInventory().getItemInMainHand() : player.getInventory().getItemInOffHand();
 
 		if (entity instanceof Villager villager) {
-
+			// We don't want any vanilla trades to occur, regardless of if there's trades or if trades were changed or not.
+			// As a side effect, right-clicking a villager will not activate interactables
+			// This is fine for now, but if we ever want interactables to work on villagers, we need to change this
+			event.setCancelled(true);
 			if (!villager.isTrading() && MetadataUtils.checkOnceThisTick(mPlugin, player, "ScriptedQuestsTraderNonce")) {
-				mPlugin.mTradeManager.trade(mPlugin, villager, player, event);
+				mPlugin.mTradeManager.trade(mPlugin, villager, player);
 			}
 		}
 		if (mPlugin.mInteractableManager.interactEntityEvent(mPlugin, player, item, entity)) {
