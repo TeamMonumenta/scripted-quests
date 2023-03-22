@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.managers.TranslationsManager;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -19,6 +20,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
@@ -109,6 +111,14 @@ public class MessagingUtils {
 		message = message.replace('§', '&');
 		TextComponent formattedMessage = AMPERSAND_SERIALIZER.deserialize(message);
 		player.sendMessage(formattedMessage);
+	}
+
+	public static void sendMessageSync(CommandSender sender, Component message) {
+		Bukkit.getScheduler().runTask(Plugin.getInstance(), () -> sender.sendMessage(message));
+	}
+
+	public static void sendMessageSync(CommandSender sender, String message) {
+		Bukkit.getScheduler().runTask(Plugin.getInstance(), () -> sender.sendMessage(message));
 	}
 
 	public static void sendClickableNPCMessage(Player player, String message,
