@@ -260,8 +260,9 @@ public class TranslationsManager implements Listener {
 			// no translations for this message. means it's new in the system. needs to be added.
 			// do not attempt to translate afterwards, since there will be no translation for that new string anyway
 			// do not add a new entry if the world is build shard
-			if (!player.getWorld().getName().contains("build"))
-			addNewEntry(message);
+			if (!player.getWorld().getName().contains("build")) {
+				addNewEntry(message);
+			}
 			return message;
 		}
 
