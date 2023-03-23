@@ -14,6 +14,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.utils.FileUtils;
+import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
@@ -27,6 +28,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -253,18 +255,24 @@ public class TranslationsManager implements Listener {
 
 	private String translatePrivate(String message, Player player) {
 
-		String lang = mPlayerLanguageMap.get(player.getUniqueId());
-
-		if (lang == null || lang.equals("en.US")) {
-			// base language, no need to translate
-			return message;
-		}
-
 		TreeMap<String, String> translations = mTranslationsMap.get(message);
 		if (translations == null) {
 			// no translations for this message. means it's new in the system. needs to be added.
 			// do not attempt to translate afterwards, since there will be no translation for that new string anyway
-			addNewEntry(message);
+			// do not add a new entry if the world is build shard
+			if (!player.getWorld().getName().contains("build")) {
+				addNewEntry(message);
+			}
+			return message;
+		}
+
+		// add a timestamp to the fake 'language' to see how fresh the line is
+		// helps remove old unused lines from the gsheet
+		translations.put("ts", LocalDate.now().toString());
+
+		String lang = mPlayerLanguageMap.get(player.getUniqueId());
+		if (lang == null || lang.equals("en.US")) {
+			// base language, no need to translate
 			return message;
 		}
 
@@ -278,8 +286,14 @@ public class TranslationsManager implements Listener {
 	}
 
 	private void addNewEntry(String message) {
+		TreeMap<String, String> translations = new TreeMap<>();
+
+		// add a timestamp to the fake 'language' to see how fresh the line is
+		// helps remove old unused lines from the gsheet
+		translations.put("ts", LocalDate.now().toString());
+
 		// update the loaded translation map
-		mTranslationsMap.put(message, new TreeMap<>());
+		mTranslationsMap.put(message, translations);
 
 		mPlugin.getLogger().info("Added new entry for translations: " + message);
 
@@ -422,7 +436,7 @@ public class TranslationsManager implements Listener {
 		Bukkit.getScheduler().runTaskAsynchronously(mPlugin, () -> {
 			/* First make a backup copy of the translations database */
 			try {
-				sender.sendMessage("Making backup copy of the translations.json database");
+				MessagingUtils.sendMessageSync(sender, "Making backup copy of the translations.json database");
 				Date date = Calendar.getInstance().getTime();
 				String filename = Paths.get(mPlugin.getDataFolder().toString(), "translations", "translations.json").toString();
 				String toFilename = filename + new SimpleDateFormat(".yyyy-MM-dd_hh:mm:ss").format(date);
@@ -430,56 +444,60 @@ public class TranslationsManager implements Listener {
 				           new File(toFilename).toPath(),
 				           StandardCopyOption.REPLACE_EXISTING);
 			} catch (Exception e) {
-				sender.sendMessage("Failed to backup translations.json database: " + e.getMessage());
+				MessagingUtils.sendMessageSync(sender, "Failed to backup translations.json database: " + e.getMessage());
 				e.printStackTrace();
 				return;
 			}
 
 			if (mGSheetConfig == null) {
-				sender.sendMessage("Failed initialize Google Sheets: no Google Sheets config file");
+				MessagingUtils.sendMessageSync(sender, "Failed initialize Google Sheets: no Google Sheets config file");
 				return;
 			}
 
 			TranslationGSheet gSheet;
 			try {
-				sender.sendMessage("Initializing Google Sheets");
+				MessagingUtils.sendMessageSync(sender, "Initializing Google Sheets");
 				gSheet = new TranslationGSheet(mGSheetConfig);
 			} catch (Exception e) {
-				sender.sendMessage("Failed initialize Google Sheets: " + e.getMessage());
+				MessagingUtils.sendMessageSync(sender, "Failed initialize Google Sheets: " + e.getMessage());
 				e.printStackTrace();
 				return;
 			}
 
 			List<List<Object>> rows;
 			try {
-				sender.sendMessage("Reading values");
+				MessagingUtils.sendMessageSync(sender, "Reading values");
 				rows = gSheet.readSheet();
-				sender.sendMessage("Received " + rows.size() + " rows from the GSheet");
+				MessagingUtils.sendMessageSync(sender, "Received " + rows.size() + " rows from the GSheet");
 			} catch (IOException e) {
-				sender.sendMessage("Failed to read values from sheet. Abort. error: " + e.getMessage());
+				MessagingUtils.sendMessageSync(sender, "Failed to read values from sheet. Abort. error: " + e.getMessage());
 				e.printStackTrace();
 				return;
 			}
 
 			Bukkit.getScheduler().runTask(mPlugin, () -> {
-				sender.sendMessage("old translation map size: " + mTranslationsMap.size());
+				MessagingUtils.sendMessageSync(sender, "old translation map size: " + mTranslationsMap.size());
 				readSheetValues(rows);
-				sender.sendMessage("new translation map size: " + mTranslationsMap.size());
+				MessagingUtils.sendMessageSync(sender, "new translation map size: " + mTranslationsMap.size());
 
-				sender.sendMessage("Reloading shards");
+				MessagingUtils.sendMessageSync(sender, "Reloading shards");
 				writeTranslationFileAndReloadShards();
-				sender.sendMessage("translation map size: " + mTranslationsMap.size());
+				MessagingUtils.sendMessageSync(sender, "translation map size: " + mTranslationsMap.size());
 
-				try {
-					sender.sendMessage("Compiling values");
-					List<List<Object>> data = convertDataToSheetList();
-					sender.sendMessage("Writing " + data.size() + " rows to the GSheet");
-					UpdateValuesResponse response = gSheet.writeSheet(data);
-					sender.sendMessage("Done! written " + response.getUpdatedRows() + " rows");
-				} catch (IOException e) {
-					sender.sendMessage("Failed to write values into sheet. error: " + e.getMessage());
-					e.printStackTrace();
-				}
+				MessagingUtils.sendMessageSync(sender, "Compiling values");
+				List<List<Object>> data = convertDataToSheetList();
+				MessagingUtils.sendMessageSync(sender, "Writing " + data.size() + " rows to the GSheet");
+
+				// Run writing rows to sheet as async because it's a heavy task
+				Bukkit.getScheduler().runTaskAsynchronously(Plugin.getInstance(), () -> {
+					try {
+						UpdateValuesResponse response = gSheet.writeSheet(data);
+						MessagingUtils.sendMessageSync(sender, "Done! written " + response.getUpdatedRows() + " rows");
+					} catch (IOException e) {
+						MessagingUtils.sendMessageSync(sender, "Failed to write values into sheet. error: " + e.getMessage());
+						e.printStackTrace();
+					}
+				});
 			});
 		});
 	}
