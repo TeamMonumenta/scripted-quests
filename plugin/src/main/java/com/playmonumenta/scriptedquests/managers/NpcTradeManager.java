@@ -32,7 +32,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Merchant;
@@ -97,12 +96,12 @@ public class NpcTradeManager implements Listener {
 	 * <li>This allows multiple players to trade with the same villager at the same time</li>
 	 * <li>This way, the villager does not gain any trade experience</li>
 	 * <li>We can filter out randomly-generated vanilla trades, and hide trades based on quest prerequisites</li>
-	 * @param plugin Used for metadata
+	 *
+	 * @param plugin   Used for metadata
 	 * @param villager The villager to trade with
-	 * @param player The player trading
-	 * @param event The interact event that initiated the trade
+	 * @param player   The player trading
 	 */
-	public void trade(Plugin plugin, Villager villager, Player player, PlayerInteractEntityEvent event) {
+	public void trade(Plugin plugin, Villager villager, Player player) {
 		ArrayList<MerchantRecipe> trades = new ArrayList<>();
 		QuestContext context = new QuestContext(plugin, player, villager, false, null, player.getInventory().getItemInMainHand());
 		List<NpcTrader> traderFiles = mTraders.getOrDefault(QuestNpc.squashNpcName(villager.getName()), Collections.emptyList()).stream()
@@ -111,11 +110,6 @@ public class NpcTradeManager implements Listener {
 		StringBuilder lockedSlots = new StringBuilder();
 		StringBuilder vanillaSlots = new StringBuilder();
 		boolean modified = false;
-
-		// We don't want any vanilla trades to occur, regardless of if trades were changed or not.
-		// As a side effect, right-clicking a villager will not activate interactables
-		// This is fine for now, but if we ever want interactables to work on villagers, we need to change this
-		event.setCancelled(true);
 
 		Map<Integer, NpcTrade> slotProperties = new HashMap<>();
 		Map<Integer, ItemStack> originalResults = new HashMap<>();
