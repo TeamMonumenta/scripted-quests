@@ -184,4 +184,8 @@ public class QuestCompassManager {
 			mPlugin.mWaypointManager.setWaypoint(player, null);
 		}
 	}
+
+	public void invalidateCache(Player player) {
+		mCompassCache.remove(player.getUniqueId());
+	}
 }
