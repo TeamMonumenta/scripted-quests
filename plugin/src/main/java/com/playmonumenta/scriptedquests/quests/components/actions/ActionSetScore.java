@@ -1,6 +1,7 @@
 package com.playmonumenta.scriptedquests.quests.components.actions;
 
 import com.google.gson.JsonElement;
+import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.utils.ScoreboardUtils;
 import java.util.Map.Entry;
@@ -111,6 +112,9 @@ public class ActionSetScore implements ActionBase {
 
 	@Override
 	public void doActions(QuestContext context) {
-		mSetScore.apply(context.getPlayer(), mScoreName);
+		Player player = context.getPlayer();
+		mSetScore.apply(player, mScoreName);
+		// Recompute quest compass entries so that they are not wrong for a few seconds
+		Plugin.getInstance().mQuestCompassManager.invalidateCache(player);
 	}
 }
