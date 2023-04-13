@@ -343,31 +343,6 @@ public class Race {
 	public void win(int endTime) {
 		end();
 
-		/* Set score on player */
-		if (mScoreboard != null) {
-			Score score = mScoreboard.getScore(mPlayer.getName());
-			if (!score.isScoreSet() || score.getScore() == 0 || endTime < score.getScore()) {
-				score.setScore(endTime);
-
-				/* If the RedisSync plugin is also present, update the score in the leaderboard cache */
-				if (Bukkit.getServer().getPluginManager().isPluginEnabled("MonumentaRedisSync")) {
-					MonumentaRedisSyncAPI.updateLeaderboardAsync(mScoreboard.getName(), mPlayer.getName(), endTime);
-				}
-
-				// handle new world record
-				if (mWRTime > endTime) {
-					String cmdStr = "broadcastcommand tellraw @a [\"\",{\"text\":\"" +
-						mPlayer.getName() +
-						"\",\"color\":\"blue\"},{\"text\":\" has set a new world record for \",\"color\":\"dark_aqua\"},{\"text\":\"" +
-						mName +
-						"\",\"color\":\"blue\"},{\"text\":\"\\nNew time: \",\"color\":\"dark_aqua\"},{\"text\":\"" +
-						RaceUtils.msToTimeString(endTime) +
-						"\",\"color\":\"blue\"}]";
-					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmdStr);
-				}
-			}
-		}
-
 		//TODO: Ring times
 		/*
 		int pb = (has_ring_times ? ringTimes.get(ringTimes.size() - 1) : possibleRingTimes.get(possibleRingTimes.size() - 1));
@@ -450,6 +425,31 @@ public class Race {
 			mPlayer.sendMessage(String.format("  %s  Your Time   - %16s",
 			                                  "" + ChatColor.BLUE + ChatColor.BOLD,
 			                                  "" + ChatColor.ITALIC + bestMedalColor + RaceUtils.msToTimeString(endTime)));
+		}
+
+		/* Set score on player */
+		if (mScoreboard != null) {
+			Score score = mScoreboard.getScore(mPlayer.getName());
+			if (!score.isScoreSet() || score.getScore() == 0 || endTime < score.getScore()) {
+				score.setScore(endTime);
+
+				/* If the RedisSync plugin is also present, update the score in the leaderboard cache */
+				if (Bukkit.getServer().getPluginManager().isPluginEnabled("MonumentaRedisSync")) {
+					MonumentaRedisSyncAPI.updateLeaderboardAsync(mScoreboard.getName(), mPlayer.getName(), endTime);
+				}
+
+				// handle new world record
+				if (mWRTime > endTime) {
+					String cmdStr = "broadcastcommand tellraw @a [\"\",{\"text\":\"" +
+							mPlayer.getName() +
+							"\",\"color\":\"blue\"},{\"text\":\" has set a new world record for \",\"color\":\"dark_aqua\"},{\"text\":\"" +
+							mName +
+							"\",\"color\":\"blue\"},{\"text\":\"\\nNew time: \",\"color\":\"dark_aqua\"},{\"text\":\"" +
+							RaceUtils.msToTimeString(endTime) +
+							"\",\"color\":\"blue\"}]";
+					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmdStr);
+				}
+			}
 		}
 
 		/* Last thing is to do any actions associated with the race */
