@@ -3,6 +3,7 @@ package com.playmonumenta.scriptedquests.adapters;
 import com.mojang.brigadier.ParseResults;
 import javax.annotation.Nullable;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.block.CommandBlock;
 import org.bukkit.entity.Player;
@@ -32,6 +33,11 @@ public class VersionAdapter_unsupported implements VersionAdapter {
 
 	@Override
 	public void executeCommandAsBlock(Block block, String command) {
+	}
+
+	@Override
+	public void runConsoleCommandSilently(String command) {
+		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
 	}
 
 }

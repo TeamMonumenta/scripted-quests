@@ -21,4 +21,9 @@ public interface VersionAdapter {
 
 	void executeCommandAsBlock(Block block, String command);
 
+	/**
+	 * Runs a command as the console, without logging output to server logs.
+	 */
+	void runConsoleCommandSilently(String command);
+
 }

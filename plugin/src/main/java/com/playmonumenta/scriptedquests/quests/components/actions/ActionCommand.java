@@ -7,7 +7,6 @@ import com.playmonumenta.scriptedquests.utils.MMLog;
 import com.playmonumenta.scriptedquests.utils.NmsUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
 
 public class ActionCommand implements ActionBase {
 	private String mCommand;
@@ -35,7 +34,6 @@ public class ActionCommand implements ActionBase {
 
 	@Override
 	public void doActions(QuestContext context) {
-		// Because there's no currently good way to run commands we need to run them via the console....janky....I know.
 		String commandStr = mCommand;
 		if (context.getNpcEntity() == null) {
 			if (commandStr.contains("@N")) {
@@ -49,7 +47,7 @@ public class ActionCommand implements ActionBase {
 		commandStr = commandStr.replaceAll("@S", context.getPlayer().getName()).replaceAll("@U", context.getPlayer().getUniqueId().toString().toLowerCase());
 		QuestContext.pushCurrentContext(context);
 		try {
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), commandStr);
+			NmsUtils.getVersionAdapter().runConsoleCommandSilently(commandStr);
 		} finally {
 			QuestContext.popCurrentContext();
 		}

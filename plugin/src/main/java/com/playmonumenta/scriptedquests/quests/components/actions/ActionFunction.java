@@ -2,7 +2,7 @@ package com.playmonumenta.scriptedquests.quests.components.actions;
 
 import com.google.gson.JsonElement;
 import com.playmonumenta.scriptedquests.quests.QuestContext;
-import org.bukkit.Bukkit;
+import com.playmonumenta.scriptedquests.utils.NmsUtils;
 
 public class ActionFunction implements ActionBase {
 	private final String mFunctionFileName;
@@ -16,11 +16,10 @@ public class ActionFunction implements ActionBase {
 
 	@Override
 	public void doActions(QuestContext context) {
-		// Because there's no currently good way to run functions we need to run them via the console....janky....I know.
 		String commandStr = String.format("execute as %s at @s run function %s", context.getPlayer().getName(), mFunctionFileName);
 		QuestContext.pushCurrentContext(context);
 		try {
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), commandStr);
+			NmsUtils.getVersionAdapter().runConsoleCommandSilently(commandStr);
 		} finally {
 			QuestContext.popCurrentContext();
 		}

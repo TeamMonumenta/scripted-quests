@@ -3,6 +3,7 @@ package com.playmonumenta.scriptedquests.commands;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.utils.CommandArgument;
 import com.playmonumenta.scriptedquests.utils.MMLog;
+import com.playmonumenta.scriptedquests.utils.NmsUtils;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
@@ -94,7 +95,7 @@ public class ScheduleFunction {
 			if (sender instanceof ProxiedCommandSender) {
 				sender = ((ProxiedCommandSender) sender).getCallee();
 			}
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), sender instanceof Entity ? "execute as " + ((Entity) sender).getUniqueId() + " at @s run " + mCommand : mCommand);
+			NmsUtils.getVersionAdapter().runConsoleCommandSilently(sender instanceof Entity ? "execute as " + ((Entity) sender).getUniqueId() + " at @s run " + mCommand : mCommand);
 		}
 
 		@Override
