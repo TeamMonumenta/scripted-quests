@@ -6,7 +6,9 @@ import com.playmonumenta.scriptedquests.utils.ScoreboardUtils;
 import java.util.Map.Entry;
 import java.util.Set;
 import javax.annotation.Nullable;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
+import org.bukkit.scoreboard.Objective;
 
 public class PrerequisiteCheckScores implements PrerequisiteBase {
 	private interface TestValue {
@@ -14,7 +16,7 @@ public class PrerequisiteCheckScores implements PrerequisiteBase {
 	}
 
 	private static class TestValueConst implements TestValue {
-		int mVal;
+		final int mVal;
 
 		private TestValueConst(int val) {
 			mVal = val;
@@ -31,7 +33,7 @@ public class PrerequisiteCheckScores implements PrerequisiteBase {
 	}
 
 	private static class TestValueObjective implements TestValue {
-		String mObjective;
+		final String mObjective;
 
 		private TestValueObjective(String objective) throws Exception {
 			if (!ScoreboardUtils.isValidObjective(objective)) {
@@ -53,10 +55,10 @@ public class PrerequisiteCheckScores implements PrerequisiteBase {
 		boolean check(Entity entity, String scoreName);
 	}
 
-	private static class CheckScoreExact implements CheckScore {
-		TestValue mVal;
+	private static class CheckScoreSimple implements CheckScore {
+		final TestValue mVal;
 
-		private CheckScoreExact(JsonElement val) throws Exception {
+		private CheckScoreSimple(JsonElement val) throws Exception {
 			mVal = parseTestValue(val);
 		}
 
@@ -66,11 +68,12 @@ public class PrerequisiteCheckScores implements PrerequisiteBase {
 		}
 	}
 
-	private static class CheckScoreRange implements CheckScore {
-		TestValue mMin;
-		TestValue mMax;
+	private static class CheckScoreExtended implements CheckScore {
+		final TestValue mMin;
+		final TestValue mMax;
+		final @Nullable String testScoreboardHolder;
 
-		private CheckScoreRange(@Nullable JsonElement min, @Nullable JsonElement max) throws Exception {
+		private CheckScoreExtended(@Nullable JsonElement min, @Nullable JsonElement max, @Nullable JsonElement scoreboardHolder) throws Exception {
 			if (min == null) {
 				mMin = new TestValueConst(Integer.MIN_VALUE);
 			} else {
@@ -81,51 +84,70 @@ public class PrerequisiteCheckScores implements PrerequisiteBase {
 			} else {
 				mMax = parseTestValue(max);
 			}
+			if (scoreboardHolder != null) {
+				testScoreboardHolder = scoreboardHolder.getAsString();
+			} else {
+				testScoreboardHolder = null;
+			}
 
 			if (mMin instanceof TestValueConst cMin &&
-				mMax instanceof TestValueConst cMax) {
+				    mMax instanceof TestValueConst cMax) {
 				if (cMin.get() == Integer.MIN_VALUE &&
-					cMax.get() == Integer.MAX_VALUE) {
-					throw new Exception("Bogus check_score object with no min or max");
+					    cMax.get() == Integer.MAX_VALUE) {
+					throw new Exception("Bogus check_score object with no min, max, or value");
 				}
 			}
 		}
 
 		@Override
 		public boolean check(Entity entity, String scoreName) {
-			int value = ScoreboardUtils.getScoreboardValue(entity, scoreName);
+			int value;
+			if (testScoreboardHolder == null) {
+				value = ScoreboardUtils.getScoreboardValue(entity, scoreName);
+			} else {
+				Objective objective = Bukkit.getScoreboardManager().getMainScoreboard().getObjective(scoreName);
+				if (objective != null) {
+					value = objective.getScore(testScoreboardHolder).getScore();
+				} else {
+					value = 0;
+				}
+			}
 			return value >= mMin.get(entity) && value <= mMax.get(entity);
 		}
 	}
 
-	private String mScoreName;
-	private CheckScore mCheckScore;
+	private final String mScoreName;
+	private final CheckScore mCheckScore;
 
 	public PrerequisiteCheckScores(String scoreName, JsonElement value) throws Exception {
 		mScoreName = scoreName;
 
 		if (value.isJsonPrimitive()) {
-			//  Single value
-			mCheckScore = new CheckScoreExact(value);
+			// Single value
+			mCheckScore = new CheckScoreSimple(value);
 		} else {
 			// Range of values
 			@Nullable JsonElement rangeMin = null;
 			@Nullable JsonElement rangeMax = null;
+			@Nullable JsonElement scoreboardHolder = null;
 
 			Set<Entry<String, JsonElement>> subentries = value.getAsJsonObject().entrySet();
 			for (Entry<String, JsonElement> subent : subentries) {
-				String rangeKey = subent.getKey();
+				String key = subent.getKey();
 
-				if (rangeKey.equals("min")) {
-					rangeMin = subent.getValue();
-				} else if (rangeKey.equals("max")) {
-					rangeMax = subent.getValue();
-				} else {
-					throw new Exception("Unknown check_score range key: '" + rangeKey + "'");
+				switch (key) {
+					case "min" -> rangeMin = subent.getValue();
+					case "max" -> rangeMax = subent.getValue();
+					case "value" -> {
+						rangeMin = subent.getValue();
+						rangeMax = subent.getValue();
+					}
+					case "scoreboard_holder" -> scoreboardHolder = subent.getValue();
+					default -> throw new Exception("Unknown check_score key: '" + key + "'");
 				}
 			}
 
-			mCheckScore = new CheckScoreRange(rangeMin, rangeMax);
+			mCheckScore = new CheckScoreExtended(rangeMin, rangeMax, scoreboardHolder);
 		}
 	}
 
@@ -135,14 +157,10 @@ public class PrerequisiteCheckScores implements PrerequisiteBase {
 		}
 
 		// First try to parse the item as an integer
-		@Nullable Integer valueAsInt;
 		try {
-			valueAsInt = value.getAsInt();
+			return new TestValueConst(value.getAsInt());
 		} catch (Exception e) {
-			valueAsInt = null;
-		}
-		if (valueAsInt != null) {
-			return new TestValueConst(valueAsInt);
+			// ignore
 		}
 
 		// If that failed, try a string instead

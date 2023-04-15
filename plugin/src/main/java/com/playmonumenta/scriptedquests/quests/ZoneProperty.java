@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
+import com.playmonumenta.scriptedquests.quests.components.QuestComponentList;
 import com.playmonumenta.scriptedquests.zones.event.ZoneBlockBreakEvent;
 import com.playmonumenta.scriptedquests.zones.event.ZoneBlockInteractEvent;
 import com.playmonumenta.scriptedquests.zones.event.ZoneEvent;
@@ -36,7 +37,7 @@ public class ZoneProperty {
 	private final String mLayer;
 	private final String mName;
 	private final String mDisplayName;
-	private final ArrayList<QuestComponent> mComponents = new ArrayList<QuestComponent>();
+	private final QuestComponentList mComponents = new QuestComponentList();
 	private final List<ZoneEvent> mEvents = new ArrayList<>();
 
 	public ZoneProperty(JsonObject object) throws Exception {
@@ -138,14 +139,12 @@ public class ZoneProperty {
 		return mName;
 	}
 
-	public ArrayList<QuestComponent> getComponents() {
-		return mComponents;
+	public List<QuestComponent> getComponents() {
+		return mComponents.getComponents();
 	}
 
 	public void changeEvent(Plugin plugin, Player player) {
-		for (QuestComponent component : mComponents) {
-			component.doActionsIfPrereqsMet(new QuestContext(plugin, player, null));
-		}
+		mComponents.run(new QuestContext(plugin, player, null));
 	}
 
 	@SuppressWarnings("unchecked")

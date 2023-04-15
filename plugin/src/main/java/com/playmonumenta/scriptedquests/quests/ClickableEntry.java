@@ -5,8 +5,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
-import java.util.ArrayList;
-import java.util.Iterator;
+import com.playmonumenta.scriptedquests.quests.components.QuestComponentList;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 import org.bukkit.ChatColor;
@@ -21,7 +21,7 @@ import org.bukkit.entity.Player;
  * Labels must be globally unique
  */
 public class ClickableEntry {
-	private final ArrayList<QuestComponent> mComponents = new ArrayList<QuestComponent>();
+	private final QuestComponentList mComponents = new QuestComponentList();
 	private final String mLabel;
 	private final String mDisplayName;
 
@@ -55,10 +55,7 @@ public class ClickableEntry {
 			throw new Exception("Failed to parse 'quest_components' as JSON array");
 		}
 
-		Iterator<JsonElement> iter = array.iterator();
-		while (iter.hasNext()) {
-			JsonElement entry = iter.next();
-
+		for (JsonElement entry : array) {
 			// TODO: Refactor so that components only require a linkage to the top-level item, not a name/entity type
 			mComponents.add(new QuestComponent("", mDisplayName, EntityType.PLAYER, entry));
 		}
@@ -69,7 +66,7 @@ public class ClickableEntry {
 			String key = ent.getKey();
 
 			if (!key.equals("label") && !key.equals("display_name")
-				&& !key.equals("quest_components")) {
+				    && !key.equals("quest_components")) {
 				throw new Exception("Unknown quest key: " + key);
 			}
 		}
@@ -79,15 +76,12 @@ public class ClickableEntry {
 		return mLabel;
 	}
 
-	public ArrayList<QuestComponent> getComponents() {
-		return mComponents;
+	public List<QuestComponent> getComponents() {
+		return mComponents.getComponents();
 	}
 
 	public void clickEvent(Plugin plugin, Player player) {
-		QuestContext context = new QuestContext(plugin, player, null);
-		for (QuestComponent component : mComponents) {
-			component.doActionsIfPrereqsMet(context);
-		}
+		mComponents.run(new QuestContext(plugin, player, null));
 	}
 
 	public static String squashLabel(String label) {

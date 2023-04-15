@@ -5,8 +5,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
+import com.playmonumenta.scriptedquests.quests.components.QuestComponentList;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 import org.bukkit.entity.EntityType;
@@ -88,7 +89,7 @@ public class CodeEntry {
 
 	public static final ArgumentSuggestions SUGGESTIONS_WORDS = ArgumentSuggestions.strings(words);
 
-	private final ArrayList<QuestComponent> mComponents = new ArrayList<>();
+	private final QuestComponentList mComponents = new QuestComponentList();
 	private final String mSeed;
 
 	public CodeEntry(JsonObject object) throws Exception {
@@ -123,7 +124,7 @@ public class CodeEntry {
 			String key = ent.getKey();
 
 			if (!key.equals("seed") && !key.equals("display_name")
-				&& !key.equals("quest_components")) {
+				    && !key.equals("quest_components")) {
 				throw new Exception("Unknown quest key: " + key);
 			}
 		}
@@ -133,8 +134,8 @@ public class CodeEntry {
 		return mSeed;
 	}
 
-	public ArrayList<QuestComponent> getComponents() {
-		return mComponents;
+	public List<QuestComponent> getComponents() {
+		return mComponents.getComponents();
 	}
 
 	public String getCodeForPlayer(Player player) {
@@ -154,10 +155,7 @@ public class CodeEntry {
 		String goodCode = getCodeForPlayer(player).toLowerCase().replaceAll("\\s", "");
 		code = code.toLowerCase().replaceAll("\\s", "");
 		if (goodCode.equals(code)) {
-			for (QuestComponent component : mComponents) {
-				component.doActionsIfPrereqsMet(new QuestContext(plugin, player, null));
-			}
-
+			mComponents.run(new QuestContext(plugin, player, null));
 			return true;
 		}
 		return false;

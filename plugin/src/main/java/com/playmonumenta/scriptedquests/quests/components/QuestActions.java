@@ -6,6 +6,7 @@ import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.quests.components.actions.ActionBase;
+import com.playmonumenta.scriptedquests.quests.components.actions.ActionCancelEvent;
 import com.playmonumenta.scriptedquests.quests.components.actions.ActionCommand;
 import com.playmonumenta.scriptedquests.quests.components.actions.ActionDialog;
 import com.playmonumenta.scriptedquests.quests.components.actions.ActionFunction;
@@ -14,6 +15,7 @@ import com.playmonumenta.scriptedquests.quests.components.actions.ActionInteract
 import com.playmonumenta.scriptedquests.quests.components.actions.ActionRemoveItem;
 import com.playmonumenta.scriptedquests.quests.components.actions.ActionRerunComponents;
 import com.playmonumenta.scriptedquests.quests.components.actions.ActionSetScore;
+import com.playmonumenta.scriptedquests.quests.components.actions.ActionStop;
 import com.playmonumenta.scriptedquests.quests.components.actions.ActionVoiceOver;
 import java.util.ArrayList;
 import java.util.Map.Entry;
@@ -24,7 +26,9 @@ import org.jetbrains.annotations.Nullable;
 
 public class QuestActions implements ActionBase {
 	private final ArrayList<ActionsElement> mActions = new ArrayList<>();
-	private int mDelayTicks;
+	private final int mDelayTicks;
+
+	public static int mSkipLevels = 0;
 
 	public QuestActions(@Nullable String npcName, @Nullable String displayName, @Nullable EntityType entityType,
 	                    int delayTicks, JsonElement element) throws Exception {
@@ -114,6 +118,12 @@ public class QuestActions implements ActionBase {
 							actions.mActions.add(new ActionRerunComponents(npcName, entityType));
 						}
 						break;
+					case "stop":
+						actions.mActions.add(new ActionStop(value.getAsInt()));
+						break;
+					case "cancel_event":
+						actions.mActions.add(new ActionCancelEvent(value.getAsBoolean()));
+						break;
 					default:
 						throw new Exception("Unknown actions key: " + key);
 				}
@@ -132,21 +142,33 @@ public class QuestActions implements ActionBase {
 	}
 
 	private void executeNow(QuestContext context) {
+		mSkipLevels = 0;
 		for (ActionsElement element : mActions) {
 			if (element.mPrerequisites != null && !element.mPrerequisites.prerequisiteMet(context)) {
 				continue;
 			}
 			QuestContext elementContext = element.mPrerequisites != null ? context.withPrerequisites(element.mPrerequisites) : context;
 			if (element.mDelayTicks <= 0) {
-				for (ActionBase action : element.mActions) {
-					action.doActions(elementContext);
-				}
+				runElementActions(element, elementContext);
 			} else {
 				Bukkit.getScheduler().scheduleSyncDelayedTask(context.getPlugin(), () -> {
-					for (ActionBase action : element.mActions) {
-						action.doActions(elementContext);
-					}
+					runElementActions(element, elementContext);
 				}, element.mDelayTicks);
+			}
+			if (mSkipLevels > 0) {
+				mSkipLevels--;
+				break;
+			}
+		}
+	}
+
+	private void runElementActions(ActionsElement element, QuestContext elementContext) {
+		mSkipLevels = 0;
+		for (ActionBase action : element.mActions) {
+			action.doActions(elementContext);
+			if (mSkipLevels > 0) {
+				mSkipLevels--;
+				break;
 			}
 		}
 	}
