@@ -71,7 +71,7 @@ public class PrerequisiteCheckScores implements PrerequisiteBase {
 	private static class CheckScoreExtended implements CheckScore {
 		final TestValue mMin;
 		final TestValue mMax;
-		final @Nullable String testScoreboardHolder;
+		final @Nullable String mTestScoreboardHolder;
 
 		private CheckScoreExtended(@Nullable JsonElement min, @Nullable JsonElement max, @Nullable JsonElement scoreboardHolder) throws Exception {
 			if (min == null) {
@@ -85,9 +85,9 @@ public class PrerequisiteCheckScores implements PrerequisiteBase {
 				mMax = parseTestValue(max);
 			}
 			if (scoreboardHolder != null) {
-				testScoreboardHolder = scoreboardHolder.getAsString();
+				mTestScoreboardHolder = scoreboardHolder.getAsString();
 			} else {
-				testScoreboardHolder = null;
+				mTestScoreboardHolder = null;
 			}
 
 			if (mMin instanceof TestValueConst cMin &&
@@ -102,12 +102,12 @@ public class PrerequisiteCheckScores implements PrerequisiteBase {
 		@Override
 		public boolean check(Entity entity, String scoreName) {
 			int value;
-			if (testScoreboardHolder == null) {
+			if (mTestScoreboardHolder == null) {
 				value = ScoreboardUtils.getScoreboardValue(entity, scoreName);
 			} else {
 				Objective objective = Bukkit.getScoreboardManager().getMainScoreboard().getObjective(scoreName);
 				if (objective != null) {
-					value = objective.getScore(testScoreboardHolder).getScore();
+					value = objective.getScore(mTestScoreboardHolder).getScore();
 				} else {
 					value = 0;
 				}

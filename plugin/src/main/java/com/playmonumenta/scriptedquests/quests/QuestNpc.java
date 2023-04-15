@@ -118,11 +118,11 @@ public class QuestNpc {
 		if (mEntityType.equals(entityType) && mNpcName.equals(npcName) && areFilePrerequisitesMet(context) && isVisibleToPlayer(context)) {
 			// TODO this way of implementing the client protocol breaks any actions that aren't plain dialogue.
 			// The actions should instead run through as normal, with any dialogue/clickable action sending a packet (or appending to a packet) instead of sending a chat message.
-//			if (ClientChatProtocol.shouldSend(context.getPlayer())) {
-//				ClientChatProtocol.sendPacket(mComponents.getComponents(), context);
-//			} else {
+			// if (ClientChatProtocol.shouldSend(context.getPlayer())) {
+			//     ClientChatProtocol.sendPacket(mComponents.getComponents(), context);
+			// } else {
 			mComponents.run(context);
-//			}
+			// }
 			return true;
 		}
 		return false;
