@@ -4,10 +4,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.api.ClientChatProtocol;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
+import com.playmonumenta.scriptedquests.quests.components.QuestComponentList;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 import org.bukkit.ChatColor;
@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
  * combined into a single QuestNpc
  */
 public class QuestNpc {
-	private final ArrayList<QuestComponent> mComponents = new ArrayList<QuestComponent>();
+	private final QuestComponentList mComponents = new QuestComponentList();
 	private final String mNpcName;
 	private final String mDisplayName;
 	private final @Nullable QuestPrerequisites mFilePrerequisites;
@@ -104,8 +104,8 @@ public class QuestNpc {
 		return mDisplayName;
 	}
 
-	public ArrayList<QuestComponent> getComponents() {
-		return mComponents;
+	public List<QuestComponent> getComponents() {
+		return mComponents.getComponents();
 	}
 
 	public EntityType getEntityType() {
@@ -116,13 +116,13 @@ public class QuestNpc {
 	// False otherwise
 	public boolean interactEvent(QuestContext context, String npcName, EntityType entityType) {
 		if (mEntityType.equals(entityType) && mNpcName.equals(npcName) && areFilePrerequisitesMet(context) && isVisibleToPlayer(context)) {
-			if (ClientChatProtocol.shouldSend(context.getPlayer())) {
-				ClientChatProtocol.sendPacket(mComponents, context);
-			} else {
-				for (QuestComponent component : mComponents) {
-					component.doActionsIfPrereqsMet(context);
-				}
-			}
+			// TODO this way of implementing the client protocol breaks any actions that aren't plain dialogue.
+			// The actions should instead run through as normal, with any dialogue/clickable action sending a packet (or appending to a packet) instead of sending a chat message.
+			// if (ClientChatProtocol.shouldSend(context.getPlayer())) {
+			//     ClientChatProtocol.sendPacket(mComponents.getComponents(), context);
+			// } else {
+			mComponents.run(context);
+			// }
 			return true;
 		}
 		return false;

@@ -5,9 +5,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
+import com.playmonumenta.scriptedquests.quests.components.QuestComponentList;
+import com.playmonumenta.scriptedquests.quests.components.actions.ActionCancelEvent;
 import com.playmonumenta.scriptedquests.utils.JsonUtils;
-import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.bukkit.Material;
@@ -57,7 +59,7 @@ public class InteractableEntry {
 		}
 	}
 
-	private final ArrayList<QuestComponent> mComponents = new ArrayList<>();
+	private final QuestComponentList mComponents = new QuestComponentList();
 	private final EnumSet<InteractType> mInteractTypes = EnumSet.noneOf(InteractType.class);
 	private final ImmutableSet<Material> mMaterials;
 	private final boolean mCancelEvent;
@@ -135,8 +137,8 @@ public class InteractableEntry {
 		}
 	}
 
-	public ArrayList<QuestComponent> getComponents() {
-		return mComponents;
+	public List<QuestComponent> getComponents() {
+		return mComponents.getComponents();
 	}
 
 	public ImmutableSet<Material> getMaterials() {
@@ -152,11 +154,10 @@ public class InteractableEntry {
 		}
 		boolean cancelEvent = false;
 		if (mInteractTypes.contains(interactType)) {
-			for (QuestComponent component : mComponents) {
-				if (component.doActionsIfPrereqsMet(context)) {
-					cancelEvent = mCancelEvent;
-				}
-			}
+			ActionCancelEvent.mCancelEvent = ActionCancelEvent.CancelState.DEFAULT;
+			boolean anyPrereqsMet = mComponents.run(context);
+			cancelEvent = mCancelEvent && anyPrereqsMet && ActionCancelEvent.mCancelEvent != ActionCancelEvent.CancelState.UNCANCEL
+				              || ActionCancelEvent.mCancelEvent == ActionCancelEvent.CancelState.CANCEL;
 		}
 		return cancelEvent;
 	}

@@ -21,16 +21,28 @@
                             "$ref": "score_or_objective.json"
                         },
                         {
-                            "title": "Range",
+                            "title": "Range or score check for different scoreboard holder",
                             "type": "object",
                             "properties": {
                                 "min": {
+                                    "propertyOrder": 1,
                                     "title": "Minimum",
                                     "$ref": "score_or_objective.json"
                                 },
                                 "max": {
+                                    "propertyOrder": 2,
                                     "title": "Maximum",
                                     "$ref": "score_or_objective.json"
+                                },
+                                "value": {
+                                    "propertyOrder": 3,
+                                    "title": "Exact Value",
+                                    "$ref": "score_or_objective.json"
+                                },
+                                "scoreboard_holder": {
+                                    "propertyOrder": 4,
+                                    "title": "Scoreboard holder to get scores from (entity UUID, player name, or other scoreboard holder name)",
+                                    "type": "string"
                                 }
                             }
                         }

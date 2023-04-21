@@ -308,12 +308,27 @@
             "description": "Re-runs all quest components tied to this specific NPC (including those specified in other files). To prevent infinite loops, this action will not run itself, even if conditions indicate it should.",
             "type": "null"
         },
-        "actions": {
+        "stop": {
             "propertyOrder": 12,
+            "title": "stop",
+            "description": "Stops execution of the current quest file, or only a specified amount of levels deep (e.g. 1 to only stop the current list of actions, but not the list of quest components).",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 999999999,
+            "default": 999999999
+        },
+        "actions": {
+            "propertyOrder": 13,
             "title": "actions",
-            "description": "Chained actions, useful for applying actions prereqs to multiple actions at once",
+            "description": "Chained actions, useful for applying prerequisites to multiple actions at once",
             "required": false,
             "$ref": "actions.json"
+        },
+        "cancel_event": {
+            "propertyOrder": 14,
+            "title": "cancel_event",
+            "description": "Cancels the current event if true, or reverts cancelling it if false (useful if the default is to cancel it). This action only works in interactibles.",
+            "type": "boolean"
         }
     }
 }
