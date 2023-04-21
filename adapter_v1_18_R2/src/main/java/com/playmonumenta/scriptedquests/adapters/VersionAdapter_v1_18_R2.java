@@ -71,4 +71,9 @@ public class VersionAdapter_v1_18_R2 implements VersionAdapter {
 		Bukkit.dispatchCommand(tileEntity.getCommandBlock().getBukkitSender(tileEntity.getCommandBlock().createCommandSourceStack()), command);
 	}
 
+	@Override
+	public void runConsoleCommandSilently(String command) {
+		MinecraftServer.getServer().getCommands().performCommand(MinecraftServer.getServer().createCommandSourceStack().withSuppressedOutput(), command);
+	}
+
 }
