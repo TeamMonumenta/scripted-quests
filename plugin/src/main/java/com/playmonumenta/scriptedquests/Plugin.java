@@ -29,11 +29,14 @@ import com.playmonumenta.scriptedquests.utils.NmsUtils;
 import com.playmonumenta.scriptedquests.zones.ZoneManager;
 import com.playmonumenta.scriptedquests.zones.ZonePropertyGroupManager;
 import java.io.File;
+import java.util.Objects;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bukkit.Bukkit;
+import org.bukkit.SoundCategory;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.PluginManager;
@@ -72,6 +75,7 @@ public class Plugin extends JavaPlugin {
 	public Random mRandom = new Random();
 	private ScheduleFunction mScheduledFunctionsManager;
 	private @Nullable CustomLogger mLogger = null;
+	private SoundCategory mDefaultMusicSoundCategory = SoundCategory.RECORDS;
 
 	@Override
 	public void onLoad() {
@@ -89,8 +93,9 @@ public class Plugin extends JavaPlugin {
 
 		reloadConfigYaml(null);
 
-		if (mConfig.contains("translations")) {
-			mTranslationsManager = new TranslationsManager(this, mConfig.getConfigurationSection("translations"));
+		ConfigurationSection translationsConfig = mConfig.getConfigurationSection("translations");
+		if (translationsConfig != null) {
+			mTranslationsManager = new TranslationsManager(this, translationsConfig);
 		}
 
 		ChangeLogLevel.register();
@@ -169,8 +174,8 @@ public class Plugin extends JavaPlugin {
 			mProtocolLibIntegration = new ProtocolLibIntegration(this);
 		}
 
-		getCommand("reloadQuests").setExecutor(new ReloadQuests(this));
-		getCommand("questTrigger").setExecutor(new QuestTrigger(this));
+		Objects.requireNonNull(getCommand("reloadQuests")).setExecutor(new ReloadQuests(this));
+		Objects.requireNonNull(getCommand("questTrigger")).setExecutor(new QuestTrigger(this));
 
 		ClientChatProtocol.initialize(this);
 		mZoneManager.doReload(this);
@@ -265,6 +270,23 @@ public class Plugin extends JavaPlugin {
 		if (sender != null) {
 			sender.sendMessage("fallback_zone_lookup: " + mFallbackZoneLookup);
 		}
+
+		String defaultMusicCategoryStr = mConfig.getString("default_music_category");
+		if (defaultMusicCategoryStr != null) {
+			SoundCategory defaultMusicCategory = Constants.SOUND_CATEGORY_BY_NAME.get(defaultMusicCategoryStr);
+			if (defaultMusicCategory == null) {
+				if (sender != null) {
+					sender.sendMessage("default_music_category is invalid category: " + defaultMusicCategoryStr);
+				}
+				mDefaultMusicSoundCategory = SoundCategory.RECORDS;
+			} else {
+				mDefaultMusicSoundCategory = defaultMusicCategory;
+			}
+		}
+		if (sender != null) {
+			sender.sendMessage("default_music_category: "
+				+ Constants.SOUND_CATEGORY_NAMES.get(mDefaultMusicSoundCategory));
+		}
 	}
 
 	public static Plugin getInstance() {
@@ -280,5 +302,9 @@ public class Plugin extends JavaPlugin {
 			mLogger = new CustomLogger(super.getLogger(), Level.INFO);
 		}
 		return mLogger;
+	}
+
+	public SoundCategory getDefaultMusicSoundCategory() {
+		return mDefaultMusicSoundCategory;
 	}
 }

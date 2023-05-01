@@ -1,5 +1,7 @@
 package com.playmonumenta.scriptedquests.commands;
 
+import com.playmonumenta.scriptedquests.Constants;
+import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.managers.SongManager;
 import com.playmonumenta.scriptedquests.managers.SongManager.Song;
 import dev.jorel.commandapi.CommandAPI;
@@ -33,7 +35,7 @@ public class Music {
 
 		List<Argument<?>> optionalArguments = new ArrayList<>();
 		optionalArguments.add(new BooleanArgument("is loop"));
-		optionalArguments.add(new MultiLiteralArgument("master", "music", "record", "weather", "block", "hostile", "neutral", "player", "ambient", "voice"));
+		optionalArguments.add(new MultiLiteralArgument(Constants.SOUND_CATEGORY_BY_NAME.keySet().toArray(String[]::new)));
 		optionalArguments.add(new FloatArgument("volume", 0.0f));
 		optionalArguments.add(new FloatArgument("pitch", 0.5f, 2.0f));
 		optionalArguments.add(new BooleanArgument("stop on death"));
@@ -106,20 +108,10 @@ public class Music {
 		SoundCategory category;
 		if (args.length > 7) {
 			String categoryStr = (String) args[7];
-			category = switch (categoryStr) {
-				case "master" -> SoundCategory.MASTER;
-				case "music" -> SoundCategory.MUSIC;
-				case "weather" -> SoundCategory.WEATHER;
-				case "block" -> SoundCategory.BLOCKS;
-				case "hostile" -> SoundCategory.HOSTILE;
-				case "neutral" -> SoundCategory.NEUTRAL;
-				case "players" -> SoundCategory.PLAYERS;
-				case "ambient" -> SoundCategory.AMBIENT;
-				case "voice" -> SoundCategory.VOICE;
-				default -> SoundCategory.RECORDS;
-			};
+			category = Constants.SOUND_CATEGORY_BY_NAME.getOrDefault(categoryStr,
+				Plugin.getInstance().getDefaultMusicSoundCategory());
 		} else {
-			category = SoundCategory.RECORDS;
+			category = Plugin.getInstance().getDefaultMusicSoundCategory();
 		}
 		float volume;
 		if (args.length > 8) {
