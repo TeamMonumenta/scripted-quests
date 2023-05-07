@@ -7,6 +7,7 @@ import com.playmonumenta.scriptedquests.quests.components.GuiItem;
 import com.playmonumenta.scriptedquests.quests.components.GuiPage;
 import com.playmonumenta.scriptedquests.quests.components.QuestActions;
 import com.playmonumenta.scriptedquests.utils.CustomInventory;
+import com.playmonumenta.scriptedquests.utils.InventoryUtils;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
 import dev.jorel.commandapi.CommandAPI;
@@ -152,6 +153,7 @@ public class GuiManager {
 				return;
 			}
 			event.setCancelled(true);
+			InventoryUtils.refreshOffhand(event);
 			if ((event.getClick() != ClickType.LEFT && event.getClick() != ClickType.RIGHT)
 				    || !(event.getWhoClicked() instanceof Player player)
 				    || event.getClickedInventory() != mInventory) {

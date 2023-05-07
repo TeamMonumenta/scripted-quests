@@ -64,6 +64,7 @@ public abstract class CustomInventory {
 						CustomInventory inv = mOpenedInvsByPlayer.get(event.getWhoClicked());
 						if (inv != null) {
 							inv.inventoryClick(event);
+							InventoryUtils.refreshOffhand(event);
 						}
 					}
 
@@ -142,6 +143,7 @@ public abstract class CustomInventory {
 
 	protected void inventoryClick(InventoryClickEvent event) {
 		event.setCancelled(true);
+		InventoryUtils.refreshOffhand(event);
 	}
 
 	protected void inventoryClose(InventoryCloseEvent event) {

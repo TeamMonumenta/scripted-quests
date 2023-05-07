@@ -2,6 +2,7 @@ package com.playmonumenta.scriptedquests.listeners;
 
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.InteractableEntry.InteractType;
+import com.playmonumenta.scriptedquests.utils.InventoryUtils;
 import com.playmonumenta.scriptedquests.utils.MetadataUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -154,6 +155,7 @@ public class InteractablesListener implements Listener {
 		}
 
 		if (mPlugin.mInteractableManager.clickInventoryEvent(mPlugin, player, item, interactType)) {
+			InventoryUtils.refreshOffhand(event);
 			event.setCancelled(true);
 		}
 	}

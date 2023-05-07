@@ -14,6 +14,8 @@ import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -114,5 +116,15 @@ public class InventoryUtils {
 			}
 		}, 200);
 		return droppedItem;
+	}
+
+	public static void refreshOffhand(InventoryClickEvent event) {
+		if (event.isCancelled()
+			&& ClickType.SWAP_OFFHAND.equals(event.getClick())
+			&& event.getWhoClicked() instanceof Player player) {
+			PlayerInventory inventory = player.getInventory();
+			ItemStack offhandItem = inventory.getItemInOffHand();
+			inventory.setItemInOffHand(offhandItem);
+		}
 	}
 }
