@@ -7,6 +7,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
@@ -35,8 +37,8 @@ public class WaypointManager {
 	private static final Random RAND = new Random();
 
 	private final Plugin mPlugin;
-	private final Map<Player, QuestLocation> mPlayers = new LinkedHashMap<>();
-	private final Map<Player, Location> mPlayerAverageLocs = new LinkedHashMap<>();
+	private final Map<UUID, QuestLocation> mPlayers = new LinkedHashMap<>();
+	private final Map<UUID, Location> mPlayerAverageLocs = new LinkedHashMap<>();
 	private @Nullable BukkitRunnable mRunnable = null;
 
 	private static double distance2D(Location loc1, Location loc2) {
@@ -119,15 +121,15 @@ public class WaypointManager {
 
 				mPrereqCounter = (mPrereqCounter + 1) & 0x7;
 
-				Iterator<Map.Entry<Player, QuestLocation>> iter = mPlayers.entrySet().iterator();
+				Iterator<Map.Entry<UUID, QuestLocation>> iter = mPlayers.entrySet().iterator();
 
 				while (iter.hasNext()) {
-					Map.Entry<Player, QuestLocation> entry = iter.next();
-					Player player = entry.getKey();
+					Map.Entry<UUID, QuestLocation> entry = iter.next();
+					Player player = Bukkit.getPlayer(entry.getKey());
 					QuestLocation questLoc = entry.getValue();
 					List<Location> waypoints = questLoc.getWaypoints();
 
-					if (!player.isValid() || player.isDead() || !player.isOnline() || !questLoc.getLocation().getWorld().equals(player.getWorld()) || (mPrereqCounter == 0 && !questLoc.prerequisiteMet(player))) {
+					if (player == null || !player.isValid() || player.isDead() || !player.isOnline() || !questLoc.getLocation().getWorld().equals(player.getWorld()) || (mPrereqCounter == 0 && !questLoc.prerequisiteMet(player))) {
 						iter.remove();
 						continue;
 					}
@@ -184,7 +186,7 @@ public class WaypointManager {
 						averageLoc = playerLoc.clone();
 					}
 					averageLoc = averageLoc.add(playerLoc).multiply(0.5d);
-					mPlayerAverageLocs.put(player, averageLoc);
+					mPlayerAverageLocs.put(player.getUniqueId(), averageLoc);
 
 					/* Create particles that lead to the destination */
 					if (targetDist > WAYPOINT_BEAM_ANIM_MIN_DIST) {
@@ -249,10 +251,10 @@ public class WaypointManager {
 
 	public void setWaypoint(Player player, @Nullable QuestLocation questLoc) {
 		if (questLoc == null || questLoc.getWaypoints() == null || questLoc.getWaypoints().isEmpty()) {
-			mPlayers.remove(player);
+			mPlayers.remove(player.getUniqueId());
 			return;
 		}
-		mPlayers.put(player, questLoc);
+		mPlayers.put(player.getUniqueId(), questLoc);
 		ensureTaskIsRunning();
 	}
 }
