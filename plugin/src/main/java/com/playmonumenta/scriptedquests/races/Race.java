@@ -1,5 +1,8 @@
 package com.playmonumenta.scriptedquests.races;
 
+import com.google.api.client.json.Json;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.playmonumenta.redissync.MonumentaRedisSyncAPI;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.managers.RaceManager;
@@ -12,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 import java.util.Map;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -43,6 +47,8 @@ public class Race {
 			Math.sin(Math.toRadians(angle * 360.0 / NUM_RING_POINTS)), 0));
 		}
 	}
+
+	private static final String REDIS_RACE_RING_PBS_PATH = "scriptedquests_races_ringpbs";
 
 	/* Arguments */
 	private final Plugin mPlugin;
@@ -77,6 +83,9 @@ public class Race {
 	private @Nullable TimeBar mTimeBar = null;
 	private boolean mCountdownActive = false;
 	private int mWRTime = Integer.MAX_VALUE;
+	private @Nullable ArrayList<Integer> mPbRingTimes;
+	private final ArrayList<Integer> mCurrentRingTimes = new ArrayList<>();
+	private int mCurrentWaypointIndex = 0;
 
 	public Race(Plugin plugin, RaceManager manager, Player player, String name,
 	            @Nullable Objective scoreboard, boolean showStats, boolean ringless, Location start, @Nullable QuestActions startActions,
@@ -104,6 +113,7 @@ public class Race {
 		mStopLoc = player.getLocation();
 
 		updateWRTime();
+		getPBRingTimes();
 
 		// Create the ring entities in the right shape
 		Location baseLoc = mWaypoints.get(0).getPosition().toLocation(mWorld);
@@ -122,7 +132,6 @@ public class Race {
 		}
 
 		restart();
-
 		animation();
 	}
 
@@ -248,29 +257,26 @@ public class Race {
 				lose();
 				return;
 			} else if (distance < mNextWaypoint.getRadius()) {
-				// TODO: Tell the player if they are going faster or slower than before
-				/*
-				possibleRingTimes.add(timeElapsed);
-				if (has_ring_times) {
-					int oldtime = ringTimes.get(actualRing);
-					if (oldtime < timeElapsed) {
-						MessagingUtils.sendActionBarMessage(mPlayer, net.md_5.bungee.api.ChatColor.RED, true, RaceUtils.msToTimeString(timeElapsed));
-					} else {
-						MessagingUtils.sendActionBarMessage(mPlayer, net.md_5.bungee.api.ChatColor.GREEN, true, RaceUtils.msToTimeString(timeElapsed));
-					}
+				Component timeMessage = Component.text(RaceUtils.msToTimeString(timeElapsed), NamedTextColor.BLUE);
+
+				if (mPbRingTimes != null) {
+					int oldTime = mPbRingTimes.get(mCurrentWaypointIndex);
+					timeMessage = timeMessage.append(Component.text(RaceUtils.msToTimeString(timeElapsed - oldTime), (oldTime < timeElapsed) ? NamedTextColor.RED : NamedTextColor.GREEN));
+					mCurrentRingTimes.add(timeElapsed);
 				}
-				*/
 
 				// Run the actions for reaching this ring
 				mNextWaypoint.doActions(new QuestContext(mPlugin, mPlayer, null));
 
-				MessagingUtils.sendActionBarMessage(mPlayer, NamedTextColor.BLUE, true, RaceUtils.msToTimeString(timeElapsed), false);
+				//MessagingUtils.sendActionBarMessage(mPlayer, NamedTextColor.BLUE, true, RaceUtils.msToTimeString(timeElapsed), false);
+				mPlayer.sendMessage(timeMessage);
 				mWorld.playSound(mPlayer.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1, 1.5f);
 
 				if (mRemainingWaypoints.size() == 0) {
 					win(timeElapsed);
 				} else {
 					mNextWaypoint = mRemainingWaypoints.removeFirst();
+					mCurrentWaypointIndex++;
 				}
 			}
 
@@ -342,6 +348,39 @@ public class Race {
 
 	public void win(int endTime) {
 		end();
+
+		// If the RedisSync plugin is present, store back the PBs
+		if (Bukkit.getServer().getPluginManager().isPluginEnabled("MonumentaRedisSync") && mPbRingTimes != null) {
+			// Try getting the player's ring PBs
+			Bukkit.getScheduler().runTaskAsynchronously(mPlugin, () -> {
+				try {
+					JsonObject pbObject = new JsonObject();
+					JsonArray pbArray = new JsonArray();
+					for (int i = 0; i < mCurrentRingTimes.size(); i++) {
+						int pbTime = mPbRingTimes.get(i);
+						int currTime = mCurrentRingTimes.get(i);
+						int delta = pbTime - currTime;
+						if (delta > 0) {
+							pbArray.add(currTime);
+						} else {
+							pbArray.add(pbTime);
+						}
+					}
+					pbObject.add("personal_bests", pbArray);
+					/*JsonObject pbs = MonumentaRedisSyncAPI.getPlayerPluginData(mPlayer.getUniqueId(), REDIS_RACE_RING_PBS_PATH);
+					if (pbs != null && pbs.has("personal_bests")) {
+						JsonArray pbtimes = pbs.getAsJsonArray("personal_bests");
+						ArrayList<Integer> pbRingTimes = new ArrayList<>();
+						pbtimes.forEach(time -> pbRingTimes.add(time.getAsInt()));
+						mPbRingTimes = pbRingTimes;
+					}*/
+				} catch (Exception ex) {
+					mPlugin.getLogger().warning("Failed to update personal best ring times for player %s in leaderboard %s: %s"
+						.formatted(mPlayer.getUniqueId(), (mScoreboard != null) ? mScoreboard.getName() : "null", ex.getMessage()));
+					ex.printStackTrace();
+				}
+			});
+		}
 
 		//TODO: Ring times
 		/*
@@ -497,6 +536,32 @@ public class Race {
 				}
 			}
 			mWRTime = top;
+		}
+	}
+
+	private void getPBRingTimes() {
+		if (mRingless) {
+			return;
+		}
+
+		// If the RedisSync plugin is present, grab player's ring PBs, if they have any.
+		if (Bukkit.getServer().getPluginManager().isPluginEnabled("MonumentaRedisSync")) {
+			// Try getting the player's ring PBs
+			Bukkit.getScheduler().runTaskAsynchronously(mPlugin, () -> {
+				try {
+					JsonObject pbs = MonumentaRedisSyncAPI.getPlayerPluginData(mPlayer.getUniqueId(), REDIS_RACE_RING_PBS_PATH);
+					if (pbs != null && pbs.has("personal_bests")) {
+						JsonArray pbtimes = pbs.getAsJsonArray("personal_bests");
+						ArrayList<Integer> pbRingTimes = new ArrayList<>();
+						pbtimes.forEach(time -> pbRingTimes.add(time.getAsInt()));
+						mPbRingTimes = pbRingTimes;
+					}
+				} catch (Exception ex) {
+					mPlugin.getLogger().warning("Failed to get personal best ring times for player %s in leaderboard %s: %s"
+						.formatted(mPlayer.getUniqueId(), (mScoreboard != null) ? mScoreboard.getName() : "null", ex.getMessage()));
+					ex.printStackTrace();
+				}
+			});
 		}
 	}
 

@@ -1,5 +1,6 @@
 package com.playmonumenta.scriptedquests.listeners;
 
+import com.playmonumenta.redissync.event.PlayerSaveEvent;
 import com.playmonumenta.redissync.event.PlayerServerTransferEvent;
 import com.playmonumenta.redissync.event.PlayerTransferFailEvent;
 import com.playmonumenta.scriptedquests.Plugin;
@@ -27,5 +28,10 @@ public class RedisSyncListener implements Listener {
 	public void playerTransferFailEvent(PlayerTransferFailEvent event) {
 		Player player = event.getPlayer();
 		ZoneManager.getInstance().setTransferring(player, false);
+	}
+
+	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
+	public void playerSaveEvent(PlayerSaveEvent event) {
+
 	}
 }
