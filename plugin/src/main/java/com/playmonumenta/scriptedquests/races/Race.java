@@ -367,44 +367,15 @@ public class Race {
 			}
 
 			// Replace the pb for this race in the JsonObject map.
-			JsonObject pbobject = RaceManager.PLAYER_RACE_RING_PB_TIMES.get(mPlayer.getUniqueId());
-			if (pbobject != null) {
-				pbobject.add(mScoreboard.getName(), pbArray);
+			JsonObject pbObject = RaceManager.PLAYER_RACE_RING_PB_TIMES.get(mPlayer.getUniqueId());
+			if (pbObject != null) {
+				pbObject.add(mScoreboard.getName(), pbArray);
 			} else {
 				JsonObject newPBObject = new JsonObject();
 				newPBObject.add(mScoreboard.getName(), pbArray);
 				RaceManager.PLAYER_RACE_RING_PB_TIMES.put(mPlayer.getUniqueId(), newPBObject);
 			}
 		}
-
-		//TODO: Ring times
-		/*
-		int pb = (has_ring_times ? ringTimes.get(ringTimes.size() - 1) : possibleRingTimes.get(possibleRingTimes.size() - 1));
-		if (!has_ring_times || endTime < pb) { // if time beaten
-			pb = endTime;
-			//rewrite recoded ringtimes
-			Path path = Paths.get(plugin.getDataFolder().toString() +  "/speedruns" + File.separator + "playerdata/recorded_ring_times" + File.separator + baseFileName.toLowerCase() + File.separator + mPlayer.getName() + ".recorded");
-			try {
-				Files.deleteIfExists(path);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			try {
-				List<String> newList = new ArrayList<String>(possibleRingTimes.size());
-				for (Integer myInt : possibleRingTimes) {
-					newList.add(String.valueOf(myInt));
-				}
-				Files.createDirectories(path.getParent());
-				Files.createFile(path);
-				Files.write(path, newList, Charset.forName("UTF-8"));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			// update leaderboards
-			String[] args = {"leaderboard", "add", baseFileName, Integer.toString(endTime)};
-			new Leaderboard(plugin).leaderboard(mPlayer, args);
-		}
-		*/
 
 		// display race end info
 		//header

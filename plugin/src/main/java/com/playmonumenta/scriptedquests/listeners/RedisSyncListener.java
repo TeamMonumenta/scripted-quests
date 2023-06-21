@@ -44,6 +44,7 @@ public class RedisSyncListener implements Listener {
 			event.setPluginData(RaceManager.REDIS_RACE_RING_PBS_PATH, playerRingPBData);
 		}
 	}
+	
 	@EventHandler(ignoreCancelled = true)
 	public void playerJoinEvent(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
