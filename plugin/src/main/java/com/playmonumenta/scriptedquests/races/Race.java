@@ -1,6 +1,5 @@
 package com.playmonumenta.scriptedquests.races;
 
-import com.google.api.client.json.Json;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.playmonumenta.redissync.MonumentaRedisSyncAPI;
@@ -8,7 +7,6 @@ import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.managers.RaceManager;
 import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.quests.components.QuestActions;
-import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 import com.playmonumenta.scriptedquests.utils.RaceUtils;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -17,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -47,8 +46,6 @@ public class Race {
 			Math.sin(Math.toRadians(angle * 360.0 / NUM_RING_POINTS)), 0));
 		}
 	}
-
-	private static final String REDIS_RACE_RING_PBS_PATH = "scriptedquests_races_ringpbs";
 
 	/* Arguments */
 	private final Plugin mPlugin;
@@ -83,7 +80,7 @@ public class Race {
 	private @Nullable TimeBar mTimeBar = null;
 	private boolean mCountdownActive = false;
 	private int mWRTime = Integer.MAX_VALUE;
-	private @Nullable ArrayList<Integer> mPbRingTimes;
+	private @Nullable ArrayList<Integer> mPBRingTimes;
 	private final ArrayList<Integer> mCurrentRingTimes = new ArrayList<>();
 	private int mCurrentWaypointIndex = 0;
 
@@ -157,6 +154,8 @@ public class Race {
 		// Copy the waypoints to something local to work with
 		mRemainingWaypoints = new ArrayDeque<>(mWaypoints);
 		mNextWaypoint = mRemainingWaypoints.removeFirst();
+		mCurrentWaypointIndex = 0;
+		mCurrentRingTimes.clear();
 
 		// Create the time-tracking bar
 		mTimeBar = new TimeBar(mPlayer, mTimes);
@@ -250,20 +249,21 @@ public class Race {
 		}
 
 		if (!mRingless) {
-
 			// Check if player went too far away
 			if (distance > mMaxDistance) {
 				mPlayer.sendMessage("" + ChatColor.RED + ChatColor.BOLD + "You went too far away from the race path!");
 				lose();
 				return;
 			} else if (distance < mNextWaypoint.getRadius()) {
-				Component timeMessage = Component.text(RaceUtils.msToTimeString(timeElapsed), NamedTextColor.BLUE);
+				Component timeMessage = Component.text(RaceUtils.msToTimeString(timeElapsed), NamedTextColor.BLUE).decorate(TextDecoration.BOLD);
 
-				if (mPbRingTimes != null) {
-					int oldTime = mPbRingTimes.get(mCurrentWaypointIndex);
-					timeMessage = timeMessage.append(Component.text(RaceUtils.msToTimeString(timeElapsed - oldTime), (oldTime < timeElapsed) ? NamedTextColor.RED : NamedTextColor.GREEN));
-					mCurrentRingTimes.add(timeElapsed);
+				int oldTime = (mPBRingTimes != null) ? mPBRingTimes.get(mCurrentWaypointIndex) : 0;
+				if (oldTime != 0) {
+					int delta = timeElapsed - oldTime;
+					NamedTextColor deltaColor = (oldTime == timeElapsed) ? NamedTextColor.GRAY : (delta > 0) ? NamedTextColor.RED : NamedTextColor.GREEN;
+					timeMessage = timeMessage.append(Component.text(" %s%s".formatted((delta < 0) ? "-" : "+", RaceUtils.msToTimeString(Math.abs(delta))), deltaColor).decorate(TextDecoration.BOLD));
 				}
+				mCurrentRingTimes.add(timeElapsed);
 
 				// Run the actions for reaching this ring
 				mNextWaypoint.doActions(new QuestContext(mPlugin, mPlayer, null));
@@ -349,37 +349,32 @@ public class Race {
 	public void win(int endTime) {
 		end();
 
-		// If the RedisSync plugin is present, store back the PBs
-		if (Bukkit.getServer().getPluginManager().isPluginEnabled("MonumentaRedisSync") && mPbRingTimes != null) {
-			// Try getting the player's ring PBs
-			Bukkit.getScheduler().runTaskAsynchronously(mPlugin, () -> {
-				try {
-					JsonObject pbObject = new JsonObject();
-					JsonArray pbArray = new JsonArray();
-					for (int i = 0; i < mCurrentRingTimes.size(); i++) {
-						int pbTime = mPbRingTimes.get(i);
-						int currTime = mCurrentRingTimes.get(i);
-						int delta = pbTime - currTime;
-						if (delta > 0) {
-							pbArray.add(currTime);
-						} else {
-							pbArray.add(pbTime);
-						}
+		if (mScoreboard != null && mScoreboard.getScoreboard() != null) {
+			JsonArray pbArray = new JsonArray();
+			if (mPBRingTimes == null) {
+				mCurrentRingTimes.forEach(pbArray::add);
+			} else {
+				for (int i = 0; i < mCurrentRingTimes.size(); i++) {
+					int pbTime = mPBRingTimes.get(i);
+					int currTime = mCurrentRingTimes.get(i);
+					int delta = pbTime - currTime;
+					if (delta > 0) {
+						pbArray.add(currTime);
+					} else {
+						pbArray.add(pbTime);
 					}
-					pbObject.add("personal_bests", pbArray);
-					/*JsonObject pbs = MonumentaRedisSyncAPI.getPlayerPluginData(mPlayer.getUniqueId(), REDIS_RACE_RING_PBS_PATH);
-					if (pbs != null && pbs.has("personal_bests")) {
-						JsonArray pbtimes = pbs.getAsJsonArray("personal_bests");
-						ArrayList<Integer> pbRingTimes = new ArrayList<>();
-						pbtimes.forEach(time -> pbRingTimes.add(time.getAsInt()));
-						mPbRingTimes = pbRingTimes;
-					}*/
-				} catch (Exception ex) {
-					mPlugin.getLogger().warning("Failed to update personal best ring times for player %s in leaderboard %s: %s"
-						.formatted(mPlayer.getUniqueId(), (mScoreboard != null) ? mScoreboard.getName() : "null", ex.getMessage()));
-					ex.printStackTrace();
 				}
-			});
+			}
+
+			// Replace the pb for this race in the JsonObject map.
+			JsonObject pbobject = RaceManager.PLAYER_RACE_RING_PB_TIMES.get(mPlayer.getUniqueId());
+			if (pbobject != null) {
+				pbobject.add(mScoreboard.getName(), pbArray);
+			} else {
+				JsonObject newPBObject = new JsonObject();
+				newPBObject.add(mScoreboard.getName(), pbArray);
+				RaceManager.PLAYER_RACE_RING_PB_TIMES.put(mPlayer.getUniqueId(), newPBObject);
+			}
 		}
 
 		//TODO: Ring times
@@ -540,29 +535,25 @@ public class Race {
 	}
 
 	private void getPBRingTimes() {
-		if (mRingless) {
+		if (mRingless || mScoreboard == null || mScoreboard.getScoreboard() == null) {
 			return;
 		}
 
-		// If the RedisSync plugin is present, grab player's ring PBs, if they have any.
-		if (Bukkit.getServer().getPluginManager().isPluginEnabled("MonumentaRedisSync")) {
-			// Try getting the player's ring PBs
-			Bukkit.getScheduler().runTaskAsynchronously(mPlugin, () -> {
-				try {
-					JsonObject pbs = MonumentaRedisSyncAPI.getPlayerPluginData(mPlayer.getUniqueId(), REDIS_RACE_RING_PBS_PATH);
-					if (pbs != null && pbs.has("personal_bests")) {
-						JsonArray pbtimes = pbs.getAsJsonArray("personal_bests");
-						ArrayList<Integer> pbRingTimes = new ArrayList<>();
-						pbtimes.forEach(time -> pbRingTimes.add(time.getAsInt()));
-						mPbRingTimes = pbRingTimes;
-					}
-				} catch (Exception ex) {
-					mPlugin.getLogger().warning("Failed to get personal best ring times for player %s in leaderboard %s: %s"
-						.formatted(mPlayer.getUniqueId(), (mScoreboard != null) ? mScoreboard.getName() : "null", ex.getMessage()));
-					ex.printStackTrace();
-				}
-			});
+		JsonObject ringPBsObject = RaceManager.PLAYER_RACE_RING_PB_TIMES.get(mPlayer.getUniqueId());
+
+		if (ringPBsObject == null) {
+			return;
 		}
+
+		JsonArray raceRingPBArray = ringPBsObject.get(mScoreboard.getName()).getAsJsonArray();
+
+		if (raceRingPBArray == null) {
+			return;
+		}
+
+		ArrayList<Integer> ringPBs = new ArrayList<>();
+		raceRingPBArray.forEach(element -> ringPBs.add(element.getAsInt()));
+		mPBRingTimes = ringPBs;
 	}
 
 	public boolean isRingless() {
