@@ -1,6 +1,7 @@
 package com.playmonumenta.scriptedquests.races;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.redissync.MonumentaRedisSyncAPI;
 import com.playmonumenta.scriptedquests.Plugin;
@@ -516,12 +517,13 @@ public class Race {
 			return;
 		}
 
-		JsonArray raceRingPBArray = ringPBsObject.get(mScoreboard.getName()).getAsJsonArray();
+		JsonElement raceRingPBElement = ringPBsObject.get(mScoreboard.getName());
 
-		if (raceRingPBArray == null) {
+		if (raceRingPBElement == null) {
 			return;
 		}
 
+		JsonArray raceRingPBArray = raceRingPBElement.getAsJsonArray();
 		ArrayList<Integer> ringPBs = new ArrayList<>();
 		raceRingPBArray.forEach(element -> ringPBs.add(element.getAsInt()));
 		mPBRingTimes = ringPBs;
