@@ -1,5 +1,6 @@
 package com.playmonumenta.scriptedquests.managers;
 
+import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Constants;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.races.Race;
@@ -22,6 +23,8 @@ public class RaceManager {
 	public static final String PLAYER_RACE_TAG = "SQRacer";
 	public static final String ARMOR_STAND_RACE_TAG = "RaceRing";
 	public static final String ARMOR_STAND_ID_PREFIX_TAG = "RacerId_";
+	public static final String REDIS_RACE_RING_PBS_PATH = "scriptedquests_races_ringpbs";
+	public static HashMap<UUID, JsonObject> PLAYER_RACE_RING_PB_TIMES = new HashMap<>();
 
 	private final Plugin mPlugin;
 

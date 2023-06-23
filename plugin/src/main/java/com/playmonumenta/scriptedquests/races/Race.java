@@ -1,18 +1,22 @@
 package com.playmonumenta.scriptedquests.races;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.playmonumenta.redissync.MonumentaRedisSyncAPI;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.managers.RaceManager;
 import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.quests.components.QuestActions;
-import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 import com.playmonumenta.scriptedquests.utils.RaceUtils;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 import java.util.Map;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -77,6 +81,9 @@ public class Race {
 	private @Nullable TimeBar mTimeBar = null;
 	private boolean mCountdownActive = false;
 	private int mWRTime = Integer.MAX_VALUE;
+	private @Nullable ArrayList<Integer> mPBRingTimes;
+	private final ArrayList<Integer> mCurrentRingTimes = new ArrayList<>();
+	private int mCurrentWaypointIndex = 0;
 
 	public Race(Plugin plugin, RaceManager manager, Player player, String name,
 	            @Nullable Objective scoreboard, boolean showStats, boolean ringless, Location start, @Nullable QuestActions startActions,
@@ -104,6 +111,7 @@ public class Race {
 		mStopLoc = player.getLocation();
 
 		updateWRTime();
+		getPBRingTimes();
 
 		// Create the ring entities in the right shape
 		Location baseLoc = mWaypoints.get(0).getPosition().toLocation(mWorld);
@@ -122,7 +130,6 @@ public class Race {
 		}
 
 		restart();
-
 		animation();
 	}
 
@@ -148,6 +155,8 @@ public class Race {
 		// Copy the waypoints to something local to work with
 		mRemainingWaypoints = new ArrayDeque<>(mWaypoints);
 		mNextWaypoint = mRemainingWaypoints.removeFirst();
+		mCurrentWaypointIndex = 0;
+		mCurrentRingTimes.clear();
 
 		// Create the time-tracking bar
 		mTimeBar = new TimeBar(mPlayer, mTimes);
@@ -241,36 +250,34 @@ public class Race {
 		}
 
 		if (!mRingless) {
-
 			// Check if player went too far away
 			if (distance > mMaxDistance) {
 				mPlayer.sendMessage("" + ChatColor.RED + ChatColor.BOLD + "You went too far away from the race path!");
 				lose();
 				return;
 			} else if (distance < mNextWaypoint.getRadius()) {
-				// TODO: Tell the player if they are going faster or slower than before
-				/*
-				possibleRingTimes.add(timeElapsed);
-				if (has_ring_times) {
-					int oldtime = ringTimes.get(actualRing);
-					if (oldtime < timeElapsed) {
-						MessagingUtils.sendActionBarMessage(mPlayer, net.md_5.bungee.api.ChatColor.RED, true, RaceUtils.msToTimeString(timeElapsed));
-					} else {
-						MessagingUtils.sendActionBarMessage(mPlayer, net.md_5.bungee.api.ChatColor.GREEN, true, RaceUtils.msToTimeString(timeElapsed));
-					}
+				Component timeMessage = Component.text(RaceUtils.msToTimeString(timeElapsed), NamedTextColor.BLUE).decorate(TextDecoration.BOLD);
+
+				int oldTime = (mPBRingTimes != null) ? mPBRingTimes.get(mCurrentWaypointIndex) : 0;
+				if (oldTime != 0) {
+					int delta = timeElapsed - oldTime;
+					NamedTextColor deltaColor = (oldTime == timeElapsed) ? NamedTextColor.GRAY : (delta > 0) ? NamedTextColor.RED : NamedTextColor.GREEN;
+					timeMessage = timeMessage.append(Component.text(" %s%s".formatted((delta < 0) ? "-" : "+", RaceUtils.msToTimeString(Math.abs(delta))), deltaColor).decorate(TextDecoration.BOLD));
 				}
-				*/
+				mCurrentRingTimes.add(timeElapsed);
 
 				// Run the actions for reaching this ring
 				mNextWaypoint.doActions(new QuestContext(mPlugin, mPlayer, null));
 
-				MessagingUtils.sendActionBarMessage(mPlayer, NamedTextColor.BLUE, true, RaceUtils.msToTimeString(timeElapsed), false);
+				//MessagingUtils.sendActionBarMessage(mPlayer, NamedTextColor.BLUE, true, RaceUtils.msToTimeString(timeElapsed), false);
+				mPlayer.sendMessage(timeMessage);
 				mWorld.playSound(mPlayer.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1, 1.5f);
 
 				if (mRemainingWaypoints.size() == 0) {
 					win(timeElapsed);
 				} else {
 					mNextWaypoint = mRemainingWaypoints.removeFirst();
+					mCurrentWaypointIndex++;
 				}
 			}
 
@@ -343,34 +350,33 @@ public class Race {
 	public void win(int endTime) {
 		end();
 
-		//TODO: Ring times
-		/*
-		int pb = (has_ring_times ? ringTimes.get(ringTimes.size() - 1) : possibleRingTimes.get(possibleRingTimes.size() - 1));
-		if (!has_ring_times || endTime < pb) { // if time beaten
-			pb = endTime;
-			//rewrite recoded ringtimes
-			Path path = Paths.get(plugin.getDataFolder().toString() +  "/speedruns" + File.separator + "playerdata/recorded_ring_times" + File.separator + baseFileName.toLowerCase() + File.separator + mPlayer.getName() + ".recorded");
-			try {
-				Files.deleteIfExists(path);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			try {
-				List<String> newList = new ArrayList<String>(possibleRingTimes.size());
-				for (Integer myInt : possibleRingTimes) {
-					newList.add(String.valueOf(myInt));
+		if (mScoreboard != null && mScoreboard.getScoreboard() != null) {
+			JsonArray pbArray = new JsonArray();
+			if (mPBRingTimes == null) {
+				mCurrentRingTimes.forEach(pbArray::add);
+			} else {
+				for (int i = 0; i < mCurrentRingTimes.size(); i++) {
+					int pbTime = mPBRingTimes.get(i);
+					int currTime = mCurrentRingTimes.get(i);
+					int delta = pbTime - currTime;
+					if (delta > 0) {
+						pbArray.add(currTime);
+					} else {
+						pbArray.add(pbTime);
+					}
 				}
-				Files.createDirectories(path.getParent());
-				Files.createFile(path);
-				Files.write(path, newList, Charset.forName("UTF-8"));
-			} catch (IOException e) {
-				e.printStackTrace();
 			}
-			// update leaderboards
-			String[] args = {"leaderboard", "add", baseFileName, Integer.toString(endTime)};
-			new Leaderboard(plugin).leaderboard(mPlayer, args);
+
+			// Replace the pb for this race in the JsonObject map.
+			JsonObject pbObject = RaceManager.PLAYER_RACE_RING_PB_TIMES.get(mPlayer.getUniqueId());
+			if (pbObject != null) {
+				pbObject.add(mScoreboard.getName(), pbArray);
+			} else {
+				JsonObject newPBObject = new JsonObject();
+				newPBObject.add(mScoreboard.getName(), pbArray);
+				RaceManager.PLAYER_RACE_RING_PB_TIMES.put(mPlayer.getUniqueId(), newPBObject);
+			}
 		}
-		*/
 
 		// display race end info
 		//header
@@ -498,6 +504,29 @@ public class Race {
 			}
 			mWRTime = top;
 		}
+	}
+
+	private void getPBRingTimes() {
+		if (mRingless || mScoreboard == null || mScoreboard.getScoreboard() == null) {
+			return;
+		}
+
+		JsonObject ringPBsObject = RaceManager.PLAYER_RACE_RING_PB_TIMES.get(mPlayer.getUniqueId());
+
+		if (ringPBsObject == null) {
+			return;
+		}
+
+		JsonElement raceRingPBElement = ringPBsObject.get(mScoreboard.getName());
+
+		if (raceRingPBElement == null) {
+			return;
+		}
+
+		JsonArray raceRingPBArray = raceRingPBElement.getAsJsonArray();
+		ArrayList<Integer> ringPBs = new ArrayList<>();
+		raceRingPBArray.forEach(element -> ringPBs.add(element.getAsInt()));
+		mPBRingTimes = ringPBs;
 	}
 
 	public boolean isRingless() {
