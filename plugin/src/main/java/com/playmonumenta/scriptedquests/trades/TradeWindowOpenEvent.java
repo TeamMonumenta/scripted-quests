@@ -21,6 +21,7 @@ public class TradeWindowOpenEvent extends Event implements Cancellable {
 	private static final HandlerList handlers = new HandlerList();
 
 	private final Player mPlayer;
+	private final Entity mNpc;
 	private final List<Trade> mTrades;
 
 	private boolean mCancelled;
@@ -79,14 +80,17 @@ public class TradeWindowOpenEvent extends Event implements Cancellable {
 		}
 	}
 
-	public TradeWindowOpenEvent(Player player, List<Trade> trades) {
+	public TradeWindowOpenEvent(Player player, Entity npc, List<Trade> trades) {
 		this.mPlayer = player;
+		this.mNpc = npc;
 		this.mTrades = trades;
 	}
 
 	public Player getPlayer() {
 		return mPlayer;
 	}
+
+	public Entity getNpc() { return mNpc; }
 
 	public List<Trade> getTrades() {
 		return mTrades;

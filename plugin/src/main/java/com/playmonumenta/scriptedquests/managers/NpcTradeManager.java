@@ -208,7 +208,7 @@ public class NpcTradeManager implements Listener {
 				trade.setOriginalResult(originalResults.get(i));
 				eventTrades.add(trade);
 			}
-			TradeWindowOpenEvent tradeEvent = new TradeWindowOpenEvent(player, eventTrades);
+			TradeWindowOpenEvent tradeEvent = new TradeWindowOpenEvent(player, villager, eventTrades);
 			Bukkit.getPluginManager().callEvent(tradeEvent);
 			if (!tradeEvent.isCancelled() && !tradeEvent.getTrades().isEmpty()) {
 				new BukkitRunnable() {
