@@ -4,6 +4,7 @@ import com.playmonumenta.scriptedquests.quests.components.QuestActions;
 import java.util.List;
 import javax.annotation.Nullable;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Villager;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -21,6 +22,7 @@ public class TradeWindowOpenEvent extends Event implements Cancellable {
 	private static final HandlerList handlers = new HandlerList();
 
 	private final Player mPlayer;
+	private final Villager mVillager;
 	private final List<Trade> mTrades;
 
 	private boolean mCancelled;
@@ -79,14 +81,17 @@ public class TradeWindowOpenEvent extends Event implements Cancellable {
 		}
 	}
 
-	public TradeWindowOpenEvent(Player player, List<Trade> trades) {
+	public TradeWindowOpenEvent(Player player, Villager villager, List<Trade> trades) {
 		this.mPlayer = player;
+		this.mVillager = villager;
 		this.mTrades = trades;
 	}
 
 	public Player getPlayer() {
 		return mPlayer;
 	}
+
+	public Villager getVillager() { return mVillager; }
 
 	public List<Trade> getTrades() {
 		return mTrades;
