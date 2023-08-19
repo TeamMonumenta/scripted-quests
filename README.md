@@ -98,6 +98,7 @@ Creating these by hand is a pain - use the web editor! The web editor not only
 helps you structure things correctly but is also the primary documentation for
 the various quest options
 
+- SQ GUI Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/gui_editor.html
 - Quest Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/quest_editor.html
 - Quest Compass Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/quest_compass_editor.html
 - Quest Death Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/quest_death_editor.html
