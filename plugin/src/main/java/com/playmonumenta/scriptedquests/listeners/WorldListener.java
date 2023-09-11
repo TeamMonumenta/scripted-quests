@@ -30,7 +30,7 @@ public class WorldListener implements Listener {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				if (entity.getScoreboardTags().contains(RaceManager.ARMOR_STAND_RACE_TAG)) {
+				if (entity.isValid() && entity.getScoreboardTags().contains(RaceManager.ARMOR_STAND_RACE_TAG)) {
 					Bukkit.getScheduler().runTask(mPlugin, () -> mPlugin.mRaceManager.removeIfNotActive(entity));
 				}
 			}
