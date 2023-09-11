@@ -93,7 +93,7 @@ public class RaceManager {
 				}
 			}
 			if (ownerId != null && !isRacing(ownerId)) {
-				mPlugin.getLogger().fine("Removing stale race ring armor stand.");
+				mPlugin.getLogger().info("Removing stale race ring armor stand.");
 				entity.remove();
 			}
 		}
