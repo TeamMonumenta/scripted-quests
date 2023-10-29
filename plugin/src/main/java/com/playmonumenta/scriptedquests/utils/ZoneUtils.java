@@ -9,8 +9,8 @@ public class ZoneUtils {
 		return x - ((float) Math.floor(x/y) * y);
 	}
 
-	public static int getColor(String layerName, String zoneName) {
-		int layerNameHash = layerName.hashCode();
+	public static int getColor(String namespaceName, String zoneName) {
+		int namespaceNameHash = namespaceName.hashCode();
 		int zoneNameHash = zoneName.hashCode();
 
 		// Start with HSV color space, which is similar to how the human eye works.
@@ -19,7 +19,7 @@ public class ZoneUtils {
 		// Magic numbers can be tweaked for better visual effect.
 		// Bitwise & used in place of modulus, as % is remainder (breaks on negatives!)
 		// H; Default doesn't *need* to be blue, but I *like* it blue.
-		float hue = ZoneUtils.floatFloorMod((float) layerNameHash / 767.0f + 203.0f / 360.0f, 1.0f);
+		float hue = ZoneUtils.floatFloorMod((float) namespaceNameHash / 767.0f + 203.0f / 360.0f, 1.0f);
 		// Saturation and value (brightness) are biased away from gray.
 		// S
 		float saturation = 1.0f - 0.6f * ((float) (zoneNameHash & 0xffff)) / (float) 0xffff;
@@ -30,7 +30,7 @@ public class ZoneUtils {
 		return HSBtoRGB(hue, saturation, value) & 0x00ffffff;
 	}
 
-	public static Color getBukkitColor(String layerName, String zoneName) {
-		return Color.fromRGB(getColor(layerName, zoneName));
+	public static Color getBukkitColor(String namespaceName, String zoneName) {
+		return Color.fromRGB(getColor(namespaceName, zoneName));
 	}
 }

@@ -30,10 +30,10 @@ public class ZoneFragment extends ZoneBase {
 
 	protected ZoneFragment(Zone other) {
 		super(other);
-		mParents.put(other.getLayerName(), other);
+		mParents.put(other.getNamespaceName(), other);
 		List<Zone> zones = new ArrayList<>();
 		zones.add(other);
-		mParentsAndEclipsed.put(other.getLayerName(), zones);
+		mParentsAndEclipsed.put(other.getNamespaceName(), zones);
 		mValid = true;
 	}
 
@@ -78,14 +78,6 @@ public class ZoneFragment extends ZoneBase {
 
 	/*
 	 * Returns a list of fragments of this zone, split by an overlapping zone.
-	 * Does not include overlap or register a new parent.
-	 */
-	protected List<ZoneFragment> splitByOverlap(ZoneBase overlap, Zone newParent) {
-		return splitByOverlap(overlap, newParent, false);
-	}
-
-	/*
-	 * Returns a list of fragments of this zone, split by an overlapping zone.
 	 * Optionally register a new parent and return the center zone.
 	 *
 	 * When registering a new parent, only do so for one of the parent zones.
@@ -124,15 +116,15 @@ public class ZoneFragment extends ZoneBase {
 
 		// If the center fragment is kept, the original parents take priority over the new parent
 		// Failing to do this would mean the fragment takes priority from the wrong zone
-		String newParentLayer = newParent.getLayerName();
-		if (!centerZone.mParents.containsKey(newParentLayer)) {
-			centerZone.mParents.put(newParentLayer, newParent);
+		String newParentNamespaceName = newParent.getNamespaceName();
+		if (!centerZone.mParents.containsKey(newParentNamespaceName)) {
+			centerZone.mParents.put(newParentNamespaceName, newParent);
 		}
 
 		// Track the new parent zone of the center fragment, even if it's eclipsed.
-		@Nullable List<Zone> newParentLayerZones = centerZone.mParentsAndEclipsed.computeIfAbsent(newParentLayer,
+		@Nullable List<Zone> newParentNamespaceZones = centerZone.mParentsAndEclipsed.computeIfAbsent(newParentNamespaceName,
 			k -> new ArrayList<>());
-		newParentLayerZones.add(newParent);
+		newParentNamespaceZones.add(newParent);
 
 		// If registering a new parent, it may be added now that the center zone is the size of the overlap.
 		if (includeOverlap) {
@@ -142,90 +134,27 @@ public class ZoneFragment extends ZoneBase {
 		return result;
 	}
 
-	/*
-	 * Merge two ZoneFragments without changing their combined size/shape.
-	 *
-	 * Assumes fragments do not overlap.
-	 *
-	 * Returns the merged ZoneFragment or null.
-	 */
-	protected @Nullable ZoneFragment merge(ZoneFragment other) {
-		if (mValid != other.mValid ||
-		    !mParents.equals(other.mParents) ||
-		    !mParentsAndEclipsed.equals(other.mParentsAndEclipsed)) {
-			return null;
-		}
-
-		Vector aMin = minCorner();
-		Vector aMax = maxCornerExclusive();
-		Vector bMin = other.minCorner();
-		Vector bMax = other.maxCornerExclusive();
-
-		boolean xMatches = aMin.getX() == bMin.getX() && aMax.getX() == bMax.getX();
-		boolean yMatches = aMin.getY() == bMin.getY() && aMax.getY() == bMax.getY();
-		boolean zMatches = aMin.getZ() == bMin.getZ() && aMax.getZ() == bMax.getZ();
-
-		// Confirm at least 2/3 axes match
-		int matchingAxes = 0;
-		matchingAxes += xMatches ? 1 : 0;
-		matchingAxes += yMatches ? 1 : 0;
-		matchingAxes += zMatches ? 1 : 0;
-		if (matchingAxes < 2) {
-			// Cannot merge, return null to indicate this.
-			return null;
-		}
-		if (matchingAxes == 3) {
-			// These are the same zone; return clone of self.
-			return new ZoneFragment(this);
-		}
-
-		// Confirm zone fragments touch on mismatched axis
-		if (!xMatches) {
-			if (aMax.getX() != bMin.getX() && bMax.getX() != aMin.getX()) {
-				return null;
-			}
-		} else if (!yMatches) {
-			if (aMax.getY() != bMin.getY() && bMax.getY() != aMin.getY()) {
-				return null;
-			}
-		} else {
-			if (aMax.getZ() != bMin.getZ() && bMax.getZ() != aMin.getZ()) {
-				return null;
-			}
-		}
-
-		// Merging is possible, go for it.
-		ZoneFragment result = new ZoneFragment(this);
-
-		Vector resultMin = Vector.getMinimum(aMin, bMin);
-		Vector resultMax = Vector.getMaximum(aMax, bMax);
-		result.minCorner(resultMin);
-		result.maxCornerExclusive(resultMax);
-
-		return result;
-	}
-
 	public Map<String, Zone> getParents() {
 		return new HashMap<>(mParents);
 	}
 
-	public @Nullable Zone getParent(String layer) {
-		return mParents.get(layer);
+	public @Nullable Zone getParent(String namespaceName) {
+		return mParents.get(namespaceName);
 	}
 
 	public Map<String, List<Zone>> getParentsAndEclipsed() {
 		Map<String, List<Zone>> result = new HashMap<>();
 		for (Map.Entry<String, List<Zone>> entry : mParentsAndEclipsed.entrySet()) {
-			String layerName = entry.getKey();
+			String namespaceName = entry.getKey();
 			List<Zone> zones = entry.getValue();
 
-			result.put(layerName, new ArrayList<>(zones));
+			result.put(namespaceName, new ArrayList<>(zones));
 		}
 		return result;
 	}
 
-	public List<Zone> getParentAndEclipsed(String layer) {
-		@Nullable List<Zone> zones = mParentsAndEclipsed.get(layer);
+	public List<Zone> getParentAndEclipsed(String namespaceName) {
+		@Nullable List<Zone> zones = mParentsAndEclipsed.get(namespaceName);
 		List<Zone> result = new ArrayList<>();
 		if (zones != null) {
 			result.addAll(zones);
@@ -233,8 +162,8 @@ public class ZoneFragment extends ZoneBase {
 		return result;
 	}
 
-	public boolean hasProperty(String layerName, String propertyName) {
-		@Nullable Zone zone = getParent(layerName);
+	public boolean hasProperty(String namespaceName, String propertyName) {
+		@Nullable Zone zone = getParent(namespaceName);
 		return zone != null && zone.hasProperty(propertyName);
 	}
 

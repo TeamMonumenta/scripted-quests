@@ -8,12 +8,12 @@ public class ZonePropertyChangeEvent extends Event {
 	private static final HandlerList handlers = new HandlerList();
 
 	private final Player mPlayer;
-	private final String mLayer;
+	private final String mNamespaceName;
 	private final String mProperty;
 
-	public ZonePropertyChangeEvent(Player player, String layer, String property) {
+	public ZonePropertyChangeEvent(Player player, String namespaceName, String property) {
 		mPlayer = player;
-		mLayer = layer;
+		mNamespaceName = namespaceName;
 		mProperty = property;
 	}
 
@@ -21,8 +21,8 @@ public class ZonePropertyChangeEvent extends Event {
 		return mPlayer;
 	}
 
-	public String getLayer() {
-		return mLayer;
+	public String getNamespaceName() {
+		return mNamespaceName;
 	}
 
 	public String getProperty() {

@@ -25,10 +25,10 @@ public class ZonePropertyManager implements Listener {
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
 	public void zonePropertyChangeEvent(ZonePropertyChangeEvent event) {
 		Player player = event.getPlayer();
-		String layer = event.getLayer();
+		String namespaceName = event.getNamespaceName();
 		String property = event.getProperty();
 
-		changeEvent(player, layer, property);
+		changeEvent(player, namespaceName, property);
 	}
 
 	/*
@@ -40,28 +40,28 @@ public class ZonePropertyManager implements Listener {
 		QuestUtils.loadScriptedQuests(plugin, "zone_properties", sender, (object) -> {
 			// Load this file into a ZoneProperty object
 			ZoneProperty property = new ZoneProperty(object);
-			String layerName = property.getLayer();
+			String namespaceName = property.getNamespaceName();
 			String name = property.getName();
 
-			if (!mZoneProperties.containsKey(layerName)) {
-				mZoneProperties.put(layerName, new HashMap<>());
+			if (!mZoneProperties.containsKey(namespaceName)) {
+				mZoneProperties.put(namespaceName, new HashMap<>());
 			}
-			Map<String, ZoneProperty> layer = mZoneProperties.get(layerName);
+			Map<String, ZoneProperty> namespace = mZoneProperties.get(namespaceName);
 
-			ZoneProperty existingProperty = layer.get(name);
+			ZoneProperty existingProperty = namespace.get(name);
 			if (existingProperty != null) {
 				// Existing ZoneProperty
 				existingProperty.addFromOther(plugin, property);
 			} else {
-				layer.put(name, property);
+				namespace.put(name, property);
 			}
 
 			return name + ":" + property.getComponents().size();
 		});
 	}
 
-	private void changeEvent(Player player, String layerName, String name) {
-		if (layerName == null || layerName.isEmpty()) {
+	private void changeEvent(Player player, String namespaceName, String name) {
+		if (namespaceName == null || namespaceName.isEmpty()) {
 			return;
 		}
 
@@ -69,12 +69,12 @@ public class ZonePropertyManager implements Listener {
 			return;
 		}
 
-		Map<String, ZoneProperty> layer = mZoneProperties.get(layerName);
-		if (layer == null) {
+		Map<String, ZoneProperty> namespace = mZoneProperties.get(namespaceName);
+		if (namespace == null) {
 			return;
 		}
 
-		ZoneProperty entry = layer.get(name);
+		ZoneProperty entry = namespace.get(name);
 		if (entry == null) {
 			return;
 		}

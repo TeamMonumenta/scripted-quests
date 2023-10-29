@@ -35,8 +35,8 @@ public class ZoneManager {
 	static @MonotonicNonNull BukkitRunnable mPlayerTracker = null;
 	static @Nullable BukkitRunnable mAsyncReloadHandler = null;
 
-	private final Map<String, ZoneLayer> mLayers = new HashMap<>();
-	private final Map<String, ZoneLayer> mPluginLayers = new HashMap<>();
+	private final Map<String, ZoneNamespace> mNamespaces = new HashMap<>();
+	private final Map<String, ZoneNamespace> mPluginNamespaces = new HashMap<>();
 	private @MonotonicNonNull ZoneTreeBase mZoneTree = null;
 
 	private final Set<UUID> mTransferringPlayers = new HashSet<>();
@@ -68,58 +68,58 @@ public class ZoneManager {
 	 ************************************************************************************/
 
 	/*
-	 * Register a ZoneLayer from an external plugin.
+	 * Register a ZoneNamespace from an external plugin.
 	 *
 	 * Returns true on success, false on failure.
 	 */
-	public boolean registerPluginZoneLayer(ZoneLayer layer) {
-		if (layer == null) {
+	public boolean registerPluginZoneNamespace(ZoneNamespace namespace) {
+		if (namespace == null) {
 			return false;
 		}
 
-		String layerName = layer.getName();
+		String namespaceName = namespace.getName();
 
-		if (mPluginLayers.containsKey(layerName)) {
+		if (mPluginNamespaces.containsKey(namespaceName)) {
 			return false;
 		}
 
-		mPluginLayers.put(layerName, layer);
+		mPluginNamespaces.put(namespaceName, namespace);
 		reload(mPlugin, Bukkit.getConsoleSender());
 		return true;
 	}
 
 	/*
-	 * Unregister a ZoneLayer from an external plugin.
+	 * Unregister a ZoneNamespace from an external plugin.
 	 *
-	 * Be sure to call invalidate() on the old layer before discarding to ease garbage collection.
+	 * Be sure to call invalidate() on the old namespace before discarding to ease garbage collection.
 	 *
 	 * Returns true on success, false on failure.
 	 */
-	public boolean unregisterPluginZoneLayer(String layerName) {
-		if (!mPluginLayers.containsKey(layerName)) {
+	public boolean unregisterPluginZoneNamespace(String namespaceName) {
+		if (!mPluginNamespaces.containsKey(namespaceName)) {
 			return false;
 		}
 
-		mPluginLayers.remove(layerName);
+		mPluginNamespaces.remove(namespaceName);
 		reload(mPlugin, Bukkit.getConsoleSender());
 		return true;
 	}
 
 	/*
-	 * Replace a ZoneLayer from an external plugin.
+	 * Replace a ZoneNamespace from an external plugin.
 	 *
-	 * Be sure to call invalidate() on the old layer before discarding to ease garbage collection.
+	 * Be sure to call invalidate() on the old namespace before discarding to ease garbage collection.
 	 *
 	 * Returns true on success, false on failure.
 	 */
-	public boolean replacePluginZoneLayer(ZoneLayer layer) {
-		if (layer == null) {
+	public boolean replacePluginZoneNamespace(ZoneNamespace namespace) {
+		if (namespace == null) {
 			return false;
 		}
 
-		String layerName = layer.getName();
+		String namespaceName = namespace.getName();
 
-		mPluginLayers.put(layerName, layer);
+		mPluginNamespaces.put(namespaceName, namespace);
 		reload(mPlugin, Bukkit.getConsoleSender());
 		return true;
 	}
@@ -170,46 +170,46 @@ public class ZoneManager {
 	}
 
 	/*
-	 * For a given layer and location, return the zone that
+	 * For a given namespace and location, return the zone that
 	 * contains it. Returns null if no zone overlaps it.
 	 */
-	public @Nullable Zone getZone(Vector loc, String layer) {
+	public @Nullable Zone getZone(Vector loc, String namespaceName) {
 		if (mPlugin.mFallbackZoneLookup) {
-			@Nullable ZoneLayer zoneLayer = mLayers.get(layer);
-			if (zoneLayer == null) {
+			@Nullable ZoneNamespace zoneNamespace = mNamespaces.get(namespaceName);
+			if (zoneNamespace == null) {
 				return null;
 			}
-			return zoneLayer.fallbackGetZone(loc);
+			return zoneNamespace.fallbackGetZone(loc);
 		} else {
-			return mZoneTree.getZone(loc, layer);
+			return mZoneTree.getZone(loc, namespaceName);
 		}
 	}
 
-	public @Nullable Zone getZone(Location loc, String layer) {
+	public @Nullable Zone getZone(Location loc, String namespaceName) {
 		if (loc == null) {
 			return null;
 		}
 
-		return mZoneTree.getZone(loc.toVector(), layer);
+		return mZoneTree.getZone(loc.toVector(), namespaceName);
 	}
 
-	public boolean hasProperty(Vector loc, String layerName, String propertyName) {
-		@Nullable Zone zone = getZone(loc, layerName);
+	public boolean hasProperty(Vector loc, String namespaceName, String propertyName) {
+		@Nullable Zone zone = getZone(loc, namespaceName);
 		if (zone == null) {
 			return false;
 		}
 		return zone.hasProperty(propertyName);
 	}
 
-	public boolean hasProperty(Location loc, String layerName, String propertyName) {
+	public boolean hasProperty(Location loc, String namespaceName, String propertyName) {
 		if (loc == null) {
 			return false;
 		}
-		return hasProperty(loc.toVector(), layerName, propertyName);
+		return hasProperty(loc.toVector(), namespaceName, propertyName);
 	}
 
 	// Passing a player is optimized to use the last known location
-	public boolean hasProperty(Player player, String layerName, String propertyName) {
+	public boolean hasProperty(Player player, String namespaceName, String propertyName) {
 		if (player == null) {
 			return false;
 		}
@@ -221,7 +221,7 @@ public class ZoneManager {
 				return false;
 			}
 
-			@Nullable Zone zone = zones.get(layerName);
+			@Nullable Zone zone = zones.get(namespaceName);
 			if (zone == null) {
 				return false;
 			}
@@ -233,32 +233,32 @@ public class ZoneManager {
 				return false;
 			}
 
-			return lastFragment.hasProperty(layerName, propertyName);
+			return lastFragment.hasProperty(namespaceName, propertyName);
 		}
 	}
 
-	public Set<String> getLayerNames() {
-		return new HashSet<>(mLayers.keySet());
+	public Set<String> getNamespaceNames() {
+		return new HashSet<>(mNamespaces.keySet());
 	}
 
-	public String[] getLayerNameSuggestions() {
-		return ArgUtils.quoteIfNeeded(new TreeSet<>(getLayerNames()));
+	public String[] getNamespaceNameSuggestions() {
+		return ArgUtils.quoteIfNeeded(new TreeSet<>(getNamespaceNames()));
 	}
 
-	public static ArgumentSuggestions getLayerNameArgumentSuggestions() {
-		return ArgumentSuggestions.strings(info -> getInstance().getLayerNameSuggestions());
+	public static ArgumentSuggestions getNamespaceArgumentSuggestions() {
+		return ArgumentSuggestions.strings(info -> getInstance().getNamespaceNameSuggestions());
 	}
 
-	public Set<String> getLoadedProperties(String layerName) {
-		@Nullable ZoneLayer layer = mLayers.get(layerName);
-		if (layer == null) {
+	public Set<String> getLoadedProperties(String namespaceName) {
+		@Nullable ZoneNamespace namespace = mNamespaces.get(namespaceName);
+		if (namespace == null) {
 			return new HashSet<>();
 		}
-		return layer.getLoadedProperties();
+		return namespace.getLoadedProperties();
 	}
 
-	public String[] getLoadedPropertySuggestions(String layerName) {
-		Set<String> properties = getLoadedProperties(layerName);
+	public String[] getLoadedPropertySuggestions(String namespaceName) {
+		Set<String> properties = getLoadedProperties(namespaceName);
 		Set<String> suggestions = new TreeSet<>(properties);
 		for (String property : properties) {
 			suggestions.add("!" + property);
@@ -266,24 +266,24 @@ public class ZoneManager {
 		return ArgUtils.quoteIfNeeded(suggestions);
 	}
 
-	public static ArgumentSuggestions getLoadedPropertyArgumentSuggestions(String layerName) {
-		return ArgumentSuggestions.strings(info -> getInstance().getLoadedPropertySuggestions(layerName));
+	public static ArgumentSuggestions getLoadedPropertyArgumentSuggestions(String namespaceName) {
+		return ArgumentSuggestions.strings(info -> getInstance().getLoadedPropertySuggestions(namespaceName));
 	}
 
-	public static ArgumentSuggestions getLoadedPropertyArgumentSuggestions(int layerNameArgIndex) {
+	public static ArgumentSuggestions getLoadedPropertyArgumentSuggestions(int namespaceNameArgIndex) {
 		return ArgumentSuggestions.strings(info -> {
 			Object[] args = info.previousArgs();
 			if (args.length == 0) {
 				return SUGGESTIONS_EXECUTE_FALLBACK;
 			}
 
-			int index = layerNameArgIndex;
+			int index = namespaceNameArgIndex;
 			if (index < 0) {
 				index += args.length;
 			}
 
 			if (index < 0 || index >= args.length) {
-				return new String[]{"\"Invalid argument index for layer name: " + index + "\""};
+				return new String[]{"\"Invalid argument index for namespace name: " + index + "\""};
 			}
 
 			return getInstance().getLoadedPropertySuggestions((String) args[index]);
@@ -300,7 +300,7 @@ public class ZoneManager {
 	 * In the event we have enough zones this takes a while to load:
 	 * Reloading after the first startup could use an async load, only pausing long enough to swap
 	 * the generated tree. If that's not good enough, an unbalanced tree is even faster to generate
-	 * without too much slowdown, and the ZoneLayer class could be modified to handle determining
+	 * without too much slowdown, and the ZoneNamespace class could be modified to handle determining
 	 * which zones have priority if startup time NEEDS to be near-instant in exchange for slower
 	 * clock speeds while the tree is loading. We have options.
 	 */
@@ -349,35 +349,35 @@ public class ZoneManager {
 		mReloadRequesters.add(Bukkit.getConsoleSender());
 
 		long cpuNanos = System.nanoTime();
-		for (ZoneLayer layer : mLayers.values()) {
+		for (ZoneNamespace namespace : mNamespaces.values()) {
 			// Cause zones to stop tracking their fragments; speeds up garbage collection.
-			layer.invalidate();
+			namespace.invalidate();
 		}
-		mLayers.clear();
-		ZoneLayer.clearDynmapLayers();
+		mNamespaces.clear();
+		ZoneNamespace.clearDynmapLayers();
 		MMLog.fine("[Zone Reload] " + String.format("%13.9f", (System.nanoTime() - cpuNanos) / 1000000000.0) + "s Resetting old data");
 
 		cpuNanos = System.nanoTime();
 		plugin.mZonePropertyGroupManager.reload(plugin, mReloadRequesters);
 
-		// Refresh plugin layers
-		for (ZoneLayer layer : mPluginLayers.values()) {
-			layer.reloadFragments(mReloadRequesters);
+		// Refresh plugin namespaces
+		for (ZoneNamespace namespace : mPluginNamespaces.values()) {
+			namespace.reloadFragments(mReloadRequesters);
 		}
 
-		mLayers.putAll(mPluginLayers);
-		QuestUtils.loadScriptedQuests(plugin, "zone_layers", mReloadRequesters, (object) -> {
-			// Load this file into a ZoneLayer object
-			ZoneLayer layer = new ZoneLayer(mReloadRequesters, object);
-			String layerName = layer.getName();
+		mNamespaces.putAll(mPluginNamespaces);
+		QuestUtils.loadScriptedQuests(plugin, "zone_namespaces", mReloadRequesters, (object) -> {
+			// Load this file into a ZoneNamespace object
+			ZoneNamespace namespace = new ZoneNamespace(mReloadRequesters, object);
+			String namespaceName = namespace.getName();
 
-			if (mLayers.containsKey(layerName)) {
-				throw new Exception("'" + layerName + "' already exists!");
+			if (mNamespaces.containsKey(namespaceName)) {
+				throw new Exception("'" + namespaceName + "' already exists!");
 			}
 
-			mLayers.put(layerName, layer);
+			mNamespaces.put(namespaceName, namespace);
 
-			return layerName + ":" + layer.getZones().size();
+			return namespaceName + ":" + namespace.getZones().size();
 		});
 		MMLog.fine("[Zone Reload] " + String.format("%13.9f", (System.nanoTime() - cpuNanos) / 1000000000.0) + "s Loading new data");
 
@@ -387,15 +387,15 @@ public class ZoneManager {
 			}
 		}
 
-		// Merge zone fragments within layers to prevent overlaps
+		// Merge zone fragments within namespaces to prevent overlaps
 		cpuNanos = System.nanoTime();
-		mergeLayers();
-		MMLog.fine("[Zone Reload] " + String.format("%13.9f", (System.nanoTime() - cpuNanos) / 1000000000.0) + "s Merging layer data");
+		mergeNamespaces();
+		MMLog.fine("[Zone Reload] " + String.format("%13.9f", (System.nanoTime() - cpuNanos) / 1000000000.0) + "s Merging namespace data");
 
 		// Create list of zones
 		List<Zone> zones = new ArrayList<>();
-		for (ZoneLayer layer : mLayers.values()) {
-			zones.addAll(layer.getZones());
+		for (ZoneNamespace namespace : mNamespaces.values()) {
+			zones.addAll(namespace.getZones());
 		}
 
 		// Create list of all zone fragments.
@@ -454,11 +454,11 @@ public class ZoneManager {
 					if (mPlugin.mFallbackZoneLookup) {
 						// getZones() will use fallback zone lookup in this case
 						Map<String, Zone> currentZones = getZones(playerVector);
-						// Need to check all layer names, not just the ones the player is in
-						for (String layerName : mLayers.keySet()) {
-							Zone currentZone = currentZones.get(layerName);
+						// Need to check all namespace names, not just the ones the player is in
+						for (String namespaceName : mNamespaces.keySet()) {
+							Zone currentZone = currentZones.get(namespaceName);
 							// Handles comparing to previous zone if needed
-							applyZoneChange(player, layerName, currentZone);
+							applyZoneChange(player, namespaceName, currentZone);
 						}
 					}
 
@@ -494,13 +494,13 @@ public class ZoneManager {
 	private Map<String, Zone> getZonesInternal(Vector loc, boolean fallbackZoneLookup) {
 		if (fallbackZoneLookup) {
 			Map<String, Zone> result = new HashMap<>();
-			for (Map.Entry<String, ZoneLayer> entry : mLayers.entrySet()) {
-				String layerName = entry.getKey();
-				ZoneLayer zoneLayer = entry.getValue();
+			for (Map.Entry<String, ZoneNamespace> entry : mNamespaces.entrySet()) {
+				String namespaceName = entry.getKey();
+				ZoneNamespace zoneNamespace = entry.getValue();
 
-				@Nullable Zone zone = zoneLayer.fallbackGetZone(loc);
+				@Nullable Zone zone = zoneNamespace.fallbackGetZone(loc);
 				if (zone != null) {
-					result.put(layerName, zone);
+					result.put(namespaceName, zone);
 				}
 			}
 			return result;
@@ -514,9 +514,9 @@ public class ZoneManager {
 		applyFragmentChange(player, null);
 		if (mPlugin.mFallbackZoneLookup && mLastPlayerZones.get(playerUuid) != null) {
 			// Copy key set, as we are modifying the map during iteration
-			Set<String> layerNames = new LinkedHashSet<>(mLastPlayerZones.get(playerUuid).keySet());
-			for (String layerName : layerNames) {
-				applyZoneChange(player, layerName, null);
+			Set<String> namespaceNames = new LinkedHashSet<>(mLastPlayerZones.get(playerUuid).keySet());
+			for (String namespaceName : namespaceNames) {
+				applyZoneChange(player, namespaceName, null);
 			}
 		}
 		mLastPlayerZoneFragment.remove(playerUuid);
@@ -562,30 +562,30 @@ public class ZoneManager {
 		}
 
 		if (!mPlugin.mFallbackZoneLookup) {
-			// Zones changed, send an event for each layer.
-			Set<String> mentionedLayerNames = new LinkedHashSet<>(lastZones.keySet());
-			mentionedLayerNames.addAll(currentZones.keySet());
-			for (String layerName : mentionedLayerNames) {
+			// Zones changed, send an event for each namespace.
+			Set<String> mentionedNamespaceNames = new LinkedHashSet<>(lastZones.keySet());
+			mentionedNamespaceNames.addAll(currentZones.keySet());
+			for (String namespaceName : mentionedNamespaceNames) {
 				// Null zones are valid - indicates no zone.
-				@Nullable Zone currentZone = currentZones.get(layerName);
-				applyZoneChange(player, layerName, currentZone);
+				@Nullable Zone currentZone = currentZones.get(namespaceName);
+				applyZoneChange(player, namespaceName, currentZone);
 			}
 		}
 	}
 
 	@SuppressWarnings("ReferenceEquality")
-	private void applyZoneChange(Player player, String layerName, @Nullable Zone currentZone) {
+	private void applyZoneChange(Player player, String namespaceName, @Nullable Zone currentZone) {
 		UUID playerUuid = player.getUniqueId();
 		// Null zones are valid - indicates no zone.
 		@Nullable Map<String, Zone> lastZones = mLastPlayerZones.computeIfAbsent(playerUuid, k -> new HashMap<>());
 
-		@Nullable Zone lastZone = lastZones.get(layerName);
+		@Nullable Zone lastZone = lastZones.get(namespaceName);
 		if (lastZone == currentZone) {
 			// Nothing to do!
 			return;
 		}
 
-		ZoneChangeEvent zoneEvent = new ZoneChangeEvent(player, layerName, lastZone, currentZone);
+		ZoneChangeEvent zoneEvent = new ZoneChangeEvent(player, namespaceName, lastZone, currentZone);
 		Bukkit.getPluginManager().callEvent(zoneEvent);
 
 		Set<String> lastProperties;
@@ -606,7 +606,7 @@ public class ZoneManager {
 		removedProperties.removeAll(currentProperties);
 		for (String property : removedProperties) {
 			ZonePropertyChangeEvent event;
-			event = new ZonePropertyChangeEvent(player, layerName, "!" + property);
+			event = new ZonePropertyChangeEvent(player, namespaceName, "!" + property);
 			Bukkit.getPluginManager().callEvent(event);
 		}
 
@@ -614,36 +614,36 @@ public class ZoneManager {
 		addedProperties.removeAll(lastProperties);
 		for (String property : addedProperties) {
 			ZonePropertyChangeEvent event;
-			event = new ZonePropertyChangeEvent(player, layerName, property);
+			event = new ZonePropertyChangeEvent(player, namespaceName, property);
 			Bukkit.getPluginManager().callEvent(event);
 		}
 
 		if (currentZone == null) {
-			lastZones.remove(layerName);
+			lastZones.remove(namespaceName);
 			if (lastZones.size() == 0) {
 				mLastPlayerZones.remove(playerUuid);
 			}
 		} else {
-			lastZones.put(layerName, currentZone);
+			lastZones.put(namespaceName, currentZone);
 		}
 	}
 
-	private void mergeLayers() {
-		List<ZoneLayer> layers = new ArrayList<>(mLayers.values());
+	private void mergeNamespaces() {
+		List<ZoneNamespace> namespaces = new ArrayList<>(mNamespaces.values());
 
-		int numLayers = layers.size();
-		for (int i = 0; i < numLayers; i++) {
-			ZoneLayer outer = layers.get(i);
-			for (int j = i + 1; j < numLayers; j++) {
-				ZoneLayer inner = layers.get(j);
-				mergeLayers(outer, inner);
+		int numNamespaces = namespaces.size();
+		for (int i = 0; i < numNamespaces; i++) {
+			ZoneNamespace outer = namespaces.get(i);
+			for (int j = i + 1; j < numNamespaces; j++) {
+				ZoneNamespace inner = namespaces.get(j);
+				mergeNamespaces(outer, inner);
 			}
 		}
 	}
 
-	private void mergeLayers(ZoneLayer outerLayer, ZoneLayer innerLayer) {
-		for (Zone outerZone : outerLayer.getZones()) {
-			for (Zone innerZone : innerLayer.getZones()) {
+	private void mergeNamespaces(ZoneNamespace outerNamespace, ZoneNamespace innerNamespace) {
+		for (Zone outerZone : outerNamespace.getZones()) {
+			for (Zone innerZone : innerNamespace.getZones()) {
 				@Nullable ZoneBase overlap = outerZone.overlappingZone(innerZone);
 				if (overlap == null) {
 					continue;
@@ -764,7 +764,7 @@ public class ZoneManager {
 		}
 	}
 
-	public Collection<ZoneLayer> getLayers() {
-		return mLayers.values();
+	public Collection<ZoneNamespace> getNamespaces() {
+		return mNamespaces.values();
 	}
 }

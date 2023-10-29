@@ -7,17 +7,14 @@ import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.utils.ZoneUtils;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.annotation.Nullable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -27,7 +24,7 @@ import org.dynmap.markers.AreaMarker;
 import org.dynmap.markers.MarkerAPI;
 import org.dynmap.markers.MarkerSet;
 
-public class ZoneLayer {
+public class ZoneNamespace {
 	public static final String DYNMAP_PREFIX = "SQZone";
 
 	private final String mName;
@@ -38,16 +35,16 @@ public class ZoneLayer {
 	/*
 	 * This should only be called by the ZoneManager.
 	 */
-	public ZoneLayer(CommandSender sender, JsonObject object) throws Exception {
+	public ZoneNamespace(CommandSender sender, JsonObject object) throws Exception {
 		this(new HashSet<>(Collections.singletonList(sender)), object);
 	}
 
-	public ZoneLayer(Set<CommandSender> senders, JsonObject object) throws Exception {
+	public ZoneNamespace(Set<CommandSender> senders, JsonObject object) throws Exception {
 		if (object == null) {
 			throw new Exception("object may not be null.");
 		}
 
-		// Load the layer name
+		// Load the namespace name
 		@Nullable JsonElement nameElement = object.get("name");
 		if (nameElement == null) {
 			throw new Exception("Failed to parse 'name'");
@@ -59,79 +56,12 @@ public class ZoneLayer {
 		}
 		mName = name;
 
-		// Load whether this layer is hidden by default on the dynmap
+		// Load whether this namespace is hidden by default on the dynmap
 		@Nullable JsonElement hiddenElement = object.get("hidden");
 		if (hiddenElement != null &&
 		    hiddenElement.getAsBoolean()) {
 			mHidden = hiddenElement.getAsBoolean();
 		}
-
-		// Load the property groups - why yes, this section is rather long.
-		@Nullable JsonElement propertyGroupsElement = object.get("property_groups");
-		if (propertyGroupsElement == null) {
-			propertyGroupsElement = new JsonObject();
-		} else {
-			Component warningComponent = Component.text("Warning: Layer " + name
-				+ " has property groups built-in. Support for this is deprecated - use zone property group files instead.",
-				TextColor.color(255, 63, 0));
-			for (CommandSender sender : senders) {
-				sender.sendMessage(warningComponent);
-			}
-		}
-		@Nullable JsonObject propertyGroupsJson = propertyGroupsElement.getAsJsonObject();
-		if (propertyGroupsJson == null) {
-			throw new Exception("Failed to parse 'property_groups'");
-		}
-
-		Map<String, List<String>> propertyGroups = new HashMap<>();
-		Map<String, Set<String>> groupReferences = new HashMap<>();
-
-		for (Map.Entry<String, JsonElement> ent : propertyGroupsJson.entrySet()) {
-			String propertyGroupName = ent.getKey();
-			JsonElement propertyGroupJson = ent.getValue();
-
-			if (propertyGroupName == null || propertyGroupName.isEmpty()) {
-				throw new Exception("Failed to parse 'property_groups': group name may not be empty.");
-			}
-			@Nullable JsonArray propertyGroupJsonArray = propertyGroupJson.getAsJsonArray();
-			if (propertyGroupJsonArray == null) {
-				throw new Exception("Failed to parse 'property_groups." + propertyGroupName + "'");
-			}
-
-			List<String> propertyGroup = new ArrayList<>();
-			Set<String> ownGroupReferences = new LinkedHashSet<>();
-			int propertyGroupIndex = 0;
-
-			for (JsonElement propertyNameElement : propertyGroupJsonArray) {
-				String propertyName = propertyNameElement.getAsString();
-
-				if (propertyName == null) {
-					throw new Exception("Failed to parse 'property_groups." + propertyGroupName +
-						"[" + propertyGroupIndex + "]'");
-				}
-
-				propertyGroup.add(propertyName);
-
-				String groupReference = propertyName;
-				if (groupReference.charAt(0) == '!') {
-					groupReference = groupReference.substring(1);
-				}
-				if (groupReference.charAt(0) == '#') {
-					ownGroupReferences.add(groupReference.substring(1));
-				}
-
-				propertyGroupIndex++;
-			}
-
-			groupReferences.put(propertyGroupName, ownGroupReferences);
-			if (hasPropertyGroupLoop(groupReferences, propertyGroupName)) {
-				throw new Exception("Loop detected in property group '" + propertyGroupName +
-				                    "'. Groups may not reference themselves directly or indirectly.");
-			}
-
-			propertyGroups.put(propertyGroupName, propertyGroup);
-		}
-
 
 		// Load the zones
 		@Nullable JsonElement zonesElement = object.get("zones");
@@ -150,7 +80,7 @@ public class ZoneLayer {
 			if (zoneObject == null) {
 				throw new Exception("Failed to parse 'zones[" + zoneIndex + "]'");
 			}
-			Zone zone = Zone.constructFromJson(this, zoneObject, propertyGroups);
+			Zone zone = Zone.constructFromJson(this, zoneObject);
 			mLoadedProperties.addAll(zone.getProperties());
 			mZones.add(zone);
 			zoneIndex++;
@@ -164,15 +94,15 @@ public class ZoneLayer {
 	 ************************************************************************************/
 
 	/*
-	 * Create an empty zone layer for use with external plugins.
+	 * Create an empty zone namespace for use with external plugins.
 	 *
-	 * name is the name of the layer. This should start with your plugin's name or ID.
+	 * name is the name of the namespace. This should start with your plugin's name or ID.
 	 */
-	public ZoneLayer(String name) {
+	public ZoneNamespace(String name) {
 		mName = name;
 	}
 
-	public ZoneLayer(String name, boolean hidden) {
+	public ZoneNamespace(String name, boolean hidden) {
 		mName = name;
 		mHidden = hidden;
 	}
@@ -207,40 +137,7 @@ public class ZoneLayer {
 	}
 
 	/*
-	 * Create a zone tree containing just this layer.
-	 *
-	 * Note that creating multiple zone trees from the same layer,
-	 * including registering it with the ZoneManager, will invalidate
-	 * the previous trees from that layer. This will not be detected
-	 * or handled automatically, so please be careful.
-	 *
-	 * Returns a subclass of ZoneTreeBase.
-	 */
-	public ZoneTreeBase createZoneTree(CommandSender sender) throws Exception {
-		Set<CommandSender> senders = new HashSet<>();
-		senders.add(sender);
-		return createZoneTree(senders);
-	}
-
-	public ZoneTreeBase createZoneTree(Set<CommandSender> senders) throws Exception {
-		reloadFragments(senders);
-
-		// Create list of all zone fragments.
-		List<ZoneFragment> zoneFragments = new ArrayList<>();
-		for (Zone zone : mZones) {
-			zoneFragments.addAll(zone.getZoneFragments());
-		}
-
-		// Create the new tree.
-		ZoneTreeBase newTree = ZoneTreeBase.createZoneTree(zoneFragments);
-		if (Plugin.getInstance().mShowZonesDynmap) {
-			newTree.refreshDynmapTree();
-		}
-		return newTree;
-	}
-
-	/*
-	 * Return the list of properties found in this zone layer.
+	 * Return the list of properties found in this zone namespace.
 	 */
 	public Set<String> getLoadedProperties() {
 		return Collections.unmodifiableSet(mLoadedProperties);
@@ -251,14 +148,12 @@ public class ZoneLayer {
 	 ************************************************************************************/
 
 	/*
-	 * Reset the fragments of this ZoneLayer, so they can be recalculated without reloading the zones.
-	 * Used to handle ZoneLayers from other plugins. This should only be called by the ZoneManager
-	 * and the ZoneLayer constructor.
+	 * Reset the fragments of this ZoneNamespace, so they can be recalculated without reloading the zones.
+	 * Used to handle ZoneNamespaces from other plugins. This should only be called by the ZoneManager
+	 * and the ZoneNamespace constructor.
 	 */
 	protected void reloadFragments(CommandSender sender) {
-		Set<CommandSender> senders = new HashSet<>();
-		senders.add(sender);
-		reloadFragments(senders);
+		reloadFragments(Set.of(sender));
 	}
 
 	protected void reloadFragments(Set<CommandSender> senders) {
@@ -330,29 +225,6 @@ public class ZoneLayer {
 				outer.splitByOverlap(overlap, inner, true);
 			}
 		}
-	}
-
-	private boolean hasPropertyGroupLoop(Map<String, Set<String>> groupReferences, String startGroup) {
-		return hasPropertyGroupLoop(groupReferences, startGroup, startGroup);
-	}
-
-	private boolean hasPropertyGroupLoop(Map<String, Set<String>> groupReferences, String startGroup, String continueGroup) {
-		@Nullable Set<String> subGroupReferences = groupReferences.get(continueGroup);
-		if (subGroupReferences == null) {
-			return false;
-		}
-
-		for (String subGroupReference : subGroupReferences) {
-			if (subGroupReference.equals(startGroup)) {
-				return true;
-			}
-
-			if (hasPropertyGroupLoop(groupReferences, startGroup, subGroupReference)) {
-				return true;
-			}
-		}
-
-		return false;
 	}
 
 	/*

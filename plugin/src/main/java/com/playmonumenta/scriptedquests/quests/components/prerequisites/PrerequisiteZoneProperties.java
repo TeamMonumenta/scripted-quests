@@ -15,54 +15,54 @@ import java.util.Set;
 import org.bukkit.Location;
 
 public class PrerequisiteZoneProperties implements PrerequisiteBase {
-	private final Set<String> mMentionedLayers;
-	private final Set<String> mRequiredLayers;
+	private final Set<String> mMentionedNamespaces;
+	private final Set<String> mRequiredNamespaces;
 	private final Map<String, Set<String>> mProperties;
 	private final Map<String, Set<String>> mNotProperties;
 
 	public PrerequisiteZoneProperties(JsonElement element) throws Exception {
-		Set<String> requiredLayers = new HashSet<String>();
-		Map<String, Set<String>> properties = new HashMap<String, Set<String>>();
-		Map<String, Set<String>> notProperties = new HashMap<String, Set<String>>();
+		Set<String> requiredNamespaces = new HashSet<>();
+		Map<String, Set<String>> properties = new HashMap<>();
+		Map<String, Set<String>> notProperties = new HashMap<>();
 
 		JsonObject object = element.getAsJsonObject();
 		for (Map.Entry<String, JsonElement> ent : object.entrySet()) {
-			String layerName = ent.getKey();
-			JsonArray jsonLayerProps = ent.getValue().getAsJsonArray();
+			String namespaceName = ent.getKey();
+			JsonArray jsonNamespaceProps = ent.getValue().getAsJsonArray();
 
-			Set<String> layerProps = new HashSet<String>();
-			Set<String> layerNotProps = new HashSet<String>();
+			Set<String> namespaceProps = new HashSet<>();
+			Set<String> namespaceNotProps = new HashSet<>();
 
-			if (jsonLayerProps.size() == 0) {
-				requiredLayers.add(layerName);
+			if (jsonNamespaceProps.size() == 0) {
+				requiredNamespaces.add(namespaceName);
 				continue;
 			}
 
-			for (JsonElement jsonProp : jsonLayerProps) {
+			for (JsonElement jsonProp : jsonNamespaceProps) {
 				String prop = jsonProp.getAsString();
 				if (prop.startsWith("!")) {
-					layerNotProps.add(prop.substring(1));
+					namespaceNotProps.add(prop.substring(1));
 				} else {
-					layerProps.add(prop);
+					namespaceProps.add(prop);
 				}
 			}
 
-			if (!layerProps.isEmpty()) {
-				properties.put(layerName, layerProps);
+			if (!namespaceProps.isEmpty()) {
+				properties.put(namespaceName, namespaceProps);
 			}
 
-			if (!layerNotProps.isEmpty()) {
-				notProperties.put(layerName, layerNotProps);
+			if (!namespaceNotProps.isEmpty()) {
+				notProperties.put(namespaceName, namespaceNotProps);
 			}
 		}
 
-		requiredLayers.addAll(properties.keySet());
+		requiredNamespaces.addAll(properties.keySet());
 
-		Set<String> mentionedLayers = new HashSet<String>(requiredLayers);
-		mentionedLayers.addAll(notProperties.keySet());
+		Set<String> mentionedNamespaces = new HashSet<>(requiredNamespaces);
+		mentionedNamespaces.addAll(notProperties.keySet());
 
-		mMentionedLayers = mentionedLayers;
-		mRequiredLayers = requiredLayers;
+		mMentionedNamespaces = mentionedNamespaces;
+		mRequiredNamespaces = requiredNamespaces;
 		mProperties = properties;
 		mNotProperties = notProperties;
 	}
@@ -72,18 +72,18 @@ public class PrerequisiteZoneProperties implements PrerequisiteBase {
 		Location loc = context.getEntityUsedForPrerequisites().getLocation();
 		ZoneFragment fragment = ZoneManager.getInstance().getZoneFragment(loc);
 
-		// If no fragment exists here, neither do zones or layers.
+		// If no fragment exists here, neither do zones nor namespaces.
 		if (fragment == null) {
-			return mRequiredLayers.isEmpty();
+			return mRequiredNamespaces.isEmpty();
 		}
 
-		for (String layerName : mMentionedLayers) {
-			Zone zone = fragment.getParent(layerName);
+		for (String namespaceName : mMentionedNamespaces) {
+			Zone zone = fragment.getParent(namespaceName);
 
-			// If there is no zone on this layer...
+			// If there is no zone in this namespace...
 			if (zone == null) {
-				// ...check that the layer is not a prerequisite...
-				if (mRequiredLayers.contains(layerName)) {
+				// ...check that the namespace is not a prerequisite...
+				if (mRequiredNamespaces.contains(namespaceName)) {
 					return false;
 				}
 				// ...and continue if it is not.
@@ -94,14 +94,14 @@ public class PrerequisiteZoneProperties implements PrerequisiteBase {
 			Set<String> properties = zone.getProperties();
 
 			// If there are any property prerequisites, ensure all are found.
-			Set<String> requiredProperties = mProperties.get(layerName);
+			Set<String> requiredProperties = mProperties.get(namespaceName);
 			if (requiredProperties != null && !properties.containsAll(requiredProperties)) {
 				return false;
 			}
 
 			// For any negated property prerequisites, ensure none are found.
 			// disjoint returns true if no elements are in common.
-			Set<String> requiredNotProperties = mNotProperties.get(layerName);
+			Set<String> requiredNotProperties = mNotProperties.get(namespaceName);
 			if (requiredNotProperties != null &&
 			    !Collections.disjoint(requiredNotProperties, properties)) {
 				return false;

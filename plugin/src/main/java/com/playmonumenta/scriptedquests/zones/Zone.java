@@ -18,20 +18,17 @@ import org.bukkit.util.Vector;
  * if a point is inside the zone after overlaps are taken into account.
  */
 public class Zone extends ZoneBase {
-	private final ZoneLayer mLayer;
+	private final ZoneNamespace mNamespace;
 	private final String mName;
 	private List<ZoneFragment> mFragments = new ArrayList<>();
 	private final Set<String> mProperties = new LinkedHashSet<>();
 
-	public static Zone constructFromJson(ZoneLayer layer, JsonObject object, Map<String, List<String>> propertyGroups) throws Exception {
-		if (layer == null) {
-			throw new Exception("layer may not be null.");
+	public static Zone constructFromJson(ZoneNamespace namespace, JsonObject object) throws Exception {
+		if (namespace == null) {
+			throw new Exception("namespace may not be null.");
 		}
 		if (object == null) {
 			throw new Exception("object may not be null.");
-		}
-		if (propertyGroups == null) {
-			throw new Exception("propertyGroups may not be null (but may be empty).");
 		}
 
 		Double[] corners = new Double[6];
@@ -95,9 +92,9 @@ public class Zone extends ZoneBase {
 			}
 			rawProperties.add(propertyName);
 		}
-		Set<String> properties = Plugin.getInstance().mZonePropertyGroupManager.resolveProperties(layer.getName(), rawProperties);
+		Set<String> properties = Plugin.getInstance().mZonePropertyGroupManager.resolveProperties(namespace.getName(), rawProperties);
 
-		return new Zone(layer, pos1, pos2, name, properties);
+		return new Zone(namespace, pos1, pos2, name, properties);
 	}
 
 	/*
@@ -105,16 +102,16 @@ public class Zone extends ZoneBase {
 	 * - Both are inclusive coordinates.
 	 * - The minimum/maximum are determined for you.
 	 */
-	public Zone(ZoneLayer layer, Vector pos1, Vector pos2, String name, Set<String> properties) {
+	public Zone(ZoneNamespace namespace, Vector pos1, Vector pos2, String name, Set<String> properties) {
 		super(pos1, pos2);
-		mLayer = layer;
+		mNamespace = namespace;
 		mName = name;
 		mProperties.addAll(properties);
 	}
 
 	/*
 	 * Reset the fragments of this Zone so they can be recalculated without reloading this zone.
-	 * Used to handle ZoneLayers from other plugins. This should only be called by its ZoneLayer.
+	 * Used to handle ZoneNamespaces from other plugins. This should only be called by its ZoneNamespace.
 	 */
 	protected void reloadFragments() {
 		mFragments.clear();
@@ -165,12 +162,12 @@ public class Zone extends ZoneBase {
 		return newFragments.size() == 0;
 	}
 
-	public ZoneLayer getLayer() {
-		return mLayer;
+	public ZoneNamespace getNamespace() {
+		return mNamespace;
 	}
 
-	public String getLayerName() {
-		return mLayer.getName();
+	public String getNamespaceName() {
+		return mNamespace.getName();
 	}
 
 	public String getName() {
@@ -197,7 +194,7 @@ public class Zone extends ZoneBase {
 	public boolean equals(Object o) {
 		if (o instanceof Zone other) {
 			return (super.equals(other) &&
-				getLayerName().equals(other.getLayerName()) &&
+				getNamespaceName().equals(other.getNamespaceName()) &&
 				getName().equals(other.getName()));
 		} else {
 			return false;
@@ -207,14 +204,14 @@ public class Zone extends ZoneBase {
 	@Override
 	public int hashCode() {
 		int result = super.hashCode();
-		result = 31*result + getLayerName().hashCode();
+		result = 31*result + getNamespaceName().hashCode();
 		result = 31*result + getName().hashCode();
 		return result;
 	}
 
 	@Override
 	public String toString() {
-		return ("Zone(layer('" + getLayerName() + "'), "
+		return ("Zone(namespace('" + getNamespaceName() + "'), "
 		        + minCorner().toString() + ", "
 		        + maxCorner().toString() + ", "
 		        + mName + ", "

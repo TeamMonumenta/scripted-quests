@@ -65,22 +65,22 @@ public class ShowZones {
 
 		Plugin mPlugin;
 		UUID mPlayerUuid;
-		String mLayerName;
+		String mNamespaceName;
 		@Nullable String mPropertyName;
 
-		public ShownInfo(Plugin plugin, UUID playerUuid, String layerName, @Nullable String propertyName) {
+		public ShownInfo(Plugin plugin, UUID playerUuid, String namespaceName, @Nullable String propertyName) {
 			mPlugin = plugin;
 			mPlayerUuid = playerUuid;
-			mLayerName = layerName;
+			mNamespaceName = namespaceName;
 			mPropertyName = propertyName;
 		}
 
-		public String layerName() {
-			return mLayerName;
+		public String namespaceName() {
+			return mNamespaceName;
 		}
 
-		public void layerName(String layerName) {
-			mLayerName = layerName;
+		public void namespaceName(String namespaceName) {
+			mNamespaceName = namespaceName;
 		}
 
 		public @Nullable String propertyName() {
@@ -129,7 +129,7 @@ public class ShowZones {
 					y = randRange(minY, maxY);
 					z = randRange(minZ, maxZ);
 
-					@Nullable Zone zone = ZoneManager.getInstance().getZone(new Vector(x, y, z), mLayerName);
+					@Nullable Zone zone = ZoneManager.getInstance().getZone(new Vector(x, y, z), mNamespaceName);
 					if (zone == null) {
 						continue;
 					}
@@ -137,7 +137,7 @@ public class ShowZones {
 						continue;
 					}
 					String zoneName = zone.getName();
-					Color color = ZoneUtils.getBukkitColor(mLayerName, zoneName);
+					Color color = ZoneUtils.getBukkitColor(mNamespaceName, zoneName);
 					double r = (1.0 + color.getRed()) / 256.0;
 					double g = (1.0 + color.getGreen()) / 256.0;
 					double b = (1.0 + color.getBlue()) / 256.0;
@@ -162,7 +162,7 @@ public class ShowZones {
 				double maxPossibleTotalLength = 0.0;
 				while (it.hasNext()) {
 					ZoneFragment fragment = it.next();
-					@Nullable Zone targetZone = fragment.getParent(mLayerName);
+					@Nullable Zone targetZone = fragment.getParent(mNamespaceName);
 					if (targetZone == null) {
 						it.remove();
 						continue;
@@ -197,14 +197,14 @@ public class ShowZones {
 
 				NavigableMap<Double, FragmentEdge> edgeWeights = new TreeMap<>();
 				for (ZoneFragment fragment : fragments) {
-					@Nullable Zone targetZone = fragment.getParent(mLayerName);
+					@Nullable Zone targetZone = fragment.getParent(mNamespaceName);
 					if (targetZone == null) {
 						continue;
 					}
 					if (mPropertyName != null && !targetZone.hasProperty(mPropertyName)) {
 						continue;
 					}
-					Color color = ZoneUtils.getBukkitColor(mLayerName, targetZone.getName());
+					Color color = ZoneUtils.getBukkitColor(mNamespaceName, targetZone.getName());
 
 					Vector minCorner = fragment.minCorner();
 					Vector maxCorner = fragment.maxCornerExclusive();
@@ -272,10 +272,10 @@ public class ShowZones {
 							z = randRange(partMinZShown, partMaxZShown);
 
 							testZone = switch (face) {
-								case X_MIN -> ZoneManager.getInstance().getZone(new Vector(x - DELTA_POS, y, z), mLayerName);
-								case Y_MIN -> ZoneManager.getInstance().getZone(new Vector(x, y - DELTA_POS, z), mLayerName);
-								case Z_MIN -> ZoneManager.getInstance().getZone(new Vector(x, y, z - DELTA_POS), mLayerName);
-								default -> ZoneManager.getInstance().getZone(new Vector(x, y, z), mLayerName);
+								case X_MIN -> ZoneManager.getInstance().getZone(new Vector(x - DELTA_POS, y, z), mNamespaceName);
+								case Y_MIN -> ZoneManager.getInstance().getZone(new Vector(x, y - DELTA_POS, z), mNamespaceName);
+								case Z_MIN -> ZoneManager.getInstance().getZone(new Vector(x, y, z - DELTA_POS), mNamespaceName);
+								default -> ZoneManager.getInstance().getZone(new Vector(x, y, z), mNamespaceName);
 							};
 							// Intentionally testing if these are the same object
 							if (targetZone == testZone) {
@@ -342,7 +342,7 @@ public class ShowZones {
 						 * Determining if a point of an edge is visible or not is...complicated.
 						 *
 						 * Fragments are used to mark rectangular prisms where zone priority
-						 * is consistent, even across layers. Zones can be split into many
+						 * is consistent, even across namespaces. Zones can be split into many
 						 * fragments, with some fragments combining to form seamless
 						 * planes or internal volumes.
 						 *
@@ -363,7 +363,7 @@ public class ShowZones {
 						for (int offset1 = -1; offset1 <= 1; ++offset1) {
 							Vector testPoint1 = particlePosition.clone().add(testPointOffset1.clone().multiply(offset1));
 							for (int offset2 = -1; offset2 <= 1; ++offset2) {
-								testZone = ZoneManager.getInstance().getZone(testPoint1.clone().add(testPointOffset2.clone().multiply(offset2)), mLayerName);
+								testZone = ZoneManager.getInstance().getZone(testPoint1.clone().add(testPointOffset2.clone().multiply(offset2)), mNamespaceName);
 								// Intentionally testing if these are not the same object
 								if (targetZone != testZone) {
 									testAxis1[1 + offset2] |= 1 << (1 + offset1);
@@ -412,22 +412,22 @@ public class ShowZones {
 		new CommandAPICommand("showzones")
 			.withPermission(CommandPermission.fromString("scriptedquests.showzones"))
 			.withArguments(new MultiLiteralArgument("show"))
-			.withArguments(new TextArgument("layer").replaceSuggestions(ZoneManager.getLayerNameArgumentSuggestions()))
+			.withArguments(new TextArgument("namespace").replaceSuggestions(ZoneManager.getNamespaceArgumentSuggestions()))
 			.executes((sender, args) -> {
-				String layerName = (String) args[1];
-				return show(plugin, sender, layerName, null);
+				String namespaceName = (String) args[1];
+				return show(plugin, sender, namespaceName, null);
 			})
 			.register();
 
 		new CommandAPICommand("showzones")
 			.withPermission(CommandPermission.fromString("scriptedquests.showzones"))
 			.withArguments(new MultiLiteralArgument("show"))
-			.withArguments(new TextArgument("layer").replaceSuggestions(ZoneManager.getLayerNameArgumentSuggestions()))
+			.withArguments(new TextArgument("namespace").replaceSuggestions(ZoneManager.getNamespaceArgumentSuggestions()))
 			.withArguments(new TextArgument("property").replaceSuggestions(ZoneManager.getLoadedPropertyArgumentSuggestions(1)))
 			.executes((sender, args) -> {
-				String layerName = (String) args[1];
+				String namespaceName = (String) args[1];
 				String propertyName = (String) args[2];
-				return show(plugin, sender, layerName, propertyName);
+				return show(plugin, sender, namespaceName, propertyName);
 			})
 			.register();
 	}
@@ -453,7 +453,7 @@ public class ShowZones {
 		}
 	}
 
-	private static int show(Plugin plugin, CommandSender sender, String layerName, @Nullable String propertyName) throws WrapperCommandSyntaxException {
+	private static int show(Plugin plugin, CommandSender sender, String namespaceName, @Nullable String propertyName) throws WrapperCommandSyntaxException {
 		CommandSender callee = sender;
 		if (sender instanceof ProxiedCommandSender proxiedCommandSender) {
 			callee = proxiedCommandSender.getCallee();
@@ -464,17 +464,17 @@ public class ShowZones {
 			UUID playerUuid = player.getUniqueId();
 			@Nullable ShownInfo shownInfo = mShownInfo.get(playerUuid);
 			if (shownInfo == null) {
-				shownInfo = new ShownInfo(plugin, playerUuid, layerName, propertyName);
+				shownInfo = new ShownInfo(plugin, playerUuid, namespaceName, propertyName);
 				mShownInfo.put(playerUuid, shownInfo);
 				shownInfo.runTaskTimer(plugin, 0, 1);
 			} else {
-				shownInfo.layerName(layerName);
+				shownInfo.namespaceName(namespaceName);
 				shownInfo.propertyName(propertyName);
 			}
 			if (propertyName == null) {
-				sender.sendMessage(Component.text("Showing all " + layerName + " zones.", NamedTextColor.AQUA));
+				sender.sendMessage(Component.text("Showing all " + namespaceName + " zones.", NamedTextColor.AQUA));
 			} else {
-				sender.sendMessage(Component.text("Showing all " + layerName + " zones with property " + propertyName + ".", NamedTextColor.AQUA));
+				sender.sendMessage(Component.text("Showing all " + namespaceName + " zones with property " + propertyName + ".", NamedTextColor.AQUA));
 			}
 			return 1;
 		}

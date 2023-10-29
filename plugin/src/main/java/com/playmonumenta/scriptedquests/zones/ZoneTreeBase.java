@@ -77,22 +77,22 @@ public abstract class ZoneTreeBase {
 	}
 
 	/*
-	 * For a given location and layer name, return the zone that contains it.
-	 * Returns null if no zone overlaps it on that layer.
+	 * For a given location and namespace name, return the zone that contains it.
+	 * Returns null if no zone overlaps it on that namespace.
 	 */
-	public @Nullable Zone getZone(Vector loc, String layer) {
+	public @Nullable Zone getZone(Vector loc, String namespaceName) {
 		@Nullable ZoneFragment fragment = getZoneFragment(loc);
 
 		if (fragment == null) {
 			return null;
 		}
 
-		return fragment.getParent(layer);
+		return fragment.getParent(namespaceName);
 	}
 
-	public boolean hasProperty(Vector loc, String layerName, String propertyName) {
+	public boolean hasProperty(Vector loc, String namespaceName, String propertyName) {
 		@Nullable ZoneFragment fragment = getZoneFragment(loc);
-		return fragment != null && fragment.hasProperty(layerName, propertyName);
+		return fragment != null && fragment.hasProperty(namespaceName, propertyName);
 	}
 
 	public int fragmentCount() {
@@ -123,7 +123,7 @@ public abstract class ZoneTreeBase {
 			return;
 		}
 
-		String markerSetId = ZoneLayer.DYNMAP_PREFIX + "Tree";
+		String markerSetId = ZoneNamespace.DYNMAP_PREFIX + "Tree";
 		@Nullable MarkerSet markerSet = markerHook.getMarkerSet(markerSetId);
 		if (markerSet != null) {
 			// Delete old marker set

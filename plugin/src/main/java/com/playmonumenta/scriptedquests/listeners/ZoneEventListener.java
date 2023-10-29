@@ -46,8 +46,8 @@ public class ZoneEventListener implements Listener {
 		mBlockInteractMaterials.clear();
 		mHasRemoteClickEvent = false;
 
-		for (Map<String, ZoneProperty> layer : mPlugin.mZonePropertyManager.getZoneProperties().values()) {
-			for (ZoneProperty zoneProperty : layer.values()) {
+		for (Map<String, ZoneProperty> namespace : mPlugin.mZonePropertyManager.getZoneProperties().values()) {
+			for (ZoneProperty zoneProperty : namespace.values()) {
 				zoneProperty.getEvents(ZoneBlockBreakEvent.class).forEach(event -> mBlockBreakMaterials.addAll(event.getMaterials()));
 				zoneProperty.getEvents(ZoneBlockInteractEvent.class).forEach(event -> mBlockInteractMaterials.addAll(event.getMaterials()));
 				if (!mHasRemoteClickEvent && !zoneProperty.getEvents(ZoneRemoteClickEvent.class).isEmpty()) {
@@ -58,15 +58,15 @@ public class ZoneEventListener implements Listener {
 	}
 
 	private interface EventAction<T extends ZoneEvent> {
-		void execute(Collection<? extends T> events, String layer, String propertyName);
+		void execute(Collection<? extends T> events, String namespaceName, String propertyName);
 	}
 
 	private <T extends ZoneEvent> void execute(Location location, Class<T> eventClass, EventAction<T> action) {
-		for (Map.Entry<String, Map<String, ZoneProperty>> layer : mPlugin.mZonePropertyManager.getZoneProperties().entrySet()) {
-			for (Map.Entry<String, ZoneProperty> property : layer.getValue().entrySet()) {
+		for (Map.Entry<String, Map<String, ZoneProperty>> namespace : mPlugin.mZonePropertyManager.getZoneProperties().entrySet()) {
+			for (Map.Entry<String, ZoneProperty> property : namespace.getValue().entrySet()) {
 				Collection<? extends T> events = property.getValue().getEvents(eventClass);
-				if (!events.isEmpty() && ZoneManager.getInstance().hasProperty(location, layer.getKey(), property.getKey())) {
-					action.execute(events, layer.getKey(), property.getKey());
+				if (!events.isEmpty() && ZoneManager.getInstance().hasProperty(location, namespace.getKey(), property.getKey())) {
+					action.execute(events, namespace.getKey(), property.getKey());
 				}
 			}
 		}
@@ -76,10 +76,10 @@ public class ZoneEventListener implements Listener {
 	public void playerInteractEntityEvent(PlayerInteractEntityEvent event) {
 		if (mHasRemoteClickEvent) {
 			MetadataUtils.checkOnceThisTick(mPlugin, event.getPlayer(), ENTITY_INTERACT_METAKEY);
-			execute(event.getPlayer().getLocation(), ZoneRemoteClickEvent.class, (events, layer, propertyName) -> {
+			execute(event.getPlayer().getLocation(), ZoneRemoteClickEvent.class, (events, namespaceName, propertyName) -> {
 				for (ZoneRemoteClickEvent e : events) {
 					Block block = e.getBlock(event.getPlayer(), Action.RIGHT_CLICK_AIR);
-					if (block != null && ZoneManager.getInstance().hasProperty(block.getLocation(), layer, propertyName)) {
+					if (block != null && ZoneManager.getInstance().hasProperty(block.getLocation(), namespaceName, propertyName)) {
 						e.execute(event.getPlayer(), block);
 					}
 				}
@@ -95,10 +95,10 @@ public class ZoneEventListener implements Listener {
 		}
 		if (mHasRemoteClickEvent) {
 			if (!MetadataUtils.happenedThisTick(event.getPlayer(), ENTITY_INTERACT_METAKEY, 0)) { // entity interact events also cause a left click event that must be ignored
-				execute(event.getPlayer().getLocation(), ZoneRemoteClickEvent.class, (events, layer, propertyName) -> {
+				execute(event.getPlayer().getLocation(), ZoneRemoteClickEvent.class, (events, namespaceName, propertyName) -> {
 					for (ZoneRemoteClickEvent e : events) {
 						Block block = e.getBlock(event.getPlayer(), event.getAction());
-						if (block != null && ZoneManager.getInstance().hasProperty(block.getLocation(), layer, propertyName)) {
+						if (block != null && ZoneManager.getInstance().hasProperty(block.getLocation(), namespaceName, propertyName)) {
 							e.execute(event.getPlayer(), block);
 						}
 					}
@@ -117,7 +117,7 @@ public class ZoneEventListener implements Listener {
 		if (!mBlockInteractMaterials.contains(clickedBlockType)) {
 			return;
 		}
-		execute(clickedBlock.getLocation(), ZoneBlockInteractEvent.class, (events, layer, propertyName) -> {
+		execute(clickedBlock.getLocation(), ZoneBlockInteractEvent.class, (events, namespaceName, propertyName) -> {
 			for (ZoneBlockInteractEvent e : events) {
 				if (e.appliesTo(event.getAction(), clickedBlockType)) {
 					e.execute(event.getPlayer(), clickedBlock);
@@ -150,7 +150,7 @@ public class ZoneEventListener implements Listener {
 		if (!mBlockBreakMaterials.contains(blockType)) {
 			return;
 		}
-		execute(block.getLocation(), ZoneBlockBreakEvent.class, (events, layer, propertyName) -> {
+		execute(block.getLocation(), ZoneBlockBreakEvent.class, (events, namespaceName, propertyName) -> {
 			for (ZoneBlockBreakEvent e : events) {
 				if (e.appliesTo(blockType)) {
 					e.execute(entity, block);
@@ -169,7 +169,7 @@ public class ZoneEventListener implements Listener {
 			if (!mBlockBreakMaterials.contains(blockType)) {
 				return;
 			}
-			execute(block.getLocation(), ZoneBlockBreakEvent.class, (events, layer, propertyName) -> {
+			execute(block.getLocation(), ZoneBlockBreakEvent.class, (events, namespaceName, propertyName) -> {
 				for (ZoneBlockBreakEvent e : events) {
 					if (e.appliesTo(blockType)) {
 						e.execute(event.getBlock(), block);
