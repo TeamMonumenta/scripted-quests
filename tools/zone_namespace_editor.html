@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>ScriptedQuests Zone Layer Editor</title>
+    <title>ScriptedQuests Zone Namespace Editor</title>
 
     <!-- Foundation CSS framework (Bootstrap and jQueryUI also supported) -->
     <link rel='stylesheet' href='//cdn.jsdelivr.net/bootstrap/3.2.0/css/bootstrap.css'>
@@ -15,8 +15,8 @@
 <div class='container'>
     <div class='row' style='padding-bottom: 15px;'>
         <div class='col-md-12'>
-            <h1>ScriptedQuests Zone Layer Editor</h1>
-            <p>Each of these is a layer of zones, with independent properties. Zones higher up in a layer override zones lower down in the same layer, but layers are independent of each other - overlapping zones in separate layers will both be in effect.</p>
+            <h1>ScriptedQuests Zone Namespace Editor</h1>
+            <p>Each of these is a namespace of zones, with independent properties. Zones higher up in a namespace override zones lower down in the same namespace, but namespaces are independent of each other - overlapping zones in separate namespaces will both be in effect.</p>
             <br>
             <a href="https://minecraft.gamepedia.com/Formatting_codes">Minecraft Formatting Codes</a>
         </div>
@@ -45,7 +45,7 @@
 
         // The schema for the editor
         schema: {
-            title: "Zone Layer",
+            title: "Zone Namespace",
             defaultProperties: [
                 "name",
                 "zones"
@@ -56,7 +56,7 @@
                     required: true,
                     propertyOrder: 1,
                     title: "name",
-                    description: "Unique layer name.",
+                    description: "Unique namespace name.",
                     type: "string",
                     default: "default"
                 },

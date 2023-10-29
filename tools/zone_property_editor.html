@@ -45,17 +45,17 @@
         schema: {
             title: "Zone Property",
             defaultProperties: [
-                "layer",
+                "namespace",
                 "name",
                 "quest_components"
             ],
             additionalProperties:false,
             properties: {
-                layer: {
+                namespace: {
                     required: true,
                     propertyOrder: 1,
-                    title: "layer",
-                    description: "A property layer; different layers do not interact or override each other",
+                    title: "namespace",
+                    description: "A property namespace; different namespaces do not interact or override each other",
                     type: "string",
                     default: "default"
                 },
@@ -63,7 +63,7 @@
                     required: true,
                     propertyOrder: 2,
                     title: "name",
-                    description: "Unique property name within a layer; names starting with ! are run when the property is removed",
+                    description: "Unique property name within a namespace; names starting with ! are run when the property is removed",
                     type: "string"
                 },
                 display_name: {

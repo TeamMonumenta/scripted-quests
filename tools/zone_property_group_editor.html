@@ -45,17 +45,17 @@
         schema: {
             title: "Zone Property",
             defaultProperties: [
-                "layer",
+                "namespace",
                 "name",
                 "properties"
             ],
             additionalProperties:false,
             properties: {
-                layer: {
+                namespace: {
                     required: true,
                     propertyOrder: 1,
-                    title: "layer",
-                    description: "A property layer; different layers do not interact or override each other",
+                    title: "namespace",
+                    description: "A property namespace; different namespaces do not interact or override each other",
                     type: "string",
                     default: "default"
                 },

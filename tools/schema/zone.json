@@ -11,7 +11,7 @@
             "required": true,
             "propertyOrder": 1,
             "title": "name",
-            "description": "Zone name - so you'll know which zone you're looking at layer.",
+            "description": "Zone name - so you'll know which zone you're looking at namespace.",
             "type": "string"
         },
         "properties": {

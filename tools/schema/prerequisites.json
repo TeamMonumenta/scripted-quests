@@ -250,14 +250,14 @@
         "zone_properties": {
             "propertyOrder": 17,
             "title": "zone_properties",
-            "description": "Checks that the player is in a zone with the specified properties. Properties may be inverted by starting them with `!`. Click Properties, then type in the layer name in the input box and click the 'add' button. Layer and property names are case sensitive.",
+            "description": "Checks that the player is in a zone with the specified properties. Properties may be inverted by starting them with `!`. Click Properties, then type in the namespace name in the input box and click the 'add' button. Namespace and property names are case sensitive.",
             "type": "object",
             "defaultProperties": [
                 "default"
             ],
             "patternProperties": {
                 ".*": {
-                    "headerTemplate": "Layer {{i}}",
+                    "headerTemplate": "Namespace {{i}}",
                     "type": "array",
                     "items": {
                         "type": "string"
