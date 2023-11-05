@@ -7,7 +7,6 @@ import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.utils.ZoneUtils;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -35,10 +34,6 @@ public class ZoneNamespace {
 	/*
 	 * This should only be called by the ZoneManager.
 	 */
-	public ZoneNamespace(CommandSender sender, JsonObject object) throws Exception {
-		this(new HashSet<>(Collections.singletonList(sender)), object);
-	}
-
 	public ZoneNamespace(Set<CommandSender> senders, JsonObject object) throws Exception {
 		if (object == null) {
 			throw new Exception("object may not be null.");
@@ -152,10 +147,6 @@ public class ZoneNamespace {
 	 * Used to handle ZoneNamespaces from other plugins. This should only be called by the ZoneManager
 	 * and the ZoneNamespace constructor.
 	 */
-	protected void reloadFragments(CommandSender sender) {
-		reloadFragments(Set.of(sender));
-	}
-
 	protected void reloadFragments(Set<CommandSender> senders) {
 		for (Zone zone : mZones) {
 			zone.reloadFragments();

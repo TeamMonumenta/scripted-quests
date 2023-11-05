@@ -12,6 +12,21 @@ import org.bukkit.util.Vector;
 import org.dynmap.markers.MarkerSet;
 
 public class ZoneTreeParent extends ZoneTreeBase {
+	private static class ParentData {
+		public int mPriority;
+		public Axis mAxis;
+		public double mPivot;
+		public double mMidMin;
+		public double mMidMax;
+		public final List<ZoneFragment> mLess = new ArrayList<>();
+		public final List<ZoneFragment> mMid = new ArrayList<>();
+		public final List<ZoneFragment> mMore = new ArrayList<>();
+
+		protected ParentData(Axis axis) {
+			mAxis = axis;
+		}
+	}
+
 	// The axis this node is split over.
 	private final Axis mAxis;
 	// The pivot for mMore/mLess
@@ -39,24 +54,13 @@ public class ZoneTreeParent extends ZoneTreeBase {
 		 * exposing incomplete results or creating tree nodes.
 		 */
 
-		 class ParentData {
-			public int mPriority;
-			public Axis mAxis;
-			public double mPivot;
-			public double mMidMin;
-			public double mMidMax;
-			public final List<ZoneFragment> mLess = new ArrayList<>();
-			public final List<ZoneFragment> mMid = new ArrayList<>();
-			public final List<ZoneFragment> mMore = new ArrayList<>();
-		}
-
 		mFragmentCount = zones.size();
 
 		Vector minVector = zones.get(0).minCorner();
 		Vector maxVector = zones.get(0).maxCornerExclusive();
 
 		// Default is an impossibly worst case scenario, so it will never be chosen.
-		ParentData bestSplit = new ParentData();
+		ParentData bestSplit = new ParentData(Axis.Y);
 		bestSplit.mPriority = mFragmentCount;
 
 		for (ZoneFragment pivotZone : zones) {
@@ -68,8 +72,7 @@ public class ZoneTreeParent extends ZoneTreeBase {
 				possiblePivots[0] = VectorUtils.vectorAxis(pivotZone.minCorner(), axis);
 				possiblePivots[1] = VectorUtils.vectorAxis(pivotZone.maxCornerExclusive(), axis);
 				for (double pivot : possiblePivots) {
-					ParentData testSplit = new ParentData();
-					testSplit.mAxis = axis;
+					ParentData testSplit = new ParentData(axis);
 					testSplit.mPivot = pivot;
 					testSplit.mMidMin = pivot;
 					testSplit.mMidMax = pivot;

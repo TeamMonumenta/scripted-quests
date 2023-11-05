@@ -17,6 +17,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
 import javax.annotation.Nullable;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -31,7 +33,7 @@ public class ZoneManager {
 	private static final String[] SUGGESTIONS_EXECUTE_FALLBACK = {"\"Suggestions unavailable through /execute\""};
 
 	private final Plugin mPlugin;
-	private static ZoneManager INSTANCE = null;
+	private static @MonotonicNonNull ZoneManager INSTANCE = null;
 	static @MonotonicNonNull BukkitRunnable mPlayerTracker = null;
 	static @Nullable BukkitRunnable mAsyncReloadHandler = null;
 
@@ -488,6 +490,52 @@ public class ZoneManager {
 				sender.sendMessage(ChatColor.GOLD + "Zones reloaded successfully.");
 			}
 		}
+	}
+
+	public void treeLoad(CommandSender sender) {
+		Set<CommandSender> senders = Set.of(sender, Bukkit.getConsoleSender());
+		Audience audience = Audience.audience(senders);
+
+		Bukkit.getScheduler().runTaskAsynchronously(mPlugin, () -> {
+			final long cpuNanos = System.nanoTime();
+			Bukkit.getScheduler().runTask(mPlugin, () -> audience.sendMessage(Component.text(
+				"[TreeLoad] " + String.format("%13.9f", (System.nanoTime() - cpuNanos) / 1000000000.0)
+					+ " Starting test tree reload")));
+
+			ZoneTreeFactory factory = new ZoneTreeFactory(senders, mNamespaces.values());
+			Bukkit.getScheduler().runTask(mPlugin, () -> audience.sendMessage(Component.text(
+				"[TreeLoad] " + String.format("%13.9f", (System.nanoTime() - cpuNanos) / 1000000000.0)
+					+ " Got fragments")));
+
+			final ZoneTreeBase newTree;
+			try {
+				newTree = factory.build();
+			} catch (Exception ex) {
+				Bukkit.getScheduler().runTask(mPlugin, () -> {
+					audience.sendMessage(Component.text(
+						"[TreeLoad] " + String.format("%13.9f", (System.nanoTime() - cpuNanos) / 1000000000.0)
+							+ " An exception occurred creating the zone tree:"));
+					MessagingUtils.sendStackTrace(senders, ex);
+				});
+				return;
+			}
+			Bukkit.getScheduler().runTask(mPlugin, () -> audience.sendMessage(Component.text(
+				"[TreeLoad] " + String.format("%13.9f", (System.nanoTime() - cpuNanos) / 1000000000.0)
+					+ " Got zone tree")));
+
+			Bukkit.getScheduler().runTask(mPlugin, () -> {
+				@Nullable ZoneTreeBase oldTree = mZoneTree;
+				mZoneTree = newTree;
+				if (oldTree != null) {
+					// Force all fragments to consider all locations as outside themselves
+					oldTree.invalidate();
+				}
+
+				Bukkit.getScheduler().runTask(mPlugin, () -> audience.sendMessage(Component.text(
+					"[TreeLoad] " + String.format("%13.9f", (System.nanoTime() - cpuNanos) / 1000000000.0)
+						+ " Swapped zone tree; done")));
+			});
+		});
 	}
 
 	// For a given location, return the zones that contain it.

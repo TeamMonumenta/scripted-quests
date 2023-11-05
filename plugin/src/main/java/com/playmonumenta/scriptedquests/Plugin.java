@@ -121,6 +121,7 @@ public class Plugin extends JavaPlugin {
 		Clock.register();
 		ImprovedClear.register();
 		ReloadZones.register(this);
+		TreeLoad.register(this);
 		GuiCommand.register(this);
 		ShowZones.register(this);
 		Music.register();
