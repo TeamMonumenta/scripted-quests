@@ -42,7 +42,7 @@ public class DialogRandomText implements DialogBase {
 		int idx = mRandom.nextInt(mText.size());
 		return JsonObjectBuilder.get()
 			.add("type", "random_text")
-			.add("commands", mText.get(idx))
+			.add("commands", MessagingUtils.serializeRawMessage(context.getPlayer(), mText.get(idx), true).content())
 			.add("npc_name", mDisplayName)
 			.build();
 
