@@ -211,7 +211,7 @@
                             "propertyOrder": 4,
                             "type": "array",
                             "title": "Entity Death",
-                            "description": "Fired when a non-player entity dies.",
+                            "description": "Fired when a non-player entity is killed by a player.",
                             "items": {
                                 "additionalProperties": false,
                                 "properties": {
@@ -227,7 +227,7 @@
                                     "command": {
                                         "propertyOrder": 2,
                                         "title": "command",
-                                        "description": "Command to execute when this event fires. Will be run at the position of the entity that died.",
+                                        "description": "Command to execute when this event fires. Will be run as the killer, at the position of the entity that died.",
                                         "type": "string"
                                     }
                                 }

@@ -168,11 +168,16 @@ public class ZoneEventListener implements Listener {
 			return;
 		}
 
+		Player killer = event.getEntity().getKiller();
+		if (killer == null) {
+			return;
+		}
+
 		String entityName = event.getEntity().getName();
 		execute(event.getEntity().getLocation(), ZoneEntityDeathEvent.class, (events, layer, propertyName) -> {
 			for (ZoneEntityDeathEvent e : events) {
 				if (e.appliesTo(entityName.replaceAll("§\\d", ""))) {
-					e.execute(event.getEntity());
+					e.execute(killer, event.getEntity());
 				}
 			}
 		});

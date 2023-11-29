@@ -31,10 +31,11 @@ public abstract class ZoneEvent {
 			"execute positioned " + block.getX() + " " + block.getY() + " " + block.getZ() + " run " + mCommand);
 	}
 
-	public void execute(Entity deadEntity) {
-		Location entityLoc = deadEntity.getLocation();
-		NmsUtils.getVersionAdapter().runConsoleCommandSilently("execute in " + deadEntity.getLocation().getWorld().getKey().asString() +
-			" positioned " + entityLoc.getX() + " " + entityLoc.getY() + " " + entityLoc.getZ() + " run " + mCommand);
+	public void execute(Player player, Entity entity) {
+		Location entityLoc = entity.getLocation();
+		NmsUtils.getVersionAdapter().runConsoleCommandSilently(
+			"execute as " + player.getName() + " at @s positioned "
+				+ entityLoc.getX() + " " + entityLoc.getY() + " " + entityLoc.getZ() + " run " + mCommand);
 	}
 
 }
