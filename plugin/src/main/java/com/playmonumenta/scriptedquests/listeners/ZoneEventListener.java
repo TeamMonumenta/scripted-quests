@@ -2,6 +2,7 @@ package com.playmonumenta.scriptedquests.listeners;
 
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.ZoneProperty;
+import com.playmonumenta.scriptedquests.utils.MMLog;
 import com.playmonumenta.scriptedquests.utils.MetadataUtils;
 import com.playmonumenta.scriptedquests.zones.ZoneManager;
 import com.playmonumenta.scriptedquests.zones.event.ZoneBlockBreakEvent;
@@ -166,7 +167,7 @@ public class ZoneEventListener implements Listener {
 		String entityName = event.getEntity().getName();
 		execute(event.getEntity().getLocation(), ZoneEntityDeathEvent.class, (events, layer, propertyName) -> {
 			for (ZoneEntityDeathEvent e : events) {
-				if (e.appliesTo(entityName)) {
+				if (e.appliesTo(entityName.replaceAll("§\\d", ""))) {
 					e.execute(event.getEntity());
 				}
 			}
