@@ -3,6 +3,7 @@ package com.playmonumenta.scriptedquests.zones.event;
 import com.playmonumenta.scriptedquests.utils.MMLog;
 import com.playmonumenta.scriptedquests.utils.NmsUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -35,10 +36,9 @@ public abstract class ZoneEvent {
 	}
 
 	public void execute(Entity deadEntity) {
-		Block block = deadEntity.getLocation().getBlock();
-		Entity markerEntity = block.getWorld().spawnEntity(block.getLocation(), EntityType.MARKER);
-		execute(markerEntity, block);
-		markerEntity.remove();
+		Location entityLoc = deadEntity.getLocation();
+		NmsUtils.getVersionAdapter().runConsoleCommandSilently("execute in " + deadEntity.getLocation().getWorld().getKey().asString() +
+			" positioned " + entityLoc.getX() + " " + entityLoc.getY() + " " + entityLoc.getZ() + " run " + mCommand);
 	}
 
 }
