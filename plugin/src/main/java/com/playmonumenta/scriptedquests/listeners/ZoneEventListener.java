@@ -6,6 +6,7 @@ import com.playmonumenta.scriptedquests.utils.MetadataUtils;
 import com.playmonumenta.scriptedquests.zones.ZoneManager;
 import com.playmonumenta.scriptedquests.zones.event.ZoneBlockBreakEvent;
 import com.playmonumenta.scriptedquests.zones.event.ZoneBlockInteractEvent;
+import com.playmonumenta.scriptedquests.zones.event.ZoneEntityDeathEvent;
 import com.playmonumenta.scriptedquests.zones.event.ZoneEvent;
 import com.playmonumenta.scriptedquests.zones.event.ZoneRemoteClickEvent;
 import java.util.Collection;
@@ -24,6 +25,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -154,6 +156,18 @@ public class ZoneEventListener implements Listener {
 			for (ZoneBlockBreakEvent e : events) {
 				if (e.appliesTo(blockType)) {
 					e.execute(entity, block);
+				}
+			}
+		});
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void entityDeathEvent(EntityDeathEvent event) {
+		String entityName = event.getEntity().getName();
+		execute(event.getEntity().getLocation(), ZoneEntityDeathEvent.class, (events, layer, propertyName) -> {
+			for (ZoneEntityDeathEvent e : events) {
+				if (e.appliesTo(entityName)) {
+					e.execute(event.getEntity());
 				}
 			}
 		});
