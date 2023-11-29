@@ -1,13 +1,9 @@
 package com.playmonumenta.scriptedquests.zones.event;
 
-import com.playmonumenta.scriptedquests.utils.MMLog;
 import com.playmonumenta.scriptedquests.utils.NmsUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 public abstract class ZoneEvent {

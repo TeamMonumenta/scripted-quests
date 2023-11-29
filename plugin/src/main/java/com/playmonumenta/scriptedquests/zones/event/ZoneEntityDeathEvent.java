@@ -7,7 +7,6 @@ import com.playmonumenta.scriptedquests.utils.JsonUtils;
 import com.playmonumenta.scriptedquests.utils.NmsUtils;
 import java.util.HashSet;
 import java.util.Set;
-import org.bukkit.Material;
 
 public class ZoneEntityDeathEvent extends ZoneEvent {
 

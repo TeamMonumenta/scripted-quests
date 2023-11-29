@@ -2,7 +2,6 @@ package com.playmonumenta.scriptedquests.listeners;
 
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.ZoneProperty;
-import com.playmonumenta.scriptedquests.utils.MMLog;
 import com.playmonumenta.scriptedquests.utils.MetadataUtils;
 import com.playmonumenta.scriptedquests.zones.ZoneManager;
 import com.playmonumenta.scriptedquests.zones.event.ZoneBlockBreakEvent;
