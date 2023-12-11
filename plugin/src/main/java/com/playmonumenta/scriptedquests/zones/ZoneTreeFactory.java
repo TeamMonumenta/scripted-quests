@@ -47,7 +47,7 @@ public class ZoneTreeFactory {
 				fragment.invalidate();
 			}
 			mFragments = newFragments;
-			return newFragments.size() == 0;
+			return newFragments.isEmpty();
 		}
 
 		public List<ZoneFragment> getZoneFragments() {

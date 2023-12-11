@@ -668,7 +668,7 @@ public class ZoneManager {
 
 		if (currentZone == null) {
 			lastZones.remove(namespaceName);
-			if (lastZones.size() == 0) {
+			if (lastZones.isEmpty()) {
 				mLastPlayerZones.remove(playerUuid);
 			}
 		} else {
@@ -722,7 +722,7 @@ public class ZoneManager {
 			sender.sendMessage(cachedFragment.toString());
 
 			Map<String, Zone> fragmentParents = cachedFragment.getParents();
-			if (fragmentParents.size() == 0) {
+			if (fragmentParents.isEmpty()) {
 				sender.sendMessage("Fragment has no parent zones! Where did it come from?");
 			}
 			sender.sendMessage("Fragment parents:");
@@ -744,7 +744,7 @@ public class ZoneManager {
 			if (cachedZones == null) {
 				sender.sendMessage("Target is not in any zone.");
 			} else {
-				if (cachedZones.size() == 0) {
+				if (cachedZones.isEmpty()) {
 					sender.sendMessage("Target is not in any zone, but an empty map is left over.");
 				}
 				for (Zone cachedZone : cachedZones.values()) {
@@ -773,7 +773,7 @@ public class ZoneManager {
 			if (fallbackZones == null) {
 				sender.sendMessage("Target is not in any zone.");
 			} else {
-				if (fallbackZones.size() == 0) {
+				if (fallbackZones.isEmpty()) {
 					sender.sendMessage("Target is not in any zone, but an empty map is left over.");
 				}
 				for (Zone fallbackZone : fallbackZones.values()) {
@@ -797,7 +797,7 @@ public class ZoneManager {
 		sender.sendMessage(fragment.toString());
 
 		Map<String, Zone> fragmentParents = fragment.getParents();
-		if (fragmentParents.size() == 0) {
+		if (fragmentParents.isEmpty()) {
 			sender.sendMessage("Fragment has no parent zones! Where did it come from?");
 		}
 		sender.sendMessage("Fragment parents:");

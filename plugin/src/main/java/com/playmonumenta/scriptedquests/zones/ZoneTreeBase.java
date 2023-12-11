@@ -18,7 +18,7 @@ public abstract class ZoneTreeBase {
 
 	protected static ZoneTreeBase createZoneTree(List<ZoneFragment> zones) throws Exception {
 		ZoneTreeBase result;
-		if (zones.size() == 0) {
+		if (zones.isEmpty()) {
 			result = new ZoneTreeEmpty();
 		} else if (zones.size() == 1) {
 			result = new ZoneTreeLeaf(zones.get(0));
