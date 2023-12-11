@@ -62,6 +62,8 @@ public class ZoneTreeParent extends ZoneTreeBase {
 		// Default is an impossibly worst case scenario, so it will never be chosen.
 		ParentData bestSplit = new ParentData(Axis.Y);
 		bestSplit.mPriority = mFragmentCount;
+		int sufficientPriority = mFragmentCount >> 1;
+		boolean done = false;
 
 		for (ZoneFragment pivotZone : zones) {
 			minVector = Vector.getMinimum(minVector, pivotZone.minCorner());
@@ -96,8 +98,18 @@ public class ZoneTreeParent extends ZoneTreeBase {
 
 					if (testSplit.mPriority < bestSplit.mPriority) {
 						bestSplit = testSplit;
+						done = bestSplit.mPriority <= sufficientPriority;
+						if (done) {
+							break;
+						}
 					}
 				}
+				if (done) {
+					break;
+				}
+			}
+			if (done) {
+				break;
 			}
 		}
 
