@@ -1,7 +1,5 @@
 package com.playmonumenta.scriptedquests.zones;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.utils.ZoneUtils;
@@ -30,51 +28,13 @@ public class ZoneNamespace {
 	/*
 	 * This should only be called by the ZoneManager.
 	 */
-	public ZoneNamespace(JsonObject object) throws Exception {
-		if (object == null) {
-			throw new Exception("object may not be null.");
-		}
-
-		// Load the namespace name
-		@Nullable JsonElement nameElement = object.get("name");
-		if (nameElement == null) {
-			throw new Exception("Failed to parse 'name'");
-		}
-		@Nullable String name = nameElement.getAsString();
-		if (name == null ||
-		    name.isEmpty()) {
-			throw new Exception("Failed to parse 'name'");
-		}
+	protected ZoneNamespace(String name, boolean isHidden, List<JsonObject> zoneObjects) throws Exception {
 		mName = name;
-
-		// Load whether this namespace is hidden by default on the dynmap
-		@Nullable JsonElement hiddenElement = object.get("hidden");
-		if (hiddenElement != null &&
-		    hiddenElement.getAsBoolean()) {
-			mHidden = hiddenElement.getAsBoolean();
-		}
-
-		// Load the zones
-		@Nullable JsonElement zonesElement = object.get("zones");
-		if (zonesElement == null) {
-			throw new Exception("Failed to parse 'zones'");
-		}
-		@Nullable JsonArray zonesArray = zonesElement.getAsJsonArray();
-		if (zonesArray == null) {
-			throw new Exception("Failed to parse 'zones'");
-		}
-
-		int zoneIndex = 0;
-
-		for (JsonElement zoneElement : zonesArray) {
-			@Nullable JsonObject zoneObject = zoneElement.getAsJsonObject();
-			if (zoneObject == null) {
-				throw new Exception("Failed to parse 'zones[" + zoneIndex + "]'");
-			}
+		mHidden = isHidden;
+		for (JsonObject zoneObject : zoneObjects) {
 			Zone zone = Zone.constructFromJson(this, zoneObject);
 			mLoadedProperties.addAll(zone.getProperties());
 			mZones.add(zone);
-			zoneIndex++;
 		}
 
 		refreshDynmapLayer();

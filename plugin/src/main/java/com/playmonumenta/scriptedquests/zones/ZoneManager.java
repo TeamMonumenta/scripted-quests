@@ -4,7 +4,6 @@ import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.utils.ArgUtils;
 import com.playmonumenta.scriptedquests.utils.MMLog;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
-import com.playmonumenta.scriptedquests.utils.QuestUtils;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import java.util.Collection;
 import java.util.HashMap;
@@ -361,19 +360,7 @@ public class ZoneManager {
 		}
 
 		mNamespaces.putAll(mPluginNamespaces);
-		QuestUtils.loadScriptedQuests(plugin, "zone_namespaces", mReloadRequesters, (object) -> {
-			// Load this file into a ZoneNamespace object
-			ZoneNamespace namespace = new ZoneNamespace(object);
-			String namespaceName = namespace.getName();
-
-			if (mNamespaces.containsKey(namespaceName)) {
-				throw new Exception("'" + namespaceName + "' already exists!");
-			}
-
-			mNamespaces.put(namespaceName, namespace);
-
-			return namespaceName + ":" + namespace.getZones().size();
-		});
+		mNamespaces.putAll(new ZonesReferenceResolver(plugin, mReloadRequesters, mNamespaces.keySet()).resolve());
 		MMLog.fine("[Zone Reload] " + String.format("%13.9f", (System.nanoTime() - cpuNanos) / 1000000000.0) + "s Loading new data");
 
 		mReloadRequesters.sendMessage(Component.text("Zone parsing successful, optimizing before enabling...", NamedTextColor.GOLD));
