@@ -12,11 +12,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.annotation.Nullable;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
 import org.bukkit.util.Vector;
 import org.dynmap.DynmapCommonAPI;
 import org.dynmap.markers.AreaMarker;
@@ -34,7 +30,7 @@ public class ZoneNamespace {
 	/*
 	 * This should only be called by the ZoneManager.
 	 */
-	public ZoneNamespace(Set<CommandSender> senders, JsonObject object) throws Exception {
+	public ZoneNamespace(JsonObject object) throws Exception {
 		if (object == null) {
 			throw new Exception("object may not be null.");
 		}
@@ -81,7 +77,7 @@ public class ZoneNamespace {
 			zoneIndex++;
 		}
 
-		reloadFragments(senders);
+		refreshDynmapLayer();
 	}
 
 	/************************************************************************************
@@ -142,38 +138,6 @@ public class ZoneNamespace {
 	 * End of methods for use with external plugins:
 	 ************************************************************************************/
 
-	/*
-	 * Reset the fragments of this ZoneNamespace, so they can be recalculated without reloading the zones.
-	 * Used to handle ZoneNamespaces from other plugins. This should only be called by the ZoneManager
-	 * and the ZoneNamespace constructor.
-	 */
-	protected void reloadFragments(Set<CommandSender> senders) {
-		for (Zone zone : mZones) {
-			zone.reloadFragments();
-		}
-
-		// Split the zones into non-overlapping fragments
-		removeOverlaps(senders, mZones);
-
-		if (Plugin.getInstance().mShowZonesDynmap) {
-			refreshDynmapLayer();
-		}
-	}
-
-	/*
-	 * Force all zones to discard their current fragments. The fragments will
-	 * continue to reference their parent zones after this.
-	 *
-	 * Not strictly required, but improves garbage collection by removing loops
-	 *
-	 * This should only be called by the ZoneManager.
-	 */
-	public void invalidate() {
-		for (Zone zone : mZones) {
-			zone.invalidate();
-		}
-	}
-
 	public String getName() {
 		return mName;
 	}
@@ -193,29 +157,6 @@ public class ZoneNamespace {
 		}
 
 		return null;
-	}
-
-	private void removeOverlaps(Set<CommandSender> senders, List<Zone> zones) {
-		for (int i = 0; i < zones.size(); i++) {
-			Zone outer = zones.get(i);
-			for (Zone inner : zones.subList(i + 1, zones.size())) {
-				@Nullable ZoneBase overlap = outer.overlappingZone(inner);
-				if (overlap == null) {
-					continue;
-				}
-				if (inner.splitByOverlap(overlap, outer)) {
-					for (@Nullable CommandSender sender : senders) {
-						if (sender != null) {
-							sender.sendMessage(Component.text("Total eclipse of zone ", NamedTextColor.RED)
-								.append(Component.text(inner.getName(), NamedTextColor.RED, TextDecoration.BOLD))
-								.append(Component.text(" by zone ", NamedTextColor.RED))
-								.append(Component.text(outer.getName(), NamedTextColor.RED, TextDecoration.BOLD)));
-						}
-					}
-				}
-				outer.splitByOverlap(overlap, inner, true);
-			}
-		}
 	}
 
 	/*
@@ -244,7 +185,11 @@ public class ZoneNamespace {
 		}
 	}
 
-	private void refreshDynmapLayer() {
+	protected void refreshDynmapLayer() {
+		if (!Plugin.getInstance().mShowZonesDynmap) {
+			return;
+		}
+
 		@Nullable DynmapCommonAPI dynmapHook = (DynmapCommonAPI) Bukkit.getServer().getPluginManager().getPlugin("dynmap");
 		if (dynmapHook == null) {
 			return;

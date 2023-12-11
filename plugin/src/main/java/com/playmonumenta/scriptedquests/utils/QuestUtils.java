@@ -6,8 +6,11 @@ import com.google.gson.JsonObject;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
@@ -37,19 +40,14 @@ public class QuestUtils {
 		String load(JsonObject object, File file) throws Exception;
 	}
 
-	public static void loadScriptedQuests(Plugin plugin, String folderName, @Nullable CommandSender sender, JsonLoadAction action) {
-		loadScriptedQuests(plugin, folderName, sender, (JsonLoadActionWithFile) action);
+	public static void loadScriptedQuests(Plugin plugin, String folderName, @Nullable Audience audience, JsonLoadAction action) {
+		loadScriptedQuests(plugin, folderName, audience, (JsonLoadActionWithFile) action);
 	}
 
-	public static void loadScriptedQuests(Plugin plugin, String folderName, @Nullable CommandSender sender, JsonLoadActionWithFile action) {
-		loadScriptedQuests(plugin, folderName, Collections.singleton(sender), action);
-	}
-
-	public static void loadScriptedQuests(Plugin plugin, String folderName, Collection<@Nullable CommandSender> senders, JsonLoadAction action) {
-		loadScriptedQuests(plugin, folderName, senders, (JsonLoadActionWithFile) action);
-	}
-
-	public static void loadScriptedQuests(Plugin plugin, String folderName, Collection<@Nullable CommandSender> senders, JsonLoadActionWithFile action) {
+	public static void loadScriptedQuests(Plugin plugin, String folderName, @Nullable Audience audience, JsonLoadActionWithFile action) {
+		if (audience == null) {
+			audience = Bukkit.getConsoleSender();
+		}
 		String folderLocation = plugin.getDataFolder() + File.separator + folderName;
 		ArrayList<File> listOfFiles;
 		ArrayList<String> listOfLabels = new ArrayList<>();
@@ -65,13 +63,7 @@ public class QuestUtils {
 			listOfFiles = FileUtils.getFilesInDirectory(folderLocation, ".json");
 		} catch (IOException e) {
 			plugin.getLogger().severe("Caught exception trying to reload " + folderName + ": " + e);
-			if (senders != null) {
-				for (CommandSender sender : senders) {
-					if (sender != null) {
-						sender.sendMessage(ChatColor.RED + "Caught exception trying to reload " + folderName + ": " + e);
-					}
-				}
-			}
+			audience.sendMessage(Component.text("Caught exception trying to reload " + folderName + ": " + e, NamedTextColor.RED));
 			return;
 		}
 
@@ -84,54 +76,31 @@ public class QuestUtils {
 					listOfLabels.add(label);
 				}
 			} catch (Exception e) {
-				plugin.getLogger().severe("Caught exception: " + e);
-				e.printStackTrace();
-
-				if (senders != null) {
-					for (CommandSender sender : senders) {
-						if (sender != null) {
-							sender.sendMessage(ChatColor.RED + "Failed to load quest file '" + file.getPath() + "'");
-							MessagingUtils.sendStackTrace(sender, e);
-						}
-					}
-				}
+				audience.sendMessage(Component.text("Failed to load quest file '" + file.getPath() + "'", NamedTextColor.RED));
+				MessagingUtils.sendStackTrace(audience, e);
 			}
 		}
 
-		if (senders != null) {
-			for (CommandSender sender : senders) {
-				if (sender != null) {
-					sender.sendMessage(ChatColor.GOLD + "Loaded " + numFiles + " " + folderName + " files");
+		audience.sendMessage(Component.text("Loaded " + numFiles + " " + folderName + " files", NamedTextColor.GOLD));
+
+		if (numFiles <= 20) {
+			Collections.sort(listOfLabels);
+			StringBuilder outMsg = new StringBuilder();
+			for (String label : listOfLabels) {
+				if (outMsg.isEmpty()) {
+					outMsg = new StringBuilder(label);
+				} else {
+					outMsg.append(", ").append(label);
+				}
+
+				if (outMsg.length() > 1000) {
+					audience.sendMessage(Component.text(outMsg.toString(), NamedTextColor.GOLD));
+					outMsg = new StringBuilder();
 				}
 			}
 
-			if (numFiles <= 20) {
-				Collections.sort(listOfLabels);
-				StringBuilder outMsg = new StringBuilder();
-				for (String label : listOfLabels) {
-					if (outMsg.length() == 0) {
-						outMsg = new StringBuilder(label);
-					} else {
-						outMsg.append(", ").append(label);
-					}
-
-					if (outMsg.length() > 1000) {
-						for (CommandSender sender : senders) {
-							if (sender != null) {
-								sender.sendMessage(ChatColor.GOLD + outMsg.toString());
-							}
-						}
-						outMsg = new StringBuilder();
-					}
-				}
-
-				if (outMsg.length() > 0) {
-					for (CommandSender sender : senders) {
-						if (sender != null) {
-							sender.sendMessage(ChatColor.GOLD + outMsg.toString());
-						}
-					}
-				}
+			if (!outMsg.isEmpty()) {
+				audience.sendMessage(Component.text(outMsg.toString(), NamedTextColor.GOLD));
 			}
 		}
 	}

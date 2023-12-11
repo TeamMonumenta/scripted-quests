@@ -3,12 +3,11 @@ package com.playmonumenta.scriptedquests.zones;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import javax.annotation.Nullable;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.command.CommandSender;
 
 public class ZoneTreeFactory {
 	// Fragments of a particular zone
@@ -56,11 +55,11 @@ public class ZoneTreeFactory {
 	}
 
 	private static class NamespaceFragments {
-		private final Set<CommandSender> mSenders;
+		private final Audience mAudience;
 		private final List<ZoneFragments> mZones = new ArrayList<>();
 
-		protected NamespaceFragments(Set<CommandSender> senders, ZoneNamespace namespace) {
-			mSenders = senders;
+		protected NamespaceFragments(Audience audience, ZoneNamespace namespace) {
+			mAudience = audience;
 			for (Zone zone : namespace.getZones()) {
 				mZones.add(new ZoneFragments(zone));
 			}
@@ -82,14 +81,10 @@ public class ZoneTreeFactory {
 						continue;
 					}
 					if (inner.splitByOverlap(overlap, outer, false)) {
-						for (@Nullable CommandSender sender : mSenders) {
-							if (sender != null) {
-								sender.sendMessage(Component.text("Total eclipse of zone ", NamedTextColor.RED)
-									.append(Component.text(inner.mZone.getName(), NamedTextColor.RED, TextDecoration.BOLD))
-									.append(Component.text(" by zone ", NamedTextColor.RED))
-									.append(Component.text(outer.mZone.getName(), NamedTextColor.RED, TextDecoration.BOLD)));
-							}
-						}
+						mAudience.sendMessage(Component.text("Total eclipse of zone ", NamedTextColor.RED)
+							.append(Component.text(inner.mZone.getName(), NamedTextColor.RED, TextDecoration.BOLD))
+							.append(Component.text(" by zone ", NamedTextColor.RED))
+							.append(Component.text(outer.mZone.getName(), NamedTextColor.RED, TextDecoration.BOLD)));
 					}
 					outer.splitByOverlap(overlap, inner, true);
 				}
@@ -99,11 +94,11 @@ public class ZoneTreeFactory {
 
 	List<ZoneFragment> mFragments = new ArrayList<>();
 
-	public ZoneTreeFactory(Set<CommandSender> senders, Collection<ZoneNamespace> namespaces) {
+	public ZoneTreeFactory(Audience audience, Collection<ZoneNamespace> namespaces) {
 		// Obtain the fragments within each namespace, processing internal overlaps as we go
 		List<NamespaceFragments> processedNamespaces = new ArrayList<>();
 		for (ZoneNamespace namespace : namespaces) {
-			processedNamespaces.add(new NamespaceFragments(senders, namespace));
+			processedNamespaces.add(new NamespaceFragments(audience, namespace));
 		}
 
 		// Merge zone fragments between namespaces to prevent overlaps

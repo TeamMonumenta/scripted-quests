@@ -2,16 +2,15 @@ package com.playmonumenta.scriptedquests.zones;
 
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.annotation.Nullable;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.command.CommandSender;
 
 public class ZonePropertyGroupManager {
 	private final Map<String, Map<String, ZonePropertyGroup>> mZonePropertyGroups = new HashMap<>();
@@ -19,10 +18,10 @@ public class ZonePropertyGroupManager {
 	/*
 	 * If sender is non-null, it will be sent debugging information
 	 */
-	public void reload(Plugin plugin, Collection<CommandSender> senders) {
+	public void reload(Plugin plugin, Audience audience) {
 		mZonePropertyGroups.clear();
 
-		QuestUtils.loadScriptedQuests(plugin, "zone_property_groups", senders, (object) -> {
+		QuestUtils.loadScriptedQuests(plugin, "zone_property_groups", audience, (object) -> {
 			// Load this file into a ZonePropertyGroup object
 			ZonePropertyGroup propertyGroup = new ZonePropertyGroup(object);
 			String namespaceName = propertyGroup.getNamespaceName();
@@ -72,9 +71,7 @@ public class ZonePropertyGroupManager {
 			if (!selfContainingGroups.isEmpty()) {
 				Component error = Component.text("ZonePropertyGroup loop(s) detected and removed in namespace '"
 					+ namespaceName + "': " + selfContainingGroups, NamedTextColor.RED);
-				for (CommandSender sender : senders) {
-					sender.sendMessage(error);
-				}
+				audience.sendMessage(error);
 			}
 			for (String selfContainingGroup : selfContainingGroups) {
 				namespaceGroups.remove(selfContainingGroup);

@@ -20,7 +20,6 @@ import org.bukkit.util.Vector;
 public class Zone extends ZoneBase {
 	private final ZoneNamespace mNamespace;
 	private final String mName;
-	private List<ZoneFragment> mFragments = new ArrayList<>();
 	private final Set<String> mProperties = new LinkedHashSet<>();
 
 	public static Zone constructFromJson(ZoneNamespace namespace, JsonObject object) throws Exception {
@@ -77,6 +76,13 @@ public class Zone extends ZoneBase {
 
 		// Load the zone properties
 		@Nullable JsonElement propertiesElement = object.get("properties");
+		List<String> rawProperties = getProperties(propertiesElement);
+		Set<String> properties = Plugin.getInstance().mZonePropertyGroupManager.resolveProperties(namespace.getName(), rawProperties);
+
+		return new Zone(namespace, pos1, pos2, name, properties);
+	}
+
+	private static List<String> getProperties(@Nullable JsonElement propertiesElement) throws Exception {
 		if (propertiesElement == null) {
 			throw new Exception("Failed to parse 'properties'");
 		}
@@ -92,9 +98,7 @@ public class Zone extends ZoneBase {
 			}
 			rawProperties.add(propertyName);
 		}
-		Set<String> properties = Plugin.getInstance().mZonePropertyGroupManager.resolveProperties(namespace.getName(), rawProperties);
-
-		return new Zone(namespace, pos1, pos2, name, properties);
+		return rawProperties;
 	}
 
 	/*
@@ -109,59 +113,6 @@ public class Zone extends ZoneBase {
 		mProperties.addAll(properties);
 	}
 
-	/*
-	 * Reset the fragments of this Zone so they can be recalculated without reloading this zone.
-	 * Used to handle ZoneNamespaces from other plugins. This should only be called by its ZoneNamespace.
-	 */
-	protected void reloadFragments() {
-		mFragments.clear();
-		mFragments.add(new ZoneFragment(this));
-	}
-
-	/*
-	 * Remove references to fragments from this zone.
-	 *
-	 * Note that the fragments point to the zone, too. This only prevents further
-	 * modification of the old fragments from the current zone object.
-	 *
-	 * Not strictly required, but speeds up garbage collection by eliminating loops.
-	 */
-	protected void invalidate() {
-		mFragments.clear();
-	}
-
-	/*
-	 * Split all fragments of this zone by an overlapping zone, removing overlap.
-	 */
-	protected boolean splitByOverlap(ZoneBase overlap, Zone otherZone) {
-		return splitByOverlap(overlap, otherZone, false);
-	}
-
-	/*
-	 * Split all fragments of this zone by an overlapping zone,
-	 * marking otherZone as the parent of the exact overlap fragment if
-	 * it exists. Otherwise, the exact overlap fragment is discarded.
-	 *
-	 * Returns true if the zone being overlapped has been completely
-	 * eclipsed by the other zone.
-	 */
-	protected boolean splitByOverlap(ZoneBase overlap, Zone otherZone, boolean includeOther) {
-		List<ZoneFragment> newFragments = new ArrayList<>();
-		for (ZoneFragment fragment : mFragments) {
-			@Nullable ZoneBase subOverlap = fragment.overlappingZone(overlap);
-
-			if (subOverlap == null) {
-				newFragments.add(fragment);
-				continue;
-			}
-
-			newFragments.addAll(fragment.splitByOverlap(subOverlap, otherZone, includeOther));
-			fragment.invalidate();
-		}
-		mFragments = newFragments;
-		return newFragments.size() == 0;
-	}
-
 	public ZoneNamespace getNamespace() {
 		return mNamespace;
 	}
@@ -172,10 +123,6 @@ public class Zone extends ZoneBase {
 
 	public String getName() {
 		return mName;
-	}
-
-	public List<ZoneFragment> getZoneFragments() {
-		return new ArrayList<>(mFragments);
 	}
 
 	public Set<String> getProperties() {

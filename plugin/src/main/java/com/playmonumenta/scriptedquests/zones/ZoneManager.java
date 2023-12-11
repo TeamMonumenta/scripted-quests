@@ -6,7 +6,6 @@ import com.playmonumenta.scriptedquests.utils.MMLog;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,8 +18,8 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -45,7 +44,7 @@ public class ZoneManager {
 	private final Map<UUID, ZoneFragment> mLastPlayerZoneFragment = new HashMap<>();
 	private final Map<UUID, Map<String, Zone>> mLastPlayerZones = new HashMap<>();
 
-	private Set<CommandSender> mReloadRequesters = new HashSet<>();
+	private Audience mReloadRequesters = Audience.empty();
 	private Set<CommandSender> mQueuedReloadRequesters = new HashSet<>();
 
 	private ZoneManager(Plugin plugin) {
@@ -311,7 +310,7 @@ public class ZoneManager {
 			sender = Bukkit.getConsoleSender();
 		}
 		mQueuedReloadRequesters.add(sender);
-		sender.sendMessage(ChatColor.GOLD + "Zone reload started in the background, you will be notified of progress.");
+		sender.sendMessage(Component.text("Zone reload started in the background, you will be notified of progress.", NamedTextColor.GOLD));
 		if (mAsyncReloadHandler == null) {
 			// Start a new async task to handle reloads
 			mAsyncReloadHandler = new BukkitRunnable() {
@@ -320,14 +319,10 @@ public class ZoneManager {
 					try {
 						handleReloads(plugin);
 					} catch (Exception e) {
-						MessagingUtils.sendStackTrace(mReloadRequesters, e);
-
-						for (@Nullable CommandSender sender : mReloadRequesters) {
-							if (sender != null) {
-								sender.sendMessage(ChatColor.RED + "Zones failed to reload.");
-							}
-						}
-
+						Bukkit.getScheduler().runTask(Plugin.getInstance(), () -> {
+							MessagingUtils.sendStackTrace(mReloadRequesters, e);
+							mReloadRequesters.sendMessage(Component.text("Zones failed to reload.", NamedTextColor.RED));
+						});
 						return;
 					}
 					mAsyncReloadHandler = null;
@@ -346,15 +341,11 @@ public class ZoneManager {
 
 	public void doReload(Plugin plugin) {
 		MMLog.fine("[Zone Reload] Begin");
-		mReloadRequesters = mQueuedReloadRequesters;
+		mQueuedReloadRequesters.add(Bukkit.getConsoleSender());
+		mReloadRequesters = Audience.audience(mQueuedReloadRequesters);
 		mQueuedReloadRequesters = new HashSet<>();
-		mReloadRequesters.add(Bukkit.getConsoleSender());
 
 		long cpuNanos = System.nanoTime();
-		for (ZoneNamespace namespace : mNamespaces.values()) {
-			// Cause zones to stop tracking their fragments; speeds up garbage collection.
-			namespace.invalidate();
-		}
 		mNamespaces.clear();
 		ZoneNamespace.clearDynmapLayers();
 		MMLog.fine("[Zone Reload] " + String.format("%13.9f", (System.nanoTime() - cpuNanos) / 1000000000.0) + "s Resetting old data");
@@ -363,14 +354,16 @@ public class ZoneManager {
 		plugin.mZonePropertyGroupManager.reload(plugin, mReloadRequesters);
 
 		// Refresh plugin namespaces
-		for (ZoneNamespace namespace : mPluginNamespaces.values()) {
-			namespace.reloadFragments(mReloadRequesters);
+		if (Plugin.getInstance().mShowZonesDynmap) {
+			for (ZoneNamespace namespace : mPluginNamespaces.values()) {
+				namespace.refreshDynmapLayer();
+			}
 		}
 
 		mNamespaces.putAll(mPluginNamespaces);
 		QuestUtils.loadScriptedQuests(plugin, "zone_namespaces", mReloadRequesters, (object) -> {
 			// Load this file into a ZoneNamespace object
-			ZoneNamespace namespace = new ZoneNamespace(mReloadRequesters, object);
+			ZoneNamespace namespace = new ZoneNamespace(object);
 			String namespaceName = namespace.getName();
 
 			if (mNamespaces.containsKey(namespaceName)) {
@@ -383,53 +376,32 @@ public class ZoneManager {
 		});
 		MMLog.fine("[Zone Reload] " + String.format("%13.9f", (System.nanoTime() - cpuNanos) / 1000000000.0) + "s Loading new data");
 
-		for (@Nullable CommandSender sender : mReloadRequesters) {
-			if (sender != null) {
-				sender.sendMessage(ChatColor.GOLD + "Zone parsing successful, optimizing before enabling...");
-			}
-		}
+		mReloadRequesters.sendMessage(Component.text("Zone parsing successful, optimizing before enabling...", NamedTextColor.GOLD));
 
-		// Merge zone fragments within namespaces to prevent overlaps
-		cpuNanos = System.nanoTime();
-		mergeNamespaces();
-		MMLog.fine("[Zone Reload] " + String.format("%13.9f", (System.nanoTime() - cpuNanos) / 1000000000.0) + "s Merging namespace data");
-
-		// Create list of zones
-		List<Zone> zones = new ArrayList<>();
-		for (ZoneNamespace namespace : mNamespaces.values()) {
-			zones.addAll(namespace.getZones());
-		}
-
-		// Create list of all zone fragments.
-		List<ZoneFragment> zoneFragments = new ArrayList<>();
-		for (Zone zone : zones) {
-			zoneFragments.addAll(zone.getZoneFragments());
-		}
+		// Gather all zone fragments
+		ZoneTreeFactory factory = new ZoneTreeFactory(mReloadRequesters, mNamespaces.values());
 
 		// Create the new tree. This could take a long time with enough fragments.
-		ZoneTreeBase newTree;
+		final ZoneTreeBase newTree;
 		try {
-			cpuNanos = System.nanoTime();
-			newTree = ZoneTreeBase.createZoneTree(zoneFragments);
-			MMLog.fine("[Zone Reload] " + String.format("%13.9f", (System.nanoTime() - cpuNanos) / 1000000000.0) + "s Creating tree");
-			if (mPlugin.mShowZonesDynmap) {
-				newTree.refreshDynmapTree();
-			}
-		} catch (Exception e) {
-			MessagingUtils.sendStackTrace(mReloadRequesters, e);
+			newTree = factory.build();
+		} catch (Exception ex) {
+			Bukkit.getScheduler().runTask(mPlugin, () -> MessagingUtils.sendStackTrace(mReloadRequesters, ex));
 			return;
 		}
-		String message = ChatColor.GOLD + "Zone tree dev stats - fragments: "
-		               + newTree.fragmentCount()
-		               + ", max depth: "
-		               + newTree.maxDepth()
-		               + ", ave depth: "
-		               + String.format("%.2f", newTree.averageDepth());
-		for (@Nullable CommandSender sender : mReloadRequesters) {
-			if (sender != null) {
-				sender.sendMessage(message);
-			}
+
+		if (mPlugin.mShowZonesDynmap) {
+			newTree.refreshDynmapTree();
 		}
+		mReloadRequesters.sendMessage(Component.text(
+			"Zone tree dev stats - fragments: "
+				+ newTree.fragmentCount()
+				+ ", max depth: "
+				+ newTree.maxDepth()
+				+ ", ave depth: "
+				+ String.format("%.2f", newTree.averageDepth()),
+			NamedTextColor.GOLD
+		));
 
 		// Make sure only one player tracker runs at a time.
 		if (mPlayerTracker != null && !mPlayerTracker.isCancelled()) {
@@ -485,57 +457,7 @@ public class ZoneManager {
 
 		mPlayerTracker.runTaskTimer(plugin, 0, 1);
 
-		for (@Nullable CommandSender sender : mReloadRequesters) {
-			if (sender != null) {
-				sender.sendMessage(ChatColor.GOLD + "Zones reloaded successfully.");
-			}
-		}
-	}
-
-	public void treeLoad(CommandSender sender) {
-		Set<CommandSender> senders = Set.of(sender, Bukkit.getConsoleSender());
-		Audience audience = Audience.audience(senders);
-
-		Bukkit.getScheduler().runTaskAsynchronously(mPlugin, () -> {
-			final long cpuNanos = System.nanoTime();
-			Bukkit.getScheduler().runTask(mPlugin, () -> audience.sendMessage(Component.text(
-				"[TreeLoad] " + String.format("%13.9f", (System.nanoTime() - cpuNanos) / 1000000000.0)
-					+ " Starting test tree reload")));
-
-			ZoneTreeFactory factory = new ZoneTreeFactory(senders, mNamespaces.values());
-			Bukkit.getScheduler().runTask(mPlugin, () -> audience.sendMessage(Component.text(
-				"[TreeLoad] " + String.format("%13.9f", (System.nanoTime() - cpuNanos) / 1000000000.0)
-					+ " Got fragments")));
-
-			final ZoneTreeBase newTree;
-			try {
-				newTree = factory.build();
-			} catch (Exception ex) {
-				Bukkit.getScheduler().runTask(mPlugin, () -> {
-					audience.sendMessage(Component.text(
-						"[TreeLoad] " + String.format("%13.9f", (System.nanoTime() - cpuNanos) / 1000000000.0)
-							+ " An exception occurred creating the zone tree:"));
-					MessagingUtils.sendStackTrace(senders, ex);
-				});
-				return;
-			}
-			Bukkit.getScheduler().runTask(mPlugin, () -> audience.sendMessage(Component.text(
-				"[TreeLoad] " + String.format("%13.9f", (System.nanoTime() - cpuNanos) / 1000000000.0)
-					+ " Got zone tree")));
-
-			Bukkit.getScheduler().runTask(mPlugin, () -> {
-				@Nullable ZoneTreeBase oldTree = mZoneTree;
-				mZoneTree = newTree;
-				if (oldTree != null) {
-					// Force all fragments to consider all locations as outside themselves
-					oldTree.invalidate();
-				}
-
-				Bukkit.getScheduler().runTask(mPlugin, () -> audience.sendMessage(Component.text(
-					"[TreeLoad] " + String.format("%13.9f", (System.nanoTime() - cpuNanos) / 1000000000.0)
-						+ " Swapped zone tree; done")));
-			});
-		});
+		mReloadRequesters.sendMessage(Component.text("Zones reloaded successfully.", NamedTextColor.GOLD));
 	}
 
 	// For a given location, return the zones that contain it.
@@ -673,32 +595,6 @@ public class ZoneManager {
 			}
 		} else {
 			lastZones.put(namespaceName, currentZone);
-		}
-	}
-
-	private void mergeNamespaces() {
-		List<ZoneNamespace> namespaces = new ArrayList<>(mNamespaces.values());
-
-		int numNamespaces = namespaces.size();
-		for (int i = 0; i < numNamespaces; i++) {
-			ZoneNamespace outer = namespaces.get(i);
-			for (int j = i + 1; j < numNamespaces; j++) {
-				ZoneNamespace inner = namespaces.get(j);
-				mergeNamespaces(outer, inner);
-			}
-		}
-	}
-
-	private void mergeNamespaces(ZoneNamespace outerNamespace, ZoneNamespace innerNamespace) {
-		for (Zone outerZone : outerNamespace.getZones()) {
-			for (Zone innerZone : innerNamespace.getZones()) {
-				@Nullable ZoneBase overlap = outerZone.overlappingZone(innerZone);
-				if (overlap == null) {
-					continue;
-				}
-				outerZone.splitByOverlap(overlap, innerZone, true);
-				innerZone.splitByOverlap(overlap, outerZone);
-			}
 		}
 	}
 
