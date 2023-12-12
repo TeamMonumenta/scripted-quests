@@ -1,5 +1,6 @@
 package com.playmonumenta.scriptedquests.zones;
 
+import java.io.PrintStream;
 import java.util.HashSet;
 import java.util.Set;
 import javax.annotation.Nullable;
@@ -89,6 +90,12 @@ public class ZoneTreeLeaf extends ZoneTreeBase {
 
 	@Override
 	public String toString() {
-		return ("ZoneTreeBase(" + mFragment.toString() + ")");
+		return ("ZoneTreeLeaf(" + mFragment.toString() + ")");
 	}
+
+	@Override
+	protected void print(PrintStream out, String indentation) {
+		out.println("leaf " + mFragment);
+	}
+
 }

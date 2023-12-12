@@ -1,6 +1,7 @@
 package com.playmonumenta.scriptedquests.zones;
 
 import com.playmonumenta.scriptedquests.utils.VectorUtils;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -62,31 +63,29 @@ public class ZoneTreeParent extends ZoneTreeBase {
 		// Default is an impossibly worst case scenario, so it will never be chosen.
 		ParentData bestSplit = new ParentData(Axis.Y);
 		bestSplit.mPriority = mFragmentCount;
-		int sufficientPriority = mFragmentCount >> 1;
-		boolean done = false;
+		int sufficientPriority = mFragmentCount / 2;
 
+		outer:
 		for (ZoneFragment pivotZone : zones) {
-			minVector = Vector.getMinimum(minVector, pivotZone.minCorner());
-			maxVector = Vector.getMaximum(maxVector, pivotZone.maxCornerExclusive());
-
 			for (Axis axis : AXIS_ORDER) {
-				double[] possiblePivots = new double[2];
-				possiblePivots[0] = VectorUtils.vectorAxis(pivotZone.minCorner(), axis);
-				possiblePivots[1] = VectorUtils.vectorAxis(pivotZone.maxCornerExclusive(), axis);
+				double[] possiblePivots = {
+					VectorUtils.vectorAxis(pivotZone.minCorner(), axis),
+					VectorUtils.vectorAxis(pivotZone.maxCornerExclusive(), axis)
+				};
 				for (double pivot : possiblePivots) {
 					ParentData testSplit = new ParentData(axis);
 					testSplit.mPivot = pivot;
-					testSplit.mMidMin = pivot;
-					testSplit.mMidMax = pivot;
+					testSplit.mMidMin = Double.MAX_VALUE;
+					testSplit.mMidMax = Double.MIN_VALUE;
 
 					for (ZoneFragment zone : zones) {
 						if (pivot >= VectorUtils.vectorAxis(zone.maxCornerExclusive(), axis)) {
 							testSplit.mLess.add(zone);
 						} else if (pivot >= VectorUtils.vectorAxis(zone.minCorner(), axis)) {
 							testSplit.mMidMin = Math.min(testSplit.mMidMin,
-							                             VectorUtils.vectorAxis(zone.minCorner(), axis));
+								VectorUtils.vectorAxis(zone.minCorner(), axis));
 							testSplit.mMidMax = Math.max(testSplit.mMidMax,
-							                             VectorUtils.vectorAxis(zone.maxCornerExclusive(), axis));
+								VectorUtils.vectorAxis(zone.maxCornerExclusive(), axis));
 							testSplit.mMid.add(zone);
 						} else {
 							testSplit.mMore.add(zone);
@@ -98,19 +97,17 @@ public class ZoneTreeParent extends ZoneTreeBase {
 
 					if (testSplit.mPriority < bestSplit.mPriority) {
 						bestSplit = testSplit;
-						done = bestSplit.mPriority <= sufficientPriority;
-						if (done) {
-							break;
+						if (bestSplit.mPriority <= sufficientPriority) {
+							break outer;
 						}
 					}
 				}
-				if (done) {
-					break;
-				}
 			}
-			if (done) {
-				break;
-			}
+		}
+
+		for (ZoneFragment pivotZone : zones) {
+			minVector = Vector.getMinimum(minVector, pivotZone.minCorner());
+			maxVector = Vector.getMaximum(maxVector, pivotZone.maxCornerExclusive());
 		}
 
 		// This is the answer we want. Copy values to self.
@@ -229,14 +226,26 @@ public class ZoneTreeParent extends ZoneTreeBase {
 	@Override
 	public String toString() {
 		return ("(ZoneTreeParent(<List<ZoneFragment>>): "
-		        + "mAxis=" + mAxis.toString() + ", "
-		        + "mPivot=" + mPivot + ", "
-		        + "mMin=" + mMin + ", "
-		        + "mMax=" + mMax + ", "
-		        + "mLess=<ZoneTreeBase>, "
-		        + "mMore=<ZoneTreeBase>, "
-		        + "mMidMin=" + mMidMin + ", "
-		        + "mMidMax=" + mMidMax + ", "
-		        + "mMid=<ZoneTreeBase>)");
+			        + "mAxis=" + mAxis.toString() + ", "
+			        + "mPivot=" + mPivot + ", "
+			        + "mMin=" + mMin + ", "
+			        + "mMax=" + mMax + ", "
+			        + "mLess=<ZoneTreeBase>, "
+			        + "mMore=<ZoneTreeBase>, "
+			        + "mMidMin=" + mMidMin + ", "
+			        + "mMidMax=" + mMidMax + ", "
+			        + "mMid=<ZoneTreeBase>)");
 	}
+
+	@Override
+	protected void print(PrintStream out, String indentation) {
+		out.println("node (axis=" + mAxis + ", pivot=" + mPivot + "):");
+		out.print(indentation + "|-less: ");
+		mLess.print(out, indentation + "| ");
+		out.print(indentation + "|-mid: ");
+		mMid.print(out, indentation + "| ");
+		out.print(indentation + "|-more: ");
+		mMore.print(out, indentation + "| ");
+	}
+
 }

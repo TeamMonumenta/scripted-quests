@@ -82,9 +82,9 @@ public class ZoneTreeFactory {
 					}
 					if (inner.splitByOverlap(overlap, outer, false)) {
 						mAudience.sendMessage(Component.text("Total eclipse of zone ", NamedTextColor.RED)
-							.append(Component.text(inner.mZone.getName(), NamedTextColor.RED, TextDecoration.BOLD))
-							.append(Component.text(" by zone ", NamedTextColor.RED))
-							.append(Component.text(outer.mZone.getName(), NamedTextColor.RED, TextDecoration.BOLD)));
+							                      .append(Component.text(inner.mZone.getName(), NamedTextColor.RED, TextDecoration.BOLD))
+							                      .append(Component.text(" by zone ", NamedTextColor.RED))
+							                      .append(Component.text(outer.mZone.getName(), NamedTextColor.RED, TextDecoration.BOLD)));
 					}
 					outer.splitByOverlap(overlap, inner, true);
 				}

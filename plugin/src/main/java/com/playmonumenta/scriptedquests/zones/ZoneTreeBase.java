@@ -1,5 +1,6 @@
 package com.playmonumenta.scriptedquests.zones;
 
+import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -137,4 +138,11 @@ public abstract class ZoneTreeBase {
 	}
 
 	protected abstract void refreshDynmapTree(MarkerSet markerSet, int parentR, int parentG, int parentB);
+
+	public void print(PrintStream out) {
+		print(out, "");
+	}
+
+	protected abstract void print(PrintStream out, String indentation);
+
 }
