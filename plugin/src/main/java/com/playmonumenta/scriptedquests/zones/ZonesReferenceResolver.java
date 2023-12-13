@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import javax.annotation.Nullable;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
@@ -129,7 +130,7 @@ public class ZonesReferenceResolver {
 	// Tracks references for a single namespace
 	private static class NamespaceResolver {
 		private final String mName;
-		private @Nullable ZoneNamespaceFile mMain = null;
+		private final List<ZoneNamespaceFile> mMainFiles = new ArrayList<>();
 		private final Map<String, ZoneNamespaceFile> mRefs = new HashMap<>();
 
 		protected NamespaceResolver(String name) {
@@ -138,10 +139,7 @@ public class ZonesReferenceResolver {
 
 		protected void addFile(ZoneNamespaceFile namespaceFile) throws Exception {
 			if (namespaceFile.mReferenceId == null) {
-				if (mMain != null) {
-					throw new Exception("Detected multiple main (non-reference) files for one ZoneNamespace!");
-				}
-				mMain = namespaceFile;
+				mMainFiles.add(namespaceFile);
 				return;
 			}
 
@@ -152,27 +150,33 @@ public class ZonesReferenceResolver {
 		}
 
 		protected ZoneNamespace resolve(Audience audience) throws Exception {
-			if (mMain == null) {
+			if (mMainFiles.isEmpty()) {
 				throw new Exception("Could not find main (non-reference) file for one ZoneNamespace " + mName + "!");
 			}
 
 			referenceCheck(audience);
 
-			List<JsonObject> zoneObjects = mMain.resolve(mRefs);
+			List<JsonObject> zoneObjects = new ArrayList<>();
+			for (ZoneNamespaceFile zoneNamespaceFile : mMainFiles) {
+				zoneObjects.addAll(zoneNamespaceFile.resolve(mRefs));
+			}
 
-			return new ZoneNamespace(mName, mMain.mHidden, zoneObjects);
+			return new ZoneNamespace(mName, mMainFiles.get(0).mHidden, zoneObjects);
 		}
 
 		private void referenceCheck(Audience audience) throws Exception {
-			if (mMain == null) {
+			if (mMainFiles.isEmpty()) {
 				throw new Exception("No main (non-reference) file for ZoneNamespace " + mName);
 			}
 
-			List<String> toSearch = new ArrayList<>(mMain.mRequiredRefs);
+			TreeSet<String> toSearch = new TreeSet<>();
+			for (ZoneNamespaceFile zoneNamespaceFile : mMainFiles) {
+				toSearch.addAll(zoneNamespaceFile.mRequiredRefs);
+			}
 			Set<String> found = new HashSet<>();
 
 			while (!toSearch.isEmpty()) {
-				String refId = toSearch.remove(0);
+				String refId = toSearch.pollFirst();
 				if (!found.add(refId)) {
 					throw new Exception("ZoneNamespace " + mName + " reference " + refId + " used multiple times!");
 				}
