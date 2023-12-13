@@ -14,12 +14,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import javax.annotation.Nullable;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -28,6 +30,13 @@ import org.bukkit.util.Vector;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
 public class ZoneManager {
+	// Used to swap the active state when reloading zones
+	private static class ZoneState {
+		protected final Map<String, ZoneNamespace> mNamespaces = new HashMap<>();
+		protected @MonotonicNonNull WorldRegexMatcher mWorldRegexMatcher = null;
+		protected @MonotonicNonNull ZoneTreeBase mZoneTree = null;
+	}
+
 	private static final String[] SUGGESTIONS_EXECUTE_FALLBACK = {"\"Suggestions unavailable through /execute\""};
 
 	private final Plugin mPlugin;
@@ -35,9 +44,9 @@ public class ZoneManager {
 	static @MonotonicNonNull BukkitRunnable mPlayerTracker = null;
 	static @Nullable BukkitRunnable mAsyncReloadHandler = null;
 
-	private final Map<String, ZoneNamespace> mNamespaces = new HashMap<>();
+	private @Nullable ZoneState mReloadingState = null;
+	private ZoneState mActiveState = new ZoneState();
 	private final Map<String, ZoneNamespace> mPluginNamespaces = new HashMap<>();
-	private @MonotonicNonNull ZoneTreeBase mZoneTree = null;
 
 	private final Set<UUID> mTransferringPlayers = new HashSet<>();
 	private final Map<UUID, ZoneFragment> mLastPlayerZoneFragment = new HashMap<>();
@@ -128,7 +137,7 @@ public class ZoneManager {
 	 * Returns all ZoneFragments that overlap a bounding box.
 	 */
 	public Set<ZoneFragment> getZoneFragments(BoundingBox bb) {
-		return mZoneTree.getZoneFragments(bb);
+		return mActiveState.mZoneTree.getZoneFragments(bb);
 	}
 
 	/*
@@ -138,7 +147,7 @@ public class ZoneManager {
 	 * If fallback zone lookup is enabled, this should be avoided.
 	 */
 	public @Nullable ZoneFragment getZoneFragment(Vector loc) {
-		return mZoneTree.getZoneFragment(loc);
+		return mActiveState.mZoneTree.getZoneFragment(loc);
 	}
 
 	public @Nullable ZoneFragment getZoneFragment(Location loc) {
@@ -146,7 +155,7 @@ public class ZoneManager {
 			return null;
 		}
 
-		return mZoneTree.getZoneFragment(loc.toVector());
+		return mActiveState.mZoneTree.getZoneFragment(loc.toVector());
 	}
 
 	// For a given location, return the zones that contain it.
@@ -159,14 +168,14 @@ public class ZoneManager {
 			return new HashMap<>();
 		}
 
-		return mZoneTree.getZones(loc.toVector());
+		return mActiveState.mZoneTree.getZones(loc.toVector());
 	}
 
 	/*
 	 * Returns all zones that overlap a bounding box, optionally including eclipsed zones.
 	 */
 	public Set<Zone> getZones(BoundingBox bb, boolean includeEclipsed) {
-		return mZoneTree.getZones(bb, includeEclipsed);
+		return mActiveState.mZoneTree.getZones(bb, includeEclipsed);
 	}
 
 	/*
@@ -175,13 +184,13 @@ public class ZoneManager {
 	 */
 	public @Nullable Zone getZone(Vector loc, String namespaceName) {
 		if (mPlugin.mFallbackZoneLookup) {
-			@Nullable ZoneNamespace zoneNamespace = mNamespaces.get(namespaceName);
+			@Nullable ZoneNamespace zoneNamespace = mActiveState.mNamespaces.get(namespaceName);
 			if (zoneNamespace == null) {
 				return null;
 			}
 			return zoneNamespace.fallbackGetZone(loc);
 		} else {
-			return mZoneTree.getZone(loc, namespaceName);
+			return mActiveState.mZoneTree.getZone(loc, namespaceName);
 		}
 	}
 
@@ -190,7 +199,7 @@ public class ZoneManager {
 			return null;
 		}
 
-		return mZoneTree.getZone(loc.toVector(), namespaceName);
+		return mActiveState.mZoneTree.getZone(loc.toVector(), namespaceName);
 	}
 
 	public boolean hasProperty(Vector loc, String namespaceName, String propertyName) {
@@ -238,7 +247,7 @@ public class ZoneManager {
 	}
 
 	public Set<String> getNamespaceNames() {
-		return new HashSet<>(mNamespaces.keySet());
+		return new HashSet<>(mActiveState.mNamespaces.keySet());
 	}
 
 	public String[] getNamespaceNameSuggestions() {
@@ -250,7 +259,7 @@ public class ZoneManager {
 	}
 
 	public Set<String> getLoadedProperties(String namespaceName) {
-		@Nullable ZoneNamespace namespace = mNamespaces.get(namespaceName);
+		@Nullable ZoneNamespace namespace = mActiveState.mNamespaces.get(namespaceName);
 		if (namespace == null) {
 			return new HashSet<>();
 		}
@@ -339,13 +348,17 @@ public class ZoneManager {
 	}
 
 	public void doReload(Plugin plugin) {
+		doReload(plugin, false);
+	}
+
+	public void doReload(Plugin plugin, boolean firstRun) {
 		MMLog.fine("[Zone Reload] Begin");
 		mQueuedReloadRequesters.add(Bukkit.getConsoleSender());
 		mReloadRequesters = Audience.audience(mQueuedReloadRequesters);
 		mQueuedReloadRequesters = new HashSet<>();
 
 		long cpuNanos = System.nanoTime();
-		mNamespaces.clear();
+		mReloadingState = new ZoneState();
 		ZoneNamespace.clearDynmapLayers();
 		MMLog.fine("[Zone Reload] " + String.format("%13.9f", (System.nanoTime() - cpuNanos) / 1000000000.0) + "s Resetting old data");
 
@@ -353,40 +366,58 @@ public class ZoneManager {
 		plugin.mZonePropertyGroupManager.reload(plugin, mReloadRequesters);
 
 		// Refresh plugin namespaces
-		if (Plugin.getInstance().mShowZonesDynmap) {
+		if (mPlugin.mShowZonesDynmap) {
 			for (ZoneNamespace namespace : mPluginNamespaces.values()) {
 				namespace.refreshDynmapLayer();
 			}
 		}
 
-		mNamespaces.putAll(mPluginNamespaces);
-		mNamespaces.putAll(new ZonesReferenceResolver(plugin, mReloadRequesters, mNamespaces.keySet()).resolve());
+		mReloadingState.mNamespaces.putAll(mPluginNamespaces);
+		mReloadingState.mNamespaces.putAll(
+			new ZonesReferenceResolver(plugin, mReloadRequesters, mReloadingState.mNamespaces.keySet()).resolve());
 		MMLog.fine("[Zone Reload] " + String.format("%13.9f", (System.nanoTime() - cpuNanos) / 1000000000.0) + "s Loading new data");
+
+		final Set<String> worldRegexes = new HashSet<>();
+		for (ZoneNamespace zoneNamespace : mReloadingState.mNamespaces.values()) {
+			for (Zone zone : zoneNamespace.getZones()) {
+				worldRegexes.add(zone.getWorldRegex());
+			}
+		}
+
+		// NOTE: We must not wait for this on the first run, as it is run on the main thread instead of an async thread
+		CompletableFuture<Void> worldMatcherFuture = new CompletableFuture<>();
+		Bukkit.getScheduler().scheduleSyncDelayedTask(mPlugin, () -> {
+			// Prevent the state from changing out from under us while we wait for sync code to be available
+			ZoneState reloadingState = mReloadingState;
+			reloadingState.mWorldRegexMatcher = new WorldRegexMatcher(worldRegexes);
+			// Mark as complete
+			worldMatcherFuture.complete(null);
+		});
 
 		mReloadRequesters.sendMessage(Component.text("Zone parsing successful, optimizing before enabling...", NamedTextColor.GOLD));
 
 		// Gather all zone fragments
-		ZoneTreeFactory factory = new ZoneTreeFactory(mReloadRequesters, mNamespaces.values());
+		ZoneTreeFactory factory = new ZoneTreeFactory(mReloadRequesters, mReloadingState.mNamespaces.values());
 
 		// Create the new tree. This could take a long time with enough fragments.
-		final ZoneTreeBase newTree;
 		try {
-			newTree = factory.build();
+			mReloadingState.mZoneTree = factory.build();
 		} catch (Exception ex) {
+			mReloadingState = null;
 			Bukkit.getScheduler().runTask(mPlugin, () -> MessagingUtils.sendStackTrace(mReloadRequesters, ex));
 			return;
 		}
 
 		if (mPlugin.mShowZonesDynmap) {
-			newTree.refreshDynmapTree();
+			mReloadingState.mZoneTree.refreshDynmapTree();
 		}
 		mReloadRequesters.sendMessage(Component.text(
 			"Zone tree dev stats - fragments: "
-				+ newTree.fragmentCount()
+				+ mReloadingState.mZoneTree.fragmentCount()
 				+ ", max depth: "
-				+ newTree.maxDepth()
+				+ mReloadingState.mZoneTree.maxDepth()
 				+ ", ave depth: "
-				+ String.format("%.2f", newTree.averageDepth()),
+				+ String.format("%.2f", mReloadingState.mZoneTree.averageDepth()),
 			NamedTextColor.GOLD
 		));
 
@@ -395,9 +426,18 @@ public class ZoneManager {
 			mPlayerTracker.cancel();
 		}
 
+		// If this is the first run, clean up the worldMatcherFuture async; otherwise, wait for its completion
+		// This prevents a deadlock when running on the main thread at startup
+		if (firstRun) {
+			Bukkit.getScheduler().runTaskAsynchronously(mPlugin, worldMatcherFuture::join);
+		} else {
+			worldMatcherFuture.join();
+		}
+
 		// Swap the tree out; this is really fast!
-		@Nullable ZoneTreeBase oldTree = mZoneTree;
-		mZoneTree = newTree;
+		@Nullable ZoneTreeBase oldTree = mActiveState.mZoneTree;
+		mActiveState = mReloadingState;
+		mReloadingState = null;
 		if (oldTree != null) {
 			// Force all fragments to consider all locations as outside themselves
 			oldTree.invalidate();
@@ -416,7 +456,7 @@ public class ZoneManager {
 						// getZones() will use fallback zone lookup in this case
 						Map<String, Zone> currentZones = getZones(playerVector);
 						// Need to check all namespace names, not just the ones the player is in
-						for (String namespaceName : mNamespaces.keySet()) {
+						for (String namespaceName : mReloadingState.mNamespaces.keySet()) {
 							Zone currentZone = currentZones.get(namespaceName);
 							// Handles comparing to previous zone if needed
 							applyZoneChange(player, namespaceName, currentZone);
@@ -451,7 +491,7 @@ public class ZoneManager {
 	private Map<String, Zone> getZonesInternal(Vector loc, boolean fallbackZoneLookup) {
 		if (fallbackZoneLookup) {
 			Map<String, Zone> result = new HashMap<>();
-			for (Map.Entry<String, ZoneNamespace> entry : mNamespaces.entrySet()) {
+			for (Map.Entry<String, ZoneNamespace> entry : mActiveState.mNamespaces.entrySet()) {
 				String namespaceName = entry.getKey();
 				ZoneNamespace zoneNamespace = entry.getValue();
 
@@ -462,7 +502,49 @@ public class ZoneManager {
 			}
 			return result;
 		} else {
-			return mZoneTree.getZones(loc);
+			return mActiveState.mZoneTree.getZones(loc);
+		}
+	}
+
+	public void onLoadWorld(World world) {
+		ZoneState tempState;
+		WorldRegexMatcher tempMatcher;
+
+		// Nullable, can change async
+		tempState = mReloadingState;
+		if (tempState != null) {
+			tempMatcher = tempState.mWorldRegexMatcher;
+			if (tempMatcher != null) {
+				tempMatcher.onLoadWorld(world);
+			}
+		}
+
+		// Never null, but can change async
+		tempState = mActiveState;
+		tempMatcher = tempState.mWorldRegexMatcher;
+		if (tempMatcher != null) {
+			tempMatcher.onLoadWorld(world);
+		}
+	}
+
+	public void onUnloadWorld(World world) {
+		ZoneState tempState;
+		WorldRegexMatcher tempMatcher;
+
+		// Nullable, can change async
+		tempState = mReloadingState;
+		if (tempState != null) {
+			tempMatcher = tempState.mWorldRegexMatcher;
+			if (tempMatcher != null) {
+				tempMatcher.onUnloadWorld(world);
+			}
+		}
+
+		// Never null, but can change async
+		tempState = mActiveState;
+		tempMatcher = tempState.mWorldRegexMatcher;
+		if (tempMatcher != null) {
+			tempMatcher.onUnloadWorld(world);
 		}
 	}
 
@@ -696,6 +778,6 @@ public class ZoneManager {
 	}
 
 	public Collection<ZoneNamespace> getNamespaces() {
-		return mNamespaces.values();
+		return mActiveState.mNamespaces.values();
 	}
 }

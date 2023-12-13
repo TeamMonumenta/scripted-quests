@@ -178,7 +178,7 @@ public class Plugin extends JavaPlugin {
 		Objects.requireNonNull(getCommand("questTrigger")).setExecutor(new QuestTrigger(this));
 
 		ClientChatProtocol.initialize(this);
-		mZoneManager.doReload(this);
+		mZoneManager.doReload(this, true);
 
 		/* Load the config 1 tick later to let other plugins load */
 		new BukkitRunnable() {
