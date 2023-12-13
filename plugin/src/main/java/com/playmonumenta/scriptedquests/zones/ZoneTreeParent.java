@@ -65,7 +65,7 @@ public class ZoneTreeParent extends ZoneTreeBase {
 		bestSplit.mPriority = mFragmentCount;
 		int sufficientPriority = mFragmentCount / 2;
 
-		outer:
+		findSufficientPivot:
 		for (ZoneFragment pivotZone : zones) {
 			for (Axis axis : AXIS_ORDER) {
 				double[] possiblePivots = {
@@ -98,7 +98,7 @@ public class ZoneTreeParent extends ZoneTreeBase {
 					if (testSplit.mPriority < bestSplit.mPriority) {
 						bestSplit = testSplit;
 						if (bestSplit.mPriority <= sufficientPriority) {
-							break outer;
+							break findSufficientPivot;
 						}
 					}
 				}
