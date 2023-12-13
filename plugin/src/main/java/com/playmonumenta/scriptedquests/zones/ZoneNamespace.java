@@ -68,11 +68,11 @@ public class ZoneNamespace {
 	 * Property group support is not provided for this method. Your plugin will need to
 	 * handle that on its own.
 	 */
-	public boolean addZone(Vector pos1, Vector pos2, String name, Set<String> properties) {
+	public boolean addZone(String worldRegex, Vector pos1, Vector pos2, String name, Set<String> properties) {
 		@Nullable Zone zone;
 
 		try {
-			zone = new Zone(this, pos1, pos2, name, properties);
+			zone = new Zone(this, worldRegex, pos1, pos2, name, properties);
 		} catch (Exception e) {
 			return false;
 		}

@@ -22,8 +22,9 @@ import net.kyori.adventure.text.format.NamedTextColor;
 public class ZonesReferenceResolver {
 	private static class ZoneNamespaceFile {
 		protected final String mName;
+		protected final @Nullable String mWorldRegex;
 		protected final @Nullable String mReferenceId;
-		protected boolean mHidden;
+		protected boolean mHidden = false;
 		protected final List<JsonObject> mZoneOrder = new ArrayList<>();
 		protected final Set<String> mRequiredRefs = new HashSet<>();
 
@@ -43,6 +44,7 @@ public class ZonesReferenceResolver {
 			}
 			mName = name;
 
+			// Load the reference ID. If set, this file will only be used when referenced by a main or referenced file
 			@Nullable JsonElement referenceElement = object.get("reference");
 			if (referenceElement == null) {
 				mReferenceId = null;
@@ -52,6 +54,23 @@ public class ZonesReferenceResolver {
 					throw new Exception("Failed to parse 'reference'");
 				}
 				mReferenceId = reference;
+			}
+
+			// Load the world name regex.
+			// If absent, use ".*" for all worlds on main files, and inherit from parent on reference files.
+			@Nullable JsonElement worldElement = object.get("world_name");
+			if (worldElement == null) {
+				if (mReferenceId != null) {
+					mWorldRegex = null;
+				} else {
+					mWorldRegex = ".*";
+				}
+			} else {
+				@Nullable String worldName = worldElement.getAsString();
+				if (worldName == null || worldName.isEmpty()) {
+					throw new Exception("Failed to parse 'world_name'");
+				}
+				mWorldRegex = worldName;
 			}
 
 			// Load whether this namespace is hidden by default on the dynmap
@@ -91,20 +110,32 @@ public class ZonesReferenceResolver {
 			}
 		}
 
-		protected List<JsonObject> resolve(Map<String, ZoneNamespaceFile> references) throws Exception {
+		protected List<JsonObject> resolve(Map<String, ZoneNamespaceFile> references, @Nullable String parentWorldRegex) throws Exception {
+			String worldRegex = parentWorldRegex;
+			if (mWorldRegex != null) {
+				worldRegex = mWorldRegex;
+			}
+			// This is a precaution; mWorldRegex is always set for main files, with a fallback of ".*"
+			if (worldRegex == null) {
+				worldRegex = ".*";
+			}
+
 			List<JsonObject> result = new ArrayList<>();
 
 			for (JsonObject zoneOrRef : mZoneOrder) {
 				String refId = getRefId(zoneOrRef);
 
 				if (refId == null) {
+					if (!zoneOrRef.has("world_name")) {
+						zoneOrRef.addProperty("world_name", worldRegex);
+					}
 					result.add(zoneOrRef);
 					continue;
 				}
 
 				ZoneNamespaceFile reference = references.get(refId);
 				if (reference != null) {
-					result.addAll(reference.resolve(references));
+					result.addAll(reference.resolve(references, worldRegex));
 				} // Else case not required; handled by referenceCheck()
 			}
 
@@ -158,7 +189,7 @@ public class ZonesReferenceResolver {
 
 			List<JsonObject> zoneObjects = new ArrayList<>();
 			for (ZoneNamespaceFile zoneNamespaceFile : mMainFiles) {
-				zoneObjects.addAll(zoneNamespaceFile.resolve(mRefs));
+				zoneObjects.addAll(zoneNamespaceFile.resolve(mRefs, null));
 			}
 
 			return new ZoneNamespace(mName, mMainFiles.get(0).mHidden, zoneObjects);

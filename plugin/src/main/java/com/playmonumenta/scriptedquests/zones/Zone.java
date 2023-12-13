@@ -20,6 +20,7 @@ import org.bukkit.util.Vector;
 public class Zone extends ZoneBase {
 	private final ZoneNamespace mNamespace;
 	private final String mName;
+	private final String mWorldRegex;
 	private final Set<String> mProperties = new LinkedHashSet<>();
 
 	public static Zone constructFromJson(ZoneNamespace namespace, JsonObject object) throws Exception {
@@ -39,9 +40,18 @@ public class Zone extends ZoneBase {
 			throw new Exception("Failed to parse 'name'");
 		}
 		name = nameElement.getAsString();
-		if (name == null ||
-		    name.isEmpty()) {
+		if (name == null || name.isEmpty()) {
 			throw new Exception("Failed to parse 'name'");
+		}
+
+		// This gets inserted from the ZoneNamespace file if missing from the zone json
+		@Nullable JsonElement worldElement = object.get("world_name");
+		if (worldElement == null) {
+			throw new Exception("Failed to find inserted 'world_name'");
+		}
+		@Nullable String worldRegexStr = worldElement.getAsString();
+		if (worldRegexStr == null || worldRegexStr.isEmpty()) {
+			throw new Exception("Failed to parse 'world_name'");
 		}
 
 		// Load the zone location
@@ -79,7 +89,7 @@ public class Zone extends ZoneBase {
 		List<String> rawProperties = getProperties(propertiesElement);
 		Set<String> properties = Plugin.getInstance().mZonePropertyGroupManager.resolveProperties(namespace.getName(), rawProperties);
 
-		return new Zone(namespace, pos1, pos2, name, properties);
+		return new Zone(namespace, worldRegexStr, pos1, pos2, name, properties);
 	}
 
 	private static List<String> getProperties(@Nullable JsonElement propertiesElement) throws Exception {
@@ -106,9 +116,10 @@ public class Zone extends ZoneBase {
 	 * - Both are inclusive coordinates.
 	 * - The minimum/maximum are determined for you.
 	 */
-	public Zone(ZoneNamespace namespace, Vector pos1, Vector pos2, String name, Set<String> properties) {
+	public Zone(ZoneNamespace namespace, String worldRegex, Vector pos1, Vector pos2, String name, Set<String> properties) {
 		super(pos1, pos2);
 		mNamespace = namespace;
+		mWorldRegex = worldRegex;
 		mName = name;
 		mProperties.addAll(properties);
 	}
@@ -119,6 +130,10 @@ public class Zone extends ZoneBase {
 
 	public String getNamespaceName() {
 		return mNamespace.getName();
+	}
+
+	public String getWorldRegex() {
+		return mWorldRegex;
 	}
 
 	public String getName() {
