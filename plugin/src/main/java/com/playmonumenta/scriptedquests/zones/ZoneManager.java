@@ -212,26 +212,17 @@ public class ZoneManager {
 		}
 		UUID playerUuid = player.getUniqueId();
 
-		if (mPlugin.mFallbackZoneLookup) {
-			@Nullable Map<String, Zone> zones = mLastPlayerZones.get(playerUuid);
-			if (zones == null) {
-				return false;
-			}
-
-			@Nullable Zone zone = zones.get(namespaceName);
-			if (zone == null) {
-				return false;
-			}
-
-			return zone.hasProperty(propertyName);
-		} else {
-			@Nullable ZoneFragment lastFragment = mLastPlayerZoneFragment.get(playerUuid);
-			if (lastFragment == null) {
-				return false;
-			}
-
-			return lastFragment.hasProperty(player.getWorld(), namespaceName, propertyName);
+		@Nullable Map<String, Zone> lastZones = mLastPlayerZones.get(playerUuid);
+		if (lastZones == null) {
+			return false;
 		}
+
+		@Nullable Zone lastZone = lastZones.get(namespaceName);
+		if (lastZone == null) {
+			return false;
+		}
+
+		return lastZone.hasProperty(propertyName);
 	}
 
 	public Set<String> getNamespaceNames() {
@@ -448,6 +439,7 @@ public class ZoneManager {
 							// Handles comparing to previous zone if needed
 							applyZoneChange(player, namespaceName, currentZone);
 						}
+						continue;
 					}
 
 					@Nullable ZoneFragment lastZoneFragment = mLastPlayerZoneFragment.get(playerUuid);
@@ -538,7 +530,7 @@ public class ZoneManager {
 	public void unregisterPlayer(Player player) {
 		UUID playerUuid = player.getUniqueId();
 		applyFragmentChange(player, null);
-		if (mPlugin.mFallbackZoneLookup && mLastPlayerZones.get(playerUuid) != null) {
+		if (mPlugin.mFallbackZoneLookup && mLastPlayerZones.containsKey(playerUuid)) {
 			// Copy key set, as we are modifying the map during iteration
 			Set<String> namespaceNames = new LinkedHashSet<>(mLastPlayerZones.get(playerUuid).keySet());
 			for (String namespaceName : namespaceNames) {
@@ -567,12 +559,7 @@ public class ZoneManager {
 			return;
 		}
 
-		@Nullable ZoneFragment lastZoneFragment = mLastPlayerZoneFragment.get(playerUuid);
-
-		Map<String, Zone> lastZones = new HashMap<>();
-		if (lastZoneFragment != null) {
-			lastZones = lastZoneFragment.getParents(world);
-		}
+		Map<String, Zone> lastZones = mLastPlayerZones.get(playerUuid);
 
 		Map<String, Zone> currentZones = new HashMap<>();
 		if (currentZoneFragment != null) {
@@ -584,7 +571,6 @@ public class ZoneManager {
 
 		if (currentZones.equals(lastZones)) {
 			// If the zones are identical between both fragments, nothing more to do.
-			// Zones and ZoneFragments are not cloned after the manager is instantiated; == is valid.
 			return;
 		}
 
@@ -666,47 +652,48 @@ public class ZoneManager {
 		UUID playerUuid = player.getUniqueId();
 		Location playerLocation = player.getLocation();
 
-		sender.sendMessage("Cached player info according to zone fragment tree:");
+		sender.sendMessage(Component.text("Cached player info according to zone fragment tree:"));
 
 		@Nullable ZoneFragment cachedFragment = mLastPlayerZoneFragment.get(playerUuid);
 		if (cachedFragment == null) {
-			sender.sendMessage("Target is not in any zone.");
+			sender.sendMessage(Component.text("Target is not in any zone."));
 		} else {
-			sender.sendMessage(cachedFragment.toString());
+			sender.sendMessage(Component.text(cachedFragment.toString()));
 
-			Map<String, Zone> fragmentParents = cachedFragment.getParents(playerLocation.getWorld());
-			if (fragmentParents.isEmpty()) {
-				sender.sendMessage("Fragment has no parent zones! Where did it come from?");
+			Map<String, Zone> fragmentParents = mLastPlayerZones.get(playerUuid);
+			if (fragmentParents == null || fragmentParents.isEmpty()) {
+				sender.sendMessage(Component.text("Fragment has no parent zones! Where did it come from?"));
+			} else {
+				sender.sendMessage(Component.text("Fragment parents:"));
+				for (Zone zone : fragmentParents.values()) {
+					sender.sendMessage(Component.text(zone.toString()));
+				}
 			}
-			sender.sendMessage("Fragment parents:");
-			for (Zone zone : fragmentParents.values()) {
-				sender.sendMessage(zone.toString());
-			}
-			sender.sendMessage("Fragment parents and eclipsed:");
+			sender.sendMessage(Component.text("Fragment parents and eclipsed:"));
 			for (List<Zone> zones : cachedFragment.getParentsAndEclipsed().values()) {
 				for (Zone zone : zones) {
-					sender.sendMessage(zone.toString());
+					sender.sendMessage(Component.text(zone.toString()));
 				}
 			}
 		}
 
 		if (mPlugin.mFallbackZoneLookup) {
-			sender.sendMessage("Cached player info according to slow/reliable method:");
+			sender.sendMessage(Component.text("Cached player info according to slow/reliable method:"));
 
 			@Nullable Map<String, Zone> cachedZones = mLastPlayerZones.get(playerUuid);
 			if (cachedZones == null) {
-				sender.sendMessage("Target is not in any zone.");
+				sender.sendMessage(Component.text("Target is not in any zone."));
 			} else {
 				if (cachedZones.isEmpty()) {
-					sender.sendMessage("Target is not in any zone, but an empty map is left over.");
+					sender.sendMessage(Component.text("Target is not in any zone, but an empty map is left over."));
 				}
 				for (Zone cachedZone : cachedZones.values()) {
-					sender.sendMessage(cachedZone.toString());
+					sender.sendMessage(Component.text(cachedZone.toString()));
 				}
 			}
 		}
 
-		sender.sendMessage("Uncached location info:");
+		sender.sendMessage(Component.text("Uncached location info:"));
 		sendDebug(sender, playerLocation);
 	}
 
@@ -718,49 +705,49 @@ public class ZoneManager {
 		@Nullable Map<String, Zone> fallbackZones = getZonesInternal(loc, true);
 		@Nullable Map<String, Zone> fastZones = getZonesInternal(loc, false);
 		if (fallbackZones == null && fastZones == null) {
-			sender.sendMessage("Fast lookup matches slow/reliable lookup (both null)");
+			sender.sendMessage(Component.text("Fast lookup matches slow/reliable lookup (both null)"));
 		} else if (fallbackZones == null || !fallbackZones.equals(fastZones)) {
-			sender.sendMessage("Fast lookup DOES NOT match slow/reliable lookup");
+			sender.sendMessage(Component.text("Fast lookup DOES NOT match slow/reliable lookup"));
 
-			sender.sendMessage("Slow/reliable lookup version:");
+			sender.sendMessage(Component.text("Slow/reliable lookup version:"));
 			if (fallbackZones == null) {
-				sender.sendMessage("Target is not in any zone.");
+				sender.sendMessage(Component.text("Target is not in any zone."));
 			} else {
 				if (fallbackZones.isEmpty()) {
-					sender.sendMessage("Target is not in any zone, but an empty map is left over.");
+					sender.sendMessage(Component.text("Target is not in any zone, but an empty map is left over."));
 				}
 				for (Zone fallbackZone : fallbackZones.values()) {
-					sender.sendMessage(fallbackZone.toString());
+					sender.sendMessage(Component.text(fallbackZone.toString()));
 				}
 			}
 		} else {
-			sender.sendMessage("Fast lookup matches slow/reliable lookup (both exist and are equal)");
+			sender.sendMessage(Component.text("Fast lookup matches slow/reliable lookup (both exist and are equal)"));
 		}
 
-		sender.sendMessage("Fast lookup version:");
+		sender.sendMessage(Component.text("Fast lookup version:"));
 		@Nullable ZoneFragment fragment = getZoneFragment(loc);
 		if (fragment == null) {
-			sender.sendMessage("Target is not in any zone.");
+			sender.sendMessage(Component.text("Target is not in any zone."));
 			return;
 		}
 
 		if (!fragment.within(loc.toVector())) {
-			sender.sendMessage("Target is not in the zone fragment they were reported in.");
+			sender.sendMessage(Component.text("Target is not in the zone fragment they were reported in."));
 		}
-		sender.sendMessage(fragment.toString());
+		sender.sendMessage(Component.text(fragment.toString()));
 
 		Map<String, Zone> fragmentParents = fragment.getParents(loc.getWorld());
 		if (fragmentParents.isEmpty()) {
-			sender.sendMessage("Fragment has no parent zones! Where did it come from?");
+			sender.sendMessage(Component.text("Fragment has no parent zones! Where did it come from?"));
 		}
-		sender.sendMessage("Fragment parents:");
+		sender.sendMessage(Component.text("Fragment parents:"));
 		for (Zone zone : fragmentParents.values()) {
-			sender.sendMessage(zone.toString());
+			sender.sendMessage(Component.text(zone.toString()));
 		}
-		sender.sendMessage("Fragment parents and eclipsed:");
+		sender.sendMessage(Component.text("Fragment parents and eclipsed:"));
 		for (List<Zone> zones : fragment.getParentsAndEclipsed().values()) {
 			for (Zone zone : zones) {
-				sender.sendMessage(zone.toString());
+				sender.sendMessage(Component.text(zone.toString()));
 			}
 		}
 	}
