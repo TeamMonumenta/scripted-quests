@@ -62,28 +62,41 @@ public abstract class ZoneTreeBase {
 		return fragment.getParents(location.getWorld());
 	}
 
-	public Map<String, Zone> getZonesLegacy(Vector loc) {
+	// Avoid using this except for test code; searching by world is more efficient
+	public Map<String, Zone> getZones(String worldName, Vector loc) {
+		Map<String, Zone> result = new HashMap<>();
+
 		@Nullable ZoneFragment fragment = getZoneFragment(loc);
 
 		if (fragment == null) {
-			return new HashMap<>();
+			return result;
 		}
 
-		return fragment.getParentsLegacy();
+		for (Map.Entry<String, List<Zone>> parentsEntry : fragment.getParents().entrySet()) {
+			String namespace = parentsEntry.getKey();
+			for (Zone parent : parentsEntry.getValue()) {
+				if (parent.matchesWorld(worldName)) {
+					result.put(namespace, parent);
+					break;
+				}
+			}
+		}
+
+		return result;
 	}
 
 	/*
 	 * Returns all zones that overlap a bounding box, optionally including eclipsed zones.
 	 */
-	public Set<Zone> getZonesLegacy(BoundingBox bb, boolean includeEclipsed) {
+	public Set<Zone> getZones(World world, BoundingBox bb, boolean includeEclipsed) {
 		Set<Zone> result = new HashSet<>();
 		for (ZoneFragment fragment : getZoneFragments(bb)) {
 			if (includeEclipsed) {
-				for (List<Zone> zones : fragment.getParentsAndEclipsed().values()) {
+				for (List<Zone> zones : fragment.getParentsAndEclipsed(world).values()) {
 					result.addAll(zones);
 				}
 			} else {
-				result.addAll(fragment.getParentsLegacy().values());
+				result.addAll(fragment.getParents(world).values());
 			}
 		}
 		return result;
@@ -109,19 +122,9 @@ public abstract class ZoneTreeBase {
 		return null;
 	}
 
-	public @Nullable Zone getZone(Vector loc, String namespaceName) {
-		@Nullable ZoneFragment fragment = getZoneFragment(loc);
-
-		if (fragment == null) {
-			return null;
-		}
-
-		return fragment.getParentLegacy(namespaceName);
-	}
-
-	public boolean hasProperty(Vector loc, String namespaceName, String propertyName) {
-		@Nullable ZoneFragment fragment = getZoneFragment(loc);
-		return fragment != null && fragment.hasProperty(namespaceName, propertyName);
+	public boolean hasProperty(Location loc, String namespaceName, String propertyName) {
+		@Nullable ZoneFragment fragment = getZoneFragment(loc.toVector());
+		return fragment != null && fragment.hasProperty(loc.getWorld(), namespaceName, propertyName);
 	}
 
 	public int fragmentCount() {

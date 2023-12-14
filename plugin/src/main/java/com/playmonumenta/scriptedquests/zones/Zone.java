@@ -142,6 +142,10 @@ public class Zone extends ZoneBase {
 		return ZoneManager.getInstance().getWorldRegexMatcher().matches(world, mWorldRegex);
 	}
 
+	public boolean matchesWorld(String worldName) {
+		return ZoneManager.getInstance().getWorldRegexMatcher().matches(worldName, mWorldRegex);
+	}
+
 	public boolean within(Location location) {
 		return matchesWorld(location.getWorld()) && within(location.toVector());
 	}

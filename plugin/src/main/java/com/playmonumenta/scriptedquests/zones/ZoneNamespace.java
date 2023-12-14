@@ -110,7 +110,7 @@ public class ZoneNamespace {
 	/*
 	 * Use this only as a fallback; it's slower than using a zone tree.
 	 */
-	public @Nullable Zone fallbackGetZoneLegacy(Vector loc) {
+	public @Nullable Zone fallbackGetZone(Location loc) {
 		for (Zone zone : mZones) {
 			if (zone.within(loc)) {
 				return zone;
@@ -120,9 +120,10 @@ public class ZoneNamespace {
 		return null;
 	}
 
-	public @Nullable Zone fallbackGetZone(Location loc) {
+	// Only use in test code
+	public @Nullable Zone fallbackGetZone(String worldName, Vector vec) {
 		for (Zone zone : mZones) {
-			if (zone.within(loc)) {
+			if (zone.within(vec) && zone.matchesWorld(worldName)) {
 				return zone;
 			}
 		}

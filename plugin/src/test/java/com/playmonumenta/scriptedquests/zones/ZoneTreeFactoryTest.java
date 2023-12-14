@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import java.util.stream.StreamSupport;
 import net.kyori.adventure.audience.Audience;
@@ -33,7 +34,7 @@ public class ZoneTreeFactoryTest {
 	void testZoneTree() throws Exception {
 
 		JsonObject zonesFile = new Gson().fromJson(new InputStreamReader(
-			getClass().getClassLoader().getResourceAsStream("zones.json"), StandardCharsets.UTF_8), JsonElement.class).getAsJsonObject();
+			Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("zones.json")), StandardCharsets.UTF_8), JsonElement.class).getAsJsonObject();
 		ZoneNamespace namespace = new ZoneNamespace("default", false,
 			StreamSupport.stream(zonesFile.get("zones").getAsJsonArray().spliterator(), false).map(JsonElement::getAsJsonObject).toList());
 		ZoneTreeFactory factory = new ZoneTreeFactory(Mockito.mock(Audience.class), List.of(namespace));
@@ -49,8 +50,8 @@ public class ZoneTreeFactoryTest {
 					rand.nextDouble(testZone.minCorner().getX() - 5, testZone.maxCorner().getX() + 5),
 					rand.nextDouble(testZone.minCorner().getY() - 5, testZone.maxCorner().getY() + 5),
 					rand.nextDouble(testZone.minCorner().getZ() - 5, testZone.maxCorner().getZ() + 5));
-				Zone treeZone = tree.getZonesLegacy(test).get("default");
-				Zone fallbackZone = namespace.fallbackGetZoneLegacy(test);
+				Zone treeZone = tree.getZones("test_world", test).get("default");
+				Zone fallbackZone = namespace.fallbackGetZone("test_world", test);
 				Assertions.assertSame(fallbackZone, treeZone, "Zone mismatch at " + test);
 			}
 		}

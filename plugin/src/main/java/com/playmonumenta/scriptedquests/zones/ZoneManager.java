@@ -177,26 +177,14 @@ public class ZoneManager {
 	/*
 	 * Returns all zones that overlap a bounding box, optionally including eclipsed zones.
 	 */
-	public Set<Zone> getZones(BoundingBox bb, boolean includeEclipsed) {
-		return mActiveState.mZoneTree.getZonesLegacy(bb, includeEclipsed);
+	public Set<Zone> getZones(World world, BoundingBox bb, boolean includeEclipsed) {
+		return mActiveState.mZoneTree.getZones(world, bb, includeEclipsed);
 	}
 
 	/*
 	 * For a given namespace and location, return the zone that
 	 * contains it. Returns null if no zone overlaps it.
 	 */
-	public @Nullable Zone getZoneLegacy(Vector loc, String namespaceName) {
-		if (mPlugin.mFallbackZoneLookup) {
-			@Nullable ZoneNamespace zoneNamespace = mActiveState.mNamespaces.get(namespaceName);
-			if (zoneNamespace == null) {
-				return null;
-			}
-			return zoneNamespace.fallbackGetZoneLegacy(loc);
-		} else {
-			return mActiveState.mZoneTree.getZone(loc, namespaceName);
-		}
-	}
-
 	public @Nullable Zone getZone(Location loc, String namespaceName) {
 		if (mPlugin.mFallbackZoneLookup) {
 			@Nullable ZoneNamespace zoneNamespace = mActiveState.mNamespaces.get(namespaceName);
@@ -242,7 +230,7 @@ public class ZoneManager {
 				return false;
 			}
 
-			return lastFragment.hasProperty(namespaceName, propertyName);
+			return lastFragment.hasProperty(player.getWorld(), namespaceName, propertyName);
 		}
 	}
 
@@ -574,6 +562,7 @@ public class ZoneManager {
 
 	private void applyFragmentChange(Player player, @Nullable ZoneFragment currentZoneFragment) {
 		UUID playerUuid = player.getUniqueId();
+		World world = player.getWorld();
 		if (currentZoneFragment != null && mTransferringPlayers.contains(playerUuid)) {
 			return;
 		}
@@ -582,12 +571,12 @@ public class ZoneManager {
 
 		Map<String, Zone> lastZones = new HashMap<>();
 		if (lastZoneFragment != null) {
-			lastZones = lastZoneFragment.getParentsLegacy();
+			lastZones = lastZoneFragment.getParents(world);
 		}
 
 		Map<String, Zone> currentZones = new HashMap<>();
 		if (currentZoneFragment != null) {
-			currentZones = currentZoneFragment.getParentsLegacy();
+			currentZones = currentZoneFragment.getParents(world);
 		}
 
 		// We've already confirmed the player changed zone fragments; null is valid.
@@ -685,7 +674,7 @@ public class ZoneManager {
 		} else {
 			sender.sendMessage(cachedFragment.toString());
 
-			Map<String, Zone> fragmentParents = cachedFragment.getParentsLegacy();
+			Map<String, Zone> fragmentParents = cachedFragment.getParents(playerLocation.getWorld());
 			if (fragmentParents.isEmpty()) {
 				sender.sendMessage("Fragment has no parent zones! Where did it come from?");
 			}
@@ -760,7 +749,7 @@ public class ZoneManager {
 		}
 		sender.sendMessage(fragment.toString());
 
-		Map<String, Zone> fragmentParents = fragment.getParentsLegacy();
+		Map<String, Zone> fragmentParents = fragment.getParents(loc.getWorld());
 		if (fragmentParents.isEmpty()) {
 			sender.sendMessage("Fragment has no parent zones! Where did it come from?");
 		}

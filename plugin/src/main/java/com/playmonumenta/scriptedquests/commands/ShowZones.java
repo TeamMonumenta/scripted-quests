@@ -25,7 +25,9 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
+import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ProxiedCommandSender;
 import org.bukkit.entity.Player;
@@ -104,19 +106,21 @@ public class ShowZones {
 				mShownInfo.remove(mPlayerUuid);
 				return;
 			}
-			Vector loc = player.getLocation().toVector();
+			Location loc = player.getLocation();
+			World world = loc.getWorld();
+			Vector vec = loc.toVector();
 
 			// Initialized here to avoid warnings about them being uninitialized
 			Vector testPointOffset1 = new Vector(0.0, 0.0, 0.0);
 			Vector testPointOffset2 = new Vector(0.0, 0.0, 0.0);
 
 			for (double shownBlockDistance = 8.0; shownBlockDistance <= RENDER_DISTANCE; shownBlockDistance *= 2.0) {
-				double minX = loc.getX() - shownBlockDistance;
-				double minY = loc.getY() - shownBlockDistance;
-				double minZ = loc.getZ() - shownBlockDistance;
-				double maxX = loc.getX() + shownBlockDistance;
-				double maxY = loc.getY() + shownBlockDistance;
-				double maxZ = loc.getZ() + shownBlockDistance;
+				double minX = vec.getX() - shownBlockDistance;
+				double minY = vec.getY() - shownBlockDistance;
+				double minZ = vec.getZ() - shownBlockDistance;
+				double maxX = vec.getX() + shownBlockDistance;
+				double maxY = vec.getY() + shownBlockDistance;
+				double maxZ = vec.getZ() + shownBlockDistance;
 				BoundingBox bbVisible = new BoundingBox(minX, minY, minZ, maxX, maxY, maxZ);
 
 				double x;
@@ -129,7 +133,7 @@ public class ShowZones {
 					y = randRange(minY, maxY);
 					z = randRange(minZ, maxZ);
 
-					@Nullable Zone zone = ZoneManager.getInstance().getZoneLegacy(new Vector(x, y, z), mNamespaceName);
+					@Nullable Zone zone = ZoneManager.getInstance().getZone(new Location(world, x, y, z), mNamespaceName);
 					if (zone == null) {
 						continue;
 					}
@@ -162,7 +166,7 @@ public class ShowZones {
 				double maxPossibleTotalLength = 0.0;
 				while (it.hasNext()) {
 					ZoneFragment fragment = it.next();
-					@Nullable Zone targetZone = fragment.getParentLegacy(mNamespaceName);
+					@Nullable Zone targetZone = fragment.getParent(world, mNamespaceName);
 					if (targetZone == null) {
 						it.remove();
 						continue;
@@ -197,7 +201,7 @@ public class ShowZones {
 
 				NavigableMap<Double, FragmentEdge> edgeWeights = new TreeMap<>();
 				for (ZoneFragment fragment : fragments) {
-					@Nullable Zone targetZone = fragment.getParentLegacy(mNamespaceName);
+					@Nullable Zone targetZone = fragment.getParent(world, mNamespaceName);
 					if (targetZone == null) {
 						continue;
 					}
@@ -272,10 +276,10 @@ public class ShowZones {
 							z = randRange(partMinZShown, partMaxZShown);
 
 							testZone = switch (face) {
-								case X_MIN -> ZoneManager.getInstance().getZoneLegacy(new Vector(x - DELTA_POS, y, z), mNamespaceName);
-								case Y_MIN -> ZoneManager.getInstance().getZoneLegacy(new Vector(x, y - DELTA_POS, z), mNamespaceName);
-								case Z_MIN -> ZoneManager.getInstance().getZoneLegacy(new Vector(x, y, z - DELTA_POS), mNamespaceName);
-								default -> ZoneManager.getInstance().getZoneLegacy(new Vector(x, y, z), mNamespaceName);
+								case X_MIN -> ZoneManager.getInstance().getZone(new Location(world, x - DELTA_POS, y, z), mNamespaceName);
+								case Y_MIN -> ZoneManager.getInstance().getZone(new Location(world, x, y - DELTA_POS, z), mNamespaceName);
+								case Z_MIN -> ZoneManager.getInstance().getZone(new Location(world, x, y, z - DELTA_POS), mNamespaceName);
+								default -> ZoneManager.getInstance().getZone(new Location(world, x, y, z), mNamespaceName);
 							};
 							// Intentionally testing if these are the same object
 							if (targetZone == testZone) {
@@ -363,7 +367,10 @@ public class ShowZones {
 						for (int offset1 = -1; offset1 <= 1; ++offset1) {
 							Vector testPoint1 = particlePosition.clone().add(testPointOffset1.clone().multiply(offset1));
 							for (int offset2 = -1; offset2 <= 1; ++offset2) {
-								testZone = ZoneManager.getInstance().getZoneLegacy(testPoint1.clone().add(testPointOffset2.clone().multiply(offset2)), mNamespaceName);
+								Vector testPoint3 = testPoint1.clone().add(testPointOffset2.clone().multiply(offset2));
+								Location testLoc3
+									= new Location(world, testPoint3.getX(), testPoint3.getY(), testPoint3.getZ());
+								testZone = ZoneManager.getInstance().getZone(testLoc3, mNamespaceName);
 								// Intentionally testing if these are not the same object
 								if (targetZone != testZone) {
 									testAxis1[1 + offset2] |= 1 << (1 + offset1);

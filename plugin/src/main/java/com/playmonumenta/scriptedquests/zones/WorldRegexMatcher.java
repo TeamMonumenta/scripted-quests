@@ -10,8 +10,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 
 public class WorldRegexMatcher {
-	private static Map<String, Pattern> mPatterns = new HashMap<>();
-	private static Map<World, Set<String>> mWorldPatternMatches = new HashMap<>();
+	private static final Map<String, Pattern> mPatterns = new HashMap<>();
+	private static final Map<World, Set<String>> mWorldPatternMatches = new HashMap<>();
 
 	protected WorldRegexMatcher(Set<String> worldRegexes) throws PatternSyntaxException {
 		for (String worldRegexStr : worldRegexes) {
@@ -52,5 +52,18 @@ public class WorldRegexMatcher {
 			return false;
 		}
 		return matches.contains(worldRegex);
+	}
+
+	public boolean matches(String worldName, String worldRegex) {
+		if (worldRegex == null || worldRegex.isEmpty() || worldRegex.equals(".*")) {
+			return true;
+		}
+
+		Pattern pattern = mPatterns.get(worldRegex);
+		if (pattern == null) {
+			return false;
+		}
+
+		return pattern.matcher(worldName).matches();
 	}
 }

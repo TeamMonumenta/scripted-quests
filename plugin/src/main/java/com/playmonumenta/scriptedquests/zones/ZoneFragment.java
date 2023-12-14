@@ -156,20 +156,6 @@ public class ZoneFragment extends ZoneBase {
 		return result;
 	}
 
-	public Map<String, Zone> getParentsLegacy() {
-		Map<String, Zone> result = new HashMap<>();
-
-		for (Map.Entry<String, List<Zone>> entry : mParents.entrySet()) {
-			List<Zone> zones = entry.getValue();
-			if (zones.isEmpty()) {
-				continue;
-			}
-			result.put(entry.getKey(), zones.get(0));
-		}
-
-		return result;
-	}
-
 	public Map<String, List<Zone>> getParents() {
 		Map<String, List<Zone>> result = new HashMap<>();
 
@@ -198,14 +184,6 @@ public class ZoneFragment extends ZoneBase {
 		return result;
 	}
 
-	public @Nullable Zone getParentLegacy(String namespaceName) {
-		List<Zone> zones = mParents.get(namespaceName);
-		if (zones == null || zones.isEmpty()) {
-			return null;
-		}
-		return zones.get(0);
-	}
-
 	public @Nullable Zone getParent(World world, String namespaceName) {
 		List<Zone> zones = mParents.get(namespaceName);
 		if (zones == null) {
@@ -232,6 +210,23 @@ public class ZoneFragment extends ZoneBase {
 		return result;
 	}
 
+	public Map<String, List<Zone>> getParentsAndEclipsed(World world) {
+		Map<String, List<Zone>> result = new HashMap<>();
+		for (Map.Entry<String, List<Zone>> entry : mParentsAndEclipsed.entrySet()) {
+			String namespaceName = entry.getKey();
+			List<Zone> zones = new ArrayList<>();
+
+			for (Zone zone : entry.getValue()) {
+				if (zone.matchesWorld(world)) {
+					zones.add(zone);
+				}
+			}
+
+			result.put(namespaceName, zones);
+		}
+		return result;
+	}
+
 	public List<Zone> getParentAndEclipsed(String namespaceName) {
 		@Nullable List<Zone> zones = mParentsAndEclipsed.get(namespaceName);
 		List<Zone> result = new ArrayList<>();
@@ -252,11 +247,6 @@ public class ZoneFragment extends ZoneBase {
 			}
 		}
 		return result;
-	}
-
-	public boolean hasProperty(String namespaceName, String propertyName) {
-		@Nullable Zone zone = getParentLegacy(namespaceName);
-		return zone != null && zone.hasProperty(propertyName);
 	}
 
 	public boolean hasProperty(World world, String namespaceName, String propertyName) {
