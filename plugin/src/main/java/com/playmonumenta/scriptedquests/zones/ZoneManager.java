@@ -576,8 +576,10 @@ public class ZoneManager {
 
 		if (!mPlugin.mFallbackZoneLookup) {
 			// Zones changed, send an event for each namespace.
-			Set<String> mentionedNamespaceNames = new LinkedHashSet<>(lastZones.keySet());
-			mentionedNamespaceNames.addAll(currentZones.keySet());
+			Set<String> mentionedNamespaceNames = new LinkedHashSet<>(currentZones.keySet());
+			if (lastZones != null) {
+				mentionedNamespaceNames.addAll(lastZones.keySet());
+			}
 			for (String namespaceName : mentionedNamespaceNames) {
 				// Null zones are valid - indicates no zone.
 				@Nullable Zone currentZone = currentZones.get(namespaceName);
