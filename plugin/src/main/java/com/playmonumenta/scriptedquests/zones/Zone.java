@@ -188,9 +188,10 @@ public class Zone extends ZoneBase {
 	@Override
 	public String toString() {
 		return ("Zone(namespace('" + getNamespaceName() + "'), "
-		        + minCorner().toString() + ", "
-		        + maxCorner().toString() + ", "
-		        + mName + ", "
-		        + mProperties.toString() + ")");
+			+ getWorldRegex() + ", "
+			+ minCorner().toString() + ", "
+			+ maxCorner().toString() + ", "
+			+ mName + ", "
+			+ mProperties.toString() + ")");
 	}
 }
