@@ -1,5 +1,6 @@
 {
   "name": "default",
+  "world_name": "test_world",
   "zones": [
     {
       "name": "Shops",
