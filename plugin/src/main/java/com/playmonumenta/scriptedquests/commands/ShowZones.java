@@ -129,7 +129,7 @@ public class ShowZones {
 					y = randRange(minY, maxY);
 					z = randRange(minZ, maxZ);
 
-					@Nullable Zone zone = ZoneManager.getInstance().getZone(new Vector(x, y, z), mNamespaceName);
+					@Nullable Zone zone = ZoneManager.getInstance().getZoneLegacy(new Vector(x, y, z), mNamespaceName);
 					if (zone == null) {
 						continue;
 					}
@@ -162,7 +162,7 @@ public class ShowZones {
 				double maxPossibleTotalLength = 0.0;
 				while (it.hasNext()) {
 					ZoneFragment fragment = it.next();
-					@Nullable Zone targetZone = fragment.getParent(mNamespaceName);
+					@Nullable Zone targetZone = fragment.getParentLegacy(mNamespaceName);
 					if (targetZone == null) {
 						it.remove();
 						continue;
@@ -197,7 +197,7 @@ public class ShowZones {
 
 				NavigableMap<Double, FragmentEdge> edgeWeights = new TreeMap<>();
 				for (ZoneFragment fragment : fragments) {
-					@Nullable Zone targetZone = fragment.getParent(mNamespaceName);
+					@Nullable Zone targetZone = fragment.getParentLegacy(mNamespaceName);
 					if (targetZone == null) {
 						continue;
 					}
@@ -272,10 +272,10 @@ public class ShowZones {
 							z = randRange(partMinZShown, partMaxZShown);
 
 							testZone = switch (face) {
-								case X_MIN -> ZoneManager.getInstance().getZone(new Vector(x - DELTA_POS, y, z), mNamespaceName);
-								case Y_MIN -> ZoneManager.getInstance().getZone(new Vector(x, y - DELTA_POS, z), mNamespaceName);
-								case Z_MIN -> ZoneManager.getInstance().getZone(new Vector(x, y, z - DELTA_POS), mNamespaceName);
-								default -> ZoneManager.getInstance().getZone(new Vector(x, y, z), mNamespaceName);
+								case X_MIN -> ZoneManager.getInstance().getZoneLegacy(new Vector(x - DELTA_POS, y, z), mNamespaceName);
+								case Y_MIN -> ZoneManager.getInstance().getZoneLegacy(new Vector(x, y - DELTA_POS, z), mNamespaceName);
+								case Z_MIN -> ZoneManager.getInstance().getZoneLegacy(new Vector(x, y, z - DELTA_POS), mNamespaceName);
+								default -> ZoneManager.getInstance().getZoneLegacy(new Vector(x, y, z), mNamespaceName);
 							};
 							// Intentionally testing if these are the same object
 							if (targetZone == testZone) {
@@ -363,7 +363,7 @@ public class ShowZones {
 						for (int offset1 = -1; offset1 <= 1; ++offset1) {
 							Vector testPoint1 = particlePosition.clone().add(testPointOffset1.clone().multiply(offset1));
 							for (int offset2 = -1; offset2 <= 1; ++offset2) {
-								testZone = ZoneManager.getInstance().getZone(testPoint1.clone().add(testPointOffset2.clone().multiply(offset2)), mNamespaceName);
+								testZone = ZoneManager.getInstance().getZoneLegacy(testPoint1.clone().add(testPointOffset2.clone().multiply(offset2)), mNamespaceName);
 								// Intentionally testing if these are not the same object
 								if (targetZone != testZone) {
 									testAxis1[1 + offset2] |= 1 << (1 + offset1);

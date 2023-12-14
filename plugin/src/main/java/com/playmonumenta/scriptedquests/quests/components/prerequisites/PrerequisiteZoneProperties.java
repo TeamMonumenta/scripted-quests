@@ -78,7 +78,7 @@ public class PrerequisiteZoneProperties implements PrerequisiteBase {
 		}
 
 		for (String namespaceName : mMentionedNamespaces) {
-			Zone zone = fragment.getParent(namespaceName);
+			Zone zone = fragment.getParentLegacy(namespaceName);
 
 			// If there is no zone in this namespace...
 			if (zone == null) {

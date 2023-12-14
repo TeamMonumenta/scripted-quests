@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Set;
 import javax.annotation.Nullable;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.dynmap.DynmapCommonAPI;
@@ -50,20 +52,30 @@ public abstract class ZoneTreeBase {
 	/*
 	 * For a given location, return the zones that contain it.
 	 */
-	public Map<String, Zone> getZones(Vector loc) {
+	public Map<String, Zone> getZones(Location location) {
+		@Nullable ZoneFragment fragment = getZoneFragment(location.toVector());
+
+		if (fragment == null) {
+			return new HashMap<>();
+		}
+
+		return fragment.getParents(location.getWorld());
+	}
+
+	public Map<String, Zone> getZonesLegacy(Vector loc) {
 		@Nullable ZoneFragment fragment = getZoneFragment(loc);
 
 		if (fragment == null) {
 			return new HashMap<>();
 		}
 
-		return fragment.getParents();
+		return fragment.getParentsLegacy();
 	}
 
 	/*
 	 * Returns all zones that overlap a bounding box, optionally including eclipsed zones.
 	 */
-	public Set<Zone> getZones(BoundingBox bb, boolean includeEclipsed) {
+	public Set<Zone> getZonesLegacy(BoundingBox bb, boolean includeEclipsed) {
 		Set<Zone> result = new HashSet<>();
 		for (ZoneFragment fragment : getZoneFragments(bb)) {
 			if (includeEclipsed) {
@@ -71,7 +83,7 @@ public abstract class ZoneTreeBase {
 					result.addAll(zones);
 				}
 			} else {
-				result.addAll(fragment.getParents().values());
+				result.addAll(fragment.getParentsLegacy().values());
 			}
 		}
 		return result;
@@ -81,6 +93,22 @@ public abstract class ZoneTreeBase {
 	 * For a given location and namespace name, return the zone that contains it.
 	 * Returns null if no zone overlaps it on that namespace.
 	 */
+	public @Nullable Zone getZone(Location loc, String namespaceName) {
+		@Nullable ZoneFragment fragment = getZoneFragment(loc.toVector());
+
+		if (fragment == null) {
+			return null;
+		}
+
+		World world = loc.getWorld();
+		for (Zone zone : fragment.getParentAndEclipsed(namespaceName)) {
+			if (zone.matchesWorld(world)) {
+				return zone;
+			}
+		}
+		return null;
+	}
+
 	public @Nullable Zone getZone(Vector loc, String namespaceName) {
 		@Nullable ZoneFragment fragment = getZoneFragment(loc);
 
@@ -88,7 +116,7 @@ public abstract class ZoneTreeBase {
 			return null;
 		}
 
-		return fragment.getParent(namespaceName);
+		return fragment.getParentLegacy(namespaceName);
 	}
 
 	public boolean hasProperty(Vector loc, String namespaceName, String propertyName) {

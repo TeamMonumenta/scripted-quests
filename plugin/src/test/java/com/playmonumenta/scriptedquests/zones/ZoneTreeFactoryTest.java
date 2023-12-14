@@ -49,8 +49,8 @@ public class ZoneTreeFactoryTest {
 					rand.nextDouble(testZone.minCorner().getX() - 5, testZone.maxCorner().getX() + 5),
 					rand.nextDouble(testZone.minCorner().getY() - 5, testZone.maxCorner().getY() + 5),
 					rand.nextDouble(testZone.minCorner().getZ() - 5, testZone.maxCorner().getZ() + 5));
-				Zone treeZone = tree.getZones(test).get("default");
-				Zone fallbackZone = namespace.fallbackGetZone(test);
+				Zone treeZone = tree.getZonesLegacy(test).get("default");
+				Zone fallbackZone = namespace.fallbackGetZoneLegacy(test);
 				Assertions.assertSame(fallbackZone, treeZone, "Zone mismatch at " + test);
 			}
 		}

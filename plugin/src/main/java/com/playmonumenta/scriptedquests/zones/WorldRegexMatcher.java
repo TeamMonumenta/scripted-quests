@@ -46,7 +46,7 @@ public class WorldRegexMatcher {
 	}
 
 	// Only works for the patterns provided at matcher instantiation
-	protected boolean matches(World world, String worldRegex) {
+	public boolean matches(World world, String worldRegex) {
 		Set<String> matches = mWorldPatternMatches.get(world);
 		if (matches == null) {
 			return false;

@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.Nullable;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.util.Vector;
 
 /*
@@ -134,6 +136,14 @@ public class Zone extends ZoneBase {
 
 	public String getWorldRegex() {
 		return mWorldRegex;
+	}
+
+	public boolean matchesWorld(World world) {
+		return ZoneManager.getInstance().getWorldRegexMatcher().matches(world, mWorldRegex);
+	}
+
+	public boolean within(Location location) {
+		return matchesWorld(location.getWorld()) && within(location.toVector());
 	}
 
 	public String getName() {

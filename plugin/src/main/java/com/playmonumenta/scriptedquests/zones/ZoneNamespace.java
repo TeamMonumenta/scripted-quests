@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import javax.annotation.Nullable;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.util.Vector;
 import org.dynmap.DynmapCommonAPI;
 import org.dynmap.markers.AreaMarker;
@@ -109,7 +110,17 @@ public class ZoneNamespace {
 	/*
 	 * Use this only as a fallback; it's slower than using a zone tree.
 	 */
-	public @Nullable Zone fallbackGetZone(Vector loc) {
+	public @Nullable Zone fallbackGetZoneLegacy(Vector loc) {
+		for (Zone zone : mZones) {
+			if (zone.within(loc)) {
+				return zone;
+			}
+		}
+
+		return null;
+	}
+
+	public @Nullable Zone fallbackGetZone(Location loc) {
 		for (Zone zone : mZones) {
 			if (zone.within(loc)) {
 				return zone;
