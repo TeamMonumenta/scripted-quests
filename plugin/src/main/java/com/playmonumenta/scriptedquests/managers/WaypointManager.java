@@ -129,7 +129,7 @@ public class WaypointManager {
 					QuestLocation questLoc = entry.getValue();
 					List<Location> waypoints = questLoc.getWaypoints();
 
-					if (player == null || !player.isValid() || player.isDead() || !player.isOnline() || !questLoc.getLocation().getWorld().equals(player.getWorld()) || (mPrereqCounter == 0 && !questLoc.prerequisiteMet(player))) {
+					if (player == null || player.isDead() || !player.isOnline() || !questLoc.getLocation().getWorld().equals(player.getWorld()) || (mPrereqCounter == 0 && !questLoc.prerequisiteMet(player))) {
 						iter.remove();
 						continue;
 					}
