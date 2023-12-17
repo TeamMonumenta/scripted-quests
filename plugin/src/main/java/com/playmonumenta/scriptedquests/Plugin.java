@@ -122,6 +122,7 @@ public class Plugin extends JavaPlugin {
 		ImprovedClear.register();
 		ReloadZones.register(this);
 		GuiCommand.register(this);
+		TradesCommand.register();
 		ShowZones.register(this);
 		Music.register();
 
