@@ -369,9 +369,9 @@ public class ZoneManager {
 			mReloadingState.mWorldRegexMatcher = new WorldRegexMatcher(worldRegexes);
 			worldMatcherFuture.complete(null);
 		} else {
+			ZoneState reloadingState = mReloadingState;
 			Bukkit.getScheduler().scheduleSyncDelayedTask(mPlugin, () -> {
 				// Prevent the state from changing out from under us while we wait for sync code to be available
-				ZoneState reloadingState = mReloadingState;
 				reloadingState.mWorldRegexMatcher = new WorldRegexMatcher(worldRegexes);
 				// Mark as complete
 				worldMatcherFuture.complete(null);
@@ -434,7 +434,7 @@ public class ZoneManager {
 						// getZones() will use fallback zone lookup in this case
 						Map<String, Zone> currentZones = getZones(playerLocation);
 						// Need to check all namespace names, not just the ones the player is in
-						for (String namespaceName : mReloadingState.mNamespaces.keySet()) {
+						for (String namespaceName : mActiveState.mNamespaces.keySet()) {
 							Zone currentZone = currentZones.get(namespaceName);
 							// Handles comparing to previous zone if needed
 							applyZoneChange(player, namespaceName, currentZone);
