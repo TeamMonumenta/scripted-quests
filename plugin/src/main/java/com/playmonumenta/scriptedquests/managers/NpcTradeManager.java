@@ -123,6 +123,14 @@ public class NpcTradeManager implements Listener {
 		return mTraders.values().stream().flatMap(Collection::stream).toList();
 	}
 
+	public Collection<String> getTraderNames() {
+		return mTraders.keySet();
+	}
+
+	public List<NpcTrader> getTrades(String npc) {
+		return mTraders.get(QuestNpc.squashNpcName(npc));
+	}
+
 	/**
 	 * Initiates a player trade with a villager. Instead of trading with the villager directly,
 	 * we generate a fake merchant to do the trading. We override this trade event for multiple reasons:
@@ -135,81 +143,91 @@ public class NpcTradeManager implements Listener {
 	 * @param player   The player trading
 	 */
 	public void trade(Plugin plugin, Villager villager, Player player) {
-		ArrayList<MerchantRecipe> trades = new ArrayList<>();
+		List<NpcTrader> traderFiles = mTraders.getOrDefault(QuestNpc.squashNpcName(villager.getName()), Collections.emptyList());
+		trade(plugin, traderFiles, villager, villager.customName(), player);
+	}
+
+	public void trade(Plugin plugin, Collection<NpcTrader> traderFiles, @Nullable Villager villager, Component title, Player player) {
 		QuestContext context = new QuestContext(plugin, player, villager, false, null, player.getInventory().getItemInMainHand());
-		List<NpcTrader> traderFiles = mTraders.getOrDefault(QuestNpc.squashNpcName(villager.getName()), Collections.emptyList()).stream()
-			                              .filter(trader -> trader.areFilePrerequisitesMet(context))
-			                              .toList();
+		traderFiles = traderFiles.stream().filter(trader -> trader.areFilePrerequisitesMet(context)).toList();
+
+		ArrayList<MerchantRecipe> trades = new ArrayList<>();
 		StringBuilder lockedSlots = new StringBuilder();
 		StringBuilder vanillaSlots = new StringBuilder();
 		boolean modified = false;
 
 		Map<Integer, NpcTrade> slotProperties = new HashMap<>();
 
-		// Iterate over the villager recipes and filter out what shouldn't be there
-		// We need to tag the outer loop so inner loops can continue it
-		recipes: for (int i = 0; i < villager.getRecipeCount(); i++) {
-			MerchantRecipe recipe = villager.getRecipe(i);
+		if (villager != null) {
+			// Iterate over the villager recipes and filter out what shouldn't be there
+			// We need to tag the outer loop so inner loops can continue it
+			recipes:
+			for (int i = 0; i < villager.getRecipeCount(); i++) {
+				MerchantRecipe recipe = villager.getRecipe(i);
 
-			List<ItemStack> items = recipe.getIngredients();
-			items.add(recipe.getResult());
-			// Remove vanilla trades (those with a regular emerald in any slot)
-			for (ItemStack item : items) {
-				if (item != null
-				    && item.getType() == Material.EMERALD
-				    && !item.hasItemMeta()) {
-					// Found emerald with no item data
-					if (vanillaSlots.length() != 0) {
-						vanillaSlots.append(", ");
-					}
-					vanillaSlots.append(i);
-					modified = true;
-					continue recipes;
-				}
-			}
-
-			// Remove unmatched prereq trades
-			for (NpcTrader trader : traderFiles) {
-				NpcTrade trade = trader.getTrade(i);
-				if (trade != null) {
-					if (!trade.prerequisiteMet(new QuestContext(plugin, player, villager))) {
-						if (lockedSlots.length() != 0) {
-							lockedSlots.append(", ");
+				List<ItemStack> items = recipe.getIngredients();
+				items.add(recipe.getResult());
+				// Remove vanilla trades (those with a regular emerald in any slot)
+				for (ItemStack item : items) {
+					if (item != null
+						    && item.getType() == Material.EMERALD
+						    && !item.hasItemMeta()) {
+						// Found emerald with no item data
+						if (vanillaSlots.length() != 0) {
+							vanillaSlots.append(", ");
 						}
-						lockedSlots.append(i);
+						vanillaSlots.append(i);
 						modified = true;
 						continue recipes;
-					} else {
-						if (trade.getOverrideTradeItems() != null) {
-							MerchantRecipe newRecipe = new MerchantRecipe(trade.getOverrideTradeItems().get(2).clone(), recipe.getUses(), recipe.getMaxUses(), recipe.hasExperienceReward(), recipe.getVillagerExperience(), recipe.getPriceMultiplier(), recipe.getDemand(), recipe.getSpecialPrice(), recipe.shouldIgnoreDiscounts());
-							// items get cloned by setIngredients()
-							newRecipe.setIngredients(trade.getOverrideTradeItems().get(1) == null || trade.getOverrideTradeItems().get(1).getType() == Material.AIR
-								                         ? trade.getOverrideTradeItems().subList(0, 1) : trade.getOverrideTradeItems().subList(0, 2));
-							recipe = newRecipe;
-						}
+					}
+				}
 
-						NpcTrade previousTrade = slotProperties.put(trades.size(), trade);
-						if (previousTrade != null
-							    && (trade.getActions() != null || trade.getOverrideTradeItems() != null || trade.getCount() > 0)
-							    && (previousTrade.getActions() != null || previousTrade.getOverrideTradeItems() != null || previousTrade.getCount() > 0)) {
-							MMLog.warning("Duplicate active non-prerequisite-only trade for villager '" + villager.getName() + "' at index " + trade.getIndex());
+				// Remove unmatched prereq trades
+				for (NpcTrader trader : traderFiles) {
+					NpcTrade trade = trader.getTrade(i);
+					if (trade != null) {
+						if (!trade.prerequisiteMet(context)) {
+							if (lockedSlots.length() != 0) {
+								lockedSlots.append(", ");
+							}
+							lockedSlots.append(i);
+							modified = true;
+							continue recipes;
+						} else {
+							if (trade.getOverrideTradeItems() != null) {
+								if (trade.getOverrideTradeItems().stream().anyMatch(item -> item != null && item.getType() == Material.BARRIER)) {
+									continue;
+								}
+								MerchantRecipe newRecipe = new MerchantRecipe(trade.getOverrideTradeItems().get(2).clone(), recipe.getUses(), recipe.getMaxUses(), recipe.hasExperienceReward(), recipe.getVillagerExperience(), recipe.getPriceMultiplier(), recipe.getDemand(), recipe.getSpecialPrice(), recipe.shouldIgnoreDiscounts());
+								// items get cloned by setIngredients()
+								newRecipe.setIngredients(trade.getOverrideTradeItems().get(1) == null || trade.getOverrideTradeItems().get(1).getType() == Material.AIR
+									                         ? trade.getOverrideTradeItems().subList(0, 1) : trade.getOverrideTradeItems().subList(0, 2));
+								recipe = newRecipe;
+							}
+
+							NpcTrade previousTrade = slotProperties.put(trades.size(), trade);
+							if (previousTrade != null
+								    && (trade.getActions() != null || trade.getOverrideTradeItems() != null || trade.getCount() > 0)
+								    && (previousTrade.getActions() != null || previousTrade.getOverrideTradeItems() != null || previousTrade.getCount() > 0)) {
+								MMLog.warning("Duplicate active non-prerequisite-only trade for villager '" + villager.getName() + "' at index " + trade.getIndex());
+							}
 						}
 					}
 				}
-			}
 
-			// This trade was not filtered by any of the above checks. Add to the fake merchant
-			trades.add(recipe);
+				// This trade was not filtered by any of the above checks. Add to the fake merchant
+				trades.add(recipe);
+			}
 		}
 
 		// check added trades
 		TreeMap<Integer, NpcTrade> addedTrades = new TreeMap<>();
 		for (NpcTrader trader : traderFiles) {
 			for (NpcTrade trade : trader.getTrades()) {
-				if (trade.getIndex() >= villager.getRecipeCount() && trade.getOverrideTradeItems() != null) {
+				if ((villager == null || trade.getIndex() >= villager.getRecipeCount()) && trade.getOverrideTradeItems() != null) {
 					NpcTrade previousTrade = addedTrades.put(trade.getIndex(), trade);
 					if (previousTrade != null) {
-						MMLog.warning("Duplicate added trade for villager '" + villager.getName() + "' at index " + trade.getIndex());
+						MMLog.warning("Duplicate added trade for villager '" + (villager == null ? "<unknown>" : villager.getName()) + "' at index " + trade.getIndex());
 					}
 				}
 			}
@@ -217,6 +235,9 @@ public class NpcTradeManager implements Listener {
 		// add new trades after real ones
 		for (NpcTrade trade : addedTrades.values()) {
 			List<ItemStack> overrideTradeItems = Objects.requireNonNull(trade.getOverrideTradeItems()); // must have overrides to get here
+			if (overrideTradeItems.stream().anyMatch(item -> item != null && item.getType() == Material.BARRIER)) {
+				continue;
+			}
 			MerchantRecipe recipe = new MerchantRecipe(overrideTradeItems.get(2).clone(), 0, Integer.MAX_VALUE, false, 0,
 				0f, 0, 0, true);
 			// items get cloned by setIngredients()
@@ -283,13 +304,13 @@ public class NpcTradeManager implements Listener {
 				trade.setOriginalResult(originalResults.get(i));
 				eventTrades.add(trade);
 			}
-			TradeWindowOpenEvent tradeEvent = new TradeWindowOpenEvent(player, villager, eventTrades);
+			TradeWindowOpenEvent tradeEvent = new TradeWindowOpenEvent(player, villager, title, eventTrades);
 			Bukkit.getPluginManager().callEvent(tradeEvent);
 			if (!tradeEvent.isCancelled() && !tradeEvent.getTrades().isEmpty()) {
 				new BukkitRunnable() {
 					@Override
 					public void run() {
-						Merchant merchant = Bukkit.createMerchant(villager.customName());
+						Merchant merchant = Bukkit.createMerchant(title);
 						final List<TradeWindowOpenEvent.Trade> newEventTrades = tradeEvent.getTrades();
 						Map<Integer, NpcTrade> newSlotProperties = new HashMap<>();
 						for (int i = 0; i < newEventTrades.size(); i++) {
@@ -404,6 +425,12 @@ public class NpcTradeManager implements Listener {
 
 	private static class TraderEditCustomInventory extends CustomInventory {
 
+		private static final ItemStack UNDEFINED_ITEM = new ItemStack(Material.BARRIER);
+
+		static {
+			UNDEFINED_ITEM.editMeta(meta -> meta.displayName(Component.text("MISSING ITEM", NamedTextColor.DARK_RED)));
+		}
+
 		private final NpcTrader mTrader;
 		private int mPage = 0;
 
@@ -416,7 +443,7 @@ public class NpcTradeManager implements Listener {
 		/*
 		 * Layout: one trade per column
 		 * items per column:
-		 * - info item: index as count (and in lore), has prerequisites, has actions (also stored on the item)
+		 * - info item
 		 * - ingredient 1
 		 * - ingredient 2
 		 * - result
@@ -478,18 +505,17 @@ public class NpcTradeManager implements Listener {
 						NpcTrade trade = trades.get(index);
 						int overrideSlot = event.getSlot() / 9 - 1;
 						List<ItemStack> overrideTradeItems = trade.getOverrideTradeItems();
-						List<ItemStack> empty = Arrays.asList(
-							new ItemStack(Material.DIRT), null, new ItemStack(Material.DIRT));
+						List<ItemStack> empty = Arrays.asList(UNDEFINED_ITEM, null, UNDEFINED_ITEM);
 						if (overrideTradeItems == null) {
 							overrideTradeItems = new ArrayList<>(empty);
 							trade.setOverrideTradeItems(overrideTradeItems);
 						}
 						ItemStack oldItem = overrideTradeItems.get(overrideSlot);
-						overrideTradeItems.set(overrideSlot, event.getCursor() == null || event.getCursor().getType() == Material.AIR ? (overrideSlot == 1 ? null : new ItemStack(Material.DIRT)) : event.getCursor());
+						overrideTradeItems.set(overrideSlot, event.getCursor() == null || event.getCursor().getType() == Material.AIR ? (overrideSlot == 1 ? null : UNDEFINED_ITEM) : event.getCursor());
 						if (overrideTradeItems.equals(empty)) {
 							trade.setOverrideTradeItems(null);
 						}
-						event.getView().setCursor(oldItem == null || oldItem.getType() == Material.AIR || oldItem.equals(new ItemStack(Material.DIRT)) ? null : oldItem);
+						event.getView().setCursor(oldItem == null || oldItem.getType() == Material.AIR || oldItem.getType() == Material.BARRIER ? null : oldItem);
 						setup();
 					}
 				} else {
