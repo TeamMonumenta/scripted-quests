@@ -110,7 +110,7 @@ public class ZonesReferenceResolver {
 			}
 		}
 
-		protected List<JsonObject> resolve(Map<String, ZoneNamespaceFile> references, @Nullable String parentWorldRegex) throws Exception {
+		protected List<JsonObject> resolve(Map<String, List<ZoneNamespaceFile>> references, @Nullable String parentWorldRegex) throws Exception {
 			String worldRegex = parentWorldRegex;
 			if (mWorldRegex != null) {
 				worldRegex = mWorldRegex;
@@ -133,9 +133,11 @@ public class ZonesReferenceResolver {
 					continue;
 				}
 
-				ZoneNamespaceFile reference = references.get(refId);
-				if (reference != null) {
-					result.addAll(reference.resolve(references, worldRegex));
+				List<ZoneNamespaceFile> refFiles = references.get(refId);
+				if (refFiles != null) {
+					for (ZoneNamespaceFile refFile : refFiles) {
+						result.addAll(refFile.resolve(references, worldRegex));
+					}
 				} // Else case not required; handled by referenceCheck()
 			}
 
@@ -162,22 +164,19 @@ public class ZonesReferenceResolver {
 	private static class NamespaceResolver {
 		private final String mName;
 		private final List<ZoneNamespaceFile> mMainFiles = new ArrayList<>();
-		private final Map<String, ZoneNamespaceFile> mRefs = new HashMap<>();
+		private final Map<String, List<ZoneNamespaceFile>> mRefs = new HashMap<>();
 
 		protected NamespaceResolver(String name) {
 			mName = name;
 		}
 
-		protected void addFile(ZoneNamespaceFile namespaceFile) throws Exception {
+		protected void addFile(ZoneNamespaceFile namespaceFile) {
 			if (namespaceFile.mReferenceId == null) {
 				mMainFiles.add(namespaceFile);
 				return;
 			}
 
-			if (mRefs.put(namespaceFile.mReferenceId, namespaceFile) != null) {
-				throw new Exception("Detected multiple files for one ZoneNamespace with reference ID "
-					+ namespaceFile.mReferenceId + "!");
-			}
+			mRefs.computeIfAbsent(namespaceFile.mReferenceId, k -> new ArrayList<>()).add(namespaceFile);
 		}
 
 		protected ZoneNamespace resolve(Audience audience) throws Exception {
@@ -212,12 +211,14 @@ public class ZonesReferenceResolver {
 					throw new Exception("ZoneNamespace " + mName + " reference " + refId + " used multiple times!");
 				}
 
-				ZoneNamespaceFile reference = mRefs.get(refId);
-				if (reference == null) {
+				List<ZoneNamespaceFile> references = mRefs.get(refId);
+				if (references == null) {
 					throw new Exception("ZoneNamespace " + mName + " reference " + refId + " not found!");
 				}
 
-				toSearch.addAll(reference.mRequiredRefs);
+				for (ZoneNamespaceFile reference : references) {
+					toSearch.addAll(reference.mRequiredRefs);
+				}
 			}
 
 			for (String refId : mRefs.keySet()) {
