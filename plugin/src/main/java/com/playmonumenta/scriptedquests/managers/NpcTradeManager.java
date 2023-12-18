@@ -238,6 +238,9 @@ public class NpcTradeManager implements Listener {
 			if (overrideTradeItems.stream().anyMatch(item -> item != null && item.getType() == Material.BARRIER)) {
 				continue;
 			}
+			if (!trade.prerequisiteMet(context)) {
+				continue;
+			}
 			MerchantRecipe recipe = new MerchantRecipe(overrideTradeItems.get(2).clone(), 0, Integer.MAX_VALUE, false, 0,
 				0f, 0, 0, true);
 			// items get cloned by setIngredients()
