@@ -59,15 +59,26 @@ class UpdaterSixDotX(Updater):
 
         print(f'  - Updating {root} from 6.x to 7.0...')
 
-        #self.walk(root, 'zone_properties', self.update_zone_property_file)
+        self.walk(root, 'zone_properties', self.update_zone_property_file)
 
-        #self.walk(root, 'zone_property_groups', self.update_zone_property_group_file)
+        self.walk(root, 'zone_property_groups', self.update_zone_property_group_file)
 
-        """TODO:
-        
-        - Move zone layer folder to zone namespace...
-          - ...populating "world_name" with ".*" in files
-        """
+        zone_layers = root / "zone_layers"
+        zone_namespaces = root / "zone_namespaces"
+        if zone_namespaces.exists():
+            print(f'    - Found zone_namespaces, assuming already upgraded.')
+        elif not zone_layers.exists():
+            print('    - Did not find zone_layers, creating an empty zone_namespaces folder.')
+            try:
+                zone_namespaces.mkdir(mode=0o755, parents=True, exist_ok=True)
+            except Exception:
+                print('      - Failed!')
+        else:
+            print('    - Renaming zone_layers dir to zone_namespaces')
+            try:
+                zone_layers.rename(zone_namespaces)
+            except Exception:
+                print('      - Failed!')
 
 
     def update_zone_property_file(self, path):
