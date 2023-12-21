@@ -35,7 +35,6 @@
             "description": "A list of actions with associated prerequisites",
             "type": "array",
             "format": "tabs",
-            "minItems": 1,
             "items": {
                 "title": "Quest component",
                 "$ref": "quest_component.json"
