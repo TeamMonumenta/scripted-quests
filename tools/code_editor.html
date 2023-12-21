@@ -45,34 +45,7 @@
 
         // The schema for the editor
         schema: {
-            title: "Redeemable Code",
-            defaultProperties: [
-                "seed",
-                "quest_components"
-            ],
-            additionalProperties:false,
-            properties: {
-                seed: {
-                    required: true,
-                    propertyOrder: 1,
-                    title: "seed",
-                    description: "Unique randomizer seed which uniquely identifies this redeemable code",
-                    type: "string"
-                },
-                quest_components: {
-                    required: true,
-                    propertyOrder: 3,
-                    title: "quest_components",
-                    description: "A list of actions with associated prerequisites",
-                    type: "array",
-                    format: "tabs",
-                    minItems: 1,
-                    items: {
-                        title: "Quest component",
-                        $ref: "schema/quest_component.json",
-                    }
-                }
-            }
+            "$ref": "schema/code.json"
         }
     });
 

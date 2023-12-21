@@ -145,7 +145,7 @@ public class ZonesReferenceResolver {
 		}
 
 		private @Nullable String getRefId(JsonObject zoneObject) throws Exception {
-			JsonElement refElement = zoneObject.get("#ref");
+			JsonElement refElement = zoneObject.get("reference");
 			if (refElement == null) {
 				return null;
 			}

@@ -43,73 +43,7 @@
 
         // The schema for the editor
         schema: {
-            title: "Quest Compass",
-            defaultProperties: [
-                "quest_name",
-                "locations"
-            ],
-            additionalProperties:false,
-            properties: {
-                quest_name: {
-                    required: true,
-                    propertyOrder: 1,
-                    title: "Quest name",
-                    description: "Quest name as it appears above the quest compass and before each quest compass message",
-                    type: "string"
-                },
-                locations: {
-                    required: true,
-                    propertyOrder: 2,
-                    title: "locations",
-                    description: "A list of locations, messages, and requirements to display them",
-                    type: "array",
-                    format: "tabs",
-                    minItems: 1,
-                    items: {
-                        headerTemplate: "{{self.message}}",
-                        $ref: "#/definitions/quest_location"
-                    }
-                }
-            },
-            definitions: {
-                quest_location: {
-                    type: "object",
-                    // The object will start with only these properties
-                    defaultProperties: [
-                        "prerequisites",
-                        "waypoints",
-                        "message"
-                    ],
-                    additionalProperties:false,
-                    properties: {
-                        prerequisites: {
-                            required: true,
-                            propertyOrder: 1,
-                            $ref: "schema/prerequisites.json"
-                        },
-                        waypoints: {
-                            required: true,
-                            propertyOrder: 2,
-                            title: "waypoints",
-                            description: "Ordered list of waypoints to reach this objective",
-                            type: "array",
-                            format: "tabs",
-                            minItems: 1,
-                            items: {
-                                headerTemplate: "{{self.x}}, {{self.y}}, {{self.z}}",
-                                $ref: "schema/xyz.json"
-                            }
-                        },
-                        message: {
-                            required: true,
-                            propertyOrder: 4,
-                            title: "message",
-                            description: "Text to display in chat when checking a quest",
-                            type: "string"
-                        }
-                    }
-                }
-            }
+            $ref: "schema/quest_compass.json"
         }
     });
 

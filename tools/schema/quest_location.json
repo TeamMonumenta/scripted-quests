@@ -1,0 +1,36 @@
+{
+    "type": "object",
+    "defaultProperties": [
+        "prerequisites",
+        "waypoints",
+        "message"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "prerequisites": {
+            "required": true,
+            "propertyOrder": 1,
+            "$ref": "prerequisites.json"
+        },
+        "waypoints": {
+            "required": true,
+            "propertyOrder": 2,
+            "title": "waypoints",
+            "description": "Ordered list of waypoints to reach this objective",
+            "type": "array",
+            "format": "tabs",
+            "minItems": 1,
+            "items": {
+                "headerTemplate": "{{self.x}}, {{self.y}}, {{self.z}}",
+                "$ref": "xyz.json"
+            }
+        },
+        "message": {
+            "required": true,
+            "propertyOrder": 4,
+            "title": "message",
+            "description": "Text to display in chat when checking a quest",
+            "type": "string"
+        }
+    }
+}

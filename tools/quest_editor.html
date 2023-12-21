@@ -47,59 +47,7 @@
 
         // The schema for the editor
         schema: {
-            title: "Quest NPC",
-            defaultProperties: [
-                "npc",
-                "quest_components"
-            ],
-            additionalProperties:false,
-            properties: {
-                npc: {
-                    required: true,
-                    propertyOrder: 1,
-                    title: "npc",
-                    description: "NPC's name. Will be the NPC's display_name if that is not specified. Any characters except a-zA-Z0-9 will be stripped to create a condensed name to use with /interactnpc",
-                    type: "string"
-                },
-                display_name: {
-                    propertyOrder: 2,
-                    title: "display_name",
-                    description: "NPC's name as displayed in chat messages sent from the NPC. Can contain spaces and technically colors, though use of colors is discouraged here.",
-                    type: "string"
-                },
-                entity_type: {
-                    propertyOrder: 3,
-                    title: "entity_type",
-                    description: "Bukkit/Spigot EntityType. Can be any of these choices: VILLAGER (default), ARMOR_STAND, BAT, BLAZE, CAVE_SPIDER, CHICKEN, COW, CREEPER, DONKEY, ELDER_GUARDIAN, ENDER_DRAGON, ENDERMAN, ENDERMITE, EVOKER, GHAST, GIANT, GUARDIAN, HORSE, HUSK, ILLUSIONER, IRON_GOLEM, LLAMA, MAGMA_CUBE, MULE, MUSHROOM_COW, OCELOT, PARROT, PIG, PIG_ZOMBIE, POLAR_BEAR, RABBIT, SHEEP, SHULKER, SILVERFISH, SKELETON, SKELETON_HORSE, SLIME, SNOWMAN, SPIDER, SQUID, STRAY, VEX, VINDICATOR, WITCH, WITHER, WITHER_SKELETON, WOLF, ZOMBIE, ZOMBIE_HORSE, ZOMBIE_VILLAGER",
-                    type: "string"
-                },
-                file_prerequisites: {
-                    propertyOrder: 4,
-                    required: false,
-                    title: "file_prerequisites",
-                    description: "Prerequisites for this NPC file. If these prerequisites exist and are not met, none of the quest actions in this file will execute, and the visibility_prerequisites in this file won't be checked.<br/>You might want to use <b>use_npc_for_prereqs</b> for these prerequisites.",
-                    $ref: "schema/prerequisites.json"
-                },
-                quest_components: {
-                    required: true,
-                    propertyOrder: 5,
-                    title: "quest_components",
-                    description: "A list of actions with associated prerequisites",
-                    type: "array",
-                    format: "tabs",
-                    minItems: 1,
-                    items: {
-                        title: "Quest component",
-                        $ref: "schema/quest_component.json",
-                    }
-                },
-                visibility_prerequisites: {
-                    propertyOrder: 6,
-                    title: "visibility_prerequisites",
-                    description: "Prerequisites for the NPC to appear to a player. This is checked often, so should preferably be relatively simple (try not using items_in_inventory checks) - note that 'file_prerequisites' is checked together with this, so that should also be kept simple. Players in creative or spectator mode will always see all NPCs. An entity with such a prerequisite must not be riding another entity or have passengers itself.",
-                    $ref: "schema/prerequisites.json"
-                }
-            }
+            $ref: "schema/quest.json"
         }
     });
 
