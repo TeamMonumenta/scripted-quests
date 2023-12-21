@@ -59,29 +59,135 @@ class UpdaterSixDotX(Updater):
 
         print(f'  - Updating {root} from 6.x to 7.0...')
 
-        self.walk(root, 'zone_properties', self.update_zone_property_file)
+        #self.walk(root, 'zone_properties', self.update_zone_property_file)
+
+        #self.walk(root, 'zone_property_groups', self.update_zone_property_group_file)
 
         """TODO:
         
-        - Also walk through zone property groups
-        - Move zone layer folder to zone namespace, populating "world_name" with ".*" in files
+        - Move zone layer folder to zone namespace...
+          - ...populating "world_name" with ".*" in files
         """
 
 
     def update_zone_property_file(self, path):
-        """Updates a Zone Properties file from 6.x to 7.0."""
+        """Updates a Zone Property file from 6.x to 7.0."""
 
         short_path = self.shorten_path(path)
 
-        print(f'      - Updating zone properties file {short_path}...')
+        print(f'      - Updating zone property file {short_path}...', end='')
 
-        """TODO:
-        
-        - Load json file to dict
-        - Copy properties in priority order, swapping layer for namespace
-          - Skip if layer not found and do not save
-        - Save it back (there will always be changes)
-        """
+        old_data = None
+        try:
+            with path.open('r', encoding='utf-8-sig') as fp:
+                old_data = json.load(fp)
+        except Exception:
+            print('Could not read file!')
+            return
+
+        new_data = {}
+
+        namespace = old_data.get("layer", None)
+        if not isinstance(namespace, str):
+            if "namespace" in old_data:
+                print("Already updated")
+                return
+            print('Could not get "layer" field!')
+            return
+        new_data["namespace"] = namespace
+
+        name = old_data.get("name", None)
+        if not isinstance(name, str):
+            print('Could not get "name" field!')
+            return
+        new_data["name"] = name
+
+        display_name = old_data.get("display_name", None)
+        if isinstance(display_name, str):
+            new_data["display_name"] = display_name
+
+        quest_components = old_data.get("quest_components", None)
+        if type(quest_components) != list:
+            print('Could not get "quest_components" field!')
+            return
+        new_data["quest_components"] = quest_components
+
+        events = old_data.get("events", None)
+        if events is not None:
+            new_data["events"] = events
+
+        try:
+            with path.open('w', encoding='utf-8') as fp:
+                json.dump(
+                    new_data,
+                    fp,
+                    ensure_ascii=False,
+                    indent=2,
+                    separators=(',', ': '),
+                    sort_keys=False
+                )
+                fp.write("\n")
+
+            print("Done.")
+        except Exception:
+            print('Could not overwrite file!')
+            return
+
+
+    def update_zone_property_group_file(self, path):
+        """Updates a Zone Property Group file from 6.x to 7.0."""
+
+        short_path = self.shorten_path(path)
+
+        print(f'      - Updating zone property file {short_path}...', end='')
+
+        old_data = None
+        try:
+            with path.open('r', encoding='utf-8-sig') as fp:
+                old_data = json.load(fp)
+        except Exception:
+            print('Could not read file!')
+            return
+
+        new_data = {}
+
+        namespace = old_data.get("layer", None)
+        if not isinstance(namespace, str):
+            if "namespace" in old_data:
+                print("Already updated")
+                return
+            print('Could not get "layer" field!')
+            return
+        new_data["namespace"] = namespace
+
+        name = old_data.get("name", None)
+        if not isinstance(name, str):
+            print('Could not get "name" field!')
+            return
+        new_data["name"] = name
+
+        properties = old_data.get("properties", None)
+        if type(properties) != list:
+            print('Could not get "properties" field!')
+            return
+        new_data["properties"] = properties
+
+        try:
+            with path.open('w', encoding='utf-8') as fp:
+                json.dump(
+                    new_data,
+                    fp,
+                    ensure_ascii=False,
+                    indent=2,
+                    separators=(',', ': '),
+                    sort_keys=False
+                )
+                fp.write("\n")
+
+            print("Done.")
+        except Exception:
+            print('Could not overwrite file!')
+            return
 
 
 all_updaters["6.x"] = UpdaterSixDotX
