@@ -59,6 +59,17 @@
 						"minimum": 1,
 						"maximum": 29999984,
 						"description": "When set, completing the trade awards this many of the result item. The item's name in the trade displays the count, or the number of stacks if it is a whole number."
+					},
+					"override_items": {
+						"required": false,
+						"propertyOrder": 5,
+						"description": "Items to override this trade with, or add a trade if the index is larger than any existing trade. Can be edited in-game with /sqtrades",
+						"type": "array",
+						"minItems": 3,
+						"maxItems": 3,
+						"items": {
+							"type": "string"
+						}
 					}
 				}
             }

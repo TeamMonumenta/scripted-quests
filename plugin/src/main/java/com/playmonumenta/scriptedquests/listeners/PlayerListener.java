@@ -6,6 +6,7 @@ import com.playmonumenta.scriptedquests.managers.SongManager;
 import com.playmonumenta.scriptedquests.point.Point;
 import com.playmonumenta.scriptedquests.quests.QuestDeath.DeathActions;
 import com.playmonumenta.scriptedquests.quests.components.DeathLocation;
+import com.playmonumenta.scriptedquests.trades.NpcTrader;
 import com.playmonumenta.scriptedquests.utils.MetadataUtils;
 import com.playmonumenta.scriptedquests.zones.ZoneManager;
 import java.util.ArrayList;
@@ -122,6 +123,14 @@ public class PlayerListener implements Listener {
 			event.setCancelled(true);
 			if (!villager.isTrading() && MetadataUtils.checkOnceThisTick(mPlugin, player, "ScriptedQuestsTraderNonce")) {
 				mPlugin.mTradeManager.trade(mPlugin, villager, player);
+			}
+		} else {
+			List<NpcTrader> trades = mPlugin.mTradeManager.getTrades(entity.getName());
+			if (trades != null) {
+				event.setCancelled(true);
+				if (MetadataUtils.checkOnceThisTick(mPlugin, player, "ScriptedQuestsTraderNonce")) {
+					mPlugin.mTradeManager.trade(mPlugin, trades, null, entity.customName(), player);
+				}
 			}
 		}
 		if (mPlugin.mInteractableManager.interactEntityEvent(mPlugin, player, item, entity)) {
