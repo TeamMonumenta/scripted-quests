@@ -161,6 +161,32 @@
                             }
                         }
                     }
+                },
+                "entity_death": {
+                    "propertyOrder": 4,
+                    "type": "array",
+                    "title": "Entity Death",
+                    "description": "Fired when a non-player entity is killed by a player.",
+                    "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                            "entity_names": {
+                                "propertyOrder": 1,
+                                "type": "array",
+                                "title": "entity_names",
+                                "description": "Names of the entities that trigger this event.",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "command": {
+                                "propertyOrder": 2,
+                                "title": "command",
+                                "description": "Command to execute when this event fires. Will be run as the killer, at the position of the entity that died.",
+                                "type": "string"
+                            }
+                        }
+                    }
                 }
             }
         }
