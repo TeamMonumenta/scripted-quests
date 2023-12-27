@@ -94,25 +94,6 @@ public class Zone extends ZoneBase {
 		return new Zone(namespace, worldRegexStr, pos1, pos2, name, properties);
 	}
 
-	private static List<String> getProperties(@Nullable JsonElement propertiesElement) throws Exception {
-		if (propertiesElement == null) {
-			throw new Exception("Failed to parse 'properties'");
-		}
-		@Nullable JsonArray propertiesArray = propertiesElement.getAsJsonArray();
-		if (propertiesArray == null) {
-			throw new Exception("Failed to parse 'properties'");
-		}
-		List<String> rawProperties = new ArrayList<>();
-		for (JsonElement element : propertiesArray) {
-			String propertyName = element.getAsString();
-			if (propertyName == null || propertyName.isBlank()) {
-				throw new Exception("Property may not be empty");
-			}
-			rawProperties.add(propertyName);
-		}
-		return rawProperties;
-	}
-
 	/*
 	 * pos1 and pos2 are used similar to /fill:
 	 * - Both are inclusive coordinates.
@@ -152,6 +133,25 @@ public class Zone extends ZoneBase {
 
 	public String getName() {
 		return mName;
+	}
+
+	private static List<String> getProperties(@Nullable JsonElement propertiesElement) throws Exception {
+		if (propertiesElement == null) {
+			throw new Exception("Failed to parse 'properties'");
+		}
+		@Nullable JsonArray propertiesArray = propertiesElement.getAsJsonArray();
+		if (propertiesArray == null) {
+			throw new Exception("Failed to parse 'properties'");
+		}
+		List<String> rawProperties = new ArrayList<>();
+		for (JsonElement element : propertiesArray) {
+			String propertyName = element.getAsString();
+			if (propertyName == null || propertyName.isBlank()) {
+				throw new Exception("Property may not be empty");
+			}
+			rawProperties.add(propertyName);
+		}
+		return rawProperties;
 	}
 
 	public Set<String> getProperties() {
