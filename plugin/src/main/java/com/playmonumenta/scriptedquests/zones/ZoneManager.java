@@ -31,7 +31,7 @@ import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
 public class ZoneManager {
 	// Used to swap the active state when reloading zones
-	private static class ZoneState {
+	public static class ZoneState {
 		protected final Map<String, ZoneNamespace> mNamespaces = new HashMap<>();
 		protected @MonotonicNonNull WorldRegexMatcher mWorldRegexMatcher = null;
 		protected @MonotonicNonNull ZoneTreeBase mZoneTree = null;
@@ -41,6 +41,8 @@ public class ZoneManager {
 
 	private final Plugin mPlugin;
 	private static @MonotonicNonNull ZoneManager INSTANCE = null;
+	// For test case code ONLY
+	private static boolean IS_TEST_MODE = false;
 	static @MonotonicNonNull BukkitRunnable mPlayerTracker = null;
 	static @Nullable BukkitRunnable mAsyncReloadHandler = null;
 
@@ -461,7 +463,9 @@ public class ZoneManager {
 			}
 		};
 
-		mPlayerTracker.runTaskTimer(plugin, 0, 1);
+		if (!IS_TEST_MODE) {
+			mPlayerTracker.runTaskTimer(plugin, 0, 1);
+		}
 
 		mReloadRequesters.sendMessage(Component.text("Zones reloaded successfully.", NamedTextColor.GOLD));
 	}
