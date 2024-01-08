@@ -1,5 +1,6 @@
 package com.playmonumenta.scriptedquests.zones;
 
+import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -7,6 +8,8 @@ import java.util.Map;
 import java.util.Set;
 import javax.annotation.Nullable;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.dynmap.DynmapCommonAPI;
@@ -18,7 +21,7 @@ public abstract class ZoneTreeBase {
 
 	protected static ZoneTreeBase createZoneTree(List<ZoneFragment> zones) throws Exception {
 		ZoneTreeBase result;
-		if (zones.size() == 0) {
+		if (zones.isEmpty()) {
 			result = new ZoneTreeEmpty();
 		} else if (zones.size() == 1) {
 			result = new ZoneTreeLeaf(zones.get(0));
@@ -49,50 +52,79 @@ public abstract class ZoneTreeBase {
 	/*
 	 * For a given location, return the zones that contain it.
 	 */
-	public Map<String, Zone> getZones(Vector loc) {
-		@Nullable ZoneFragment fragment = getZoneFragment(loc);
+	public Map<String, Zone> getZones(Location location) {
+		@Nullable ZoneFragment fragment = getZoneFragment(location.toVector());
 
 		if (fragment == null) {
 			return new HashMap<>();
 		}
 
-		return fragment.getParents();
+		return fragment.getParents(location.getWorld());
+	}
+
+	// Avoid using this except for test code; searching by world is more efficient
+	public Map<String, Zone> getZones(String worldName, Vector loc) {
+		Map<String, Zone> result = new HashMap<>();
+
+		@Nullable ZoneFragment fragment = getZoneFragment(loc);
+
+		if (fragment == null) {
+			return result;
+		}
+
+		for (Map.Entry<String, List<Zone>> parentsEntry : fragment.getParents().entrySet()) {
+			String namespace = parentsEntry.getKey();
+			for (Zone parent : parentsEntry.getValue()) {
+				if (parent.matchesWorld(worldName)) {
+					result.put(namespace, parent);
+					break;
+				}
+			}
+		}
+
+		return result;
 	}
 
 	/*
 	 * Returns all zones that overlap a bounding box, optionally including eclipsed zones.
 	 */
-	public Set<Zone> getZones(BoundingBox bb, boolean includeEclipsed) {
+	public Set<Zone> getZones(World world, BoundingBox bb, boolean includeEclipsed) {
 		Set<Zone> result = new HashSet<>();
 		for (ZoneFragment fragment : getZoneFragments(bb)) {
 			if (includeEclipsed) {
-				for (List<Zone> zones : fragment.getParentsAndEclipsed().values()) {
+				for (List<Zone> zones : fragment.getParentsAndEclipsed(world).values()) {
 					result.addAll(zones);
 				}
 			} else {
-				result.addAll(fragment.getParents().values());
+				result.addAll(fragment.getParents(world).values());
 			}
 		}
 		return result;
 	}
 
 	/*
-	 * For a given location and layer name, return the zone that contains it.
-	 * Returns null if no zone overlaps it on that layer.
+	 * For a given location and namespace name, return the zone that contains it.
+	 * Returns null if no zone overlaps it on that namespace.
 	 */
-	public @Nullable Zone getZone(Vector loc, String layer) {
-		@Nullable ZoneFragment fragment = getZoneFragment(loc);
+	public @Nullable Zone getZone(Location loc, String namespaceName) {
+		@Nullable ZoneFragment fragment = getZoneFragment(loc.toVector());
 
 		if (fragment == null) {
 			return null;
 		}
 
-		return fragment.getParent(layer);
+		World world = loc.getWorld();
+		for (Zone zone : fragment.getParentAndEclipsed(namespaceName)) {
+			if (zone.matchesWorld(world)) {
+				return zone;
+			}
+		}
+		return null;
 	}
 
-	public boolean hasProperty(Vector loc, String layerName, String propertyName) {
-		@Nullable ZoneFragment fragment = getZoneFragment(loc);
-		return fragment != null && fragment.hasProperty(layerName, propertyName);
+	public boolean hasProperty(Location loc, String namespaceName, String propertyName) {
+		@Nullable ZoneFragment fragment = getZoneFragment(loc.toVector());
+		return fragment != null && fragment.hasProperty(loc.getWorld(), namespaceName, propertyName);
 	}
 
 	public int fragmentCount() {
@@ -123,7 +155,7 @@ public abstract class ZoneTreeBase {
 			return;
 		}
 
-		String markerSetId = ZoneLayer.DYNMAP_PREFIX + "Tree";
+		String markerSetId = ZoneNamespace.DYNMAP_PREFIX + "Tree";
 		@Nullable MarkerSet markerSet = markerHook.getMarkerSet(markerSetId);
 		if (markerSet != null) {
 			// Delete old marker set
@@ -137,4 +169,11 @@ public abstract class ZoneTreeBase {
 	}
 
 	protected abstract void refreshDynmapTree(MarkerSet markerSet, int parentR, int parentG, int parentB);
+
+	public void print(PrintStream out) {
+		print(out, "");
+	}
+
+	protected abstract void print(PrintStream out, String indentation);
+
 }

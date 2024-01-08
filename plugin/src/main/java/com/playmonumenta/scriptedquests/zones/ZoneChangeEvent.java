@@ -8,14 +8,14 @@ import org.bukkit.event.HandlerList;
 public class ZoneChangeEvent extends Event {
 	private static final HandlerList handlers = new HandlerList();
 
-	private final String mLayer;
+	private final String mNamespaceName;
 	private final Player mPlayer;
 	private final @Nullable Zone mFromZone;
 	private final @Nullable Zone mToZone;
 
-	public ZoneChangeEvent(Player player, String layer, @Nullable Zone from, @Nullable Zone to) {
+	public ZoneChangeEvent(Player player, String namespaceName, @Nullable Zone from, @Nullable Zone to) {
 		mPlayer = player;
-		mLayer = layer;
+		mNamespaceName = namespaceName;
 		mFromZone = from;
 		mToZone = to;
 	}
@@ -24,8 +24,8 @@ public class ZoneChangeEvent extends Event {
 		return mPlayer;
 	}
 
-	public String getLayer() {
-		return mLayer;
+	public String getNamespaceName() {
+		return mNamespaceName;
 	}
 
 	public @Nullable Zone getFromZone() {

@@ -1,0 +1,36 @@
+{
+    "title": "Player Clickable Command",
+    "defaultProperties": [
+        "label",
+        "quest_components"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "label": {
+            "required": true,
+            "propertyOrder": 1,
+            "title": "label",
+            "description": "Unique label that identifies this player-sent clickable interaction",
+            "type": "string"
+        },
+        "display_name": {
+            "propertyOrder": 2,
+            "title": "display_name",
+            "description": "Optional display name of the NPC, necessary if regular text is used in dialog",
+            "type": "string"
+        },
+        "quest_components": {
+            "required": true,
+            "propertyOrder": 3,
+            "title": "quest_components",
+            "description": "A list of actions with associated prerequisites",
+            "type": "array",
+            "format": "tabs",
+            "minItems": 1,
+            "items": {
+                "title": "Quest component",
+                "$ref": "quest_component.json"
+            }
+        }
+    }
+}

@@ -11,6 +11,7 @@ import java.io.StringWriter;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -137,13 +138,7 @@ public class MessagingUtils {
 		player.sendMessage(formattedMessage);
 	}
 
-	public static void sendStackTrace(CommandSender sender, Exception e) {
-		Set<CommandSender> senders = new HashSet<>();
-		senders.add(sender);
-		sendStackTrace(senders, e);
-	}
-
-	public static void sendStackTrace(Set<CommandSender> senders, Exception e) {
+	public static void sendStackTrace(Audience audience, Exception e) {
 		TextComponent formattedMessage;
 		String errorMessage = e.getLocalizedMessage();
 		if (errorMessage != null) {
@@ -162,11 +157,7 @@ public class MessagingUtils {
 
 		TextComponent textStackTrace = Component.text(sStackTrace.replace("\t", "  "), NamedTextColor.RED);
 		formattedMessage = formattedMessage.hoverEvent(textStackTrace);
-		for (CommandSender sender : senders) {
-			if (sender != null) {
-				sender.sendMessage(formattedMessage);
-			}
-		}
+		audience.sendMessage(formattedMessage);
 
 		e.printStackTrace();
 	}

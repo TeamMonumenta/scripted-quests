@@ -33,8 +33,15 @@ dependencies {
     compileOnly("org.dynmap:DynmapCoreAPI:2.0")
     compileOnly("com.playmonumenta:redissync:3.5")
     compileOnly("com.comphenix.protocol:ProtocolLib:4.7.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
+    testImplementation("org.mockito:mockito-junit-jupiter:5.8.0")
+    testImplementation("com.github.seeseemelk:MockBukkit-v1.20:3.9.0")
     errorprone("com.google.errorprone:error_prone_core:2.10.0")
     errorprone("com.uber.nullaway:nullaway:0.9.5")
+}
+configurations {
+    testCompileOnly.get().extendsFrom(compileOnly.get())
 }
 
 group = "com.playmonumenta"
@@ -107,15 +114,34 @@ tasks.withType<JavaCompile>().configureEach {
 
         /*** Disabled checks ***/
         // These we almost certainly don't want
-        check("InlineMeSuggester", CheckSeverity.OFF) // We won't keep deprecated stuff around long enough for this to matter
+        check(
+            "InlineMeSuggester",
+            CheckSeverity.OFF
+        ) // We won't keep deprecated stuff around long enough for this to matter
         check("CatchAndPrintStackTrace", CheckSeverity.OFF) // This is the primary way a lot of exceptions are handled
-        check("FutureReturnValueIgnored", CheckSeverity.OFF) // This one is dumb and doesn't let you check return values with .whenComplete()
-        check("ImmutableEnumChecker", CheckSeverity.OFF) // Would like to turn this on but we'd have to annotate a bunch of base classes
-        check("LockNotBeforeTry", CheckSeverity.OFF) // Very few locks in our code, those that we have are simple and refactoring like this would be ugly
+        check(
+            "FutureReturnValueIgnored",
+            CheckSeverity.OFF
+        ) // This one is dumb and doesn't let you check return values with .whenComplete()
+        check(
+            "ImmutableEnumChecker",
+            CheckSeverity.OFF
+        ) // Would like to turn this on but we'd have to annotate a bunch of base classes
+        check(
+            "LockNotBeforeTry",
+            CheckSeverity.OFF
+        ) // Very few locks in our code, those that we have are simple and refactoring like this would be ugly
         check("StaticAssignmentInConstructor", CheckSeverity.OFF) // We have tons of these on purpose
         check("StringSplitter", CheckSeverity.OFF) // We have a lot of string splits too which are fine for this use
-        check("MutablePublicArray", CheckSeverity.OFF) // These are bad practice but annoying to refactor and low risk of actual bugs
+        check(
+            "MutablePublicArray",
+            CheckSeverity.OFF
+        ) // These are bad practice but annoying to refactor and low risk of actual bugs
     }
+}
+
+tasks.named<Test>("test") {
+    useJUnitPlatform()
 }
 
 publishing {

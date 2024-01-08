@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>ScriptedQuests Zone Namespace Editor</title>
+
+    <!-- Foundation CSS framework (Bootstrap and jQueryUI also supported) -->
+    <link rel='stylesheet' href='//cdn.jsdelivr.net/bootstrap/3.2.0/css/bootstrap.css'>
+    <!-- Font Awesome icons (Bootstrap, Foundation, and jQueryUI also supported) -->
+    <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.6.1/css/all.css'>
+
+    <script src="https://cdn.jsdelivr.net/npm/@json-editor/json-editor@2.12.0/dist/jsoneditor.min.js"></script>
+</head>
+<body>
+<div class='container'>
+    <div class='row' style='padding-bottom: 15px;'>
+        <div class='col-md-12'>
+            <h1>ScriptedQuests Zone Namespace Editor</h1>
+            <p>A zone namespace is a list of zones, split into one or more files. Files load in <a href="https://en.wikipedia.org/wiki/ASCII#Character_order">asciibetical order</a>, with zones from earlier files overriding those in later files. Zones higher up in a namespace file override zones lower down in the same namespace file, but namespaces are independent of each other - overlapping zones in separate namespaces will both be in effect. You may also insert a reference (#ref) to a reference zone namespace file in the place of a zone to insert its contents at that point in the current file.</p>
+            <br>
+            <a href="https://minecraft.wiki/w/Formatting_codes">Minecraft Formatting Codes</a>
+        </div>
+    </div>
+    <div class='row' style='padding-bottom: 15px;'>
+        <div class='col-md-12'>
+            <button id='restore' class='btn btn-info'>Restore to Default</button>
+            <span id='valid_indicator' class='label label-success'></span>
+        </div>
+    </div>
+    <div class='row'>
+        <div class='col-md-12'>
+            <div id='editor_holder'></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Initialize the editor
+    var editor = new JSONEditor(document.getElementById('editor_holder'),{
+        theme: 'bootstrap3',
+        iconlib: 'fontawesome5',
+
+        // Enable fetching schemas via ajax
+        ajax: true,
+
+        // The schema for the editor
+        schema: {
+            $ref: "schema/zone_namespace.json"
+        }
+    });
+
+    // Hook up the Restore to Default button
+    document.getElementById('restore').addEventListener('click',function() {
+        editor.setValue(starting_value);
+    });
+
+    // Hook up the validation indicator to update its
+    // status whenever the editor changes
+    editor.on('change',function() {
+        // Get an array of errors from the validator
+        var errors = editor.validate();
+
+        var indicator = document.getElementById('valid_indicator');
+
+        // Not valid
+        if(errors.length) {
+            indicator.className = 'label label-danger'
+            indicator.textContent = "not valid";
+        }
+        // Valid
+        else {
+            indicator.className = 'label label-success'
+            indicator.textContent = "valid";
+        }
+    });
+</script>
+</body>
+</html>

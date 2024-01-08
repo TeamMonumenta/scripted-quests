@@ -1,0 +1,92 @@
+{
+    "title": "Interactable",
+    "defaultProperties": [
+        "material",
+        "click_types",
+        "cancel_event",
+        "quest_components"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "material": {
+            "required": true,
+            "propertyOrder": 1,
+            "title": "material",
+            "description": "Matches if the item type is exactly this Material, or one of these materials if multiple. List of available materials can be found here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html",
+            "options": {
+                "keep_oneof_values": false
+            },
+            "oneOf": [
+                {
+                    "title": "One material",
+                    "type": "string"
+                },
+                {
+                    "title": "Multiple materials",
+                    "type": "array",
+                    "minItems": 2,
+                    "items": {
+                        "title": "material",
+                        "type": "string"
+                    }
+                }
+            ]
+        },
+        "click_types": {
+            "required": true,
+            "propertyOrder": 2,
+            "title": "click_types",
+            "description": "The types of clicks that will run the components. right_click_functional only applies to functional blocks like chests, furnaces, crafting tables, etc.",
+            "type": "array",
+            "format": "checkbox",
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "enum": [
+                    "right_click_air",
+                    "right_click_block",
+                    "right_click_entity",
+                    "right_click_functional",
+                    "right_click_inventory",
+                    "left_click_air",
+                    "left_click_block",
+                    "left_click_entity",
+                    "left_click_inventory",
+                    "swap_hands",
+                    "swap_hands_inventory"
+                ]
+            }
+        },
+        "cancel_event": {
+            "required": false,
+            "propertyOrder": 3,
+            "title": "cancel event",
+            "description": "If any component has all of its prerequisites succeed, stop actions such as opening chests, clicking buttons, throwing ender pearls, etc.",
+            "type": "boolean",
+            "format": "checkbox",
+            "default": false
+        },
+        "allow_item_on_cooldown": {
+            "required": false,
+            "propertyOrder": 4,
+            "title": "allow item on cooldown",
+            "description": "If false (the default), will ignore this interactible if the base material is on cooldown for the player.",
+            "type": "boolean",
+            "format": "checkbox",
+            "default": false
+        },
+        "quest_components": {
+            "required": true,
+            "propertyOrder": 5,
+            "title": "quest_components",
+            "description": "A list of actions with associated prerequisites",
+            "type": "array",
+            "format": "tabs",
+            "minItems": 1,
+            "items": {
+                "title": "Quest component",
+                "$ref": "quest_component.json"
+            }
+        }
+    }
+}

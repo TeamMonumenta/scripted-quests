@@ -20,7 +20,7 @@
             <br>
             <a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html">Entity Types</a>
             <br>
-            <a href="https://minecraft.gamepedia.com/Formatting_codes">Minecraft Formatting Codes</a>
+            <a href="https://minecraft.wiki/w/Formatting_codes">Minecraft Formatting Codes</a>
         </div>
     </div>
     <div class='row' style='padding-bottom: 15px;'>
@@ -47,40 +47,7 @@
 
         // The schema for the editor
         schema: {
-            title: "Player Clickable Command",
-            defaultProperties: [
-                "label",
-                "quest_components"
-            ],
-            additionalProperties:false,
-            properties: {
-                label: {
-                    required: true,
-                    propertyOrder: 1,
-                    title: "label",
-                    description: "Unique label that identifies this player-sent clickable interaction",
-                    type: "string"
-                },
-                display_name: {
-                    propertyOrder: 2,
-                    title: "display_name",
-                    description: "Optional display name of the NPC, necessary if regular text is used in dialog",
-                    type: "string"
-                },
-                quest_components: {
-                    required: true,
-                    propertyOrder: 3,
-                    title: "quest_components",
-                    description: "A list of actions with associated prerequisites",
-                    type: "array",
-                    format: "tabs",
-                    minItems: 1,
-                    items: {
-                        title: "Quest component",
-                        $ref: "schema/quest_component.json",
-                    }
-                }
-            }
+            $ref: "schema/clickable.json"
         }
     });
 

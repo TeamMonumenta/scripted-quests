@@ -1,0 +1,30 @@
+{
+    "title": "Quest Compass",
+    "defaultProperties": [
+        "quest_name",
+        "locations"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "quest_name": {
+            "required": true,
+            "propertyOrder": 1,
+            "title": "Quest name",
+            "description": "Quest name as it appears above the quest compass and before each quest compass message",
+            "type": "string"
+        },
+        "locations": {
+            "required": true,
+            "propertyOrder": 2,
+            "title": "locations",
+            "description": "A list of locations, messages, and requirements to display them",
+            "type": "array",
+            "format": "tabs",
+            "minItems": 1,
+            "items": {
+                "headerTemplate": "{{self.message}}",
+                "$ref": "quest_location.json"
+            }
+        }
+    }
+}

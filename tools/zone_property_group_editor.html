@@ -43,39 +43,7 @@
 
         // The schema for the editor
         schema: {
-            title: "Zone Property",
-            defaultProperties: [
-                "layer",
-                "name",
-                "properties"
-            ],
-            additionalProperties:false,
-            properties: {
-                layer: {
-                    required: true,
-                    propertyOrder: 1,
-                    title: "layer",
-                    description: "A property layer; different layers do not interact or override each other",
-                    type: "string",
-                    default: "default"
-                },
-                name: {
-                    required: true,
-                    propertyOrder: 2,
-                    title: "name",
-                    description: "Unique property group name (without # prefix).",
-                    type: "string"
-                },
-                properties: {
-                    propertyOrder: 3,
-                    title: "properties",
-                    description: "A list of properties for this zone, in order. Property groups are identified by the prefix '#'. Properties that are not desired from a group can be removed with the prefix '!', as if it was never there.",
-                    type: "array",
-                    items: {
-                        type: "string"
-                    }
-                }
-            }
+            "$ref": "schema/zone_property_group.json"
         }
     });
 

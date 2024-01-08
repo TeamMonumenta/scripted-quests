@@ -2,16 +2,15 @@ package com.playmonumenta.scriptedquests.zones;
 
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.annotation.Nullable;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.command.CommandSender;
 
 public class ZonePropertyGroupManager {
 	private final Map<String, Map<String, ZonePropertyGroup>> mZonePropertyGroups = new HashMap<>();
@@ -19,31 +18,31 @@ public class ZonePropertyGroupManager {
 	/*
 	 * If sender is non-null, it will be sent debugging information
 	 */
-	public void reload(Plugin plugin, Collection<CommandSender> senders) {
+	public void reload(Plugin plugin, Audience audience) {
 		mZonePropertyGroups.clear();
 
-		QuestUtils.loadScriptedQuests(plugin, "zone_property_groups", senders, (object) -> {
+		QuestUtils.loadScriptedQuests(plugin, "zone_property_groups", audience, (object) -> {
 			// Load this file into a ZonePropertyGroup object
 			ZonePropertyGroup propertyGroup = new ZonePropertyGroup(object);
-			String layerName = propertyGroup.getLayerName();
+			String namespaceName = propertyGroup.getNamespaceName();
 			String name = propertyGroup.getGroupName();
 
-			Map<String, ZonePropertyGroup> layerGroups = mZonePropertyGroups.computeIfAbsent(layerName, key -> new HashMap<>());
-			if (layerGroups.containsKey(name)) {
-				throw new Exception("ZonePropertyGroup in layer '" + layerName + "' named '" + name + "' already exists!");
+			Map<String, ZonePropertyGroup> namespacePropertyGroups = mZonePropertyGroups.computeIfAbsent(namespaceName, key -> new HashMap<>());
+			if (namespacePropertyGroups.containsKey(name)) {
+				throw new Exception("ZonePropertyGroup in namespace '" + namespaceName + "' named '" + name + "' already exists!");
 			}
-			layerGroups.put(name, propertyGroup);
+			namespacePropertyGroups.put(name, propertyGroup);
 
-			return layerName + ":" + name + ":" + propertyGroup.getPropertyListSize();
+			return namespaceName + ":" + name + ":" + propertyGroup.getPropertyListSize();
 		});
 
-		for (Map.Entry<String, Map<String, ZonePropertyGroup>> layerEntry : mZonePropertyGroups.entrySet()) {
-			String layerName = layerEntry.getKey();
-			Map<String, ZonePropertyGroup> layerGroups = layerEntry.getValue();
+		for (Map.Entry<String, Map<String, ZonePropertyGroup>> namespaceEntry : mZonePropertyGroups.entrySet()) {
+			String namespaceName = namespaceEntry.getKey();
+			Map<String, ZonePropertyGroup> namespaceGroups = namespaceEntry.getValue();
 			Map<String, Set<String>> groupReferences = new HashMap<>();
 
 			// Gather group references
-			for (Map.Entry<String, ZonePropertyGroup> propertyGroupEntry : layerGroups.entrySet()) {
+			for (Map.Entry<String, ZonePropertyGroup> propertyGroupEntry : namespaceGroups.entrySet()) {
 				String groupName = propertyGroupEntry.getKey();
 				ZonePropertyGroup group = propertyGroupEntry.getValue();
 
@@ -70,14 +69,12 @@ public class ZonePropertyGroupManager {
 
 			// Report and remove loops
 			if (!selfContainingGroups.isEmpty()) {
-				Component error = Component.text("ZonePropertyGroup loop(s) detected and removed in layer '"
-					+ layerName + "': " + selfContainingGroups, NamedTextColor.RED);
-				for (CommandSender sender : senders) {
-					sender.sendMessage(error);
-				}
+				Component error = Component.text("ZonePropertyGroup loop(s) detected and removed in namespace '"
+					+ namespaceName + "': " + selfContainingGroups, NamedTextColor.RED);
+				audience.sendMessage(error);
 			}
 			for (String selfContainingGroup : selfContainingGroups) {
-				layerGroups.remove(selfContainingGroup);
+				namespaceGroups.remove(selfContainingGroup);
 			}
 		}
 	}
@@ -111,17 +108,17 @@ public class ZonePropertyGroupManager {
 		}
 	}
 
-	public Set<String> resolveProperties(String layerName, List<String> originalProperties) {
+	public Set<String> resolveProperties(String namespaceName, List<String> originalProperties) {
 		Set<String> result = new TreeSet<>();
-		@Nullable Map<String, ZonePropertyGroup> layerGroups = mZonePropertyGroups.get(layerName);
-		if (layerGroups == null) {
-			layerGroups = new HashMap<>();
+		@Nullable Map<String, ZonePropertyGroup> namespaceGroups = mZonePropertyGroups.get(namespaceName);
+		if (namespaceGroups == null) {
+			namespaceGroups = new HashMap<>();
 		}
-		resolveProperties(layerGroups, result, originalProperties, false);
+		resolveProperties(namespaceGroups, result, originalProperties, false);
 		return result;
 	}
 
-	private void resolveProperties(Map<String, ZonePropertyGroup> layerGroups,
+	private void resolveProperties(Map<String, ZonePropertyGroup> namespaceGroups,
 	                               Set<String> loadedProperties,
 	                               List<String> toProcess,
 	                               boolean removingProperties) {
@@ -134,11 +131,11 @@ public class ZonePropertyGroupManager {
 
 			if (property.charAt(0) == '#') {
 				String childGroupName = property.substring(1);
-				@Nullable ZonePropertyGroup childGroup = layerGroups.get(childGroupName);
+				@Nullable ZonePropertyGroup childGroup = namespaceGroups.get(childGroupName);
 				if (childGroup == null) {
 					continue;
 				}
-				resolveProperties(layerGroups, loadedProperties, childGroup.getPropertyList(), locallyRemoving);
+				resolveProperties(namespaceGroups, loadedProperties, childGroup.getPropertyList(), locallyRemoving);
 				continue;
 			}
 

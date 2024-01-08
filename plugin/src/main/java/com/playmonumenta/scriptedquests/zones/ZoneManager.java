@@ -4,9 +4,7 @@ import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.utils.ArgUtils;
 import com.playmonumenta.scriptedquests.utils.MMLog;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
-import com.playmonumenta.scriptedquests.utils.QuestUtils;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,10 +14,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import javax.annotation.Nullable;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -28,22 +30,31 @@ import org.bukkit.util.Vector;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
 public class ZoneManager {
+	// Used to swap the active state when reloading zones
+	public static class ZoneState {
+		protected final Map<String, ZoneNamespace> mNamespaces = new HashMap<>();
+		protected @MonotonicNonNull WorldRegexMatcher mWorldRegexMatcher = null;
+		protected @MonotonicNonNull ZoneTreeBase mZoneTree = null;
+	}
+
 	private static final String[] SUGGESTIONS_EXECUTE_FALLBACK = {"\"Suggestions unavailable through /execute\""};
 
 	private final Plugin mPlugin;
-	private static ZoneManager INSTANCE = null;
+	private static @MonotonicNonNull ZoneManager INSTANCE = null;
+	// For test case code ONLY
+	private static boolean IS_TEST_MODE = false;
 	static @MonotonicNonNull BukkitRunnable mPlayerTracker = null;
 	static @Nullable BukkitRunnable mAsyncReloadHandler = null;
 
-	private final Map<String, ZoneLayer> mLayers = new HashMap<>();
-	private final Map<String, ZoneLayer> mPluginLayers = new HashMap<>();
-	private @MonotonicNonNull ZoneTreeBase mZoneTree = null;
+	private @Nullable ZoneState mReloadingState = null;
+	private ZoneState mActiveState = new ZoneState();
+	private final Map<String, ZoneNamespace> mPluginNamespaces = new HashMap<>();
 
 	private final Set<UUID> mTransferringPlayers = new HashSet<>();
 	private final Map<UUID, ZoneFragment> mLastPlayerZoneFragment = new HashMap<>();
 	private final Map<UUID, Map<String, Zone>> mLastPlayerZones = new HashMap<>();
 
-	private Set<CommandSender> mReloadRequesters = new HashSet<>();
+	private Audience mReloadRequesters = Audience.empty();
 	private Set<CommandSender> mQueuedReloadRequesters = new HashSet<>();
 
 	private ZoneManager(Plugin plugin) {
@@ -68,67 +79,78 @@ public class ZoneManager {
 	 ************************************************************************************/
 
 	/*
-	 * Register a ZoneLayer from an external plugin.
+	 * Register a ZoneNamespace from an external plugin.
 	 *
 	 * Returns true on success, false on failure.
 	 */
-	public boolean registerPluginZoneLayer(ZoneLayer layer) {
-		if (layer == null) {
+	public boolean registerPluginZoneNamespace(ZoneNamespace namespace) {
+		if (namespace == null) {
 			return false;
 		}
 
-		String layerName = layer.getName();
+		String namespaceName = namespace.getName();
 
-		if (mPluginLayers.containsKey(layerName)) {
+		if (mPluginNamespaces.containsKey(namespaceName)) {
 			return false;
 		}
 
-		mPluginLayers.put(layerName, layer);
+		mPluginNamespaces.put(namespaceName, namespace);
 		reload(mPlugin, Bukkit.getConsoleSender());
 		return true;
 	}
 
 	/*
-	 * Unregister a ZoneLayer from an external plugin.
+	 * Unregister a ZoneNamespace from an external plugin.
 	 *
-	 * Be sure to call invalidate() on the old layer before discarding to ease garbage collection.
+	 * Be sure to call invalidate() on the old namespace before discarding to ease garbage collection.
 	 *
 	 * Returns true on success, false on failure.
 	 */
-	public boolean unregisterPluginZoneLayer(String layerName) {
-		if (!mPluginLayers.containsKey(layerName)) {
+	public boolean unregisterPluginZoneNamespace(String namespaceName) {
+		if (!mPluginNamespaces.containsKey(namespaceName)) {
 			return false;
 		}
 
-		mPluginLayers.remove(layerName);
+		mPluginNamespaces.remove(namespaceName);
 		reload(mPlugin, Bukkit.getConsoleSender());
 		return true;
 	}
 
 	/*
-	 * Replace a ZoneLayer from an external plugin.
+	 * Replace a ZoneNamespace from an external plugin.
 	 *
-	 * Be sure to call invalidate() on the old layer before discarding to ease garbage collection.
+	 * Be sure to call invalidate() on the old namespace before discarding to ease garbage collection.
 	 *
 	 * Returns true on success, false on failure.
 	 */
-	public boolean replacePluginZoneLayer(ZoneLayer layer) {
-		if (layer == null) {
+	public boolean replacePluginZoneNamespace(ZoneNamespace namespace) {
+		if (namespace == null) {
 			return false;
 		}
 
-		String layerName = layer.getName();
+		String namespaceName = namespace.getName();
 
-		mPluginLayers.put(layerName, layer);
+		mPluginNamespaces.put(namespaceName, namespace);
 		reload(mPlugin, Bukkit.getConsoleSender());
 		return true;
+	}
+
+	/*
+	 * Returns the WorldRegexMatcher; will never return null as long as the plugin loaded successfully
+	 */
+	public WorldRegexMatcher getWorldRegexMatcher() {
+		WorldRegexMatcher matcher = mActiveState.mWorldRegexMatcher;
+		if (matcher == null) {
+			throw new RuntimeException("WorldRegexMatcher unavailable before ScriptedQuests finishes loading");
+		}
+		return matcher;
 	}
 
 	/*
 	 * Returns all ZoneFragments that overlap a bounding box.
 	 */
 	public Set<ZoneFragment> getZoneFragments(BoundingBox bb) {
-		return mZoneTree.getZoneFragments(bb);
+		return mActiveState.mZoneTree.getZoneFragments(bb);
 	}
 
 	/*
@@ -138,7 +160,7 @@ public class ZoneManager {
 	 * If fallback zone lookup is enabled, this should be avoided.
 	 */
 	public @Nullable ZoneFragment getZoneFragment(Vector loc) {
-		return mZoneTree.getZoneFragment(loc);
+		return mActiveState.mZoneTree.getZoneFragment(loc);
 	}
 
 	public @Nullable ZoneFragment getZoneFragment(Location loc) {
@@ -146,119 +168,87 @@ public class ZoneManager {
 			return null;
 		}
 
-		return mZoneTree.getZoneFragment(loc.toVector());
+		return mActiveState.mZoneTree.getZoneFragment(loc.toVector());
 	}
 
 	// For a given location, return the zones that contain it.
-	public Map<String, Zone> getZones(Vector loc) {
-		return getZonesInternal(loc, mPlugin.mFallbackZoneLookup);
-	}
-
 	public Map<String, Zone> getZones(Location loc) {
-		if (loc == null) {
-			return new HashMap<>();
-		}
-
-		return mZoneTree.getZones(loc.toVector());
+		return getZonesInternal(loc, mPlugin.mFallbackZoneLookup);
 	}
 
 	/*
 	 * Returns all zones that overlap a bounding box, optionally including eclipsed zones.
 	 */
-	public Set<Zone> getZones(BoundingBox bb, boolean includeEclipsed) {
-		return mZoneTree.getZones(bb, includeEclipsed);
+	public Set<Zone> getZones(World world, BoundingBox bb, boolean includeEclipsed) {
+		return mActiveState.mZoneTree.getZones(world, bb, includeEclipsed);
 	}
 
 	/*
-	 * For a given layer and location, return the zone that
+	 * For a given namespace and location, return the zone that
 	 * contains it. Returns null if no zone overlaps it.
 	 */
-	public @Nullable Zone getZone(Vector loc, String layer) {
+	public @Nullable Zone getZone(Location loc, String namespaceName) {
 		if (mPlugin.mFallbackZoneLookup) {
-			@Nullable ZoneLayer zoneLayer = mLayers.get(layer);
-			if (zoneLayer == null) {
+			@Nullable ZoneNamespace zoneNamespace = mActiveState.mNamespaces.get(namespaceName);
+			if (zoneNamespace == null) {
 				return null;
 			}
-			return zoneLayer.fallbackGetZone(loc);
+			return zoneNamespace.fallbackGetZone(loc);
 		} else {
-			return mZoneTree.getZone(loc, layer);
+			return mActiveState.mZoneTree.getZone(loc, namespaceName);
 		}
 	}
 
-	public @Nullable Zone getZone(Location loc, String layer) {
-		if (loc == null) {
-			return null;
-		}
-
-		return mZoneTree.getZone(loc.toVector(), layer);
-	}
-
-	public boolean hasProperty(Vector loc, String layerName, String propertyName) {
-		@Nullable Zone zone = getZone(loc, layerName);
+	public boolean hasProperty(Location loc, String namespaceName, String propertyName) {
+		@Nullable Zone zone = getZone(loc, namespaceName);
 		if (zone == null) {
 			return false;
 		}
 		return zone.hasProperty(propertyName);
 	}
 
-	public boolean hasProperty(Location loc, String layerName, String propertyName) {
-		if (loc == null) {
-			return false;
-		}
-		return hasProperty(loc.toVector(), layerName, propertyName);
-	}
-
 	// Passing a player is optimized to use the last known location
-	public boolean hasProperty(Player player, String layerName, String propertyName) {
+	public boolean hasProperty(Player player, String namespaceName, String propertyName) {
 		if (player == null) {
 			return false;
 		}
 		UUID playerUuid = player.getUniqueId();
 
-		if (mPlugin.mFallbackZoneLookup) {
-			@Nullable Map<String, Zone> zones = mLastPlayerZones.get(playerUuid);
-			if (zones == null) {
-				return false;
-			}
-
-			@Nullable Zone zone = zones.get(layerName);
-			if (zone == null) {
-				return false;
-			}
-
-			return zone.hasProperty(propertyName);
-		} else {
-			@Nullable ZoneFragment lastFragment = mLastPlayerZoneFragment.get(playerUuid);
-			if (lastFragment == null) {
-				return false;
-			}
-
-			return lastFragment.hasProperty(layerName, propertyName);
+		@Nullable Map<String, Zone> lastZones = mLastPlayerZones.get(playerUuid);
+		if (lastZones == null) {
+			return false;
 		}
+
+		@Nullable Zone lastZone = lastZones.get(namespaceName);
+		if (lastZone == null) {
+			return false;
+		}
+
+		return lastZone.hasProperty(propertyName);
 	}
 
-	public Set<String> getLayerNames() {
-		return new HashSet<>(mLayers.keySet());
+	public Set<String> getNamespaceNames() {
+		return new HashSet<>(mActiveState.mNamespaces.keySet());
 	}
 
-	public String[] getLayerNameSuggestions() {
-		return ArgUtils.quoteIfNeeded(new TreeSet<>(getLayerNames()));
+	public String[] getNamespaceNameSuggestions() {
+		return ArgUtils.quoteIfNeeded(new TreeSet<>(getNamespaceNames()));
 	}
 
-	public static ArgumentSuggestions getLayerNameArgumentSuggestions() {
-		return ArgumentSuggestions.strings(info -> getInstance().getLayerNameSuggestions());
+	public static ArgumentSuggestions getNamespaceArgumentSuggestions() {
+		return ArgumentSuggestions.strings(info -> getInstance().getNamespaceNameSuggestions());
 	}
 
-	public Set<String> getLoadedProperties(String layerName) {
-		@Nullable ZoneLayer layer = mLayers.get(layerName);
-		if (layer == null) {
+	public Set<String> getLoadedProperties(String namespaceName) {
+		@Nullable ZoneNamespace namespace = mActiveState.mNamespaces.get(namespaceName);
+		if (namespace == null) {
 			return new HashSet<>();
 		}
-		return layer.getLoadedProperties();
+		return namespace.getLoadedProperties();
 	}
 
-	public String[] getLoadedPropertySuggestions(String layerName) {
-		Set<String> properties = getLoadedProperties(layerName);
+	public String[] getLoadedPropertySuggestions(String namespaceName) {
+		Set<String> properties = getLoadedProperties(namespaceName);
 		Set<String> suggestions = new TreeSet<>(properties);
 		for (String property : properties) {
 			suggestions.add("!" + property);
@@ -266,24 +256,24 @@ public class ZoneManager {
 		return ArgUtils.quoteIfNeeded(suggestions);
 	}
 
-	public static ArgumentSuggestions getLoadedPropertyArgumentSuggestions(String layerName) {
-		return ArgumentSuggestions.strings(info -> getInstance().getLoadedPropertySuggestions(layerName));
+	public static ArgumentSuggestions getLoadedPropertyArgumentSuggestions(String namespaceName) {
+		return ArgumentSuggestions.strings(info -> getInstance().getLoadedPropertySuggestions(namespaceName));
 	}
 
-	public static ArgumentSuggestions getLoadedPropertyArgumentSuggestions(int layerNameArgIndex) {
+	public static ArgumentSuggestions getLoadedPropertyArgumentSuggestions(int namespaceNameArgIndex) {
 		return ArgumentSuggestions.strings(info -> {
 			Object[] args = info.previousArgs();
 			if (args.length == 0) {
 				return SUGGESTIONS_EXECUTE_FALLBACK;
 			}
 
-			int index = layerNameArgIndex;
+			int index = namespaceNameArgIndex;
 			if (index < 0) {
 				index += args.length;
 			}
 
 			if (index < 0 || index >= args.length) {
-				return new String[]{"\"Invalid argument index for layer name: " + index + "\""};
+				return new String[]{"\"Invalid argument index for namespace name: " + index + "\""};
 			}
 
 			return getInstance().getLoadedPropertySuggestions((String) args[index]);
@@ -300,7 +290,7 @@ public class ZoneManager {
 	 * In the event we have enough zones this takes a while to load:
 	 * Reloading after the first startup could use an async load, only pausing long enough to swap
 	 * the generated tree. If that's not good enough, an unbalanced tree is even faster to generate
-	 * without too much slowdown, and the ZoneLayer class could be modified to handle determining
+	 * without too much slowdown, and the ZoneNamespace class could be modified to handle determining
 	 * which zones have priority if startup time NEEDS to be near-instant in exchange for slower
 	 * clock speeds while the tree is loading. We have options.
 	 */
@@ -309,7 +299,7 @@ public class ZoneManager {
 			sender = Bukkit.getConsoleSender();
 		}
 		mQueuedReloadRequesters.add(sender);
-		sender.sendMessage(ChatColor.GOLD + "Zone reload started in the background, you will be notified of progress.");
+		sender.sendMessage(Component.text("Zone reload started in the background, you will be notified of progress.", NamedTextColor.GOLD));
 		if (mAsyncReloadHandler == null) {
 			// Start a new async task to handle reloads
 			mAsyncReloadHandler = new BukkitRunnable() {
@@ -318,14 +308,10 @@ public class ZoneManager {
 					try {
 						handleReloads(plugin);
 					} catch (Exception e) {
-						MessagingUtils.sendStackTrace(mReloadRequesters, e);
-
-						for (@Nullable CommandSender sender : mReloadRequesters) {
-							if (sender != null) {
-								sender.sendMessage(ChatColor.RED + "Zones failed to reload.");
-							}
-						}
-
+						Bukkit.getScheduler().runTask(Plugin.getInstance(), () -> {
+							MessagingUtils.sendStackTrace(mReloadRequesters, e);
+							mReloadRequesters.sendMessage(Component.text("Zones failed to reload.", NamedTextColor.RED));
+						});
 						return;
 					}
 					mAsyncReloadHandler = null;
@@ -343,100 +329,95 @@ public class ZoneManager {
 	}
 
 	public void doReload(Plugin plugin) {
+		doReload(plugin, false);
+	}
+
+	public void doReload(Plugin plugin, boolean firstRun) {
 		MMLog.fine("[Zone Reload] Begin");
-		mReloadRequesters = mQueuedReloadRequesters;
+		mQueuedReloadRequesters.add(Bukkit.getConsoleSender());
+		mReloadRequesters = Audience.audience(mQueuedReloadRequesters);
 		mQueuedReloadRequesters = new HashSet<>();
-		mReloadRequesters.add(Bukkit.getConsoleSender());
 
 		long cpuNanos = System.nanoTime();
-		for (ZoneLayer layer : mLayers.values()) {
-			// Cause zones to stop tracking their fragments; speeds up garbage collection.
-			layer.invalidate();
-		}
-		mLayers.clear();
-		ZoneLayer.clearDynmapLayers();
+		mReloadingState = new ZoneState();
+		ZoneNamespace.clearDynmapLayers();
 		MMLog.fine("[Zone Reload] " + String.format("%13.9f", (System.nanoTime() - cpuNanos) / 1000000000.0) + "s Resetting old data");
 
 		cpuNanos = System.nanoTime();
 		plugin.mZonePropertyGroupManager.reload(plugin, mReloadRequesters);
 
-		// Refresh plugin layers
-		for (ZoneLayer layer : mPluginLayers.values()) {
-			layer.reloadFragments(mReloadRequesters);
+		// Refresh plugin namespaces
+		if (mPlugin.mShowZonesDynmap) {
+			for (ZoneNamespace namespace : mPluginNamespaces.values()) {
+				namespace.refreshDynmapLayer();
+			}
 		}
 
-		mLayers.putAll(mPluginLayers);
-		QuestUtils.loadScriptedQuests(plugin, "zone_layers", mReloadRequesters, (object) -> {
-			// Load this file into a ZoneLayer object
-			ZoneLayer layer = new ZoneLayer(mReloadRequesters, object);
-			String layerName = layer.getName();
-
-			if (mLayers.containsKey(layerName)) {
-				throw new Exception("'" + layerName + "' already exists!");
-			}
-
-			mLayers.put(layerName, layer);
-
-			return layerName + ":" + layer.getZones().size();
-		});
+		mReloadingState.mNamespaces.putAll(mPluginNamespaces);
+		mReloadingState.mNamespaces.putAll(
+			new ZonesReferenceResolver(plugin, mReloadRequesters, mReloadingState.mNamespaces.keySet()).resolve());
 		MMLog.fine("[Zone Reload] " + String.format("%13.9f", (System.nanoTime() - cpuNanos) / 1000000000.0) + "s Loading new data");
 
-		for (@Nullable CommandSender sender : mReloadRequesters) {
-			if (sender != null) {
-				sender.sendMessage(ChatColor.GOLD + "Zone parsing successful, optimizing before enabling...");
+		final Set<String> worldRegexes = new HashSet<>();
+		for (ZoneNamespace zoneNamespace : mReloadingState.mNamespaces.values()) {
+			for (Zone zone : zoneNamespace.getZones()) {
+				worldRegexes.add(zone.getWorldRegex());
 			}
 		}
 
-		// Merge zone fragments within layers to prevent overlaps
-		cpuNanos = System.nanoTime();
-		mergeLayers();
-		MMLog.fine("[Zone Reload] " + String.format("%13.9f", (System.nanoTime() - cpuNanos) / 1000000000.0) + "s Merging layer data");
-
-		// Create list of zones
-		List<Zone> zones = new ArrayList<>();
-		for (ZoneLayer layer : mLayers.values()) {
-			zones.addAll(layer.getZones());
+		// If not the first run, start this async and await it later
+		CompletableFuture<Void> worldMatcherFuture = new CompletableFuture<>();
+		if (firstRun) {
+			mReloadingState.mWorldRegexMatcher = new WorldRegexMatcher(worldRegexes);
+			worldMatcherFuture.complete(null);
+		} else {
+			ZoneState reloadingState = mReloadingState;
+			Bukkit.getScheduler().scheduleSyncDelayedTask(mPlugin, () -> {
+				// Prevent the state from changing out from under us while we wait for sync code to be available
+				reloadingState.mWorldRegexMatcher = new WorldRegexMatcher(worldRegexes);
+				// Mark as complete
+				worldMatcherFuture.complete(null);
+			});
 		}
 
-		// Create list of all zone fragments.
-		List<ZoneFragment> zoneFragments = new ArrayList<>();
-		for (Zone zone : zones) {
-			zoneFragments.addAll(zone.getZoneFragments());
-		}
+		mReloadRequesters.sendMessage(Component.text("Zone parsing successful, optimizing before enabling...", NamedTextColor.GOLD));
+
+		// Gather all zone fragments
+		ZoneTreeFactory factory = new ZoneTreeFactory(mReloadRequesters, mReloadingState.mNamespaces.values());
 
 		// Create the new tree. This could take a long time with enough fragments.
-		ZoneTreeBase newTree;
 		try {
-			cpuNanos = System.nanoTime();
-			newTree = ZoneTreeBase.createZoneTree(zoneFragments);
-			MMLog.fine("[Zone Reload] " + String.format("%13.9f", (System.nanoTime() - cpuNanos) / 1000000000.0) + "s Creating tree");
-			if (mPlugin.mShowZonesDynmap) {
-				newTree.refreshDynmapTree();
-			}
-		} catch (Exception e) {
-			MessagingUtils.sendStackTrace(mReloadRequesters, e);
+			mReloadingState.mZoneTree = factory.build();
+		} catch (Exception ex) {
+			mReloadingState = null;
+			Bukkit.getScheduler().runTask(mPlugin, () -> MessagingUtils.sendStackTrace(mReloadRequesters, ex));
 			return;
 		}
-		String message = ChatColor.GOLD + "Zone tree dev stats - fragments: "
-		               + newTree.fragmentCount()
-		               + ", max depth: "
-		               + newTree.maxDepth()
-		               + ", ave depth: "
-		               + String.format("%.2f", newTree.averageDepth());
-		for (@Nullable CommandSender sender : mReloadRequesters) {
-			if (sender != null) {
-				sender.sendMessage(message);
-			}
+
+		if (mPlugin.mShowZonesDynmap) {
+			mReloadingState.mZoneTree.refreshDynmapTree();
 		}
+		mReloadRequesters.sendMessage(Component.text(
+			"Zone tree dev stats - fragments: "
+				+ mReloadingState.mZoneTree.fragmentCount()
+				+ ", max depth: "
+				+ mReloadingState.mZoneTree.maxDepth()
+				+ ", ave depth: "
+				+ String.format("%.2f", mReloadingState.mZoneTree.averageDepth()),
+			NamedTextColor.GOLD
+		));
 
 		// Make sure only one player tracker runs at a time.
 		if (mPlayerTracker != null && !mPlayerTracker.isCancelled()) {
 			mPlayerTracker.cancel();
 		}
 
+		worldMatcherFuture.join();
+
 		// Swap the tree out; this is really fast!
-		@Nullable ZoneTreeBase oldTree = mZoneTree;
-		mZoneTree = newTree;
+		@Nullable ZoneTreeBase oldTree = mActiveState.mZoneTree;
+		mActiveState = mReloadingState;
+		mReloadingState = null;
 		if (oldTree != null) {
 			// Force all fragments to consider all locations as outside themselves
 			oldTree.invalidate();
@@ -453,13 +434,14 @@ public class ZoneManager {
 
 					if (mPlugin.mFallbackZoneLookup) {
 						// getZones() will use fallback zone lookup in this case
-						Map<String, Zone> currentZones = getZones(playerVector);
-						// Need to check all layer names, not just the ones the player is in
-						for (String layerName : mLayers.keySet()) {
-							Zone currentZone = currentZones.get(layerName);
+						Map<String, Zone> currentZones = getZones(playerLocation);
+						// Need to check all namespace names, not just the ones the player is in
+						for (String namespaceName : mActiveState.mNamespaces.keySet()) {
+							Zone currentZone = currentZones.get(namespaceName);
 							// Handles comparing to previous zone if needed
-							applyZoneChange(player, layerName, currentZone);
+							applyZoneChange(player, namespaceName, currentZone);
 						}
+						continue;
 					}
 
 					@Nullable ZoneFragment lastZoneFragment = mLastPlayerZoneFragment.get(playerUuid);
@@ -481,42 +463,82 @@ public class ZoneManager {
 			}
 		};
 
-		mPlayerTracker.runTaskTimer(plugin, 0, 1);
-
-		for (@Nullable CommandSender sender : mReloadRequesters) {
-			if (sender != null) {
-				sender.sendMessage(ChatColor.GOLD + "Zones reloaded successfully.");
-			}
+		if (!IS_TEST_MODE) {
+			mPlayerTracker.runTaskTimer(plugin, 0, 1);
 		}
+
+		mReloadRequesters.sendMessage(Component.text("Zones reloaded successfully.", NamedTextColor.GOLD));
 	}
 
 	// For a given location, return the zones that contain it.
-	private Map<String, Zone> getZonesInternal(Vector loc, boolean fallbackZoneLookup) {
+	private Map<String, Zone> getZonesInternal(Location loc, boolean fallbackZoneLookup) {
 		if (fallbackZoneLookup) {
 			Map<String, Zone> result = new HashMap<>();
-			for (Map.Entry<String, ZoneLayer> entry : mLayers.entrySet()) {
-				String layerName = entry.getKey();
-				ZoneLayer zoneLayer = entry.getValue();
+			for (Map.Entry<String, ZoneNamespace> entry : mActiveState.mNamespaces.entrySet()) {
+				String namespaceName = entry.getKey();
+				ZoneNamespace zoneNamespace = entry.getValue();
 
-				@Nullable Zone zone = zoneLayer.fallbackGetZone(loc);
+				@Nullable Zone zone = zoneNamespace.fallbackGetZone(loc);
 				if (zone != null) {
-					result.put(layerName, zone);
+					result.put(namespaceName, zone);
 				}
 			}
 			return result;
 		} else {
-			return mZoneTree.getZones(loc);
+			return mActiveState.mZoneTree.getZones(loc);
+		}
+	}
+
+	public void onLoadWorld(World world) {
+		ZoneState tempState;
+		WorldRegexMatcher tempMatcher;
+
+		// Nullable, can change async
+		tempState = mReloadingState;
+		if (tempState != null) {
+			tempMatcher = tempState.mWorldRegexMatcher;
+			if (tempMatcher != null) {
+				tempMatcher.onLoadWorld(world);
+			}
+		}
+
+		// Never null, but can change async
+		tempState = mActiveState;
+		tempMatcher = tempState.mWorldRegexMatcher;
+		if (tempMatcher != null) {
+			tempMatcher.onLoadWorld(world);
+		}
+	}
+
+	public void onUnloadWorld(World world) {
+		ZoneState tempState;
+		WorldRegexMatcher tempMatcher;
+
+		// Nullable, can change async
+		tempState = mReloadingState;
+		if (tempState != null) {
+			tempMatcher = tempState.mWorldRegexMatcher;
+			if (tempMatcher != null) {
+				tempMatcher.onUnloadWorld(world);
+			}
+		}
+
+		// Never null, but can change async
+		tempState = mActiveState;
+		tempMatcher = tempState.mWorldRegexMatcher;
+		if (tempMatcher != null) {
+			tempMatcher.onUnloadWorld(world);
 		}
 	}
 
 	public void unregisterPlayer(Player player) {
 		UUID playerUuid = player.getUniqueId();
 		applyFragmentChange(player, null);
-		if (mPlugin.mFallbackZoneLookup && mLastPlayerZones.get(playerUuid) != null) {
+		if (mPlugin.mFallbackZoneLookup && mLastPlayerZones.containsKey(playerUuid)) {
 			// Copy key set, as we are modifying the map during iteration
-			Set<String> layerNames = new LinkedHashSet<>(mLastPlayerZones.get(playerUuid).keySet());
-			for (String layerName : layerNames) {
-				applyZoneChange(player, layerName, null);
+			Set<String> namespaceNames = new LinkedHashSet<>(mLastPlayerZones.get(playerUuid).keySet());
+			for (String namespaceName : namespaceNames) {
+				applyZoneChange(player, namespaceName, null);
 			}
 		}
 		mLastPlayerZoneFragment.remove(playerUuid);
@@ -536,20 +558,16 @@ public class ZoneManager {
 
 	private void applyFragmentChange(Player player, @Nullable ZoneFragment currentZoneFragment) {
 		UUID playerUuid = player.getUniqueId();
+		World world = player.getWorld();
 		if (currentZoneFragment != null && mTransferringPlayers.contains(playerUuid)) {
 			return;
 		}
 
-		@Nullable ZoneFragment lastZoneFragment = mLastPlayerZoneFragment.get(playerUuid);
-
-		Map<String, Zone> lastZones = new HashMap<>();
-		if (lastZoneFragment != null) {
-			lastZones = lastZoneFragment.getParents();
-		}
+		Map<String, Zone> lastZones = mLastPlayerZones.get(playerUuid);
 
 		Map<String, Zone> currentZones = new HashMap<>();
 		if (currentZoneFragment != null) {
-			currentZones = currentZoneFragment.getParents();
+			currentZones = currentZoneFragment.getParents(world);
 		}
 
 		// We've already confirmed the player changed zone fragments; null is valid.
@@ -557,35 +575,36 @@ public class ZoneManager {
 
 		if (currentZones.equals(lastZones)) {
 			// If the zones are identical between both fragments, nothing more to do.
-			// Zones and ZoneFragments are not cloned after the manager is instantiated; == is valid.
 			return;
 		}
 
 		if (!mPlugin.mFallbackZoneLookup) {
-			// Zones changed, send an event for each layer.
-			Set<String> mentionedLayerNames = new LinkedHashSet<>(lastZones.keySet());
-			mentionedLayerNames.addAll(currentZones.keySet());
-			for (String layerName : mentionedLayerNames) {
+			// Zones changed, send an event for each namespace.
+			Set<String> mentionedNamespaceNames = new LinkedHashSet<>(currentZones.keySet());
+			if (lastZones != null) {
+				mentionedNamespaceNames.addAll(lastZones.keySet());
+			}
+			for (String namespaceName : mentionedNamespaceNames) {
 				// Null zones are valid - indicates no zone.
-				@Nullable Zone currentZone = currentZones.get(layerName);
-				applyZoneChange(player, layerName, currentZone);
+				@Nullable Zone currentZone = currentZones.get(namespaceName);
+				applyZoneChange(player, namespaceName, currentZone);
 			}
 		}
 	}
 
 	@SuppressWarnings("ReferenceEquality")
-	private void applyZoneChange(Player player, String layerName, @Nullable Zone currentZone) {
+	private void applyZoneChange(Player player, String namespaceName, @Nullable Zone currentZone) {
 		UUID playerUuid = player.getUniqueId();
 		// Null zones are valid - indicates no zone.
 		@Nullable Map<String, Zone> lastZones = mLastPlayerZones.computeIfAbsent(playerUuid, k -> new HashMap<>());
 
-		@Nullable Zone lastZone = lastZones.get(layerName);
+		@Nullable Zone lastZone = lastZones.get(namespaceName);
 		if (lastZone == currentZone) {
 			// Nothing to do!
 			return;
 		}
 
-		ZoneChangeEvent zoneEvent = new ZoneChangeEvent(player, layerName, lastZone, currentZone);
+		ZoneChangeEvent zoneEvent = new ZoneChangeEvent(player, namespaceName, lastZone, currentZone);
 		Bukkit.getPluginManager().callEvent(zoneEvent);
 
 		Set<String> lastProperties;
@@ -606,7 +625,7 @@ public class ZoneManager {
 		removedProperties.removeAll(currentProperties);
 		for (String property : removedProperties) {
 			ZonePropertyChangeEvent event;
-			event = new ZonePropertyChangeEvent(player, layerName, "!" + property);
+			event = new ZonePropertyChangeEvent(player, namespaceName, "!" + property);
 			Bukkit.getPluginManager().callEvent(event);
 		}
 
@@ -614,43 +633,17 @@ public class ZoneManager {
 		addedProperties.removeAll(lastProperties);
 		for (String property : addedProperties) {
 			ZonePropertyChangeEvent event;
-			event = new ZonePropertyChangeEvent(player, layerName, property);
+			event = new ZonePropertyChangeEvent(player, namespaceName, property);
 			Bukkit.getPluginManager().callEvent(event);
 		}
 
 		if (currentZone == null) {
-			lastZones.remove(layerName);
-			if (lastZones.size() == 0) {
+			lastZones.remove(namespaceName);
+			if (lastZones.isEmpty()) {
 				mLastPlayerZones.remove(playerUuid);
 			}
 		} else {
-			lastZones.put(layerName, currentZone);
-		}
-	}
-
-	private void mergeLayers() {
-		List<ZoneLayer> layers = new ArrayList<>(mLayers.values());
-
-		int numLayers = layers.size();
-		for (int i = 0; i < numLayers; i++) {
-			ZoneLayer outer = layers.get(i);
-			for (int j = i + 1; j < numLayers; j++) {
-				ZoneLayer inner = layers.get(j);
-				mergeLayers(outer, inner);
-			}
-		}
-	}
-
-	private void mergeLayers(ZoneLayer outerLayer, ZoneLayer innerLayer) {
-		for (Zone outerZone : outerLayer.getZones()) {
-			for (Zone innerZone : innerLayer.getZones()) {
-				@Nullable ZoneBase overlap = outerZone.overlappingZone(innerZone);
-				if (overlap == null) {
-					continue;
-				}
-				outerZone.splitByOverlap(overlap, innerZone, true);
-				innerZone.splitByOverlap(overlap, outerZone);
-			}
+			lastZones.put(namespaceName, currentZone);
 		}
 	}
 
@@ -663,53 +656,54 @@ public class ZoneManager {
 		}
 
 		UUID playerUuid = player.getUniqueId();
-		Vector playerLocation = player.getLocation().toVector();
+		Location playerLocation = player.getLocation();
 
-		sender.sendMessage("Cached player info according to zone fragment tree:");
+		sender.sendMessage(Component.text("Cached player info according to zone fragment tree:"));
 
 		@Nullable ZoneFragment cachedFragment = mLastPlayerZoneFragment.get(playerUuid);
 		if (cachedFragment == null) {
-			sender.sendMessage("Target is not in any zone.");
+			sender.sendMessage(Component.text("Target is not in any zone."));
 		} else {
-			sender.sendMessage(cachedFragment.toString());
+			sender.sendMessage(Component.text(cachedFragment.toString()));
 
-			Map<String, Zone> fragmentParents = cachedFragment.getParents();
-			if (fragmentParents.size() == 0) {
-				sender.sendMessage("Fragment has no parent zones! Where did it come from?");
+			Map<String, Zone> fragmentParents = mLastPlayerZones.get(playerUuid);
+			if (fragmentParents == null || fragmentParents.isEmpty()) {
+				sender.sendMessage(Component.text("Fragment has no parent zones! Where did it come from?"));
+			} else {
+				sender.sendMessage(Component.text("Fragment parents:"));
+				for (Zone zone : fragmentParents.values()) {
+					sender.sendMessage(Component.text(zone.toString()));
+				}
 			}
-			sender.sendMessage("Fragment parents:");
-			for (Zone zone : fragmentParents.values()) {
-				sender.sendMessage(zone.toString());
-			}
-			sender.sendMessage("Fragment parents and eclipsed:");
+			sender.sendMessage(Component.text("Fragment parents and eclipsed:"));
 			for (List<Zone> zones : cachedFragment.getParentsAndEclipsed().values()) {
 				for (Zone zone : zones) {
-					sender.sendMessage(zone.toString());
+					sender.sendMessage(Component.text(zone.toString()));
 				}
 			}
 		}
 
 		if (mPlugin.mFallbackZoneLookup) {
-			sender.sendMessage("Cached player info according to slow/reliable method:");
+			sender.sendMessage(Component.text("Cached player info according to slow/reliable method:"));
 
 			@Nullable Map<String, Zone> cachedZones = mLastPlayerZones.get(playerUuid);
 			if (cachedZones == null) {
-				sender.sendMessage("Target is not in any zone.");
+				sender.sendMessage(Component.text("Target is not in any zone."));
 			} else {
-				if (cachedZones.size() == 0) {
-					sender.sendMessage("Target is not in any zone, but an empty map is left over.");
+				if (cachedZones.isEmpty()) {
+					sender.sendMessage(Component.text("Target is not in any zone, but an empty map is left over."));
 				}
 				for (Zone cachedZone : cachedZones.values()) {
-					sender.sendMessage(cachedZone.toString());
+					sender.sendMessage(Component.text(cachedZone.toString()));
 				}
 			}
 		}
 
-		sender.sendMessage("Uncached location info:");
+		sender.sendMessage(Component.text("Uncached location info:"));
 		sendDebug(sender, playerLocation);
 	}
 
-	public void sendDebug(CommandSender sender, Vector loc) {
+	public void sendDebug(CommandSender sender, Location loc) {
 		if (sender == null) {
 			return;
 		}
@@ -717,54 +711,54 @@ public class ZoneManager {
 		@Nullable Map<String, Zone> fallbackZones = getZonesInternal(loc, true);
 		@Nullable Map<String, Zone> fastZones = getZonesInternal(loc, false);
 		if (fallbackZones == null && fastZones == null) {
-			sender.sendMessage("Fast lookup matches slow/reliable lookup (both null)");
+			sender.sendMessage(Component.text("Fast lookup matches slow/reliable lookup (both null)"));
 		} else if (fallbackZones == null || !fallbackZones.equals(fastZones)) {
-			sender.sendMessage("Fast lookup DOES NOT match slow/reliable lookup");
+			sender.sendMessage(Component.text("Fast lookup DOES NOT match slow/reliable lookup"));
 
-			sender.sendMessage("Slow/reliable lookup version:");
+			sender.sendMessage(Component.text("Slow/reliable lookup version:"));
 			if (fallbackZones == null) {
-				sender.sendMessage("Target is not in any zone.");
+				sender.sendMessage(Component.text("Target is not in any zone."));
 			} else {
-				if (fallbackZones.size() == 0) {
-					sender.sendMessage("Target is not in any zone, but an empty map is left over.");
+				if (fallbackZones.isEmpty()) {
+					sender.sendMessage(Component.text("Target is not in any zone, but an empty map is left over."));
 				}
 				for (Zone fallbackZone : fallbackZones.values()) {
-					sender.sendMessage(fallbackZone.toString());
+					sender.sendMessage(Component.text(fallbackZone.toString()));
 				}
 			}
 		} else {
-			sender.sendMessage("Fast lookup matches slow/reliable lookup (both exist and are equal)");
+			sender.sendMessage(Component.text("Fast lookup matches slow/reliable lookup (both exist and are equal)"));
 		}
 
-		sender.sendMessage("Fast lookup version:");
+		sender.sendMessage(Component.text("Fast lookup version:"));
 		@Nullable ZoneFragment fragment = getZoneFragment(loc);
 		if (fragment == null) {
-			sender.sendMessage("Target is not in any zone.");
+			sender.sendMessage(Component.text("Target is not in any zone."));
 			return;
 		}
 
-		if (!fragment.within(loc)) {
-			sender.sendMessage("Target is not in the zone fragment they were reported in.");
+		if (!fragment.within(loc.toVector())) {
+			sender.sendMessage(Component.text("Target is not in the zone fragment they were reported in."));
 		}
-		sender.sendMessage(fragment.toString());
+		sender.sendMessage(Component.text(fragment.toString()));
 
-		Map<String, Zone> fragmentParents = fragment.getParents();
-		if (fragmentParents.size() == 0) {
-			sender.sendMessage("Fragment has no parent zones! Where did it come from?");
+		Map<String, Zone> fragmentParents = fragment.getParents(loc.getWorld());
+		if (fragmentParents.isEmpty()) {
+			sender.sendMessage(Component.text("Fragment has no parent zones! Where did it come from?"));
 		}
-		sender.sendMessage("Fragment parents:");
+		sender.sendMessage(Component.text("Fragment parents:"));
 		for (Zone zone : fragmentParents.values()) {
-			sender.sendMessage(zone.toString());
+			sender.sendMessage(Component.text(zone.toString()));
 		}
-		sender.sendMessage("Fragment parents and eclipsed:");
+		sender.sendMessage(Component.text("Fragment parents and eclipsed:"));
 		for (List<Zone> zones : fragment.getParentsAndEclipsed().values()) {
 			for (Zone zone : zones) {
-				sender.sendMessage(zone.toString());
+				sender.sendMessage(Component.text(zone.toString()));
 			}
 		}
 	}
 
-	public Collection<ZoneLayer> getLayers() {
-		return mLayers.values();
+	public Collection<ZoneNamespace> getNamespaces() {
+		return mActiveState.mNamespaces.values();
 	}
 }

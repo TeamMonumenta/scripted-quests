@@ -1,0 +1,194 @@
+{
+    "title": "Zone Property",
+    "defaultProperties": [
+        "namespace",
+        "name",
+        "quest_components"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "namespace": {
+            "required": true,
+            "propertyOrder": 1,
+            "title": "namespace",
+            "description": "A property namespace; different namespaces do not interact or override each other",
+            "type": "string",
+            "default": "default"
+        },
+        "name": {
+            "required": true,
+            "propertyOrder": 2,
+            "title": "name",
+            "description": "Unique property name within a namespace; names starting with ! are run when the property is removed",
+            "type": "string"
+        },
+        "display_name": {
+            "propertyOrder": 3,
+            "title": "display_name",
+            "description": "Optional display name of the NPC, necessary if regular text is used in dialog",
+            "type": "string"
+        },
+        "quest_components": {
+            "required": true,
+            "propertyOrder": 4,
+            "title": "quest_components",
+            "description": "A list of actions with associated prerequisites",
+            "type": "array",
+            "format": "tabs",
+            "items": {
+                "title": "Quest component",
+                "$ref": "quest_component.json"
+            }
+        },
+        "events": {
+            "propertyOrder": 5,
+            "required": false,
+            "title": "Events",
+            "additionalProperties": false,
+            "defaultProperties": [],
+            "properties": {
+                "block_break": {
+                    "propertyOrder": 1,
+                    "type": "array",
+                    "title": "Block Break",
+                    "description": "Fired when a player breaks a block or an explosion destroys a block.",
+                    "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                            "blocks": {
+                                "propertyOrder": 1,
+                                "type": "array",
+                                "title": "blocks",
+                                "description": "Block types that trigger this event.",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "command": {
+                                "propertyOrder": 2,
+                                "title": "command",
+                                "description": "Command to execute when this event fires. Will be run at the broken block, and as the player, entity, or block that broke the block.",
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "block_interact": {
+                    "propertyOrder": 2,
+                    "type": "array",
+                    "title": "Block Interact",
+                    "description": "Fired when a player left or right clicks a block.",
+                    "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                            "blocks": {
+                                "propertyOrder": 1,
+                                "type": "array",
+                                "title": "blocks",
+                                "description": "Block types that trigger this event.",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": {
+                                "propertyOrder": 2,
+                                "required": false,
+                                "type": "string",
+                                "title": "click type",
+                                "description": "Either LEFT_CLICK, RIGHT_CLICK, or not set for either click type."
+                            },
+                            "command": {
+                                "propertyOrder": 3,
+                                "title": "command",
+                                "description": "Command to execute when this event fires. Will be run at the broken block, and as the player, entity, or block that broke the block.",
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "remote_click": {
+                    "propertyOrder": 3,
+                    "type": "array",
+                    "title": "Remote Click",
+                    "description": "Fired when a player left or right clicks while looking in the direction of a matching block, even if that block is out of player range. Both the player and the targeted block must be in a zone with this zone property.",
+                    "items": {
+                        "additionalProperties": false,
+                        "defaultProperties": ["blocks", "type", "command", "max_distance", "ignore_transparent_blocks"],
+                        "properties": {
+                            "blocks": {
+                                "propertyOrder": 1,
+                                "type": "array",
+                                "required": false,
+                                "title": "blocks",
+                                "description": "Block types that trigger this event. Omit to apply to all block types.",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": {
+                                "propertyOrder": 2,
+                                "required": false,
+                                "type": "string",
+                                "title": "click type",
+                                "description": "Either LEFT_CLICK, RIGHT_CLICK, or not set for either click type."
+                            },
+                            "command": {
+                                "propertyOrder": 3,
+                                "title": "command",
+                                "description": "Command to execute when this event fires. Will be run at the broken block, and as the player, entity, or block that broke the block.",
+                                "type": "string"
+                            },
+                            "max_distance": {
+                                "propertyOrder": 4,
+                                "title": "max_distance",
+                                "description": "Maximum distance to check for blocks.",
+                                "type": "number"
+                            },
+                            "ignore_transparent_blocks": {
+                                "propertyOrder": 5,
+                                "title": "ignore_transparent_blocks",
+                                "description": "Whether to ignore transparent blocks when looking for a targeted block.",
+                                "type": "boolean"
+                            },
+                            "min_ticks_between_clicks": {
+                                "propertyOrder": 6,
+                                "title": "min_ticks_between_clicks",
+                                "description": "Minimum delay in ticks between two clicks. Clicks happening faster than this value will not count. This prevents the occasional double clicks that Minecraft does, as well as accidental double clicks. Defaults to 1 if not set. The minimum value of 0 only prevents multiple clicks in the same tick.",
+                                "type": "number",
+                                "minimum": 0,
+                                "maximum": 1200,
+                                "required": false
+                            }
+                        }
+                    }
+                },
+                "entity_death": {
+                    "propertyOrder": 4,
+                    "type": "array",
+                    "title": "Entity Death",
+                    "description": "Fired when a non-player entity is killed by a player.",
+                    "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                            "entity_names": {
+                                "propertyOrder": 1,
+                                "type": "array",
+                                "title": "entity_names",
+                                "description": "Names of the entities that trigger this event.",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "command": {
+                                "propertyOrder": 2,
+                                "title": "command",
+                                "description": "Command to execute when this event fires. Will be run as the killer, at the position of the entity that died.",
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

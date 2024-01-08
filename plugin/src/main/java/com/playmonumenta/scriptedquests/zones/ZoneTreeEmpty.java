@@ -1,5 +1,6 @@
 package com.playmonumenta.scriptedquests.zones;
 
+import java.io.PrintStream;
 import java.util.HashSet;
 import java.util.Set;
 import javax.annotation.Nullable;
@@ -42,4 +43,10 @@ public class ZoneTreeEmpty extends ZoneTreeBase {
 	public String toString() {
 		return "ZoneTreeEmpty()";
 	}
+
+	@Override
+	protected void print(PrintStream out, String indentation) {
+		out.println("-");
+	}
+
 }

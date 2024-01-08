@@ -1,0 +1,146 @@
+{
+  "name": "default",
+  "world_name": "test_world",
+  "zones": [
+    {
+      "name": "Shops",
+      "properties": [
+        "Shops Possible"
+      ],
+      "location": {
+        "x1": -1678,
+        "y1": 0,
+        "z1": -2093,
+        "x2": -1451,
+        "y2": 168,
+        "z2": -1810
+      }
+    },
+    {
+      "name": "Black - No Properties (namespace version)",
+      "properties": [],
+      "location": {
+        "x1": -1485,
+        "y1": 20,
+        "z1": -1485,
+        "x2": -1465,
+        "y2": 25,
+        "z2": -1465
+      }
+    },
+    {
+      "name": "Red - Adventure",
+      "properties": [
+        "#Adventure"
+      ],
+      "location": {
+        "x1": -1471,
+        "y1": 20,
+        "z1": -1495,
+        "x2": -1455,
+        "y2": 35,
+        "z2": -1479
+      }
+    },
+    {
+      "name": "Yellow - Quest",
+      "properties": [
+        "#Quest",
+        "No Portable Storage"
+      ],
+      "location": {
+        "x1": -1471,
+        "y1": 20,
+        "z1": -1471,
+        "x2": -1455,
+        "y2": 35,
+        "z2": -1455
+      }
+    },
+    {
+      "name": "Blue - Town",
+      "properties": [
+        "#Safe"
+      ],
+      "location": {
+        "x1": -1495,
+        "y1": 20,
+        "z1": -1471,
+        "x2": -1479,
+        "y2": 35,
+        "z2": -1455
+      }
+    },
+    {
+      "name": "Green - Capital",
+      "properties": [
+        "#Capital",
+        "MusicFarr"
+      ],
+      "location": {
+        "x1": -1495,
+        "y1": 20,
+        "z1": -1495,
+        "x2": -1479,
+        "y2": 35,
+        "z2": -1479
+      }
+    },
+    {
+      "name": "Trapdoor Test",
+      "properties": [
+        "No Trapdoor Clicks"
+      ],
+      "location": {
+        "x1": -1478,
+        "y1": 20,
+        "z1": -1495,
+        "x2": -1472,
+        "y2": 26,
+        "z2": -1486
+      }
+    },
+    {
+      "name": "Trapdoor Test 2",
+      "properties": [
+        "Big Door Down is CCW"
+      ],
+      "location": {
+        "x1": -1495,
+        "y1": 20,
+        "z1": -1478,
+        "x2": -1486,
+        "y2": 26,
+        "z2": -1472
+      }
+    },
+    {
+      "name": "Composter Test",
+      "properties": [
+        "#Adventure"
+      ],
+      "location": {
+        "x1": -1617,
+        "y1": 22,
+        "z1": -1560,
+        "x2": -1581,
+        "y2": 22,
+        "z2": -1580
+      }
+    },
+    {
+      "name": "Door Test 1",
+      "properties": [
+        "No Door Clicks"
+      ],
+      "location": {
+        "x1": 954,
+        "y1": 76,
+        "z1": 1077,
+        "x2": 962,
+        "y2": 83,
+        "z2": 1085
+      }
+    }
+  ]
+}

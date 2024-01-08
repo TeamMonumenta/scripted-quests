@@ -1,0 +1,96 @@
+{
+    "title": "Zone Namespace",
+    "defaultProperties": [
+        "name",
+        "world_name",
+        "zones"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "name": {
+            "required": true,
+            "propertyOrder": 1,
+            "title": "name",
+            "description": "The name of this zone namespace.",
+            "type": "string",
+            "default": "default"
+        },
+        "world_name": {
+            "required": false,
+            "propertyOrder": 2,
+            "title": "world_name",
+            "description": "A regular expersion (regex) that matches one or more world names completely. Acts as the default for all zones in this file, including referenced files. If not set at all, it defaults to \".*\". See <a href=\"https://regex101.com\">regex101.com</a> for help.",
+            "type": "string",
+            "default": ".*"
+        },
+        "reference": {
+            "propertyOrder": 3,
+            "title": "reference",
+            "description": "Zone namespace files with \"reference\" set will not load unless referenced by a main file (without \"reference\" set), or by another \"reference\" file that is referenced.",
+            "type": "string",
+            "pattern": ".+"
+        },
+        "hidden": {
+            "propertyOrder": 4,
+            "title": "hidden",
+            "description": "Whether to hide by default on the dynmap.",
+            "type": "boolean"
+        },
+        "property_groups": {
+            "propertyOrder": 5,
+            "title": "property_groups",
+            "description": "Named lists of properties, to be applied or canceled in order. May contain other property groups. Do not include the '#' in the property group name here, it is implied. Please use the zone property group editor instead!",
+            "type": "object",
+            "patternProperties": {
+                ".*": {
+                    "headerTemplate": "#{{i}}",
+                    "description": "The header here should only have one '#' - if that's all set, please continue to use # for property group names inside this list of properties.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "zones": {
+            "propertyOrder": 6,
+            "title": "zones",
+            "description": "A list of zones; if two zones overlap, the one higher up the list takes priority.",
+            "type": "array",
+            "format": "tabs",
+            "minItems": 1,
+            "items": {
+                "$comment": "TODO:\n\nI can not figure out how to show the header that is appropriate for each oneOf entry:\n- Removing the title messes up the drop down menu for which variant to use\n- Not including a heading at this level but including it in the oneOf entries shows no header\n- headerTemplate does not appear to support conditional formatting;\nor maybe it does, but is not documented anywhere I can find it",
+                "headerTemplate": "{{i1}}: {{self.name}}",
+                "options": {
+                    "keep_oneof_values": false
+                },
+                "oneOf": [
+                    {
+                        "title": "Zone",
+                        "$comment": "\"headerTemplate\": \"{{i1}}: Zone {{self.name}}\",",
+                        "$ref": "zone.json"
+                    },
+                    {
+                        "title": "Zone Namespace Reference",
+                        "$comment": "\"headerTemplate\": \"{{i1}}: Reference {{self.reference}}\",",
+                        "type": "object",
+                        "defaultProperties": [
+                            "reference"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "reference": {
+                                "required": true,
+                                "propertyOrder": 1,
+                                "description": "The \"reference\" label from reference Zone Namespace files with the same namespace.",
+                                "type": "string",
+                                "pattern": ".+"
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    }
+}

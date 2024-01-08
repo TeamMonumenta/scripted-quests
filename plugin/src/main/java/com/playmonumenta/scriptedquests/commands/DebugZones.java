@@ -23,7 +23,7 @@ public class DebugZones {
 			.withPermission(CommandPermission.fromString("scriptedquests.debugzones"))
 			.withArguments(new LocationArgument("position"))
 			.executes((sender, args) -> {
-				ZoneManager.getInstance().sendDebug(sender, ((Location) args[0]).toVector());
+				ZoneManager.getInstance().sendDebug(sender, (Location) args[0]);
 			})
 			.register();
 	}

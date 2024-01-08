@@ -9,7 +9,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 public class ZonePropertyGroup {
-	private final String mLayerName;
+	private final String mNamespaceName;
 	private final String mName;
 	private final List<String> mPropertyList = new ArrayList<>();
 
@@ -18,17 +18,17 @@ public class ZonePropertyGroup {
 			throw new Exception("object may not be null.");
 		}
 
-		// Load the layer name
-		@Nullable JsonElement layerNameElement = object.get("layer");
-		if (layerNameElement == null) {
-			throw new Exception("Failed to parse 'layer'");
+		// Load the namespace name
+		@Nullable JsonElement namespaceNameElement = object.get("namespace");
+		if (namespaceNameElement == null) {
+			throw new Exception("Failed to parse 'namespace'");
 		}
-		@Nullable String layerName = layerNameElement.getAsString();
-		if (layerName == null ||
-			layerName.isEmpty()) {
-			throw new Exception("Failed to parse 'layer'");
+		@Nullable String namespaceName = namespaceNameElement.getAsString();
+		if (namespaceName == null ||
+			namespaceName.isEmpty()) {
+			throw new Exception("Failed to parse 'namespace'");
 		}
-		mLayerName = layerName;
+		mNamespaceName = namespaceName;
 
 		// Load the property group name
 		@Nullable JsonElement nameElement = object.get("name");
@@ -61,8 +61,8 @@ public class ZonePropertyGroup {
 		}
 	}
 
-	public String getLayerName() {
-		return mLayerName;
+	public String getNamespaceName() {
+		return mNamespaceName;
 	}
 
 	public String getGroupName() {

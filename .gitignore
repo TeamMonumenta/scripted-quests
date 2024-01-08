@@ -144,3 +144,6 @@ run/
 build
 .gradle
 /*.jar
+
+# Python
+__pycache__/

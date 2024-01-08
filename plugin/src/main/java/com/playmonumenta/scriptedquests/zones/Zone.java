@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.Nullable;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.util.Vector;
 
 /*
@@ -18,20 +20,17 @@ import org.bukkit.util.Vector;
  * if a point is inside the zone after overlaps are taken into account.
  */
 public class Zone extends ZoneBase {
-	private final ZoneLayer mLayer;
+	private final ZoneNamespace mNamespace;
 	private final String mName;
-	private List<ZoneFragment> mFragments = new ArrayList<>();
+	private final String mWorldRegex;
 	private final Set<String> mProperties = new LinkedHashSet<>();
 
-	public static Zone constructFromJson(ZoneLayer layer, JsonObject object, Map<String, List<String>> propertyGroups) throws Exception {
-		if (layer == null) {
-			throw new Exception("layer may not be null.");
+	public static Zone constructFromJson(ZoneNamespace namespace, JsonObject object) throws Exception {
+		if (namespace == null) {
+			throw new Exception("namespace may not be null.");
 		}
 		if (object == null) {
 			throw new Exception("object may not be null.");
-		}
-		if (propertyGroups == null) {
-			throw new Exception("propertyGroups may not be null (but may be empty).");
 		}
 
 		Double[] corners = new Double[6];
@@ -43,9 +42,18 @@ public class Zone extends ZoneBase {
 			throw new Exception("Failed to parse 'name'");
 		}
 		name = nameElement.getAsString();
-		if (name == null ||
-		    name.isEmpty()) {
+		if (name == null || name.isEmpty()) {
 			throw new Exception("Failed to parse 'name'");
+		}
+
+		// This gets inserted from the ZoneNamespace file if missing from the zone json
+		@Nullable JsonElement worldElement = object.get("world_name");
+		if (worldElement == null) {
+			throw new Exception("Failed to find inserted 'world_name'");
+		}
+		@Nullable String worldRegexStr = worldElement.getAsString();
+		if (worldRegexStr == null || worldRegexStr.isEmpty()) {
+			throw new Exception("Failed to parse 'world_name'");
 		}
 
 		// Load the zone location
@@ -80,6 +88,54 @@ public class Zone extends ZoneBase {
 
 		// Load the zone properties
 		@Nullable JsonElement propertiesElement = object.get("properties");
+		List<String> rawProperties = getProperties(propertiesElement);
+		Set<String> properties = Plugin.getInstance().mZonePropertyGroupManager.resolveProperties(namespace.getName(), rawProperties);
+
+		return new Zone(namespace, worldRegexStr, pos1, pos2, name, properties);
+	}
+
+	/*
+	 * pos1 and pos2 are used similar to /fill:
+	 * - Both are inclusive coordinates.
+	 * - The minimum/maximum are determined for you.
+	 */
+	public Zone(ZoneNamespace namespace, String worldRegex, Vector pos1, Vector pos2, String name, Set<String> properties) {
+		super(pos1, pos2);
+		mNamespace = namespace;
+		mWorldRegex = worldRegex;
+		mName = name;
+		mProperties.addAll(properties);
+	}
+
+	public ZoneNamespace getNamespace() {
+		return mNamespace;
+	}
+
+	public String getNamespaceName() {
+		return mNamespace.getName();
+	}
+
+	public String getWorldRegex() {
+		return mWorldRegex;
+	}
+
+	public boolean matchesWorld(World world) {
+		return ZoneManager.getInstance().getWorldRegexMatcher().matches(world, mWorldRegex);
+	}
+
+	public boolean matchesWorld(String worldName) {
+		return ZoneManager.getInstance().getWorldRegexMatcher().matches(worldName, mWorldRegex);
+	}
+
+	public boolean within(Location location) {
+		return matchesWorld(location.getWorld()) && within(location.toVector());
+	}
+
+	public String getName() {
+		return mName;
+	}
+
+	private static List<String> getProperties(@Nullable JsonElement propertiesElement) throws Exception {
 		if (propertiesElement == null) {
 			throw new Exception("Failed to parse 'properties'");
 		}
@@ -95,90 +151,7 @@ public class Zone extends ZoneBase {
 			}
 			rawProperties.add(propertyName);
 		}
-		Set<String> properties = Plugin.getInstance().mZonePropertyGroupManager.resolveProperties(layer.getName(), rawProperties);
-
-		return new Zone(layer, pos1, pos2, name, properties);
-	}
-
-	/*
-	 * pos1 and pos2 are used similar to /fill:
-	 * - Both are inclusive coordinates.
-	 * - The minimum/maximum are determined for you.
-	 */
-	public Zone(ZoneLayer layer, Vector pos1, Vector pos2, String name, Set<String> properties) {
-		super(pos1, pos2);
-		mLayer = layer;
-		mName = name;
-		mProperties.addAll(properties);
-	}
-
-	/*
-	 * Reset the fragments of this Zone so they can be recalculated without reloading this zone.
-	 * Used to handle ZoneLayers from other plugins. This should only be called by its ZoneLayer.
-	 */
-	protected void reloadFragments() {
-		mFragments.clear();
-		mFragments.add(new ZoneFragment(this));
-	}
-
-	/*
-	 * Remove references to fragments from this zone.
-	 *
-	 * Note that the fragments point to the zone, too. This only prevents further
-	 * modification of the old fragments from the current zone object.
-	 *
-	 * Not strictly required, but speeds up garbage collection by eliminating loops.
-	 */
-	protected void invalidate() {
-		mFragments.clear();
-	}
-
-	/*
-	 * Split all fragments of this zone by an overlapping zone, removing overlap.
-	 */
-	protected boolean splitByOverlap(ZoneBase overlap, Zone otherZone) {
-		return splitByOverlap(overlap, otherZone, false);
-	}
-
-	/*
-	 * Split all fragments of this zone by an overlapping zone,
-	 * marking otherZone as the parent of the exact overlap fragment if
-	 * it exists. Otherwise, the exact overlap fragment is discarded.
-	 *
-	 * Returns true if the zone being overlapped has been completely
-	 * eclipsed by the other zone.
-	 */
-	protected boolean splitByOverlap(ZoneBase overlap, Zone otherZone, boolean includeOther) {
-		List<ZoneFragment> newFragments = new ArrayList<>();
-		for (ZoneFragment fragment : mFragments) {
-			@Nullable ZoneBase subOverlap = fragment.overlappingZone(overlap);
-
-			if (subOverlap == null) {
-				newFragments.add(fragment);
-				continue;
-			}
-
-			newFragments.addAll(fragment.splitByOverlap(subOverlap, otherZone, includeOther));
-			fragment.invalidate();
-		}
-		mFragments = newFragments;
-		return newFragments.size() == 0;
-	}
-
-	public ZoneLayer getLayer() {
-		return mLayer;
-	}
-
-	public String getLayerName() {
-		return mLayer.getName();
-	}
-
-	public String getName() {
-		return mName;
-	}
-
-	public List<ZoneFragment> getZoneFragments() {
-		return new ArrayList<>(mFragments);
+		return rawProperties;
 	}
 
 	public Set<String> getProperties() {
@@ -197,7 +170,7 @@ public class Zone extends ZoneBase {
 	public boolean equals(Object o) {
 		if (o instanceof Zone other) {
 			return (super.equals(other) &&
-				getLayerName().equals(other.getLayerName()) &&
+				getNamespaceName().equals(other.getNamespaceName()) &&
 				getName().equals(other.getName()));
 		} else {
 			return false;
@@ -207,17 +180,18 @@ public class Zone extends ZoneBase {
 	@Override
 	public int hashCode() {
 		int result = super.hashCode();
-		result = 31*result + getLayerName().hashCode();
+		result = 31*result + getNamespaceName().hashCode();
 		result = 31*result + getName().hashCode();
 		return result;
 	}
 
 	@Override
 	public String toString() {
-		return ("Zone(layer('" + getLayerName() + "'), "
-		        + minCorner().toString() + ", "
-		        + maxCorner().toString() + ", "
-		        + mName + ", "
-		        + mProperties.toString() + ")");
+		return ("Zone(namespace('" + getNamespaceName() + "'), "
+			+ getWorldRegex() + ", "
+			+ minCorner().toString() + ", "
+			+ maxCorner().toString() + ", "
+			+ mName + ", "
+			+ mProperties.toString() + ")");
 	}
 }

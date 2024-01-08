@@ -1,5 +1,6 @@
 package com.playmonumenta.scriptedquests.zones;
 
+import java.io.PrintStream;
 import java.util.HashSet;
 import java.util.Set;
 import javax.annotation.Nullable;
@@ -82,13 +83,21 @@ public class ZoneTreeLeaf extends ZoneTreeBase {
 		color = (color << 8) | (b & 0xff);
 
 		AreaMarker areaMarker = markerSet.createAreaMarker(fragmentId, fragmentLabel, false, world, x, z, false);
-		areaMarker.setRangeY(maxCorner.getY(), minCorner.getY());
-		areaMarker.setFillStyle(0.2, color);
-		areaMarker.setLineStyle(1, 0.3, color);
+		if (areaMarker != null) {
+			areaMarker.setRangeY(maxCorner.getY(), minCorner.getY());
+			areaMarker.setFillStyle(0.2, color);
+			areaMarker.setLineStyle(1, 0.3, color);
+		}
 	}
 
 	@Override
 	public String toString() {
-		return ("ZoneTreeBase(" + mFragment.toString() + ")");
+		return ("ZoneTreeLeaf(" + mFragment.toString() + ")");
 	}
+
+	@Override
+	protected void print(PrintStream out, String indentation) {
+		out.println("leaf " + mFragment);
+	}
+
 }

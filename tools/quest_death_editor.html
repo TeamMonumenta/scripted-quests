@@ -19,7 +19,7 @@
             <br>
             <a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html">Entity Types</a>
             <br>
-            <a href="https://minecraft.gamepedia.com/Formatting_codes">Minecraft Formatting Codes</a>
+            <a href="https://minecraft.wiki/w/Formatting_codes">Minecraft Formatting Codes</a>
         </div>
     </div>
     <div class='row' style='padding-bottom: 15px;'>
@@ -46,64 +46,7 @@
 
         // The schema for the editor
         schema: {
-            title: "Quest Death",
-            defaultProperties: [
-                "keep_inventory",
-                "actions",
-                "prerequisites"
-            ],
-            additionalProperties:false,
-            properties: {
-                keep_inventory: {
-                    propertyOrder: 1,
-                    required: false,
-                    title: "keep_inventory",
-                    description: "Whether the player should keep inventory / experience if the prerequisites match",
-                    type: "boolean"
-                },
-                keep_xp: {
-                    propertyOrder: 2,
-                    required: false,
-                    title: "keep_xp",
-                    description: "How much experience should be kept on death, as a factor of current experience. When set, no experience will be dropped even if keep_inventory is disabled. If not set, the default behaviour is 100% if keep_inventory is enabled, and 0% otherwise.",
-                    type: "number"
-                },
-                respawn_location: {
-                    propertyOrder: 3,
-                    required: false,
-                    title: "respawn_location",
-                    description: "Coordinates where the player should respawn if the prerequisites match",
-					type: "object",
-					additionalProperties:false,
-					properties: {
-						x: {
-							propertyOrder: 1,
-							required: true,
-							$ref: "schema/coordinate.json",
-						},
-						y: {
-							propertyOrder: 2,
-							required: true,
-							$ref: "schema/coordinate.json",
-						},
-						z: {
-							propertyOrder: 3,
-							required: true,
-							$ref: "schema/coordinate.json",
-						}
-					}
-                },
-				prerequisites: {
-                    propertyOrder: 4,
-                    required: false,
-					$ref: "schema/prerequisites.json",
-				},
-                actions: {
-                    propertyOrder: 5,
-                    required: true,
-					$ref: "schema/actions.json",
-				},
-            }
+            $ref: "schema/quest_death.json"
         }
     });
 

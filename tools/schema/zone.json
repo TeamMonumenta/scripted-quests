@@ -11,11 +11,19 @@
             "required": true,
             "propertyOrder": 1,
             "title": "name",
-            "description": "Zone name - so you'll know which zone you're looking at layer.",
+            "description": "Zone name - so you'll know which zone you're looking at.",
             "type": "string"
         },
-        "properties": {
+        "world_name": {
+            "required": false,
             "propertyOrder": 2,
+            "title": "world_name",
+            "description": "A regular expersion (regex) that matches one or more world names completely. Inherits from the file containing it. If not set at all, it defaults to \".*\". See <a href=\"https://regex101.com\">regex101.com</a> for help.",
+            "type": "string",
+            "default": ".*"
+        },
+        "properties": {
+            "propertyOrder": 3,
             "title": "properties",
             "description": "A list of properties for this zone, in order. Property groups are identified by the prefix '#'. Properties that are not desired from a group can be removed with the prefix '!', as if it was never there.",
             "type": "array",
@@ -24,7 +32,7 @@
             }
         },
         "location": {
-            "propertyOrder": 3,
+            "propertyOrder": 4,
             "$ref": "location.json"
         }
     }

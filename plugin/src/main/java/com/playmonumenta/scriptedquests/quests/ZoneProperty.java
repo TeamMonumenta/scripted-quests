@@ -31,26 +31,26 @@ import org.bukkit.entity.Player;
  * and leaving ("!adventure mode") would run `gamemode @S survival`.
  *
  * Note that you may specify just the "property added" quest components, just the
- * "property removed" quest components, both, or niether. You may also hook plugin
+ * "property removed" quest components, both, or neither. You may also hook plugin
  * code of your own into this system for additional features.
  */
 public class ZoneProperty {
-	private final String mLayer;
+	private final String mNamespaceName;
 	private final String mName;
 	private final String mDisplayName;
 	private final QuestComponentList mComponents = new QuestComponentList();
 	private final List<ZoneEvent> mEvents = new ArrayList<>();
 
 	public ZoneProperty(JsonObject object) throws Exception {
-		//////////////////////////////////////// layer (Required) ////////////////////////////////////////
-		JsonElement layer = object.get("layer");
-		if (layer == null) {
-			throw new Exception("'layer' entry is required");
+		//////////////////////////////////////// namespace (Required) ////////////////////////////////////////
+		JsonElement namespaceElement = object.get("namespace");
+		if (namespaceElement == null) {
+			throw new Exception("'namespace' entry is required");
 		}
-		if (layer.getAsString() == null || layer.getAsString().isEmpty()) {
-			throw new Exception("Failed to parse 'layer' as string");
+		mNamespaceName = namespaceElement.getAsString();
+		if (mNamespaceName == null || mNamespaceName.isEmpty()) {
+			throw new Exception("Failed to parse 'namespace' as string");
 		}
-		mLayer = layer.getAsString();
 
 		//////////////////////////////////////// name (Required) ////////////////////////////////////////
 		JsonElement name = object.get("name");
@@ -120,7 +120,7 @@ public class ZoneProperty {
 		for (Entry<String, JsonElement> ent : entries) {
 			String key = ent.getKey();
 
-			if (!key.equals("layer") && !key.equals("name") && !key.equals("display_name")
+			if (!key.equals("namespace") && !key.equals("name") && !key.equals("display_name")
 				    && !key.equals("quest_components") && !key.equals("events")) {
 				throw new Exception("Unknown quest key: " + key);
 			}
@@ -128,7 +128,7 @@ public class ZoneProperty {
 	}
 
 	public void addFromOther(Plugin plugin, ZoneProperty other) {
-		if (!mLayer.equals(other.mLayer)
+		if (!mNamespaceName.equals(other.mNamespaceName)
 		    || !mName.equals(other.mName)) {
 			plugin.getLogger().severe("Attempted to add two ZoneProperty objects of different properties!");
 			return;
@@ -138,8 +138,8 @@ public class ZoneProperty {
 		}
 	}
 
-	public String getLayer() {
-		return mLayer;
+	public String getNamespaceName() {
+		return mNamespaceName;
 	}
 
 	public String getName() {

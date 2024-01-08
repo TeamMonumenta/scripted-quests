@@ -108,7 +108,7 @@ the various quest options
 - Redeemable Codes Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/code_editor.html
 - Clickable Actions Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/clickable_editor.html
 - Interactable Items Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/interactable_editor.html
-- Zone Layers Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/zone_layer_editor.html
+- Zone Namespaces Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/zone_namespace_editor.html
 - Zone Properties Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/zone_property_editor.html
 - Zone Property Groups Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/zone_property_group_editor.html
 
@@ -252,10 +252,10 @@ an NPC, quest components are run in-order (more than one may be executed).
 - permission: `scriptedquests.setvelocity`
 - Sets the velocity of the targeted entity to x y z.
 
-`/testzone <x> <y> <z> <layerName> [propertyName]`
+`/testzone <x> <y> <z> <namespaceName> [propertyName]`
 - permission: `scriptedquests.testzone`
-- Checks if the coordinates specified are in a zone of layerName, optionally with a
-  given property name, which may be inverted with the prefix `!`. If layerName or
+- Checks if the coordinates specified are in a zone of namespaceName, optionally with a
+  given property name, which may be inverted with the prefix `!`. If namespaceName or
   propertyName have spaces, quotes, or other characters that may cause issues,
   put them in quotes similar to json.
 ### Debug commands
@@ -266,7 +266,7 @@ an NPC, quest components are run in-order (more than one may be executed).
 - Get debug information about which zone a player or position is.
 
 `/showzones hide`
-`/showzones show <layerName> [propertyName]`
+`/showzones show <namespaceName> [propertyName]`
 - permission: `scriptedquests.showzones`
 - Shows nearby zones to the player running the command.
 
