@@ -13,6 +13,7 @@ import de.tr7zw.nbtapi.NBTCompoundList;
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.NBTListCompound;
+import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -207,8 +208,8 @@ public class GuiItem {
 		NBTCompound sqguiCompound = nbtItem.getCompound(SQGUI_KEY);
 		if (sqguiCompound != null) {
 			NBTCompoundList moreItems = sqguiCompound.getCompoundList(MORE_ITEMS_KEY);
-			for (NBTListCompound item : moreItems) {
-				result.add(new GuiItem(index, NBTItem.convertNBTtoItem(new NBTContainer(item.getCompound()))));
+			for (ReadWriteNBT item : moreItems) {
+				result.add(new GuiItem(index, NBTItem.convertNBTtoItem(new NBTContainer(item.toString()))));
 			}
 		}
 		result.add(0, new GuiItem(index, itemStack));
