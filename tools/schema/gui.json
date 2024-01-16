@@ -89,6 +89,26 @@
                     "$ref": "prerequisites.json",
                     "required": false
                   },
+                  "nbt_tags": {
+                    "required": false,
+                    "title": "nbt tags",
+                    "description": "Sets the specified NBT path to the specified value, useful for resource pack support. Path nodes are separated by periods. ",
+                    "type": "array",
+                    "items": {
+                      "title": "Tag",
+                      "type": "object",
+                      "properties": {
+                        "path": {
+                          "title": "path",
+                          "type": "string"
+                        },
+                        "value": {
+                          "title": "value",
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
                   "left_click_actions": {
                     "required": false,
                     "title": "left click actions",
