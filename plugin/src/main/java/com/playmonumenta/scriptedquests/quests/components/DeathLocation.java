@@ -6,7 +6,7 @@ import org.bukkit.Location;
 
 public class DeathLocation implements QuestLocation {
 	private final long mDeathTime;
-	private final List<Location> mWaypoints = new ArrayList<Location>(1);
+	private final List<Location> mWaypoints = new ArrayList<>(1);
 
 	public DeathLocation(Location loc, long deathTime) {
 		mDeathTime = deathTime;
@@ -22,7 +22,7 @@ public class DeathLocation implements QuestLocation {
 
 		String timeStr = "";
 		if (diffDays > 0) {
-			timeStr += Long.toString(diffDays) + " day";
+			timeStr += diffDays + " day";
 			if (diffDays > 1) {
 				timeStr += "s";
 			}
@@ -33,7 +33,7 @@ public class DeathLocation implements QuestLocation {
 		}
 
 		if (diffHours > 0) {
-			timeStr += Long.toString(diffHours) + " hour";
+			timeStr += diffHours + " hour";
 			if (diffHours > 1) {
 				timeStr += "s";
 			}
@@ -44,7 +44,7 @@ public class DeathLocation implements QuestLocation {
 		}
 
 		if (diffMinutes > 0) {
-			timeStr += Long.toString(diffMinutes) + " minute";
+			timeStr += diffMinutes + " minute";
 			if (diffMinutes > 1) {
 				timeStr += "s";
 			}
@@ -54,9 +54,10 @@ public class DeathLocation implements QuestLocation {
 			timeStr += " ";
 		}
 
-		if (diffSeconds > 0) {
-			timeStr += Long.toString(diffSeconds) + " second";
-			if (diffSeconds > 1) {
+		//If it has been less than a second, say 0 seconds, but don't list seconds if it is an exact number of minutes
+		if (diffSeconds > 0 || diffMinutes == 0) {
+			timeStr += diffSeconds + " second";
+			if (diffSeconds != 1) {
 				timeStr += "s";
 			}
 		}
