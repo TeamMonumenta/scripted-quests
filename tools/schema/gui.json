@@ -90,9 +90,9 @@
                     "required": false
                   },
                   "nbt_tags": {
-                    "required": false,
+                    "required": true,
                     "title": "nbt tags",
-                    "description": "Sets the specified NBT path to the specified value, useful for resource pack support. Path nodes are separated by periods. ",
+                    "description": "Sets the specified NBT path to the specified value, useful for resource pack support. Path nodes are separated by periods. Equivalent to running `/data modify {item} Item.tag.{path} set value {value}`.",
                     "type": "array",
                     "items": {
                       "title": "Tag",
