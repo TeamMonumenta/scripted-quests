@@ -214,7 +214,6 @@ public class GuiItem {
 			if (mNbtTags != null && mNbtTags.hasTags()) {
 				displayItem = mNbtTags.applyTags(displayItem);
 			}
-			context.getPlayer().getInventory().addItem(displayItem);
 			return displayItem;
 		}
 	}
