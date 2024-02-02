@@ -8,7 +8,7 @@ import dev.jorel.commandapi.arguments.Argument;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.EntitySelectorArgument;
 import dev.jorel.commandapi.arguments.GreedyStringArgument;
-import dev.jorel.commandapi.arguments.StringArgument;
+import dev.jorel.commandapi.arguments.TextArgument;
 import java.io.File;
 import java.util.List;
 import java.util.Optional;
@@ -43,8 +43,9 @@ public class TradesCommand {
 			).withSubcommand(
 				new CommandAPICommand("show")
 					.withArguments(new EntitySelectorArgument.OnePlayer("player"),
-						new StringArgument("npc")
-							.replaceSuggestions(ArgumentSuggestions.stringCollection(info -> Plugin.getInstance().mTradeManager.getTraderNames())),
+						new TextArgument("npc")
+							.replaceSuggestions(ArgumentSuggestions.stringCollection(info -> Plugin.getInstance().mTradeManager.getTraderNames()
+								                                                                 .stream().map(n -> n.contains(" ") ? '"' + n + '"' : n).toList())),
 						new GreedyStringArgument("title"))
 					.executes((sender, args) -> {
 						Player player = (Player) args[0];

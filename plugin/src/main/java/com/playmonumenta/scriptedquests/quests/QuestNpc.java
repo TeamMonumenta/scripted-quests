@@ -59,7 +59,7 @@ public class QuestNpc {
 		// Read the npc's entity_type
 		// Default to villager
 		JsonElement entityType = object.get("entity_type");
-		if (entityType == null || EntityType.valueOf(entityType.getAsString()) == null) {
+		if (entityType == null) {
 			mEntityType = EntityType.VILLAGER;
 		} else {
 			mEntityType = EntityType.valueOf(entityType.getAsString());
