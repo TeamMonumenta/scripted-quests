@@ -3,16 +3,9 @@ package com.playmonumenta.scriptedquests.quests.components;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.playmonumenta.scriptedquests.utils.MMLog;
-import de.tr7zw.nbtapi.NBT;
-import de.tr7zw.nbtapi.NBTCompound;
-import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTItem;
-import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import java.util.HashMap;
 import java.util.Map;
-import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 
 public class NbtTags {
@@ -52,6 +45,7 @@ public class NbtTags {
 	});
 		return item.getItem();
 	}
+	
 	public boolean hasTags() {
 		return mHasTags;
 	}

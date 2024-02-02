@@ -12,17 +12,12 @@ import de.tr7zw.nbtapi.NBTCompound;
 import de.tr7zw.nbtapi.NBTCompoundList;
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTItem;
-import de.tr7zw.nbtapi.NBTListCompound;
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
-import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -119,9 +114,9 @@ public class GuiItem {
 					mPrerequisites = new QuestPrerequisites(mPrerequisitesJson);
 				}
 			}
-			String nbt_tags = sqguiCompound.getString(NBT_TAGS_KEY);
-			if (nbt_tags != null) {
-				mNbtTagsJson = gson.fromJson(nbt_tags, JsonElement.class);
+			String nbtTags = sqguiCompound.getString(NBT_TAGS_KEY);
+			if (nbtTags != null) {
+				mNbtTagsJson = gson.fromJson(nbtTags, JsonElement.class);
 				if (mNbtTagsJson.isJsonNull()) {
 					mNbtTagsJson = null;
 				} else {
