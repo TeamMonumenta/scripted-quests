@@ -45,7 +45,7 @@ public class NbtTags {
 	});
 		return item.getItem();
 	}
-	
+
 	public boolean hasTags() {
 		return mHasTags;
 	}
