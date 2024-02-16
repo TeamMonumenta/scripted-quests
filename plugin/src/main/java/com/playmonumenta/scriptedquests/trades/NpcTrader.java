@@ -3,13 +3,16 @@ package com.playmonumenta.scriptedquests.trades;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.playmonumenta.scriptedquests.api.JsonObjectBuilder;
 import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.quests.QuestNpc;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import com.playmonumenta.scriptedquests.utils.JsonUtils;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.NavigableMap;
 import java.util.Set;
@@ -22,16 +25,28 @@ import org.jetbrains.annotations.Nullable;
 public class NpcTrader {
 	private final File mFile;
 	private final NavigableMap<Integer, NpcTrade> mTrades = new TreeMap<>();
-	private final String mOriginalNpcName;
-	private final String mNpcName;
+	private final List<String> mOriginalNpcNames;
+	private final List<String> mNpcNames;
 	private final @Nullable JsonElement mFilePrerequisitesJson;
 	private final @Nullable QuestPrerequisites mFilePrerequisites;
 
 	public NpcTrader(JsonObject object, File file) throws Exception {
 		mFile = file;
+
 		// Read the npc's name first
-		mOriginalNpcName = JsonUtils.getString(object, "npc");
-		mNpcName = QuestNpc.squashNpcName(mOriginalNpcName);
+		if (JsonUtils.getElement(object, "npc").isJsonArray()) {
+			mOriginalNpcNames = new ArrayList<>();
+			mNpcNames = new ArrayList<>();
+			for (JsonElement npc : JsonUtils.getJsonArray(object, "npc")) {
+				String name = npc.getAsString();
+				mOriginalNpcNames.add(name);
+				mNpcNames.add(QuestNpc.squashNpcName(name));
+			}
+		} else {
+			String name = JsonUtils.getString(object, "npc");
+			mOriginalNpcNames = List.of(name);
+			mNpcNames = List.of(QuestNpc.squashNpcName(name));
+		}
 
 		mFilePrerequisitesJson = object.get("file_prerequisites");
 		if (mFilePrerequisitesJson != null) {
@@ -46,7 +61,7 @@ public class NpcTrader {
 			NpcTrade trade = new NpcTrade(entry);
 			if (mTrades.containsKey(trade.getIndex())) {
 				// The same index is used twice, throw an error
-				throw new Exception("Trader '" + mNpcName + "' specifies index " + trade.getIndex() + " more than once");
+				throw new Exception("Trader '" + mNpcNames + "' specifies index " + trade.getIndex() + " more than once");
 			}
 			mTrades.put(trade.getIndex(), trade);
 		}
@@ -64,7 +79,7 @@ public class NpcTrader {
 
 	public JsonObject toJson() {
 		return new JsonObjectBuilder()
-			       .add("npc", mOriginalNpcName)
+			       .add("npc", JsonUtils.toJsonArray(mOriginalNpcNames, JsonPrimitive::new))
 			       .add("file_prerequisites", mFilePrerequisitesJson)
 			       .add("trades", JsonUtils.toJsonArray(mTrades.values().stream().toList(), NpcTrade::toJson))
 			       .build();
@@ -75,14 +90,14 @@ public class NpcTrader {
 	}
 
 	/**
-	 * NOTE: This is always the squashed/stripped version of the name! use {@link #getOriginalNpcName()} to get the full name.
+	 * NOTE: This is always the squashed/stripped version of the name! use {@link #getOriginalNpcNames()} to get the full name.
 	 */
-	public String getNpcName() {
-		return mNpcName;
+	public List<String> getNpcNames() {
+		return mNpcNames;
 	}
 
-	public String getOriginalNpcName() {
-		return mOriginalNpcName;
+	public List<String> getOriginalNpcNames() {
+		return mOriginalNpcNames;
 	}
 
 	public @Nullable NpcTrade getTrade(int index) {

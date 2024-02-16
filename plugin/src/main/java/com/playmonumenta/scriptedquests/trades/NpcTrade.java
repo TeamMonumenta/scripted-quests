@@ -15,19 +15,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
-import javax.annotation.Nullable;
+import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 public class NpcTrade implements Comparable<NpcTrade> {
 
 	private final int mIndex;
-	private final JsonElement mPrerequisitesJson;
+	private final @Nullable JsonElement mPrerequisitesJson;
 	private final QuestPrerequisites mPrerequisites;
 	private @Nullable JsonElement mActionsJson = null;
 	private @Nullable QuestActions mActions = null;
 	private int mCount = -1;
-	private @Nullable List<ItemStack> mOverrideTradeItems;
+	/**
+	 * A list of 3 item stacks and/or loot tables for the 2 ingredients and the result
+	 */
+	private @Nullable List<NpcTradeOverride> mOverrideTradeItems;
 	private @Nullable ItemStack mOriginalResult = null;
 
 	public NpcTrade(JsonElement element) throws Exception {
@@ -67,7 +72,16 @@ public class NpcTrade implements Comparable<NpcTrade> {
 			}
 			mOverrideTradeItems = new ArrayList<>(3);
 			for (JsonElement override : overrides) {
-				mOverrideTradeItems.add(NBTItem.convertNBTtoItem(new NBTContainer(override.getAsString())));
+				if (override.isJsonPrimitive()) {
+					String item = override.getAsString();
+					if (item.isEmpty()) {
+						mOverrideTradeItems.add(new NpcTradeOverride.ItemOverride(new ItemStack(Material.AIR)));
+					} else {
+						mOverrideTradeItems.add(new NpcTradeOverride.ItemOverride(NBTItem.convertNBTtoItem(new NBTContainer(item))));
+					}
+				} else {
+					mOverrideTradeItems.add(new NpcTradeOverride.LootTableOverride(override.getAsJsonObject()));
+				}
 			}
 		}
 
@@ -103,8 +117,8 @@ public class NpcTrade implements Comparable<NpcTrade> {
 		JsonArray overrides = null;
 		if (mOverrideTradeItems != null) {
 			overrides = new JsonArray(3);
-			for (ItemStack override : mOverrideTradeItems) {
-				overrides.add(NBTItem.convertItemtoNBT(override).toString());
+			for (NpcTradeOverride override : mOverrideTradeItems) {
+				overrides.add(override.toJson());
 			}
 		}
 		return new JsonObjectBuilder()
@@ -138,11 +152,15 @@ public class NpcTrade implements Comparable<NpcTrade> {
 		return mCount;
 	}
 
-	public @Nullable List<ItemStack> getOverrideTradeItems() {
+	public @Nullable List<NpcTradeOverride> getOverrideTradeItems() {
 		return mOverrideTradeItems;
 	}
 
-	public void setOverrideTradeItems(@Nullable List<ItemStack> mOverrideTradeItems) {
+	public @Nullable List<ItemStack> getResolvedOverrideTradeItems(Player player) {
+		return mOverrideTradeItems == null ? null : mOverrideTradeItems.stream().map(o -> o.resolve(player.getLocation())).toList();
+	}
+
+	public void setOverrideTradeItems(@Nullable List<NpcTradeOverride> mOverrideTradeItems) {
 		this.mOverrideTradeItems = mOverrideTradeItems;
 	}
 

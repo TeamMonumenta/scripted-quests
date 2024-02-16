@@ -8,26 +8,41 @@
     "properties": {
 		"npc": {
 			"required": true,
+			"title": "NPC",
 			"propertyOrder": 1,
-			"title": "npc",
-			"description": "NPC's name - same as when used in quests",
-			"type": "string"
+			"oneOf": [
+				{
+					"title": "one NPC",
+					"description": "NPC's name - same as when used in quests",
+					"type": "string"
+				},
+				{
+					"title": "multiple NPCs",
+					"description": "NPC names - same as when used in quests",
+					"type": "array",
+					"items": {
+						"title": "NPC name",
+						"type": "string"
+					}
+				}
+			]
 		},
 		"file_prerequisites": {
 			"required": false,
 			"propertyOrder": 2,
 			"$ref": "prerequisites.json",
-			"title": "file_prerequisites",
+			"title": "File Prerequisites",
 			"description": "Prerequisites for this trader file. If these prerequisites exist and are not met, none of the trade prerequisites and actions defined in this file will be considered. Note that in particular this means that unmet prerequisites does not block any trades!<br/>You might want to use <b>use_npc_for_prereqs</b> for these prerequisites."
 		},
 		"trades": {
 			"required": true,
 			"propertyOrder": 4,
 			"description": "List of trades that are restricted. Unrestricted trades need not be specified.",
-			"title": "trades",
+			"title": "Trades",
 			"type": "array",
 			"minItems": 1,
 			"items": {
+				"title": "Trade",
 				"defaultProperties": [
 					"index",
 					"prerequisites"
@@ -63,16 +78,43 @@
 					"override_items": {
 						"required": false,
 						"propertyOrder": 5,
-						"description": "Items to override this trade with, or add a trade if the index is larger than any existing trade. Can be edited in-game with /sqtrades",
+						"description": "Items to override this trade with, or add a trade if the index is larger than any existing trade. Each entry can either be from a loot table or a Mojangson of an item (which can be edited in-game with /sqtrades)",
 						"type": "array",
 						"minItems": 3,
 						"maxItems": 3,
 						"items": {
-							"type": "string"
+							"oneOf": [
+								{
+									"title": "item Mojangson",
+									"type": "string"
+								},
+								{
+									"title": "loot table",
+									"type": "object",
+									"properties": {
+										"loot_table": {
+											"type": "string",
+											"required": true
+										},
+										"count": {
+											"type": "integer",
+											"minimum": 0,
+											"maximum": 64,
+											"default": 1,
+											"description": "Number of items in the trade. If 0, uses the count in the loot table, otherwise overrides the count with the value here.",
+											"required": true
+										},
+										"defaultProperties": [
+											"loot_table",
+											"count"
+										]
+									}
+								}
+							]
 						}
 					}
 				}
-            }
-        }
-    }
+			}
+		}
+	}
 }

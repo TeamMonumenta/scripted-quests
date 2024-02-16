@@ -5,6 +5,7 @@ import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.quests.QuestNpc;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import com.playmonumenta.scriptedquests.trades.NpcTrade;
+import com.playmonumenta.scriptedquests.trades.NpcTradeOverride;
 import com.playmonumenta.scriptedquests.trades.NpcTrader;
 import com.playmonumenta.scriptedquests.trades.TradeWindowOpenEvent;
 import com.playmonumenta.scriptedquests.utils.CustomInventory;
@@ -33,6 +34,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -96,9 +98,9 @@ public class NpcTradeManager implements Listener {
 			// Load this file into a NpcTrader object
 			NpcTrader trader = new NpcTrader(object, file);
 
-			mTraders.computeIfAbsent(trader.getNpcName(), key -> new ArrayList<>()).add(trader);
+			trader.getNpcNames().forEach(npcName -> mTraders.computeIfAbsent(npcName, key -> new ArrayList<>()).add(trader));
 
-			return trader.getNpcName();
+			return "" + trader.getNpcNames();
 		});
 	}
 
@@ -108,7 +110,7 @@ public class NpcTradeManager implements Listener {
 			QuestUtils.loadScriptedQuestsFile(trader.getFile(), (object, file) -> {
 				NpcTrader newTrader = new NpcTrader(object, file);
 				mTraders.values().forEach(ts -> ts.removeIf(t -> trader.getFile().getAbsoluteFile().equals(t.getFile().getAbsoluteFile())));
-				mTraders.computeIfAbsent(newTrader.getNpcName(), key -> new ArrayList<>()).add(newTrader);
+				newTrader.getNpcNames().forEach(npcName -> mTraders.computeIfAbsent(npcName, key -> new ArrayList<>()).add(newTrader));
 				newTraderRef.set(newTrader);
 				return null;
 			});
@@ -194,20 +196,19 @@ public class NpcTradeManager implements Listener {
 							modified = true;
 							continue recipes;
 						} else {
-							if (trade.getOverrideTradeItems() != null) {
-								if (trade.getOverrideTradeItems().stream().anyMatch(item -> item != null && item.getType() == Material.BARRIER)) {
+							List<ItemStack> overrideTradeItems = trade.getResolvedOverrideTradeItems(player);
+							if (overrideTradeItems != null) {
+								if (overrideTradeItems.stream().anyMatch(item -> item.getType() == Material.BARRIER)) {
 									continue;
 								}
-								MerchantRecipe newRecipe = new MerchantRecipe(trade.getOverrideTradeItems().get(2).clone(), recipe.getUses(), recipe.getMaxUses(), recipe.hasExperienceReward(), recipe.getVillagerExperience(), recipe.getPriceMultiplier(), recipe.getDemand(), recipe.getSpecialPrice(), recipe.shouldIgnoreDiscounts());
-								// items get cloned by setIngredients()
-								newRecipe.setIngredients(trade.getOverrideTradeItems().get(1) == null || trade.getOverrideTradeItems().get(1).getType() == Material.AIR
-									                         ? trade.getOverrideTradeItems().subList(0, 1) : trade.getOverrideTradeItems().subList(0, 2));
+								MerchantRecipe newRecipe = new MerchantRecipe(overrideTradeItems.get(2), recipe.getUses(), recipe.getMaxUses(), recipe.hasExperienceReward(), recipe.getVillagerExperience(), recipe.getPriceMultiplier(), recipe.getDemand(), recipe.getSpecialPrice(), recipe.shouldIgnoreDiscounts());
+								newRecipe.setIngredients(overrideTradeItems.subList(0, 2));
 								recipe = newRecipe;
 							}
 
 							NpcTrade previousTrade = slotProperties.put(trades.size(), trade);
 							if (previousTrade != null
-								    && (trade.getActions() != null || trade.getOverrideTradeItems() != null || trade.getCount() > 0)
+								    && (trade.getActions() != null || overrideTradeItems != null || trade.getCount() > 0)
 								    && (previousTrade.getActions() != null || previousTrade.getOverrideTradeItems() != null || previousTrade.getCount() > 0)) {
 								MMLog.warning("Duplicate active non-prerequisite-only trade for villager '" + villager.getName() + "' at index " + trade.getIndex());
 							}
@@ -234,17 +235,16 @@ public class NpcTradeManager implements Listener {
 		}
 		// add new trades after real ones
 		for (NpcTrade trade : addedTrades.values()) {
-			List<ItemStack> overrideTradeItems = Objects.requireNonNull(trade.getOverrideTradeItems()); // must have overrides to get here
-			if (overrideTradeItems.stream().anyMatch(item -> item != null && item.getType() == Material.BARRIER)) {
-				continue;
-			}
 			if (!trade.prerequisiteMet(context)) {
 				continue;
 			}
-			MerchantRecipe recipe = new MerchantRecipe(overrideTradeItems.get(2).clone(), 0, Integer.MAX_VALUE, false, 0,
+			List<ItemStack> overrideTradeItems = Objects.requireNonNull(trade.getResolvedOverrideTradeItems(player)); // must have overrides to get here
+			if (overrideTradeItems.stream().anyMatch(item -> item != null && item.getType() == Material.BARRIER)) { // safeguard against incomplete trades
+				continue;
+			}
+			MerchantRecipe recipe = new MerchantRecipe(overrideTradeItems.get(2), 0, Integer.MAX_VALUE, false, 0,
 				0f, 0, 0, true);
-			// items get cloned by setIngredients()
-			recipe.setIngredients(overrideTradeItems.get(1) == null ? overrideTradeItems.subList(0, 1) : overrideTradeItems.subList(0, 2));
+			recipe.setIngredients(overrideTradeItems.subList(0, 2));
 			slotProperties.put(trades.size(), trade);
 			trades.add(recipe);
 		}
@@ -434,11 +434,13 @@ public class NpcTradeManager implements Listener {
 			UNDEFINED_ITEM.editMeta(meta -> meta.displayName(Component.text("MISSING ITEM", NamedTextColor.DARK_RED)));
 		}
 
+		private final Player mPlayer;
 		private final NpcTrader mTrader;
 		private int mPage = 0;
 
 		public TraderEditCustomInventory(Player player, NpcTrader trader) {
-			super(player, 6 * 9, "Trades for " + trader.getOriginalNpcName());
+			super(player, 6 * 9, "Trades for " + trader.getOriginalNpcNames().get(0) + (trader.getOriginalNpcNames().size() > 1 ? " (+" + (trader.getOriginalNpcNames().size() - 1) + " more)" : ""));
+			this.mPlayer = player;
 			mTrader = trader;
 			setup();
 		}
@@ -463,13 +465,13 @@ public class NpcTradeManager implements Listener {
 				infoItem.editMeta(meta -> meta.displayName(Component.text("Trade #" + trade.getIndex())));
 				getInventory().setItem(i, infoItem);
 
-				List<ItemStack> overrideTradeItems = trade.getOverrideTradeItems();
+				List<NpcTradeOverride> overrideTradeItems = trade.getOverrideTradeItems();
 				if (overrideTradeItems != null) {
-					ItemStack ingredient1 = overrideTradeItems.get(0).clone();
+					ItemStack ingredient1 = getDisplayItem(overrideTradeItems.get(0), mPlayer.getLocation());
 					getInventory().setItem(9 + i, ingredient1);
-					ItemStack ingredient2 = overrideTradeItems.get(1) == null ? null : overrideTradeItems.get(1).clone();
+					ItemStack ingredient2 = getDisplayItem(overrideTradeItems.get(1), mPlayer.getLocation());
 					getInventory().setItem(2 * 9 + i, ingredient2);
-					ItemStack result = overrideTradeItems.get(2).clone();
+					ItemStack result = getDisplayItem(overrideTradeItems.get(2), mPlayer.getLocation());
 					getInventory().setItem(3 * 9 + i, result);
 				}
 			}
@@ -496,6 +498,19 @@ public class NpcTradeManager implements Listener {
 			}
 		}
 
+		private ItemStack getDisplayItem(NpcTradeOverride override, Location someLocation) {
+			ItemStack item = override.resolve(someLocation);
+			if (override instanceof NpcTradeOverride.LootTableOverride lootTableOverride) {
+				item.editMeta(meta -> {
+					List<Component> oldLore = meta.lore();
+					ArrayList<Component> lore = new ArrayList<>(oldLore == null ? List.of() : oldLore);
+					lore.add(0, Component.text("Loot table: " + lootTableOverride.mLootTable.key().asString(), NamedTextColor.GOLD).decorate(TextDecoration.UNDERLINED));
+					meta.lore(lore);
+				});
+			}
+			return item;
+		}
+
 		@Override
 		protected void inventoryClick(InventoryClickEvent event) {
 			if (event.getClickedInventory() == getInventory()) {
@@ -507,19 +522,25 @@ public class NpcTradeManager implements Listener {
 					if (index < trades.size()) {
 						NpcTrade trade = trades.get(index);
 						int overrideSlot = event.getSlot() / 9 - 1;
-						List<ItemStack> overrideTradeItems = trade.getOverrideTradeItems();
-						List<ItemStack> empty = Arrays.asList(UNDEFINED_ITEM, null, UNDEFINED_ITEM);
+						List<NpcTradeOverride> overrideTradeItems = trade.getOverrideTradeItems();
+						List<NpcTradeOverride> empty = Arrays.asList(
+							new NpcTradeOverride.ItemOverride(UNDEFINED_ITEM),
+							new NpcTradeOverride.ItemOverride(new ItemStack(Material.AIR)),
+							new NpcTradeOverride.ItemOverride(UNDEFINED_ITEM));
 						if (overrideTradeItems == null) {
 							overrideTradeItems = new ArrayList<>(empty);
 							trade.setOverrideTradeItems(overrideTradeItems);
 						}
-						ItemStack oldItem = overrideTradeItems.get(overrideSlot);
-						overrideTradeItems.set(overrideSlot, event.getCursor() == null || event.getCursor().getType() == Material.AIR ? (overrideSlot == 1 ? null : UNDEFINED_ITEM) : event.getCursor());
-						if (overrideTradeItems.equals(empty)) {
-							trade.setOverrideTradeItems(null);
+						NpcTradeOverride oldOverride = overrideTradeItems.get(overrideSlot);
+						if (oldOverride instanceof NpcTradeOverride.ItemOverride || oldOverride == null) {
+							ItemStack oldItem = oldOverride != null ? ((NpcTradeOverride.ItemOverride) oldOverride).mItem : null;
+							overrideTradeItems.set(overrideSlot, new NpcTradeOverride.ItemOverride(event.getCursor() == null || event.getCursor().getType() == Material.AIR ? (overrideSlot == 1 ? new ItemStack(Material.AIR) : UNDEFINED_ITEM) : event.getCursor()));
+							if (overrideTradeItems.equals(empty)) {
+								trade.setOverrideTradeItems(null);
+							}
+							event.getView().setCursor(oldItem == null || oldItem.getType() == Material.AIR || oldItem.getType() == Material.BARRIER ? null : oldItem);
+							setup();
 						}
-						event.getView().setCursor(oldItem == null || oldItem.getType() == Material.AIR || oldItem.getType() == Material.BARRIER ? null : oldItem);
-						setup();
 					}
 				} else {
 					if (event.getSlot() == 5 * 9 && mPage > 0) {
