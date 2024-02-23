@@ -12,13 +12,12 @@ import de.tr7zw.nbtapi.NBTCompound;
 import de.tr7zw.nbtapi.NBTCompoundList;
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTItem;
-import de.tr7zw.nbtapi.NBTListCompound;
+import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -29,6 +28,7 @@ public class GuiItem {
 	private static final String ITEM_KEY = "item";
 	private static final String KEEP_GUI_OPEN_KEY = "keep_gui_open";
 	private static final String PREREQUISITES_KEY = "prerequisites";
+	private static final String NBT_TAGS_KEY = "nbt_tags";
 	private static final String LEFT_CLICK_ACTIONS_KEY = "left_click_actions";
 	private static final String RIGHT_CLICK_ACTIONS_KEY = "right_click_actions";
 
@@ -43,6 +43,8 @@ public class GuiItem {
 	private boolean mKeepGuiOpen;
 	private @Nullable JsonElement mPrerequisitesJson;
 	private @Nullable QuestPrerequisites mPrerequisites;
+	private @Nullable JsonElement mNbtTagsJson;
+	private @Nullable NbtTags mNbtTags;
 	private @Nullable JsonElement mLeftClickActionsJson;
 	private @Nullable QuestActions mLeftClickActions;
 	private @Nullable JsonElement mRightClickActionsJson;
@@ -58,6 +60,12 @@ public class GuiItem {
 		mPrerequisitesJson = object.get(PREREQUISITES_KEY);
 		if (mPrerequisitesJson != null) {
 			mPrerequisites = new QuestPrerequisites(mPrerequisitesJson.getAsJsonObject());
+		}
+
+		mNbtTagsJson = object.get(NBT_TAGS_KEY);
+		if (mNbtTagsJson != null) {
+			NbtTags tags = new NbtTags(mNbtTagsJson);
+			mNbtTags = tags.hasTags() ? tags : null;
 		}
 
 		mLeftClickActionsJson = object.get(LEFT_CLICK_ACTIONS_KEY);
@@ -79,6 +87,7 @@ public class GuiItem {
 			.add(ITEM_KEY, NBTItem.convertItemtoNBT(mDisplayItem).toString())
 			.add(KEEP_GUI_OPEN_KEY, mKeepGuiOpen)
 			.add(PREREQUISITES_KEY, mPrerequisitesJson)
+			.add(NBT_TAGS_KEY, mNbtTagsJson)
 			.add(LEFT_CLICK_ACTIONS_KEY, mLeftClickActionsJson)
 			.add(RIGHT_CLICK_ACTIONS_KEY, mRightClickActionsJson)
 			.build();
@@ -103,6 +112,16 @@ public class GuiItem {
 					mPrerequisitesJson = null;
 				} else {
 					mPrerequisites = new QuestPrerequisites(mPrerequisitesJson);
+				}
+			}
+			String nbtTags = sqguiCompound.getString(NBT_TAGS_KEY);
+			if (nbtTags != null) {
+				mNbtTagsJson = gson.fromJson(nbtTags, JsonElement.class);
+				if (mNbtTagsJson.isJsonNull()) {
+					mNbtTagsJson = null;
+				} else {
+					NbtTags tags = new NbtTags(mNbtTagsJson);
+					mNbtTags = tags.hasTags() ? mNbtTags : null;
 				}
 			}
 			String leftClickActions = sqguiCompound.getString(LEFT_CLICK_ACTIONS_KEY);
@@ -153,6 +172,9 @@ public class GuiItem {
 			if (mPrerequisites != null) {
 				lore.add(Component.text("[SQGUI] Has prerequisites"));
 			}
+			if (mNbtTags != null) {
+				lore.add(Component.text("[SQGUI] Has tags"));
+			}
 			if (mKeepGuiOpen) {
 				lore.add(Component.text("[SQGUI] keeps GUI open"));
 			}
@@ -168,6 +190,7 @@ public class GuiItem {
 			Gson gson = new Gson();
 			sqguiCompound.setBoolean(KEEP_GUI_OPEN_KEY, mKeepGuiOpen);
 			sqguiCompound.setString(PREREQUISITES_KEY, gson.toJson(mPrerequisitesJson));
+			sqguiCompound.setString(NBT_TAGS_KEY, gson.toJson(mNbtTagsJson));
 			sqguiCompound.setString(LEFT_CLICK_ACTIONS_KEY, gson.toJson(mLeftClickActionsJson));
 			sqguiCompound.setString(RIGHT_CLICK_ACTIONS_KEY, gson.toJson(mRightClickActionsJson));
 			return nbtItem.getItem();
@@ -183,6 +206,9 @@ public class GuiItem {
 				meta.lore(lore.stream().map(line -> NmsUtils.getVersionAdapter().resolveComponents(line, context.getPlayer())).collect(Collectors.toList()));
 			}
 			displayItem.setItemMeta(meta);
+			if (mNbtTags != null && mNbtTags.hasTags()) {
+				displayItem = mNbtTags.applyTags(displayItem);
+			}
 			return displayItem;
 		}
 	}
@@ -207,8 +233,8 @@ public class GuiItem {
 		NBTCompound sqguiCompound = nbtItem.getCompound(SQGUI_KEY);
 		if (sqguiCompound != null) {
 			NBTCompoundList moreItems = sqguiCompound.getCompoundList(MORE_ITEMS_KEY);
-			for (NBTListCompound item : moreItems) {
-				result.add(new GuiItem(index, NBTItem.convertNBTtoItem(new NBTContainer(item.getCompound()))));
+			for (ReadWriteNBT item : moreItems) {
+				result.add(new GuiItem(index, NBTItem.convertNBTtoItem(new NBTContainer(item.toString()))));
 			}
 		}
 		result.add(0, new GuiItem(index, itemStack));
