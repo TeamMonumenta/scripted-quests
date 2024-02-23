@@ -15,16 +15,19 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BooleanSupplier;
 import javax.annotation.Nullable;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
 import org.bukkit.Bukkit;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.intellij.lang.annotations.Subst;
 
 public class SongManager {
 	public static class Song {
-		public String mSongPath;
-		public SoundCategory mCategory;
+		public final String mSongPath;
+		public final SoundCategory mCategory;
 		public long mSongDuration;
 		public boolean mIsLoop;
 		public float mVolume;
@@ -55,6 +58,7 @@ public class SongManager {
 				&& mSongPath.equals(song.mSongPath);
 		}
 
+		@Subst("minecraft:block.note_block.harp")
 		public String songPath() {
 			return mSongPath;
 		}
@@ -95,7 +99,9 @@ public class SongManager {
 			}
 
 			mNextTime = LocalDateTime.now(TIMEZONE).plus(mNow.mSongDuration, ChronoUnit.MILLIS);
-			player.playSound(player.getLocation(), mNow.mSongPath, mNow.mCategory, mNow.mVolume, mNow.mPitch);
+			Key key = Key.key(mNow.songPath());
+			Sound sound = Sound.sound(key, mNow.mCategory.soundSource(), mNow.mVolume, mNow.mPitch);
+			player.playSound(sound, player);
 			mRealTimePool.schedule(this, millisToRefresh(), TimeUnit.of(ChronoUnit.MILLIS));
 		}
 
