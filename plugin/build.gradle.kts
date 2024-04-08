@@ -27,7 +27,7 @@ dependencies {
     implementation("com.google.auth:google-auth-library-oauth2-http:0.1.0")
     compileOnly("io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT")
     compileOnly("dev.jorel.CommandAPI:commandapi-core:8.8.0")
-    compileOnly("de.tr7zw:item-nbt-api-plugin:2.3.1")
+    compileOnly("de.tr7zw:item-nbt-api-plugin:2.12.0-SNAPSHOT")
     compileOnly("com.mojang:brigadier:1.0.17")
     compileOnly("com.google.code.gson:gson:2.8.0")
     compileOnly("org.dynmap:DynmapCoreAPI:2.0")

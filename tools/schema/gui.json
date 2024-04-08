@@ -89,6 +89,28 @@
                     "$ref": "prerequisites.json",
                     "required": false
                   },
+                  "nbt_tags": {
+                    "required": true,
+                    "title": "nbt tags",
+                    "description": "Set a specified value at a simple NBT path, useful for resource pack support. Path nodes are separated by periods.",
+                    "type": "array",
+                    "items": {
+                      "title": "Tag",
+                      "type": "object",
+                      "properties": {
+                        "path": {
+                          "title": "path",
+                          "type": "string",
+                          "pattern": "^([a-zA-Z0-9_])+(\\.[a-zA-Z0-9_]+)*$"
+                        },
+                        "value": {
+                          "title": "value",
+                          "type": "string",
+                          "pattern": "^([a-zA-Z0-9_])+$"
+                        }
+                      }
+                    }
+                  },
                   "left_click_actions": {
                     "required": false,
                     "title": "left click actions",
