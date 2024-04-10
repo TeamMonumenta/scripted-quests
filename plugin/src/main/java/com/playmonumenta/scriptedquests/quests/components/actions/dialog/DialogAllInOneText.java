@@ -1,12 +1,14 @@
 package com.playmonumenta.scriptedquests.quests.components.actions.dialog;
 
 import com.google.gson.JsonElement;
+import com.playmonumenta.scriptedquests.api.JsonObjectBuilder;
 import com.playmonumenta.scriptedquests.quests.QuestContext;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.stream.Collectors;
 
 public class DialogAllInOneText implements DialogBase {
-	private ArrayList<DialogAllInOneEntry> mEntries = new ArrayList<DialogAllInOneEntry>();
+	private Collection<DialogAllInOneEntry> mEntries = new ArrayList<DialogAllInOneEntry>();
 
 	public DialogAllInOneText(String npcName, JsonElement element) throws Exception {
 		if (element.isJsonObject()) {
@@ -26,5 +28,13 @@ public class DialogAllInOneText implements DialogBase {
 		for (DialogAllInOneEntry ent : mEntries) {
 			ent.sendDialog(context);
 		}
+	}
+
+	@Override
+	public JsonElement serializeForClientAPI(final QuestContext context) {
+		return JsonObjectBuilder.get()
+			.add("type", "all_in_one_text")
+			.add("entries", mEntries.stream().map(v -> v.serializeForClientAPI(context)).collect(Collectors.toList()))
+			.build();
 	}
 }
