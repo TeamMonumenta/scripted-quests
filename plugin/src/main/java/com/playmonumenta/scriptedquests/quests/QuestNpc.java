@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 import org.bukkit.ChatColor;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -23,12 +24,16 @@ import org.jetbrains.annotations.Nullable;
  * combined into a single QuestNpc
  */
 public class QuestNpc {
+	// tacked on, this could be moved
+	public static final NamespacedKey PLAYER_SKIN_KEY = new NamespacedKey("monumenta", "player_skin");
+
 	private final QuestComponentList mComponents = new QuestComponentList();
 	private final String mNpcName;
 	private final String mDisplayName;
 	private final @Nullable QuestPrerequisites mFilePrerequisites;
 	private final EntityType mEntityType;
 	private @Nullable QuestPrerequisites mVisibilityPrerequisites;
+	private final @Nullable String mPlayerSkin;
 
 	public QuestNpc(JsonObject object) throws Exception {
 		// Read the npc's name first
@@ -70,12 +75,21 @@ public class QuestNpc {
 			mVisibilityPrerequisites = new QuestPrerequisites(visibilityPrerequisites);
 		}
 
+		// Set the skin if it has one
+		JsonElement playerSkin = object.get("player_skin");
+		if (playerSkin != null) {
+			mPlayerSkin = playerSkin.getAsString();
+		} else {
+			mPlayerSkin = null;
+		}
+
 		Set<Entry<String, JsonElement>> entries = object.entrySet();
 		for (Entry<String, JsonElement> ent : entries) {
 			String key = ent.getKey();
 
 			if (!key.equals("npc") && !key.equals("display_name") && !key.equals("file_prerequisites")
-				    && !key.equals("quest_components") && !key.equals("entity_type") && !key.equals("visibility_prerequisites")) {
+				    && !key.equals("quest_components") && !key.equals("entity_type") && !key.equals("visibility_prerequisites")
+						&& !key.equals("player_skin")) {
 				throw new Exception("Unknown quest key: " + key);
 			}
 
@@ -110,6 +124,10 @@ public class QuestNpc {
 
 	public EntityType getEntityType() {
 		return mEntityType;
+	}
+
+	public @Nullable String getPlayerSkin() {
+		return mPlayerSkin;
 	}
 
 	// Returns true if any quest components were attempted with this NPC

@@ -1,0 +1,21 @@
+{
+	"title": "NPC Skin Texture Map",
+	"defaultProperties": [
+		"skins"
+	],
+	"additionalProperties": false,
+	"properties": {
+		"skins": {
+			"required": true,
+			"title": "list of skins",
+			"description": "",
+			"type": "array",
+			"items": {
+				"headerTemplate": "{{self.name}}",
+				"properties": {
+
+				}
+			}
+		}
+	}
+}

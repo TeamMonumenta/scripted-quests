@@ -50,6 +50,14 @@
             "title": "visibility_prerequisites",
             "description": "Prerequisites for the NPC to appear to a player. This is checked often, so should preferably be relatively simple (try not using items_in_inventory checks) - note that 'file_prerequisites' is checked together with this, so that should also be kept simple. Players in creative or spectator mode will always see all NPCs. An entity with such a prerequisite must not be riding another entity or have passengers itself.",
             "$ref": "prerequisites.json"
+        },
+        "player_skin": {
+            "propertyOrder": 7,
+            "required": false,
+            "title": "player_skin",
+            "description": "Player Skin for the mob.",
+            "type": "string",
+            "pattern": "[-+._A-Za-z0-9]+"
         }
     }
 }

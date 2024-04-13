@@ -1,0 +1,19 @@
+{
+	"title": "Player Skin Texture Map",
+	"defaultProperties": [
+		"textures"
+	],
+	"additionalProperties": false,
+	"properties": {
+		"textures": {
+			"required": true,
+			"title": "list of skins",
+			"description": "",
+			"type": "array",
+			"items": {
+				"headerTemplate": "{{self.name}}",
+				"$ref": "skin.json"
+			}
+		}
+	}
+}

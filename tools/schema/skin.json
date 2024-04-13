@@ -1,0 +1,35 @@
+{
+	"title": "Player Skin Texture",
+	"defaultProperties": [
+			"name",
+			"texture",
+			"signature"
+	],
+	"additionalProperties": false,
+	"properties": {
+		"name": {
+			"required": true,
+			"title": "name",
+			"propertyOrder": 1,
+			"description": "A name for the skin.",
+			"type": "string",
+			"pattern": "[-+._A-Za-z0-9]+"
+		},
+		"texture": {
+			"required": true,
+			"title": "texture",
+			"propertyOrder": 2,
+			"description": "texture link to mojang servers base64 encoded",
+			"type": "string",
+			"pattern": "^[-A-Za-z0-9+/]+={0,3}$",
+			"default": "ewogICJ0aW1lc3RhbXAiIDogMTcxMTc3ODUyMTkyMCwKICAicHJvZmlsZUlkIiA6ICJlZDUzZGQ4MTRmOWQ0YTNjYjRlYjY1MWRjYmE3N2U2NiIsCiAgInByb2ZpbGVOYW1lIiA6ICI0MTQxNDE0MWgiLAogICJzaWduYXR1cmVSZXF1aXJlZCIgOiB0cnVlLAogICJ0ZXh0dXJlcyIgOiB7CiAgICAiU0tJTiIgOiB7CiAgICAgICJ1cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTM5OTkzNTU4ZTFmNTI0MzA5Yzc5NjcwNTVkNTI4ZTYwNjkxMzdlNDEwMjNlYjk0MGUzNWFjMmI4OWIzOTI1OCIsCiAgICAgICJtZXRhZGF0YSIgOiB7CiAgICAgICAgIm1vZGVsIiA6ICJzbGltIgogICAgICB9CiAgICB9CiAgfQp9"
+		},
+		"signature": {
+			"required": false,
+			"title": "texture",
+			"propertyOrder": 3,
+			"description": "signature for above texture encoded",
+			"type": "string"
+		}
+	}
+}
