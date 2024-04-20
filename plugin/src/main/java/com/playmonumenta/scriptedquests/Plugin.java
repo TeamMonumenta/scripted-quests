@@ -19,6 +19,7 @@ import com.playmonumenta.scriptedquests.managers.QuestDeathManager;
 import com.playmonumenta.scriptedquests.managers.QuestLoginManager;
 import com.playmonumenta.scriptedquests.managers.QuestNpcManager;
 import com.playmonumenta.scriptedquests.managers.RaceManager;
+import com.playmonumenta.scriptedquests.managers.TitleManager;
 import com.playmonumenta.scriptedquests.managers.TranslationsManager;
 import com.playmonumenta.scriptedquests.managers.WaypointManager;
 import com.playmonumenta.scriptedquests.managers.ZonePropertyManager;
@@ -76,6 +77,7 @@ public class Plugin extends JavaPlugin {
 	private ScheduleFunction mScheduledFunctionsManager;
 	private @Nullable CustomLogger mLogger = null;
 	private SoundCategory mDefaultMusicSoundCategory = SoundCategory.RECORDS;
+	public TitleManager mTitleManager;
 
 	@Override
 	public void onLoad() {
@@ -124,6 +126,7 @@ public class Plugin extends JavaPlugin {
 		GuiCommand.register(this);
 		TradesCommand.register();
 		ShowZones.register(this);
+		SQTitle.register();
 		Music.register();
 
 		mScheduledFunctionsManager = new ScheduleFunction(this);
@@ -146,6 +149,7 @@ public class Plugin extends JavaPlugin {
 		mLoginManager = new QuestLoginManager();
 		mDeathManager = new QuestDeathManager();
 		mRaceManager = new RaceManager(this);
+		mTitleManager = new TitleManager();
 		mCodeManager = new CodeManager();
 		mZoneEventListener = new ZoneEventListener(this);
 		mZoneManager = ZoneManager.createInstance(this);
@@ -219,6 +223,7 @@ public class Plugin extends JavaPlugin {
 		mQuestCompassManager.reload(this, sender);
 		mLoginManager.reload(this, sender);
 		mDeathManager.reload(this, sender);
+		mTitleManager.reload(this, sender);
 		mRaceManager.reload(this, sender);
 		mCodeManager.reload(this, sender);
 		mZonePropertyManager.reload(this, sender);
