@@ -2,13 +2,11 @@ package com.playmonumenta.scriptedquests.quests;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import com.playmonumenta.scriptedquests.quests.components.StaticTitle;
 import java.lang.reflect.InvocationTargetException;
 import java.time.Duration;
 import java.util.Objects;
 import java.util.Optional;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title.Times;
 import net.kyori.adventure.title.TitlePart;
 import org.bukkit.entity.Player;
@@ -49,18 +47,6 @@ public abstract class TitleEntry {
 		return Objects.requireNonNull(Type.fromString(object.get("type").getAsString()).orElseThrow(() -> new IllegalArgumentException("A `type` is required."))).create(object);
 	}
 
-
-	public int getFadeIn() {
-		return fadeIn;
-	}
-
-	public int getFadeOut() {
-		return fadeOut;
-	}
-
-	public int getStay() {
-		return stay;
-	}
 
 	public String getLabel() {
 		return label;

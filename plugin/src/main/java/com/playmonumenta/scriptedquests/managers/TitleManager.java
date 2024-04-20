@@ -13,7 +13,7 @@ import org.bukkit.plugin.Plugin;
 public class TitleManager {
 
 
-	private Map<String, TitleEntry> titles;
+	private final Map<String, TitleEntry> titles;
 
 	public TitleManager() {
 		this.titles = new HashMap<>();
@@ -26,10 +26,6 @@ public class TitleManager {
 			titles.put(titleEntry.getLabel(), titleEntry);
 			return titleEntry.getLabel();
 		});
-	}
-
-	public Map<String, TitleEntry> getTitles() {
-		return titles;
 	}
 
 	public TitleEntry getTitle(String label) {
