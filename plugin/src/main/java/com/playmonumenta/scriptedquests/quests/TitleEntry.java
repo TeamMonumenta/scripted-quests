@@ -2,6 +2,7 @@ package com.playmonumenta.scriptedquests.quests;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.playmonumenta.scriptedquests.quests.components.ScrollingTitle;
 import com.playmonumenta.scriptedquests.quests.components.StaticTitle;
 import java.lang.reflect.InvocationTargetException;
 import java.time.Duration;
@@ -24,7 +25,7 @@ public abstract class TitleEntry {
 	private final int fadeIn;
 	private final int fadeOut;
 
-	protected TitleEntry(JsonObject object) {
+	public TitleEntry(JsonObject object) {
 
 		label = Objects.requireNonNull(object.get("label").getAsString(), "A `label` is required.");
 		stay = object.get("stay").getAsInt(); // (in ticks)
@@ -61,7 +62,7 @@ public abstract class TitleEntry {
 	 */
 	enum Type {
 		STATIC("static", StaticTitle.class),
-		SCROLLING("scrolling", null),
+		SCROLLING("scrolling", ScrollingTitle.class),
 		CUSTOM("custom", null);
 
 		private final String jsonTag;

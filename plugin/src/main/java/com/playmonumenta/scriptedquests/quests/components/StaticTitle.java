@@ -15,10 +15,10 @@ import org.bukkit.entity.Player;
  * A sample json object:
  * <pre>
  * {
- * 	   label: "example",
- *     stay: 200,
- *     title: "<red>some title</red>",
- *     subtitle: "<blue>some subtitle</blue>"
+ * 	   "label": "example",
+ *     "stay": 200,
+ *     "title": "<red>some title</red>",
+ *     "subtitle": "<blue>some subtitle</blue>"
  * }
  * </pre>
  */
