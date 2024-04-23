@@ -1,0 +1,43 @@
+{
+  "title": "Animated Title",
+  "type":"object",
+  "additionalProperties": false,
+  "properties": {
+    "stay": {
+      "propertyOrder": 1,
+      "required": true,
+      "title": "stay",
+      "description": "How long the title will stay (in ticks)",
+      "type": "integer",
+      "minimum": 1
+    },
+    "fadeIn": {
+      "propertyOrder": 2,
+      "required": false,
+      "title": "fadeIn",
+      "description": "Fade in (in ticks)",
+      "type": "integer"
+    },
+    "fadeOut": {
+      "propertyOrder": 3,
+      "required": false,
+      "title": "fadeOut",
+      "description": "Fade out (in ticks)",
+      "type": "integer"
+    },
+    "title": {
+      "propertyOrder": 4,
+      "title": "Title",
+      "description": "The title",
+      "type": "string"
+    },
+    "subtitle": {
+      "propertyOrder": 5,
+      "title": "Subtitle",
+      "description": "The subtitle",
+      "type": "string"
+    }
+  }
+
+
+}
