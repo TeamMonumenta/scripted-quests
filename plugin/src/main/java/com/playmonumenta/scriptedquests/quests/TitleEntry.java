@@ -2,6 +2,7 @@ package com.playmonumenta.scriptedquests.quests;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.playmonumenta.scriptedquests.quests.components.AnimatedTitle;
 import com.playmonumenta.scriptedquests.quests.components.ScrollingTitle;
 import com.playmonumenta.scriptedquests.quests.components.StaticTitle;
 import java.lang.reflect.InvocationTargetException;
@@ -12,7 +13,7 @@ import net.kyori.adventure.title.Title.Times;
 import net.kyori.adventure.title.TitlePart;
 import org.bukkit.entity.Player;
 
-/**
+/** A TitleEntry
  * @author Tristian
  *
  * A title entry is a sort of animated title, with "instructions" to transform the title.
@@ -63,7 +64,7 @@ public abstract class TitleEntry {
 	enum Type {
 		STATIC("static", StaticTitle.class),
 		SCROLLING("scrolling", ScrollingTitle.class),
-		CUSTOM("custom", null);
+		ANIMATED("animated", AnimatedTitle.class);
 
 		private final String jsonTag;
 		private final Class<?> clazz;
