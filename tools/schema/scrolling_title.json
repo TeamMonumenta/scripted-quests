@@ -1,0 +1,93 @@
+{
+  "title": "Scrolling Title",
+  "type": "object",
+  "description": "A scrolling title with a delay for each character. An option for parallelism (both title and subtitle will scroll at the same time) is included. At least one of title or subtitle should be supplied.",
+  "options": {
+    "keep_oneof_values": false
+  },
+  "properties": {
+    "type": {
+      "type": "string",
+      "default": "scrolling",
+      "options": {
+        "hidden": true
+      }
+    },
+    "parallel": {
+      "type": "boolean",
+      "propertyOrder": 0,
+      "enum": [true, false],
+      "default": false,
+      "title": "Parallel",
+      "description": "Should the title and subtitle run in parallel? (Leave blank if not applicable)."
+    },
+    "delay": {
+      "type": "integer",
+      "propertyOrder": 1,
+      "default": 50,
+      "title": "Delay (in ms)",
+      "description": "The delay between each character"
+    },
+    "stay": {
+      "propertyOrder": 2,
+      "required": true,
+      "title": "Stay",
+      "description": "How long the title will stay (in ticks)",
+      "type": "integer",
+      "minimum": 1
+    },
+    "fadeIn": {
+      "propertyOrder": 3,
+      "required": false,
+      "title": "Fade In",
+      "description": "Fade in (in ticks)",
+      "type": "integer"
+    },
+    "fadeOut": {
+      "propertyOrder": 4,
+      "required": false,
+      "title": "Fade Out",
+      "description": "Fade out (in ticks)",
+      "type": "integer"
+    },
+    "title": {
+      "propertyOrder": 5,
+      "title": "Title",
+      "description": "The Title object",
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string",
+          "title": "Text",
+          "description": "The text of the title."
+        },
+        "delay": {
+          "type": "integer",
+          "title": "Delay (in ms)",
+          "description": "The delay between each character (in ms). Default: 50",
+          "default": 50
+        }
+      }
+
+    },
+    "subtitle": {
+      "propertyOrder": 6,
+      "title": "Subtitle",
+      "description": "The Subtitle object",
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string",
+          "title": "Text",
+          "description": "The text of the subtitle."
+        },
+        "delay": {
+          "type": "integer",
+          "title": "Delay (in ms)",
+          "description": "The delay between each character (in ms). Default: 50",
+          "default": 50
+        }
+      }
+    }
+  }
+}

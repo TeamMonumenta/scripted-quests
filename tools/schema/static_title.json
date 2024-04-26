@@ -1,13 +1,22 @@
 {
-
     "title": "Static Title",
-    "type":"object",
-    "additionalProperties": false,
+    "type": "object",
+    "description": "A static title. Equivalent to a /title command. At least one of title or subtitle should be supplied.",
+    "options": {
+        "keep_oneof_values": false
+    },
     "properties": {
+        "type": {
+            "type": "string",
+            "default": "static",
+            "options": {
+                "hidden": true
+            }
+        },
         "stay": {
             "propertyOrder": 1,
             "required": true,
-            "title": "stay",
+            "title": "Stay",
             "description": "How long the title will stay (in ticks)",
             "type": "integer",
             "minimum": 1
@@ -15,32 +24,30 @@
         "fadeIn": {
             "propertyOrder": 2,
             "required": false,
-            "title": "fadeIn",
+            "title": "Fade In",
             "description": "Fade in (in ticks)",
             "type": "integer"
         },
         "fadeOut": {
             "propertyOrder": 3,
             "required": false,
-            "title": "fadeOut",
+            "title": "Fade Out",
             "description": "Fade out (in ticks)",
             "type": "integer"
         },
         "title": {
             "propertyOrder": 4,
             "title": "Title",
-            "description": "The title",
+            "description": "The Title (can be left blank).",
             "type": "string",
-            "required": true
+            "default": ""
         },
         "subtitle": {
             "propertyOrder": 5,
             "title": "Subtitle",
-            "description": "The subtitle",
+            "description": "The Subtitle (can be left blank).",
             "type": "string",
-            "required": true
+            "default": ""
         }
     }
-
-
 }

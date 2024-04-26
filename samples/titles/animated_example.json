@@ -1,0 +1,23 @@
+
+{
+    "type":"animated",
+    "label":"example_animated",
+    "stay":200,
+    "instructions": [
+        {"target":"title", "app":"this is just a test"},
+        {"target":"subtitle", "wait":250},
+        {"target":"subtitle", "app":"this "},
+        {"target":"subtitle", "wait":250},
+        {"target":"subtitle", "app":"sentence "},
+        {"target":"subtitle", "wait":250},
+        {"target":"subtitle", "app":"is "},
+        {"target":"subtitle", "wait":250},
+        {"target":"subtitle", "app":"slow "},
+        {"target":"subtitle", "wait":50},
+        {"target":"subtitle", "app":"! "},
+        {"target":"subtitle", "wait":50},
+        {"target":"subtitle", "app":"! "}
+
+    ]
+
+}

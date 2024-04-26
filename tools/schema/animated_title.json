@@ -1,11 +1,19 @@
 {
   "title": "Animated Title",
+  "description": "A fully custom, animated title. Supply a list of instructions to be executed in game.",
   "type":"object",
   "properties": {
+    "type": {
+      "type": "string",
+      "default": "animated",
+      "options": {
+        "hidden": true
+      }
+    },
     "stay": {
       "propertyOrder": 1,
       "required": true,
-      "title": "stay",
+      "title": "Stay",
       "description": "How long the title will stay (in ticks)",
       "type": "integer",
       "minimum": 1
@@ -13,28 +21,29 @@
     "fadeIn": {
       "propertyOrder": 2,
       "required": false,
-      "title": "fadeIn",
+      "title": "Fade In",
       "description": "Fade in (in ticks)",
       "type": "integer"
     },
     "fadeOut": {
       "propertyOrder": 3,
       "required": false,
-      "title": "fadeOut",
+      "title": "Fade Out",
       "description": "Fade out (in ticks)",
       "type": "integer"
     },
-    "animations": {
+    "instructions": {
+      "title": "Animation Instructions",
       "type": "array",
       "minItems": 1,
       "items": {
-        "$ref": "#/definitions/instruction"
+        "$ref": "#/definitions/instructions"
       },
       "required": true
     }
   },
   "definitions": {
-    "instruction": {
+    "instructions": {
       "title": "Instructions",
       "extraProperties": false,
       "options": {
@@ -44,38 +53,42 @@
       "properties": {
         "target": {
           "title": "Target (subtitle or title)",
+          "description": "The target for this instruction; what part of the title this will affect.",
           "type": "string",
           "enum": ["title", "subtitle"]
         }
       },
-      "oneOf": [
+      "anyOf": [
         {
-          "title": "delay (in ms)",
+          "title": "Wait (in ms)",
           "type": "object",
           "properties": {
-            "delay": {
-              "title": "delay (in ms)",
+            "wait": {
+              "title": "Wait (in ms)",
+              "description": "Causes a delay of the provided amount of milliseconds before proceeding to the next instruction. TARGET does nothing here.",
               "type": "integer",
               "minValue": 1
             }
           }
         },
         {
-          "title": "add",
+          "title": "Append characters",
           "type": "object",
           "properties": {
-            "add": {
-              "title": "add",
+            "app": {
+              "title": "Append characters",
+              "description": "Adds the provided characters on to the END of the target.",
               "type": "string",
               "minLength": 1
             }
           }
         },{
           "type": "object",
-          "title": "sub",
+          "title": "Subtract off characters.",
           "properties": {
             "sub": {
-              "title": "sub",
+              "title": "Subtract off characters.",
+              "description": "Clears the specified amount of characters off the target. To clear the whole target, just use a massive number.",
               "type": "integer",
               "minValue": 1
             }

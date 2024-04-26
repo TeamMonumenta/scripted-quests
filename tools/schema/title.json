@@ -3,8 +3,19 @@
   "options": {
     "keep_oneof_values": false
   },
+  "properties": {
+    "label": {
+      "title": "Label",
+      "description": "The label of this title. Used to identify it in game.",
+      "type": "string",
+      "required": true,
+      "minLength": 1,
+      "propertyOrder": 0
+    }
+  },
   "anyOf": [
     {"$ref": "animated_title.json"},
-    {"$ref": "static_title.json"}
+    {"$ref": "static_title.json"},
+    {"$ref": "scrolling_title.json"}
   ]
 }

@@ -1,0 +1,15 @@
+{
+    "label": "scrolling_example_parallel",
+    "stay": 120,
+    "type": "scrolling",
+    "parallel": true,
+    "title": {
+        "delay": 50,
+        "text":"<red>this is my scrolling title</red>"
+    },
+    "subtitle": {
+        "delay": 50,
+        "text":"<blue>with a parallel scrolling subtitle.</blue>"
+        }
+
+}
