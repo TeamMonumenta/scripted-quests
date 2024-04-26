@@ -73,7 +73,8 @@ public class AnimatedTitle extends TitleEntry {
 			return component;
 		}),
 		APPEND("app", c -> component -> component.content(component.content()+c.getAsString())), // append a string
-		SUBTRACT("sub", i -> component -> component.content(component.content().substring(component.content().length() - i.getAsInt()))); // subtract from the end.
+//		this is unbounded, if it goes over it'll just clear.
+		SUBTRACT("sub", i -> component -> component.content().length() - i.getAsInt() <= 0 ? Component.empty() : component.content(component.content().substring(component.content().length() - i.getAsInt()))); // subtract from the end.
 
 		private final String jsonKey;
 		private final Function<JsonPrimitive, Function<TextComponent, TextComponent>>  f;

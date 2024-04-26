@@ -1,7 +1,6 @@
 {
   "title": "Animated Title",
   "type":"object",
-  "additionalProperties": false,
   "properties": {
     "stay": {
       "propertyOrder": 1,
@@ -25,17 +24,64 @@
       "description": "Fade out (in ticks)",
       "type": "integer"
     },
-    "title": {
-      "propertyOrder": 4,
-      "title": "Title",
-      "description": "The title",
-      "type": "string"
-    },
-    "subtitle": {
-      "propertyOrder": 5,
-      "title": "Subtitle",
-      "description": "The subtitle",
-      "type": "string"
+    "animations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/definitions/instruction"
+      },
+      "required": true
+    }
+  },
+  "definitions": {
+    "instruction": {
+      "title": "Instructions",
+      "extraProperties": false,
+      "options": {
+        "keep_oneof_values": false
+      },
+      "type": "object",
+      "properties": {
+        "target": {
+          "title": "Target (subtitle or title)",
+          "type": "string",
+          "enum": ["title", "subtitle"]
+        }
+      },
+      "oneOf": [
+        {
+          "title": "delay (in ms)",
+          "type": "object",
+          "properties": {
+            "delay": {
+              "title": "delay (in ms)",
+              "type": "integer",
+              "minValue": 1
+            }
+          }
+        },
+        {
+          "title": "add",
+          "type": "object",
+          "properties": {
+            "add": {
+              "title": "add",
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },{
+          "type": "object",
+          "title": "sub",
+          "properties": {
+            "sub": {
+              "title": "sub",
+              "type": "integer",
+              "minValue": 1
+            }
+          }
+        }
+      ]
     }
   }
 

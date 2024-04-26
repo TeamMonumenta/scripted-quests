@@ -1,0 +1,10 @@
+{
+  "title": "Title Editor",
+  "options": {
+    "keep_oneof_values": false
+  },
+  "anyOf": [
+    {"$ref": "animated_title.json"},
+    {"$ref": "static_title.json"}
+  ]
+}

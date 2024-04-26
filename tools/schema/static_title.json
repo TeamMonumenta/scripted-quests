@@ -3,10 +3,6 @@
     "title": "Static Title",
     "type":"object",
     "additionalProperties": false,
-    "anyOf": [
-        {"not": {"title": null}},
-        {"not": {"subtitle":null }}
-    ],
     "properties": {
         "stay": {
             "propertyOrder": 1,
@@ -34,13 +30,15 @@
             "propertyOrder": 4,
             "title": "Title",
             "description": "The title",
-            "type": ["string", "null"]
+            "type": "string",
+            "required": true
         },
         "subtitle": {
             "propertyOrder": 5,
             "title": "Subtitle",
             "description": "The subtitle",
-            "type": ["string", "null"]
+            "type": "string",
+            "required": true
         }
     }
 

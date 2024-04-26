@@ -30,7 +30,6 @@ public abstract class TitleEntry {
 
 		label = Objects.requireNonNull(object.get("label").getAsString(), "A `label` is required.");
 		stay = object.get("stay").getAsInt(); // (in ticks)
-		if (0 >= stay) throw new NullPointerException("A non-negative `stay` parameter is required.");
 //		optional parameters
 		fadeIn = Optional.ofNullable(object.get("fadeIn")).map(JsonElement::getAsInt).orElse(0);
 		fadeOut = Optional.ofNullable(object.get("fadeOut")).map(JsonElement::getAsInt).orElse(0);
