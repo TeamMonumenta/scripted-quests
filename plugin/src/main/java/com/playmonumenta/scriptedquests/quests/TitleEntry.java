@@ -58,7 +58,7 @@ public abstract class TitleEntry {
 	 * A title entry can hold one of these types.
 	 * They are defined as "static" (a vanilla title),
 	 * "scrolling" (text that scrolls from left to right with a set delay for each character),
-	 * and "custom", where the user defines their own set of "instructions" for the title.
+	 * and "animated", where the user defines their own set of "instructions" for the title.
 	 */
 	enum Type {
 		STATIC("static", StaticTitle.class),
