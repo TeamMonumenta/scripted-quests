@@ -41,6 +41,7 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
     testImplementation("org.mockito:mockito-junit-jupiter:5.8.0")
     testImplementation("com.github.seeseemelk:MockBukkit-v1.20:3.9.0")
+    testRuntimeOnly("dev.jorel:commandapi-bukkit-core:9.4.0")
     errorprone("com.google.errorprone:error_prone_core:2.10.0")
     errorprone("com.uber.nullaway:nullaway:0.9.5")
 }
