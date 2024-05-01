@@ -82,7 +82,7 @@ public class GiveLootTable {
 			.withArguments(lootTableTextArg)
 			.withArguments(countItemsArg)
 			.executes((sender, args) -> {
-				giveLootCountFromItemEntity(args.getByArgument(playersArg), args.getByArgument(lootTableTextArg),  args.getByArgument(countItemsArg), random);
+				giveLootCountFromItemEntity(args.getByArgument(playersArg), args.getByArgument(lootTableTextArg), args.getByArgument(countItemsArg), random);
 			})
 			.register();
 	}

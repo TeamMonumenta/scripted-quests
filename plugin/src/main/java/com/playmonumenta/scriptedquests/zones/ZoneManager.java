@@ -1,7 +1,6 @@
 package com.playmonumenta.scriptedquests.zones;
 
 import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.commands.ShowZones;
 import com.playmonumenta.scriptedquests.utils.ArgUtils;
 import com.playmonumenta.scriptedquests.utils.MMLog;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
