@@ -420,11 +420,11 @@ public class ShowZones {
 		new CommandAPICommand("showzones")
 			.withPermission(CommandPermission.fromString("scriptedquests.showzones"))
 			.withArguments(new LiteralArgument("show"))
-			.withArguments(ZoneManager.namespaceArg)
-			.withOptionalArguments(ZoneManager.propertyArg)
+			.withArguments(ZoneManager.getNamespaceArg())
+			.withOptionalArguments(ZoneManager.getPropertyArg())
 			.executes((sender, args) -> {
-				String namespaceName = args.getByArgument(ZoneManager.namespaceArg);
-				return show(plugin, sender, namespaceName, args.getByArgument(ZoneManager.propertyArg));
+				String namespaceName = args.getByArgument(ZoneManager.getNamespaceArg());
+				return show(plugin, sender, namespaceName, args.getByArgument(ZoneManager.getPropertyArg()));
 			})
 			.register();
 	}

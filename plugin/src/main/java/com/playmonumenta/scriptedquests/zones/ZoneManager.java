@@ -230,8 +230,13 @@ public class ZoneManager {
 		return lastZone.hasProperty(propertyName);
 	}
 
-	public static Argument<String> namespaceArg = new TextArgument("namespace").replaceSuggestions(ZoneManager.getNamespaceArgumentSuggestions());
-	public static Argument<String> propertyArg = new TextArgument("property").replaceSuggestions(ZoneManager.getLoadedPropertyArgumentSuggestions());
+	public static Argument<String> getNamespaceArg() {
+		return new TextArgument("namespace").replaceSuggestions(ZoneManager.getNamespaceArgumentSuggestions());
+	}
+
+	public static Argument<String> getPropertyArg() {
+		return new TextArgument("property").replaceSuggestions(ZoneManager.getLoadedPropertyArgumentSuggestions());
+	}
 
 	public Set<String> getNamespaceNames() {
 		return new HashSet<>(mActiveState.mNamespaces.keySet());
@@ -263,7 +268,7 @@ public class ZoneManager {
 	}
 
 	public static ArgumentSuggestions<CommandSender> getLoadedPropertyArgumentSuggestions() {
-		return ArgumentSuggestions.strings(info -> getInstance().getLoadedPropertySuggestions(info.previousArgs().getByArgument(namespaceArg)));
+		return ArgumentSuggestions.strings(info -> getInstance().getLoadedPropertySuggestions(info.previousArgs().getByArgument(getNamespaceArg())));
 	}
 
 	/************************************************************************************

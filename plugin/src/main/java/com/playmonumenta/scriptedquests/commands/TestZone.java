@@ -18,31 +18,31 @@ public class TestZone {
 		new CommandAPICommand("testzones")
 			.withPermission(CommandPermission.fromString("scriptedquests.testzones"))
 			.withArguments(locationArg)
-			.withArguments(ZoneManager.namespaceArg)
+			.withArguments(ZoneManager.getNamespaceArg())
 			.executes((sender, args) -> {
-				return inNamespace(args.getByArgument(locationArg), args.getByArgument(ZoneManager.namespaceArg));
+				return inNamespace(args.getByArgument(locationArg), args.getByArgument(ZoneManager.getNamespaceArg()));
 			})
 			.register();
 
 		new CommandAPICommand("testzones")
 			.withPermission(CommandPermission.fromString("scriptedquests.testzones"))
 			.withArguments(locationArg)
-			.withArguments(ZoneManager.namespaceArg)
-			.withArguments(ZoneManager.propertyArg)
+			.withArguments(ZoneManager.getNamespaceArg())
+			.withArguments(ZoneManager.getPropertyArg())
 			.executes((sender, args) -> {
-				return hasProperty(args.getByArgument(locationArg), args.getByArgument(ZoneManager.namespaceArg), args.getByArgument(ZoneManager.propertyArg));
+				return hasProperty(args.getByArgument(locationArg), args.getByArgument(ZoneManager.getNamespaceArg()), args.getByArgument(ZoneManager.getPropertyArg()));
 			})
 			.register();
 
 		new CommandAPICommand("testzones")
 			.withPermission(CommandPermission.fromString("scriptedquests.testzones"))
 			.withArguments(locationArg)
-			.withArguments(ZoneManager.namespaceArg)
-			.withArguments(ZoneManager.propertyArg)
+			.withArguments(ZoneManager.getNamespaceArg())
+			.withArguments(ZoneManager.getPropertyArg())
 			.withArguments(new LiteralArgument("tellresult"))
 			.executes((sender, args) -> {
-				String namespaceName = args.getByArgument(ZoneManager.namespaceArg);
-				String propertyName = args.getByArgument(ZoneManager.propertyArg);
+				String namespaceName = args.getByArgument(ZoneManager.getNamespaceArg());
+				String propertyName = args.getByArgument(ZoneManager.getPropertyArg());
 				int result = hasProperty(args.getByArgument(locationArg), namespaceName, propertyName);
 				String message;
 				if (result == 0) {
