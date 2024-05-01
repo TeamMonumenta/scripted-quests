@@ -1,10 +1,13 @@
 package com.playmonumenta.scriptedquests.zones;
 
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.commands.ShowZones;
 import com.playmonumenta.scriptedquests.utils.ArgUtils;
 import com.playmonumenta.scriptedquests.utils.MMLog;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
+import dev.jorel.commandapi.arguments.Argument;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
+import dev.jorel.commandapi.arguments.TextArgument;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -227,6 +230,9 @@ public class ZoneManager {
 		return lastZone.hasProperty(propertyName);
 	}
 
+	public static Argument<String> namespaceArg = new TextArgument("namespace").replaceSuggestions(ZoneManager.getNamespaceArgumentSuggestions());
+	public static Argument<String> propertyArg = new TextArgument("property").replaceSuggestions(ZoneManager.getLoadedPropertyArgumentSuggestions());
+
 	public Set<String> getNamespaceNames() {
 		return new HashSet<>(mActiveState.mNamespaces.keySet());
 	}
@@ -235,7 +241,7 @@ public class ZoneManager {
 		return ArgUtils.quoteIfNeeded(new TreeSet<>(getNamespaceNames()));
 	}
 
-	public static ArgumentSuggestions getNamespaceArgumentSuggestions() {
+	public static ArgumentSuggestions<CommandSender> getNamespaceArgumentSuggestions() {
 		return ArgumentSuggestions.strings(info -> getInstance().getNamespaceNameSuggestions());
 	}
 
@@ -256,28 +262,8 @@ public class ZoneManager {
 		return ArgUtils.quoteIfNeeded(suggestions);
 	}
 
-	public static ArgumentSuggestions getLoadedPropertyArgumentSuggestions(String namespaceName) {
-		return ArgumentSuggestions.strings(info -> getInstance().getLoadedPropertySuggestions(namespaceName));
-	}
-
-	public static ArgumentSuggestions getLoadedPropertyArgumentSuggestions(int namespaceNameArgIndex) {
-		return ArgumentSuggestions.strings(info -> {
-			Object[] args = info.previousArgs();
-			if (args.length == 0) {
-				return SUGGESTIONS_EXECUTE_FALLBACK;
-			}
-
-			int index = namespaceNameArgIndex;
-			if (index < 0) {
-				index += args.length;
-			}
-
-			if (index < 0 || index >= args.length) {
-				return new String[]{"\"Invalid argument index for namespace name: " + index + "\""};
-			}
-
-			return getInstance().getLoadedPropertySuggestions((String) args[index]);
-		});
+	public static ArgumentSuggestions<CommandSender> getLoadedPropertyArgumentSuggestions() {
+		return ArgumentSuggestions.strings(info -> getInstance().getLoadedPropertySuggestions(info.previousArgs().getByArgument(namespaceArg)));
 	}
 
 	/************************************************************************************

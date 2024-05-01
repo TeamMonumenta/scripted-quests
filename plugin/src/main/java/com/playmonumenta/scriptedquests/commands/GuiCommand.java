@@ -18,38 +18,31 @@ public class GuiCommand {
 	@SuppressWarnings("unchecked")
 	public static void register(Plugin plugin) {
 
-		Argument<?> guiNameArgument = new StringArgument("name")
+		Argument<String> guiNameArgument = new StringArgument("name")
 			.replaceSuggestions(ArgumentSuggestions.strings(info -> plugin.mGuiManager.getGuiNames()));
 
-		Argument<?> guiPageArgument = new StringArgument("page")
+		Argument<String> guiPageArgument = new StringArgument("page")
 			.replaceSuggestions(ArgumentSuggestions.strings(info -> {
-				Optional<Gui> gui = Arrays.stream(info.previousArgs()).filter(arg -> arg instanceof String).findFirst().map(label ->
-					plugin.mGuiManager.getGui((String) label));
-				return gui.isPresent() ? gui.get().getPages() : new String[0];
+				String label = info.previousArgs().getByArgument(guiNameArgument);
+				Gui gui = plugin.mGuiManager.getGui(label);
+				if (gui == null) {
+					return new String[0];
+				}
+				return gui.getPages();
 			}));
+
+		EntitySelectorArgument.ManyPlayers playerArgument = new EntitySelectorArgument.ManyPlayers("player");
 
 		new CommandAPICommand("sqgui")
 			.withPermission("scriptedquests.gui")
 			.withSubcommand(
 				new CommandAPICommand("show")
 					.withPermission("scriptedquests.gui.show")
-					.withArguments(guiNameArgument,
-					               new EntitySelectorArgument.ManyPlayers("player"))
+					.withArguments(guiNameArgument, playerArgument)
+					.withOptionalArguments(guiPageArgument)
 					.executes((sender, args) -> {
-						for (Player player : (Collection<Player>) args[1]) {
-							plugin.mGuiManager.showGui((String) args[0], player, GuiManager.MAIN_PAGE);
-						}
-					})
-			)
-			.withSubcommand(
-				new CommandAPICommand("show")
-					.withPermission("scriptedquests.gui.show")
-					.withArguments(guiNameArgument,
-					               new EntitySelectorArgument.ManyPlayers("player"),
-					               guiPageArgument)
-					.executes((sender, args) -> {
-						for (Player player : (Collection<Player>) args[1]) {
-							plugin.mGuiManager.showGui((String) args[0], player, (String) args[2]);
+						for (Player player : (Collection<Player>) args.getByArgument(playerArgument)) {
+							plugin.mGuiManager.showGui(args.getByArgument(guiNameArgument), player, args.getByArgumentOrDefault(guiPageArgument, GuiManager.MAIN_PAGE));
 						}
 					})
 			)
@@ -57,20 +50,11 @@ public class GuiCommand {
 				new CommandAPICommand("edit")
 					.withPermission("scriptedquests.gui.edit")
 					.withArguments(guiNameArgument)
+					.withOptionalArguments(guiPageArgument)
 					.executesPlayer((sender, args) -> {
-						plugin.mGuiManager.editGui((String) args[0], sender, GuiManager.MAIN_PAGE);
+						plugin.mGuiManager.editGui(args.getByArgument(guiNameArgument), sender, args.getByArgumentOrDefault(guiPageArgument, GuiManager.MAIN_PAGE));
 					})
-			)
-			.withSubcommand(
-				new CommandAPICommand("edit")
-					.withPermission("scriptedquests.gui.edit")
-					.withArguments(guiNameArgument,
-					               guiPageArgument)
-					.executesPlayer((sender, args) -> {
-						plugin.mGuiManager.editGui((String) args[0], sender, (String) args[1]);
-					})
-			)
-			.register();
+			).register();
 
 	}
 

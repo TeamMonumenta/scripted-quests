@@ -30,14 +30,18 @@ public class ScoreboardUtils {
 	public static void setScoreboardValue(Entity entity, String scoreboardValue, int value) {
 		Objective objective = Bukkit.getScoreboardManager().getMainScoreboard().getObjective(scoreboardValue);
 		if (objective != null) {
-			final Score score;
-			if (entity instanceof Player) {
-				score = objective.getScore(entity.getName());
-			} else {
-				score = objective.getScore(entity.getUniqueId().toString());
-			}
-			score.setScore(value);
+			setScoreboardValue(entity, objective, value);
 		}
+	}
+
+	public static void setScoreboardValue(Entity entity, Objective objective, int value) {
+		final Score score;
+		if (entity instanceof Player) {
+			score = objective.getScore(entity.getName());
+		} else {
+			score = objective.getScore(entity.getUniqueId().toString());
+		}
+		score.setScore(value);
 	}
 
 	public static boolean isValidObjective(String objectiveName) {

@@ -18,6 +18,7 @@ import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
+import dev.jorel.commandapi.arguments.Argument;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.StringArgument;
 import java.io.File;
@@ -79,6 +80,8 @@ public class TranslationsManager implements Listener {
 
 		INSTANCE = this;
 
+		Argument<String> languageArg = new StringArgument("language").replaceSuggestions(ArgumentSuggestions.strings(info -> getListOfAvailableLanguages(true).values().toArray(new String[0])));
+
 		/* Register the main two commands */
 		new CommandAPICommand("reloadtranslations")
 			.withPermission(CommandPermission.fromString("scriptedquests.translations.reload"))
@@ -89,10 +92,9 @@ public class TranslationsManager implements Listener {
 		new CommandAPICommand("changelanguage")
 			.withPermission(CommandPermission.fromString("scriptedquests.translations.changelanguage"))
 			.withAliases("cl")
-			.withArguments(new StringArgument("language").replaceSuggestions(ArgumentSuggestions.strings(info ->
-				getListOfAvailableLanguages(true).values().toArray(new String[0]))))
+			.withArguments(languageArg)
 			.executes((sender, args) -> {
-				changeLanguage(sender, (String)args[0]);
+				changeLanguage(sender, args.getByArgument(languageArg));
 			}).register();
 
 		/* Check if the gsheet config is enabled - if it is, register the gsheet sync command */

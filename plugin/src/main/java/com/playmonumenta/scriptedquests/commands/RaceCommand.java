@@ -13,41 +13,44 @@ import org.bukkit.entity.Player;
 public class RaceCommand {
 	@SuppressWarnings("unchecked")
 	public static void register(Plugin plugin) {
+		EntitySelectorArgument.ManyPlayers playersArg = new EntitySelectorArgument.ManyPlayers("players");
+		StringArgument labelArg = new StringArgument("raceLabel");
+		IntegerArgument pageArg = new IntegerArgument("page", 1);
+
 		new CommandAPICommand("race")
 			.withSubcommand(new CommandAPICommand("start")
 				.withPermission(CommandPermission.fromString("scriptedquests.race.start"))
-				.withArguments(new EntitySelectorArgument.ManyPlayers("players"))
-				.withArguments(new StringArgument("raceLabel"))
+				.withArguments(playersArg)
+				.withArguments(labelArg)
 				.executes((sender, args) -> {
-					raceStart(plugin, (Collection<Player>) args[0],
-						(String) args[1]);
+					raceStart(plugin, args.getByArgument(playersArg), args.getByArgument(labelArg));
 				}))
 			.withSubcommand(new CommandAPICommand("stop")
 				.withPermission(CommandPermission.fromString("scriptedquests.race.stop"))
-				.withArguments(new EntitySelectorArgument.ManyPlayers("players"))
+				.withArguments(playersArg)
 				.executes((sender, args) -> {
-					raceStop(plugin, (Collection<Player>)args[0]);
+					raceStop(plugin, args.getByArgument(playersArg));
 				}))
 			.withSubcommand(new CommandAPICommand("win")
 				.withPermission(CommandPermission.fromString("scriptedquests.race.win"))
-				.withArguments(new EntitySelectorArgument.ManyPlayers("players"))
+				.withArguments(playersArg)
 				.executes((sender, args) -> {
-					raceWin(plugin, (Collection<Player>)args[0]);
+					raceWin(plugin, args.getByArgument(playersArg));
 				}))
 			.withSubcommand(new CommandAPICommand("leaderboard")
 				.withPermission(CommandPermission.fromString("scriptedquests.race.leaderboard"))
-				.withArguments(new EntitySelectorArgument.ManyPlayers("players"))
-				.withArguments(new StringArgument("raceLabel"))
-				.withArguments(new IntegerArgument("page", 1))
+				.withArguments(playersArg)
+				.withArguments(labelArg)
+				.withArguments(pageArg)
 				.executes((sender, args) -> {
-					Collection<Player> targets = (Collection<Player>) args[0];
+					Collection<Player> targets = args.getByArgument(playersArg);
 					if (sender instanceof Player player) {
 						if (!player.hasPermission("scriptedquests.race.leaderboard.others") && (targets.size() > 1 || !targets.contains(player))) {
 							throw CommandAPI.failWithString("You do not have permission to run this as another player.");
 						}
 					}
-					String raceLabel = (String) args[1];
-					Integer pageNumber = (Integer) args[2];
+					String raceLabel = args.getByArgument(labelArg);
+					int pageNumber = args.getByArgument(pageArg);
 					raceLeaderboard(plugin, targets, raceLabel, pageNumber);
 				}))
 			.register();

@@ -3,20 +3,24 @@ package com.playmonumenta.scriptedquests.commands;
 import com.playmonumenta.scriptedquests.utils.DateUtils;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
+import dev.jorel.commandapi.arguments.Argument;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.TextArgument;
+import org.bukkit.command.CommandSender;
 
 public class GetDate {
-	private static final ArgumentSuggestions SUGGESTIONS_FIELDS
+	private static final ArgumentSuggestions<CommandSender> SUGGESTIONS_FIELDS
 		= ArgumentSuggestions.strings("Year", "Month", "DayOfMonth", "DayOfWeek", "DaysSinceEpoch",
 		"SecondsSinceEpoch", "IsPm", "HourOfDay", "HourOfTwelve", "Minute", "Second", "Ms");
 
 	public static void register() {
+		Argument<String> fieldArg = new TextArgument("field").replaceSuggestions(SUGGESTIONS_FIELDS);
+
 		new CommandAPICommand("getdate")
 			.withPermission(CommandPermission.fromString("scriptedquests.getdate"))
-			.withArguments(new TextArgument("field").replaceSuggestions(SUGGESTIONS_FIELDS))
+			.withArguments(fieldArg)
 			.executes((sender, args) -> {
-					return getField((String) args[0]);
+					return getField(args.getByArgument(fieldArg));
 				})
 			.register();
 	}

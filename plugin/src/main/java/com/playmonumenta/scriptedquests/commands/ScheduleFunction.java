@@ -8,6 +8,7 @@ import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.FunctionArgument;
+import dev.jorel.commandapi.arguments.LiteralArgument;
 import dev.jorel.commandapi.arguments.MultiLiteralArgument;
 import dev.jorel.commandapi.arguments.TimeArgument;
 import dev.jorel.commandapi.wrappers.FunctionWrapper;
@@ -233,51 +234,55 @@ public class ScheduleFunction {
 			plugin.getLogger().info("Failed to unregister /schedule - this is only an error in 1.14+");
 		}
 
+		FunctionArgument functionArg = new FunctionArgument("function");
+		CommandArgument commandArg = new CommandArgument("cmd");
+		TimeArgument timeArg = new TimeArgument("time");
+
 		new CommandAPICommand("schedule")
 			.withPermission(CommandPermission.fromString("scriptedquests.schedulefunction"))
 			.withSubcommand(
 				new CommandAPICommand("command")
-					.withArguments(new TimeArgument("time"),
-						new CommandArgument("cmd"))
+					.withArguments(timeArg)
+					.withArguments(commandArg)
 					.executes((sender, args) -> {
-						return addDelayedCommand(sender, (String) args[1], (Integer) args[0]);
+						return addDelayedCommand(sender, args.getByArgument(commandArg), args.getByArgument(timeArg));
 					}))
 			.withSubcommand(
 				new CommandAPICommand("function")
-					.withArguments(new FunctionArgument("function"),
-					               new TimeArgument("time"))
+					.withArguments(functionArg)
+					.withArguments(timeArg)
 					.executes((sender, args) -> {
-						return addDelayedFunction(sender, (FunctionWrapper[]) args[0], (Integer) args[1]);
+						return addDelayedFunction(sender, args.getByArgument(functionArg), args.getByArgument(timeArg));
 					}))
 			.withSubcommand(
 				new CommandAPICommand("function")
-					.withArguments(new FunctionArgument("function"),
-						new TimeArgument("time"),
-						new MultiLiteralArgument("add"))
+					.withArguments(functionArg)
+					.withArguments(timeArg)
+					.withArguments(new LiteralArgument("add"))
 					.executes((sender, args) -> {
-						return addDelayedFunction(sender, (FunctionWrapper[]) args[0], (Integer) args[1]);
+						return addDelayedFunction(sender, args.getByArgument(functionArg), args.getByArgument(timeArg));
 					}))
 			.withSubcommand(
 				new CommandAPICommand("function")
-					.withArguments(new FunctionArgument("function"),
-						new TimeArgument("time"),
-						new MultiLiteralArgument("append"))
+					.withArguments(functionArg)
+					.withArguments(timeArg)
+					.withArguments(new LiteralArgument("append"))
 					.executes((sender, args) -> {
-						return appendDelayedFunction(sender, (FunctionWrapper[]) args[0], (Integer) args[1]);
+						return appendDelayedFunction(sender, args.getByArgument(functionArg), args.getByArgument(timeArg));
 					}))
 			.withSubcommand(
 				new CommandAPICommand("function")
-					.withArguments(new FunctionArgument("function"),
-						new TimeArgument("time"),
-						new MultiLiteralArgument("replace"))
+					.withArguments(functionArg)
+					.withArguments(timeArg)
+					.withArguments(new LiteralArgument("replace"))
 					.executes((sender, args) -> {
-						return replaceDelayedFunction(sender, (FunctionWrapper[]) args[0], (Integer) args[1]);
+						return replaceDelayedFunction(sender, args.getByArgument(functionArg), args.getByArgument(timeArg));
 					}))
 			.withSubcommand(
 				new CommandAPICommand("clear")
-					.withArguments(new FunctionArgument("function"))
+					.withArguments(functionArg)
 					.executes((sender, args) -> {
-						return clearDelayedFunction(sender, (FunctionWrapper[]) args[0]);
+						return clearDelayedFunction(sender, args.getByArgument(functionArg));
 					}))
 			.register();
 	}

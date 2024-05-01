@@ -17,6 +17,10 @@ plugins {
     id("net.ltgt.nullaway") version "1.3.0"
 }
 
+repositories {
+    maven("https://repo.codemc.org/repository/maven-public/")
+}
+
 dependencies {
     implementation(project(":adapter_api"))
     implementation(project(":adapter_unsupported"))
@@ -26,7 +30,7 @@ dependencies {
     implementation("com.google.apis:google-api-services-sheets:v4-rev1-1.21.0")
     implementation("com.google.auth:google-auth-library-oauth2-http:0.1.0")
     compileOnly("io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT")
-    compileOnly("dev.jorel.CommandAPI:commandapi-core:8.8.0")
+    compileOnly("dev.jorel:commandapi-bukkit-core:9.4.0")
     compileOnly("de.tr7zw:item-nbt-api-plugin:2.12.0-SNAPSHOT")
     compileOnly("com.mojang:brigadier:1.0.17")
     compileOnly("com.google.code.gson:gson:2.8.0")

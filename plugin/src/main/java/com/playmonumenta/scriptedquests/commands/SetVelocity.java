@@ -11,15 +11,22 @@ import org.bukkit.util.Vector;
 public class SetVelocity {
 	@SuppressWarnings("unchecked")
 	public static void register() {
+		EntitySelectorArgument.ManyEntities entitiesArg = new EntitySelectorArgument.ManyEntities("entities");
+		DoubleArgument xArg = new DoubleArgument("xVel");
+		DoubleArgument yArg = new DoubleArgument("yVel");
+		DoubleArgument zArg = new DoubleArgument("zVel");
+
+
 		new CommandAPICommand("setvelocity")
 			.withPermission(CommandPermission.fromString("scriptedquests.setvelocity"))
-			.withArguments(new EntitySelectorArgument.ManyEntities("entities"))
-			.withArguments(new DoubleArgument("xVel"))
-			.withArguments(new DoubleArgument("yVel"))
-			.withArguments(new DoubleArgument("zVel"))
+			.withArguments(entitiesArg)
+			.withArguments(xArg)
+			.withArguments(yArg)
+			.withArguments(zArg)
 			.executes((sender, args) -> {
-				for (Entity entity : (Collection<Entity>)args[0]) {
-					entity.setVelocity(new Vector((Double)args[1], (Double)args[2], (Double)args[3]));
+				Collection<Entity> entities = args.getByArgument(entitiesArg);
+				for (Entity entity : entities) {
+					entity.setVelocity(new Vector(args.getByArgument(xArg), args.getByArgument(yArg), args.getByArgument(zArg)));
 				}
 			})
 			.register();

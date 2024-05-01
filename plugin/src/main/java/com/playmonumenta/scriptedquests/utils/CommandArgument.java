@@ -20,7 +20,7 @@ public class CommandArgument extends GreedyStringArgument {
 		replaceSuggestions(ArgumentSuggestions.strings(this::suggestions));
 	}
 
-	private String[] suggestions(SuggestionInfo info) {
+	private String[] suggestions(SuggestionInfo<CommandSender> info) {
 		String input = info.currentArg();
 		CommandSender sender = info.sender();
 		String[] cmd = input.split(" ", Integer.MAX_VALUE);
