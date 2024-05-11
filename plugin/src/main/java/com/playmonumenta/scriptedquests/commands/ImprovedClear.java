@@ -29,6 +29,9 @@ public class ImprovedClear {
 			.withPermission(perms)
 			.withArguments(targetArg)
 			.withArguments(nameArg)
+			.withOptionalArguments(maxAmountArg)
+			.withOptionalArguments(clearShulkersArg)
+			.withOptionalArguments(shulkerLoreArg)
 			.withAliases(aliases)
 			.executes((sender, args) -> {
 				Player player = args.getByArgument(targetArg);
