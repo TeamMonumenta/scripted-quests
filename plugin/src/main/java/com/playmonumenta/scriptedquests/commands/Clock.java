@@ -2,10 +2,13 @@ package com.playmonumenta.scriptedquests.commands;
 
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
+import dev.jorel.commandapi.arguments.Argument;
 import dev.jorel.commandapi.arguments.IntegerArgument;
+import dev.jorel.commandapi.arguments.LiteralArgument;
 import dev.jorel.commandapi.arguments.LocationArgument;
 import dev.jorel.commandapi.arguments.LocationType;
-import dev.jorel.commandapi.arguments.MultiLiteralArgument;
+import dev.jorel.commandapi.executors.CommandArguments;
+import java.util.function.Function;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.util.Consumer;
@@ -56,102 +59,85 @@ public class Clock {
 		}
 	}
 
+	private static final Argument<Location> locationArg = new LocationArgument("location", LocationType.BLOCK_POSITION);
+	private static final Argument<Integer> periodArg = new IntegerArgument("period", 1);
+	private static final Argument<Integer> rangeArg = new IntegerArgument("range", 1);
+
 	public static void register() {
 		new CommandAPICommand("clock")
 			.withPermission(CommandPermission.fromString("scriptedquests.clock"))
-			.withArguments(new LocationArgument("location", LocationType.BLOCK_POSITION))
-			.withArguments(new MultiLiteralArgument("always"))
-			.withArguments(new IntegerArgument("period", 1))
+			.withArguments(locationArg)
+			.withArguments(new LiteralArgument("always"))
+			.withArguments(periodArg)
 			.executes((sender, args) -> {
-				Location loc = (Location) args[0];
-				loc.add(0.5, 0.0, 0.5);
-				int period = (Integer) args[2];
-
-				SummonTimerConsumer consumer = new SummonTimerConsumer(period);
-				loc.getWorld().spawn(loc, ArmorStand.class, consumer);
+				summonTimer(args, t -> t);
 			})
 			.register();
 
 		new CommandAPICommand("clock")
 			.withPermission(CommandPermission.fromString("scriptedquests.clock"))
-			.withArguments(new LocationArgument("location", LocationType.BLOCK_POSITION))
-			.withArguments(new MultiLiteralArgument("always"))
-			.withArguments(new IntegerArgument("period", 1))
-			.withArguments(new MultiLiteralArgument("repeater"))
+			.withArguments(locationArg)
+			.withArguments(new LiteralArgument("always"))
+			.withArguments(periodArg)
+			.withArguments(new LiteralArgument("repeater"))
 			.executes((sender, args) -> {
-				Location loc = (Location) args[0];
-				loc.add(0.5, 0.0, 0.5);
-				int period = (Integer) args[2];
-
-				SummonTimerConsumer consumer = new SummonTimerConsumer(period).setRepeater();
-				loc.getWorld().spawn(loc, ArmorStand.class, consumer);
+				summonTimer(args, SummonTimerConsumer::setRepeater);
 			})
 			.register();
 
 		new CommandAPICommand("clock")
 			.withPermission(CommandPermission.fromString("scriptedquests.clock"))
-			.withArguments(new LocationArgument("location", LocationType.BLOCK_POSITION))
-			.withArguments(new MultiLiteralArgument("range"))
-			.withArguments(new IntegerArgument("range", 1))
-			.withArguments(new IntegerArgument("period", 1))
+			.withArguments(locationArg)
+			.withArguments(new LiteralArgument("range"))
+			.withArguments(rangeArg)
+			.withArguments(periodArg)
 			.executes((sender, args) -> {
-				Location loc = (Location) args[0];
-				loc.add(0.5, 0.0, 0.5);
-				int range = (Integer) args[2];
-				int period = (Integer) args[3];
-
-				SummonTimerConsumer consumer = new SummonTimerConsumer(period).setRange(range);
-				loc.getWorld().spawn(loc, ArmorStand.class, consumer);
+				int range = args.getByArgument(rangeArg);
+				summonTimer(args, t -> t.setRange(range));
 			})
 			.register();
 
 		new CommandAPICommand("clock")
 			.withPermission(CommandPermission.fromString("scriptedquests.clock"))
-			.withArguments(new LocationArgument("location", LocationType.BLOCK_POSITION))
-			.withArguments(new MultiLiteralArgument("range"))
-			.withArguments(new IntegerArgument("range", 1))
-			.withArguments(new IntegerArgument("period", 1))
-			.withArguments(new MultiLiteralArgument("repeater"))
+			.withArguments(locationArg)
+			.withArguments(new LiteralArgument("range"))
+			.withArguments(rangeArg)
+			.withArguments(periodArg)
+			.withArguments(new LiteralArgument("repeater"))
 			.executes((sender, args) -> {
-				Location loc = (Location) args[0];
-				loc.add(0.5, 0.0, 0.5);
-				int range = (Integer) args[2];
-				int period = (Integer) args[3];
-
-				SummonTimerConsumer consumer = new SummonTimerConsumer(period).setRange(range).setRepeater();
-				loc.getWorld().spawn(loc, ArmorStand.class, consumer);
+				int range = args.getByArgument(rangeArg);
+				summonTimer(args, t -> t.setRange(range).setRepeater());
 			})
 			.register();
 
 		new CommandAPICommand("clock")
 			.withPermission(CommandPermission.fromString("scriptedquests.clock"))
-			.withArguments(new LocationArgument("location", LocationType.BLOCK_POSITION))
-			.withArguments(new MultiLiteralArgument("player"))
-			.withArguments(new IntegerArgument("period", 1))
+			.withArguments(locationArg)
+			.withArguments(new LiteralArgument("player"))
+			.withArguments(periodArg)
 			.executes((sender, args) -> {
-				Location loc = (Location) args[0];
-				loc.add(0.5, 0.0, 0.5);
-				int period = (Integer) args[2];
-
-				SummonTimerConsumer consumer = new SummonTimerConsumer(period).setPlayer();
-				loc.getWorld().spawn(loc, ArmorStand.class, consumer);
+				summonTimer(args, SummonTimerConsumer::setPlayer);
 			})
 			.register();
 
 		new CommandAPICommand("clock")
 			.withPermission(CommandPermission.fromString("scriptedquests.clock"))
-			.withArguments(new LocationArgument("location", LocationType.BLOCK_POSITION))
-			.withArguments(new MultiLiteralArgument("player"))
-			.withArguments(new IntegerArgument("period", 1))
-			.withArguments(new MultiLiteralArgument("repeater"))
+			.withArguments(locationArg)
+			.withArguments(new LiteralArgument("player"))
+			.withArguments(periodArg)
+			.withArguments(new LiteralArgument("repeater"))
 			.executes((sender, args) -> {
-				Location loc = (Location) args[0];
-				loc.add(0.5, 0.0, 0.5);
-				int period = (Integer) args[2];
-
-				SummonTimerConsumer consumer = new SummonTimerConsumer(period).setPlayer().setRepeater();
-				loc.getWorld().spawn(loc, ArmorStand.class, consumer);
+				summonTimer(args, t -> t.setPlayer().setRepeater());
 			})
 			.register();
+	}
+
+	private static void summonTimer(CommandArguments args, Function<SummonTimerConsumer, SummonTimerConsumer> func) {
+		Location loc = args.getByArgument(locationArg);
+		loc.add(0.5, 0.0, 0.5);
+		int period = args.getByArgument(periodArg);
+
+		SummonTimerConsumer consumer = func.apply(new SummonTimerConsumer(period));
+		loc.getWorld().spawn(loc, ArmorStand.class, consumer);
 	}
 }

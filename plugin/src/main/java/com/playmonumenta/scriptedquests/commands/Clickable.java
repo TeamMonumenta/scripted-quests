@@ -3,6 +3,7 @@ package com.playmonumenta.scriptedquests.commands;
 import com.playmonumenta.scriptedquests.Plugin;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
+import dev.jorel.commandapi.arguments.Argument;
 import dev.jorel.commandapi.arguments.StringArgument;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ProxiedCommandSender;
@@ -10,11 +11,12 @@ import org.bukkit.entity.Player;
 
 public class Clickable {
 	public static void register(Plugin plugin) {
+		Argument<String> labelArg = new StringArgument("label");
 		new CommandAPICommand("clickable")
 			.withPermission(CommandPermission.fromString("scriptedquests.clickable"))
-			.withArguments(new StringArgument("label"))
+			.withArguments(labelArg)
 			.executes((sender, args) -> {
-				return click(plugin, sender, (String)args[0]);
+				return click(plugin, sender, args.getByArgument(labelArg));
 			})
 			.register();
 	}

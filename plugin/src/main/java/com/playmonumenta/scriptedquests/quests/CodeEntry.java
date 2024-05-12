@@ -10,6 +10,7 @@ import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
@@ -87,7 +88,7 @@ public class CodeEntry {
 		"witch",
 	};
 
-	public static final ArgumentSuggestions SUGGESTIONS_WORDS = ArgumentSuggestions.strings(words);
+	public static final ArgumentSuggestions<CommandSender> SUGGESTIONS_WORDS = ArgumentSuggestions.strings(words);
 
 	private final QuestComponentList mComponents = new QuestComponentList();
 	private final String mSeed;

@@ -10,13 +10,16 @@ public class RandomNumber {
 	private static final SplittableRandom mRandom = new SplittableRandom();
 
 	public static void register() {
+		IntegerArgument minArg = new IntegerArgument("min");
+		IntegerArgument maxArg = new IntegerArgument("max");
+
 		new CommandAPICommand("randomnumber")
 			.withPermission(CommandPermission.fromString("scriptedquests.randomnumber"))
-			.withArguments(new IntegerArgument("min"))
-			.withArguments(new IntegerArgument("max"))
+			.withArguments(minArg)
+			.withArguments(maxArg)
 			.executes((sender, args) -> {
-				int min = (Integer)args[0];
-				int max = (Integer)args[1];
+				int min = args.getByArgument(minArg);
+				int max = args.getByArgument(maxArg);
 				if (max < min) {
 					throw CommandAPI.failWithString("max < min");
 				}

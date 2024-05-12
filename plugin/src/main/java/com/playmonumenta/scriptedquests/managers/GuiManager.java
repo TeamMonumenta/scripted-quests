@@ -66,8 +66,8 @@ public class GuiManager {
 		return mGuis.keySet().toArray(new String[0]);
 	}
 
-	public @Nullable Gui getGui(String label) {
-		return mGuis.get(label);
+	public @Nullable Gui getGui(@Nullable String label) {
+		return label == null ? null : mGuis.get(label);
 	}
 
 	public void showGui(String label, Player player, String pageName) throws WrapperCommandSyntaxException {

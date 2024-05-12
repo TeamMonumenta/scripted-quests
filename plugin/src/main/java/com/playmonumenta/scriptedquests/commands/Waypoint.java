@@ -18,38 +18,45 @@ public class Waypoint {
 	public static void register(Plugin plugin) {
 		CommandPermission perm = CommandPermission.fromString("scriptedquests.waypoint");
 
+		EntitySelectorArgument.OnePlayer playerArg = new EntitySelectorArgument.OnePlayer("player");
+		TextArgument titleArg = new TextArgument("title");
+		TextArgument labelArg = new TextArgument("label");
+		LocationArgument locationArg = new LocationArgument("location", LocationType.PRECISE_POSITION);
+
 		//Sets command waypoint
 		new CommandAPICommand("waypoint")
 			.withPermission(perm)
 			.withSubcommand(new CommandAPICommand("set")
-				.withArguments(new EntitySelectorArgument.OnePlayer("player"))
-				.withArguments(new TextArgument("title"))
-				.withArguments(new TextArgument("label"))
-				.withArguments(new LocationArgument("location", LocationType.PRECISE_POSITION))
+				.withArguments(playerArg)
+				.withArguments(titleArg)
+				.withArguments(labelArg)
+				.withArguments(locationArg)
 				.executes((sender, args) -> {
+					Player targetPlayer = args.getByArgument(playerArg);
 					if (sender instanceof Player player
-						    && player != args[0]
+						    && player != targetPlayer
 						    && !player.hasPermission("scriptedquests.waypoint.others")) {
 						throw CommandAPI.failWithString("You do not have permission to run this as another player.");
 					}
 					if (plugin.mQuestCompassManager != null) {
 						List<Location> waypoint = new ArrayList<>();
-						waypoint.add((Location) args[3]);
-						plugin.mQuestCompassManager.setCommandWaypoint((Player) args[0], waypoint, (String) args[1] + ChatColor.RESET, (String) args[2]);
+						waypoint.add(args.getByArgument(locationArg));
+						plugin.mQuestCompassManager.setCommandWaypoint(targetPlayer, waypoint, args.getByArgument(titleArg) + ChatColor.RESET, args.getByArgument(labelArg));
 					} else {
 						throw CommandAPI.failWithString("Quest Compass Manager does not exist!");
 					}
 				}))
 			.withSubcommand(new CommandAPICommand("remove")
-				.withArguments(new EntitySelectorArgument.OnePlayer("player"))
+				.withArguments(playerArg)
 				.executes((sender, args) -> {
+					Player targetPlayer = args.getByArgument(playerArg);
 					if (sender instanceof Player player
-						    && player != args[0]
+						    && player != targetPlayer
 						    && !player.hasPermission("scriptedquests.waypoint.others")) {
 						throw CommandAPI.failWithString("You do not have permission to run this as another player.");
 					}
 					if (plugin.mQuestCompassManager != null) {
-						plugin.mQuestCompassManager.removeCommandWaypoint((Player) args[0]);
+						plugin.mQuestCompassManager.removeCommandWaypoint(targetPlayer);
 					} else {
 						throw CommandAPI.failWithString("Quest Compass Manager does not exist!");
 					}

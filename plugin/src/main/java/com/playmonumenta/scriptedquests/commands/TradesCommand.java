@@ -19,11 +19,16 @@ import org.bukkit.entity.Player;
 public class TradesCommand {
 
 	public static void register() {
-		Argument<?> tradeFileArgument
+		Argument<String> tradeFileArgument
 			= new GreedyStringArgument("trades_file")
 				  .replaceSuggestions(ArgumentSuggestions.stringCollection(
 					  info -> Plugin.getInstance().mTradeManager.getTraders().stream().map(
 						  trader -> Plugin.getInstance().getDataFolder().toPath().relativize(trader.getFile().toPath()).toString()).toList()));
+		EntitySelectorArgument.OnePlayer playerArg = new EntitySelectorArgument.OnePlayer("player");
+		Argument<String> npcArg = new TextArgument("npc")
+			.replaceSuggestions(ArgumentSuggestions.stringCollection(info -> Plugin.getInstance().mTradeManager.getTraderNames()
+				.stream().map(n -> n.contains(" ") ? '"' + n + '"' : n).toList()));
+		Argument<String> titleArg = new GreedyStringArgument("title");
 
 		new CommandAPICommand("sqtrades")
 			.withPermission("scriptedquests.trades")
@@ -31,7 +36,7 @@ public class TradesCommand {
 				new CommandAPICommand("edit")
 					.withArguments(tradeFileArgument)
 					.executesPlayer((player, args) -> {
-						String filePath = (String) args[0];
+						String filePath = args.getByArgument(tradeFileArgument);
 						File file = new File(Plugin.getInstance().getDataFolder(), filePath);
 						Optional<NpcTrader> optionalTrader = Plugin.getInstance().mTradeManager.getTraders().stream().filter(trader -> trader.getFile().getAbsoluteFile().equals(file.getAbsoluteFile())).findFirst();
 						if (optionalTrader.isEmpty()) {
@@ -42,15 +47,15 @@ public class TradesCommand {
 					})
 			).withSubcommand(
 				new CommandAPICommand("show")
-					.withArguments(new EntitySelectorArgument.OnePlayer("player"),
-						new TextArgument("npc")
-							.replaceSuggestions(ArgumentSuggestions.stringCollection(info -> Plugin.getInstance().mTradeManager.getTraderNames()
-								                                                                 .stream().map(n -> n.contains(" ") ? '"' + n + '"' : n).toList())),
-						new GreedyStringArgument("title"))
+					.withArguments(
+						playerArg,
+						npcArg,
+						titleArg
+					)
 					.executes((sender, args) -> {
-						Player player = (Player) args[0];
-						String npc = (String) args[1];
-						Component title = MiniMessage.miniMessage().deserialize((String) args[2]);
+						Player player = args.getByArgument(playerArg);
+						String npc = args.getByArgument(npcArg);
+						Component title = MiniMessage.miniMessage().deserialize(args.getByArgument(titleArg));
 						List<NpcTrader> trades = Plugin.getInstance().mTradeManager.getTrades(npc);
 						if (trades == null) {
 							throw CommandAPI.failWithString("No trader file with name '" + npc + "' found!");

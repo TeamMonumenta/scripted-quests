@@ -22,41 +22,32 @@ public class InteractNpc {
 
 	@SuppressWarnings("unchecked")
 	public static void register(Plugin plugin) {
-		/* First one of these has both required arguments */
+		EntitySelectorArgument.ManyPlayers playersArg = new EntitySelectorArgument.ManyPlayers("players");
+		TextArgument nameArg = new TextArgument("npcName");
+		EntityTypeArgument typeArg = new EntityTypeArgument("npcType");
+		EntitySelectorArgument.OneEntity npcArg = new EntitySelectorArgument.OneEntity("npc");
+
 		new CommandAPICommand("interactnpc")
 			.withPermission(CommandPermission.fromString("scriptedquests.interactnpc"))
-			.withArguments(new EntitySelectorArgument.ManyPlayers("players"))
-			.withArguments(new TextArgument("npcName"))
-			.withArguments(new EntityTypeArgument("npcType"))
+			.withArguments(playersArg)
+			.withArguments(nameArg)
+			.withOptionalArguments(typeArg)
 			.executes((sender, args) -> {
-				Collection<Player> targets = (Collection<Player>) args[0];
-				String npcName = (String) args[1];
-				EntityType npcType = (EntityType) args[2];
+				Collection<Player> targets = args.getByArgument(playersArg);
+				String npcName = args.getByArgument(nameArg);
+				EntityType npcType = args.getByArgument(typeArg);
 				interact(plugin, sender, targets, npcName, npcType);
 			})
 			.register();
 
-		/* Second one accepts a single NPC entity, and goes earlier to take priority over entity names */
 		new CommandAPICommand("interactnpc")
 			.withPermission(CommandPermission.fromString("scriptedquests.interactnpc"))
-			.withArguments(new EntitySelectorArgument.ManyPlayers("players"))
-			.withArguments(new EntitySelectorArgument.OneEntity("npc"))
+			.withArguments(playersArg)
+			.withArguments(npcArg)
 			.executes((sender, args) -> {
-				Collection<Player> targets = (Collection<Player>) args[0];
-				Entity npc = (Entity) args[1];
+				Collection<Player> targets = args.getByArgument(playersArg);
+				Entity npc = args.getByArgument(npcArg);
 				interact(plugin, sender, targets, npc);
-			})
-			.register();
-
-		/* Third one just has the npc name with VILLAGER as default */
-		new CommandAPICommand("interactnpc")
-			.withPermission(CommandPermission.fromString("scriptedquests.interactnpc"))
-			.withArguments(new EntitySelectorArgument.ManyPlayers("players"))
-			.withArguments(new TextArgument("npcName"))
-			.executes((sender, args) -> {
-				Collection<Player> targets = (Collection<Player>) args[0];
-				String npcName = (String) args[1];
-				interact(plugin, sender, targets, npcName, EntityType.VILLAGER);
 			})
 			.register();
 	}

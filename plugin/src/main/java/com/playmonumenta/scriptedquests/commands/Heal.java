@@ -14,13 +14,16 @@ import org.bukkit.entity.Entity;
 public class Heal {
 	@SuppressWarnings("unchecked")
 	public static void register() {
+		EntitySelectorArgument.ManyEntities entitiesArg = new EntitySelectorArgument.ManyEntities("entities");
+		DoubleArgument amountArg = new DoubleArgument("amount");
+
 		new CommandAPICommand("heal")
 			.withPermission(CommandPermission.fromString("scriptedquests.heal"))
-			.withArguments(new EntitySelectorArgument.ManyEntities("entities"))
-			.withArguments(new DoubleArgument("amount"))
+			.withArguments(entitiesArg)
+			.withArguments(amountArg)
 			.executes((sender, args) -> {
-				Collection<Entity> entities = (Collection<Entity>) args[0];
-				double amount = (double) args[1];
+				Collection<Entity> entities = args.getByArgument(entitiesArg);
+				double amount = args.getByArgument(amountArg);
 				for (Entity entity : entities) {
 					if (entity instanceof Damageable damageable) {
 						if (damageable instanceof Attributable attributable) {

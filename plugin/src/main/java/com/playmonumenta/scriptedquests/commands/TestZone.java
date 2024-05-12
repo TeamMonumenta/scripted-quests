@@ -3,6 +3,7 @@ package com.playmonumenta.scriptedquests.commands;
 import com.playmonumenta.scriptedquests.zones.ZoneManager;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
+import dev.jorel.commandapi.arguments.LiteralArgument;
 import dev.jorel.commandapi.arguments.LocationArgument;
 import dev.jorel.commandapi.arguments.MultiLiteralArgument;
 import dev.jorel.commandapi.arguments.TextArgument;
@@ -12,35 +13,37 @@ import org.bukkit.Location;
 
 public class TestZone {
 	public static void register() {
+		LocationArgument locationArg = new LocationArgument("location");
+
 		new CommandAPICommand("testzones")
 			.withPermission(CommandPermission.fromString("scriptedquests.testzones"))
-			.withArguments(new LocationArgument("location"))
-			.withArguments(new TextArgument("namespace").replaceSuggestions(ZoneManager.getNamespaceArgumentSuggestions()))
+			.withArguments(locationArg)
+			.withArguments(ZoneManager.getNamespaceArg())
 			.executes((sender, args) -> {
-				return inNamespace((Location) args[0], (String) args[1]);
+				return inNamespace(args.getByArgument(locationArg), args.getByArgument(ZoneManager.getNamespaceArg()));
 			})
 			.register();
 
 		new CommandAPICommand("testzones")
 			.withPermission(CommandPermission.fromString("scriptedquests.testzones"))
-			.withArguments(new LocationArgument("location"))
-			.withArguments(new TextArgument("namespace").replaceSuggestions(ZoneManager.getNamespaceArgumentSuggestions()))
-			.withArguments(new TextArgument("property").replaceSuggestions(ZoneManager.getLoadedPropertyArgumentSuggestions(1)))
+			.withArguments(locationArg)
+			.withArguments(ZoneManager.getNamespaceArg())
+			.withArguments(ZoneManager.getPropertyArg())
 			.executes((sender, args) -> {
-				return hasProperty((Location) args[0], (String) args[1], (String) args[2]);
+				return hasProperty(args.getByArgument(locationArg), args.getByArgument(ZoneManager.getNamespaceArg()), args.getByArgument(ZoneManager.getPropertyArg()));
 			})
 			.register();
 
 		new CommandAPICommand("testzones")
 			.withPermission(CommandPermission.fromString("scriptedquests.testzones"))
-			.withArguments(new LocationArgument("location"))
-			.withArguments(new TextArgument("namespace").replaceSuggestions(ZoneManager.getNamespaceArgumentSuggestions()))
-			.withArguments(new TextArgument("property").replaceSuggestions(ZoneManager.getLoadedPropertyArgumentSuggestions(1)))
-			.withArguments(new MultiLiteralArgument("tellresult"))
+			.withArguments(locationArg)
+			.withArguments(ZoneManager.getNamespaceArg())
+			.withArguments(ZoneManager.getPropertyArg())
+			.withArguments(new LiteralArgument("tellresult"))
 			.executes((sender, args) -> {
-				String namespaceName = (String) args[1];
-				String propertyName = (String) args[2];
-				int result = hasProperty((Location) args[0], namespaceName, propertyName);
+				String namespaceName = args.getByArgument(ZoneManager.getNamespaceArg());
+				String propertyName = args.getByArgument(ZoneManager.getPropertyArg());
+				int result = hasProperty(args.getByArgument(locationArg), namespaceName, propertyName);
 				String message;
 				if (result == 0) {
 					message = "Did not find zone in " + namespaceName + " with property " + propertyName;

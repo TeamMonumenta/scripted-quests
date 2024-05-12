@@ -7,6 +7,7 @@ import com.playmonumenta.scriptedquests.utils.QuestUtils;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
+import dev.jorel.commandapi.arguments.Argument;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.BooleanArgument;
 import dev.jorel.commandapi.arguments.IntegerArgument;
@@ -41,19 +42,26 @@ public class GrowableAPI {
 	public static void registerCommands() {
 		CommandPermission perm = CommandPermission.fromString("monumenta.growstructure");
 
+		LocationArgument locationArg = new LocationArgument("location", LocationType.BLOCK_POSITION);
+		Argument<String> labelArg = new StringArgument("label").replaceSuggestions(ArgumentSuggestions.strings(info -> getLabels()));
+		IntegerArgument ticksArg = new IntegerArgument("ticksPerStep", 1);
+		IntegerArgument blocksArg = new IntegerArgument("blocksPerStep", 1);
+		BooleanArgument eventArg = new BooleanArgument("callStructureGrowEvent");
+		IntegerArgument depthArg = new IntegerArgument("maxDepth", 1);
+
 		new CommandAPICommand("growable")
 			.withPermission(perm)
 			.withSubcommand(new CommandAPICommand("grow")
-				.withArguments(new LocationArgument("location", LocationType.BLOCK_POSITION))
-				.withArguments(new StringArgument("label").replaceSuggestions(ArgumentSuggestions.strings(info -> getLabels())))
-				.withArguments(new IntegerArgument("ticksPerStep", 1))
-				.withArguments(new IntegerArgument("blocksPerStep", 1))
-				.withArguments(new BooleanArgument("callStructureGrowEvent"))
+				.withArguments(locationArg)
+				.withArguments(labelArg)
+				.withArguments(ticksArg)
+				.withArguments(blocksArg)
+				.withArguments(eventArg)
 				.executes((sender, args) -> {
 					try {
-						String label = (String)args[1];
+						String label = args.getByArgument(labelArg);
 						sender.sendMessage("Started growing '" + label);
-						grow(label, (Location)args[0], (Integer)args[2], (Integer)args[3], (Boolean)args[4]).whenComplete((growable) -> {
+						grow(label, args.getByArgument(locationArg), args.getByArgument(ticksArg), args.getByArgument(blocksArg), args.getByArgument(eventArg)).whenComplete((growable) -> {
 							if (growable.wasCancelled()) {
 								sender.sendMessage("Growable '" + label + "' was cancelled after placing " + growable.getBlocksPlaced() + " blocks");
 							} else {
@@ -65,13 +73,13 @@ public class GrowableAPI {
 					}
 				}))
 			.withSubcommand(new CommandAPICommand("add")
-				.withArguments(new LocationArgument("location", LocationType.BLOCK_POSITION))
-				.withArguments(new StringArgument("label"))
-				.withArguments(new IntegerArgument("maxDepth", 1))
+				.withArguments(locationArg)
+				.withArguments(labelArg)
+				.withArguments(depthArg)
 				.executes((sender, args) -> {
 					try {
-						String label = (String)args[1];
-						GrowableStructure growable = add(label, (Location)args[0], (Integer)args[2]);
+						String label = args.getByArgument(labelArg);
+						GrowableStructure growable = add(label, args.getByArgument(locationArg), args.getByArgument(depthArg));
 						sender.sendMessage("Successfully saved '" + label + "' containing " + growable.getSize() + " blocks");
 					} catch (Exception e) {
 						throw CommandAPI.failWithString(e.getMessage());
@@ -90,7 +98,7 @@ public class GrowableAPI {
 		QuestUtils.loadScriptedQuests(Plugin.getInstance(), "growables", sender, (object, file) -> {
 			GrowableStructure growable = new GrowableStructure(file.getPath(), object);
 			getInstance().mGrowables.put(growable.getLabel(), growable);
-			return growable.getLabel() + ":" + Integer.toString(growable.getSize());
+			return growable.getLabel() + ":" + growable.getSize();
 		});
 	}
 

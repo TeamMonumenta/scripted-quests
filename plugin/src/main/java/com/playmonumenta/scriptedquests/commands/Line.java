@@ -11,13 +11,17 @@ import org.bukkit.command.CommandSender;
 
 public class Line {
 	public static void register() {
+		LocationArgument startArg = new LocationArgument("start");
+		LocationArgument endArg = new LocationArgument("end");
+		StringArgument materialArg = new StringArgument("material");
+
 		new CommandAPICommand("line")
 			.withPermission(CommandPermission.fromString("scriptedquests.line"))
-			.withArguments(new LocationArgument("start"))
-			.withArguments(new LocationArgument("end"))
-			.withArguments(new StringArgument("material"))
+			.withArguments(startArg)
+			.withArguments(endArg)
+			.withArguments(materialArg)
 			.executes((sender, args) -> {
-				return run(sender, (Location) args[0], (Location) args[1], (String) args[2]);
+				return run(sender, args.getByArgument(startArg), args.getByArgument(endArg), args.getByArgument(materialArg));
 			})
 			.register();
 	}

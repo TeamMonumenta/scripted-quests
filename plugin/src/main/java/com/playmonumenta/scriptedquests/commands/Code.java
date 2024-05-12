@@ -17,15 +17,13 @@ public class Code {
 			.withArguments(new TextArgument("word1").replaceSuggestions(CodeEntry.SUGGESTIONS_WORDS))
 			.withArguments(new TextArgument("word2").replaceSuggestions(CodeEntry.SUGGESTIONS_WORDS))
 			.withArguments(new TextArgument("word3").replaceSuggestions(CodeEntry.SUGGESTIONS_WORDS))
-			.executes((sender, args) -> {
-				submitCode(plugin, sender, (String)args[0], (String)args[1], (String)args[2]);
+			.executesPlayer((player, args) -> {
+				submitCode(plugin, player, args.getUnchecked("word1"), args.getUnchecked("word2"), args.getUnchecked("word3"));
 			})
 			.register();
 	}
 
-	private static void submitCode(Plugin plugin, CommandSender sender, String word1, String word2, String word3) throws WrapperCommandSyntaxException {
-		Player player = (Player)sender;
-
+	private static void submitCode(Plugin plugin, Player player, String word1, String word2, String word3) throws WrapperCommandSyntaxException {
 		// Check if race allows this
 		if (!plugin.mRaceManager.isNotRacingOrAllowsCode(player)) {
 			throw CommandAPI.failWithString("You can not enter a code while you are racing");

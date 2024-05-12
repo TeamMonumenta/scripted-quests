@@ -1,6 +1,5 @@
 package com.playmonumenta.scriptedquests.adapters;
 
-import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.papermc.paper.adventure.AdventureComponent;
@@ -46,7 +45,7 @@ public class VersionAdapter_v1_19_R3 implements VersionAdapter {
 	public @Nullable ParseResults<?> parseCommand(String command) {
 		try {
 			String testCommandStr = command.replaceAll("@S", "testuser").replaceAll("@N", "testnpc").replaceAll("@U", UUID.randomUUID().toString().toLowerCase());
-			return ((CraftServer) Bukkit.getServer()).getServer().vanillaCommandDispatcher.getDispatcher().parse(testCommandStr, ((CraftServer) Bukkit.getServer()).getServer().rconConsoleSource.createCommandSourceStack());
+			return MinecraftServer.getServer().getCommands().getDispatcher().parse(testCommandStr, MinecraftServer.getServer().createCommandSourceStack().withSuppressedOutput());
 		} catch (Exception e) {
 			// Failed to test the command - ignore it and print a log message
 			e.printStackTrace();

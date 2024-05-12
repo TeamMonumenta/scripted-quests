@@ -8,8 +8,7 @@ import com.playmonumenta.scriptedquests.zones.ZoneManager;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
-import dev.jorel.commandapi.arguments.MultiLiteralArgument;
-import dev.jorel.commandapi.arguments.TextArgument;
+import dev.jorel.commandapi.arguments.LiteralArgument;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import it.unimi.dsi.util.XoRoShiRo128PlusRandom;
 import java.util.HashMap;
@@ -410,7 +409,7 @@ public class ShowZones {
 	public static void register(Plugin plugin) {
 		new CommandAPICommand("showzones")
 			.withPermission(CommandPermission.fromString("scriptedquests.showzones"))
-			.withArguments(new MultiLiteralArgument("hide"))
+			.withArguments(new LiteralArgument("hide"))
 			.executes((sender, args) -> {
 				return hide(sender);
 			})
@@ -418,23 +417,12 @@ public class ShowZones {
 
 		new CommandAPICommand("showzones")
 			.withPermission(CommandPermission.fromString("scriptedquests.showzones"))
-			.withArguments(new MultiLiteralArgument("show"))
-			.withArguments(new TextArgument("namespace").replaceSuggestions(ZoneManager.getNamespaceArgumentSuggestions()))
+			.withArguments(new LiteralArgument("show"))
+			.withArguments(ZoneManager.getNamespaceArg())
+			.withOptionalArguments(ZoneManager.getPropertyArg())
 			.executes((sender, args) -> {
-				String namespaceName = (String) args[1];
-				return show(plugin, sender, namespaceName, null);
-			})
-			.register();
-
-		new CommandAPICommand("showzones")
-			.withPermission(CommandPermission.fromString("scriptedquests.showzones"))
-			.withArguments(new MultiLiteralArgument("show"))
-			.withArguments(new TextArgument("namespace").replaceSuggestions(ZoneManager.getNamespaceArgumentSuggestions()))
-			.withArguments(new TextArgument("property").replaceSuggestions(ZoneManager.getLoadedPropertyArgumentSuggestions(1)))
-			.executes((sender, args) -> {
-				String namespaceName = (String) args[1];
-				String propertyName = (String) args[2];
-				return show(plugin, sender, namespaceName, propertyName);
+				String namespaceName = args.getByArgument(ZoneManager.getNamespaceArg());
+				return show(plugin, sender, namespaceName, args.getByArgument(ZoneManager.getPropertyArg()));
 			})
 			.register();
 	}

@@ -7,89 +7,79 @@ import com.playmonumenta.scriptedquests.managers.SongManager.Song;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
-import dev.jorel.commandapi.arguments.Argument;
 import dev.jorel.commandapi.arguments.BooleanArgument;
 import dev.jorel.commandapi.arguments.DoubleArgument;
 import dev.jorel.commandapi.arguments.EntitySelectorArgument;
 import dev.jorel.commandapi.arguments.FloatArgument;
+import dev.jorel.commandapi.arguments.LiteralArgument;
 import dev.jorel.commandapi.arguments.MultiLiteralArgument;
 import dev.jorel.commandapi.arguments.SoundArgument;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
-import java.util.ArrayList;
+import dev.jorel.commandapi.executors.CommandArguments;
 import java.util.Collection;
-import java.util.List;
+import java.util.Optional;
 import org.bukkit.NamespacedKey;
 import org.bukkit.SoundCategory;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class Music {
+	private static final MultiLiteralArgument whenArg = new MultiLiteralArgument("when", "now", "next");
+	private static final EntitySelectorArgument.ManyPlayers playersArg = new EntitySelectorArgument.ManyPlayers("players");
+	private static final SoundArgument.NamespacedKey pathArg = new SoundArgument.NamespacedKey("music path");
+	private static final DoubleArgument durationArg = new DoubleArgument("duration in seconds", 0.001);
+	private static final BooleanArgument loopArg = new BooleanArgument("is loop");
+	private static final MultiLiteralArgument categoryArg = new MultiLiteralArgument("category", Constants.SOUND_CATEGORY_BY_NAME.keySet().toArray(String[]::new));
+	private static final FloatArgument volumeArg = new FloatArgument("volume", 0.0f);
+	private static final FloatArgument pitchArg = new FloatArgument("pitch", 0.5f, 2.0f);
+	private static final BooleanArgument stopOnDeathArg = new BooleanArgument("stop on death");
+	private static final MultiLiteralArgument conditionArg = new MultiLiteralArgument("condition", "if", "unless");
+	private static final EntitySelectorArgument.OnePlayer onePlayerArg = new EntitySelectorArgument.OnePlayer("player");
+
 	public static void register() {
-		List<Argument<?>> arguments = new ArrayList<>();
-		arguments.add(new MultiLiteralArgument("music"));
-		arguments.add(new MultiLiteralArgument("play"));
-		arguments.add(new MultiLiteralArgument("now", "next"));
-		arguments.add(new EntitySelectorArgument.ManyPlayers("players"));
-		arguments.add(new SoundArgument.NamespacedKey("music path"));
-		arguments.add(new DoubleArgument("duration in seconds", 0.001));
-
-		List<Argument<?>> optionalArguments = new ArrayList<>();
-		optionalArguments.add(new BooleanArgument("is loop"));
-		optionalArguments.add(new MultiLiteralArgument(Constants.SOUND_CATEGORY_BY_NAME.keySet().toArray(String[]::new)));
-		optionalArguments.add(new FloatArgument("volume", 0.0f));
-		optionalArguments.add(new FloatArgument("pitch", 0.5f, 2.0f));
-		optionalArguments.add(new BooleanArgument("stop on death"));
-
 		new CommandAPICommand("monumenta")
 			.withPermission(CommandPermission.fromString("scriptedquests.music.play"))
-			.withArguments(arguments)
+			.withArguments(new LiteralArgument("music"))
+			.withArguments(new LiteralArgument("play"))
+			.withArguments(whenArg)
+			.withArguments(playersArg)
+			.withArguments(pathArg)
+			.withArguments(durationArg)
+			.withOptionalArguments(loopArg)
+			.withOptionalArguments(categoryArg)
+			.withOptionalArguments(volumeArg)
+			.withOptionalArguments(pitchArg)
+			.withOptionalArguments(stopOnDeathArg)
 			.executes(Music::runPlay)
 			.register();
 
-		for (Argument<?> argument : optionalArguments) {
-			arguments.add(argument);
-			new CommandAPICommand("monumenta")
-				.withPermission(CommandPermission.fromString("scriptedquests.music.play"))
-				.withArguments(arguments)
-				.executes(Music::runPlay)
-				.register();
-		}
-
-		arguments.clear();
-		arguments.add(new MultiLiteralArgument("music"));
-		arguments.add(new MultiLiteralArgument("cancel"));
-		arguments.add(new MultiLiteralArgument("now", "next"));
-		arguments.add(new EntitySelectorArgument.ManyPlayers("players"));
 		new CommandAPICommand("monumenta")
 			.withPermission(CommandPermission.fromString("scriptedquests.music.cancel"))
-			.withArguments(arguments)
-			.executes(Music::runStop)
-			.register();
-
-		arguments.add(new MultiLiteralArgument("if", "unless"));
-		arguments.add(new SoundArgument.NamespacedKey("music path"));
-		new CommandAPICommand("monumenta")
-			.withPermission(CommandPermission.fromString("scriptedquests.music.cancel"))
-			.withArguments(arguments)
+			.withArguments(new LiteralArgument("music"))
+			.withArguments(new LiteralArgument("cancel"))
+			.withArguments(whenArg)
+			.withArguments(playersArg)
+			.withOptionalArguments(conditionArg)
+			.withOptionalArguments(pathArg)
 			.executes(Music::runStop)
 			.register();
 
 		new CommandAPICommand("monumenta")
 			.withPermission(CommandPermission.fromString("scriptedquests.music.isplaying"))
-			.withArguments(new MultiLiteralArgument("music"))
-			.withArguments(new MultiLiteralArgument("isplaying"))
-			.withArguments(new MultiLiteralArgument("now", "next"))
-			.withArguments(new EntitySelectorArgument.OnePlayer("players"))
-			.withArguments(new SoundArgument.NamespacedKey("music path"))
+			.withArguments(new LiteralArgument("music"))
+			.withArguments(new LiteralArgument("isplaying"))
+			.withArguments(whenArg)
+			.withArguments(onePlayerArg)
+			.withArguments(pathArg)
 			.executes(Music::runIsPlaying)
 			.register();
 	}
 
 	@SuppressWarnings("unchecked")
-	public static int runPlay(CommandSender sender, Object[] args) throws WrapperCommandSyntaxException {
-		String when = (String) args[2];
+	public static int runPlay(CommandSender sender, CommandArguments args) throws WrapperCommandSyntaxException {
+		String when = args.getByArgument(whenArg);
 		boolean playNow = "now".equals(when);
-		Collection<Player> players = (Collection<Player>) args[3];
+		Collection<Player> players = args.getByArgument(playersArg);
 
 		if (sender instanceof Player player) {
 			if (!player.hasPermission("scriptedquests.music.play.others") && (players.size() > 1 || !players.contains(player))) {
@@ -97,47 +87,30 @@ public class Music {
 			}
 		}
 
-		NamespacedKey musicPath = (NamespacedKey) args[4];
-		double duration = (Double) args[5];
-		boolean isLoop;
-		if (args.length > 6) {
-			isLoop = (Boolean) args[6];
-		} else {
-			isLoop = false;
-		}
+		NamespacedKey musicPath = args.getByArgument(pathArg);
+		double duration = args.getByArgument(durationArg);
+		boolean isLoop = args.getByArgumentOrDefault(loopArg, false);
+
+		Optional<String> optionalCategory = args.getOptionalByArgument(categoryArg);
 		SoundCategory category;
-		if (args.length > 7) {
-			String categoryStr = (String) args[7];
-			category = Constants.SOUND_CATEGORY_BY_NAME.getOrDefault(categoryStr,
-				Plugin.getInstance().getDefaultMusicSoundCategory());
+		if (optionalCategory.isPresent()) {
+			category = Constants.SOUND_CATEGORY_BY_NAME.getOrDefault(optionalCategory.get(), Plugin.getInstance().getDefaultMusicSoundCategory());
 		} else {
 			category = Plugin.getInstance().getDefaultMusicSoundCategory();
 		}
-		float volume;
-		if (args.length > 8) {
-			volume = (Float) args[8];
-		} else {
-			volume = 1.0f;
-		}
-		float pitch;
-		if (args.length > 9) {
-			pitch = (Float) args[9];
-		} else {
-			pitch = 1.0f;
-		}
-		boolean stopOnDeath = false;
-		if (args.length > 10) {
-			stopOnDeath = (boolean) args[10];
-		}
+
+		float volume = args.getByArgumentOrDefault(volumeArg, 1.0f);
+		float pitch = args.getByArgumentOrDefault(pitchArg, 1.0f);
+		boolean stopOnDeath = args.getByArgumentOrDefault(stopOnDeathArg, false);
 		Song song = new Song(musicPath.asString(), category, duration, isLoop, volume, pitch, stopOnDeath);
 		return SongManager.playSong(players, song, playNow);
 	}
 
 	@SuppressWarnings("unchecked")
-	public static int runStop(CommandSender sender, Object[] args) throws WrapperCommandSyntaxException {
-		String when = (String) args[2];
+	public static int runStop(CommandSender sender, CommandArguments args) throws WrapperCommandSyntaxException {
+		String when = args.getByArgument(whenArg);
 		boolean cancelNow = "now".equals(when);
-		Collection<Player> players = (Collection<Player>) args[3];
+		Collection<Player> players = args.getByArgument(playersArg);
 
 		if (sender instanceof Player player) {
 			if (!player.hasPermission("scriptedquests.music.cancel.others") && (players.size() > 1 || !players.contains(player))) {
@@ -145,10 +118,11 @@ public class Music {
 			}
 		}
 
-		if (args.length > 5) {
-			String conditionType = (String) args[2];
+		String conditionType = args.getByArgument(conditionArg);
+		NamespacedKey musicPathKey = args.getByArgument(pathArg);
+		if (conditionType != null && musicPathKey != null) {
 			boolean conditionIsUnless = "unless".equals(conditionType);
-			String musicPath = ((NamespacedKey) args[5]).asString();
+			String musicPath = musicPathKey.asString();
 			int result = 0;
 			for (Player player : players) {
 				boolean wasCancelled = false;
@@ -179,10 +153,10 @@ public class Music {
 		return SongManager.stopSong(players, cancelNow);
 	}
 
-	public static int runIsPlaying(CommandSender sender, Object[] args) throws WrapperCommandSyntaxException {
-		String when = (String) args[2];
+	public static int runIsPlaying(CommandSender sender, CommandArguments args) throws WrapperCommandSyntaxException {
+		String when = args.getByArgument(whenArg);
 		boolean isPlayingNow = "now".equals(when);
-		Player player = (Player) args[3];
+		Player player = args.getByArgument(onePlayerArg);
 
 		if (sender instanceof Player playerSender) {
 			if (!playerSender.hasPermission("scriptedquests.music.isplaying.others") && !playerSender.equals(player)) {
@@ -190,7 +164,7 @@ public class Music {
 			}
 		}
 
-		String musicPath = ((NamespacedKey) args[4]).asString();
+		String musicPath = args.getByArgument(pathArg).asString();
 
 		Song song;
 		if (isPlayingNow) {

@@ -8,13 +8,16 @@ import org.bukkit.entity.Player;
 
 public class HasPermission {
 	public static void register() {
+		EntitySelectorArgument.OnePlayer playerArg = new EntitySelectorArgument.OnePlayer("player");
+		TextArgument permissionArg = new TextArgument("permission");
+
 		new CommandAPICommand("haspermission")
 			.withPermission(CommandPermission.fromString("scriptedquests.haspermission"))
-			.withArguments(new EntitySelectorArgument.OnePlayer("players"))
-			.withArguments(new TextArgument("permission"))
+			.withArguments(playerArg)
+			.withArguments(permissionArg)
 			.executes((sender, args) -> {
-				Player player = (Player)args[0];
-				String perm = (String)args[1];
+				Player player = args.getByArgument(playerArg);
+				String perm = args.getByArgument(permissionArg);
 				if (perm.equals("*")) {
 					// Test if opped
 					if (player.isOp()) {

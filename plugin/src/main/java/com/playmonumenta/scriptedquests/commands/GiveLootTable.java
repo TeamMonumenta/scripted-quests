@@ -21,62 +21,68 @@ public class GiveLootTable {
 	public static void register(Random random) {
 		CommandPermission perms = CommandPermission.fromString("scriptedquests.giveloottable");
 
+		EntitySelectorArgument.ManyPlayers playersArg = new EntitySelectorArgument.ManyPlayers("players");
+		LootTableArgument lootTableArg = new LootTableArgument("loot_table");
+		TextArgument lootTableTextArg = new TextArgument("lootTablePath");
+		IntegerArgument countArg = new IntegerArgument("count", 1, 1000);
+		EntitySelectorArgument.OneEntity countItemsArg = new EntitySelectorArgument.OneEntity("countItems");
+
 		new CommandAPICommand("giveloottable")
 			.withPermission(perms)
-			.withArguments(new EntitySelectorArgument.ManyPlayers("players"))
-			.withArguments(new LootTableArgument("loot_table"))
+			.withArguments(playersArg)
+			.withArguments(lootTableArg)
 			.executes((sender, args) -> {
-				giveLoot((Collection<Player>)args[0], (LootTable)args[1], 1, random);
+				giveLoot(args.getByArgument(playersArg), args.getByArgument(lootTableArg), 1, random);
 			})
 			.register();
 
 		new CommandAPICommand("giveloottable")
 			.withPermission(perms)
-			.withArguments(new EntitySelectorArgument.ManyPlayers("players"))
-			.withArguments(new TextArgument("lootTablePath"))
+			.withArguments(playersArg)
+			.withArguments(lootTableTextArg)
 			.executes((sender, args) -> {
-				giveLoot((Collection<Player>)args[0], (String)args[1], 1, random);
+				giveLoot(args.getByArgument(playersArg), args.getByArgument(lootTableTextArg), 1, random);
 			})
 			.register();
 
 		new CommandAPICommand("giveloottable")
 			.withPermission(perms)
-			.withArguments(new EntitySelectorArgument.ManyPlayers("players"))
-			.withArguments(new LootTableArgument("loot_table"))
-			.withArguments(new IntegerArgument("count", 1, 1000))
+			.withArguments(playersArg)
+			.withArguments(lootTableArg)
+			.withArguments(countArg)
 			.executes((sender, args) -> {
-				giveLoot((Collection<Player>)args[0], (LootTable)args[1], (Integer)args[2], random);
+				giveLoot(args.getByArgument(playersArg), args.getByArgument(lootTableArg), args.getByArgument(countArg), random);
 			})
 			.register();
 
 		new CommandAPICommand("giveloottable")
 			.withPermission(perms)
-			.withArguments(new EntitySelectorArgument.ManyPlayers("players"))
-			.withArguments(new TextArgument("lootTablePath"))
-			.withArguments(new IntegerArgument("count", 1, 1000))
+			.withArguments(playersArg)
+			.withArguments(lootTableTextArg)
+			.withArguments(countArg)
 			.executes((sender, args) -> {
-				giveLoot((Collection<Player>)args[0], (String)args[1], (Integer)args[2], random);
+				giveLoot(args.getByArgument(playersArg), args.getByArgument(lootTableTextArg), args.getByArgument(countArg), random);
 			})
 			.register();
 
 		/* Rather than take a specified count, take an item entity - and give loot from the loot table once for each item in the stack */
 		new CommandAPICommand("giveloottable")
 			.withPermission(perms)
-			.withArguments(new EntitySelectorArgument.ManyPlayers("players"))
-			.withArguments(new LootTableArgument("loot_table"))
-			.withArguments(new EntitySelectorArgument.OneEntity("countItems"))
+			.withArguments(playersArg)
+			.withArguments(lootTableArg)
+			.withArguments(countItemsArg)
 			.executes((sender, args) -> {
-				giveLootCountFromItemEntity((Collection<Player>)args[0], (LootTable)args[1], (Entity)args[2], random);
+				giveLootCountFromItemEntity(args.getByArgument(playersArg), args.getByArgument(lootTableArg), args.getByArgument(countItemsArg), random);
 			})
 			.register();
 
 		new CommandAPICommand("giveloottable")
 			.withPermission(perms)
-			.withArguments(new EntitySelectorArgument.ManyPlayers("players"))
-			.withArguments(new TextArgument("lootTablePath"))
-			.withArguments(new EntitySelectorArgument.OneEntity("countItems"))
+			.withArguments(playersArg)
+			.withArguments(lootTableTextArg)
+			.withArguments(countItemsArg)
 			.executes((sender, args) -> {
-				giveLootCountFromItemEntity((Collection<Player>)args[0], (String)args[1], (Entity)args[2], random);
+				giveLootCountFromItemEntity(args.getByArgument(playersArg), args.getByArgument(lootTableTextArg), args.getByArgument(countItemsArg), random);
 			})
 			.register();
 	}

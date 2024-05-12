@@ -19,67 +19,27 @@ public class ImprovedClear {
 		CommandPermission perms = CommandPermission.fromString("scriptedquests.improvedclear");
 		String[] aliases = {"iclear"};
 
+		EntitySelectorArgument.OnePlayer targetArg = new EntitySelectorArgument.OnePlayer("target");
+		TextArgument nameArg = new TextArgument("name");
+		IntegerArgument maxAmountArg = new IntegerArgument("maxAmount");
+		BooleanArgument clearShulkersArg = new BooleanArgument("clearShulkers");
+		TextArgument shulkerLoreArg = new TextArgument("shulkerLore");
+
 		new CommandAPICommand("improvedclear")
 			.withPermission(perms)
-			.withArguments(new EntitySelectorArgument.OnePlayer("target"))
-			.withArguments(new TextArgument("name"))
+			.withArguments(targetArg)
+			.withArguments(nameArg)
+			.withOptionalArguments(maxAmountArg)
+			.withOptionalArguments(clearShulkersArg)
+			.withOptionalArguments(shulkerLoreArg)
 			.withAliases(aliases)
 			.executes((sender, args) -> {
+				Player player = args.getByArgument(targetArg);
+				String itemName = args.getByArgument(nameArg);
+				int maxAmount = args.getByArgumentOrDefault(maxAmountArg, -1);
+				boolean clearShulkers = args.getByArgumentOrDefault(clearShulkersArg, true);
+				String shulkerLore = args.getByArgumentOrDefault(shulkerLoreArg, "");
 				// Make sure shulker boxes are closed so they can be clear'd
-				((Player)args[0]).closeInventory();
-				return clearInventory(((Player)args[0]).getInventory(), (String)args[1], -1, true, "", 0);
-			})
-			.register();
-
-		new CommandAPICommand("improvedclear")
-			.withPermission(perms)
-			.withArguments(new EntitySelectorArgument.OnePlayer("target"))
-			.withArguments(new TextArgument("name"))
-			.withArguments(new IntegerArgument("maxAmount"))
-			.withAliases(aliases)
-			.executes((sender, args) -> {
-				Player player = (Player) args[0];
-				String itemName = (String) args[1];
-				int maxAmount = (int) args[2];
-				// Make sure shulker boxes are closed, so they can be cleared
-				player.closeInventory();
-				return clearInventory(player.getInventory(), itemName, maxAmount, true, "", 0);
-			})
-			.register();
-
-		new CommandAPICommand("improvedclear")
-			.withPermission(perms)
-			.withArguments(new EntitySelectorArgument.OnePlayer("target"))
-			.withArguments(new TextArgument("name"))
-			.withArguments(new IntegerArgument("maxAmount"))
-			.withArguments(new BooleanArgument("clearShulkers"))
-			.withAliases(aliases)
-			.executes((sender, args) -> {
-				Player player = (Player) args[0];
-				String itemName = (String) args[1];
-				int maxAmount = (int) args[2];
-				boolean clearShulkers = (boolean) args[3];
-				// Make sure shulker boxes are closed, so they can be cleared
-				player.closeInventory();
-				return clearInventory(player.getInventory(), itemName, maxAmount, clearShulkers, "", 0);
-			})
-			.register();
-
-		new CommandAPICommand("improvedclear")
-			.withPermission(perms)
-			.withArguments(new EntitySelectorArgument.OnePlayer("target"))
-			.withArguments(new TextArgument("name"))
-			.withArguments(new IntegerArgument("maxAmount"))
-			.withArguments(new BooleanArgument("clearShulkers"))
-			.withArguments(new TextArgument("shulkerLore"))
-			.withAliases(aliases)
-			.executes((sender, args) -> {
-				Player player = (Player) args[0];
-				String itemName = (String) args[1];
-				int maxAmount = (int) args[2];
-				boolean clearShulkers = (boolean) args[3];
-				String shulkerLore = (String) args[4];
-				// Make sure shulker boxes are closed, so they can be cleared
 				player.closeInventory();
 				return clearInventory(player.getInventory(), itemName, maxAmount, clearShulkers, shulkerLore, 0);
 			})

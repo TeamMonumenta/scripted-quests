@@ -9,6 +9,7 @@ import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.BooleanArgument;
 import dev.jorel.commandapi.arguments.EntitySelectorArgument;
 import dev.jorel.commandapi.arguments.IntegerArgument;
+import dev.jorel.commandapi.arguments.LiteralArgument;
 import dev.jorel.commandapi.arguments.MultiLiteralArgument;
 import dev.jorel.commandapi.arguments.StringArgument;
 import java.util.ArrayList;
@@ -29,22 +30,29 @@ import org.jetbrains.annotations.Nullable;
 public class Leaderboard {
 	@SuppressWarnings("unchecked")
 	public static void register(Plugin plugin) {
+		EntitySelectorArgument.ManyPlayers playersArg = new EntitySelectorArgument.ManyPlayers("players");
+		StringArgument objectiveArg = new StringArgument("objective");
+		BooleanArgument descendingArg = new BooleanArgument("descending");
+		IntegerArgument pageArg = new IntegerArgument("page", 1);
+		EntitySelectorArgument.ManyPlayers filterPlayersArg = new EntitySelectorArgument.ManyPlayers("filterPlayers");
+
 		new CommandAPICommand("leaderboard")
 			.withPermission(CommandPermission.fromString("scriptedquests.leaderboard"))
-			.withArguments(new EntitySelectorArgument.ManyPlayers("players"))
-			.withArguments(new StringArgument("objective"))
-			.withArguments(new BooleanArgument("descending"))
-			.withArguments(new IntegerArgument("page", 1))
+			.withArguments(playersArg)
+			.withArguments(objectiveArg)
+			.withArguments(descendingArg)
+			.withArguments(pageArg)
+			.withOptionalArguments()
 			.executes((sender, args) -> {
-				Collection<Player> targets = (Collection<Player>) args[0];
+				Collection<Player> targets = args.getByArgument(playersArg);
 				if (sender instanceof Player player) {
 					if (!player.hasPermission("scriptedquests.leaderboard.others") && (targets.size() > 1 || !targets.contains(player))) {
 						throw CommandAPI.failWithString("You do not have permission to run this as another player.");
 					}
 				}
-				String objective = (String) args[1];
-				Boolean descending = (Boolean) args[2];
-				Integer pageNumber = (Integer) args[3];
+				String objective = args.getByArgument(objectiveArg);
+				boolean descending = args.getByArgument(descendingArg);
+				int pageNumber = args.getByArgument(pageArg);
 				for (Player player : targets) {
 					leaderboard(plugin, player, objective, descending, pageNumber, null);
 				}
@@ -53,20 +61,20 @@ public class Leaderboard {
 
 		new CommandAPICommand("leaderboard")
 			.withPermission(CommandPermission.fromString("scriptedquests.leaderboard"))
-			.withArguments(new EntitySelectorArgument.ManyPlayers("players"))
-			.withArguments(new StringArgument("objective"))
-			.withArguments(new BooleanArgument("descending"))
-			.withArguments(new EntitySelectorArgument.ManyPlayers("filterPlayers"))
+			.withArguments(playersArg)
+			.withArguments(objectiveArg)
+			.withArguments(descendingArg)
+			.withArguments(filterPlayersArg)
 			.executes((sender, args) -> {
-				Collection<Player> targets = (Collection<Player>) args[0];
+				Collection<Player> targets = args.getByArgument(playersArg);
 				if (sender instanceof Player player) {
 					if (!player.hasPermission("scriptedquests.leaderboard.others") && (targets.size() > 1 || !targets.contains(player))) {
 						throw CommandAPI.failWithString("You do not have permission to run this as another player.");
 					}
 				}
-				String objective = (String) args[1];
-				Boolean descending = (Boolean) args[2];
-				Collection<Player> filterPlayers = (Collection<Player>) args[3];
+				String objective = args.getByArgument(objectiveArg);
+				boolean descending = args.getByArgument(descendingArg);
+				Collection<Player> filterPlayers = args.getByArgument(filterPlayersArg);
 				for (Player player : targets) {
 					leaderboard(plugin, player, objective, descending, 1, filterPlayers);
 				}
@@ -79,12 +87,14 @@ public class Leaderboard {
 		 */
 		new CommandAPICommand("leaderboard")
 			.withPermission(CommandPermission.fromString("scriptedquests.leaderboard.update"))
-			.withArguments(new MultiLiteralArgument("update"))
-			.withArguments(new EntitySelectorArgument.ManyPlayers("players"))
-			.withArguments(new StringArgument("objective"))
+			.withArguments(new LiteralArgument("update"))
+			.withArguments(playersArg)
+			.withArguments(objectiveArg)
 			.executes((sender, args) -> {
-				for (Player player : (Collection<Player>)args[1]) {
-					leaderboardUpdate(player, (String)args[2]);
+				Collection<Player> players = args.getByArgument(playersArg);
+				String objective = args.getByArgument(objectiveArg);
+				for (Player player : players) {
+					leaderboardUpdate(player, objective);
 				}
 			})
 			.register();

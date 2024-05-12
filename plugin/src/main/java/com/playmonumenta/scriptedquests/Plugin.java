@@ -113,7 +113,7 @@ public class Plugin extends JavaPlugin {
 		GetDate.register();
 		Code.register(this);
 		SetVelocity.register();
-		DebugZones.register(this);
+		DebugZones.register();
 		TestZone.register();
 		Heal.register();
 		Damage.register();
