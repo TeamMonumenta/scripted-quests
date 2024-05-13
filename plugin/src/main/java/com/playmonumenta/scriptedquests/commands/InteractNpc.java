@@ -35,7 +35,7 @@ public class InteractNpc {
 			.executes((sender, args) -> {
 				Collection<Player> targets = args.getByArgument(playersArg);
 				String npcName = args.getByArgument(nameArg);
-				EntityType npcType = args.getByArgument(typeArg);
+				EntityType npcType = args.getByArgumentOrDefault(typeArg, EntityType.VILLAGER);
 				interact(plugin, sender, targets, npcName, npcType);
 			})
 			.register();
