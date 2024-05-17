@@ -125,6 +125,7 @@ public class Plugin extends JavaPlugin {
 		TradesCommand.register();
 		ShowZones.register(this);
 		Music.register();
+		InvalidateCompassCacheCommand.register(this);
 
 		mScheduledFunctionsManager = new ScheduleFunction(this);
 
