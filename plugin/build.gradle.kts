@@ -22,6 +22,7 @@ dependencies {
 	implementation(project(":adapter_unsupported"))
 	implementation(project(":adapter_v1_18_R2", "reobf"))
 	implementation(project(":adapter_v1_19_R3", "reobf"))
+	implementation(project(":adapter_v1_20_R3", "reobf"))
 	implementation("com.google.api-client:google-api-client:1.31.4")
 	implementation("com.google.apis:google-api-services-sheets:v4-rev1-1.21.0")
 	implementation("com.google.auth:google-auth-library-oauth2-http:0.1.0")
@@ -40,6 +41,7 @@ dependencies {
 	errorprone("com.google.errorprone:error_prone_core:2.10.0")
 	errorprone("com.uber.nullaway:nullaway:0.9.5")
 	compileOnly("com.playmonumenta:redissync:4.5")
+
 }
 configurations {
 	testCompileOnly.get().extendsFrom(compileOnly.get())
