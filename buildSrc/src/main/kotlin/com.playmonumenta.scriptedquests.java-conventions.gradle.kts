@@ -7,41 +7,21 @@ plugins {
 
 repositories {
     mavenLocal()
-    maven {
-        url = uri("https://repo.papermc.io/repository/maven-public/")
-    }
-
-    maven {
-        url = uri("https://jitpack.io")
-    }
-
-    maven {
-        url = uri("https://repo.mikeprimm.com/")
-    }
-
-    maven {
-        url = uri("https://raw.githubusercontent.com/TeamMonumenta/monumenta-redis-sync/master/mvn-repo/")
-    }
-
-    maven {
-        url = uri("https://libraries.minecraft.net")
-    }
-
-    maven {
-        url = uri("https://repo.maven.apache.org/maven2/")
-    }
-
+    maven("https://repo.papermc.io/repository/maven-public/")
+    maven("https://jitpack.io")
+    maven("https://repo.mikeprimm.com/")
+    maven("https://maven.playmonumenta.com/releases/")
+    maven("https://libraries.minecraft.net")
+    maven("https://repo.maven.apache.org/maven2/")
     // NBT API
-    maven {
-        url = uri("https://repo.codemc.org/repository/maven-public/")
-    }
+    maven("https://repo.codemc.org/repository/maven-public/")
 }
 
 group = "com.playmonumenta.scriptedquests"
 java.sourceCompatibility = JavaVersion.VERSION_17
 java.targetCompatibility = JavaVersion.VERSION_17
 
-tasks.withType<JavaCompile>() {
+tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
 }
 

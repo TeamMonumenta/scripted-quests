@@ -10,7 +10,7 @@ plugins {
     id("java")
     id("net.ltgt.errorprone") version "2.0.2"
     id("net.ltgt.nullaway") version "1.3.0"
-	id("com.playmonumenta.deployment") version "1.0"
+	id("com.playmonumenta.deployment") version "1.+"
 }
 
 repositories {
@@ -31,7 +31,6 @@ dependencies {
     compileOnly("com.mojang:brigadier:1.0.17")
     compileOnly("com.google.code.gson:gson:2.8.0")
     compileOnly("org.dynmap:DynmapCoreAPI:2.0")
-    compileOnly("com.playmonumenta:redissync:3.5")
     compileOnly("com.comphenix.protocol:ProtocolLib:4.7.0")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
@@ -40,6 +39,7 @@ dependencies {
     testRuntimeOnly("dev.jorel:commandapi-bukkit-core:9.4.0")
     errorprone("com.google.errorprone:error_prone_core:2.10.0")
     errorprone("com.uber.nullaway:nullaway:0.9.5")
+	compileOnly("com.playmonumenta:redissync:4.5")
 }
 configurations {
     testCompileOnly.get().extendsFrom(compileOnly.get())
@@ -145,20 +145,30 @@ tasks.named<Test>("test") {
     useJUnitPlatform()
 }
 
+java {
+	withSourcesJar()
+}
+
 publishing {
-    publications.create<MavenPublication>("maven") {
-        project.shadow.component(this)
-    }
-    repositories {
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/TeamMonumenta/scripted-quests")
-            credentials {
-                username = System.getenv("GITHUB_ACTOR")
-                password = System.getenv("GITHUB_TOKEN")
-            }
-        }
-    }
+	publications {
+		create<MavenPublication>("maven") {
+			from(components["java"])
+		}
+	}
+	repositories {
+		maven {
+			name = "MonumentaMaven"
+			url = when (version.toString().endsWith("SNAPSHOT")) {
+				true -> uri("https://maven.playmonumenta.com/snapshots")
+				false -> uri("https://maven.playmonumenta.com/releases")
+			}
+
+			credentials {
+				username = System.getenv("USERNAME")
+				password = System.getenv("TOKEN")
+			}
+		}
+	}
 }
 
 ssh.easySetup(tasks.named<ShadowJar>("shadowJar").get(), "ScriptedQuests")
