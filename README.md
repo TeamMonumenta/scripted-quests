@@ -297,22 +297,41 @@ actions:
 - interact\_npc - Triggers a follow-on interaction with a different NPC
 - rerun\_components - Re-runs all components for this NPC from the beginning
 
-## <a name="maven"></a>Maven Dependency:
+## Maven dependency
 ```xml
-    <repositories>
-        <repository>
-            <id>scripted-quests</id>
-            <url>https://raw.githubusercontent.com/TeamMonumenta/scripted-quests/master/mvn-repo/</url>
-        </repository>
-    </repositories>
-
-    <dependencies>
-        <dependency>
-            <groupId>com.playmonumenta</groupId>
-            <artifactId>scripted-quests</artifactId>
-            <version>6.6</version>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
+<repository>
+	<id>monumenta</id>
+	<name>Monumenta Maven Repo</name>
+	<url>https://maven.playmonumenta.com/releases</url>
+</repository>
+<dependencies>
+	<dependency>
+		<groupId>com.playmonumenta</groupId>
+		<artifactId>scripted-quests</artifactId>
+		<version>7.0</version>
+		<scope>provided</scope>
+	</dependency>
+</dependencies>
 ```
+Gradle (kotlin):
+```kts
+maven {
+    name = "monumenta"
+    url = uri("https://maven.playmonumenta.com/releases")
+}
 
+dependencies {
+	compileOnly("com.playmonumenta:scripted-quests:7.0")
+}
+```
+Gradle (groovy):
+```groovy
+maven {
+    name "monumenta"
+    url "https://maven.playmonumenta.com/releases"
+}
+
+dependencies {
+	compileOnly "com.playmonumenta:scripted-quests:7.0"
+}
+```
