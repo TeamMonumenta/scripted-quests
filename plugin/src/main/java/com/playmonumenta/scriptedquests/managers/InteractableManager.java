@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
@@ -128,6 +129,9 @@ public class InteractableManager {
 	}
 
 	private boolean handleEvent(QuestContext context, InteractType type, List<InteractableEntry> entries) {
+		if (context.getPlayer().getGameMode() == GameMode.SPECTATOR) {
+			return false;
+		}
 		boolean cancelEvent = false;
 		for (InteractableEntry entry : entries) {
 			if (entry.interactEvent(context, type)) {
