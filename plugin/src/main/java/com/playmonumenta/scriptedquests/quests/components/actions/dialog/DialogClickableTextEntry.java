@@ -142,10 +142,10 @@ public class DialogClickableTextEntry implements DialogBase {
 	}
 
 	@Override
-	public JsonElement serializeForClientAPI(QuestContext context) {
+	public JsonElement serializeForClientAPI(final QuestContext context) {
 		JsonObject tmp = JsonObjectBuilder.get()
 			.add("command", "/questtrigger " + mIdx)
-			.add("text", mText)
+			.add("text", MessagingUtils.serializeRawMessage(context.getPlayer(), mText, true).content())
 			.build();
 		setupTriggersEntries(context);
 		return tmp;

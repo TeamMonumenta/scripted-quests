@@ -46,11 +46,10 @@ public class DialogClickableText implements DialogBase {
 	}
 
 	@Override
-	public JsonElement serializeForClientAPI(QuestContext context) {
+	public JsonElement serializeForClientAPI(final QuestContext context) {
 		return JsonObjectBuilder.get()
 			.add("type", "clickable_text")
-			.add("commands", mEntries.stream().map(v -> v.serializeForClientAPI(context))
-				.collect(Collectors.toList()))
+			.add("commands", mEntries.stream().map(v -> v.serializeForClientAPI(context)).collect(Collectors.toList()))
 			.build();
 	}
 }
