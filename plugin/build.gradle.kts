@@ -8,8 +8,8 @@ plugins {
 	id("com.playmonumenta.scriptedquests.java-conventions")
 	id("net.minecrell.plugin-yml.bukkit") version "0.5.1" // Generates plugin.yml
 	id("java")
-	id("net.ltgt.errorprone") version "2.0.2"
-	id("net.ltgt.nullaway") version "1.3.0"
+	id("net.ltgt.errorprone") version "3.1.0"
+	id("net.ltgt.nullaway") version "1.6.0"
 	id("com.playmonumenta.deployment") version "1.+"
 }
 
@@ -37,9 +37,9 @@ dependencies {
 	testImplementation("org.mockito:mockito-junit-jupiter:5.8.0")
 	testImplementation("com.github.seeseemelk:MockBukkit-v1.20:3.9.0")
 	testRuntimeOnly("dev.jorel:commandapi-bukkit-core:9.4.0")
-	errorprone("com.google.errorprone:error_prone_core:2.10.0")
+	errorprone("com.google.errorprone:error_prone_core:2.29.1")
 	errorprone("com.uber.nullaway:nullaway:0.9.5")
-	compileOnly("com.playmonumenta:redissync:4.5")
+	compileOnly("com.playmonumenta:redissync:4.6.1:all")
 }
 configurations {
 	testCompileOnly.get().extendsFrom(compileOnly.get())
