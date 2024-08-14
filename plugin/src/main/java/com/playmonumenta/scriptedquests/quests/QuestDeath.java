@@ -8,6 +8,7 @@ import com.playmonumenta.scriptedquests.point.Point;
 import com.playmonumenta.scriptedquests.quests.components.QuestActions;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import com.playmonumenta.scriptedquests.utils.ExperienceUtils;
+import com.playmonumenta.scriptedquests.utils.JsonUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -58,28 +59,13 @@ public class QuestDeath {
 					break;
 				case "respawn_location":
 					JsonObject coordObj = value.getAsJsonObject();
-					// Read x coordinate
-					JsonElement xElement = coordObj.get("x");
-					if (xElement == null) {
-						throw new Exception("Failed to parse location x value!");
-					}
-					double x = xElement.getAsDouble();
+					double x = JsonUtils.getDouble(coordObj, "x");
+					double y = JsonUtils.getDouble(coordObj, "y");
+					double z = JsonUtils.getDouble(coordObj, "z");
+					float yaw = (float) JsonUtils.getDouble(coordObj, "yaw", 0);
+					float pitch = (float) JsonUtils.getDouble(coordObj, "pitch", 0);
 
-					// Read y coordinate
-					JsonElement yElement = coordObj.get("y");
-					if (yElement == null) {
-						throw new Exception("Failed to parse location y value!");
-					}
-					double y = yElement.getAsDouble();
-
-					// Read z coordinate
-					JsonElement zElement = coordObj.get("z");
-					if (zElement == null) {
-						throw new Exception("Failed to parse location z value!");
-					}
-					double z = zElement.getAsDouble();
-
-					mRespawnPt = new Point(x, y, z);
+					mRespawnPt = new Point(x, y, z, yaw, pitch);
 
 					break;
 				case "prerequisites":

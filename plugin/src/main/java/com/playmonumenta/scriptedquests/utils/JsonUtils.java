@@ -77,6 +77,25 @@ public abstract class JsonUtils {
 		return element.getAsInt();
 	}
 
+	public static double getDouble(JsonObject object, String property) throws Exception {
+		JsonElement element = getElement(object, property);
+		if (!element.isJsonPrimitive() || !element.getAsJsonPrimitive().isNumber()) {
+			throw new Exception("'" + property + "' entry must be a number");
+		}
+		return element.getAsDouble();
+	}
+
+	public static double getDouble(JsonObject object, String property, double defaultValue) throws Exception {
+		JsonElement element = object.get(property);
+		if (element == null) {
+			return defaultValue;
+		}
+		if (!element.isJsonPrimitive() || !element.getAsJsonPrimitive().isNumber()) {
+			throw new Exception("'" + property + "' entry must be a number");
+		}
+		return element.getAsDouble();
+	}
+
 	public static boolean getBoolean(JsonObject object, String property) throws Exception {
 		JsonElement element = getElement(object, property);
 		if (!element.isJsonPrimitive() || !element.getAsJsonPrimitive().isBoolean()) {
