@@ -14,7 +14,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.Nullable;
 
-public class ZonePropertyManager implements Listener {
+public class ZonePropertyManager implements Listener, Reloadable {
 	private final Plugin mPlugin;
 	private final Map<String, Map<String, ZoneProperty>> mZoneProperties = new HashMap<>();
 
@@ -31,9 +31,6 @@ public class ZonePropertyManager implements Listener {
 		changeEvent(player, namespaceName, property);
 	}
 
-	/*
-	 * If sender is non-null, it will be sent debugging information
-	 */
 	public void reload(Plugin plugin, @Nullable CommandSender sender) {
 		mZoneProperties.clear();
 

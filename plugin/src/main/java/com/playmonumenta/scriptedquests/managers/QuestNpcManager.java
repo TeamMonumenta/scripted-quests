@@ -16,12 +16,9 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.jetbrains.annotations.Nullable;
 
-public class QuestNpcManager {
+public class QuestNpcManager implements Reloadable {
 	private final Map<EntityType, Map<String, List<QuestNpc>>> mNpcs = new HashMap<>();
 
-	/*
-	 * If sender is non-null, it will be sent debugging information
-	 */
 	public void reload(Plugin plugin, @Nullable CommandSender sender) {
 		mNpcs.clear();
 

@@ -10,12 +10,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
-public class ClickableManager {
+public class ClickableManager implements Reloadable {
 	private final Map<String, ClickableEntry> mClickables = new HashMap<String, ClickableEntry>();
 
-	/*
-	 * If sender is non-null, it will be sent debugging information
-	 */
 	public void reload(Plugin plugin, @Nullable CommandSender sender) {
 		mClickables.clear();
 

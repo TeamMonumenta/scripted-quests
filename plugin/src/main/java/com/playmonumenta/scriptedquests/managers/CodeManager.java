@@ -10,12 +10,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
-public class CodeManager {
+public class CodeManager implements Reloadable {
 	private final Map<String, CodeEntry> mCodes = new HashMap<String, CodeEntry>();
 
-	/*
-	 * If sender is non-null, it will be sent debugging information
-	 */
 	public void reload(Plugin plugin, @Nullable CommandSender sender) {
 
 		mCodes.clear();

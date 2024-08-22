@@ -9,19 +9,7 @@ import com.playmonumenta.scriptedquests.listeners.PlayerListener;
 import com.playmonumenta.scriptedquests.listeners.RedisSyncListener;
 import com.playmonumenta.scriptedquests.listeners.WorldListener;
 import com.playmonumenta.scriptedquests.listeners.ZoneEventListener;
-import com.playmonumenta.scriptedquests.managers.ClickableManager;
-import com.playmonumenta.scriptedquests.managers.CodeManager;
-import com.playmonumenta.scriptedquests.managers.GuiManager;
-import com.playmonumenta.scriptedquests.managers.InteractableManager;
-import com.playmonumenta.scriptedquests.managers.NpcTradeManager;
-import com.playmonumenta.scriptedquests.managers.QuestCompassManager;
-import com.playmonumenta.scriptedquests.managers.QuestDeathManager;
-import com.playmonumenta.scriptedquests.managers.QuestLoginManager;
-import com.playmonumenta.scriptedquests.managers.QuestNpcManager;
-import com.playmonumenta.scriptedquests.managers.RaceManager;
-import com.playmonumenta.scriptedquests.managers.TranslationsManager;
-import com.playmonumenta.scriptedquests.managers.WaypointManager;
-import com.playmonumenta.scriptedquests.managers.ZonePropertyManager;
+import com.playmonumenta.scriptedquests.managers.*;
 import com.playmonumenta.scriptedquests.protocollib.ProtocolLibIntegration;
 import com.playmonumenta.scriptedquests.timers.CommandTimerManager;
 import com.playmonumenta.scriptedquests.utils.MetadataUtils;
@@ -71,6 +59,7 @@ public class Plugin extends JavaPlugin {
 	public GuiManager mGuiManager;
 	public ZoneEventListener mZoneEventListener;
 	public @Nullable ProtocolLibIntegration mProtocolLibIntegration;
+	private HandbookManager mHandbookManager;
 
 	public Random mRandom = new Random();
 	private ScheduleFunction mScheduledFunctionsManager;
@@ -155,6 +144,7 @@ public class Plugin extends JavaPlugin {
 		mTimerManager = new CommandTimerManager(this);
 		mWaypointManager = new WaypointManager(this);
 		mGuiManager = new GuiManager(this);
+		mHandbookManager = new HandbookManager(this.getDataFolder() + File.separator + "handbook");
 
 		manager.registerEvents(new EntityListener(this), this);
 		manager.registerEvents(new InteractablesListener(this), this);
@@ -170,6 +160,7 @@ public class Plugin extends JavaPlugin {
 		manager.registerEvents(mZonePropertyManager, this);
 		manager.registerEvents(mTradeManager, this);
 		manager.registerEvents(mZoneEventListener, this);
+		manager.registerEvents(mHandbookManager, this);
 
 		// Hook into ProtocolLib if present
 		if (Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) {
@@ -199,6 +190,7 @@ public class Plugin extends JavaPlugin {
 		mRaceManager.cancelAllRaces();
 		mTimerManager.unloadAll();
 		mWaypointManager.cancelAll();
+		mHandbookManager.save(); // save handbook pages
 
 		MetadataUtils.removeAllMetadata(this);
 
@@ -226,6 +218,7 @@ public class Plugin extends JavaPlugin {
 		mZoneEventListener.update();
 		GrowableAPI.reload(sender);
 		mGuiManager.reload(this, sender);
+		mHandbookManager.reload(this, sender);
 		if (mProtocolLibIntegration != null) {
 			mProtocolLibIntegration.reload();
 		}

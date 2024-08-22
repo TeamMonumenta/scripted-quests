@@ -27,7 +27,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class GuiManager {
+public class GuiManager implements Reloadable {
 
 	public static final String MAIN_PAGE = "main";
 

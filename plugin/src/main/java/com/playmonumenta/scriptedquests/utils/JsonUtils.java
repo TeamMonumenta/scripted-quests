@@ -4,8 +4,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.api.JsonObjectBuilder;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 import java.util.function.Function;
 import org.bukkit.Material;
 import org.jetbrains.annotations.Nullable;
@@ -129,6 +129,37 @@ public abstract class JsonUtils {
 			array.add(toJsonFunc.apply(element));
 		}
 		return array;
+	}
+
+
+	/** A mapping function over a JsonArray to turn it into a java List
+	 *
+	 * @param array The JsonArray in question
+	 * @param how  The way to convert into <code>T</code>
+	 * @return A List of a generic type created by applying a function over a given json array.
+	 * @param <T> The type of the list
+	 */
+	public static <T> List<T> intoList(JsonArray array, Function<JsonElement, ? extends T> how) {
+		List<T> accumulator = new ArrayList<>();
+		for (var item : array) {
+			accumulator.add(how.apply(item));
+		}
+		return accumulator;
+	}
+
+	/** A mapping function over a JsonArray to turn it into a java Set
+	 *
+	 * @param array The JsonArray in question
+	 * @param how  The way to convert into <code>T</code>
+	 * @return A Set of type <code>T</code> created by applying a function over a given json array.
+	 * @param <T> The type of the Set
+	 */
+	public static <T> Set<T> intoSet(JsonArray array, Function<JsonElement, ? extends T> how) {
+		Set<T> accumulator = new HashSet<>();
+		for (var item : array) {
+			accumulator.add(how.apply(item));
+		}
+		return accumulator;
 	}
 
 	public static <T> T parse(JsonObject object, String property, Function<String, T> parser) throws Exception {

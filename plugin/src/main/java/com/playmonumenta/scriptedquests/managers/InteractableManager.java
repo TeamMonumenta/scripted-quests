@@ -20,12 +20,9 @@ import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-public class InteractableManager {
+public class InteractableManager implements Reloadable {
 	private final Map<Material, List<InteractableEntry>> mInteractables = new EnumMap<>(Material.class);
 
-	/*
-	 * If sender is non-null, it will be sent debugging information
-	 */
 	public void reload(Plugin plugin, @Nullable CommandSender sender) {
 		mInteractables.clear();
 

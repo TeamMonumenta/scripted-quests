@@ -19,7 +19,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class RaceManager {
+public class RaceManager implements Reloadable {
 	public static final String PLAYER_RACE_TAG = "SQRacer";
 	public static final String ARMOR_STAND_RACE_TAG = "RaceRing";
 	public static final String ARMOR_STAND_ID_PREFIX_TAG = "RacerId_";
@@ -39,9 +39,6 @@ public class RaceManager {
 		mPlugin = plugin;
 	}
 
-	/*
-	 * If sender is non-null, it will be sent debugging information
-	 */
 	public void reload(Plugin plugin, @Nullable CommandSender sender) {
 		mRaceFactories.clear();
 

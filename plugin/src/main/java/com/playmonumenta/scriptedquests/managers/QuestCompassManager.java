@@ -20,7 +20,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
-public class QuestCompassManager {
+public class QuestCompassManager implements Reloadable {
 	private static class ValidCompassEntry {
 		private final QuestLocation mLocation;
 		private final String mTitle;

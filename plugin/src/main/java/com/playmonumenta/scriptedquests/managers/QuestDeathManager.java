@@ -8,10 +8,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.jetbrains.annotations.Nullable;
 
-public class QuestDeathManager {
+public class QuestDeathManager implements Reloadable {
 	private final ArrayList<QuestDeath> mDeaths = new ArrayList<QuestDeath>();
 
-	/* If sender is non-null, it will be sent debugging information */
 	public void reload(Plugin plugin, @Nullable CommandSender sender) {
 		mDeaths.clear();
 		QuestUtils.loadScriptedQuests(plugin, "death", sender, (object) -> {
