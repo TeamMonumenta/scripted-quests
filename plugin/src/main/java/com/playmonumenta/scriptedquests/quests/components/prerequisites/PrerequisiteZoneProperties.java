@@ -69,7 +69,7 @@ public class PrerequisiteZoneProperties implements PrerequisiteBase {
 
 	@Override
 	public boolean prerequisiteMet(QuestContext context) {
-		Location loc = context.getEntityUsedForPrerequisites().getLocation();
+		Location loc = context.getLocation();
 		ZoneFragment fragment = ZoneManager.getInstance().getZoneFragment(loc);
 
 		// If no fragment exists here, neither do zones nor namespaces.

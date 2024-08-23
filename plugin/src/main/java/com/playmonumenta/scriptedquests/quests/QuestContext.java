@@ -3,6 +3,7 @@ package com.playmonumenta.scriptedquests.quests;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import java.util.ArrayDeque;
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -19,23 +20,24 @@ public class QuestContext {
 	private final boolean mUseNpcForPrerequisites;
 	private final @Nullable QuestPrerequisites mPrerequisites;
 	private final @Nullable ItemStack mUsedItem;
+	private final @Nullable Location mLocation;
 
 	public QuestContext(Plugin plugin, Player player, @Nullable Entity npcEntity) {
-		mPlugin = plugin;
-		mPlayer = player;
-		mUseNpcForPrerequisites = false;
-		mNpcEntity = npcEntity;
-		mPrerequisites = null;
-		mUsedItem = null;
+		this(plugin, player, npcEntity, false, null, null);
 	}
 
 	public QuestContext(Plugin plugin, Player player, @Nullable Entity npcEntity, boolean useNpc, @Nullable QuestPrerequisites prerequisites, @Nullable ItemStack usedItem) {
+		this(plugin, player, npcEntity, useNpc, prerequisites, usedItem, null);
+	}
+
+	public QuestContext(Plugin plugin, Player player, @Nullable Entity npcEntity, boolean useNpc, @Nullable QuestPrerequisites prerequisites, @Nullable ItemStack usedItem, @Nullable Location location) {
 		mPlugin = plugin;
 		mPlayer = player;
 		mUseNpcForPrerequisites = useNpc;
 		mNpcEntity = npcEntity;
 		mPrerequisites = prerequisites;
 		mUsedItem = usedItem;
+		mLocation = location;
 	}
 
 	public Plugin getPlugin() {
@@ -84,31 +86,45 @@ public class QuestContext {
 	}
 
 	/**
+	 * Gets the location to use for this context. This is usually the location of {@link #getEntityUsedForPrerequisites()}, but can be overridden.
+	 */
+	public Location getLocation() {
+		return mLocation != null ? mLocation : getEntityUsedForPrerequisites().getLocation();
+	}
+
+	/**
 	 * Returns a new {@link QuestContext} with the given prerequisites set so that {@link #prerequisitesMet()} will check them.
 	 * If this context already had prerequisites, the given prerequisites will be merged with the existing ones.
 	 * Passing in null will have no effect and return a clone of this context.
 	 */
 	public QuestContext withPrerequisites(@Nullable QuestPrerequisites prerequisites) {
 		QuestPrerequisites newPrerequisites = prerequisites == null ? mPrerequisites : mPrerequisites == null ? prerequisites : mPrerequisites.union(prerequisites);
-		return new QuestContext(mPlugin, mPlayer, mNpcEntity, mUseNpcForPrerequisites, newPrerequisites, mUsedItem);
+		return new QuestContext(mPlugin, mPlayer, mNpcEntity, mUseNpcForPrerequisites, newPrerequisites, mUsedItem, mLocation);
 	}
 
 	public QuestContext clearPrerequisites() {
-		return new QuestContext(mPlugin, mPlayer, mNpcEntity, mUseNpcForPrerequisites, null, mUsedItem);
+		return new QuestContext(mPlugin, mPlayer, mNpcEntity, mUseNpcForPrerequisites, null, mUsedItem, mLocation);
 	}
 
 	/**
 	 * Returns a new {@link QuestContext} that will return the NPC entity from {@link #getEntityUsedForPrerequisites()} (which returns the player by default).
 	 */
 	public QuestContext useNpcForPrerequisites(boolean useNpc) {
-		return new QuestContext(mPlugin, mPlayer, mNpcEntity, useNpc, mPrerequisites, mUsedItem);
+		return new QuestContext(mPlugin, mPlayer, mNpcEntity, useNpc, mPrerequisites, mUsedItem, mLocation);
 	}
 
 	/**
 	 * Returns a new {@link QuestContext} with the given NPC set (and {@link #useNpcForPrerequisites(boolean)} will be reset to false)
 	 */
 	public QuestContext withNpc(@Nullable Entity npcEntity) {
-		return new QuestContext(mPlugin, mPlayer, npcEntity, false, mPrerequisites, mUsedItem);
+		return new QuestContext(mPlugin, mPlayer, npcEntity, false, mPrerequisites, mUsedItem, mLocation);
+	}
+
+	/**
+	 * Returns a new {@link QuestContext} with the given location override
+	 */
+	public QuestContext withLocation(@Nullable Location location) {
+		return new QuestContext(mPlugin, mPlayer, mNpcEntity, mUseNpcForPrerequisites, mPrerequisites, mUsedItem, location);
 	}
 
 	// Static thread-local context storage for providing the context to executed commands (e.g. used by GUIs)
