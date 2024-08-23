@@ -13,8 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.function.Predicate;
-import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -43,7 +41,6 @@ public class QuestDeath {
 	private @Nullable Point mRespawnPt = null;
 	private boolean mKeepInv = false;
 	private Double mKeepXp = null;
-	private boolean mKeepOriginalRespawnLocationInSameArea = false;
 	private @Nullable QuestPrerequisites mPrerequisites = null;
 	private @Nullable QuestActions mActions = null;
 
@@ -70,9 +67,6 @@ public class QuestDeath {
 
 					mRespawnPt = new Point(x, y, z, yaw, pitch);
 
-					break;
-				case "keep_original_respawn_location_in_same_area":
-					mKeepOriginalRespawnLocationInSameArea = value.getAsBoolean();
 					break;
 				case "prerequisites":
 					mPrerequisites = new QuestPrerequisites(value);
@@ -137,11 +131,7 @@ public class QuestDeath {
 				 * they can be sent there
 				 */
 				player.setMetadata(Constants.PLAYER_RESPAWN_POINT_METAKEY,
-						new FixedMetadataValue(plugin, mRespawnPt));
-				if (mKeepOriginalRespawnLocationInSameArea) {
-					player.setMetadata(Constants.PLAYER_RESPAWN_POINT_PREDICATE_METAKEY,
-							new FixedMetadataValue(plugin, (Predicate<Location>) (loc) -> (mPrerequisites != null && !mPrerequisites.prerequisiteMet(new QuestContext(plugin, player, null).withLocation(loc)))));
-				}
+					new FixedMetadataValue(plugin, mRespawnPt));
 			}
 			return true;
 		}

@@ -11,10 +11,7 @@ import com.playmonumenta.scriptedquests.utils.MetadataUtils;
 import com.playmonumenta.scriptedquests.zones.ZoneManager;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.function.Predicate;
 import org.bukkit.GameMode;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -192,17 +189,13 @@ public class PlayerListener implements Listener {
 		 * set their respawn location there and remove the metadata
 		 */
 		if (player.hasMetadata(Constants.PLAYER_RESPAWN_POINT_METAKEY)) {
-			Point respawnPoint = (Point) Objects.requireNonNull(player.getMetadata(Constants.PLAYER_RESPAWN_POINT_METAKEY).get(0).value());
-			boolean changeRespawnPoint = true;
-			if (player.hasMetadata(Constants.PLAYER_RESPAWN_POINT_PREDICATE_METAKEY)) {
-				Predicate<Location> respawnLocationPredicate = (Predicate<Location>) Objects.requireNonNull(player.getMetadata(Constants.PLAYER_RESPAWN_POINT_PREDICATE_METAKEY).get(0).value());
-				changeRespawnPoint = respawnLocationPredicate.test(event.getRespawnLocation());
+			Point respawnPoint = (Point)player.getMetadata(Constants.PLAYER_RESPAWN_POINT_METAKEY).get(0).value();
+			// This should never happen, but it makes a warning go away
+			if (respawnPoint == null) {
+				respawnPoint = new Point(player.getWorld().getSpawnLocation());
 			}
-			if (changeRespawnPoint) {
-				event.setRespawnLocation(respawnPoint.toLocation(player.getWorld()));
-			}
+			event.setRespawnLocation(respawnPoint.toLocation(player.getWorld()));
 			player.removeMetadata(Constants.PLAYER_RESPAWN_POINT_METAKEY, mPlugin);
-			player.removeMetadata(Constants.PLAYER_RESPAWN_POINT_PREDICATE_METAKEY, mPlugin);
 		}
 
 		/*
@@ -256,7 +249,6 @@ public class PlayerListener implements Listener {
 		player.removeMetadata(Constants.PLAYER_DEATH_LOCATION_METAKEY, mPlugin);
 		player.removeMetadata(Constants.PLAYER_RESPAWN_ACTIONS_METAKEY, mPlugin);
 		player.removeMetadata(Constants.PLAYER_RESPAWN_POINT_METAKEY, mPlugin);
-		player.removeMetadata(Constants.PLAYER_RESPAWN_POINT_PREDICATE_METAKEY, mPlugin);
 		player.removeMetadata(Constants.PLAYER_CLICKABLE_DIALOG_METAKEY, mPlugin);
 		player.removeMetadata(Constants.PLAYER_VOICE_OVER_METAKEY, mPlugin);
 	}
