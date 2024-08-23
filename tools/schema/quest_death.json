@@ -69,6 +69,13 @@
 			"propertyOrder": 5,
 			"required": true,
 			"$ref": "actions.json"
+		},
+		"keep_original_respawn_location_in_same_area": {
+			"propertyOrder": 6,
+			"required": false,
+			"title": "keep_original_respawn_location_in_same_area",
+			"description": "If this quest death matches at the original respawn location of the player as well, use that location instead of the one in this file. Defaults to false. Only makes sense if the prerequisites have a location-based check.",
+			"type": "boolean"
 		}
 	}
 }

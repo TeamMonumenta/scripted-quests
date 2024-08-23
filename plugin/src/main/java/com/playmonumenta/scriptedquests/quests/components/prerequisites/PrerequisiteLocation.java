@@ -55,6 +55,6 @@ public class PrerequisiteLocation implements PrerequisiteBase {
 
 	@Override
 	public boolean prerequisiteMet(QuestContext context) {
-		return mAreaBounds.within(context.getEntityUsedForPrerequisites().getLocation());
+		return mAreaBounds.within(context.getLocation());
 	}
 }
