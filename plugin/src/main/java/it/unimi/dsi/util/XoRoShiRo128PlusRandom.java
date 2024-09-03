@@ -22,43 +22,6 @@ package it.unimi.dsi.util;
 
 import java.util.Random;
 
-/** A fast, high-quality {@linkplain Random pseudorandom number generator} for floating-point generation.
- * It has excellent speed,
- * but its state space (128 bits) is large enough for
- * mild parallelism only. It passes all tests we are aware of except for the four
- * lower bits, which might fail linearity tests (and just those), so if
- * low linear complexity is not considered an issue (as it is usually the
- * case) it can be used to generate integer outputs, too; moreover, this
- * generator has a very mild Hamming-weight dependency making <a href="http://prng.di.unimi.it/hwd.php">our test</a>
- * fail after 8 TB of output; we believe
- * this slight bias cannot affect any application. If you are concerned,
- * use {@link XoRoShiRo128StarStarRandom} or {@link XoShiRo256PlusRandom}.
- * More information can be found at our <a href="http://prng.di.unimi.it/">PRNG page</a>.
- *
- * <p><strong>Warning</strong>: the constants used in this generator differ from the ones used in the 2016 version.
- *
- * <p>If you need a general PRNG, use {@link XoRoShiRo128StarStarRandom}. If you can use more space,
- * you might try {@link XoShiRo256PlusRandom}.
- *
- * <p>By using the supplied {@link #jump()} method it is possible to generate non-overlapping long sequences
- * for parallel computations; {@link #longJump()} makes it possible to create several
- * starting points, each providing several non-overlapping sequences, for distributed computations. This class provides also a {@link #split()} method to support recursive parallel computations, in the spirit of
- * {@link SplittableRandom}.
- *
- * <p><strong>Warning</strong>: before release 2.6.3, the {@link #split()} method
- * would not alter the state of the caller, and it would return instances initialized in the same
- * way if called multiple times. This was a major mistake in the implementation and it has been fixed,
- * but as a consequence the output of the caller after a call to {@link #split()} is
- * now different, and the result of {@link #split()} is initialized in a different way.
- *
- * <p>Note that this is not a {@linkplain SecureRandom secure generator}.
- *
- * @version 1.0
- * @see it.unimi.dsi.util
- * @see RandomGenerator
- * @see XoRoShiRo128PlusRandomGenerator
- */
-
 public class XoRoShiRo128PlusRandom extends Random {
 	private static final long serialVersionUID = 1L;
 	/** The internal state of the algorithm. */
@@ -70,7 +33,6 @@ public class XoRoShiRo128PlusRandom extends Random {
 		this.mS1 = s1;
 	}
 
-	/** Creates a new generator seeded using {@link Util#randomSeed()}. */
 	/* Monumenta NOTE: Seed with time instead, which lacks uniqueness properties */
 	public XoRoShiRo128PlusRandom() {
 		this(System.nanoTime());
@@ -313,15 +275,6 @@ public class XoRoShiRo128PlusRandom extends Random {
 		return split;
 	}
 
-	/** Sets the seed of this generator.
-	 *
-	 * <p>The argument will be used to seed a {@link SplitMix64RandomGenerator}, whose output
-	 * will in turn be used to seed this generator. This approach makes &ldquo;warmup&rdquo; unnecessary,
-	 * and makes the probability of starting from a state
-	 * with a large fraction of bits set to zero astronomically small.
-	 *
-	 * @param seed a seed for this generator.
-	 */
 	/* Monumenta NOTE : Just use Java's Random instead to generate the seed */
 	@Override
 	public synchronized void setSeed(final long seed) {

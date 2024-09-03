@@ -16,7 +16,7 @@ import org.bukkit.entity.Player;
 /**
  * A ClickableEntry is a container for an interaction the player can trigger at any time
  * by clicking an in-game object (sign, book entry) or by typing the command
- * /click <label>
+ * /click [label]
  *
  * Labels must be globally unique
  */

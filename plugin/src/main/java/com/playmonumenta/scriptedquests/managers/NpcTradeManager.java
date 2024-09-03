@@ -8,34 +8,17 @@ import com.playmonumenta.scriptedquests.trades.NpcTrade;
 import com.playmonumenta.scriptedquests.trades.NpcTradeOverride;
 import com.playmonumenta.scriptedquests.trades.NpcTrader;
 import com.playmonumenta.scriptedquests.trades.TradeWindowOpenEvent;
-import com.playmonumenta.scriptedquests.utils.CustomInventory;
-import com.playmonumenta.scriptedquests.utils.InventoryUtils;
-import com.playmonumenta.scriptedquests.utils.MMLog;
-import com.playmonumenta.scriptedquests.utils.MessagingUtils;
-import com.playmonumenta.scriptedquests.utils.QuestUtils;
+import com.playmonumenta.scriptedquests.utils.*;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import io.papermc.paper.event.player.PlayerPurchaseEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.TreeMap;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
@@ -46,11 +29,7 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.Merchant;
-import org.bukkit.inventory.MerchantInventory;
-import org.bukkit.inventory.MerchantRecipe;
+import org.bukkit.inventory.*;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.Nullable;
@@ -136,21 +115,26 @@ public class NpcTradeManager implements Listener {
 	/**
 	 * Initiates a player trade with a villager. Instead of trading with the villager directly,
 	 * we generate a fake merchant to do the trading. We override this trade event for multiple reasons:
+	 * <ul>
 	 * <li>This allows multiple players to trade with the same villager at the same time</li>
 	 * <li>This way, the villager does not gain any trade experience</li>
 	 * <li>We can filter out randomly-generated vanilla trades, and hide trades based on quest prerequisites</li>
+	 * </ul>
 	 *
 	 * @param plugin   Used for metadata
 	 * @param villager The villager to trade with
 	 * @param player   The player trading
 	 */
 	public void trade(Plugin plugin, Villager villager, Player player) {
-		List<NpcTrader> traderFiles = mTraders.getOrDefault(QuestNpc.squashNpcName(villager.getName()), Collections.emptyList());
+		List<NpcTrader> traderFiles = mTraders.getOrDefault(QuestNpc.squashNpcName(villager.getName()),
+            Collections.emptyList());
 		trade(plugin, traderFiles, villager, villager.customName(), player);
 	}
 
-	public void trade(Plugin plugin, Collection<NpcTrader> traderFiles, @Nullable Villager villager, Component title, Player player) {
-		QuestContext context = new QuestContext(plugin, player, villager, false, null, player.getInventory().getItemInMainHand());
+	public void trade(Plugin plugin, Collection<NpcTrader> traderFiles, @Nullable Villager villager, Component title,
+                      Player player) {
+		QuestContext context = new QuestContext(plugin, player, villager, false, null,
+            player.getInventory().getItemInMainHand());
 		traderFiles = traderFiles.stream().filter(trader -> trader.areFilePrerequisitesMet(context)).toList();
 
 		ArrayList<MerchantRecipe> trades = new ArrayList<>();
@@ -172,8 +156,8 @@ public class NpcTradeManager implements Listener {
 				// Remove vanilla trades (those with a regular emerald in any slot)
 				for (ItemStack item : items) {
 					if (item != null
-						    && item.getType() == Material.EMERALD
-						    && !item.hasItemMeta()) {
+						&& item.getType() == Material.EMERALD
+						&& !item.hasItemMeta()) {
 						// Found emerald with no item data
 						if (vanillaSlots.length() != 0) {
 							vanillaSlots.append(", ");
@@ -201,15 +185,18 @@ public class NpcTradeManager implements Listener {
 								if (overrideTradeItems.stream().anyMatch(item -> item.getType() == Material.BARRIER)) {
 									continue;
 								}
-								MerchantRecipe newRecipe = new MerchantRecipe(overrideTradeItems.get(2), recipe.getUses(), recipe.getMaxUses(), recipe.hasExperienceReward(), recipe.getVillagerExperience(), recipe.getPriceMultiplier(), recipe.getDemand(), recipe.getSpecialPrice(), recipe.shouldIgnoreDiscounts());
+								MerchantRecipe newRecipe = new MerchantRecipe(overrideTradeItems.get(2),
+                                    recipe.getUses(), recipe.getMaxUses(), recipe.hasExperienceReward(),
+                                    recipe.getVillagerExperience(), recipe.getPriceMultiplier(), recipe.getDemand(),
+                                    recipe.getSpecialPrice(), recipe.shouldIgnoreDiscounts());
 								newRecipe.setIngredients(overrideTradeItems.subList(0, 2));
 								recipe = newRecipe;
 							}
 
 							NpcTrade previousTrade = slotProperties.put(trades.size(), trade);
 							if (previousTrade != null
-								    && (trade.getActions() != null || overrideTradeItems != null || trade.getCount() > 0)
-								    && (previousTrade.getActions() != null || previousTrade.getOverrideTradeItems() != null || previousTrade.getCount() > 0)) {
+								&& (trade.getActions() != null || overrideTradeItems != null || trade.getCount() > 0)
+								&& (previousTrade.getActions() != null || previousTrade.getOverrideTradeItems() != null || previousTrade.getCount() > 0)) {
 								MMLog.warning("Duplicate active non-prerequisite-only trade for villager '" + villager.getName() + "' at index " + trade.getIndex());
 							}
 						}
@@ -228,7 +215,8 @@ public class NpcTradeManager implements Listener {
 				if ((villager == null || trade.getIndex() >= villager.getRecipeCount()) && trade.getOverrideTradeItems() != null) {
 					NpcTrade previousTrade = addedTrades.put(trade.getIndex(), trade);
 					if (previousTrade != null) {
-						MMLog.warning("Duplicate added trade for villager '" + (villager == null ? "<unknown>" : villager.getName()) + "' at index " + trade.getIndex());
+						MMLog.warning("Duplicate added trade for villager '" + (villager == null ? "<unknown>" :
+                            villager.getName()) + "' at index " + trade.getIndex());
 					}
 				}
 			}
@@ -238,8 +226,10 @@ public class NpcTradeManager implements Listener {
 			if (!trade.prerequisiteMet(context)) {
 				continue;
 			}
-			List<ItemStack> overrideTradeItems = Objects.requireNonNull(trade.getResolvedOverrideTradeItems(player)); // must have overrides to get here
-			if (overrideTradeItems.stream().anyMatch(item -> item != null && item.getType() == Material.BARRIER)) { // safeguard against incomplete trades
+			List<ItemStack> overrideTradeItems = Objects.requireNonNull(trade.getResolvedOverrideTradeItems(player));
+            // must have overrides to get here
+			if (overrideTradeItems.stream().anyMatch(item -> item != null && item.getType() == Material.BARRIER)) { //
+                // safeguard against incomplete trades
 				continue;
 			}
 			MerchantRecipe recipe = new MerchantRecipe(overrideTradeItems.get(2), 0, Integer.MAX_VALUE, false, 0,
@@ -277,7 +267,9 @@ public class NpcTradeManager implements Listener {
 						result.setItemMeta(meta);
 					}
 					// make a new recipe with the replaced item
-					MerchantRecipe newRecipe = new MerchantRecipe(result, recipe.getUses(), recipe.getMaxUses(), recipe.hasExperienceReward(), recipe.getVillagerExperience(), recipe.getPriceMultiplier(), recipe.getDemand(), recipe.getSpecialPrice(), recipe.shouldIgnoreDiscounts());
+					MerchantRecipe newRecipe = new MerchantRecipe(result, recipe.getUses(), recipe.getMaxUses(),
+                        recipe.hasExperienceReward(), recipe.getVillagerExperience(), recipe.getPriceMultiplier(),
+                        recipe.getDemand(), recipe.getSpecialPrice(), recipe.shouldIgnoreDiscounts());
 					newRecipe.setIngredients(recipe.getIngredients());
 					trades.set(i, newRecipe);
 				}
@@ -287,17 +279,21 @@ public class NpcTradeManager implements Listener {
 		if (modified && player.getGameMode() == GameMode.CREATIVE && player.isOp()) {
 			player.sendMessage(Component.text("Some trader slots were not shown to you:", NamedTextColor.GOLD));
 			if (lockedSlots.length() > 0) {
-				player.sendMessage(Component.text("These slots were locked by quest scores: " + lockedSlots, NamedTextColor.GOLD));
+				player.sendMessage(Component.text("These slots were locked by quest scores: " + lockedSlots,
+                    NamedTextColor.GOLD));
 			}
 			if (vanillaSlots.length() > 0) {
-				player.sendMessage(Component.text("These slots contained a vanilla emerald: " + vanillaSlots, NamedTextColor.GOLD));
+				player.sendMessage(Component.text("These slots contained a vanilla emerald: " + vanillaSlots,
+                    NamedTextColor.GOLD));
 			}
-			player.sendMessage(Component.text("This message only appears to operators in creative mode", NamedTextColor.GOLD));
+			player.sendMessage(Component.text("This message only appears to operators in creative mode",
+                NamedTextColor.GOLD));
 		}
 
 		/*
 		 * If this villager still has trades, create a temporary fake merchant to interact with the player
-		 * This allows multiple players to trade with the same NPC at the same time, and also gives score-limited trades
+		 * This allows multiple players to trade with the same NPC at the same time, and also gives score-limited
+		 * trades
 		 */
 		if (trades.size() > 0) {
 			List<TradeWindowOpenEvent.Trade> eventTrades = new ArrayList<>();
@@ -321,7 +317,8 @@ public class NpcTradeManager implements Listener {
 							newSlotProperties.put(i, npcTrade);
 						}
 						merchant.setRecipes(newEventTrades.stream().map(TradeWindowOpenEvent.Trade::getRecipe).collect(Collectors.toList()));
-						mOpenTrades.put(player.getUniqueId(), new PlayerTradeContext(newSlotProperties, villager, merchant));
+						mOpenTrades.put(player.getUniqueId(), new PlayerTradeContext(newSlotProperties, villager,
+                            merchant));
 						player.openMerchant(merchant, true);
 					}
 				}.runTaskLater(plugin, 1);
@@ -347,7 +344,8 @@ public class NpcTradeManager implements Listener {
 		PlayerTradeContext context = mOpenTrades.get(player.getUniqueId());
 
 		if (context == null || !(inv instanceof MerchantInventory merchInv) || !merchInv.getMerchant().equals(context.getMerchant())) {
-			player.sendMessage(Component.text("DENIED: You should not have been able to view this interface. If this is a bug, please report it, and try trading with the villager again.", NamedTextColor.RED));
+			player.sendMessage(Component.text("DENIED: You should not have been able to view this interface. If this " +
+                "is a bug, please report it, and try trading with the villager again.", NamedTextColor.RED));
 			event.setCancelled(true);
 			Bukkit.getScheduler().runTask(Plugin.getInstance(), () -> player.closeInventory());
 			return;
@@ -371,12 +369,14 @@ public class NpcTradeManager implements Listener {
 		int selectedIndex = recipes.indexOf(recipe);
 
 		if (selectedIndex < 0) {
-			player.sendMessage(Component.text("BUG! Somehow the recipe you selected couldn't be found. Please report this, and include which villager and what you were trading for", NamedTextColor.YELLOW));
+			player.sendMessage(Component.text("BUG! Somehow the recipe you selected couldn't be found. Please report " +
+                "this, and include which villager and what you were trading for", NamedTextColor.YELLOW));
 		}
 
 		NpcTrade trade = context.getSlotProperties().get(selectedIndex);
 		if (trade == null) {
-			player.sendMessage(Component.text("BUG! Somehow the trade you selected couldn't be found. Please report this, and include which villager and what you were trading for", NamedTextColor.YELLOW));
+			player.sendMessage(Component.text("BUG! Somehow the trade you selected couldn't be found. Please report " +
+                "this, and include which villager and what you were trading for", NamedTextColor.YELLOW));
 			return;
 		}
 
@@ -402,7 +402,8 @@ public class NpcTradeManager implements Listener {
 
 				InventoryUtils.giveItems(player, items, false);
 				event.setCancelled(true);
-				ingredient: for (ItemStack recipeItem : recipe.getIngredients()) {
+				ingredient:
+				for (ItemStack recipeItem : recipe.getIngredients()) {
 					int amountToDecrement = recipeItem.getAmount();
 					for (ItemStack merchItem : merchInv) {
 						if (merchItem != null && merchItem.isSimilar(recipeItem)) {
@@ -439,7 +440,9 @@ public class NpcTradeManager implements Listener {
 		private int mPage = 0;
 
 		public TraderEditCustomInventory(Player player, NpcTrader trader) {
-			super(player, 6 * 9, "Trades for " + trader.getOriginalNpcNames().get(0) + (trader.getOriginalNpcNames().size() > 1 ? " (+" + (trader.getOriginalNpcNames().size() - 1) + " more)" : ""));
+			super(player, 6 * 9,
+                "Trades for " + trader.getOriginalNpcNames().get(0) + (trader.getOriginalNpcNames().size() > 1 ? " " +
+                    "(+" + (trader.getOriginalNpcNames().size() - 1) + " more)" : ""));
 			this.mPlayer = player;
 			mTrader = trader;
 			setup();
@@ -504,7 +507,8 @@ public class NpcTradeManager implements Listener {
 				item.editMeta(meta -> {
 					List<Component> oldLore = meta.lore();
 					ArrayList<Component> lore = new ArrayList<>(oldLore == null ? List.of() : oldLore);
-					lore.add(0, Component.text("Loot table: " + lootTableOverride.mLootTable.key().asString(), NamedTextColor.GOLD).decorate(TextDecoration.UNDERLINED));
+					lore.add(0, Component.text("Loot table: " + lootTableOverride.mLootTable.key().asString(),
+                        NamedTextColor.GOLD).decorate(TextDecoration.UNDERLINED));
 					meta.lore(lore);
 				});
 			}
@@ -533,8 +537,10 @@ public class NpcTradeManager implements Listener {
 						}
 						NpcTradeOverride oldOverride = overrideTradeItems.get(overrideSlot);
 						if (oldOverride instanceof NpcTradeOverride.ItemOverride || oldOverride == null) {
-							ItemStack oldItem = oldOverride != null ? ((NpcTradeOverride.ItemOverride) oldOverride).mItem : null;
-							overrideTradeItems.set(overrideSlot, new NpcTradeOverride.ItemOverride(event.getCursor() == null || event.getCursor().getType() == Material.AIR ? (overrideSlot == 1 ? new ItemStack(Material.AIR) : UNDEFINED_ITEM) : event.getCursor()));
+							ItemStack oldItem = oldOverride != null ?
+                                ((NpcTradeOverride.ItemOverride) oldOverride).mItem : null;
+							overrideTradeItems.set(overrideSlot,
+                                new NpcTradeOverride.ItemOverride(event.getCursor() == null || event.getCursor().getType() == Material.AIR ? (overrideSlot == 1 ? new ItemStack(Material.AIR) : UNDEFINED_ITEM) : event.getCursor()));
 							if (overrideTradeItems.equals(empty)) {
 								trade.setOverrideTradeItems(null);
 							}

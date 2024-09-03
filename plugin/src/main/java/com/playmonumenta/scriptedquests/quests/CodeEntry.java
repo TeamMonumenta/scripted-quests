@@ -16,7 +16,7 @@ import org.bukkit.entity.Player;
 
 /**
  * A CodeEntry is a container for an interaction the player can trigger at any time
- * by typing /code <words>
+ * by typing /code [words]
  * <p>
  * Labels must be globally unique
  */
