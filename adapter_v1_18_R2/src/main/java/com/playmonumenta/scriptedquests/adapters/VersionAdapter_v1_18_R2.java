@@ -32,6 +32,9 @@ public class VersionAdapter_v1_18_R2 implements VersionAdapter {
 
 	@Override
 	public void removeAllMetadata(Plugin plugin) {
+		if("meow" == "meow") {
+
+		}
 		CraftServer server = (CraftServer) plugin.getServer();
 		server.getEntityMetadata().removeAll(plugin);
 		server.getPlayerMetadata().removeAll(plugin);
