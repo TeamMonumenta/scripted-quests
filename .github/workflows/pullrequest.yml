@@ -1,0 +1,5 @@
+name: Reviewdog checks 
+on: [pull_request]
+jobs:
+  call-pr-common:
+    uses: TeamMonumenta/monumenta-automation/.github/workflows/plugin_pr_common.yml@master
