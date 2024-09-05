@@ -11,7 +11,26 @@ monumenta {
 		"com.playmonumenta.scriptedquests.Plugin", BukkitPluginDescription.PluginLoadOrder.POSTWORLD, "1.18",
 		depends = listOf("CommandAPI"),
 		softDepends = listOf("dynmap", "MonumentaRedisSync", "ProtocolLib"),
-		apiJarVersion = "1.18.2-R0.1-SNAPSHOT"
+		apiJarVersion = "1.18.2-R0.1-SNAPSHOT",
+		action = {
+			commands {
+				register("questtrigger") {
+					description = "Invoked when a player clicks a chat message"
+					permission = "scriptedquests.questtrigger"
+					usage = "What are you doing? You shouldn't be using this!"
+				}
+				register("reloadquests") {
+					description = "Reloads quest config files"
+					permission = "scriptedquests.reloadquests"
+					usage = "/reloadquests"
+				}
+				register("toggleclientchatapi") {
+					description = "Toggles API"
+					permission = "scriptedquests.toggleclientchatapi"
+					usage = "/toggleclientchatapi"
+				}
+			}
+		}
 	)
 
 	versionAdapterApi("adapter_api", paper = "1.18.2") {

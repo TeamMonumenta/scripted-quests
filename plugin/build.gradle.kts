@@ -50,6 +50,8 @@ tasks {
 		relocate("io.grpc", "com.playmonumenta.scriptedquests.internal.io.grpc")
 		relocate("io.opencensus", "com.playmonumenta.scriptedquests.internal.io.opencensus")
 		minimize {
+			exclude(project(":adapter_v1_18_R2"))
+			exclude(project(":adapter_v1_19_R3"))
 			exclude(dependency("com.playmonumenta.*:.*:.*"))
 			exclude(dependency("dev.jorel.commandapi.*:.*:.*"))
 		}
