@@ -52,6 +52,7 @@ tasks {
 		minimize {
 			exclude(project(":adapter_v1_18_R2"))
 			exclude(project(":adapter_v1_19_R3"))
+			exclude(project(":adapter_v1_20_R3"))
 			exclude(dependency("com.playmonumenta.*:.*:.*"))
 			exclude(dependency("dev.jorel.commandapi.*:.*:.*"))
 		}
