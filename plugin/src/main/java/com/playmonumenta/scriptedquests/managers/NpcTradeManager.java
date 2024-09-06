@@ -8,17 +8,34 @@ import com.playmonumenta.scriptedquests.trades.NpcTrade;
 import com.playmonumenta.scriptedquests.trades.NpcTradeOverride;
 import com.playmonumenta.scriptedquests.trades.NpcTrader;
 import com.playmonumenta.scriptedquests.trades.TradeWindowOpenEvent;
-import com.playmonumenta.scriptedquests.utils.*;
+import com.playmonumenta.scriptedquests.utils.CustomInventory;
+import com.playmonumenta.scriptedquests.utils.InventoryUtils;
+import com.playmonumenta.scriptedquests.utils.MMLog;
+import com.playmonumenta.scriptedquests.utils.MessagingUtils;
+import com.playmonumenta.scriptedquests.utils.QuestUtils;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import io.papermc.paper.event.player.PlayerPurchaseEvent;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.TreeMap;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
@@ -29,7 +46,11 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.inventory.*;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Merchant;
+import org.bukkit.inventory.MerchantInventory;
+import org.bukkit.inventory.MerchantRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.Nullable;
@@ -39,10 +60,10 @@ public class NpcTradeManager implements Listener {
 
 	private static class PlayerTradeContext {
 		private final Map<Integer, NpcTrade> mSlotProperties;
-		private final Villager mVillager;
+		private final @Nullable Villager mVillager;
 		private final Merchant mMerchant;
 
-		private PlayerTradeContext(Map<Integer, NpcTrade> slotProperties, Villager villager, Merchant merchant) {
+		private PlayerTradeContext(Map<Integer, NpcTrade> slotProperties, @Nullable Villager villager, Merchant merchant) {
 			mSlotProperties = slotProperties;
 			mVillager = villager;
 			mMerchant = merchant;
@@ -66,7 +87,7 @@ public class NpcTradeManager implements Listener {
 	 * A player can not interact with a Merchant-type inventory unless they are on this map
 	 * The value map for each player tracks what special Trader specifications are for each slot, if any
 	 */
-	public final HashMap<UUID, PlayerTradeContext> mOpenTrades = new HashMap<>();
+	private final HashMap<UUID, PlayerTradeContext> mOpenTrades = new HashMap<>();
 
 	/*
 	 * If sender is non-null, it will be sent debugging information
@@ -159,7 +180,7 @@ public class NpcTradeManager implements Listener {
 						&& item.getType() == Material.EMERALD
 						&& !item.hasItemMeta()) {
 						// Found emerald with no item data
-						if (vanillaSlots.length() != 0) {
+						if (!vanillaSlots.isEmpty()) {
 							vanillaSlots.append(", ");
 						}
 						vanillaSlots.append(i);
@@ -173,7 +194,7 @@ public class NpcTradeManager implements Listener {
 					NpcTrade trade = trader.getTrade(i);
 					if (trade != null) {
 						if (!trade.prerequisiteMet(context)) {
-							if (lockedSlots.length() != 0) {
+							if (!lockedSlots.isEmpty()) {
 								lockedSlots.append(", ");
 							}
 							lockedSlots.append(i);
@@ -278,11 +299,11 @@ public class NpcTradeManager implements Listener {
 
 		if (modified && player.getGameMode() == GameMode.CREATIVE && player.isOp()) {
 			player.sendMessage(Component.text("Some trader slots were not shown to you:", NamedTextColor.GOLD));
-			if (lockedSlots.length() > 0) {
+			if (!lockedSlots.isEmpty()) {
 				player.sendMessage(Component.text("These slots were locked by quest scores: " + lockedSlots,
                     NamedTextColor.GOLD));
 			}
-			if (vanillaSlots.length() > 0) {
+			if (!vanillaSlots.isEmpty()) {
 				player.sendMessage(Component.text("These slots contained a vanilla emerald: " + vanillaSlots,
                     NamedTextColor.GOLD));
 			}
@@ -295,7 +316,7 @@ public class NpcTradeManager implements Listener {
 		 * This allows multiple players to trade with the same NPC at the same time, and also gives score-limited
 		 * trades
 		 */
-		if (trades.size() > 0) {
+		if (!trades.isEmpty()) {
 			List<TradeWindowOpenEvent.Trade> eventTrades = new ArrayList<>();
 			for (int i = 0; i < trades.size(); i++) {
 				NpcTrade npcTrade = slotProperties.get(i);
