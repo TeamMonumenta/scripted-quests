@@ -1,0 +1,33 @@
+[versions]
+google-api-client = "1.31.4"
+google-api-services-sheets = "v4-rev1-1.21.0"
+google-oauth = "0.1.0"
+commandapi = "9.4.1"
+nbtapi = "2.12.0-SNAPSHOT"
+brigadier = "1.0.17"
+gson = "2.8.0"
+dynmap = "2.0"
+protocollib = "4.7.0"
+junit = "5.8.1"
+mockito-junit = "5.8.0"
+mockbukkit = "3.9.0"
+redissync = "4.6.1"
+
+[libraries]
+google-api-client = { module = "com.google.api-client:google-api-client", version.ref = "google-api-client" }
+google-api-services-sheets = { module = "com.google.apis:google-api-services-sheets", version.ref = "google-api-services-sheets" }
+google-oauth = { module = "com.google.auth:google-auth-library-oauth2-http", version.ref = "google-oauth" }
+commandapi = { module = "dev.jorel:commandapi-bukkit-core", version.ref = "commandapi" }
+nbtapi = { module = "de.tr7zw:item-nbt-api-plugin", version.ref = "nbtapi" }
+brigadier = { module = "com.mojang:brigadier", version.ref = "brigadier" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+dynmap = { module = "org.dynmap:DynmapCoreAPI", version.ref = "dynmap" }
+protocollib = { module = "com.comphenix.protocol:ProtocolLib", version.ref = "protocollib" }
+jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
+jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
+mockito = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockito-junit" }
+mockbukkit = { module = "com.github.seeseemelk:MockBukkit-v1.20", version.ref = "mockbukkit" }
+redissync = { module = "com.playmonumenta:redissync", version.ref = "redissync" }
+
+[bundles]
+google-api = ["google-api-client", "google-api-services-sheets", "google-oauth"]
