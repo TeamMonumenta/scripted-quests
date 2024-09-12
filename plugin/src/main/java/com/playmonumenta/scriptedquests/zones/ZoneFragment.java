@@ -6,8 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Axis;
 import org.bukkit.World;
+import org.bukkit.command.CommandSender;
 import org.bukkit.util.Vector;
 
 /*
@@ -167,17 +170,37 @@ public class ZoneFragment extends ZoneBase {
 	}
 
 	public Map<String, Zone> getParents(World world) {
+		return getParents(world, null);
+	}
+
+	public Map<String, Zone> getParents(World world, @Nullable CommandSender sender) {
 		Map<String, Zone> result = new HashMap<>();
 
 		for (Map.Entry<String, List<Zone>> entry : mParents.entrySet()) {
 			String namespaceName = entry.getKey();
 			List<Zone> zones = entry.getValue();
+			if (sender != null) {
+				sender.sendMessage(Component.text(
+					"- This fragment has " + zones.size() + " possible matches", NamedTextColor.GREEN));
+			}
 
 			for (Zone zone : zones) {
 				if (zone.matchesWorld(world)) {
+					if (sender != null) {
+						sender.sendMessage(Component.text(
+							"- `" + zone.getName()
+								+ "` matches " + zone.getWorldRegex() + "!",
+							NamedTextColor.GREEN));
+					}
 					result.put(namespaceName, zone);
 					break;
+				} else if (sender != null) {
+					sender.sendMessage(Component.text(
+						"- `" + zone.getName()
+							+ "` does not match " + zone.getWorldRegex() + "!",
+						NamedTextColor.RED));
 				}
+
 			}
 		}
 
