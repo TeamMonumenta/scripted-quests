@@ -10,6 +10,7 @@ import javax.annotation.Nullable;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.command.CommandSender;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.dynmap.DynmapCommonAPI;
@@ -53,13 +54,17 @@ public abstract class ZoneTreeBase {
 	 * For a given location, return the zones that contain it.
 	 */
 	public Map<String, Zone> getZones(Location location) {
+		return getZones(location, null);
+	}
+
+	public Map<String, Zone> getZones(Location location, @Nullable CommandSender sender) {
 		@Nullable ZoneFragment fragment = getZoneFragment(location.toVector());
 
 		if (fragment == null) {
 			return new HashMap<>();
 		}
 
-		return fragment.getParents(location.getWorld());
+		return fragment.getParents(location.getWorld(), sender);
 	}
 
 	// Avoid using this except for test code; searching by world is more efficient

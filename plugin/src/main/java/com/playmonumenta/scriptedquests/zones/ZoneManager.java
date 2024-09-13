@@ -39,8 +39,6 @@ public class ZoneManager {
 		protected @MonotonicNonNull ZoneTreeBase mZoneTree = null;
 	}
 
-	private static final String[] SUGGESTIONS_EXECUTE_FALLBACK = {"\"Suggestions unavailable through /execute\""};
-
 	private final Plugin mPlugin;
 	private static @MonotonicNonNull ZoneManager INSTANCE = null;
 	// For test case code ONLY
@@ -640,7 +638,7 @@ public class ZoneManager {
 	/*
 	 * sender receives the debug info, player is the target and sees nothing
 	 */
-	public void sendDebug(CommandSender sender, Player player) {
+	public void sendDebugFull(CommandSender sender, Player player) {
 		if (sender == null) {
 			return;
 		}
@@ -690,10 +688,10 @@ public class ZoneManager {
 		}
 
 		sender.sendMessage(Component.text("Uncached location info:"));
-		sendDebug(sender, playerLocation);
+		sendDebugFull(sender, playerLocation);
 	}
 
-	public void sendDebug(CommandSender sender, Location loc) {
+	public void sendDebugFull(CommandSender sender, Location loc) {
 		if (sender == null) {
 			return;
 		}
@@ -746,6 +744,42 @@ public class ZoneManager {
 				sender.sendMessage(Component.text(zone.toString()));
 			}
 		}
+	}
+
+	public void sendDebugWorld(CommandSender sender, Location loc) {
+		if (sender == null) {
+			return;
+		}
+
+		sender.sendMessage(Component.text(
+			"Zone world debug at " + loc.getWorld() + " " + loc.getX() + " " + loc.getY() + " " + loc.getZ(),
+			NamedTextColor.GOLD));
+		mActiveState.mZoneTree.getZones(loc, sender);
+		sender.sendMessage(Component.text(
+			"And that's all!",
+			NamedTextColor.GOLD));
+	}
+
+	public void sendDebugMinimal(CommandSender sender, Location loc) {
+		if (sender == null) {
+			return;
+		}
+
+		Map<String, Zone> zones = getZones(loc);
+		sender.sendMessage(Component.text(
+			"Zones at " + loc.getWorld() + " " + loc.getX() + " " + loc.getY() + " " + loc.getZ(),
+			NamedTextColor.GOLD));
+		for (Map.Entry<String, Zone> zoneEntry : zones.entrySet()) {
+			String namespace = zoneEntry.getKey();
+			Zone zone = zoneEntry.getValue();
+			String zoneName = zone.getName();
+			sender.sendMessage(Component.text(
+				"- " + namespace + ": " + zoneName,
+				NamedTextColor.GREEN));
+		}
+		sender.sendMessage(Component.text(
+			"And that's all!",
+			NamedTextColor.GOLD));
 	}
 
 	public Collection<ZoneNamespace> getNamespaces() {
