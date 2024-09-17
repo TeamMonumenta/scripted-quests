@@ -2,6 +2,7 @@ package com.playmonumenta.scriptedquests;
 
 import com.playmonumenta.scriptedquests.api.ClientChatProtocol;
 import com.playmonumenta.scriptedquests.commands.*;
+import com.playmonumenta.scriptedquests.editor.BookEditor;
 import com.playmonumenta.scriptedquests.growables.GrowableAPI;
 import com.playmonumenta.scriptedquests.listeners.EntityListener;
 import com.playmonumenta.scriptedquests.listeners.InteractablesListener;
@@ -9,7 +10,20 @@ import com.playmonumenta.scriptedquests.listeners.PlayerListener;
 import com.playmonumenta.scriptedquests.listeners.RedisSyncListener;
 import com.playmonumenta.scriptedquests.listeners.WorldListener;
 import com.playmonumenta.scriptedquests.listeners.ZoneEventListener;
-import com.playmonumenta.scriptedquests.managers.*;
+import com.playmonumenta.scriptedquests.managers.ClickableManager;
+import com.playmonumenta.scriptedquests.managers.CodeManager;
+import com.playmonumenta.scriptedquests.managers.GuiManager;
+import com.playmonumenta.scriptedquests.managers.HandbookManager;
+import com.playmonumenta.scriptedquests.managers.InteractableManager;
+import com.playmonumenta.scriptedquests.managers.NpcTradeManager;
+import com.playmonumenta.scriptedquests.managers.QuestCompassManager;
+import com.playmonumenta.scriptedquests.managers.QuestDeathManager;
+import com.playmonumenta.scriptedquests.managers.QuestLoginManager;
+import com.playmonumenta.scriptedquests.managers.QuestNpcManager;
+import com.playmonumenta.scriptedquests.managers.RaceManager;
+import com.playmonumenta.scriptedquests.managers.TranslationsManager;
+import com.playmonumenta.scriptedquests.managers.WaypointManager;
+import com.playmonumenta.scriptedquests.managers.ZonePropertyManager;
 import com.playmonumenta.scriptedquests.protocollib.ProtocolLibIntegration;
 import com.playmonumenta.scriptedquests.timers.CommandTimerManager;
 import com.playmonumenta.scriptedquests.utils.MetadataUtils;
@@ -60,6 +74,7 @@ public class Plugin extends JavaPlugin {
 	public ZoneEventListener mZoneEventListener;
 	public @Nullable ProtocolLibIntegration mProtocolLibIntegration;
 	private HandbookManager mHandbookManager;
+	private BookEditor bookEditor;
 
 	public Random mRandom = new Random();
 	private ScheduleFunction mScheduledFunctionsManager;
@@ -116,6 +131,9 @@ public class Plugin extends JavaPlugin {
 		Music.register();
 		InvalidateCompassCacheCommand.register(this);
 
+		mHandbookManager = new HandbookManager(this.getDataFolder() + File.separator + "handbook");
+		HandbookCommand.register(this);
+
 		mScheduledFunctionsManager = new ScheduleFunction(this);
 
 		GrowableAPI.registerCommands();
@@ -144,9 +162,10 @@ public class Plugin extends JavaPlugin {
 		mTimerManager = new CommandTimerManager(this);
 		mWaypointManager = new WaypointManager(this);
 		mGuiManager = new GuiManager(this);
-		mHandbookManager = new HandbookManager(this.getDataFolder() + File.separator + "handbook");
+		bookEditor = new BookEditor();
 
 		manager.registerEvents(new EntityListener(this), this);
+		manager.registerEvents(bookEditor, this);
 		manager.registerEvents(new InteractablesListener(this), this);
 		manager.registerEvents(new PlayerListener(this), this);
 		if (manager.isPluginEnabled("MonumentaRedisSync")) {
@@ -291,12 +310,20 @@ public class Plugin extends JavaPlugin {
 		return INSTANCE;
 	}
 
+	public HandbookManager getHandbookManager() {
+		return mHandbookManager;
+	}
+
 	@Override
 	public Logger getLogger() {
 		if (mLogger == null) {
 			mLogger = new CustomLogger(super.getLogger(), Level.INFO);
 		}
 		return mLogger;
+	}
+
+	public BookEditor getBookEditor() {
+		return bookEditor;
 	}
 
 	public SoundCategory getDefaultMusicSoundCategory() {

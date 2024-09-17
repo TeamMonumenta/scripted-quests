@@ -1,5 +1,6 @@
 package com.playmonumenta.scriptedquests.handbook;
 
+import com.google.common.collect.Lists;
 import com.google.gson.JsonObject;
 
 import java.nio.file.Path;
@@ -7,6 +8,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 
 
 /**
@@ -17,9 +20,13 @@ import java.util.stream.Stream;
  */
 public final class Category {
 	private final String name;
-	private final String titlePage;
+	private final Component titlePage;
 	private Category parent;
 	private final Set<HandbookEntry> entries;
+
+	private final static String JSON_KEY_NAME = "name";
+	private final static String JSON_KEY_PARENT_PATH = "parentPath";
+	private final static String JSON_KEY_TITLE_PAGE = "titlePage";
 
 	/**
 	 * @param name      The name of this category
@@ -28,7 +35,7 @@ public final class Category {
 	 * @param entries   The handbook entries that this Category contains. Should not be empty.
 	 */
 	public Category(String name,
-					String titlePage,
+					Component titlePage,
 					Category parent,
 					Set<HandbookEntry> entries) {
 		this.name = name;
@@ -46,7 +53,7 @@ public final class Category {
 	}
 
 	/**
-	 * get the directory of the category
+	 * get the (relative) directory of the category relative to the main categories folder
 	 *
 	 * @return
 	 */
@@ -64,15 +71,15 @@ public final class Category {
 	/**
 	 * get the directory of the ENTRIES of this category.
 	 *
-	 * @return todo documentation
+	 * @return todo better documentation
 	 */
-	public Path getEntriesPath() {
+	public Path getEntryFolder() {
 		final var cs = traceParents();
 		final var buff = new StringBuilder();
 		for (var i = cs.size() - 1; i >= 0; i--) {
 			buff.append(cs.get(i).name).append("/");
 		}
-		buff.append(name).append("entries");
+		buff.append(name).append("/").append("entries");
 		return Path.of(buff.toString());
 	}
 
@@ -103,7 +110,6 @@ public final class Category {
 	 *     name: String,
 	 *     titlePage: String,
 	 *     parentPath: Optional[String]
-	 *     entries: [HandbookEntry]
 	 * }
 	 *
 	 * }
@@ -113,14 +119,11 @@ public final class Category {
 	 */
 	public JsonObject getAsJsonObject() {
 		final var obj = new JsonObject();
-		obj.addProperty("name", name);
-		obj.addProperty("titlePage", titlePage);
+		obj.addProperty(JSON_KEY_NAME, name);
+		obj.add(JSON_KEY_TITLE_PAGE, GsonComponentSerializer.gson().serializeToTree(titlePage));
 		if (parent != null) {
-			obj.addProperty("parentPath", parent.toDirectoryPath().toString());
+			obj.addProperty(JSON_KEY_PARENT_PATH, parent.toDirectoryPath().toString());
 		}
-//		final var entries = new JsonArray();
-//		this.entries.forEach(entry -> entries.add(entry.getAsJsonObject()));
-//		obj.add("entries", entries);
 		return obj;
 	}
 
@@ -134,6 +137,14 @@ public final class Category {
 		return toDirectoryPath().toString().replaceAll("/", ".");
 	}
 
+	public List<Component> intoBookPages() {
+		final var list = Lists.newArrayList(titlePage);
+		for (var entry : entries) {
+			list.addAll(entry.pages());
+		}
+		return list;
+	}
+
 	public void assignParent(Category parent) {
 		this.parent = parent;
 	}
@@ -142,7 +153,7 @@ public final class Category {
 		return name;
 	}
 
-	public String titlePage() {
+	public Component titlePage() {
 		return titlePage;
 	}
 

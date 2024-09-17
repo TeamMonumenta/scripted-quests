@@ -7,6 +7,8 @@ import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 
 /**
  * A handbook entry is a page of the handbook.
@@ -19,80 +21,83 @@ import java.util.Set;
 public final class HandbookEntry {
 	private final String name;
 	private final String permission;
-	private final Set<String> pages;
+	private final Set<Component> pages;
 	private Category category;
 	private final String unlockDescription;
+
+	// the keys of the json entries
+	private static final String JSON_KEY_NAME = "name";
+	private static final String JSON_KEY_UNLOCK_DESCRIPTION  = "unlockDescription";
+	private static final String JSON_KEY_PAGES  = "pages";
 
 	/**
 	 * @param name       The name of this entry.
 	 * @param unlockDescription Sent to the player upon unlocking the entry. Should be a short summary/lore text
-	 * @param permission The permission to unlock this handbook entry. This is automatically handled while parsing.
 	 * @param pages      The pages of the entry and their contents
 	 * @param category   The {@link Category} that this HandbookEntry belongs to.
 	 */
 	public HandbookEntry(String name,
 						 String unlockDescription,
-						 String permission,
-						 Set<String> pages,
+						 Set<Component> pages,
 						 Category category) {
 		this.name = name;
 		this.unlockDescription = unlockDescription;
-		this.permission = permission;
 		this.pages = pages;
 		this.category = category;
+		this.permission = toPath().toString();
 	}
 
 	/**
-	 * <p>
-	 * The returned object is of the form:
-	 * <pre>
-	 * {@code
-	 * {
-	 *     name: String,
-	 *     permission: String,
-	 *     unlockDescription: String,
-	 *     pages: [String]
-	 * }
-	 *
-	 * }
-	 * </pre>
+	 * Returns a Json representation of this entry.
+	 * This method serializes pages from components into json.
 	 *
 	 * @return The json representation of this HandbookEntry.
+	 * @see HandbookEntry#JSON_KEY_NAME
+	 * @see HandbookEntry#JSON_KEY_PAGES
+	 * @see HandbookEntry#JSON_KEY_UNLOCK_DESCRIPTION
 	 */
 	public JsonObject getAsJsonObject() {
 		final var obj = new JsonObject();
-		obj.addProperty("name", name);
-		obj.addProperty("permission", permission);
-		obj.addProperty("unlockDescription", unlockDescription);
+		obj.addProperty(JSON_KEY_NAME, name);
+		obj.addProperty(JSON_KEY_UNLOCK_DESCRIPTION, unlockDescription);
 		final var pages = new JsonArray();
-		this.pages.forEach(pages::add);
-		obj.add("pages", pages);
+		this.pages.forEach(page -> pages.add(GsonComponentSerializer.gson().serializeToTree(page)));
+		obj.add(JSON_KEY_PAGES, pages);
 		return obj;
 	}
 
 
 	public Path toPath() {
-		return Path.of(category.getEntriesPath() + "/" + name + ".json");
+		return category.getEntryFolder().resolve(name + ".json");
 	}
 
+	/** Creates a HandbookEntry from a JsonObject and assigns its parent to the given category.
+	 *
+	 * @param object The object to read
+	 * @param category The parent category of this entry.
+	 * @return A {@link HandbookEntry} with the given {@link Category} as its parent
+	 */
 	public static HandbookEntry fromJsonObject(JsonObject object, Category category) {
-		final var name = object.get("name").getAsString();
-		final var permission = object.get("permission").getAsString();
-		final var unlockDescription = object.get("unlockDescription").getAsString();
-		final var pages = new HashSet<String>();
-		object.getAsJsonArray("pages").forEach(page -> pages.add(page.getAsString()));
-		return new HandbookEntry(name, unlockDescription, permission, pages, category);
+		final var name = object.get(JSON_KEY_NAME).getAsString();
+		final var unlockDescription = object.get(JSON_KEY_UNLOCK_DESCRIPTION).getAsString();
+		final var pages = new HashSet<Component>();
+		object.getAsJsonArray(JSON_KEY_PAGES).forEach(page -> pages.add(GsonComponentSerializer.gson().deserializeFromTree(page)));
+		return new HandbookEntry(name, unlockDescription, pages, category);
 	}
 
 	public String name() {
 		return name;
 	}
 
+	/** Always equivalent to {@code toPath().toString()}
+	 *
+	 * @return The permission for this entry.
+	 */
 	public String permission() {
 		return permission;
 	}
 
-	public Set<String> pages() {
+	public Set<Component> pages() {
 		return pages;
 	}
 

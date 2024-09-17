@@ -251,6 +251,7 @@ public class PlayerListener implements Listener {
 		player.removeMetadata(Constants.PLAYER_RESPAWN_POINT_METAKEY, mPlugin);
 		player.removeMetadata(Constants.PLAYER_CLICKABLE_DIALOG_METAKEY, mPlugin);
 		player.removeMetadata(Constants.PLAYER_VOICE_OVER_METAKEY, mPlugin);
+		player.removeMetadata(Constants.PLAYER_BOOK_EDITING_METAKEY, mPlugin);
 	}
 
 }
