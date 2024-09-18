@@ -9,11 +9,15 @@ import com.playmonumenta.scriptedquests.managers.RaceManager;
 import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.quests.components.QuestActions;
 import com.playmonumenta.scriptedquests.utils.RaceUtils;
+import java.util.AbstractMap;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Deque;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -31,6 +35,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
+import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
@@ -47,7 +52,7 @@ public class Race {
 			Math.sin(Math.toRadians(angle * 360.0 / NUM_RING_POINTS)), 0));
 		}
 	}
-
+	private static final String PLAYER_RACE_SPEED_TAG = "SQRacerSpeed";
 	/* Arguments */
 	private final Plugin mPlugin;
 	private final RaceManager mManager;
@@ -349,120 +354,217 @@ public class Race {
 
 	public void win(int endTime) {
 		end();
+		int speedScore = 0;
 
-		if (mScoreboard != null && mScoreboard.getScoreboard() != null) {
-			JsonArray pbArray = new JsonArray();
-			if (mPBRingTimes == null) {
-				mCurrentRingTimes.forEach(pbArray::add);
-			} else {
-				for (int i = 0; i < mCurrentRingTimes.size(); i++) {
-					int pbTime = mPBRingTimes.get(i);
-					int currTime = mCurrentRingTimes.get(i);
-					int delta = pbTime - currTime;
-					if (delta > 0) {
-						pbArray.add(currTime);
-					} else {
-						pbArray.add(pbTime);
+		if (mPlayer.getScoreboardTags().contains(PLAYER_RACE_SPEED_TAG)) {
+			speedScore = Objects.requireNonNull(mPlayer.getScoreboard().getObjective("Speed")).getScore(mPlayer.getName()).getScore();
+
+			if (endTime > mTimes.get(0).getTime()) {
+				mPlayer.sendMessage("" + ChatColor.RED + ChatColor.BOLD + "Since you didn't achieve master time, your time on the Lowest Speed % leaderboard was not updated!");
+				mPlayer.getScoreboardTags().remove(PLAYER_RACE_SPEED_TAG);
+			}
+		}
+
+			if (mScoreboard != null && mScoreboard.getScoreboard() != null) {
+				JsonArray pbArray = new JsonArray();
+				if (mPBRingTimes == null) {
+					mCurrentRingTimes.forEach(pbArray::add);
+				} else {
+					for (int i = 0; i < mCurrentRingTimes.size(); i++) {
+						int pbTime = mPBRingTimes.get(i);
+						int currTime = mCurrentRingTimes.get(i);
+						int delta = pbTime - currTime;
+						if (delta > 0) {
+							pbArray.add(currTime);
+						} else {
+							pbArray.add(pbTime);
+						}
+					}
+				}
+
+				// Replace the pb for this race in the JsonObject map.
+				JsonObject pbObject = RaceManager.PLAYER_RACE_RING_PB_TIMES.get(mPlayer.getUniqueId());
+				if (pbObject != null) {
+					pbObject.add(mScoreboard.getName(), pbArray);
+				} else {
+					JsonObject newPBObject = new JsonObject();
+					newPBObject.add(mScoreboard.getName(), pbArray);
+					RaceManager.PLAYER_RACE_RING_PB_TIMES.put(mPlayer.getUniqueId(), newPBObject);
+				}
+			}
+
+			// display race end info
+			//header
+			if (mShowStats) {
+				mPlayer.sendMessage("" + ChatColor.DARK_AQUA + ChatColor.BOLD + "----====----       " + ChatColor.AQUA + ChatColor.BOLD + "Speedruns" + ChatColor.DARK_AQUA + ChatColor.BOLD + "       ----====----\n");
+				String recapMessage = String.format("%s - %s",
+					"" + ChatColor.AQUA + "Race Recap",
+					" " + ChatColor.YELLOW + mName
+				);
+
+				if (mPlayer.getScoreboardTags().contains(PLAYER_RACE_SPEED_TAG)) {
+					recapMessage += " " + ChatColor.GREEN + "(Lowest Speed %)";
+				}
+				mPlayer.sendMessage(" " + recapMessage);
+				mPlayer.sendMessage(" ");
+			}
+
+			//TODO: World record time first
+
+		if ((!mPlayer.getScoreboardTags().contains(PLAYER_RACE_SPEED_TAG))) {
+			mPlayer.sendMessage(String.format("  %sWorld Record - %16s  | %s %s",
+				"" + ChatColor.AQUA + ChatColor.BOLD,
+				"" + RaceUtils.msToTimeString(mWRTime),
+				"" + ((endTime <= mWRTime) ? ("" + ChatColor.AQUA + ChatColor.BOLD + "\u272A") : ("" + ChatColor.GRAY + ChatColor.BOLD + "\u272A")),
+				"" + ((endTime <= mWRTime) ? ("" + ChatColor.BLUE + ChatColor.BOLD + "( -" + RaceUtils.msToTimeString(mWRTime - endTime) + ")") : ("" + ChatColor.RED + ChatColor.BOLD + "( +" + RaceUtils.msToTimeString(endTime - mWRTime) + ")"))));
+
+			int bestMedalTime = Integer.MAX_VALUE;
+			String bestMedalColor = null;
+			for (RaceTime time : mTimes) {
+				int medalTime = time.getTime();
+				if (mShowStats) {
+					mPlayer.sendMessage(String.format("  %s   %s      - %16s  | %s %s",
+						"" + time.getColor(),
+						"" + time.getLabel(),
+						"" + RaceUtils.msToTimeString(medalTime),
+						"" + ((endTime <= medalTime) ? ("" + time.getColor() + "\u272A") : ("" + ChatColor.GRAY + ChatColor.BOLD + "\u272A")),
+						"" + ((endTime <= medalTime) ? ("" + ChatColor.BLUE + ChatColor.BOLD + "( -" + RaceUtils.msToTimeString(medalTime - endTime) + ")") : ("" + ChatColor.RED + ChatColor.BOLD + "( +" + RaceUtils.msToTimeString(endTime - medalTime) + ")"))));
+				}
+
+				if (endTime <= medalTime) {
+					if (medalTime < bestMedalTime) {
+						bestMedalTime = medalTime;
+						bestMedalColor = time.getColor();
 					}
 				}
 			}
 
-			// Replace the pb for this race in the JsonObject map.
-			JsonObject pbObject = RaceManager.PLAYER_RACE_RING_PB_TIMES.get(mPlayer.getUniqueId());
-			if (pbObject != null) {
-				pbObject.add(mScoreboard.getName(), pbArray);
-			} else {
-				JsonObject newPBObject = new JsonObject();
-				newPBObject.add(mScoreboard.getName(), pbArray);
-				RaceManager.PLAYER_RACE_RING_PB_TIMES.put(mPlayer.getUniqueId(), newPBObject);
-			}
-		}
-
-		// display race end info
-		//header
-		if (mShowStats) {
-			mPlayer.sendMessage("" + ChatColor.DARK_AQUA + ChatColor.BOLD + "----====----       " + ChatColor.AQUA + ChatColor.BOLD + "Speedruns" + ChatColor.DARK_AQUA + ChatColor.BOLD + "       ----====----\n");
-			mPlayer.sendMessage(" " + String.format("%s - %s", "" + ChatColor.AQUA + "Race Recap", " " + ChatColor.YELLOW + mName));
-			mPlayer.sendMessage(" ");
-		}
-
-		//TODO: World record time first
-
-		mPlayer.sendMessage(String.format("  %sWorld Record - %16s  | %s %s",
-										  "" + ChatColor.AQUA + ChatColor.BOLD,
-										  "" + RaceUtils.msToTimeString(mWRTime),
-										  "" + ((endTime <= mWRTime) ? ("" + ChatColor.AQUA + ChatColor.BOLD + "\u272A") : ("" + ChatColor.GRAY + ChatColor.BOLD + "\u272A")),
-										  "" + ((endTime <= mWRTime) ? ("" + ChatColor.BLUE + ChatColor.BOLD + "( -" + RaceUtils.msToTimeString(mWRTime - endTime) + ")") : ("" + ChatColor.RED + ChatColor.BOLD + "( +" + RaceUtils.msToTimeString(endTime - mWRTime) + ")"))));
-
-		int bestMedalTime = Integer.MAX_VALUE;
-		String bestMedalColor = null;
-		for (RaceTime time : mTimes) {
-			int medalTime = time.getTime();
 			if (mShowStats) {
-				mPlayer.sendMessage(String.format("  %s   %s      - %16s  | %s %s",
-				                                  "" + time.getColor(),
-				                                  "" + time.getLabel(),
-				                                  "" + RaceUtils.msToTimeString(medalTime),
-				                                  "" + ((endTime <= medalTime) ? ("" + time.getColor() + "\u272A") : ("" + ChatColor.GRAY + ChatColor.BOLD + "\u272A")),
-				                                  "" + ((endTime <= medalTime) ? ("" + ChatColor.BLUE + ChatColor.BOLD + "( -" + RaceUtils.msToTimeString(medalTime - endTime) + ")") : ("" + ChatColor.RED + ChatColor.BOLD + "( +" + RaceUtils.msToTimeString(endTime - medalTime) + ")"))));
+				mPlayer.sendMessage(" ");
 			}
 
-			if (endTime <= medalTime) {
-				if (medalTime < bestMedalTime) {
-					bestMedalTime = medalTime;
-					bestMedalColor = time.getColor();
+			if (mScoreboard != null && mShowStats) {
+				int personalBest = mScoreboard.getScore(mPlayer.getName()).getScore();
+				mPlayer.sendMessage(String.format("  %s Personal Best - %16s  | %s",
+					"" + ChatColor.BLUE + ChatColor.BOLD,
+					"" + RaceUtils.msToTimeString(personalBest),
+					"" + ((endTime <= personalBest) ? ("" + ChatColor.BLUE + ChatColor.BOLD + "( -" + RaceUtils.msToTimeString(personalBest - endTime) + ")") : ("" + ChatColor.RED + ChatColor.BOLD + "( +" + RaceUtils.msToTimeString(endTime - personalBest) + ")"))));
+			}
+
+			if (mShowStats) {
+				mPlayer.sendMessage(String.format("  %s  Your Time   - %16s",
+					"" + ChatColor.BLUE + ChatColor.BOLD,
+					"" + ChatColor.ITALIC + bestMedalColor + RaceUtils.msToTimeString(endTime)));
+			}
+		} else {
+			@Nullable Objective mSpeedScoreboard;
+			if (mScoreboard != null) {
+				String newName = mScoreboard.getName() + "-Speed";
+				Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
+				mSpeedScoreboard = scoreboard.getObjective(newName);
+				String bestMedalColor = null;
+				if (mSpeedScoreboard != null) {
+					int personalBest = mSpeedScoreboard.getScore(mPlayer.getName()).getScore();
+					int speedWR = Objects.requireNonNull(mSpeedScoreboard.getScoreboard()).getEntries().stream()
+						.map(mSpeedScoreboard::getScore)
+						.max(Comparator.comparingInt(Score::getScore))
+						.orElseThrow(() -> new IllegalStateException("No entries found")).getScore();
+
+					if (!mTimes.isEmpty()) {
+						RaceTime masterTime = mTimes.get(0);
+						int medalTime = masterTime.getTime();
+						mPlayer.sendMessage(String.format("  %s%s      - %22s  | %s %s",
+							"" + masterTime.getColor(),
+							"" + masterTime.getLabel(),
+							"" + RaceUtils.msToTimeString(medalTime),
+							"" + ((endTime <= medalTime) ? ("" + masterTime.getColor() + "\u272A") : ("" + ChatColor.GRAY + ChatColor.BOLD + "\u272A")),
+							"" + ((endTime <= medalTime) ? ("" + ChatColor.BLUE + ChatColor.BOLD + "( -" + RaceUtils.msToTimeString(medalTime - endTime) + ")") : ("" + ChatColor.RED + ChatColor.BOLD + "( +" + RaceUtils.msToTimeString(endTime - medalTime) + ")"))));
+						if (endTime <= medalTime) {
+							bestMedalColor = masterTime.getColor();
+						}
+					}
+					mPlayer.sendMessage(String.format("  %s  Your Time   - %26s",
+						"" + ChatColor.BLUE + ChatColor.BOLD,
+						"" + ChatColor.ITALIC + bestMedalColor + RaceUtils.msToTimeString(endTime)));
+					mPlayer.sendMessage(" ");
+					mPlayer.sendMessage(String.format("  %sWorld Record - %16s  | %s %s",
+						"" + ChatColor.AQUA + ChatColor.BOLD,
+						"" + speedWR,
+						"" + ((speedScore <= speedWR) ? ("" + ChatColor.AQUA + ChatColor.BOLD + "\u272A") : ("" + ChatColor.GRAY + ChatColor.BOLD + "\u272A")),
+						"" + ((speedScore <= speedWR) ? ("" + ChatColor.BLUE + ChatColor.BOLD + "( -" + (speedWR - speedScore) + ")") : ("" + ChatColor.RED + ChatColor.BOLD + "( +" + (speedScore - speedWR) + ")"))));
+					mPlayer.sendMessage(String.format("  %s  Personal Best - %14s  | %s",
+						"" + ChatColor.BLUE + ChatColor.BOLD,
+						"" + personalBest,
+						"" + ((endTime <= personalBest) ? ("" + ChatColor.BLUE + ChatColor.BOLD + "( -" + (personalBest - speedScore) + ")") : ("" + ChatColor.RED + ChatColor.BOLD + "( +" + (speedScore - personalBest) + ")"))));
+                    List<AbstractMap.SimpleEntry<String, Integer>> sortedEntries = mSpeedScoreboard.getScoreboard().getEntries().stream()
+                            .map(entry -> new AbstractMap.SimpleEntry<>(entry, mSpeedScoreboard.getScore(entry).getScore()))
+                            .filter(entry -> entry.getValue() != 0)
+                            .sorted(Map.Entry.comparingByValue())
+                            .toList();
+                    int playerPosition = -1;
+                    for (int i = 0; i < sortedEntries.size(); i++) {
+                        if (sortedEntries.get(i).getKey().equals(mPlayer.getName())) {
+                            playerPosition = i;
+                            break;
+                        }
+                    }
+					if (playerPosition != -1) {
+						mPlayer.sendMessage(String.format("  %s  Current Position - %12s%d%s", ChatColor.GOLD + "" + ChatColor.BOLD,
+							ChatColor.WHITE + "" + ChatColor.BOLD,
+							playerPosition + 1,
+							ordinalSuffix(playerPosition + 1)
+                        ));
+                    } else {
+                        mPlayer.sendMessage(ChatColor.RED + "You are not on the leaderboard.");
+                    }
+                    mPlayer.sendMessage(String.format("  %s  Your Speed   - %19s",
+						"" + ChatColor.BLUE + ChatColor.BOLD,
+						"" + ChatColor.GREEN + ChatColor.BOLD + speedScore));
 				}
 			}
-		}
-
-		if (mShowStats) {
-			mPlayer.sendMessage(" ");
-		}
-
-		if (mScoreboard != null && mShowStats) {
-			int personalBest = mScoreboard.getScore(mPlayer.getName()).getScore();
-			mPlayer.sendMessage(String.format("  %s Personal Best - %16s  | %s",
-											  "" + ChatColor.BLUE + ChatColor.BOLD,
-											  "" + RaceUtils.msToTimeString(personalBest),
-											  "" + ((endTime <= personalBest) ? ("" + ChatColor.BLUE + ChatColor.BOLD + "( -" + RaceUtils.msToTimeString(personalBest - endTime) + ")") : ("" + ChatColor.RED + ChatColor.BOLD + "( +" + RaceUtils.msToTimeString(endTime - personalBest) + ")"))));
-		}
-
-		if (mShowStats) {
-			mPlayer.sendMessage(String.format("  %s  Your Time   - %16s",
-			                                  "" + ChatColor.BLUE + ChatColor.BOLD,
-			                                  "" + ChatColor.ITALIC + bestMedalColor + RaceUtils.msToTimeString(endTime)));
 		}
 
 		/* Set score on player */
-		if (mScoreboard != null) {
-			Score score = mScoreboard.getScore(mPlayer.getName());
-			if (!score.isScoreSet() || score.getScore() == 0 || endTime < score.getScore()) {
-				score.setScore(endTime);
+			if (mScoreboard != null) {
+				Score score = mScoreboard.getScore(mPlayer.getName());
+				if (!score.isScoreSet() || score.getScore() == 0 || endTime < score.getScore()) {
+					score.setScore(endTime);
 
-				/* If the RedisSync plugin is also present, update the score in the leaderboard cache */
-				if (Bukkit.getServer().getPluginManager().isPluginEnabled("MonumentaRedisSync")) {
-					MonumentaRedisSyncAPI.updateLeaderboardAsync(mScoreboard.getName(), mPlayer.getName(), endTime);
-				}
+					/* If the RedisSync plugin is also present, update the score in the leaderboard cache */
+					if (Bukkit.getServer().getPluginManager().isPluginEnabled("MonumentaRedisSync")) {
+						MonumentaRedisSyncAPI.updateLeaderboardAsync(mScoreboard.getName(), mPlayer.getName(), endTime);
+					}
 
-				// handle new world record
-				if (mWRTime > endTime) {
-					String cmdStr = "broadcastcommand tellraw @a [\"\",{\"text\":\"" +
-							mPlayer.getName() +
-							"\",\"color\":\"blue\"},{\"text\":\" has set a new world record for \",\"color\":\"dark_aqua\"},{\"text\":\"" +
-							mName +
-							"\",\"color\":\"blue\"},{\"text\":\"\\nNew time: \",\"color\":\"dark_aqua\"},{\"text\":\"" +
-							RaceUtils.msToTimeString(endTime) +
-							"\",\"color\":\"blue\"}]";
-					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmdStr);
+					// handle new world record
+					if (mWRTime > endTime) {
+						String cmdStr = "broadcastcommand tellraw @a [\"\",{\"text\":\"" +
+								mPlayer.getName() +
+								"\",\"color\":\"blue\"},{\"text\":\" has set a new world record for \",\"color\":\"dark_aqua\"},{\"text\":\"" +
+								mName +
+								"\",\"color\":\"blue\"},{\"text\":\"\\nNew time: \",\"color\":\"dark_aqua\"},{\"text\":\"" +
+								RaceUtils.msToTimeString(endTime) +
+								"\",\"color\":\"blue\"}]";
+						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmdStr);
+					}
 				}
 			}
-		}
+
 
 		/* Last thing is to do any actions associated with the race */
 		for (RaceTime time : mTimes) {
 			if (endTime <= time.getTime()) {
 				time.doActions(new QuestContext(mPlugin, mPlayer, null));
 			}
+		}
+	}
+
+	private String ordinalSuffix(int position) {
+		if (position >= 11 && position <= 13) return "th";
+		switch (position % 10) {
+			case 1: return "st";
+			case 2: return "nd";
+			case 3: return "rd";
+			default: return "th";
 		}
 	}
 
