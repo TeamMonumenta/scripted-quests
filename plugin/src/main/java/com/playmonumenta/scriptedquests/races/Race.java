@@ -477,12 +477,15 @@ public class Race {
 		} else {
 			if (mSpeedScoreboard != null) {
 				int personalBest = mSpeedScoreboard.getScore(mPlayer.getName()).getScore();
-				speedWR = Objects.requireNonNull(mSpeedScoreboard.getScoreboard()).getEntries().stream()
-					.map(mSpeedScoreboard::getScore)
-					.filter(score -> score.isScoreSet() && score.getScore() > 0)
-					.min(Comparator.comparingInt(Score::getScore))
-					.orElseThrow(() -> new IllegalStateException("No entries found"))
-					.getScore();
+				int top = Integer.MAX_VALUE;
+				int score;
+				for (String name : Objects.requireNonNull(mSpeedScoreboard.getScoreboard()).getEntries()) {
+					score = mSpeedScoreboard.getScore(name).getScore();
+					if (score < top && score > 0) {
+						top = score;
+					}
+				}
+				speedWR = top;
 				if (!mTimes.isEmpty()) {
 					RaceTime masterTime = mTimes.get(0);
 					int medalTime = masterTime.getTime();
