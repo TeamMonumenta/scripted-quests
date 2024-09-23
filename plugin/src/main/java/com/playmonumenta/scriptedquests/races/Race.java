@@ -83,6 +83,7 @@ public class Race {
 	private long mStartTime;
 	private long mMaxTime;
 	private int mFrame = 0;
+	private int speedWR = 0;
 	private @Nullable TimeBar mTimeBar = null;
 	private boolean mCountdownActive = false;
 	private int mWRTime = Integer.MAX_VALUE;
@@ -374,7 +375,6 @@ public class Race {
 		int playerPosition1 = getPlayerPosition(mPlayer, mSpeedScoreboard);
 		end();
 		int speedScore = 0;
-		int speedWR = 0;
 		if (mPlayer.getScoreboardTags().contains(PLAYER_RACE_SPEED_TAG)) {
 			speedScore = Objects.requireNonNull(mPlayer.getScoreboard().getObjective("Speed")).getScore(mPlayer.getName()).getScore();
 			if (endTime > mTimes.get(0).getTime()) {
@@ -477,15 +477,7 @@ public class Race {
 		} else {
 			if (mSpeedScoreboard != null) {
 				int personalBest = mSpeedScoreboard.getScore(mPlayer.getName()).getScore();
-				int top = Integer.MAX_VALUE;
-				int score;
-				for (String name : Objects.requireNonNull(mSpeedScoreboard.getScoreboard()).getEntries()) {
-					score = mSpeedScoreboard.getScore(name).getScore();
-					if (score < top && score > 0) {
-						top = score;
-					}
-				}
-				speedWR = top;
+				updateSpeedWR(mSpeedScoreboard);
 				if (!mTimes.isEmpty()) {
 					RaceTime masterTime = mTimes.get(0);
 					int medalTime = masterTime.getTime();
@@ -559,7 +551,6 @@ public class Race {
 			}
 		}
 
-
 		/* Last thing is to do any actions associated with the race */
 		for (RaceTime time : mTimes) {
 			if (endTime <= time.getTime()) {
@@ -605,21 +596,66 @@ public class Race {
 		}
 	}
 
-	public int getPlayerPosition(Player mPlayer, Objective mSpeedScoreboard) {
-		if (mSpeedScoreboard != null) {
-			List<AbstractMap.SimpleEntry<String, Integer>> sortedEntries = mSpeedScoreboard.getScoreboard().getEntries().stream()
-				.map(entry -> new AbstractMap.SimpleEntry<>(entry, mSpeedScoreboard.getScore(entry).getScore()))
-				.filter(entry -> entry.getValue() != 0)
-				.sorted(Map.Entry.comparingByValue())
-				.toList();
-
-			for (int i = 0; i < sortedEntries.size(); i++) {
-				if (sortedEntries.get(i).getKey().equals(mPlayer.getName())) {
-					return i + 1;
+	public int getPlayerPosition(Player mPlayer, Objective lb) {
+		int playerPosition = -1;
+		if (Bukkit.getServer().getPluginManager().isPluginEnabled("MonumentaRedisSync")) {
+			try {
+				Map<String, Integer> values = MonumentaRedisSyncAPI.getLeaderboard(lb.getName(), 0, -1, true).get();
+				int position = 1;
+				for (Map.Entry<String, Integer> entry : values.entrySet()) {
+					if (entry.getKey().equals(mPlayer.getName())) {
+						playerPosition = position;
+						break;
+					}
+					position++;
 				}
+			} catch (Exception ex) {
+				mPlugin.getLogger().severe("Failed to get player position on leaderboard " + lb.getName() + ": " + ex.getMessage());
+				ex.printStackTrace();
+			}
+		} else {
+			List<String> sortedEntries = new ArrayList<>(lb.getScoreboard().getEntries());
+			sortedEntries.sort((a, b) -> Integer.compare(lb.getScore(b).getScore(), lb.getScore(a).getScore()));
+			int position = 1;
+			for (String name : sortedEntries) {
+				if (name.equals(mPlayer.getName())) {
+					playerPosition = position;
+					break;
+				}
+				position++;
 			}
 		}
-		return -1;
+		return playerPosition;
+	}
+
+	private void updateSpeedWR(Objective lb) {
+        if (Bukkit.getServer().getPluginManager().isPluginEnabled("MonumentaRedisSync")) {
+			/* Get the lowest value from the redis leaderboard that's not zero */
+			try {
+				Map<String, Integer> values = MonumentaRedisSyncAPI.getLeaderboard(lb.getName(), 0, -1, true).get();
+				for (Map.Entry<String, Integer> entry : values.entrySet()) {
+					// These are already in sorted order - stop at the first non-zero one
+					if (entry.getValue() > 0) {
+						speedWR = entry.getValue();
+						return;
+					}
+				}
+			} catch (Exception ex) {
+				mPlugin.getLogger().severe("Failed to get world record time for leaderboard " + lb.getName() + ": " + ex.getMessage());
+				ex.printStackTrace();
+			}
+		} else {
+			/* Get the lowest value from the scoreboard that's not zero */
+			int top = Integer.MAX_VALUE;
+			int score;
+			for (String name : lb.getScoreboard().getEntries()) {
+				score = lb.getScore(name).getScore();
+				if (score < top && score > 0) {
+					top = score;
+				}
+			}
+			speedWR = top;
+		}
 	}
 
 	private void updateWRTime() {
