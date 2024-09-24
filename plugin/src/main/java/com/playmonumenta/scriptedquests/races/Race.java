@@ -372,7 +372,10 @@ public class Race {
 				authorTime = Objects.requireNonNull(scoreboard.getObjective("AuthorMedal")).getScore(mPlayer.getName()).getScore();
 			}
 		}
-		int playerPosition1 = getPlayerPosition(mPlayer, mSpeedScoreboard);
+		int playerPosition1 = 0;
+		if (mSpeedScoreboard != null) {
+			playerPosition1 = getPlayerPosition(mPlayer, mSpeedScoreboard);
+		}
 		end();
 		int speedScore = 0;
 		if (mPlayer.getScoreboardTags().contains(PLAYER_RACE_SPEED_TAG)) {
@@ -429,7 +432,7 @@ public class Race {
 
 		//TODO: World record time first
 
-		if ((!mPlayer.getScoreboardTags().contains(PLAYER_RACE_SPEED_TAG))) {
+		if (!mPlayer.getScoreboardTags().contains(PLAYER_RACE_SPEED_TAG)) {
 			mPlayer.sendMessage(String.format("  %sWorld Record - %16s  | %s %s",
 				"" + ChatColor.AQUA + ChatColor.BOLD,
 				"" + RaceUtils.msToTimeString(mWRTime),
@@ -485,7 +488,7 @@ public class Race {
 						"" + masterTime.getColor(),
 						"" + masterTime.getLabel(),
 						"" + RaceUtils.msToTimeString(medalTime),
-						"" + (("" + masterTime.getColor() + ChatColor.BOLD + "✔")),
+						"" + ("" + masterTime.getColor() + ChatColor.BOLD + "✔"),
 						"" + ((endTime <= medalTime) ? ("" + ChatColor.BLUE + ChatColor.BOLD + "( -" + RaceUtils.msToTimeString(medalTime - endTime) + ")") : ("" + ChatColor.RED + ChatColor.BOLD + "( +" + RaceUtils.msToTimeString(endTime - medalTime) + ")"))));
 
 				}
@@ -498,7 +501,7 @@ public class Race {
 				mPlayer.sendMessage(String.format("  %s  Author Medal   - %17s  | %s %s",
 					"" + ChatColor.DARK_RED + ChatColor.BOLD,
 					"" + ChatColor.DARK_RED + ChatColor.BOLD + authorTime,
-					"" + (("" + ChatColor.DARK_RED + ChatColor.BOLD + "✪")),
+					"" + ("" + ChatColor.DARK_RED + ChatColor.BOLD + "✪"),
 					differenceString
 				));
 				mPlayer.sendMessage(String.format("  %s  Your Speed   - %19s",
@@ -508,7 +511,7 @@ public class Race {
 				mPlayer.sendMessage(String.format("  %sWorld Record - %16s  | %s %s",
 					"" + ChatColor.AQUA + ChatColor.BOLD,
 					"" + speedWR,
-					"" + (("" + ChatColor.AQUA + ChatColor.BOLD + "⓵")),
+					"" + ("" + ChatColor.AQUA + ChatColor.BOLD + "⓵"),
 					"" + ((speedWR - speedScore != 0)
 						? ((speedScore <= speedWR)
 						? ("" + ChatColor.BLUE + ChatColor.BOLD + "( -" + (speedWR - speedScore) + ")")
@@ -559,7 +562,10 @@ public class Race {
 			}
 		}
 		if (mPlayer.getScoreboardTags().contains(PLAYER_RACE_SPEED_TAG)) {
-			int playerPosition2 = getPlayerPosition(mPlayer, mSpeedScoreboard);
+			int playerPosition2 = 0;
+			if (mSpeedScoreboard != null) {
+				playerPosition2 = getPlayerPosition(mPlayer, mSpeedScoreboard);
+			}
 			if (playerPosition1 != 0 && playerPosition2 != 0) {
 				int positionDifference = playerPosition1 - playerPosition2;
 				String differenceMessage = positionDifference > 0 ? " | (-" + positionDifference + ")" : "";
