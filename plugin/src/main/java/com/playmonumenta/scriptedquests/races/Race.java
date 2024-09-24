@@ -485,36 +485,37 @@ public class Race {
 						"" + masterTime.getColor(),
 						"" + masterTime.getLabel(),
 						"" + RaceUtils.msToTimeString(medalTime),
-						"" + ((endTime <= medalTime) ? ("" + masterTime.getColor() + "\u272A") : ("" + ChatColor.GRAY + ChatColor.BOLD + "\u272A")),
+						"" + (("" + masterTime.getColor() + ChatColor.BOLD + "✔")),
 						"" + ((endTime <= medalTime) ? ("" + ChatColor.BLUE + ChatColor.BOLD + "( -" + RaceUtils.msToTimeString(medalTime - endTime) + ")") : ("" + ChatColor.RED + ChatColor.BOLD + "( +" + RaceUtils.msToTimeString(endTime - medalTime) + ")"))));
 
 				}
 				int timeDifference = speedScore - authorTime;
 				String differenceString = (timeDifference != 0)
 					? ((timeDifference > 0)
-					? "" + ChatColor.RED + ChatColor.BOLD + " (+" + timeDifference + ")"
-					: "" + ChatColor.BLUE + ChatColor.BOLD + " (-" + Math.abs(timeDifference) + ")")
+					? "" + ChatColor.RED + ChatColor.BOLD + " ( +" + timeDifference + ")"
+					: "" + ChatColor.BLUE + ChatColor.BOLD + " ( -" + Math.abs(timeDifference) + ")")
 					: "";
-				mPlayer.sendMessage(String.format("  %s  Author Medal   - %18s  | %s",
-					"" + ChatColor.BLUE + ChatColor.BOLD,
-					"" + ChatColor.GREEN + ChatColor.BOLD + authorTime,
+				mPlayer.sendMessage(String.format("  %s  Author Medal   - %17s  | %s %s",
+					"" + ChatColor.DARK_RED + ChatColor.BOLD,
+					"" + ChatColor.DARK_RED + ChatColor.BOLD + authorTime,
+					"" + (("" + ChatColor.DARK_RED + ChatColor.BOLD + "✪")),
 					differenceString
 				));
 				mPlayer.sendMessage(String.format("  %s  Your Speed   - %19s",
 					"" + ChatColor.BLUE + ChatColor.BOLD,
-					"" + ChatColor.GREEN + ChatColor.BOLD + speedScore));
+					"" + ChatColor.BLUE + ChatColor.BOLD + speedScore));
 				mPlayer.sendMessage(" ");
 				mPlayer.sendMessage(String.format("  %sWorld Record - %16s  | %s %s",
 					"" + ChatColor.AQUA + ChatColor.BOLD,
 					"" + speedWR,
-					"" + ((speedScore <= speedWR) ? ("" + ChatColor.AQUA + ChatColor.BOLD + "\u272A") : ("" + ChatColor.GRAY + ChatColor.BOLD + "\u272A")),
+					"" + (("" + ChatColor.AQUA + ChatColor.BOLD + "⓵")),
 					"" + ((speedWR - speedScore != 0)
 						? ((speedScore <= speedWR)
 						? ("" + ChatColor.BLUE + ChatColor.BOLD + "( -" + (speedWR - speedScore) + ")")
 						: ("" + ChatColor.RED + ChatColor.BOLD + "( +" + (speedScore - speedWR) + ")"))
 						: "")
 				));
-				mPlayer.sendMessage(String.format("  %s  Personal Best - %14s  | %s",
+				mPlayer.sendMessage(String.format("  %s  Personal Best - %13s  | ⚡ %s",
 					"" + ChatColor.BLUE + ChatColor.BOLD,
 					"" + personalBest,
 					"" + ((personalBest - speedScore != 0)
