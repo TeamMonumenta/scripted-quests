@@ -3,21 +3,18 @@ package com.playmonumenta.scriptedquests.races;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.playmonumenta.redissync.MonumentaRedisSyncAPI;
+import com.playmonumenta.redissync.LeaderboardAPI;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.managers.RaceManager;
 import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.quests.components.QuestActions;
 import com.playmonumenta.scriptedquests.utils.RaceUtils;
-import java.util.AbstractMap;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Deque;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -116,7 +113,7 @@ public class Race {
 		mWorld = player.getWorld();
 		mStopLoc = player.getLocation();
 
-		updateWRTime();
+		updateWRTime(mScoreboard);
 		getPBRingTimes();
 
 		// Create the ring entities in the right shape
@@ -287,7 +284,7 @@ public class Race {
 				mPlayer.sendMessage(timeMessage);
 				mWorld.playSound(mPlayer.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1, 1.5f);
 
-				if (mRemainingWaypoints.size() == 0) {
+				if (mRemainingWaypoints.isEmpty()) {
 					win(timeElapsed);
 				} else {
 					mNextWaypoint = mRemainingWaypoints.removeFirst();
@@ -538,7 +535,7 @@ public class Race {
 
 				/* If the RedisSync plugin is also present, update the score in the leaderboard cache */
 				if (Bukkit.getServer().getPluginManager().isPluginEnabled("MonumentaRedisSync")) {
-					MonumentaRedisSyncAPI.updateLeaderboardAsync(mScoreboard.getName(), mPlayer.getName(), endTime);
+					LeaderboardAPI.updateAsync(mScoreboard.getName(), mPlayer.getName(), endTime);
 				}
 
 				// handle new world record
@@ -595,19 +592,19 @@ public class Race {
 
 	private String ordinalSuffix(int position) {
 		if (position >= 11 && position <= 13) return "th";
-		switch (position % 10) {
-			case 1: return "st";
-			case 2: return "nd";
-			case 3: return "rd";
-			default: return "th";
-		}
+        return switch (position % 10) {
+            case 1 -> "st";
+            case 2 -> "nd";
+            case 3 -> "rd";
+            default -> "th";
+        };
 	}
 
 	public int getPlayerPosition(Player mPlayer, Objective lb) {
 		int playerPosition = -1;
 		if (Bukkit.getServer().getPluginManager().isPluginEnabled("MonumentaRedisSync")) {
 			try {
-				Map<String, Integer> values = MonumentaRedisSyncAPI.getLeaderboard(lb.getName(), 0, -1, true).get();
+				Map<String, Integer> values = LeaderboardAPI.get(lb.getName(), 0, -1, true).get();
 				int position = 1;
 				for (Map.Entry<String, Integer> entry : values.entrySet()) {
 					if (entry.getKey().equals(mPlayer.getName())) {
@@ -639,7 +636,7 @@ public class Race {
         if (Bukkit.getServer().getPluginManager().isPluginEnabled("MonumentaRedisSync")) {
 			/* Get the lowest value from the redis leaderboard that's not zero */
 			try {
-				Map<String, Integer> values = MonumentaRedisSyncAPI.getLeaderboard(lb.getName(), 0, -1, true).get();
+				Map<String, Integer> values = LeaderboardAPI.get(lb.getName(), 0, -1, true).get();
 				for (Map.Entry<String, Integer> entry : values.entrySet()) {
 					// These are already in sorted order - stop at the first non-zero one
 					if (entry.getValue() > 0) {
@@ -665,20 +662,18 @@ public class Race {
 		}
 	}
 
-	private void updateWRTime() {
+	private void updateWRTime(Objective mScoreboard) {
 		if (mScoreboard == null || mScoreboard.getScoreboard() == null) {
 			// no scoreboard = statless race
 			return;
 		}
 
-		Objective finalScoreboard = mScoreboard;
-
-		/* If the RedisSync plugin is also present, update the score in the leaderboard cache */
+        /* If the RedisSync plugin is also present, update the score in the leaderboard cache */
 		if (Bukkit.getServer().getPluginManager().isPluginEnabled("MonumentaRedisSync")) {
 			/* Get the lowest value from the redis leaderboard that's not zero */
 			Bukkit.getScheduler().runTaskAsynchronously(mPlugin, () -> {
 				try {
-					Map<String, Integer> values = MonumentaRedisSyncAPI.getLeaderboard(finalScoreboard.getName(), 0, -1, true).get();
+					Map<String, Integer> values = LeaderboardAPI.get(mScoreboard.getName(), 0, -1, true).get();
 					for (Map.Entry<String, Integer> entry : values.entrySet()) {
 						// These are already in sorted order - stop at the first non-zero one
 						if (entry.getValue() > 0) {
@@ -687,7 +682,7 @@ public class Race {
 						}
 					}
 				} catch (Exception ex) {
-					mPlugin.getLogger().severe("Failed to get world record time for leaderboard " + finalScoreboard.getName() + ": " + ex.getMessage());
+					mPlugin.getLogger().severe("Failed to get world record time for leaderboard " + mScoreboard.getName() + ": " + ex.getMessage());
 					ex.printStackTrace();
 				}
 			});
@@ -695,8 +690,8 @@ public class Race {
 			/* Get the lowest value from the scoreboard that's not zero */
 			int top = Integer.MAX_VALUE;
 			int score;
-			for (String name : finalScoreboard.getScoreboard().getEntries()) {
-				score = finalScoreboard.getScore(name).getScore();
+			for (String name : mScoreboard.getScoreboard().getEntries()) {
+				score = mScoreboard.getScore(name).getScore();
 				if (score < top && score > 0) {
 					top = score;
 				}
