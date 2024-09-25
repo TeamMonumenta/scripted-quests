@@ -113,7 +113,9 @@ public class Race {
 		mWorld = player.getWorld();
 		mStopLoc = player.getLocation();
 
-		updateWRTime(mScoreboard);
+		if (mScoreboard != null) {
+			updateWRTime(mScoreboard);
+		}
 		getPBRingTimes();
 
 		// Create the ring entities in the right shape
