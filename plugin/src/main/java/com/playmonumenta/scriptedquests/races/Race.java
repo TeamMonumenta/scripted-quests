@@ -114,7 +114,7 @@ public class Race {
 		mStopLoc = player.getLocation();
 
 		if (mScoreboard != null) {
-			updateWRTime(mScoreboard);
+			updateWorldRecord(mScoreboard, false);
 		}
 		getPBRingTimes();
 
@@ -479,7 +479,7 @@ public class Race {
 		} else {
 			if (mSpeedScoreboard != null) {
 				int personalBest = mSpeedScoreboard.getScore(mPlayer.getName()).getScore();
-				updateSpeedWR(mSpeedScoreboard);
+				updateWorldRecord(mSpeedScoreboard, true);
 				if (!mTimes.isEmpty()) {
 					RaceTime masterTime = mTimes.get(0);
 					int medalTime = masterTime.getTime();
@@ -634,73 +634,50 @@ public class Race {
 		return playerPosition;
 	}
 
-	private void updateSpeedWR(Objective lb) {
-        if (Bukkit.getServer().getPluginManager().isPluginEnabled("MonumentaRedisSync")) {
-			/* Get the lowest value from the redis leaderboard that's not zero */
-			try {
-				Map<String, Integer> values = LeaderboardAPI.get(lb.getName(), 0, -1, true).get();
-				for (Map.Entry<String, Integer> entry : values.entrySet()) {
-					// These are already in sorted order - stop at the first non-zero one
-					if (entry.getValue() > 0) {
-						speedWR = entry.getValue();
-						return;
-					}
-				}
-			} catch (Exception ex) {
-				mPlugin.getLogger().severe("Failed to get world record time for leaderboard " + lb.getName() + ": " + ex.getMessage());
-				ex.printStackTrace();
-			}
-		} else {
-			/* Get the lowest value from the scoreboard that's not zero */
-			int top = Integer.MAX_VALUE;
-			int score;
-			for (String name : lb.getScoreboard().getEntries()) {
-				score = lb.getScore(name).getScore();
-				if (score < top && score > 0) {
-					top = score;
-				}
-			}
-			speedWR = top;
-		}
-	}
-
-	private void updateWRTime(Objective mScoreboard) {
-		if (mScoreboard == null || mScoreboard.getScoreboard() == null) {
-			// no scoreboard = statless race
+	private void updateWorldRecord(Objective objective, boolean isSpeedWR) {
+		if (objective == null || objective.getScoreboard() == null) {
+			// No scoreboard = statless race, nothing to update
 			return;
 		}
 
-        /* If the RedisSync plugin is also present, update the score in the leaderboard cache */
 		if (Bukkit.getServer().getPluginManager().isPluginEnabled("MonumentaRedisSync")) {
-			/* Get the lowest value from the redis leaderboard that's not zero */
 			Bukkit.getScheduler().runTaskAsynchronously(mPlugin, () -> {
 				try {
-					Map<String, Integer> values = LeaderboardAPI.get(mScoreboard.getName(), 0, -1, true).get();
+					Map<String, Integer> values = LeaderboardAPI.get(objective.getName(), 0, -1, true).get();
 					for (Map.Entry<String, Integer> entry : values.entrySet()) {
-						// These are already in sorted order - stop at the first non-zero one
 						if (entry.getValue() > 0) {
-							mWRTime = entry.getValue();
+							if (isSpeedWR) {
+								speedWR = entry.getValue();
+							} else {
+								mWRTime = entry.getValue();
+							}
 							return;
 						}
 					}
 				} catch (Exception ex) {
-					mPlugin.getLogger().severe("Failed to get world record time for leaderboard " + mScoreboard.getName() + ": " + ex.getMessage());
+					mPlugin.getLogger().severe("Failed to get world record time for leaderboard " + objective.getName() + ": " + ex.getMessage());
 					ex.printStackTrace();
 				}
 			});
 		} else {
-			/* Get the lowest value from the scoreboard that's not zero */
+			// Fallback to checking the scoreboard if RedisSync is not available
 			int top = Integer.MAX_VALUE;
 			int score;
-			for (String name : mScoreboard.getScoreboard().getEntries()) {
-				score = mScoreboard.getScore(name).getScore();
+
+			for (String name : objective.getScoreboard().getEntries()) {
+				score = objective.getScore(name).getScore();
 				if (score < top && score > 0) {
 					top = score;
 				}
 			}
-			mWRTime = top;
+			if (isSpeedWR) {
+				speedWR = top;
+			} else {
+				mWRTime = top;
+			}
 		}
 	}
+
 
 	private void getPBRingTimes() {
 		if (mRingless || mScoreboard == null || mScoreboard.getScoreboard() == null) {
