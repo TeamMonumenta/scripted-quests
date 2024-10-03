@@ -1,7 +1,7 @@
 import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
 
 plugins {
-	id("com.playmonumenta.gradle-config") version "1.1+"
+	id("com.playmonumenta.gradle-config") version "2.1+"
 }
 
 monumenta {
@@ -42,4 +42,5 @@ monumenta {
 	versionAdapterUnsupported("adapter_unsupported")
 	versionAdapter("adapter_v1_18_R2", "1.18.2")
 	versionAdapter("adapter_v1_19_R3", "1.19.4")
+	versionAdapter("adapter_v1_20_R3", "1.20.4")
 }
