@@ -15,7 +15,7 @@
 			"title": "start_date",
 			"description": "The start date of this pass. Format: YYYY-MM-DD",
 			"type": "string",
-			"default": "default"
+			"default": "YYYY-MM-DD"
 		},
 		"pass_name": {
 			"required": true,
@@ -23,7 +23,7 @@
 			"title": "pass_name",
 			"description": "The name of this pass.",
 			"type": "string",
-			"default": "default"
+			"default": "name"
 		},
 		"pass_namecolor": {
 			"required": true,
@@ -31,7 +31,7 @@
 			"title": "pass_namecolor",
 			"description": "The color shown on the name of this pass.",
 			"type": "string",
-			"default": "default"
+			"default": "color"
 		},
 		"pass_displayitem": {
 			"required": true,
@@ -39,425 +39,154 @@
 			"title": "pass_displayitem",
 			"description": "The item displayed on this pass.",
 			"type": "string",
-			"default": "default"
+			"default": "DISPLAY_ITEM"
 		},
 		"missions": {
 			"required": true,
 			"propertyOrder": 5,
 			"title": "Missions",
-			"additionalProperties": false,
-			"defaultProperties": [],
-			"properties": {
-				"pass_week": {
-					"required": true,
-					"propertyOrder": 1,
-					"title": "Pass Week",
-					"description": "The"
+			"description": "The missions for this pass.",
+			"type": "array",
+			"format": "tabs",
+			"minItems": 1,
+			"items": {
+				"properties": {
+					"type": {
+						"required": true,
+						"title": "Type",
+						"description": "The type of mission.",
+						"type": "string",
+						"enum": [
+							"content",
+							"regional_content",
+							"delve_modifier",
+							"delve_points",
+							"delve_bounty",
+							"daily_bounty",
+							"spawners_poi",
+							"strikes",
+							"rod_waves",
+							"depths_rooms",
+							"zenith_rooms",
+							"zenith_ascension"
+						]
+					},
+					"week": {
+						"required": true,
+						"title": "Week",
+						"description": "The week number.",
+						"type": "string"
+					},
+					"is_bonus": {
+						"required": false,
+						"title": "Bonus Week?",
+						"type": "boolean",
+						"format": "checkbox",
+						"default": false
+					},
+					"mp": {
+						"required": true,
+						"title": "MP",
+						"description": "The amount of MP rewarded for this mission.",
+						"type": "integer"
+					},
+					"amount": {
+						"required": true,
+						"title": "Amount",
+						"description": "The amount of the objective needed to complete the mission.",
+						"type": "integer"
+					},
+					"description": {
+						"required": true,
+						"title": "Description",
+						"description": "The description of the mission, shown to the player.",
+						"type": "string"
+					},
+					"content": {
+						"title": "Content",
+						"description": "for 'content': the content to be ran (certain dungeons, strikes, bosses). \nfor 'delve_points': the dungeon(s) to run the amount of points with.",
+						"type": "array",
+						"minItems": 1,
+						"items": {
+							"type": "string"
+						},
+						"options": {
+							"dependencies": {
+								"type": [
+									"content",
+									"delve_points"
+								]
+							}
+						}
+					},
+					"region": {
+						"title": "Region",
+						"description": "for 'regional_content': the region the content must be in.",
+						"type": "integer",
+						"default": 1,
+						"options": {
+							"dependencies": {
+								"type": "regional_content"
+							}
+						}
+					},
+					"delvemodifier": {
+						"title": "Modifier Type",
+						"description": "for 'delve_modifier': the required modifiers to run. Leave blank if counting rotating modifier amount.",
+						"type": "array",
+						"items": {
+							"type": "string"
+						},
+						"options": {
+							"dependencies": {
+								"type": "delve_modifier"
+							}
+						}
+					},
+					"modifierrank": {
+						"title": "Modifier Level",
+						"description": "for 'delve_modifier': the required modifier level, 1-5.",
+						"type": "integer",
+						"default": 1,
+						"options": {
+							"dependencies": {
+								"type": "delve_modifier"
+							}
+						}
+					},
+					"rotatingamount": {
+						"title": "Delve Modifier",
+						"description": "for 'delve_modifier': Number of rotating modifiers that need to be ran. Leave at 0 if specifying a delve mod.",
+						"type": "integer",
+						"default": 0,
+						"options": {
+							"dependencies": {
+								"type": "delve_modifier"
+							}
+						}
+					},
+					"ascension": {
+						"title": "Ascension",
+						"description": "for 'zenith_ascension': the ascension level.",
+						"type": "integer",
+						"options": {
+							"dependencies": {
+								"type": "zenith_ascension"
+							}
+						}
+					},
+					"delvepoints": {
+						"title": "Delve Points",
+						"description": "for `delve_points`: the delve point amount.",
+						"type": "integer",
+						"options": {
+							"dependencies": {
+								"type": "delve_points"
+							}
+						}
+					}
 				}
 			}
 		}
 	}
 }
-
-
-{
-	"start_date": "2023-12-29",
-	"pass_name": "Coin Rush Pass",
-	"pass_namecolor": "gold",
-	"pass_displayitem": "GOLD_BLOCK",
-	"missions": [
-		{
-			"type": "content",
-			"week": 1,
-			"mp": 50,
-			"amount": 2,
-			"content": [
-				"verdant",
-				"mist",
-				"portal"
-			],
-			"description": "Complete Verdant Remnants, Black Mist, or P.O.R.T.A.L a total of 2 times"
-		},
-		{
-			"type": "zenith_rooms",
-			"week": 1,
-			"mp": 75,
-			"amount": 60,
-			"description": "Clear 60 Celestial Zenith rooms (counts across runs)"
-		},
-		{
-			"type": "delve_modifier",
-			"week": 1,
-			"mp": 100,
-			"amount": 1,
-			"delvemodifier": "ENTROPY",
-			"modifierrank": 5,
-			"description": "Clear any dungeon delve with Entropy 5"
-		},
-		{
-			"type": "spawners_poi",
-			"week": 2,
-			"mp": 50,
-			"amount": 100,
-			"description": "Break 100 spawners in POIs"
-		},
-		{
-			"type": "regional_content",
-			"week": 2,
-			"mp": 75,
-			"amount": 3,
-			"region": 3,
-			"description": "Complete 3 Dungeons, Bosses or Strikes in the Architect's Ring"
-		},
-		{
-			"type": "daily_bounty",
-			"week": 2,
-			"mp": 100,
-			"amount": 6,
-			"description": "Complete 6 daily bounties"
-		},
-		{
-			"type": "rod_waves",
-			"week": 3,
-			"mp": 50,
-			"amount": 25,
-			"description": "Clear 25 Rush of Dissonance Waves (counts across runs)"
-		},
-		{
-			"type": "content",
-			"week": 3,
-			"mp": 75,
-			"amount": 1,
-			"content": [
-				"lightblue",
-				"cyan",
-				"blue"
-			],
-			"description": "Complete Arcane Rivalry, Scourge of Lunacy, or Coven's Gambit"
-		},
-		{
-			"type": "delve_points",
-			"week": 3,
-			"mp": 100,
-			"amount": 1,
-			"delvepoints": 18,
-			"content": [
-				"white",
-				"orange",
-				"magenta",
-				"lightblue",
-				"yellow",
-				"willows",
-				"reverie",
-				"lime",
-				"pink",
-				"gray",
-				"lightgray",
-				"cyan",
-				"purple",
-				"teal",
-				"shiftingcity",
-				"forum",
-				"blue",
-				"brown"
-			],
-			"description": "Clear any dungeon with 18 or more delve points"
-		},
-		{
-			"type": "content",
-			"week": 4,
-			"mp": 50,
-			"amount": 1,
-			"content": [
-				"purple",
-				"mist"
-			],
-			"description": "Clear Grasp of Avarice or Black Mist"
-		},
-		{
-			"type": "delve_bounty",
-			"week": 4,
-			"mp": 75,
-			"amount": 1,
-			"description": "Complete a weekly Delve bounty"
-		},
-		{
-			"type": "strikes",
-			"week": 4,
-			"mp": 100,
-			"amount": 5,
-			"description": "Clear 5 Strikes"
-		},
-		{
-			"type": "spawners_poi",
-			"week": 5,
-			"mp": 50,
-			"amount": 100,
-			"description": "Break 100 spawners in POIs"
-		},
-		{
-			"type": "content",
-			"week": 5,
-			"mp": 75,
-			"amount": 30,
-			"content": [
-				"galleryround"
-			],
-			"description": "Complete 30 Gallery of Fear waves"
-		},
-		{
-			"type": "content",
-			"week": 5,
-			"mp": 100,
-			"amount": 3,
-			"content": [
-				"verdant",
-				"sanctum"
-			],
-			"description": "Clear 3 Strikes in the King's Valley"
-		},
-		{
-			"type": "bosses",
-			"week": 6,
-			"mp": 50,
-			"amount": 1,
-			"description": "Defeat 1 Boss"
-		},
-		{
-			"type": "content",
-			"week": 6,
-			"mp": 75,
-			"amount": 2,
-			"content": [
-				"snowspirit",
-				"eldrask"
-			],
-			"description": "Clear Snow Wool Spirit or Eldrask 2 times"
-		},
-		{
-			"type": "content",
-			"week": 6,
-			"mp": 100,
-			"amount": 2,
-			"content": [
-				"depths",
-				"corridors",
-				"zenith"
-			],
-			"description": "Clear Darkest Depths, Ephemeral Corridors, or Celestial Zenith a total of 2 times"
-		},
-		{
-			"type": "spawners_poi",
-			"week": 7,
-			"mp": 50,
-			"amount": 100,
-			"description": "Break 100 spawners in POIs"
-		},
-		{
-			"type": "content",
-			"week": 7,
-			"mp": 75,
-			"amount": 1,
-			"content": [
-				"lightgray",
-				"brown"
-			],
-			"description": "Clear Palace of Mirrors or Cradle of the Broken God"
-		},
-		{
-			"type": "delve_modifier",
-			"week": 7,
-			"mp": 100,
-			"amount": 1,
-			"delvemodifier": [],
-			"content": [
-				"lime",
-				"pink",
-				"gray",
-				"lightgray",
-				"cyan",
-				"purple",
-				"teal",
-				"shiftingcity",
-				"forum"
-			],
-			"rotatingamount": 1,
-			"description": "Clear a Celsian Isles dungeon with at least 1 rotating delve modifier active"
-		},
-		{
-			"type": "content",
-			"week": 8,
-			"mp": 50,
-			"amount": 1,
-			"content": [
-				"kaul",
-				"eldrask",
-				"hekawt"
-			],
-			"description": "Defeat Kaul, Eldrask, or Hekawt"
-		},
-		{
-			"type": "delve_bounty",
-			"week": 8,
-			"mp": 75,
-			"amount": 1,
-			"description": "Complete a weekly Delve bounty"
-		},
-		{
-			"type": "regional_content",
-			"week": 8,
-			"mp": 100,
-			"amount": 5,
-			"region": 2,
-			"description": "Complete 5 Dungeons, Bosses, or Strikes in the Celsian Isles"
-		},
-		{
-			"type": "content",
-			"week": 9,
-			"mp": 50,
-			"amount": 1,
-			"content": [
-				"verdant",
-				"mist",
-				"portal"
-			],
-			"description": "Clear Verdant Remnants, Black Mist, or P.O.R.T.A.L"
-		},
-		{
-			"type": "daily_bounty",
-			"week": 9,
-			"mp": 75,
-			"amount": 4,
-			"description": "Complete 4 Daily Bounties"
-		},
-		{
-			"type": "spawners",
-			"week": 9,
-			"mp": 100,
-			"amount": 200,
-			"description": "Break 200 spawners"
-		},
-		{
-			"type": "daily_bounty",
-			"week": 10,
-			"mp": 50,
-			"amount": 2,
-			"description": "Complete 2 Daily Bounties"
-		},
-		{
-			"type": "bosses",
-			"week": 10,
-			"mp": 75,
-			"amount": 3,
-			"description": "Defeat 3 Bosses"
-		},
-		{
-			"type": "delve_modifier",
-			"week": 10,
-			"mp": 100,
-			"amount": 1,
-			"content": [
-				"reverie",
-				"forum"
-			],
-			"delvemodifier": [
-				"LEGIONARY"
-			],
-			"modifierrank": 5,
-			"description": "Clear Malevolent Reverie or The Fallen Forum with Legionary 5"
-		},
-		{
-			"type": "delve_points",
-			"week": 11,
-			"mp": 50,
-			"amount": 1,
-			"delvepoints": 8,
-			"content": [
-				"white",
-				"orange",
-				"magenta",
-				"lightblue",
-				"yellow",
-				"willows",
-				"reverie",
-				"lime",
-				"pink",
-				"gray",
-				"lightgray",
-				"cyan",
-				"purple",
-				"teal",
-				"shiftingcity",
-				"forum",
-				"blue",
-				"brown"
-			],
-			"description": "Clear any dungeon with 8 or more delve points"
-		},
-		{
-			"type": "depths_rooms",
-			"week": 11,
-			"mp": 75,
-			"amount": 60,
-			"description": "Clear 60 Darkest Depths rooms (counts across runs)"
-		},
-		{
-			"type": "daily_bounty",
-			"week": 11,
-			"mp": 100,
-			"amount": 5,
-			"description": "Complete 5 Daily Bounties"
-		},
-		{
-			"type": "content",
-			"week": 12,
-			"mp": 50,
-			"amount": 20,
-			"content": [
-				"galleryround"
-			],
-			"description": "Complete 20 Gallery of Fear waves"
-		},
-		{
-			"type": "bosses",
-			"week": 12,
-			"mp": 75,
-			"amount": 3,
-			"description": "Defeat 3 Bosses"
-		},
-		{
-			"type": "zenith_rooms",
-			"week": 12,
-			"mp": 100,
-			"amount": 80,
-			"description": "Clear 80 Celestial Zenith rooms (counts across runs)"
-		},
-		{
-			"type": "regional_content",
-			"week": 13,
-			"mp": 100,
-			"amount": 6,
-			"region": 3,
-			"is_bonus": true,
-			"description": "Complete 6 Dungeons, Bosses, or Strikes in the Architect's Ring"
-		},
-		{
-			"type": "daily_bounty",
-			"week": 13,
-			"mp": 200,
-			"amount": 16,
-			"is_bonus": true,
-			"description": "Complete 16 Daily Bounties"
-		},
-		{
-			"type": "zenith_ascension",
-			"week": 13,
-			"mp": 300,
-			"amount": 1,
-			"ascension": 8,
-			"is_bonus": true,
-			"description": "Complete Ascension level 8 or higher in Celestial Zenith"
-		}
-	]
-}
-
