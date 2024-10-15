@@ -59,6 +59,7 @@
 						"title": "Loot Table path",
 						"description": "The pathing for the loot table for said reward.",
 						"type": "string",
+						"default": "epic:pass/",
 						"options": {
 							"dependencies": {
 								"type": [
@@ -75,6 +76,7 @@
 						"title": "displayed name",
 						"description": "The displayed name on hover.",
 						"type": "string",
+						"default": "name",
 						"options": {
 							"dependencies": {
 								"type": [
@@ -88,9 +90,36 @@
 					},
 					"namecolor": {
 						"propertyOrder": 4,
-						"title": "Name Color",
 						"description": "The display color for the name",
 						"type": "string",
+						"anyOf": [
+							{
+								"title": "Hex Color Picker",
+								"format": "color",
+								"default": "#000000"
+							},
+							{
+								"title": "Minecraft Color",
+								"enum": [
+									"aqua",
+									"black",
+									"blue",
+									"dark_aqua",
+									"dark_blue",
+									"dark_gray",
+									"dark_green",
+									"dark_purple",
+									"dark_red",
+									"gold",
+									"gray",
+									"green",
+									"light_purple",
+									"red",
+									"white",
+									"yellow"
+								]
+							}
+						],
 						"options": {
 							"dependencies": {
 								"type": [
@@ -106,6 +135,7 @@
 						"title": "Data",
 						"description": "Data associated with granting the reward.",
 						"type": "string",
+						"default": "data",
 						"options": {
 							"dependencies": {
 								"type": [
@@ -119,9 +149,23 @@
 					},
 					"description": {
 						"propertyOrder": 6,
-						"title": "Description",
 						"description": "The description visible to the player, ex: Custom Player Title",
 						"type": "string",
+						"anyOf": [
+							{
+								"title": "Custom Description",
+								"default": "description"
+							},
+							{
+								"title": "Set Description",
+								"enum": [
+									"Custom Player Title",
+									"Custom Elite Finisher",
+									"Dyed Shulker Box",
+									"Custom Plot Border"
+								]
+							}
+						],
 						"options": {
 							"dependencies": {
 								"type": [
@@ -138,6 +182,7 @@
 						"title": "Display Item",
 						"description": "The icon to display, if applicable.",
 						"type": "string",
+						"default": "DISPLAY_ITEM",
 						"options": {
 							"dependencies": {
 								"type": [
