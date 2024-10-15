@@ -31,7 +31,34 @@
 			"title": "pass_namecolor",
 			"description": "The color shown on the name of this pass.",
 			"type": "string",
-			"default": "color"
+			"anyOf": [
+				{
+					"title": "Hex Color Picker",
+					"format": "color",
+					"default": "#000000"
+				},
+				{
+					"title": "Minecraft Color",
+					"enum": [
+						"aqua",
+						"black",
+						"blue",
+						"dark_aqua",
+						"dark_blue",
+						"dark_gray",
+						"dark_green",
+						"dark_purple",
+						"dark_red",
+						"gold",
+						"gray",
+						"green",
+						"light_purple",
+						"red",
+						"white",
+						"yellow"
+					]
+				}
+			]
 		},
 		"pass_displayitem": {
 			"required": true,
