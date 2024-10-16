@@ -102,7 +102,7 @@
 						"required": true,
 						"title": "Week",
 						"description": "The week number.",
-						"type": "string"
+						"type": "integer"
 					},
 					"is_bonus": {
 						"required": false,
