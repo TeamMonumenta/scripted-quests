@@ -1,0 +1,219 @@
+{
+	"title": "Seasonal Pass Missions",
+	"defaultProperties": [
+		"start_date",
+		"pass_name",
+		"pass_namecolor",
+		"pass_displayitem",
+		"missions"
+	],
+	"additionalProperties": false,
+	"properties": {
+		"start_date": {
+			"required": true,
+			"propertyOrder": 1,
+			"title": "start_date",
+			"description": "The start date of this pass. Format: YYYY-MM-DD",
+			"type": "string",
+			"default": "YYYY-MM-DD"
+		},
+		"pass_name": {
+			"required": true,
+			"propertyOrder": 2,
+			"title": "pass_name",
+			"description": "The name of this pass.",
+			"type": "string",
+			"default": "name"
+		},
+		"pass_namecolor": {
+			"required": true,
+			"propertyOrder": 3,
+			"title": "pass_namecolor",
+			"description": "The color shown on the name of this pass.",
+			"type": "string",
+			"anyOf": [
+				{
+					"title": "Hex Color Picker",
+					"format": "color",
+					"default": "#000000"
+				},
+				{
+					"title": "Minecraft Color",
+					"enum": [
+						"aqua",
+						"black",
+						"blue",
+						"dark_aqua",
+						"dark_blue",
+						"dark_gray",
+						"dark_green",
+						"dark_purple",
+						"dark_red",
+						"gold",
+						"gray",
+						"green",
+						"light_purple",
+						"red",
+						"white",
+						"yellow"
+					]
+				}
+			]
+		},
+		"pass_displayitem": {
+			"required": true,
+			"propertyOrder": 4,
+			"title": "pass_displayitem",
+			"description": "The item displayed on this pass.",
+			"type": "string",
+			"default": "DISPLAY_ITEM"
+		},
+		"missions": {
+			"required": true,
+			"propertyOrder": 5,
+			"title": "Missions",
+			"description": "The missions for this pass.",
+			"type": "array",
+			"format": "tabs",
+			"minItems": 1,
+			"items": {
+				"properties": {
+					"type": {
+						"required": true,
+						"title": "Type",
+						"description": "The type of mission.",
+						"type": "string",
+						"enum": [
+							"content",
+							"regional_content",
+							"delve_modifier",
+							"delve_points",
+							"delve_bounty",
+							"daily_bounty",
+							"spawners_poi",
+							"strikes",
+							"rod_waves",
+							"depths_rooms",
+							"zenith_rooms",
+							"zenith_ascension"
+						]
+					},
+					"week": {
+						"required": true,
+						"title": "Week",
+						"description": "The week number.",
+						"type": "integer"
+					},
+					"is_bonus": {
+						"required": false,
+						"title": "Bonus Week?",
+						"type": "boolean",
+						"format": "checkbox",
+						"default": false
+					},
+					"mp": {
+						"required": true,
+						"title": "MP",
+						"description": "The amount of MP rewarded for this mission.",
+						"type": "integer"
+					},
+					"amount": {
+						"required": true,
+						"title": "Amount",
+						"description": "The amount of the objective needed to complete the mission.",
+						"type": "integer"
+					},
+					"description": {
+						"required": true,
+						"title": "Description",
+						"description": "The description of the mission, shown to the player.",
+						"type": "string"
+					},
+					"content": {
+						"title": "Content",
+						"description": "for 'content': the content to be ran (certain dungeons, strikes, bosses). \nfor 'delve_points': the dungeon(s) to run the amount of points with.",
+						"type": "array",
+						"minItems": 1,
+						"items": {
+							"type": "string"
+						},
+						"options": {
+							"dependencies": {
+								"type": [
+									"content",
+									"delve_points"
+								]
+							}
+						}
+					},
+					"region": {
+						"title": "Region",
+						"description": "for 'regional_content': the region the content must be in.",
+						"type": "integer",
+						"default": 1,
+						"options": {
+							"dependencies": {
+								"type": "regional_content"
+							}
+						}
+					},
+					"delvemodifier": {
+						"title": "Modifier Type",
+						"description": "for 'delve_modifier': the required modifiers to run. Leave blank if counting rotating modifier amount.",
+						"type": "array",
+						"items": {
+							"type": "string"
+						},
+						"options": {
+							"dependencies": {
+								"type": "delve_modifier"
+							}
+						}
+					},
+					"modifierrank": {
+						"title": "Modifier Level",
+						"description": "for 'delve_modifier': the required modifier level, 1-5.",
+						"type": "integer",
+						"default": 1,
+						"options": {
+							"dependencies": {
+								"type": "delve_modifier"
+							}
+						}
+					},
+					"rotatingamount": {
+						"title": "Delve Modifier",
+						"description": "for 'delve_modifier': Number of rotating modifiers that need to be ran. Leave at 0 if specifying a delve mod.",
+						"type": "integer",
+						"default": 0,
+						"options": {
+							"dependencies": {
+								"type": "delve_modifier"
+							}
+						}
+					},
+					"ascension": {
+						"title": "Ascension",
+						"description": "for 'zenith_ascension': the ascension level.",
+						"type": "integer",
+						"options": {
+							"dependencies": {
+								"type": "zenith_ascension"
+							}
+						}
+					},
+					"delvepoints": {
+						"title": "Delve Points",
+						"description": "for `delve_points`: the delve point amount.",
+						"type": "integer",
+						"options": {
+							"dependencies": {
+								"type": "delve_points"
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

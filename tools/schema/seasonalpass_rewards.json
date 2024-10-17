@@ -1,0 +1,201 @@
+{
+	"title": "Seasonal Pass Rewards",
+	"defaultProperties": [
+		"start_date",
+		"rewards"
+	],
+	"additionalProperties": false,
+	"properties": {
+		"start_date": {
+			"required": true,
+			"propertyOrder": 1,
+			"title": "start_date",
+			"description": "The start date of this pass. Format: YYYY-MM-DD",
+			"type": "string",
+			"default": "default"
+		},
+		"rewards":  {
+			"required": true,
+			"propertyOrder": 2,
+			"title": "rewards",
+			"description": "The rewards for this pass, starting at Tier 1",
+			"type": "array",
+			"format": "table",
+			"minItems": 25,
+			"maxItems": 25,
+			"items": {
+				"title": "reward",
+				"description": "A reward for a specific Tier of the pass, in the form of item ID.",
+				"defaultProperties": [
+					"type",
+					"loottable",
+					"name",
+					"namecolor",
+					"data",
+					"description",
+					"displayitem"
+				],
+				"additionalProperties": false,
+				"properties": {
+					"type": {
+						"required": true,
+						"propertyOrder": 1,
+						"title": "Reward Type",
+						"description": "The type of reward.",
+						"type": "string",
+						"enum": [
+							"item_skin",
+							"loot_spin",
+							"unique_spin",
+							"title",
+							"elite_finisher",
+							"loot_table",
+							"shulker_box",
+							"plot_border"
+						]
+					},
+					"loottable": {
+						"propertyOrder": 2,
+						"title": "Loot Table path",
+						"description": "The pathing for the loot table for said reward.",
+						"type": "string",
+						"default": "epic:pass/",
+						"options": {
+							"dependencies": {
+								"type": [
+									"item_skin",
+									"loot_spin",
+									"unique_spin",
+									"loot_table"
+								]
+							}
+						}
+					},
+					"name": {
+						"propertyOrder": 3,
+						"title": "displayed name",
+						"description": "The displayed name on hover.",
+						"type": "string",
+						"default": "name",
+						"options": {
+							"dependencies": {
+								"type": [
+									"title",
+									"elite_finisher",
+									"shulker_box",
+									"plot_border"
+								]
+							}
+						}
+					},
+					"namecolor": {
+						"propertyOrder": 4,
+						"description": "The display color for the name",
+						"type": "string",
+						"anyOf": [
+							{
+								"title": "Hex Color Picker",
+								"format": "color",
+								"default": "#000000"
+							},
+							{
+								"title": "Minecraft Color",
+								"enum": [
+									"aqua",
+									"black",
+									"blue",
+									"dark_aqua",
+									"dark_blue",
+									"dark_gray",
+									"dark_green",
+									"dark_purple",
+									"dark_red",
+									"gold",
+									"gray",
+									"green",
+									"light_purple",
+									"red",
+									"white",
+									"yellow"
+								]
+							}
+						],
+						"options": {
+							"dependencies": {
+								"type": [
+									"elite_finisher",
+									"shulker_box",
+									"plot_border"
+								]
+							}
+						}
+					},
+					"data": {
+						"propertyOrder": 5,
+						"title": "Data",
+						"description": "Data associated with granting the reward.",
+						"type": "string",
+						"default": "data",
+						"options": {
+							"dependencies": {
+								"type": [
+									"title",
+									"elite_finisher",
+									"loot_table",
+									"plot_border"
+								]
+							}
+						}
+					},
+					"description": {
+						"propertyOrder": 6,
+						"description": "The description visible to the player, ex: Custom Player Title",
+						"type": "string",
+						"anyOf": [
+							{
+								"title": "Custom Description",
+								"default": "description"
+							},
+							{
+								"title": "Set Description",
+								"enum": [
+									"Custom Player Title",
+									"Custom Elite Finisher",
+									"Dyed Shulker Box",
+									"Custom Plot Border"
+								]
+							}
+						],
+						"options": {
+							"dependencies": {
+								"type": [
+									"title",
+									"elite_finisher",
+									"shulker_box",
+									"plot_border"
+								]
+							}
+						}
+					},
+					"displayitem": {
+						"propertyOrder": 7,
+						"title": "Display Item",
+						"description": "The icon to display, if applicable.",
+						"type": "string",
+						"default": "DISPLAY_ITEM",
+						"options": {
+							"dependencies": {
+								"type": [
+									"title",
+									"elite_finisher",
+									"shulker_box",
+									"plot_border"
+								]
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
