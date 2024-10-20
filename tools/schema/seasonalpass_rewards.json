@@ -12,9 +12,9 @@
 			"title": "start_date",
 			"description": "The start date of this pass. Format: YYYY-MM-DD",
 			"type": "string",
-			"default": "default"
+			"default": "YYYY-MM-DD"
 		},
-		"rewards":  {
+		"rewards": {
 			"required": true,
 			"propertyOrder": 2,
 			"title": "rewards",
@@ -59,13 +59,10 @@
 						"title": "Loot Table path",
 						"description": "The pathing for the loot table for said reward.",
 						"type": "string",
-						"default": "epic:pass/",
+						"default": "epic:",
 						"options": {
 							"dependencies": {
 								"type": [
-									"item_skin",
-									"loot_spin",
-									"unique_spin",
 									"loot_table"
 								]
 							}
@@ -135,7 +132,6 @@
 						"title": "Data",
 						"description": "Data associated with granting the reward.",
 						"type": "string",
-						"default": "data",
 						"options": {
 							"dependencies": {
 								"type": [
