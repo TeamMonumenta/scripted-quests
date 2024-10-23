@@ -1,6 +1,5 @@
 {
 	"title": "Seasonal Pass Missions",
-
 	"defaultProperties": [
 		"start_date",
 		"pass_name",
