@@ -168,7 +168,94 @@
 						"type": "array",
 						"minItems": 1,
 						"items": {
-							"type": "string"
+							"type": "string",
+							"anyOf": [
+								{
+									"title": "Custom",
+									"description": "In case content is missing from the dropdowns."
+								},
+								{
+									"title": "Dungeon",
+									"description": "To be used with 'content'.",
+									"enum": [
+										"white",
+										"orange",
+										"magenta",
+										"lightblue",
+										"yellow",
+										"reverie",
+										"willows",
+										"corridors",
+										"lime",
+										"pink",
+										"gray",
+										"lightgray",
+										"cyan",
+										"purple",
+										"teal",
+										"shiftingcity",
+										"forum",
+										"blue",
+										"brown",
+										"skt",
+										"hexfall",
+										"depths",
+										"zenith"
+									]
+								},
+								{
+									"title": "Boss",
+									"description": "To be used with 'content'.",
+									"enum": [
+										"kaul",
+										"azacor",
+										"snowspirit",
+										"horseman",
+										"eldrask",
+										"hekawt",
+										"godspore",
+										"sirius"
+									]
+								},
+								{
+									"title": "Strike",
+									"description": "To be used with 'content'.",
+									"enum": [
+										"verdant",
+										"sanctum",
+										"mist",
+										"remorse",
+										"portal",
+										"ruin"
+									]
+								},
+								{
+									"title": "POI",
+									"description": "To be used with 'poi_biomes'.",
+									"enum": [
+										"wolfswood",
+										"keep",
+										"starpoint"
+									]
+								},
+								{
+									"title": "Other",
+									"description": "What doesn't fit in the other categories.",
+									"enum": [
+										"corridorsroom",
+										"arena",
+										"rush",
+										"rushwave",
+										"gallery",
+										"galleryround",
+										"r1daily",
+										"r2daily",
+										"r3daily",
+										"delvebounty",
+										"fishingcombat"
+									]
+								}
+							]
 						},
 						"options": {
 							"dependencies": {
@@ -199,7 +286,46 @@
 						"description": "for 'delve_modifier': the required modifiers to run. Leave blank if counting rotating modifier amount.",
 						"type": "array",
 						"items": {
-							"type": "string"
+							"type": "string",
+							"anyOf": [
+								{
+									"title": "Custom",
+									"description": "In case a modifier is missing from the dropdowns, OR for Experimentals."
+								},
+								{
+									"title": "Normal",
+									"description": "Normal delve modifiers that always exist every week.",
+									"enum": [
+										"VENGEANCE",
+										"ARCANIC",
+										"INFERNAL",
+										"TRANSCENDENT",
+										"SPECTRAL",
+										"DREADFUL",
+										"COLOSSAL",
+										"CHIVALROUS",
+										"BLOODTHIRSTY",
+										"PERNICIOUS",
+										"LEGIONARY",
+										"CARAPACE",
+										"ENTROPY",
+										"TWISTED"
+									]
+								},
+								{
+									"title": "Rotating",
+									"description": "Rotating delve modifiers that vary week-by-week.",
+									"enum":[
+										"FRAGILE",
+										"ASSASSINS",
+										"ASTRAL",
+										"UNYIELDING",
+										"CHRONOLOGY",
+										"RIFTBORN",
+										"HAUNTED"
+									]
+								}
+							]
 						},
 						"options": {
 							"dependencies": {
