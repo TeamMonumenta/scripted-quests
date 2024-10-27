@@ -105,6 +105,7 @@
 							"delve_points",
 							"delve_bounty",
 							"daily_bounty",
+							"poi_biome",
 							"spawners_poi",
 							"strikes",
 							"rod_waves",
@@ -176,7 +177,7 @@
 								},
 								{
 									"title": "Dungeon",
-									"description": "To be used with 'content'.",
+									"description": "Content that is considered a dungeon.",
 									"enum": [
 										"white",
 										"orange",
@@ -205,7 +206,7 @@
 								},
 								{
 									"title": "Boss",
-									"description": "To be used with 'content'.",
+									"description": "Content that is considered a boss.",
 									"enum": [
 										"kaul",
 										"azacor",
@@ -219,7 +220,7 @@
 								},
 								{
 									"title": "Strike",
-									"description": "To be used with 'content'.",
+									"description": "Content that is considered a strike.",
 									"enum": [
 										"verdant",
 										"sanctum",
@@ -231,7 +232,7 @@
 								},
 								{
 									"title": "POI",
-									"description": "To be used with 'poi_biomes'.",
+									"description": "To be used only with 'poi_biomes'.",
 									"enum": [
 										"wolfswood",
 										"keep",
@@ -240,7 +241,7 @@
 								},
 								{
 									"title": "Other",
-									"description": "What doesn't fit in the other categories.",
+									"description": "Content that doesn't fit in the other categories.",
 									"enum": [
 										"corridorsroom",
 										"arena",
@@ -261,7 +262,8 @@
 							"dependencies": {
 								"type": [
 									"content",
-									"delve_points"
+									"delve_points",
+									"poi_biome"
 								]
 							}
 						}
@@ -315,7 +317,7 @@
 								{
 									"title": "Rotating",
 									"description": "Rotating delve modifiers that vary week-by-week.",
-									"enum":[
+									"enum": [
 										"FRAGILE",
 										"ASSASSINS",
 										"ASTRAL",
