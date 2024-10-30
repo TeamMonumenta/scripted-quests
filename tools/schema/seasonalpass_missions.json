@@ -101,11 +101,13 @@
 						"enum": [
 							"content",
 							"regional_content",
+							"challenge_delve",
 							"delve_modifier",
 							"delve_points",
 							"delve_bounty",
 							"daily_bounty",
 							"poi_biome",
+							"spawners",
 							"spawners_poi",
 							"strikes",
 							"rod_waves",
@@ -165,7 +167,7 @@
 						"propertyOrder": 9,
 						"required": true,
 						"title": "Content",
-						"description": "for 'content': the content to be ran (certain dungeons, strikes, bosses). \nfor 'delve_points': the dungeon(s) to run the amount of points with.",
+						"description": "for 'content': the content to be ran (certain dungeons, strikes, bosses). \nfor 'challenge_delve'/'delve_points'/'poi_biome': the dungeon(s)/poi(s) to run.",
 						"type": "array",
 						"minItems": 1,
 						"items": {
@@ -262,6 +264,7 @@
 							"dependencies": {
 								"type": [
 									"content",
+									"challenge_delve",
 									"delve_points",
 									"poi_biome"
 								]
