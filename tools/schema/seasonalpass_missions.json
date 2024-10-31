@@ -77,19 +77,37 @@
 			"format": "tabs",
 			"minItems": 1,
 			"items": {
+				"defaultProperties": [
+					"type",
+					"is_bonus",
+					"mp",
+					"amount",
+					"description",
+					"content",
+					"region",
+					"delvemodifier",
+					"modifierrank",
+					"rotatingamount",
+					"ascension",
+					"delvepoints"
+				],
 				"properties": {
 					"type": {
 						"required": true,
+						"propertyOrder": 1,
 						"title": "Type",
 						"description": "The type of mission.",
 						"type": "string",
 						"enum": [
 							"content",
 							"regional_content",
+							"challenge_delve",
 							"delve_modifier",
 							"delve_points",
 							"delve_bounty",
 							"daily_bounty",
+							"poi_biome",
+							"spawners",
 							"spawners_poi",
 							"strikes",
 							"rod_waves",
@@ -99,54 +117,164 @@
 						]
 					},
 					"week": {
-						"required": true,
+						"propertyOrder": 2,
 						"title": "Week",
-						"description": "The week number.",
+						"description": "The week number for the mission.",
+						"type": "integer"
+					},
+					"firstweek": {
+						"propertyOrder": 3,
+						"title": "First Week",
+						"description": "The number of the starting week for the mission.",
+						"type": "integer"
+					},
+					"lastweek": {
+						"propertyOrder": 4,
+						"title": "Last Week",
+						"description": "The number of the last week for the mission.",
 						"type": "integer"
 					},
 					"is_bonus": {
-						"required": false,
+						"propertyOrder": 5,
+						"required": true,
 						"title": "Bonus Week?",
 						"type": "boolean",
 						"format": "checkbox",
 						"default": false
 					},
 					"mp": {
+						"propertyOrder": 6,
 						"required": true,
 						"title": "MP",
 						"description": "The amount of MP rewarded for this mission.",
 						"type": "integer"
 					},
 					"amount": {
+						"propertyOrder": 7,
 						"required": true,
 						"title": "Amount",
 						"description": "The amount of the objective needed to complete the mission.",
 						"type": "integer"
 					},
 					"description": {
+						"propertyOrder": 8,
 						"required": true,
 						"title": "Description",
 						"description": "The description of the mission, shown to the player.",
 						"type": "string"
 					},
 					"content": {
+						"propertyOrder": 9,
+						"required": true,
 						"title": "Content",
-						"description": "for 'content': the content to be ran (certain dungeons, strikes, bosses). \nfor 'delve_points': the dungeon(s) to run the amount of points with.",
+						"description": "for 'content': the content to be ran (certain dungeons, strikes, bosses). \nfor 'challenge_delve'/'delve_points'/'poi_biome': the dungeon(s)/poi(s) to run.",
 						"type": "array",
 						"minItems": 1,
 						"items": {
-							"type": "string"
+							"type": "string",
+							"anyOf": [
+								{
+									"title": "Custom",
+									"description": "In case content is missing from the dropdowns."
+								},
+								{
+									"title": "Dungeon",
+									"description": "Content that is considered a dungeon.",
+									"enum": [
+										"white",
+										"orange",
+										"magenta",
+										"lightblue",
+										"yellow",
+										"reverie",
+										"willows",
+										"corridors",
+										"lime",
+										"pink",
+										"gray",
+										"lightgray",
+										"cyan",
+										"purple",
+										"teal",
+										"shiftingcity",
+										"forum",
+										"blue",
+										"brown",
+										"skt",
+										"hexfall",
+										"depths",
+										"zenith"
+									]
+								},
+								{
+									"title": "Boss",
+									"description": "Content that is considered a boss.",
+									"enum": [
+										"kaul",
+										"azacor",
+										"snowspirit",
+										"horseman",
+										"eldrask",
+										"hekawt",
+										"godspore",
+										"sirius"
+									]
+								},
+								{
+									"title": "Strike",
+									"description": "Content that is considered a strike.",
+									"enum": [
+										"verdant",
+										"sanctum",
+										"mist",
+										"remorse",
+										"portal",
+										"ruin"
+									]
+								},
+								{
+									"title": "POI",
+									"description": "To be used only with 'poi_biomes'.",
+									"enum": [
+										"wolfswood",
+										"keep",
+										"starpoint"
+									]
+								},
+								{
+									"title": "Other",
+									"description": "Content that doesn't fit in the other categories.",
+									"enum": [
+										"corridorsroom",
+										"arena",
+										"rush",
+										"rushwave",
+										"gallery",
+										"galleryround",
+										"r1daily",
+										"r2daily",
+										"r3daily",
+										"delvebounty",
+										"fishingcombat"
+									]
+								}
+							]
 						},
 						"options": {
 							"dependencies": {
 								"type": [
 									"content",
-									"delve_points"
+									"challenge_delve",
+									"delve_modifier",
+									"delve_points",
+									"poi_biome"
 								]
 							}
 						}
 					},
 					"region": {
+						"propertyOrder": 10,
+						"required": true,
 						"title": "Region",
 						"description": "for 'regional_content': the region the content must be in.",
 						"type": "integer",
@@ -158,11 +286,52 @@
 						}
 					},
 					"delvemodifier": {
+						"propertyOrder": 11,
+					    "required": true,
 						"title": "Modifier Type",
 						"description": "for 'delve_modifier': the required modifiers to run. Leave blank if counting rotating modifier amount.",
 						"type": "array",
 						"items": {
-							"type": "string"
+							"type": "string",
+							"anyOf": [
+								{
+									"title": "Custom",
+									"description": "In case a modifier is missing from the dropdowns, OR for Experimentals."
+								},
+								{
+									"title": "Normal",
+									"description": "Normal delve modifiers that always exist every week.",
+									"enum": [
+										"VENGEANCE",
+										"ARCANIC",
+										"INFERNAL",
+										"TRANSCENDENT",
+										"SPECTRAL",
+										"DREADFUL",
+										"COLOSSAL",
+										"CHIVALROUS",
+										"BLOODTHIRSTY",
+										"PERNICIOUS",
+										"LEGIONARY",
+										"CARAPACE",
+										"ENTROPY",
+										"TWISTED"
+									]
+								},
+								{
+									"title": "Rotating",
+									"description": "Rotating delve modifiers that vary week-by-week.",
+									"enum": [
+										"FRAGILE",
+										"ASSASSINS",
+										"ASTRAL",
+										"UNYIELDING",
+										"CHRONOLOGY",
+										"RIFTBORN",
+										"HAUNTED"
+									]
+								}
+							]
 						},
 						"options": {
 							"dependencies": {
@@ -171,6 +340,8 @@
 						}
 					},
 					"modifierrank": {
+						"propertyOrder": 12,
+						"required": true,
 						"title": "Modifier Level",
 						"description": "for 'delve_modifier': the required modifier level, 1-5.",
 						"type": "integer",
@@ -182,6 +353,8 @@
 						}
 					},
 					"rotatingamount": {
+						"propertyOrder": 13,
+						"required": true,
 						"title": "Delve Modifier",
 						"description": "for 'delve_modifier': Number of rotating modifiers that need to be ran. Leave at 0 if specifying a delve mod.",
 						"type": "integer",
@@ -193,6 +366,8 @@
 						}
 					},
 					"ascension": {
+						"propertyOrder": 14,
+						"required": true,
 						"title": "Ascension",
 						"description": "for 'zenith_ascension': the ascension level.",
 						"type": "integer",
@@ -203,6 +378,8 @@
 						}
 					},
 					"delvepoints": {
+						"propertyOrder": 15,
+						"required": true,
 						"title": "Delve Points",
 						"description": "for `delve_points`: the delve point amount.",
 						"type": "integer",
@@ -212,7 +389,27 @@
 							}
 						}
 					}
-				}
+				},
+				"anyOf": [
+					{
+						"title": "Select a Type"
+					},
+					{
+						"title": "One Week Mission",
+						"description": "A mission lasting for a week. Make sure only 'week' exists.",
+						"required": [
+							"week"
+						]
+					},
+					{
+						"title": "Multi-Week Mission",
+						"description": "A mission occurring over multiple weeks. Make sure only 'firstweek' and 'lastweek' exist.",
+						"required": [
+							"firstweek",
+							"lastweek"
+						]
+					}
+				]
 			}
 		}
 	}

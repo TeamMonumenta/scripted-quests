@@ -12,9 +12,9 @@
 			"title": "start_date",
 			"description": "The start date of this pass. Format: YYYY-MM-DD",
 			"type": "string",
-			"default": "default"
+			"default": "YYYY-MM-DD"
 		},
-		"rewards":  {
+		"rewards": {
 			"required": true,
 			"propertyOrder": 2,
 			"title": "rewards",
@@ -57,15 +57,23 @@
 					"loottable": {
 						"propertyOrder": 2,
 						"title": "Loot Table path",
-						"description": "The pathing for the loot table for said reward.",
+						"description": "The pathing for the loot table for said reward. The /findtable command in-game is useful here!",
 						"type": "string",
-						"default": "epic:pass/",
+						"anyOf": [
+							{
+								"title": "Custom Path",
+								"default": "epic:"
+							},
+							{
+								"title": "Loadout Lockbox",
+								"enum": [
+									"epic:r1/items/loadout_lockbox"
+								]
+							}
+						],
 						"options": {
 							"dependencies": {
 								"type": [
-									"item_skin",
-									"loot_spin",
-									"unique_spin",
 									"loot_table"
 								]
 							}
@@ -135,7 +143,33 @@
 						"title": "Data",
 						"description": "Data associated with granting the reward.",
 						"type": "string",
-						"default": "data",
+						"anyOf": [
+							{
+								"title": "Select!"
+							},
+							{
+								"title": "Player Title",
+								"description": "Insert the title ID/name."
+							},
+							{
+								"title": "Elite Finisher",
+								"description": "Insert the finisher ID/name."
+							},
+							{
+								"title": "Plot Border",
+								"description": "Insert the border ID/name."
+							},
+							{
+								"title": "Loot Table",
+								"description": "Insert the loot table path, same as the 'loottable' property."
+							},
+							{
+								"title": "Loadout Lockbox",
+								"enum": [
+									"epic:r1/items/loadout_lockbox"
+								]
+							}
+						],
 						"options": {
 							"dependencies": {
 								"type": [
@@ -180,7 +214,7 @@
 					"displayitem": {
 						"propertyOrder": 7,
 						"title": "Display Item",
-						"description": "The icon to display, if applicable.",
+						"description": "The icon to display.",
 						"type": "string",
 						"default": "DISPLAY_ITEM",
 						"options": {

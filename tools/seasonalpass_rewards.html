@@ -16,7 +16,17 @@
 	<div class='row' style='padding-bottom: 15px;'>
 		<div class='col-md-12'>
 			<h1>Seasonal Pass Reward Editor</h1>
-			<p>An array which determines the rewards of all 25 tiers of a given Seasonal Pass (based on pass start date). Utilizes the ID of an item, like "item_skin", "loot_spin", and "unique_spin" as the primary examples.</p>
+			<p>An array which determines the rewards of all 25 tiers of a given Seasonal Pass (chosen pass based on sharing the pass start date).</p>
+			<p>Reward Item Types:</p>
+			<p>item_skin: Metamorphosis Token</p>
+			<p>loot_spin: Treasure Wheel Token</p>
+			<p>unique_spin: Relic Wheel Token</p>
+			<p>title: A player title, defined by further parameters</p>
+			<p>elite_finisher: An elite finisher, defined by further parameters</p>
+			<p>loot_table: Any item, defined by the loot table & data (both equal the same)</p>
+			<p>shulker_box: A vanilla shulker box, defined by further parameters</p>
+			<p>plot_border: A plot border, defined by further parameters</p>
+
 		</div>
 	</div>
 	<div class='row' style='padding-bottom: 15px;'>
@@ -37,6 +47,9 @@
 	var editor = new JSONEditor(document.getElementById('editor_holder'),{
 		theme: 'bootstrap3',
 		iconlib: 'fontawesome5',
+
+		// Disable array reordering (causes visual bugs)
+		disable_array_reorder: true,
 
 		// Enable fetching schemas via ajax
 		ajax: true,
