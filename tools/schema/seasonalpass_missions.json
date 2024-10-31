@@ -265,6 +265,7 @@
 								"type": [
 									"content",
 									"challenge_delve",
+									"delve_modifier",
 									"delve_points",
 									"poi_biome"
 								]
