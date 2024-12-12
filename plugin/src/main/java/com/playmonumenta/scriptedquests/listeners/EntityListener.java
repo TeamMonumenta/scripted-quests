@@ -67,7 +67,7 @@ public class EntityListener implements Listener {
 
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void entityDamageEvent(EntityDamageEvent event) {
-		if (event.getCause() != DamageCause.CUSTOM && event.getCause() != DamageCause.VOID) {
+		if (event.getCause() != DamageCause.CUSTOM && event.getCause() != DamageCause.VOID && event.getCause() != DamageCause.KILL) {
 			cancelIfNpc(event.getEntity(), event);
 		}
 	}
