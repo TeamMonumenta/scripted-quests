@@ -8,8 +8,6 @@ import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.managers.TranslationsManager;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.regex.Pattern;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
@@ -120,6 +118,16 @@ public class MessagingUtils {
 
 	public static void sendMessageSync(CommandSender sender, String message) {
 		Bukkit.getScheduler().runTask(Plugin.getInstance(), () -> sender.sendMessage(message));
+	}
+
+	public static void sendClickableMessage(Player player, String message, boolean allowTranslations, String commandStr, @Nullable HoverEvent<?> hoverEvent) {
+		if (allowTranslations) {
+			message = TranslationsManager.translate(player, message);
+		}
+		message = translatePlayerName(player, message);
+		message = message.replace('§', '&');
+		TextComponent formattedMessage = AMPERSAND_SERIALIZER.deserialize(message);
+		player.sendMessage(formattedMessage.hoverEvent(hoverEvent).clickEvent(ClickEvent.runCommand(commandStr)));
 	}
 
 	public static void sendClickableNPCMessage(Player player, String message,

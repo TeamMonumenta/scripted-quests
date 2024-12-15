@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.WeakHashMap;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.HoverEvent;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -21,6 +23,15 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 public class QuestCompassManager {
+
+	private final List<QuestCompass> mQuests = new ArrayList<QuestCompass>();
+	private final Map<UUID, CompassCacheEntry> mCompassCache = new HashMap<UUID, CompassCacheEntry>();
+	private final Map<Player, Integer> mCurrentIndex = new WeakHashMap<>();
+	private final Plugin mPlugin;
+
+	/* One command-specified waypoint per player */
+	public final Map<UUID, ValidCompassEntry> mCommandWaypoints = new HashMap<UUID, ValidCompassEntry>();
+
 	private static class ValidCompassEntry {
 		private final QuestLocation mLocation;
 		private final String mTitle;
@@ -32,8 +43,12 @@ public class QuestCompassManager {
 			mAllowTranslations = allowTranslations;
 		}
 
-		private void directPlayer(WaypointManager mgr, Player player) {
-			MessagingUtils.sendRawMessage(player, mTitle + ": " + mLocation.getMessage(), mAllowTranslations);
+		private void directPlayer(WaypointManager mgr, Player player, boolean isRemovable) {
+			if (isRemovable) {
+				MessagingUtils.sendClickableMessage(player, mTitle + ": " + mLocation.getMessage() + " removable !", mAllowTranslations, "/waypoint remove @s", HoverEvent.showText(Component.text("Click to remove this waypoint.")));
+			} else {
+				MessagingUtils.sendRawMessage(player, mTitle + ": " + mLocation.getMessage() + " NOT removable...", mAllowTranslations);
+			}
 			mgr.setWaypoint(player, mLocation);
 		}
 	}
@@ -51,14 +66,6 @@ public class QuestCompassManager {
 			return Math.abs(player.getTicksLived() - mLastRefresh) < 200;
 		}
 	}
-
-	private final List<QuestCompass> mQuests = new ArrayList<QuestCompass>();
-	private final Map<UUID, CompassCacheEntry> mCompassCache = new HashMap<UUID, CompassCacheEntry>();
-	private final Map<Player, Integer> mCurrentIndex = new WeakHashMap<>();
-	private final Plugin mPlugin;
-
-	/* One command-specified waypoint per player */
-	private final Map<UUID, ValidCompassEntry> mCommandWaypoints = new HashMap<UUID, ValidCompassEntry>();
 
 	public QuestCompassManager(Plugin plugin) {
 		mPlugin = plugin;
@@ -145,9 +152,10 @@ public class QuestCompassManager {
 		}
 
 		if (entries.size() == 0) {
-			MessagingUtils.sendActionBarMessage(player, "You have no active quest.");
+			MessagingUtils.sendActionBarMessage(player, "You have no active quest. NONE!");
+			mPlugin.mWaypointManager.removeWaypoint(player);
 		} else {
-			entries.get(index).directPlayer(mPlugin.mWaypointManager, player);
+			entries.get(index).directPlayer(mPlugin.mWaypointManager, player, entries.get(index) == mCommandWaypoints.get(player.getUniqueId()));
 		}
 
 		return index;
@@ -173,7 +181,7 @@ public class QuestCompassManager {
 		ValidCompassEntry entry = new ValidCompassEntry(new CompassLocation(null, message, steps), title, false);
 		mCommandWaypoints.put(player.getUniqueId(), entry);
 		getCurrentMarkerTitles(player);
-		entry.directPlayer(mPlugin.mWaypointManager, player);
+		entry.directPlayer(mPlugin.mWaypointManager, player, true);
 	}
 
 	//Remove command-specified waypoint on a player
