@@ -32,7 +32,7 @@ public class QuestContext {
 	}
 
 	public QuestContext(Plugin plugin, Player player, @Nullable Entity npcEntity, boolean useNpc, @Nullable QuestPrerequisites prerequisites, @Nullable ItemStack usedItem, @Nullable Location location) {
-		this(plugin, player, npcEntity, useNpc, prerequisites, usedItem, null, true);
+		this(plugin, player, npcEntity, useNpc, prerequisites, usedItem, location, true);
 	}
 
 	public QuestContext(Plugin plugin, Player player, @Nullable Entity npcEntity, boolean useNpc, @Nullable QuestPrerequisites prerequisites, @Nullable ItemStack usedItem, @Nullable Location location, boolean wasPunched) {
@@ -65,7 +65,7 @@ public class QuestContext {
 	}
 
 	/**
-	 * Gets the Entity to use for prerequisite checks. Should not be used outside of prerequisite checks.
+	 * Gets the Entity to use for prerequisite checks. Should not be used outside prerequisite checks.
 	 */
 	public Entity getEntityUsedForPrerequisites() {
 		return mUseNpcForPrerequisites ? mNpcEntity : mPlayer;
@@ -120,7 +120,7 @@ public class QuestContext {
 	}
 
 	public QuestContext withPunch(boolean wasPunched) {
-		return new QuestContext(mPlugin, mPlayer, mNpcEntity, mUseNpcForPrerequisites, mPrerequisites, mUsedItem, mLocation, mWasPunched);
+		return new QuestContext(mPlugin, mPlayer, mNpcEntity, mUseNpcForPrerequisites, mPrerequisites, mUsedItem, mLocation, wasPunched);
 	}
 
 	/**
