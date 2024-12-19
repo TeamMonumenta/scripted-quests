@@ -45,8 +45,20 @@
                 "$ref": "quest_component.json"
             }
         },
-        "visibility_prerequisites": {
+        "right_click_components": {
             "propertyOrder": 6,
+            "title": "quest_components",
+            "description": "A list of actions to run when right clicking an NPC, rather than punching it",
+            "type": "array",
+            "format": "tabs",
+            "minItems": 1,
+            "items": {
+                "title": "Quest component",
+                "$ref": "quest_component.json"
+            }
+        },
+        "visibility_prerequisites": {
+            "propertyOrder": 7,
             "title": "visibility_prerequisites",
             "description": "Prerequisites for the NPC to appear to a player. This is checked often, so should preferably be relatively simple (try not using items_in_inventory checks) - note that 'file_prerequisites' is checked together with this, so that should also be kept simple. Players in creative or spectator mode will always see all NPCs. An entity with such a prerequisite must not be riding another entity or have passengers itself.",
             "$ref": "prerequisites.json"

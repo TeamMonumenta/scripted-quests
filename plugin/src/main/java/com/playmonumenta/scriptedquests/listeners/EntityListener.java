@@ -3,6 +3,7 @@ package com.playmonumenta.scriptedquests.listeners;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.quests.QuestNpc;
+import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 import java.util.List;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -19,10 +20,12 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.entity.PlayerLeashEntityEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 public class EntityListener implements Listener {
-	private Plugin mPlugin;
+	private final Plugin mPlugin;
 
 	public EntityListener(Plugin plugin) {
 		mPlugin = plugin;
@@ -46,12 +49,32 @@ public class EntityListener implements Listener {
 				 */
 				event.setCancelled(true);
 
+				String damageeName = MessagingUtils.plainText(damagee.customName());
+
 				/* Only trigger quest interactions via melee attack */
 				if (event.getCause().equals(DamageCause.ENTITY_ATTACK)) {
 					mPlugin.mNpcManager.interactEvent(new QuestContext(mPlugin, player, damagee, false, null, player.getInventory().getItemInMainHand()),
-						damagee.getCustomName(), damagee.getType(), npc, false);
+						damageeName, damagee.getType(), npc, false);
 				}
 			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
+	public void playerInteractEntityEvent(PlayerInteractEntityEvent event) {
+		Entity target = event.getRightClicked();
+		Player player = event.getPlayer();
+
+		List<QuestNpc> npc = mPlugin.mNpcManager.getInteractNPC(target);
+		if (npc != null) {
+			/*
+			 * This is definitely a quest NPC, even if the player might not be able to interact with it
+			 */
+
+			String targetName = MessagingUtils.plainText(target.customName());
+			QuestContext context = new QuestContext(mPlugin, player, target, false, null, player.getInventory().getItemInMainHand())
+				.withPunch(false);
+			mPlugin.mNpcManager.interactEvent(context, targetName, target.getType(), npc, false);
 		}
 	}
 
@@ -74,7 +97,12 @@ public class EntityListener implements Listener {
 
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void entityPotionEffectEvent(EntityPotionEffectEvent event) {
-		if (event.getAction().equals(EntityPotionEffectEvent.Action.ADDED) && !event.getNewEffect().getType().equals(PotionEffectType.HEAL)) {
+		PotionEffect potionEffect = event.getNewEffect();
+		if (
+			potionEffect != null
+				&& event.getAction().equals(EntityPotionEffectEvent.Action.ADDED)
+				&& !potionEffect.getType().equals(PotionEffectType.HEAL)
+		) {
 			cancelIfNpc(event.getEntity(), event);
 		}
 	}

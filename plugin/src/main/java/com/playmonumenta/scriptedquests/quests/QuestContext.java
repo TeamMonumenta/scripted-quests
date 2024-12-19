@@ -17,6 +17,7 @@ public class QuestContext {
 	private final Plugin mPlugin;
 	private final Player mPlayer;
 	private final @Nullable Entity mNpcEntity;
+	private final boolean mWasPunched;
 	private final boolean mUseNpcForPrerequisites;
 	private final @Nullable QuestPrerequisites mPrerequisites;
 	private final @Nullable ItemStack mUsedItem;
@@ -31,8 +32,13 @@ public class QuestContext {
 	}
 
 	public QuestContext(Plugin plugin, Player player, @Nullable Entity npcEntity, boolean useNpc, @Nullable QuestPrerequisites prerequisites, @Nullable ItemStack usedItem, @Nullable Location location) {
+		this(plugin, player, npcEntity, useNpc, prerequisites, usedItem, null, true);
+	}
+
+	public QuestContext(Plugin plugin, Player player, @Nullable Entity npcEntity, boolean useNpc, @Nullable QuestPrerequisites prerequisites, @Nullable ItemStack usedItem, @Nullable Location location, boolean wasPunched) {
 		mPlugin = plugin;
 		mPlayer = player;
+		mWasPunched = wasPunched;
 		mUseNpcForPrerequisites = useNpc;
 		mNpcEntity = npcEntity;
 		mPrerequisites = prerequisites;
@@ -49,6 +55,13 @@ public class QuestContext {
 	 */
 	public Player getPlayer() {
 		return mPlayer;
+	}
+
+	/**
+	 * Gets if the NPC was punched (default left click, assumed true), or used (default right click, assumed false)
+	 */
+	public boolean wasPunched() {
+		return mWasPunched;
 	}
 
 	/**
@@ -99,32 +112,36 @@ public class QuestContext {
 	 */
 	public QuestContext withPrerequisites(@Nullable QuestPrerequisites prerequisites) {
 		QuestPrerequisites newPrerequisites = prerequisites == null ? mPrerequisites : mPrerequisites == null ? prerequisites : mPrerequisites.union(prerequisites);
-		return new QuestContext(mPlugin, mPlayer, mNpcEntity, mUseNpcForPrerequisites, newPrerequisites, mUsedItem, mLocation);
+		return new QuestContext(mPlugin, mPlayer, mNpcEntity, mUseNpcForPrerequisites, newPrerequisites, mUsedItem, mLocation, mWasPunched);
 	}
 
 	public QuestContext clearPrerequisites() {
-		return new QuestContext(mPlugin, mPlayer, mNpcEntity, mUseNpcForPrerequisites, null, mUsedItem, mLocation);
+		return new QuestContext(mPlugin, mPlayer, mNpcEntity, mUseNpcForPrerequisites, null, mUsedItem, mLocation, mWasPunched);
+	}
+
+	public QuestContext withPunch(boolean wasPunched) {
+		return new QuestContext(mPlugin, mPlayer, mNpcEntity, mUseNpcForPrerequisites, mPrerequisites, mUsedItem, mLocation, mWasPunched);
 	}
 
 	/**
 	 * Returns a new {@link QuestContext} that will return the NPC entity from {@link #getEntityUsedForPrerequisites()} (which returns the player by default).
 	 */
 	public QuestContext useNpcForPrerequisites(boolean useNpc) {
-		return new QuestContext(mPlugin, mPlayer, mNpcEntity, useNpc, mPrerequisites, mUsedItem, mLocation);
+		return new QuestContext(mPlugin, mPlayer, mNpcEntity, useNpc, mPrerequisites, mUsedItem, mLocation, mWasPunched);
 	}
 
 	/**
 	 * Returns a new {@link QuestContext} with the given NPC set (and {@link #useNpcForPrerequisites(boolean)} will be reset to false)
 	 */
 	public QuestContext withNpc(@Nullable Entity npcEntity) {
-		return new QuestContext(mPlugin, mPlayer, npcEntity, false, mPrerequisites, mUsedItem, mLocation);
+		return new QuestContext(mPlugin, mPlayer, npcEntity, false, mPrerequisites, mUsedItem, mLocation, mWasPunched);
 	}
 
 	/**
 	 * Returns a new {@link QuestContext} with the given location override
 	 */
 	public QuestContext withLocation(@Nullable Location location) {
-		return new QuestContext(mPlugin, mPlayer, mNpcEntity, mUseNpcForPrerequisites, mPrerequisites, mUsedItem, location);
+		return new QuestContext(mPlugin, mPlayer, mNpcEntity, mUseNpcForPrerequisites, mPrerequisites, mUsedItem, location, mWasPunched);
 	}
 
 	// Static thread-local context storage for providing the context to executed commands (e.g. used by GUIs)
