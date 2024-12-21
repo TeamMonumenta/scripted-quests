@@ -6,8 +6,8 @@ import dev.jorel.commandapi.arguments.GreedyStringArgument;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -44,7 +44,7 @@ public class CommandArgument extends GreedyStringArgument {
 			}
 			List<String> tabComplete = command.tabComplete(sender, cmd[0], Arrays.copyOfRange(cmd, 1, cmd.length), null);
 			String lastArg = cmd[cmd.length - 1];
-			if (tabComplete.stream().allMatch(tc -> StringUtils.startsWithIgnoreCase(tc, lastArg))) {
+			if (tabComplete.stream().allMatch(tc -> tc.toLowerCase(Locale.ENGLISH).startsWith(lastArg.toLowerCase(Locale.ENGLISH)))) {
 				String allButLastArg = input.substring(0, input.lastIndexOf(' '));
 				return tabComplete.stream().map(s -> allButLastArg + ' ' + s).toArray(String[]::new);
 			} else {

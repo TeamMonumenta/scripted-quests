@@ -72,7 +72,7 @@
 			"required": true,
 			"propertyOrder": 5,
 			"title": "Missions",
-			"description": "The missions for this pass.",
+			"description": "The missions for this pass. (Do not swap between one week/multi week for a mission.)",
 			"type": "array",
 			"format": "tabs",
 			"minItems": 1,
@@ -115,24 +115,6 @@
 							"zenith_rooms",
 							"zenith_ascension"
 						]
-					},
-					"week": {
-						"propertyOrder": 2,
-						"title": "Week",
-						"description": "The week number for the mission.",
-						"type": "integer"
-					},
-					"firstweek": {
-						"propertyOrder": 3,
-						"title": "First Week",
-						"description": "The number of the starting week for the mission.",
-						"type": "integer"
-					},
-					"lastweek": {
-						"propertyOrder": 4,
-						"title": "Last Week",
-						"description": "The number of the last week for the mission.",
-						"type": "integer"
 					},
 					"is_bonus": {
 						"propertyOrder": 5,
@@ -201,7 +183,8 @@
 										"blue",
 										"brown",
 										"skt",
-										"hexfall",
+										"hexfallruten",
+										"hexfallhycenea",
 										"depths",
 										"zenith"
 									]
@@ -396,18 +379,67 @@
 					},
 					{
 						"title": "One Week Mission",
-						"description": "A mission lasting for a week. Make sure only 'week' exists.",
-						"required": [
+						"description": "A mission lasting for a week.",
+						"defaultProperties": [
+							"type",
+							"is_bonus",
+							"mp",
+							"amount",
+							"description",
+							"content",
+							"region",
+							"delvemodifier",
+							"modifierrank",
+							"rotatingamount",
+							"ascension",
+							"delvepoints",
 							"week"
-						]
+						],
+						"properties": {
+							"week": {
+								"required": true,
+								"propertyOrder": 2,
+								"title": "Week",
+								"description": "The week number for the mission.",
+								"type": "integer"
+							}
+						}
 					},
 					{
 						"title": "Multi-Week Mission",
-						"description": "A mission occurring over multiple weeks. Make sure only 'firstweek' and 'lastweek' exist.",
-						"required": [
+						"description": "A mission occurring over multiple weeks.",
+						"defaultProperties": [
+							"type",
+							"is_bonus",
+							"mp",
+							"amount",
+							"description",
+							"content",
+							"region",
+							"delvemodifier",
+							"modifierrank",
+							"rotatingamount",
+							"ascension",
+							"delvepoints",
 							"firstweek",
 							"lastweek"
-						]
+						],
+						"properties": {
+							"firstweek": {
+								"required": true,
+								"propertyOrder": 3,
+								"title": "First Week",
+								"description": "The number of the starting week for the mission.",
+								"type": "integer"
+							},
+							"lastweek": {
+								"required": true,
+								"propertyOrder": 4,
+								"title": "Last Week",
+								"description": "The number of the last week for the mission.",
+								"type": "integer"
+							}
+						}
 					}
 				]
 			}

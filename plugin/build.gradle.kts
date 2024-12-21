@@ -40,7 +40,6 @@ tasks {
 		exclude("com/google/errorprone/**")
 		exclude("com/google/j2objc/**")
 		exclude("com/google/thirdparty/**")
-		exclude("org/apache/commons/**")
 		exclude("org/apache/http/**")
 		exclude("org/mortbay/**")
 		relocate("com.fasterxml", "com.playmonumenta.scriptedquests.internal.com.fasterxml")
