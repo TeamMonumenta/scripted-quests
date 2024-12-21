@@ -11,7 +11,7 @@ monumenta {
 		"com.playmonumenta.scriptedquests.Plugin", BukkitPluginDescription.PluginLoadOrder.POSTWORLD, "1.18",
 		depends = listOf("CommandAPI"),
 		softDepends = listOf("dynmap", "MonumentaRedisSync", "ProtocolLib"),
-		apiJarVersion = "1.18.2-R0.1-SNAPSHOT",
+		apiJarVersion = "1.20.4-R0.1-SNAPSHOT",
 		action = {
 			commands {
 				register("questtrigger") {
