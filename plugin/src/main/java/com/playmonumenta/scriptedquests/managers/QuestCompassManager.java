@@ -45,9 +45,9 @@ public class QuestCompassManager {
 
 		private void directPlayer(WaypointManager mgr, Player player, boolean isRemovable) {
 			if (isRemovable) {
-				MessagingUtils.sendClickableMessage(player, mTitle + ": " + mLocation.getMessage() + " removable !", mAllowTranslations, "/waypoint remove @s", HoverEvent.showText(Component.text("Click to remove this waypoint.")));
+				MessagingUtils.sendClickableMessage(player, mTitle + ": " + mLocation.getMessage(), mAllowTranslations, "/waypoint remove @s", HoverEvent.showText(Component.text("Click to remove this waypoint.")));
 			} else {
-				MessagingUtils.sendRawMessage(player, mTitle + ": " + mLocation.getMessage() + " NOT removable...", mAllowTranslations);
+				MessagingUtils.sendRawMessage(player, mTitle + ": " + mLocation.getMessage(), mAllowTranslations);
 			}
 			mgr.setWaypoint(player, mLocation);
 		}
@@ -151,9 +151,9 @@ public class QuestCompassManager {
 			index = 0;
 		}
 
-		if (entries.size() == 0) {
-			MessagingUtils.sendActionBarMessage(player, "You have no active quest. NONE!");
-			mPlugin.mWaypointManager.removeWaypoint(player);
+		if (entries.isEmpty()) {
+			MessagingUtils.sendActionBarMessage(player, "You have no active quest.");
+			mPlugin.mWaypointManager.setWaypoint(player, null);
 		} else {
 			entries.get(index).directPlayer(mPlugin.mWaypointManager, player, entries.get(index) == mCommandWaypoints.get(player.getUniqueId()));
 		}

@@ -257,14 +257,9 @@ public class WaypointManager {
 	public void setWaypoint(Player player, @Nullable QuestLocation questLoc) {
 		if (questLoc == null || questLoc.getWaypoints() == null || questLoc.getWaypoints().isEmpty()) {
 			mPlayers.remove(player.getUniqueId());
-		} else {
-			mPlayers.put(player.getUniqueId(), questLoc);
+			return;
 		}
-		ensureTaskIsRunning();
-	}
-
-	public void removeWaypoint(Player player) {
-		mPlayers.remove(player.getUniqueId());
+		mPlayers.put(player.getUniqueId(), questLoc);
 		ensureTaskIsRunning();
 	}
 }
