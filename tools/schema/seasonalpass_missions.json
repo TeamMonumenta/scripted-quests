@@ -129,7 +129,24 @@
 						"required": true,
 						"title": "MP",
 						"description": "The amount of MP rewarded for this mission.",
-						"type": "integer"
+						"type": "integer",
+						"anyOf": [
+							{
+								"title": "Custom Value",
+								"description": "Custom point value, assuming it doesn't exist in the dropdowns."
+							},
+							{
+								"title": "Set Value",
+								"description": "Set point values for missions based on the current standard.",
+								"enum": [
+									"50",
+									"75",
+									"100",
+									"200",
+									"300"
+								]
+							}
+						]
 					},
 					"amount": {
 						"propertyOrder": 7,
@@ -259,7 +276,7 @@
 						"propertyOrder": 10,
 						"required": true,
 						"title": "Region",
-						"description": "for 'regional_content': the region the content must be in.",
+						"description": "for 'regional_content': the region the content must be in, from 1-3.",
 						"type": "integer",
 						"default": 1,
 						"options": {
