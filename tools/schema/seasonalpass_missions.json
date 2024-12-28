@@ -165,21 +165,147 @@
 					"content": {
 						"propertyOrder": 9,
 						"required": true,
-						"title": "Content",
-						"description": "for 'content': the content to be ran (certain dungeons, strikes, bosses). \nfor 'challenge_delve'/'delve_points'/'poi_biome': the dungeon(s)/poi(s) to run.",
-						"type": "array",
-						"minItems": 1,
-						"items": {
-							"type": "string",
-							"anyOf": [
-								{
-									"title": "Custom",
-									"description": "In case content is missing from the dropdowns."
-								},
-								{
-									"title": "Dungeon",
-									"description": "Content that is considered a dungeon.",
-									"enum": [
+						"anyOf": [
+							{
+								"title": "Content - Manual",
+								"description": "for 'content': the content to be ran (certain dungeons, strikes, bosses). \nfor 'challenge_delve'/'delve_points'/'poi_biome': the dungeon(s)/poi(s) to run.",
+								"type": "array",
+								"minItems": 1,
+								"items": {
+									"type": "string",
+									"anyOf": [
+										{
+											"title": "Custom",
+											"description": "In case content is missing from the dropdowns."
+										},
+										{
+											"title": "Dungeon",
+											"description": "Content that is considered a dungeon.",
+											"enum": [
+												"labs",
+												"white",
+												"orange",
+												"magenta",
+												"lightblue",
+												"yellow",
+												"reverie",
+												"willows",
+												"corridors",
+												"lime",
+												"pink",
+												"gray",
+												"lightgray",
+												"cyan",
+												"purple",
+												"teal",
+												"shiftingcity",
+												"forum",
+												"blue",
+												"brown",
+												"skt",
+												"hexfallruten",
+												"hexfallhycenea",
+												"depths",
+												"zenith"
+											]
+										},
+										{
+											"title": "Boss",
+											"description": "Content that is considered a boss.",
+											"enum": [
+												"kaul",
+												"azacor",
+												"snowspirit",
+												"horseman",
+												"eldrask",
+												"hekawt",
+												"godspore",
+												"sirius"
+											]
+										},
+										{
+											"title": "Strike",
+											"description": "Content that is considered a strike.",
+											"enum": [
+												"verdant",
+												"sanctum",
+												"mist",
+												"remorse",
+												"portal",
+												"ruin"
+											]
+										},
+										{
+											"title": "POI",
+											"description": "To be used only with 'poi_biomes'.",
+											"enum": [
+												"wolfswood",
+												"keep",
+												"starpoint"
+											]
+										},
+										{
+											"title": "Other",
+											"description": "Content that doesn't fit in the other categories.",
+											"enum": [
+												"corridorsroom",
+												"arena",
+												"rush",
+												"rushwave",
+												"gallery",
+												"galleryround",
+												"r1daily",
+												"r2daily",
+												"r3daily",
+												"delvebounty",
+												"fishingcombat"
+											]
+										}
+									]
+								}
+							},
+							{
+								"title": "All Wool Dungeons",
+								"description": "For 'content': Automatically sets all wool dungeons.",
+								"type": "array",
+								"enum": [
+									[
+										"white",
+										"orange",
+										"magenta",
+										"lightblue",
+										"yellow",
+										"lime",
+										"pink",
+										"gray",
+										"lightgray",
+										"cyan",
+										"purple",
+										"blue",
+										"brown"
+									]
+								]
+							},
+							{
+								"title": "All Bonus Dungeons",
+								"description": "For 'content': Automatically sets all bonus dungeons.",
+								"type": "array",
+								"enum": [
+									[
+										"labs",
+										"reverie",
+										"willows",
+										"shiftingcity",
+										"forum"
+									]
+								]
+							},
+							{
+								"title": "All Dungeons",
+								"description": "For 'content': Automatically sets all traditional dungeons.",
+								"type": "array",
+								"enum": [
+									[
 										"white",
 										"orange",
 										"magenta",
@@ -187,7 +313,6 @@
 										"yellow",
 										"reverie",
 										"willows",
-										"corridors",
 										"lime",
 										"pink",
 										"gray",
@@ -198,18 +323,16 @@
 										"shiftingcity",
 										"forum",
 										"blue",
-										"brown",
-										"skt",
-										"hexfallruten",
-										"hexfallhycenea",
-										"depths",
-										"zenith"
+										"brown"
 									]
-								},
-								{
-									"title": "Boss",
-									"description": "Content that is considered a boss.",
-									"enum": [
+								]
+							},
+							{
+								"title": "All Bosses",
+								"description": "For 'content': automatically sets all bosses.",
+								"type": "array",
+								"enum": [
+									[
 										"kaul",
 										"azacor",
 										"snowspirit",
@@ -219,47 +342,22 @@
 										"godspore",
 										"sirius"
 									]
-								},
-								{
-									"title": "Strike",
-									"description": "Content that is considered a strike.",
-									"enum": [
-										"verdant",
-										"sanctum",
-										"mist",
-										"remorse",
-										"portal",
-										"ruin"
+								]
+							},
+							{
+								"title": "All World Bosses",
+								"description": "For 'content': automatically sets all world bosses.",
+								"type": "array",
+								"enum": [
+									[
+										"kaul",
+										"eldrask",
+										"hekawt",
+										"sirius"
 									]
-								},
-								{
-									"title": "POI",
-									"description": "To be used only with 'poi_biomes'.",
-									"enum": [
-										"wolfswood",
-										"keep",
-										"starpoint"
-									]
-								},
-								{
-									"title": "Other",
-									"description": "Content that doesn't fit in the other categories.",
-									"enum": [
-										"corridorsroom",
-										"arena",
-										"rush",
-										"rushwave",
-										"gallery",
-										"galleryround",
-										"r1daily",
-										"r2daily",
-										"r3daily",
-										"delvebounty",
-										"fishingcombat"
-									]
-								}
-							]
-						},
+								]
+							}
+						],
 						"options": {
 							"dependencies": {
 								"type": [
