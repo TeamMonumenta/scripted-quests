@@ -306,6 +306,7 @@
 								"type": "array",
 								"enum": [
 									[
+										"labs",
 										"white",
 										"orange",
 										"magenta",
