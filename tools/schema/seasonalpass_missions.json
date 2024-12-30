@@ -176,7 +176,7 @@
 									"anyOf": [
 										{
 											"title": "Custom",
-											"description": "In case content is missing from the dropdowns."
+											"description": "In case content is missing from the dropdowns. If something is missing, it should be requested to be added."
 										},
 										{
 											"title": "Dungeon",
@@ -292,7 +292,6 @@
 								"type": "array",
 								"enum": [
 									[
-										"labs",
 										"reverie",
 										"willows",
 										"shiftingcity",
@@ -306,7 +305,6 @@
 								"type": "array",
 								"enum": [
 									[
-										"labs",
 										"white",
 										"orange",
 										"magenta",
