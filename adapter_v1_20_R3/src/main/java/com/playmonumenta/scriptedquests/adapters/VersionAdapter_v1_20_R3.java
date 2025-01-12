@@ -7,6 +7,9 @@ import io.papermc.paper.adventure.PaperAdventure;
 import java.util.UUID;
 import javax.annotation.Nullable;
 import net.kyori.adventure.text.Component;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.execution.ExecutionContext;
 import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.block.entity.CommandBlockEntity;
@@ -23,8 +26,8 @@ import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+@SuppressWarnings("unchecked")
 public class VersionAdapter_v1_20_R3 implements VersionAdapter {
-
 	@Override
 	public void setAutoState(CommandBlock state, boolean auto) {
 		((CraftCommandBlock) state).getTileEntity().setAutomatic(auto);
@@ -65,15 +68,54 @@ public class VersionAdapter_v1_20_R3 implements VersionAdapter {
 		}
 	}
 
+	// https://linkie.shedaniel.dev/mappings?namespace=mojang_raw&version=1.20.4&search=CURRENT_EXECUTION_CONTEXT&translateMode=none
+	private static ThreadLocal<ExecutionContext<CommandSourceStack>> CURRENT_EXECUTION_CONTEXT;
+
+	static {
+		try {
+			final var field = Commands.class.getDeclaredField("f");
+			field.setAccessible(true);
+			CURRENT_EXECUTION_CONTEXT = (ThreadLocal<ExecutionContext<CommandSourceStack>>) field.get(null);
+		} catch (NoSuchFieldException | IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private void dispatchCommandInNewContext(Runnable exec) {
+		// We can't actually use Commands.performCommand directly here, since that would break if
+		// runConsoleCommandSilently is ran *while* handling another command. This is because minecraft will enqueue
+		// the command we want to run into the current active ExecutionContext, rather than immediately performing the
+		// command. Thus, the command we intend to run will be executed after the current command has completed, rather
+		// than while the current command is running. We therefore need to modify the behavior here.
+		final var currContext = CURRENT_EXECUTION_CONTEXT.get();
+
+		// The goal of this is to trick minecraft into thinking there isn't an active command context.
+		//noinspection ThreadLocalSetWithNull
+		CURRENT_EXECUTION_CONTEXT.set(null);
+		exec.run();
+		CURRENT_EXECUTION_CONTEXT.set(currContext);
+	}
+
 	@Override
 	public void executeCommandAsBlock(Block block, String command) {
-		CommandBlockEntity tileEntity = new CommandBlockEntity(((CraftBlock) block).getPosition(), ((CraftBlockState) block.getState()).getHandle());
-		Bukkit.dispatchCommand(tileEntity.getCommandBlock().getBukkitSender(tileEntity.getCommandBlock().createCommandSourceStack()), command);
+		CommandBlockEntity tileEntity = new CommandBlockEntity(
+			((CraftBlock) block).getPosition(),
+			((CraftBlockState) block.getState()).getHandle()
+		);
+
+		dispatchCommandInNewContext(() -> {
+			final var source = tileEntity.getCommandBlock().createCommandSourceStack();
+			final var sender = tileEntity.getCommandBlock().getBukkitSender(source);
+			Bukkit.dispatchCommand(sender, command);
+		});
 	}
 
 	@Override
 	public void runConsoleCommandSilently(String command) {
-		MinecraftServer.getServer().getCommands().performCommand(MinecraftServer.getServer().getCommands().getDispatcher().parse(command, MinecraftServer.getServer().createCommandSourceStack().withSuppressedOutput()), command);
+		dispatchCommandInNewContext(() -> {
+			final var source = MinecraftServer.getServer().createCommandSourceStack().withSuppressedOutput();
+			final var parseResults = MinecraftServer.getServer().getCommands().getDispatcher().parse(command, source);
+			MinecraftServer.getServer().getCommands().performCommand(parseResults, command);
+		});
 	}
-
 }
