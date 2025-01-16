@@ -28,6 +28,7 @@ public class GrowableStructure {
 		private final int mDZ;
 		private final int mDepth;
 		private final BlockData mData;
+		private final List<BlockData> mExclude;
 
 		private GrowableElement(int dx, int dy, int dz, int depth, BlockData data) {
 			mDX = dx;
@@ -35,6 +36,7 @@ public class GrowableStructure {
 			mDZ = dz;
 			mDepth = depth;
 			mData = data;
+			mExclude = null;
 		}
 
 		private GrowableElement(JsonObject obj) throws Exception {
@@ -43,6 +45,15 @@ public class GrowableStructure {
 			mDZ = obj.get("dz").getAsInt();
 			mDepth = obj.get("depth").getAsInt();
 			mData = Bukkit.getServer().createBlockData(obj.get("data").getAsString());
+			if (obj.has("exclude")) {
+				mExclude = new ArrayList<>();
+				JsonArray blocks = obj.getAsJsonArray("exclude");
+				for(JsonElement block : blocks) {
+					mExclude.add(Bukkit.getServer().createBlockData(block.getAsString()));
+				}
+			} else {
+				mExclude = null;
+			}
 		}
 
 		private Block getBlock(Location origin) {
@@ -63,6 +74,9 @@ public class GrowableStructure {
 			obj.addProperty("dz", mDZ);
 			obj.addProperty("depth", mDepth);
 			obj.addProperty("data", mData.getAsString());
+			if (mExclude != null) {
+				obj.add("exclude", (JsonElement) mExclude);
+			}
 			return obj;
 		}
 	}
