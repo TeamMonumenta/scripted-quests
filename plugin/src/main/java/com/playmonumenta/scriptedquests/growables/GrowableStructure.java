@@ -36,7 +36,7 @@ public class GrowableStructure {
 			mDZ = dz;
 			mDepth = depth;
 			mData = data;
-			mExclude = null;
+			mExclude = new ArrayList<>();
 		}
 
 		private GrowableElement(JsonObject obj) throws Exception {
@@ -45,20 +45,23 @@ public class GrowableStructure {
 			mDZ = obj.get("dz").getAsInt();
 			mDepth = obj.get("depth").getAsInt();
 			mData = Bukkit.getServer().createBlockData(obj.get("data").getAsString());
-			if (obj.has("exclude")) {
+			if (obj.get("exclude") != null) {
 				mExclude = new ArrayList<>();
-				JsonArray blocks = obj.getAsJsonArray("exclude");
+				JsonArray blocks = obj.get("exclude").getAsJsonArray();
 				for(JsonElement block : blocks) {
-					mExclude.add(Bukkit.getServer().createBlockData(block.getAsString()));
+					BlockData type = Bukkit.getServer().createBlockData(block.getAsString());
+					mExclude.add(type);
 				}
 			} else {
-				mExclude = null;
+				mExclude = new ArrayList<>();
 			}
 		}
 
 		private Block getBlock(Location origin) {
 			return origin.clone().add(mDX, mDY, mDZ).getBlock();
 		}
+
+		private List<BlockData> getExclusionList() { return mExclude; }
 
 		private BlockState getBlockState(Location origin) {
 			BlockState state = getBlock(origin).getState();
@@ -68,14 +71,19 @@ public class GrowableStructure {
 		}
 
 		protected JsonObject getAsJsonObject() {
+			JsonArray array = new JsonArray();
+			for (BlockData item : mExclude) {
+				array.add(item.getAsString());
+			}
+
 			JsonObject obj = new JsonObject();
 			obj.addProperty("dx", mDX);
 			obj.addProperty("dy", mDY);
 			obj.addProperty("dz", mDZ);
 			obj.addProperty("depth", mDepth);
 			obj.addProperty("data", mData.getAsString());
-			if (mExclude != null) {
-				obj.add("exclude", (JsonElement) mExclude);
+			if (!array.isEmpty()) {
+				obj.add("exclude", array);
 			}
 			return obj;
 		}
@@ -238,7 +246,15 @@ public class GrowableStructure {
 		List<BlockState> states = new ArrayList<>(mElements.size());
 
 		for (GrowableElement element : mElements) {
-			states.add(element.getBlockState(origin));
+			if (!element.getExclusionList().isEmpty()) {
+				if (element.getExclusionList().contains(element.getBlock(origin).getBlockData())) {
+					states.add(null); // in exclusion list - do not change
+				} else {
+					states.add(element.getBlockState(origin));
+				}
+			} else {
+				states.add(element.getBlockState(origin));
+			}
 		}
 
 		return new GrowableProgress(states, origin, ticksPerStep, blocksPerStep, callStructureGrowEvent);
