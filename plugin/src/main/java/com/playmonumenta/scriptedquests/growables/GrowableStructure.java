@@ -29,6 +29,7 @@ public class GrowableStructure {
 		private final int mDepth;
 		private final BlockData mData;
 		private final List<BlockData> mExclude;
+		private final List<BlockData> mInclude;
 
 		private GrowableElement(int dx, int dy, int dz, int depth, BlockData data) {
 			mDX = dx;
@@ -37,6 +38,7 @@ public class GrowableStructure {
 			mDepth = depth;
 			mData = data;
 			mExclude = new ArrayList<>();
+			mInclude = new ArrayList<>();
 		}
 
 		private GrowableElement(JsonObject obj) throws Exception {
@@ -45,15 +47,20 @@ public class GrowableStructure {
 			mDZ = obj.get("dz").getAsInt();
 			mDepth = obj.get("depth").getAsInt();
 			mData = Bukkit.getServer().createBlockData(obj.get("data").getAsString());
+			mExclude = new ArrayList<>();
+			mInclude = new ArrayList<>();
 			if (obj.get("excludes") != null) {
-				mExclude = new ArrayList<>();
 				JsonArray blocks = obj.get("excludes").getAsJsonArray();
 				for (JsonElement block : blocks) {
 					BlockData type = Bukkit.getServer().createBlockData(block.getAsString());
 					mExclude.add(type);
 				}
-			} else {
-				mExclude = new ArrayList<>();
+			} else if (obj.get("includes") != null) {
+				JsonArray blocks = obj.get("includes").getAsJsonArray();
+				for (JsonElement block : blocks) {
+					BlockData type = Bukkit.getServer().createBlockData(block.getAsString());
+					mInclude.add(type);
+				}
 			}
 		}
 
@@ -62,6 +69,8 @@ public class GrowableStructure {
 		}
 
 		private List<BlockData> getExclusionList() { return mExclude; }
+
+		private List<BlockData> getInclusionList() { return mInclude; }
 
 		private BlockState getBlockState(Location origin) {
 			BlockState state = getBlock(origin).getState();
@@ -72,8 +81,17 @@ public class GrowableStructure {
 
 		protected JsonObject getAsJsonObject() {
 			JsonArray array = new JsonArray();
-			for (BlockData item : mExclude) {
-				array.add(item.getAsString());
+			String type = null;
+			if(!mExclude.isEmpty()) {
+				type = "excludes";
+				for (BlockData item : mExclude) {
+					array.add(item.getAsString());
+				}
+			} else if (!mInclude.isEmpty()) {
+				type = "includes";
+				for (BlockData item : mInclude) {
+					array.add(item.getAsString());
+				}
 			}
 
 			JsonObject obj = new JsonObject();
@@ -82,8 +100,8 @@ public class GrowableStructure {
 			obj.addProperty("dz", mDZ);
 			obj.addProperty("depth", mDepth);
 			obj.addProperty("data", mData.getAsString());
-			if (!array.isEmpty()) {
-				obj.add("excludes", array);
+			if (!array.isEmpty() && type != null) {
+				obj.add(type, array);
 			}
 			return obj;
 		}
@@ -251,6 +269,12 @@ public class GrowableStructure {
 					states.add(null); // in exclusion list - do not change
 				} else {
 					states.add(element.getBlockState(origin));
+				}
+			} else if (!element.getInclusionList().isEmpty()) {
+				if (element.getInclusionList().contains(element.getBlock(origin).getBlockData())) {
+					states.add(element.getBlockState(origin)); // in inclusion list - keep
+				} else {
+					states.add(null);
 				}
 			} else {
 				states.add(element.getBlockState(origin));
