@@ -45,10 +45,10 @@ public class GrowableStructure {
 			mDZ = obj.get("dz").getAsInt();
 			mDepth = obj.get("depth").getAsInt();
 			mData = Bukkit.getServer().createBlockData(obj.get("data").getAsString());
-			if (obj.get("exclude") != null) {
+			if (obj.get("excludes") != null) {
 				mExclude = new ArrayList<>();
-				JsonArray blocks = obj.get("exclude").getAsJsonArray();
-				for(JsonElement block : blocks) {
+				JsonArray blocks = obj.get("excludes").getAsJsonArray();
+				for (JsonElement block : blocks) {
 					BlockData type = Bukkit.getServer().createBlockData(block.getAsString());
 					mExclude.add(type);
 				}
@@ -83,7 +83,7 @@ public class GrowableStructure {
 			obj.addProperty("depth", mDepth);
 			obj.addProperty("data", mData.getAsString());
 			if (!array.isEmpty()) {
-				obj.add("exclude", array);
+				obj.add("excludes", array);
 			}
 			return obj;
 		}
