@@ -28,6 +28,8 @@ public class GrowableStructure {
 		private final int mDZ;
 		private final int mDepth;
 		private final BlockData mData;
+		private final List<BlockData> mExclude;
+		private final List<BlockData> mInclude;
 
 		private GrowableElement(int dx, int dy, int dz, int depth, BlockData data) {
 			mDX = dx;
@@ -35,6 +37,8 @@ public class GrowableStructure {
 			mDZ = dz;
 			mDepth = depth;
 			mData = data;
+			mExclude = new ArrayList<>();
+			mInclude = new ArrayList<>();
 		}
 
 		private GrowableElement(JsonObject obj) throws Exception {
@@ -43,11 +47,30 @@ public class GrowableStructure {
 			mDZ = obj.get("dz").getAsInt();
 			mDepth = obj.get("depth").getAsInt();
 			mData = Bukkit.getServer().createBlockData(obj.get("data").getAsString());
+			mExclude = new ArrayList<>();
+			mInclude = new ArrayList<>();
+			if (obj.get("excludes") != null) {
+				JsonArray blocks = obj.get("excludes").getAsJsonArray();
+				for (JsonElement block : blocks) {
+					BlockData type = Bukkit.getServer().createBlockData(block.getAsString());
+					mExclude.add(type);
+				}
+			} else if (obj.get("includes") != null) {
+				JsonArray blocks = obj.get("includes").getAsJsonArray();
+				for (JsonElement block : blocks) {
+					BlockData type = Bukkit.getServer().createBlockData(block.getAsString());
+					mInclude.add(type);
+				}
+			}
 		}
 
 		private Block getBlock(Location origin) {
 			return origin.clone().add(mDX, mDY, mDZ).getBlock();
 		}
+
+		private List<BlockData> getExclusionList() { return mExclude; }
+
+		private List<BlockData> getInclusionList() { return mInclude; }
 
 		private BlockState getBlockState(Location origin) {
 			BlockState state = getBlock(origin).getState();
@@ -57,12 +80,29 @@ public class GrowableStructure {
 		}
 
 		protected JsonObject getAsJsonObject() {
+			JsonArray array = new JsonArray();
+			String type = null;
+			if(!mExclude.isEmpty()) {
+				type = "excludes";
+				for (BlockData item : mExclude) {
+					array.add(item.getAsString());
+				}
+			} else if (!mInclude.isEmpty()) {
+				type = "includes";
+				for (BlockData item : mInclude) {
+					array.add(item.getAsString());
+				}
+			}
+
 			JsonObject obj = new JsonObject();
 			obj.addProperty("dx", mDX);
 			obj.addProperty("dy", mDY);
 			obj.addProperty("dz", mDZ);
 			obj.addProperty("depth", mDepth);
 			obj.addProperty("data", mData.getAsString());
+			if (!array.isEmpty() && type != null) {
+				obj.add(type, array);
+			}
 			return obj;
 		}
 	}
@@ -224,7 +264,17 @@ public class GrowableStructure {
 		List<BlockState> states = new ArrayList<>(mElements.size());
 
 		for (GrowableElement element : mElements) {
-			states.add(element.getBlockState(origin));
+			if (!element.getExclusionList().isEmpty()) {
+				if (!element.getExclusionList().contains(element.getBlock(origin).getBlockData())) {
+					states.add(element.getBlockState(origin)); // not in exclusion list - keep
+				}
+			} else if (!element.getInclusionList().isEmpty()) {
+				if (element.getInclusionList().contains(element.getBlock(origin).getBlockData())) {
+					states.add(element.getBlockState(origin)); // in inclusion list - keep
+				}
+			} else {
+				states.add(element.getBlockState(origin));
+			}
 		}
 
 		return new GrowableProgress(states, origin, ticksPerStep, blocksPerStep, callStructureGrowEvent);
