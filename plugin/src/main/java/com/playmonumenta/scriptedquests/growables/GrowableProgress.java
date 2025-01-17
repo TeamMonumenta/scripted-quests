@@ -48,10 +48,9 @@ public class GrowableProgress {
 						return;
 					}
 					blocks.get(mIdx).update(true);
-
 					mIdx++;
-					mBlocksPlaced += 1;
 
+					mBlocksPlaced += 1;
 				}
 			}
 		};
