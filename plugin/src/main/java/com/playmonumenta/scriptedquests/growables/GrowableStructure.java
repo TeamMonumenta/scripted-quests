@@ -265,16 +265,12 @@ public class GrowableStructure {
 
 		for (GrowableElement element : mElements) {
 			if (!element.getExclusionList().isEmpty()) {
-				if (element.getExclusionList().contains(element.getBlock(origin).getBlockData())) {
-					states.add(null); // in exclusion list - do not change
-				} else {
-					states.add(element.getBlockState(origin));
+				if (!element.getExclusionList().contains(element.getBlock(origin).getBlockData())) {
+					states.add(element.getBlockState(origin)); // not in exclusion list - keep
 				}
 			} else if (!element.getInclusionList().isEmpty()) {
 				if (element.getInclusionList().contains(element.getBlock(origin).getBlockData())) {
 					states.add(element.getBlockState(origin)); // in inclusion list - keep
-				} else {
-					states.add(null);
 				}
 			} else {
 				states.add(element.getBlockState(origin));

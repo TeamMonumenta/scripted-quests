@@ -47,12 +47,10 @@ public class GrowableProgress {
 						setFinished(false); // Note: Cancels runnable
 						return;
 					}
+					blocks.get(mIdx).update(true);
 
-					if (blocks.get(mIdx) != null) {
-						blocks.get(mIdx).update(true);
-						mBlocksPlaced += 1; // Only counts blocks up if successfully placed
-					}
 					mIdx++;
+					mBlocksPlaced += 1;
 
 				}
 			}
