@@ -24,6 +24,7 @@ import com.playmonumenta.scriptedquests.managers.WaypointManager;
 import com.playmonumenta.scriptedquests.managers.ZonePropertyManager;
 import com.playmonumenta.scriptedquests.protocollib.ProtocolLibIntegration;
 import com.playmonumenta.scriptedquests.timers.CommandTimerManager;
+import com.playmonumenta.scriptedquests.utils.CustomInventory;
 import com.playmonumenta.scriptedquests.utils.MetadataUtils;
 import com.playmonumenta.scriptedquests.utils.NmsUtils;
 import com.playmonumenta.scriptedquests.zones.ZoneManager;
@@ -170,6 +171,7 @@ public class Plugin extends JavaPlugin {
 		manager.registerEvents(mZonePropertyManager, this);
 		manager.registerEvents(mTradeManager, this);
 		manager.registerEvents(mZoneEventListener, this);
+		manager.registerEvents(new CustomInventory.InventoryListener(), this);
 
 		// Hook into ProtocolLib if present
 		if (Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) {
