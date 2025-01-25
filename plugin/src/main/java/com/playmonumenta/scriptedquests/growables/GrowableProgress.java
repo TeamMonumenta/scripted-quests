@@ -47,7 +47,6 @@ public class GrowableProgress {
 						setFinished(false); // Note: Cancels runnable
 						return;
 					}
-
 					blocks.get(mIdx).update(true);
 					mIdx++;
 
