@@ -219,7 +219,9 @@
 												"eldrask",
 												"hekawt",
 												"godspore",
-												"sirius"
+												"sirius",
+												"huntsspoiled",
+												"huntsunspoiled"
 											]
 										},
 										{
@@ -339,7 +341,9 @@
 										"eldrask",
 										"hekawt",
 										"godspore",
-										"sirius"
+										"sirius",
+										"huntsspoiled",
+										"huntsunspoiled"
 									]
 								]
 							},
