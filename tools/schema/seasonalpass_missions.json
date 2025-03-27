@@ -110,7 +110,6 @@
 							"spawners",
 							"spawners_poi",
 							"strikes",
-							"rod_waves",
 							"depths_rooms",
 							"zenith_rooms",
 							"zenith_ascension"
@@ -220,7 +219,9 @@
 												"eldrask",
 												"hekawt",
 												"godspore",
-												"sirius"
+												"sirius",
+												"huntsspoiled",
+												"huntsunspoiled"
 											]
 										},
 										{
@@ -258,7 +259,8 @@
 												"r2daily",
 												"r3daily",
 												"delvebounty",
-												"fishingcombat"
+												"fishingcombat",
+												"skr"
 											]
 										}
 									]
@@ -339,7 +341,9 @@
 										"eldrask",
 										"hekawt",
 										"godspore",
-										"sirius"
+										"sirius",
+										"huntsspoiled",
+										"huntsunspoiled"
 									]
 								]
 							},
