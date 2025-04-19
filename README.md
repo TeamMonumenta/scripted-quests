@@ -260,10 +260,18 @@ an NPC, quest components are run in-order (more than one may be executed).
   put them in quotes similar to json.
 ### Debug commands
 
-`/debugzones <player>`
-`/debugzones <position>`
+`/debugzones minimal <position>`
 - permission: `scriptedquests.debugzones`
-- Get debug information about which zone a player or position is.
+- Tells you the name of the zone at that location.
+
+`/debugzones world <position>`
+- permission: `scriptedquests.debugzones`
+- Tells you which worlds match which regular expressions for each zone at that location.
+
+`/debugzones full <player>`
+`/debugzones full <position>`
+- permission: `scriptedquests.debugzones`
+- Provides detailed debug information for zones at the specified location. This is useful for verifying changes to the zone plugin code within ScriptedQuests, but is overkill for editing zones.
 
 `/showzones hide`
 `/showzones show <namespaceName> [propertyName]`
