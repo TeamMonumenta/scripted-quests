@@ -24,26 +24,38 @@ import org.jetbrains.annotations.Nullable;
 
 public class QuestCompassManager {
 
-	private final List<QuestCompass> mQuests = new ArrayList<QuestCompass>();
-	private final Map<UUID, CompassCacheEntry> mCompassCache = new HashMap<UUID, CompassCacheEntry>();
-	private final Map<Player, Integer> mCurrentIndex = new WeakHashMap<>();
-	private final Plugin mPlugin;
+	public final List<QuestCompass> mQuests = new ArrayList<QuestCompass>();
+	public final Map<UUID, CompassCacheEntry> mCompassCache = new HashMap<UUID, CompassCacheEntry>();
+	public final Map<Player, Integer> mCurrentIndex = new WeakHashMap<>();
+	public final Plugin mPlugin;
 
 	/* One command-specified waypoint per player */
 	public final Map<UUID, ValidCompassEntry> mCommandWaypoints = new HashMap<UUID, ValidCompassEntry>();
 
-	private static class ValidCompassEntry {
-		private final QuestLocation mLocation;
-		private final String mTitle;
-		private final boolean mAllowTranslations;
+	public static class ValidCompassEntry {
+		public final QuestLocation mLocation;
+		public final String mTitle;
+		public final boolean mAllowTranslations;
+		public final CompassEntryType mType;
+		public final int[] mMarkersIndex;
 
-		private ValidCompassEntry(QuestLocation loc, String title, boolean allowTranslations) {
+		public ValidCompassEntry(QuestLocation loc, String title, boolean allowTranslations, CompassEntryType type) {
 			mLocation = loc;
 			mTitle = title;
 			mAllowTranslations = allowTranslations;
+			mType = type;
+			mMarkersIndex = new int[]{1, 1};
 		}
 
-		private void directPlayer(WaypointManager mgr, Player player, boolean isRemovable) {
+		public ValidCompassEntry(QuestLocation loc, String title, boolean allowTranslations, CompassEntryType type, int[] markersIndex) {
+			mLocation = loc;
+			mTitle = title;
+			mAllowTranslations = allowTranslations;
+			mType = type;
+			mMarkersIndex = markersIndex;
+		}
+
+		public void directPlayer(WaypointManager mgr, Player player, boolean isRemovable) {
 			if (isRemovable) {
 				MessagingUtils.sendClickableMessage(player, mTitle + ": " + mLocation.getMessage(), mAllowTranslations, "/waypoint remove @s", HoverEvent.showText(Component.text("Click to remove this waypoint.")));
 			} else {
@@ -53,16 +65,22 @@ public class QuestCompassManager {
 		}
 	}
 
-	private static class CompassCacheEntry {
-		private final int mLastRefresh;
-		private final List<ValidCompassEntry> mEntries;
+	public enum CompassEntryType {
+		Quest(),
+		Death(),
+		Waypoint()
+	}
 
-		private CompassCacheEntry(Player player, List<ValidCompassEntry> entries) {
+	public static class CompassCacheEntry {
+		public final int mLastRefresh;
+		public final List<ValidCompassEntry> mEntries;
+
+		public CompassCacheEntry(Player player, List<ValidCompassEntry> entries) {
 			mLastRefresh = player.getTicksLived();
 			mEntries = entries;
 		}
 
-		private boolean isStillValid(Player player) {
+		public boolean isStillValid(Player player) {
 			return Math.abs(player.getTicksLived() - mLastRefresh) < 200;
 		}
 	}
@@ -85,7 +103,7 @@ public class QuestCompassManager {
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<ValidCompassEntry> getCurrentMarkerTitles(Player player) {
+	public List<ValidCompassEntry> getCurrentMarkerTitles(Player player) {
 		/*
 		 * First check the cache - if it is still valid, returned the cached data
 		 * This dramatically improves performance when there are many compass entries
@@ -112,7 +130,7 @@ public class QuestCompassManager {
 					title += " [" + (i + 1) + "/" + questMarkers.size() + "]";
 				}
 
-				entries.add(new ValidCompassEntry(questMarkers.get(i), title, true));
+				entries.add(new ValidCompassEntry(questMarkers.get(i), title, true, CompassEntryType.Quest, new int[]{i + 1, questMarkers.size()}));
 			}
 		}
 
@@ -128,7 +146,7 @@ public class QuestCompassManager {
 					title += " [" + (i + 1) + "/" + deathEntries.size() + "]";
 				}
 
-				entries.add(new ValidCompassEntry(deathEntries.get(i), title, false));
+				entries.add(new ValidCompassEntry(deathEntries.get(i), title, false, CompassEntryType.Death));
 			}
 		}
 
@@ -144,7 +162,7 @@ public class QuestCompassManager {
 		return entries;
 	}
 
-	private int showCurrentQuest(Player player, int index) {
+	public int showCurrentQuest(Player player, int index) {
 		List<ValidCompassEntry> entries = getCurrentMarkerTitles(player);
 
 		if (index >= entries.size()) {
@@ -178,9 +196,9 @@ public class QuestCompassManager {
 
 	/* One command-specified waypoint per player */
 	public void setCommandWaypoint(Player player, List<Location> steps, String title, String message) {
-		ValidCompassEntry entry = new ValidCompassEntry(new CompassLocation(null, message, steps), title, false);
+		ValidCompassEntry entry = new ValidCompassEntry(new CompassLocation(null, message, steps), title, false, CompassEntryType.Waypoint);
 		mCommandWaypoints.put(player.getUniqueId(), entry);
-		getCurrentMarkerTitles(player);
+		mCurrentIndex.put(player, getCurrentMarkerTitles(player).indexOf(mCommandWaypoints.get(player.getUniqueId())));
 		entry.directPlayer(mPlugin.mWaypointManager, player, true);
 	}
 

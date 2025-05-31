@@ -2,6 +2,8 @@ package com.playmonumenta.scriptedquests.listeners;
 
 import com.playmonumenta.scriptedquests.Constants;
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.managers.QuestCompassGui;
+import com.playmonumenta.scriptedquests.managers.QuestCompassManager;
 import com.playmonumenta.scriptedquests.managers.SongManager;
 import com.playmonumenta.scriptedquests.point.Point;
 import com.playmonumenta.scriptedquests.quests.QuestDeath.DeathActions;
@@ -70,7 +72,7 @@ public class PlayerListener implements Listener {
 			if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
 				mPlugin.mQuestCompassManager.showCurrentQuest(player);
 			} else if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
-				mPlugin.mQuestCompassManager.cycleQuestTracker(player);
+				new QuestCompassGui(player, mPlugin.mQuestCompassManager).openInventory(player, mPlugin);
 			}
 		}
 
