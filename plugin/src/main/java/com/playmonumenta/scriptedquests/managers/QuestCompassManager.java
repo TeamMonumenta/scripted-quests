@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.WeakHashMap;
+
+import dev.jorel.commandapi.arguments.ChatColorArgument;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
 import org.bukkit.ChatColor;
@@ -146,7 +148,7 @@ public class QuestCompassManager {
 					title += " [" + (i + 1) + "/" + deathEntries.size() + "]";
 				}
 
-				entries.add(new ValidCompassEntry(deathEntries.get(i), title, false, CompassEntryType.Death));
+				entries.add(new ValidCompassEntry(deathEntries.get(i), title, false, CompassEntryType.Death, new int[]{i + 1, deathEntries.size()}));
 			}
 		}
 
@@ -206,8 +208,8 @@ public class QuestCompassManager {
 	public void removeCommandWaypoint(Player player) {
 		if (mCommandWaypoints.containsKey(player.getUniqueId())) {
 			mCommandWaypoints.remove(player.getUniqueId());
+			invalidateCache(player);
 			getCurrentMarkerTitles(player);
-			mPlugin.mWaypointManager.setWaypoint(player, null);
 		}
 	}
 
