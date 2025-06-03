@@ -217,9 +217,6 @@ public class QuestCompassGui extends CustomInventory {
 		int index = item.getItemMeta().getCustomModelData();
 		mManager.mCurrentIndex.put(player, mManager.showCurrentQuest(player, index));
 		player.playSound(player.getLocation(), Sound.UI_LOOM_TAKE_RESULT, SoundCategory.PLAYERS, 1f, 1f);
-		if (slot == mCustomSlot) {
-			player.playSound(player.getLocation(), "minecraft:block.trial_spawner.eject_item", SoundCategory.PLAYERS, 1f, 2f);
-		}
 		close();
 	}
 }
