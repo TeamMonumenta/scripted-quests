@@ -14,12 +14,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.WeakHashMap;
-
-import dev.jorel.commandapi.arguments.ChatColorArgument;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
@@ -171,7 +171,7 @@ public class QuestCompassManager {
 			index = 0;
 		}
 
-		if (entries.isEmpty()) {
+		if (entries.isEmpty() || index == -1) {
 			MessagingUtils.sendActionBarMessage(player, "You have no active quest.");
 			mPlugin.mWaypointManager.setWaypoint(player, null);
 		} else {
@@ -189,11 +189,20 @@ public class QuestCompassManager {
 
 	public void cycleQuestTracker(Player player) {
 		Integer index = mCurrentIndex.getOrDefault(player, 0);
-		index += 1;
+		if (index < 0) {
+			showCurrentQuest(player, index);
+			return;
+		}
 
-		index = showCurrentQuest(player, index);
+		ValidCompassEntry quest = mCompassCache.get(player.getUniqueId()).mEntries.get(index);
+		if (quest.mMarkersIndex[0] == quest.mMarkersIndex[1]) {
+			index += 1 - quest.mMarkersIndex[1];
+		} else {
+			index += 1;
+		}
 
-		mCurrentIndex.put(player, index);
+		mCurrentIndex.put(player, showCurrentQuest(player, index));
+		player.playSound(player.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, SoundCategory.PLAYERS, 1f, 1.5f);
 	}
 
 	/* One command-specified waypoint per player */
@@ -201,6 +210,7 @@ public class QuestCompassManager {
 		ValidCompassEntry entry = new ValidCompassEntry(new CompassLocation(null, message, steps), title, false, CompassEntryType.Waypoint);
 		mCommandWaypoints.put(player.getUniqueId(), entry);
 		mCurrentIndex.put(player, getCurrentMarkerTitles(player).indexOf(mCommandWaypoints.get(player.getUniqueId())));
+		invalidateCache(player);
 		entry.directPlayer(mPlugin.mWaypointManager, player, true);
 	}
 

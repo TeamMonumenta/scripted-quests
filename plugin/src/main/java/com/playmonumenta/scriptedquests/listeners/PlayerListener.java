@@ -68,11 +68,13 @@ public class PlayerListener implements Listener {
 
 		// compass
 		if (useItem != Event.Result.DENY && item != null
-		    && item.getType() == Material.COMPASS && !player.isSneaking()) {
-			if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
+		    && item.getType() == Material.COMPASS) {
+			if ((action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) && !player.isSneaking()) {
 				mPlugin.mQuestCompassManager.showCurrentQuest(player);
-			} else if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
+			} else if ((action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) && !player.isSneaking()) {
 				new QuestCompassGui(player, mPlugin.mQuestCompassManager).openInventory(player, mPlugin);
+			} else if ((action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) && player.isSneaking()) {
+				mPlugin.mQuestCompassManager.cycleQuestTracker(player);
 			}
 		}
 
