@@ -529,7 +529,6 @@ public class Race {
 
 			}
 		}
-`
 		if (mScoreboard != null) {
 			Score score = mScoreboard.getScore(mPlayer.getName());
 			if (!score.isScoreSet() || score.getScore() == 0 || endTime < score.getScore()) {
