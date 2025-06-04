@@ -23,7 +23,18 @@ import org.jetbrains.annotations.Nullable;
  * combined into a single QuestNpc
  */
 public class QuestNpc {
+	private static final List<String> VALID_KEYS = List.of(
+		"npc",
+		"display_name",
+		"file_prerequisites",
+		"quest_components",
+		"right_click_components",
+		"entity_type",
+		"visibility_prerequisites"
+	);
+
 	private final QuestComponentList mComponents = new QuestComponentList();
+	private final QuestComponentList mRightClickComponents = new QuestComponentList();
 	private final String mNpcName;
 	private final String mDisplayName;
 	private final @Nullable QuestPrerequisites mFilePrerequisites;
@@ -31,7 +42,7 @@ public class QuestNpc {
 	private @Nullable QuestPrerequisites mVisibilityPrerequisites;
 
 	public QuestNpc(JsonObject object) throws Exception {
-		// Read the npc's name first
+		// Read the NPC's name first
 		JsonElement npc = object.get("npc");
 		if (npc == null) {
 			throw new Exception("'npc' entry is required");
@@ -74,8 +85,7 @@ public class QuestNpc {
 		for (Entry<String, JsonElement> ent : entries) {
 			String key = ent.getKey();
 
-			if (!key.equals("npc") && !key.equals("display_name") && !key.equals("file_prerequisites")
-				    && !key.equals("quest_components") && !key.equals("entity_type") && !key.equals("visibility_prerequisites")) {
+			if (!VALID_KEYS.contains(key)) {
 				throw new Exception("Unknown quest key: " + key);
 			}
 
@@ -88,6 +98,17 @@ public class QuestNpc {
 
 				for (JsonElement entry : array) {
 					mComponents.add(new QuestComponent(mNpcName, mDisplayName, mEntityType, entry));
+				}
+			}
+
+			if (key.equals("right_click_components")) {
+				JsonArray array = object.getAsJsonArray(key);
+				if (array == null) {
+					throw new Exception("Failed to parse 'right_click_components'");
+				}
+
+				for (JsonElement entry : array) {
+					mRightClickComponents.add(new QuestComponent(mNpcName, mDisplayName, mEntityType, entry));
 				}
 			}
 		}
@@ -108,6 +129,10 @@ public class QuestNpc {
 		return mComponents.getComponents();
 	}
 
+	public List<QuestComponent> getRightClickComponents() {
+		return mRightClickComponents.getComponents();
+	}
+
 	public EntityType getEntityType() {
 		return mEntityType;
 	}
@@ -121,7 +146,11 @@ public class QuestNpc {
 			// if (ClientChatProtocol.shouldSend(context.getPlayer())) {
 			//     ClientChatProtocol.sendPacket(mComponents.getComponents(), context);
 			// } else {
-			mComponents.run(context);
+			if (context.wasPunched()) {
+				mComponents.run(context);
+			} else {
+				mRightClickComponents.run(context);
+			}
 			// }
 			return true;
 		}

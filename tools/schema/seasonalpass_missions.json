@@ -1,0 +1,566 @@
+{
+	"title": "Seasonal Pass Missions",
+	"defaultProperties": [
+		"start_date",
+		"pass_name",
+		"pass_namecolor",
+		"pass_displayitem",
+		"missions"
+	],
+	"additionalProperties": false,
+	"properties": {
+		"start_date": {
+			"required": true,
+			"propertyOrder": 1,
+			"title": "start_date",
+			"description": "The start date of this pass. Format: YYYY-MM-DD",
+			"type": "string",
+			"default": "YYYY-MM-DD"
+		},
+		"pass_name": {
+			"required": true,
+			"propertyOrder": 2,
+			"title": "pass_name",
+			"description": "The name of this pass.",
+			"type": "string",
+			"default": "name"
+		},
+		"pass_namecolor": {
+			"required": true,
+			"propertyOrder": 3,
+			"title": "pass_namecolor",
+			"description": "The color shown on the name of this pass.",
+			"type": "string",
+			"anyOf": [
+				{
+					"title": "Hex Color Picker",
+					"format": "color",
+					"default": "#000000"
+				},
+				{
+					"title": "Minecraft Color",
+					"enum": [
+						"aqua",
+						"black",
+						"blue",
+						"dark_aqua",
+						"dark_blue",
+						"dark_gray",
+						"dark_green",
+						"dark_purple",
+						"dark_red",
+						"gold",
+						"gray",
+						"green",
+						"light_purple",
+						"red",
+						"white",
+						"yellow"
+					]
+				}
+			]
+		},
+		"pass_displayitem": {
+			"required": true,
+			"propertyOrder": 4,
+			"title": "pass_displayitem",
+			"description": "The item displayed on this pass.",
+			"type": "string",
+			"default": "DISPLAY_ITEM"
+		},
+		"missions": {
+			"required": true,
+			"propertyOrder": 5,
+			"title": "Missions",
+			"description": "The missions for this pass. (Do not swap between one week/multi week for a mission.)",
+			"type": "array",
+			"format": "tabs",
+			"minItems": 1,
+			"items": {
+				"defaultProperties": [
+					"type",
+					"is_bonus",
+					"mp",
+					"amount",
+					"description",
+					"content",
+					"region",
+					"delvemodifier",
+					"modifierrank",
+					"rotatingamount",
+					"ascension",
+					"delvepoints"
+				],
+				"properties": {
+					"type": {
+						"required": true,
+						"propertyOrder": 1,
+						"title": "Type",
+						"description": "The type of mission.",
+						"type": "string",
+						"enum": [
+							"content",
+							"regional_content",
+							"challenge_delve",
+							"delve_modifier",
+							"delve_points",
+							"delve_bounty",
+							"daily_bounty",
+							"poi_biome",
+							"spawners",
+							"spawners_poi",
+							"strikes",
+							"depths_rooms",
+							"zenith_rooms",
+							"zenith_ascension"
+						]
+					},
+					"is_bonus": {
+						"propertyOrder": 5,
+						"required": true,
+						"title": "Bonus Week?",
+						"type": "boolean",
+						"format": "checkbox",
+						"default": false
+					},
+					"mp": {
+						"propertyOrder": 6,
+						"required": true,
+						"title": "MP",
+						"description": "The amount of MP rewarded for this mission.",
+						"type": "integer",
+						"anyOf": [
+							{
+								"title": "Custom Value",
+								"description": "Custom point value, assuming it doesn't exist in the dropdowns."
+							},
+							{
+								"title": "Set Value",
+								"description": "Set point values for missions based on the current standard.",
+								"enum": [
+									"50",
+									"75",
+									"100",
+									"200",
+									"300"
+								]
+							}
+						]
+					},
+					"amount": {
+						"propertyOrder": 7,
+						"required": true,
+						"title": "Amount",
+						"description": "The amount of the objective needed to complete the mission.",
+						"type": "integer"
+					},
+					"description": {
+						"propertyOrder": 8,
+						"required": true,
+						"title": "Description",
+						"description": "The description of the mission, shown to the player.",
+						"type": "string"
+					},
+					"content": {
+						"propertyOrder": 9,
+						"required": true,
+						"anyOf": [
+							{
+								"title": "Content - Manual",
+								"description": "for 'content': the content to be ran (certain dungeons, strikes, bosses). \nfor 'challenge_delve'/'delve_points'/'poi_biome': the dungeon(s)/poi(s) to run.",
+								"type": "array",
+								"minItems": 1,
+								"items": {
+									"type": "string",
+									"anyOf": [
+										{
+											"title": "Custom",
+											"description": "In case content is missing from the dropdowns. If something is missing, it should be requested to be added."
+										},
+										{
+											"title": "Dungeon",
+											"description": "Content that is considered a dungeon.",
+											"enum": [
+												"labs",
+												"white",
+												"orange",
+												"magenta",
+												"lightblue",
+												"yellow",
+												"reverie",
+												"willows",
+												"corridors",
+												"lime",
+												"pink",
+												"gray",
+												"lightgray",
+												"cyan",
+												"purple",
+												"teal",
+												"shiftingcity",
+												"forum",
+												"blue",
+												"brown",
+												"skt",
+												"hexfallruten",
+												"hexfallhycenea",
+												"depths",
+												"zenith"
+											]
+										},
+										{
+											"title": "Boss",
+											"description": "Content that is considered a boss.",
+											"enum": [
+												"kaul",
+												"azacor",
+												"snowspirit",
+												"horseman",
+												"eldrask",
+												"hekawt",
+												"godspore",
+												"sirius",
+												"huntsspoiled",
+												"huntsunspoiled"
+											]
+										},
+										{
+											"title": "Strike",
+											"description": "Content that is considered a strike.",
+											"enum": [
+												"verdant",
+												"sanctum",
+												"mist",
+												"remorse",
+												"portal",
+												"ruin"
+											]
+										},
+										{
+											"title": "POI",
+											"description": "To be used only with 'poi_biomes'.",
+											"enum": [
+												"wolfswood",
+												"keep",
+												"starpoint"
+											]
+										},
+										{
+											"title": "Other",
+											"description": "Content that doesn't fit in the other categories.",
+											"enum": [
+												"corridorsroom",
+												"arena",
+												"rush",
+												"rushwave",
+												"gallery",
+												"galleryround",
+												"r1daily",
+												"r2daily",
+												"r3daily",
+												"delvebounty",
+												"fishingcombat",
+												"skr"
+											]
+										}
+									]
+								}
+							},
+							{
+								"title": "All Wool Dungeons",
+								"description": "For 'content': Automatically sets all wool dungeons.",
+								"type": "array",
+								"enum": [
+									[
+										"white",
+										"orange",
+										"magenta",
+										"lightblue",
+										"yellow",
+										"lime",
+										"pink",
+										"gray",
+										"lightgray",
+										"cyan",
+										"purple",
+										"blue",
+										"brown"
+									]
+								]
+							},
+							{
+								"title": "All Bonus Dungeons",
+								"description": "For 'content': Automatically sets all bonus dungeons.",
+								"type": "array",
+								"enum": [
+									[
+										"reverie",
+										"willows",
+										"shiftingcity",
+										"forum"
+									]
+								]
+							},
+							{
+								"title": "All Dungeons",
+								"description": "For 'content': Automatically sets all traditional dungeons.",
+								"type": "array",
+								"enum": [
+									[
+										"white",
+										"orange",
+										"magenta",
+										"lightblue",
+										"yellow",
+										"reverie",
+										"willows",
+										"lime",
+										"pink",
+										"gray",
+										"lightgray",
+										"cyan",
+										"purple",
+										"teal",
+										"shiftingcity",
+										"forum",
+										"blue",
+										"brown"
+									]
+								]
+							},
+							{
+								"title": "All Bosses",
+								"description": "For 'content': automatically sets all bosses.",
+								"type": "array",
+								"enum": [
+									[
+										"kaul",
+										"azacor",
+										"snowspirit",
+										"horseman",
+										"eldrask",
+										"hekawt",
+										"godspore",
+										"sirius",
+										"huntsspoiled",
+										"huntsunspoiled"
+									]
+								]
+							},
+							{
+								"title": "All World Bosses",
+								"description": "For 'content': automatically sets all world bosses.",
+								"type": "array",
+								"enum": [
+									[
+										"kaul",
+										"eldrask",
+										"hekawt",
+										"sirius"
+									]
+								]
+							}
+						],
+						"options": {
+							"dependencies": {
+								"type": [
+									"content",
+									"challenge_delve",
+									"delve_modifier",
+									"delve_points",
+									"poi_biome"
+								]
+							}
+						}
+					},
+					"region": {
+						"propertyOrder": 10,
+						"required": true,
+						"title": "Region",
+						"description": "for 'regional_content': the region the content must be in, from 1-3.",
+						"type": "integer",
+						"default": 1,
+						"options": {
+							"dependencies": {
+								"type": "regional_content"
+							}
+						}
+					},
+					"delvemodifier": {
+						"propertyOrder": 11,
+					    "required": true,
+						"title": "Modifier Type",
+						"description": "for 'delve_modifier': the required modifiers to run. Leave blank if counting rotating modifier amount.",
+						"type": "array",
+						"items": {
+							"type": "string",
+							"anyOf": [
+								{
+									"title": "Custom",
+									"description": "In case a modifier is missing from the dropdowns, OR for Experimentals."
+								},
+								{
+									"title": "Normal",
+									"description": "Normal delve modifiers that always exist every week.",
+									"enum": [
+										"VENGEANCE",
+										"ARCANIC",
+										"INFERNAL",
+										"TRANSCENDENT",
+										"SPECTRAL",
+										"DREADFUL",
+										"COLOSSAL",
+										"CHIVALROUS",
+										"BLOODTHIRSTY",
+										"PERNICIOUS",
+										"LEGIONARY",
+										"CARAPACE",
+										"ENTROPY",
+										"TWISTED"
+									]
+								},
+								{
+									"title": "Rotating",
+									"description": "Rotating delve modifiers that vary week-by-week.",
+									"enum": [
+										"FRAGILE",
+										"ASSASSINS",
+										"ASTRAL",
+										"UNYIELDING",
+										"CHRONOLOGY",
+										"RIFTBORN",
+										"HAUNTED"
+									]
+								}
+							]
+						},
+						"options": {
+							"dependencies": {
+								"type": "delve_modifier"
+							}
+						}
+					},
+					"modifierrank": {
+						"propertyOrder": 12,
+						"required": true,
+						"title": "Modifier Level",
+						"description": "for 'delve_modifier': the required modifier level, 1-5.",
+						"type": "integer",
+						"default": 1,
+						"options": {
+							"dependencies": {
+								"type": "delve_modifier"
+							}
+						}
+					},
+					"rotatingamount": {
+						"propertyOrder": 13,
+						"required": true,
+						"title": "Delve Modifier",
+						"description": "for 'delve_modifier': Number of rotating modifiers that need to be ran. Leave at 0 if specifying a delve mod.",
+						"type": "integer",
+						"default": 0,
+						"options": {
+							"dependencies": {
+								"type": "delve_modifier"
+							}
+						}
+					},
+					"ascension": {
+						"propertyOrder": 14,
+						"required": true,
+						"title": "Ascension",
+						"description": "for 'zenith_ascension': the ascension level.",
+						"type": "integer",
+						"options": {
+							"dependencies": {
+								"type": "zenith_ascension"
+							}
+						}
+					},
+					"delvepoints": {
+						"propertyOrder": 15,
+						"required": true,
+						"title": "Delve Points",
+						"description": "for `delve_points`: the delve point amount.",
+						"type": "integer",
+						"options": {
+							"dependencies": {
+								"type": "delve_points"
+							}
+						}
+					}
+				},
+				"anyOf": [
+					{
+						"title": "Select a Type"
+					},
+					{
+						"title": "One Week Mission",
+						"description": "A mission lasting for a week.",
+						"defaultProperties": [
+							"type",
+							"is_bonus",
+							"mp",
+							"amount",
+							"description",
+							"content",
+							"region",
+							"delvemodifier",
+							"modifierrank",
+							"rotatingamount",
+							"ascension",
+							"delvepoints",
+							"week"
+						],
+						"properties": {
+							"week": {
+								"required": true,
+								"propertyOrder": 2,
+								"title": "Week",
+								"description": "The week number for the mission.",
+								"type": "integer"
+							}
+						}
+					},
+					{
+						"title": "Multi-Week Mission",
+						"description": "A mission occurring over multiple weeks.",
+						"defaultProperties": [
+							"type",
+							"is_bonus",
+							"mp",
+							"amount",
+							"description",
+							"content",
+							"region",
+							"delvemodifier",
+							"modifierrank",
+							"rotatingamount",
+							"ascension",
+							"delvepoints",
+							"firstweek",
+							"lastweek"
+						],
+						"properties": {
+							"firstweek": {
+								"required": true,
+								"propertyOrder": 3,
+								"title": "First Week",
+								"description": "The number of the starting week for the mission.",
+								"type": "integer"
+							},
+							"lastweek": {
+								"required": true,
+								"propertyOrder": 4,
+								"title": "Last Week",
+								"description": "The number of the last week for the mission.",
+								"type": "integer"
+							}
+						}
+					}
+				]
+			}
+		}
+	}
+}

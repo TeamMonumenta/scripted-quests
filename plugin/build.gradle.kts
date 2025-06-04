@@ -40,7 +40,6 @@ tasks {
 		exclude("com/google/errorprone/**")
 		exclude("com/google/j2objc/**")
 		exclude("com/google/thirdparty/**")
-		exclude("org/apache/commons/**")
 		exclude("org/apache/http/**")
 		exclude("org/mortbay/**")
 		relocate("com.fasterxml", "com.playmonumenta.scriptedquests.internal.com.fasterxml")
@@ -52,6 +51,7 @@ tasks {
 		minimize {
 			exclude(project(":adapter_v1_18_R2"))
 			exclude(project(":adapter_v1_19_R3"))
+			exclude(project(":adapter_v1_20_R3"))
 			exclude(dependency("com.playmonumenta.*:.*:.*"))
 			exclude(dependency("dev.jorel.commandapi.*:.*:.*"))
 		}
