@@ -147,15 +147,12 @@ public class NpcTradeManager implements Listener {
 	 * @param player   The player trading
 	 */
 	public void trade(Plugin plugin, Villager villager, Player player) {
-		List<NpcTrader> traderFiles = mTraders.getOrDefault(QuestNpc.squashNpcName(villager.getName()),
-            Collections.emptyList());
+		List<NpcTrader> traderFiles = mTraders.getOrDefault(QuestNpc.squashNpcName(villager.getName()), Collections.emptyList());
 		trade(plugin, traderFiles, villager, villager.customName(), player);
 	}
 
-	public void trade(Plugin plugin, Collection<NpcTrader> traderFiles, @Nullable Villager villager, Component title,
-                      Player player) {
-		QuestContext context = new QuestContext(plugin, player, villager, false, null,
-            player.getInventory().getItemInMainHand());
+	public void trade(Plugin plugin, Collection<NpcTrader> traderFiles, @Nullable Villager villager, Component title, Player player) {
+		QuestContext context = new QuestContext(plugin, player, villager, false, null, player.getInventory().getItemInMainHand());
 		traderFiles = traderFiles.stream().filter(trader -> trader.areFilePrerequisitesMet(context)).toList();
 
 		ArrayList<MerchantRecipe> trades = new ArrayList<>();
@@ -207,9 +204,9 @@ public class NpcTradeManager implements Listener {
 									continue;
 								}
 								MerchantRecipe newRecipe = new MerchantRecipe(overrideTradeItems.get(2),
-                                    recipe.getUses(), recipe.getMaxUses(), recipe.hasExperienceReward(),
-                                    recipe.getVillagerExperience(), recipe.getPriceMultiplier(), recipe.getDemand(),
-                                    recipe.getSpecialPrice(), recipe.shouldIgnoreDiscounts());
+									recipe.getUses(), recipe.getMaxUses(), recipe.hasExperienceReward(),
+									recipe.getVillagerExperience(), recipe.getPriceMultiplier(), recipe.getDemand(),
+									recipe.getSpecialPrice(), recipe.shouldIgnoreDiscounts());
 								newRecipe.setIngredients(overrideTradeItems.subList(0, 2));
 								recipe = newRecipe;
 							}
@@ -237,7 +234,7 @@ public class NpcTradeManager implements Listener {
 					NpcTrade previousTrade = addedTrades.put(trade.getIndex(), trade);
 					if (previousTrade != null) {
 						MMLog.warning("Duplicate added trade for villager '" + (villager == null ? "<unknown>" :
-                            villager.getName()) + "' at index " + trade.getIndex());
+							villager.getName()) + "' at index " + trade.getIndex());
 					}
 				}
 			}
@@ -289,8 +286,8 @@ public class NpcTradeManager implements Listener {
 					}
 					// make a new recipe with the replaced item
 					MerchantRecipe newRecipe = new MerchantRecipe(result, recipe.getUses(), recipe.getMaxUses(),
-                        recipe.hasExperienceReward(), recipe.getVillagerExperience(), recipe.getPriceMultiplier(),
-                        recipe.getDemand(), recipe.getSpecialPrice(), recipe.shouldIgnoreDiscounts());
+						recipe.hasExperienceReward(), recipe.getVillagerExperience(), recipe.getPriceMultiplier(),
+						recipe.getDemand(), recipe.getSpecialPrice(), recipe.shouldIgnoreDiscounts());
 					newRecipe.setIngredients(recipe.getIngredients());
 					trades.set(i, newRecipe);
 				}
@@ -301,14 +298,14 @@ public class NpcTradeManager implements Listener {
 			player.sendMessage(Component.text("Some trader slots were not shown to you:", NamedTextColor.GOLD));
 			if (!lockedSlots.isEmpty()) {
 				player.sendMessage(Component.text("These slots were locked by quest scores: " + lockedSlots,
-                    NamedTextColor.GOLD));
+					NamedTextColor.GOLD));
 			}
 			if (!vanillaSlots.isEmpty()) {
 				player.sendMessage(Component.text("These slots contained a vanilla emerald: " + vanillaSlots,
-                    NamedTextColor.GOLD));
+					NamedTextColor.GOLD));
 			}
 			player.sendMessage(Component.text("This message only appears to operators in creative mode",
-                NamedTextColor.GOLD));
+				NamedTextColor.GOLD));
 		}
 
 		/*
@@ -366,7 +363,7 @@ public class NpcTradeManager implements Listener {
 
 		if (context == null || !(inv instanceof MerchantInventory merchInv) || !merchInv.getMerchant().equals(context.getMerchant())) {
 			player.sendMessage(Component.text("DENIED: You should not have been able to view this interface. If this " +
-                "is a bug, please report it, and try trading with the villager again.", NamedTextColor.RED));
+				"is a bug, please report it, and try trading with the villager again.", NamedTextColor.RED));
 			event.setCancelled(true);
 			Bukkit.getScheduler().runTask(Plugin.getInstance(), () -> player.closeInventory());
 			return;
@@ -391,13 +388,13 @@ public class NpcTradeManager implements Listener {
 
 		if (selectedIndex < 0) {
 			player.sendMessage(Component.text("BUG! Somehow the recipe you selected couldn't be found. Please report " +
-                "this, and include which villager and what you were trading for", NamedTextColor.YELLOW));
+				"this, and include which villager and what you were trading for", NamedTextColor.YELLOW));
 		}
 
 		NpcTrade trade = context.getSlotProperties().get(selectedIndex);
 		if (trade == null) {
 			player.sendMessage(Component.text("BUG! Somehow the trade you selected couldn't be found. Please report " +
-                "this, and include which villager and what you were trading for", NamedTextColor.YELLOW));
+				"this, and include which villager and what you were trading for", NamedTextColor.YELLOW));
 			return;
 		}
 
@@ -595,4 +592,3 @@ public class NpcTradeManager implements Listener {
 	}
 
 }
-
