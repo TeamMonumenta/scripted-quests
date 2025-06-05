@@ -8,8 +8,8 @@ import java.util.Objects;
 import java.util.Random;
 import javax.annotation.Nullable;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Item;
@@ -98,7 +98,7 @@ public class InventoryUtils {
 		}
 
 		if (itemsDropped && !alreadyDone) {
-			player.sendMessage(ChatColor.RED + "Your inventory is full! Some items were dropped on the ground!");
+			player.sendMessage(Component.text("Your inventory is full! Some items were dropped on the ground!", NamedTextColor.RED));
 			alreadyDone = true;
 		}
 		return alreadyDone;

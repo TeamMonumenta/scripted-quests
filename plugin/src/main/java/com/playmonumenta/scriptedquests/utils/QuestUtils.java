@@ -11,7 +11,6 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
@@ -138,7 +137,7 @@ public class QuestUtils {
 			e.printStackTrace();
 
 			if (sender != null) {
-				sender.sendMessage(ChatColor.RED + "Failed to save quest file '" + file.getPath() + "'");
+				sender.sendMessage(Component.text("Failed to save quest file '" + file.getPath() + "'", NamedTextColor.RED));
 				MessagingUtils.sendStackTrace(sender, e);
 			}
 		}

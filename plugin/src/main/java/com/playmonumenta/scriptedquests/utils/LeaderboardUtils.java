@@ -4,8 +4,8 @@ import java.util.List;
 import javax.annotation.Nullable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 public class LeaderboardUtils {
@@ -76,7 +76,7 @@ public class LeaderboardUtils {
 
 		// print leaderboard itself
 		//TODO : The alignment here really sucks - improve with https://www.spigotmc.org/threads/free-code-sending-perfectly-centered-chat-message.95872/
-		player.sendMessage("" + ChatColor.DARK_GRAY + ChatColor.ITALIC + " Rank  |        Name      |    Score");
+		player.sendMessage(Component.text(" Rank  |        Name      |    Score", NamedTextColor.DARK_GRAY).decorate(TextDecoration.ITALIC));
 		for (int i = (page - 1) * 10; i < Math.min(page * 10, values.size()); i++) {
 			LeaderboardEntry entry = values.get(i);
 
@@ -88,7 +88,7 @@ public class LeaderboardUtils {
 		for (LeaderboardEntry entry : values) {
 			i++;
 			if (entry.getName().equals(player.getName())) {
-				player.sendMessage(String.format("%s%-3s - %-15s -    %s", "" + ChatColor.BLUE + ChatColor.BOLD, i, entry.getName(), entry.getValueStr()));
+				player.sendMessage(Component.text(String.format("%-3s - %-15s -    %s", i, entry.getName(), entry.getValueStr()), NamedTextColor.BLUE).decorate(TextDecoration.BOLD));
 				break;
 			}
 		}
