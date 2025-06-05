@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -118,7 +119,7 @@ public class Leaderboard {
 			/* Redis sync plugin not found - need to loop over scoreboards to compute leaderboard */
 
 			if (obj == null) {
-				player.sendMessage(ChatColor.RED + "The scoreboard objective '" + objective + "' does not exist");
+				player.sendMessage(Component.text("The scoreboard objective '" + objective + "' does not exist", NamedTextColor.RED));
 				return;
 			}
 			if (filterPlayers == null) {

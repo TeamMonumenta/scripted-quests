@@ -198,7 +198,7 @@ public class Race {
 
 				if (mTicks == 0) {
 					if (!mShowStats || !mRingless) {
-						mPlayer.sendMessage("" + ChatColor.BLUE + "Reminder:\nShift + Left-Click: Abandon\nShift + Right-Click: Retry");
+						mPlayer.sendMessage(Component.text("Reminder:\nShift + Left-Click: Abandon\nShift + Right-Click: Retry", NamedTextColor.BLUE));
 					}
 					// 3
 					mPlayer.sendTitle(ChatColor.RED + "" + ChatColor.BOLD + "3", "", 0, 20, 0);
@@ -255,7 +255,7 @@ public class Race {
 			timeElapsed = 0;
 		}
 		if (timeElapsed > mMaxTime) {
-			mPlayer.sendMessage("" + ChatColor.RED + ChatColor.BOLD + "You ran out of time!");
+			mPlayer.sendMessage(Component.text("You ran out of time!", NamedTextColor.RED).decorate(TextDecoration.BOLD));
 			lose();
 			return;
 		}
@@ -266,7 +266,7 @@ public class Race {
 		if (!mRingless) {
 			// Check if player went too far away
 			if (distance > mMaxDistance) {
-				mPlayer.sendMessage("" + ChatColor.RED + ChatColor.BOLD + "You went too far away from the race path!");
+				mPlayer.sendMessage(Component.text("You went too far away from the race path!", NamedTextColor.RED).decorate(TextDecoration.BOLD));
 				lose();
 				return;
 			} else if (distance < mNextWaypoint.getRadius()) {
@@ -381,7 +381,7 @@ public class Race {
 		if (mPlayer.getScoreboardTags().contains(PLAYER_RACE_SPEED_TAG)) {
 			speedScore = Objects.requireNonNull(mPlayer.getScoreboard().getObjective("Speed")).getScore(mPlayer.getName()).getScore();
 			if (endTime > mTimes.get(0).getTime()) {
-				mPlayer.sendMessage("" + ChatColor.RED + ChatColor.BOLD + "Since you didn't achieve master time, your time on the Lowest Speed % leaderboard was not updated!");
+				mPlayer.sendMessage(Component.text("Since you didn't achieve master time, your time on the Lowest Speed % leaderboard was not updated!", NamedTextColor.RED).decorate(TextDecoration.BOLD));
 				mPlayer.getScoreboardTags().remove(PLAYER_RACE_SPEED_TAG);
 			}
 		}
@@ -578,7 +578,7 @@ public class Race {
 					differenceMessage
 				));
 			} else {
-				mPlayer.sendMessage(ChatColor.RED + "You are not on the leaderboard.");
+				mPlayer.sendMessage(Component.text("You are not on the leaderboard.", NamedTextColor.RED));
 			}
 
 			if (mSpeedWR > speedScore) {

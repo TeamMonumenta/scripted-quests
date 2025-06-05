@@ -18,6 +18,7 @@ import javax.annotation.Nullable;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -257,7 +258,7 @@ public class RaceFactory {
 
 	public void sendLeaderboard(Player player, int page) {
 		if (mObjective == null) {
-			player.sendMessage(ChatColor.RED + "No leaderboard exists for race '" + mLabel + "'");
+			player.sendMessage(Component.text("No leaderboard exists for race '" + mLabel + "'", NamedTextColor.RED));
 			return;
 		}
 

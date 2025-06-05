@@ -13,7 +13,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Stream;
 import javax.annotation.Nullable;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -209,7 +210,7 @@ public class RaceManager {
 		if (mActiveRaces.containsKey(player.getUniqueId())) {
 			mPlugin.getLogger().severe("Attempted to start second race '" + raceLabel +
 			                           "' for player '" + player.getName() + "'");
-			player.sendMessage(ChatColor.RED + "You are already in a race!");
+			player.sendMessage(Component.text("You are already in a race!", NamedTextColor.RED));
 			return;
 		}
 

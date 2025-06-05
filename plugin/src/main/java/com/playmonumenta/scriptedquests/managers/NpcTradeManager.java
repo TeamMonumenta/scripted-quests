@@ -32,7 +32,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -582,9 +581,9 @@ public class NpcTradeManager implements Listener {
 		protected void inventoryClose(InventoryCloseEvent event) {
 			try {
 				QuestUtils.save(Plugin.getInstance(), event.getPlayer(), mTrader.toJson(), mTrader.getFile());
-				event.getPlayer().sendMessage(ChatColor.GOLD + "Trade file updated.");
+				event.getPlayer().sendMessage(Component.text("Trade file updated.", NamedTextColor.GOLD));
 			} catch (Exception e) {
-				event.getPlayer().sendMessage(ChatColor.RED + "Failed to update trade file.");
+				event.getPlayer().sendMessage(Component.text("Failed to update trade file.", NamedTextColor.RED));
 				MessagingUtils.sendStackTrace(event.getPlayer(), e);
 			}
 		}
