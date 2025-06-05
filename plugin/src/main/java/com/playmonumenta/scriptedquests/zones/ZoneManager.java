@@ -228,11 +228,11 @@ public class ZoneManager {
 	}
 
 	public static Argument<String> getNamespaceArg() {
-		return new TextArgument("namespace").replaceSuggestions(ZoneManager.getNamespaceArgumentSuggestions());
+		return new TextArgument("namespace").replaceSuggestions(getNamespaceArgumentSuggestions());
 	}
 
 	public static Argument<String> getPropertyArg() {
-		return new TextArgument("property").replaceSuggestions(ZoneManager.getLoadedPropertyArgumentSuggestions());
+		return new TextArgument("property").replaceSuggestions(getLoadedPropertyArgumentSuggestions());
 	}
 
 	public Set<String> getNamespaceNames() {

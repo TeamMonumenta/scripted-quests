@@ -336,7 +336,7 @@ public class NpcTradeManager implements Listener {
 						}
 						merchant.setRecipes(newEventTrades.stream().map(TradeWindowOpenEvent.Trade::getRecipe).collect(Collectors.toList()));
 						mOpenTrades.put(player.getUniqueId(), new PlayerTradeContext(newSlotProperties, villager,
-                            merchant));
+							merchant));
 						player.openMerchant(merchant, true);
 					}
 				}.runTaskLater(plugin, 1);
@@ -459,8 +459,8 @@ public class NpcTradeManager implements Listener {
 
 		public TraderEditCustomInventory(Player player, NpcTrader trader) {
 			super(player, 6 * 9,
-                "Trades for " + trader.getOriginalNpcNames().get(0) + (trader.getOriginalNpcNames().size() > 1 ? " " +
-                    "(+" + (trader.getOriginalNpcNames().size() - 1) + " more)" : ""));
+				"Trades for " + trader.getOriginalNpcNames().get(0) + (trader.getOriginalNpcNames().size() > 1 ? " " +
+					"(+" + (trader.getOriginalNpcNames().size() - 1) + " more)" : ""));
 			this.mPlayer = player;
 			mTrader = trader;
 			setup();
@@ -526,7 +526,7 @@ public class NpcTradeManager implements Listener {
 					List<Component> oldLore = meta.lore();
 					ArrayList<Component> lore = new ArrayList<>(oldLore == null ? List.of() : oldLore);
 					lore.add(0, Component.text("Loot table: " + lootTableOverride.mLootTable.key().asString(),
-                        NamedTextColor.GOLD).decorate(TextDecoration.UNDERLINED));
+						NamedTextColor.GOLD).decorate(TextDecoration.UNDERLINED));
 					meta.lore(lore);
 				});
 			}
@@ -556,9 +556,9 @@ public class NpcTradeManager implements Listener {
 						NpcTradeOverride oldOverride = overrideTradeItems.get(overrideSlot);
 						if (oldOverride instanceof NpcTradeOverride.ItemOverride || oldOverride == null) {
 							ItemStack oldItem = oldOverride != null ?
-                                ((NpcTradeOverride.ItemOverride) oldOverride).mItem : null;
+								((NpcTradeOverride.ItemOverride) oldOverride).mItem : null;
 							overrideTradeItems.set(overrideSlot,
-                                new NpcTradeOverride.ItemOverride(event.getCursor() == null || event.getCursor().getType() == Material.AIR ? (overrideSlot == 1 ? new ItemStack(Material.AIR) : UNDEFINED_ITEM) : event.getCursor()));
+								new NpcTradeOverride.ItemOverride(event.getCursor() == null || event.getCursor().getType() == Material.AIR ? (overrideSlot == 1 ? new ItemStack(Material.AIR) : UNDEFINED_ITEM) : event.getCursor()));
 							if (overrideTradeItems.equals(empty)) {
 								trade.setOverrideTradeItems(null);
 							}

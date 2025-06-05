@@ -49,6 +49,7 @@ public class Race {
 				Math.sin(Math.toRadians(angle * 360.0 / NUM_RING_POINTS)), 0));
 		}
 	}
+
 	private static final String PLAYER_RACE_SPEED_TAG = "SQRacerSpeed";
 	/* Arguments */
 	private final Plugin mPlugin;
@@ -80,7 +81,7 @@ public class Race {
 	private long mStartTime;
 	private long mMaxTime;
 	private int mFrame = 0;
-	private int speedWR = 0;
+	private int mSpeedWR = 0;
 	private @Nullable TimeBar mTimeBar = null;
 	private boolean mCountdownActive = false;
 	private int mWRTime = Integer.MAX_VALUE;
@@ -509,12 +510,12 @@ public class Race {
 				mPlayer.sendMessage(" ");
 				mPlayer.sendMessage(String.format("  %sWorld Record - %16s  | %s %s",
 					"" + ChatColor.AQUA + ChatColor.BOLD,
-					"" + speedWR,
+					"" + mSpeedWR,
 					"" + ("" + ChatColor.AQUA + ChatColor.BOLD + "⓵"),
-					"" + ((speedWR - speedScore != 0)
-						? ((speedScore <= speedWR)
-						? ("" + ChatColor.BLUE + ChatColor.BOLD + "( -" + (speedWR - speedScore) + ")")
-						: ("" + ChatColor.RED + ChatColor.BOLD + "( +" + (speedScore - speedWR) + ")"))
+					"" + ((mSpeedWR - speedScore != 0)
+						? ((speedScore <= mSpeedWR)
+						? ("" + ChatColor.BLUE + ChatColor.BOLD + "( -" + (mSpeedWR - speedScore) + ")")
+						: ("" + ChatColor.RED + ChatColor.BOLD + "( +" + (speedScore - mSpeedWR) + ")"))
 						: "")
 				));
 				mPlayer.sendMessage(String.format("  %s  Personal Best - %13s  | ⚡ %s",
@@ -549,7 +550,7 @@ public class Race {
 						RaceUtils.msToTimeString(endTime) +
 						"\",\"color\":\"blue\"}]";
 					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmdStr);
-					String wrStr = "auditlogplayer " + mPlayer.getName() + " \"" + mPlayer.getName()  + " has set a new record on " + mName + " with a time of "+ RaceUtils.msToTimeString(endTime) + "\"";
+					String wrStr = "auditlogplayer " + mPlayer.getName() + " \"" + mPlayer.getName() + " has set a new record on " + mName + " with a time of " + RaceUtils.msToTimeString(endTime) + "\"";
 					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), wrStr);
 				}
 			}
@@ -580,7 +581,7 @@ public class Race {
 				mPlayer.sendMessage(ChatColor.RED + "You are not on the leaderboard.");
 			}
 
-			if (speedWR > speedScore) {
+			if (mSpeedWR > speedScore) {
 				String cmdStr = "broadcastcommand tellraw @a [\"\",{\"text\":\"" +
 					mPlayer.getName() +
 					"\",\"color\":\"blue\"},{\"text\":\" has set a new world record for \",\"color\":\"dark_aqua\"},{\"text\":\"" +
@@ -589,20 +590,22 @@ public class Race {
 					speedScore +
 					"%\",\"color\":\"blue\"}]";
 				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmdStr);
-				String wrStr = "auditlogplayer " + mPlayer.getName() + " \"" + mPlayer.getName()  + " has set a new record on " + mName + " with a speed of "+ speedScore + "\"";
+				String wrStr = "auditlogplayer " + mPlayer.getName() + " \"" + mPlayer.getName() + " has set a new record on " + mName + " with a speed of " + speedScore + "\"";
 				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), wrStr);
 			}
 		}
 	}
 
 	private String ordinalSuffix(int position) {
-		if (position >= 11 && position <= 13) return "th";
-        return switch (position % 10) {
-            case 1 -> "st";
-            case 2 -> "nd";
-            case 3 -> "rd";
-            default -> "th";
-        };
+		if (position >= 11 && position <= 13) {
+			return "th";
+		}
+		return switch (position % 10) {
+			case 1 -> "st";
+			case 2 -> "nd";
+			case 3 -> "rd";
+			default -> "th";
+		};
 	}
 
 	public int getPlayerPosition(Player mPlayer, Objective lb) {
@@ -650,7 +653,7 @@ public class Race {
 					for (Map.Entry<String, Integer> entry : values.entrySet()) {
 						if (entry.getValue() > 0) {
 							if (isSpeedWR) {
-								speedWR = entry.getValue();
+								mSpeedWR = entry.getValue();
 							} else {
 								mWRTime = entry.getValue();
 							}
@@ -674,7 +677,7 @@ public class Race {
 				}
 			}
 			if (isSpeedWR) {
-				speedWR = top;
+				mSpeedWR = top;
 			} else {
 				mWRTime = top;
 			}

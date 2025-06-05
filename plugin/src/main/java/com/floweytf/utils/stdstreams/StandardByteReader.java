@@ -1,4 +1,5 @@
 package com.floweytf.utils.stdstreams;
+
 /*
  * These are utilities for serialization between forge & bukkit
  * See original project here: https://github.com/FloweyTheFlower420/mappings-utils

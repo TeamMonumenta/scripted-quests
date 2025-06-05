@@ -160,15 +160,13 @@ public class PrerequisiteCheckScores implements PrerequisiteBase {
 		try {
 			return new TestValueConst(value.getAsInt());
 		} catch (Exception e) {
-			// ignore
-		}
-
-		// If that failed, try a string instead
-		@Nullable String valueAsString = value.getAsString();
-		if (valueAsString != null) {
-			return new TestValueObjective(valueAsString);
-		} else {
-			throw new Exception("Test value is neither an integer nor a string!");
+			// If that failed, try a string instead
+			@Nullable String valueAsString = value.getAsString();
+			if (valueAsString != null) {
+				return new TestValueObjective(valueAsString);
+			} else {
+				throw new Exception("Test value is neither an integer nor a string!");
+			}
 		}
 	}
 
