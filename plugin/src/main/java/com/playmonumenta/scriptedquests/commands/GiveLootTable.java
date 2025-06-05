@@ -122,6 +122,12 @@ public class GiveLootTable {
 			}
 			return;
 		}
+		if (lootTable == null) {
+			for (Player player : players) {
+				player.sendMessage(Component.text("BUG! Failed to find loot table '" + lootPath + "'. Please report this.", NamedTextColor.RED));
+			}
+			return;
+		}
 		giveLoot(players, lootTable, count, random);
 	}
 

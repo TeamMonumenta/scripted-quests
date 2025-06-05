@@ -34,6 +34,7 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.util.Vector;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.jetbrains.annotations.Nullable;
 
 /*
@@ -76,7 +77,7 @@ public class Race {
 	private final Location mStopLoc; // Location where player should tp back to on lose
 
 	/* Mutable variables for this race */
-	private Deque<RaceWaypoint> mRemainingWaypoints;
+	private @MonotonicNonNull Deque<RaceWaypoint> mRemainingWaypoints;
 	private RaceWaypoint mNextWaypoint;
 	private long mStartTime;
 	private long mMaxTime;

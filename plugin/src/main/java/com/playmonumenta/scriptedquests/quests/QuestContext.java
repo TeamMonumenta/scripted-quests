@@ -68,7 +68,13 @@ public class QuestContext {
 	 * Gets the Entity to use for prerequisite checks. Should not be used outside prerequisite checks.
 	 */
 	public Entity getEntityUsedForPrerequisites() {
-		return mUseNpcForPrerequisites ? mNpcEntity : mPlayer;
+		if (mUseNpcForPrerequisites) {
+			if (mNpcEntity == null) {
+				throw new IllegalStateException("NPC entity is null but useNpcForPrerequisites is true");
+			}
+			return mNpcEntity;
+		}
+		return mPlayer;
 	}
 
 	/**

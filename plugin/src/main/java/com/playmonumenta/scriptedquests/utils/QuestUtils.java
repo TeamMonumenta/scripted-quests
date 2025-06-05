@@ -36,7 +36,7 @@ public class QuestUtils {
 		 * Called with each file loaded into a JSON object
 		 * Return value is identifying string to return to the user or null
 		 */
-		String load(JsonObject object, File file) throws Exception;
+		@Nullable String load(JsonObject object, File file) throws Exception;
 	}
 
 	public static void loadScriptedQuests(Plugin plugin, String folderName, @Nullable Audience audience, JsonLoadAction action) {

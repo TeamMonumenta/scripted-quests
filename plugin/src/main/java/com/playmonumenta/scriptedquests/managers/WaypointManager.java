@@ -75,13 +75,17 @@ public class WaypointManager {
 				continue;
 			}
 
-			if (dist < closestDist || dist < distance2D(prevLoc, loc) + WAYPOINT_SWITCH_OFFSET) {
+			if (dist < closestDist || (prevLoc != null && dist < distance2D(prevLoc, loc) + WAYPOINT_SWITCH_OFFSET)) {
 				/* This is either the closest location OR it's closer than the distance between this and the last waypoint */
 				closestLoc = loc;
 				closestDist = dist;
 			}
 
 			prevLoc = loc;
+		}
+
+		if (closestLoc == null) {
+			throw new IllegalArgumentException("No waypoints provided");
 		}
 
 		if (closestLoc.getY() < 0) {

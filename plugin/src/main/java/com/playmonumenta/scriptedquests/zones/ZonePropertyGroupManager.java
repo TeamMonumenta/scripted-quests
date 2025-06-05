@@ -93,7 +93,11 @@ public class ZonePropertyGroupManager {
 		seenByGroup.add(currentGroup);
 
 		// Check next groups
-		for (String nextGroup : groupReferences.get(currentGroup)) {
+		Set<String> nextGroups = groupReferences.get(currentGroup);
+		if (nextGroups == null) {
+			throw new IllegalStateException("Expected to find group " + currentGroup + " in groupReferences but it was missing");
+		}
+		for (String nextGroup : nextGroups) {
 			// If we found the starting group, it is a self containing group
 			if (startingGroup.equals(nextGroup)) {
 				selfContainingGroups.add(startingGroup);

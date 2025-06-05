@@ -72,7 +72,7 @@ public class NpcTradeManager implements Listener {
 			return mSlotProperties;
 		}
 
-		public Villager getVillager() {
+		public @Nullable Villager getVillager() {
 			return mVillager;
 		}
 
@@ -103,7 +103,7 @@ public class NpcTradeManager implements Listener {
 		});
 	}
 
-	public NpcTrader reloadSingleTrader(NpcTrader trader, CommandSender sender) throws WrapperCommandSyntaxException {
+	public @Nullable NpcTrader reloadSingleTrader(NpcTrader trader, CommandSender sender) throws WrapperCommandSyntaxException {
 		try {
 			AtomicReference<NpcTrader> newTraderRef = new AtomicReference<>();
 			QuestUtils.loadScriptedQuestsFile(trader.getFile(), (object, file) -> {
@@ -128,7 +128,7 @@ public class NpcTradeManager implements Listener {
 		return mTraders.keySet();
 	}
 
-	public List<NpcTrader> getTrades(String npc) {
+	public @Nullable List<NpcTrader> getTrades(String npc) {
 		return mTraders.get(QuestNpc.squashNpcName(npc));
 	}
 
@@ -376,6 +376,11 @@ public class NpcTradeManager implements Listener {
 		Player player = event.getPlayer();
 		PlayerTradeContext context = mOpenTrades.get(player.getUniqueId());
 
+		if (context == null) {
+			player.sendMessage(Component.text("BUG! Trade context not found. Please report this, including which villager you were trading with and what you tried to buy.", NamedTextColor.RED));
+			return;
+		}
+
 		/*
 		 * Have to manually compute which slot this was because merchInv.getSelectedIndex returns the wrong index
 		 * if the player leaves the trade on the first slot but puts in materials for one of the other trades
@@ -441,6 +446,9 @@ public class NpcTradeManager implements Listener {
 
 	public void editTrader(NpcTrader trader, Player player) throws WrapperCommandSyntaxException {
 		trader = reloadSingleTrader(trader, player);
+		if (trader == null) {
+			throw CommandAPI.failWithString("Failed to reload trader - trader is null after reload");
+		}
 		new TraderEditCustomInventory(player, trader).openInventory(player, Plugin.getInstance());
 	}
 

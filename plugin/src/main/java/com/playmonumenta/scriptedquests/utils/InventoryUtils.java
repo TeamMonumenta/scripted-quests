@@ -67,7 +67,7 @@ public class InventoryUtils {
 		return NamespacedKey.fromString(path);
 	}
 
-	public static LootTable getLootTable(String path) {
+	public static @Nullable LootTable getLootTable(String path) {
 		return getLootTable(getNamespacedKey(path));
 	}
 
@@ -93,7 +93,10 @@ public class InventoryUtils {
 			HashMap<Integer, ItemStack> overflow = inv.addItem(item);
 			if (!overflow.isEmpty()) {
 				itemsDropped = true;
-				dropTempOwnedItem(overflow.get(0), player.getLocation(), player);
+				ItemStack overflowItem = overflow.get(0);
+				if (overflowItem != null) {
+					dropTempOwnedItem(overflowItem, player.getLocation(), player);
+				}
 			}
 		}
 

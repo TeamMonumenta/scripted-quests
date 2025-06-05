@@ -194,7 +194,7 @@ public class TranslationsManager implements Listener {
 	 *
 	 */
 
-	public static void reload(CommandSender sender) {
+	public static void reload(@Nullable CommandSender sender) {
 		if (INSTANCE == null) {
 			return;
 		}
@@ -552,7 +552,11 @@ public class TranslationsManager implements Listener {
 			out.put("en | English", "English");
 		}
 
-		for (Map.Entry<String, String> entry : mTranslationsMap.get(" @ @ LANGUAGES @ @ ").entrySet()) {
+		Map<String, String> languagesMap = mTranslationsMap.get(" @ @ LANGUAGES @ @ ");
+		if (languagesMap == null) {
+			throw new IllegalStateException("Languages map not found in translations data - translations may not be properly loaded");
+		}
+		for (Map.Entry<String, String> entry : languagesMap.entrySet()) {
 			if (!entry.getKey().equals("S")) {
 				out.put(entry.getKey(), entry.getValue());
 			}

@@ -282,7 +282,7 @@ public class ZoneManager {
 	 * which zones have priority if startup time NEEDS to be near-instant in exchange for slower
 	 * clock speeds while the tree is loading. We have options.
 	 */
-	public void reload(Plugin plugin, CommandSender sender) {
+	public void reload(Plugin plugin, @Nullable CommandSender sender) {
 		if (sender == null) {
 			sender = Bukkit.getConsoleSender();
 		}
