@@ -8,6 +8,7 @@ import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponentList;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.Set;
 import org.bukkit.command.CommandSender;
@@ -153,8 +154,8 @@ public class CodeEntry {
 	}
 
 	public boolean doActionsIfCodeMatches(Plugin plugin, Player player, String code) {
-		String goodCode = getCodeForPlayer(player).toLowerCase().replaceAll("\\s", "");
-		code = code.toLowerCase().replaceAll("\\s", "");
+		String goodCode = getCodeForPlayer(player).toLowerCase(Locale.ENGLISH).replaceAll("\\s", "");
+		code = code.toLowerCase(Locale.ENGLISH).replaceAll("\\s", "");
 		if (goodCode.equals(code)) {
 			mComponents.run(new QuestContext(plugin, player, null));
 			return true;

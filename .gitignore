@@ -1,3 +1,5 @@
+.factorypath
+
 # Maven
 target/
 dependency-reduced-pom.xml

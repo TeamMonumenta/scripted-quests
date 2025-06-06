@@ -121,13 +121,23 @@ public class NpcTrade implements Comparable<NpcTrade> {
 				overrides.add(override.toJson());
 			}
 		}
-		return new JsonObjectBuilder()
-			       .add("index", mIndex)
-			       .add("prerequisites", mPrerequisitesJson)
-			       .add("actions", mActionsJson)
-			       .add("count", mCount == -1 ? null : new JsonPrimitive(mCount))
-			       .add("override_items", overrides)
-			       .build();
+		JsonObjectBuilder builder = new JsonObjectBuilder()
+			       .add("index", mIndex);
+
+		if (mPrerequisitesJson != null) {
+			builder.add("prerequisites", mPrerequisitesJson);
+		}
+		if (mActionsJson != null) {
+			builder.add("actions", mActionsJson);
+		}
+		if (overrides != null) {
+			builder.add("override_items", overrides);
+		}
+		if (mCount != -1) {
+			builder.add("count", new JsonPrimitive(mCount));
+		}
+
+		return builder.build();
 	}
 
 	public int getIndex() {

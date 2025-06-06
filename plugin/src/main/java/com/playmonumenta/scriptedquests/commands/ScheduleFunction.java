@@ -9,7 +9,6 @@ import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.FunctionArgument;
 import dev.jorel.commandapi.arguments.LiteralArgument;
-import dev.jorel.commandapi.arguments.MultiLiteralArgument;
 import dev.jorel.commandapi.arguments.TimeArgument;
 import dev.jorel.commandapi.wrappers.FunctionWrapper;
 import java.util.ArrayList;

@@ -7,7 +7,6 @@ import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.EntitySelectorArgument;
 import dev.jorel.commandapi.arguments.IntegerArgument;
 import dev.jorel.commandapi.arguments.LiteralArgument;
-import dev.jorel.commandapi.arguments.MultiLiteralArgument;
 import dev.jorel.commandapi.arguments.ObjectiveArgument;
 import java.util.Collection;
 import java.util.SplittableRandom;

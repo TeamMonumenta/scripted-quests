@@ -42,7 +42,7 @@ public class QuestDeath {
 
 	private @Nullable Point mRespawnPt = null;
 	private boolean mKeepInv = false;
-	private Double mKeepXp = null;
+	private @Nullable Double mKeepXp = null;
 	private boolean mKeepOriginalRespawnLocationInSameArea = false;
 	private @Nullable QuestPrerequisites mPrerequisites = null;
 	private @Nullable QuestActions mActions = null;

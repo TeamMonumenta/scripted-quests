@@ -18,7 +18,6 @@ import java.util.Map;
 import javax.annotation.Nullable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -200,9 +199,9 @@ public class GuiManager {
 					GuiPage updated = page.createUpdated(getInventory());
 					mGui.setPage(mPageName, updated);
 					QuestUtils.save(Plugin.getInstance(), event.getPlayer(), mGui.toJson(), mGui.getFile());
-					event.getPlayer().sendMessage(ChatColor.GOLD + "GUI updated.");
+					event.getPlayer().sendMessage(Component.text("GUI updated.", NamedTextColor.GOLD));
 				} catch (Exception e) {
-					event.getPlayer().sendMessage(ChatColor.RED + "Failed to update GUI.");
+					event.getPlayer().sendMessage(Component.text("Failed to update GUI.", NamedTextColor.RED));
 					MessagingUtils.sendStackTrace(event.getPlayer(), e);
 				}
 			} else {

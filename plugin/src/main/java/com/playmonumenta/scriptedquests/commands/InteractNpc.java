@@ -10,8 +10,9 @@ import dev.jorel.commandapi.arguments.TextArgument;
 import java.util.Collection;
 import java.util.UUID;
 import java.util.regex.Pattern;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -58,7 +59,7 @@ public class InteractNpc {
 			UUID npcUuid = UUID.fromString(npcName);
 			Entity npc = Bukkit.getEntity(npcUuid);
 			if (npc == null) {
-				sender.sendMessage(ChatColor.RED + "No NPC with UUID '" + npcName + "'");
+				sender.sendMessage(Component.text("No NPC with UUID '" + npcName + "'", NamedTextColor.RED));
 			} else {
 				interact(plugin, sender, players, npc);
 			}
@@ -70,8 +71,8 @@ public class InteractNpc {
 			for (Player player : players) {
 				QuestContext context = new QuestContext(plugin, player, null, false, null, currentContext != null ? currentContext.getUsedItem() : null);
 				if (!plugin.mNpcManager.interactEvent(context, npcName, npcType, true)) {
-					sender.sendMessage(ChatColor.RED + "No interaction available for player '" + player.getName() +
-						                   "' and NPC '" + npcName + "'");
+					sender.sendMessage(Component.text("No interaction available for player '" + player.getName() +
+						                   "' and NPC '" + npcName + "'", NamedTextColor.RED));
 				}
 			}
 		}
@@ -83,8 +84,8 @@ public class InteractNpc {
 			for (Player player : players) {
 				QuestContext context = new QuestContext(plugin, player, npc, false, null, currentContext != null ? currentContext.getUsedItem() : null);
 				if (!plugin.mNpcManager.interactEvent(context, npc.getCustomName(), npc.getType(), false)) {
-					sender.sendMessage(ChatColor.RED + "No interaction available for player '" + player.getName() +
-						                   "' and NPC '" + npc.getCustomName() + "'");
+					sender.sendMessage(Component.text("No interaction available for player '" + player.getName() +
+						                   "' and NPC '" + npc.getCustomName() + "'", NamedTextColor.RED));
 				}
 			}
 		}

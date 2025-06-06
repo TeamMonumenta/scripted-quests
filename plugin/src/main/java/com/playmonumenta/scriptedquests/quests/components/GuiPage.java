@@ -51,13 +51,15 @@ public final class GuiPage {
 	}
 
 	public JsonObject toJson() {
-		return new JsonObjectBuilder()
+		JsonObjectBuilder builder = new JsonObjectBuilder()
 			.add("rows", mRows)
 			.add("title", mTitle)
 			.add("filler_item", NBTItem.convertItemtoNBT(mFillerItem).toString())
-			.add("items", JsonUtils.toJsonArray(mItems, GuiItem::toJson))
-			.add("close_actions", mCloseActionsJson)
-			.build();
+			.add("items", JsonUtils.toJsonArray(mItems, GuiItem::toJson));
+		if (mCloseActionsJson != null) {
+			builder.add("close_actions", mCloseActionsJson);
+		}
+		return builder.build();
 	}
 
 	/**
@@ -87,7 +89,7 @@ public final class GuiPage {
 		return mTitle;
 	}
 
-	public QuestActions getCloseActions() {
+	public @Nullable QuestActions getCloseActions() {
 		return mCloseActions;
 	}
 

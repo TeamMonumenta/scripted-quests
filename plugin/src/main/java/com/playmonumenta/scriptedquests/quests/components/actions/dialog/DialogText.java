@@ -40,10 +40,12 @@ public class DialogText implements DialogBase {
 
 	@Override
 	public JsonElement serializeForClientAPI(QuestContext context) {
-		return JsonObjectBuilder.get()
+		JsonObjectBuilder builder = JsonObjectBuilder.get()
 			.add("type", "text")
-			.add("text", mText.stream().map(JsonPrimitive::new).collect(Collectors.toList()))
-			.add("npc_name", mDisplayName)
-			.build();
+			.add("text", mText.stream().map(JsonPrimitive::new).collect(Collectors.toList()));
+		if (mDisplayName != null) {
+			builder.add("npc_name", mDisplayName);
+		}
+		return builder.build();
 	}
 }

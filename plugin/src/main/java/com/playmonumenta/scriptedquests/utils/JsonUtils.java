@@ -135,7 +135,7 @@ public abstract class JsonUtils {
 		return parser.apply(getString(object, property));
 	}
 
-	public static <T> T parse(JsonObject object, String property, Function<String, T> parser, T defaultValue) throws Exception {
+	public static <T> @Nullable T parse(JsonObject object, String property, Function<String, T> parser, @Nullable T defaultValue) throws Exception {
 		JsonElement element = object.get(property);
 		if (element == null) {
 			return defaultValue;

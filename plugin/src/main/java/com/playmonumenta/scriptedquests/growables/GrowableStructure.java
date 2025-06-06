@@ -68,9 +68,13 @@ public class GrowableStructure {
 			return origin.clone().add(mDX, mDY, mDZ).getBlock();
 		}
 
-		private List<BlockData> getExclusionList() { return mExclude; }
+		private List<BlockData> getExclusionList() {
+			return mExclude;
+		}
 
-		private List<BlockData> getInclusionList() { return mInclude; }
+		private List<BlockData> getInclusionList() {
+			return mInclude;
+		}
 
 		private BlockState getBlockState(Location origin) {
 			BlockState state = getBlock(origin).getState();
@@ -82,7 +86,7 @@ public class GrowableStructure {
 		protected JsonObject getAsJsonObject() {
 			JsonArray array = new JsonArray();
 			String type = null;
-			if(!mExclude.isEmpty()) {
+			if (!mExclude.isEmpty()) {
 				type = "excludes";
 				for (BlockData item : mExclude) {
 					array.add(item.getAsString());

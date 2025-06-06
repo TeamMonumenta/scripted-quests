@@ -5,7 +5,8 @@ import com.playmonumenta.scriptedquests.quests.ClickableEntry;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
 import java.util.HashMap;
 import java.util.Map;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
@@ -36,18 +37,18 @@ public class ClickableManager {
 	public boolean clickEvent(Plugin plugin, Player player, String label) {
 		// Check if race allows this
 		if (!plugin.mRaceManager.isNotRacingOrAllowsClickables(player)) {
-			player.sendMessage(ChatColor.RED + "Can not do this while racing!");
+			player.sendMessage(Component.text("Can not do this while racing!", NamedTextColor.RED));
 			return false;
 		}
 
 		if (label == null || ClickableEntry.squashLabel(label).isEmpty()) {
-			player.sendMessage(ChatColor.RED + "Invalid clickable label");
+			player.sendMessage(Component.text("Invalid clickable label", NamedTextColor.RED));
 			return false;
 		}
 
 		ClickableEntry entry = mClickables.get(ClickableEntry.squashLabel(label));
 		if (entry == null) {
-			player.sendMessage(ChatColor.RED + "No clickable matching '" + label + "'");
+			player.sendMessage(Component.text("No clickable matching '" + label + "'", NamedTextColor.RED));
 			return false;
 		}
 

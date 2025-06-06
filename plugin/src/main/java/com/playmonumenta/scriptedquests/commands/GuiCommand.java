@@ -8,9 +8,7 @@ import dev.jorel.commandapi.arguments.Argument;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.EntitySelectorArgument;
 import dev.jorel.commandapi.arguments.StringArgument;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Optional;
 import org.bukkit.entity.Player;
 
 public class GuiCommand {

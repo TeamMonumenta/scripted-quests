@@ -4,6 +4,7 @@ import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.papermc.paper.adventure.AdventureComponent;
 import io.papermc.paper.adventure.PaperAdventure;
+import java.util.Locale;
 import java.util.UUID;
 import javax.annotation.Nullable;
 import net.kyori.adventure.text.Component;
@@ -44,7 +45,7 @@ public class VersionAdapter_v1_19_R3 implements VersionAdapter {
 	@Override
 	public @Nullable ParseResults<?> parseCommand(String command) {
 		try {
-			String testCommandStr = command.replaceAll("@S", "testuser").replaceAll("@N", "testnpc").replaceAll("@U", UUID.randomUUID().toString().toLowerCase());
+			String testCommandStr = command.replaceAll("@S", "testuser").replaceAll("@N", "testnpc").replaceAll("@U", UUID.randomUUID().toString().toLowerCase(Locale.ENGLISH));
 			return MinecraftServer.getServer().getCommands().getDispatcher().parse(testCommandStr, MinecraftServer.getServer().createCommandSourceStack().withSuppressedOutput());
 		} catch (Exception e) {
 			// Failed to test the command - ignore it and print a log message

@@ -8,8 +8,8 @@ import java.util.Objects;
 import java.util.Random;
 import javax.annotation.Nullable;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Item;
@@ -67,7 +67,7 @@ public class InventoryUtils {
 		return NamespacedKey.fromString(path);
 	}
 
-	public static LootTable getLootTable(String path) {
+	public static @Nullable LootTable getLootTable(String path) {
 		return getLootTable(getNamespacedKey(path));
 	}
 
@@ -93,12 +93,15 @@ public class InventoryUtils {
 			HashMap<Integer, ItemStack> overflow = inv.addItem(item);
 			if (!overflow.isEmpty()) {
 				itemsDropped = true;
-				dropTempOwnedItem(overflow.get(0), player.getLocation(), player);
+				ItemStack overflowItem = overflow.get(0);
+				if (overflowItem != null) {
+					dropTempOwnedItem(overflowItem, player.getLocation(), player);
+				}
 			}
 		}
 
 		if (itemsDropped && !alreadyDone) {
-			player.sendMessage(ChatColor.RED + "Your inventory is full! Some items were dropped on the ground!");
+			player.sendMessage(Component.text("Your inventory is full! Some items were dropped on the ground!", NamedTextColor.RED));
 			alreadyDone = true;
 		}
 		return alreadyDone;

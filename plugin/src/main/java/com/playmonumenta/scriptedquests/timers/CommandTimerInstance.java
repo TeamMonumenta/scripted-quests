@@ -3,8 +3,9 @@ package com.playmonumenta.scriptedquests.timers;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.utils.MMLog;
 import com.playmonumenta.scriptedquests.utils.NmsUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -79,25 +80,25 @@ public class CommandTimerInstance {
 	}
 
 	public void setName(ArmorStand entity) {
-		entity.setCustomName(getName());
+		entity.customName(getName());
 	}
 
-	private String getName() {
-		String name = "";
+	private Component getName() {
+		Component name = Component.empty();
+
 		if (mRepeat) {
-			name += ChatColor.LIGHT_PURPLE + "Repeater ";
+			name = name.append(Component.text("Repeater " + mPeriodStr + " ", NamedTextColor.LIGHT_PURPLE));
 		} else {
-			name += ChatColor.GOLD + "Timer ";
+			name = name.append(Component.text("Timer " + mPeriodStr + " ", NamedTextColor.GOLD));
 		}
-		name += mPeriodStr + " ";
 		if (mPlayerOnline) {
-			name += ChatColor.DARK_GREEN + "player online";
+			name = name.append(Component.text("player online", NamedTextColor.DARK_GREEN));
 		} else if (mPlayerRange <= 0) {
-			name += ChatColor.DARK_PURPLE + "always";
+			name = name.append(Component.text("always", NamedTextColor.DARK_PURPLE));
 		} else if (mPlayerRange > 1000) {
-			name += ChatColor.YELLOW + "range=" + Integer.toString(mPlayerRange);
+			name = name.append(Component.text("range=" + Integer.toString(mPlayerRange), NamedTextColor.YELLOW));
 		} else {
-			name += ChatColor.GREEN + "range=" + Integer.toString(mPlayerRange);
+			name = name.append(Component.text("range=" + Integer.toString(mPlayerRange), NamedTextColor.GREEN));
 		}
 		return name;
 	}
@@ -129,4 +130,3 @@ public class CommandTimerInstance {
 	}
 
 }
-

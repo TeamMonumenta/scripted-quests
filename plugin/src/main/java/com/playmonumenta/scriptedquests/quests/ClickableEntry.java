@@ -6,10 +6,10 @@ import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponentList;
+import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
@@ -85,6 +85,6 @@ public class ClickableEntry {
 	}
 
 	public static String squashLabel(String label) {
-		return ChatColor.stripColor(label).toLowerCase().replaceAll("[^a-zA-Z0-9]", "");
+		return MessagingUtils.plainFromLegacy(label).toLowerCase().replaceAll("[^a-zA-Z0-9]", "");
 	}
 }

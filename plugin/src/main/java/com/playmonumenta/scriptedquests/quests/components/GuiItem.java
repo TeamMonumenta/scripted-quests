@@ -81,16 +81,26 @@ public class GuiItem {
 	}
 
 	public JsonObject toJson() {
-		return new JsonObjectBuilder()
+		JsonObjectBuilder builder = new JsonObjectBuilder()
 			.add(ROW_KEY, mRow)
 			.add(COL_KEY, mCol)
 			.add(ITEM_KEY, NBTItem.convertItemtoNBT(mDisplayItem).toString())
-			.add(KEEP_GUI_OPEN_KEY, mKeepGuiOpen)
-			.add(PREREQUISITES_KEY, mPrerequisitesJson)
-			.add(NBT_TAGS_KEY, mNbtTagsJson)
-			.add(LEFT_CLICK_ACTIONS_KEY, mLeftClickActionsJson)
-			.add(RIGHT_CLICK_ACTIONS_KEY, mRightClickActionsJson)
-			.build();
+			.add(KEEP_GUI_OPEN_KEY, mKeepGuiOpen);
+
+		if (mPrerequisitesJson != null) {
+			builder.add(PREREQUISITES_KEY, mPrerequisitesJson);
+		}
+		if (mNbtTagsJson != null) {
+			builder.add(NBT_TAGS_KEY, mNbtTagsJson);
+		}
+		if (mLeftClickActionsJson != null) {
+			builder.add(LEFT_CLICK_ACTIONS_KEY, mLeftClickActionsJson);
+		}
+		if (mRightClickActionsJson != null) {
+			builder.add(RIGHT_CLICK_ACTIONS_KEY, mRightClickActionsJson);
+		}
+
+		return builder.build();
 	}
 
 	private GuiItem(int index, ItemStack itemStack) throws Exception {
@@ -162,7 +172,7 @@ public class GuiItem {
 		return mCol;
 	}
 
-	public ItemStack getDisplayItem(QuestContext context, boolean edit) {
+	public @Nullable ItemStack getDisplayItem(QuestContext context, boolean edit) {
 		if (edit) {
 			ItemStack item = mDisplayItem.clone();
 			List<Component> lore = item.lore();

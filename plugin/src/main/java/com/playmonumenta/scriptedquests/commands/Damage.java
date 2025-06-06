@@ -6,7 +6,6 @@ import dev.jorel.commandapi.arguments.Argument;
 import dev.jorel.commandapi.arguments.BooleanArgument;
 import dev.jorel.commandapi.arguments.DoubleArgument;
 import dev.jorel.commandapi.arguments.EntitySelectorArgument;
-import java.util.Collection;
 import org.bukkit.entity.Damageable;
 
 public class Damage {

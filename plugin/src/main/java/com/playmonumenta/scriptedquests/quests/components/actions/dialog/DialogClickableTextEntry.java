@@ -14,7 +14,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -36,10 +36,10 @@ public class DialogClickableTextEntry implements DialogBase {
 		public void doActionsIfConditionsMatch(Player player) {
 			if (!mValidArea.within(player.getLocation())) {
 				player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 0.7f, 0.3f);
-				player.sendMessage(ChatColor.RED + "You moved too far away to be heard");
+				player.sendMessage(Component.text("You moved too far away to be heard", NamedTextColor.RED));
 			} else if (!mContext.prerequisitesMet()) {
 				player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 0.7f, 0.3f);
-				player.sendMessage(ChatColor.RED + "You no longer meet the requirements for this option");
+				player.sendMessage(Component.text("You no longer meet the requirements for this option", NamedTextColor.RED));
 			} else {
 				player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 0.7f, 0.9f);
 				mActions.doActions(mContext);

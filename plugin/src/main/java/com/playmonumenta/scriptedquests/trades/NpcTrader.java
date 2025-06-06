@@ -78,11 +78,13 @@ public class NpcTrader {
 	}
 
 	public JsonObject toJson() {
-		return new JsonObjectBuilder()
+		JsonObjectBuilder builder = new JsonObjectBuilder()
 			       .add("npc", JsonUtils.toJsonArray(mOriginalNpcNames, JsonPrimitive::new))
-			       .add("file_prerequisites", mFilePrerequisitesJson)
-			       .add("trades", JsonUtils.toJsonArray(mTrades.values().stream().toList(), NpcTrade::toJson))
-			       .build();
+			       .add("trades", JsonUtils.toJsonArray(mTrades.values().stream().toList(), NpcTrade::toJson));
+		if (mFilePrerequisitesJson != null) {
+			builder.add("file_prerequisites", mFilePrerequisitesJson);
+		}
+		return builder.build();
 	}
 
 	public File getFile() {

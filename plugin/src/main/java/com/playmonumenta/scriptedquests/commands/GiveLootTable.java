@@ -10,7 +10,8 @@ import dev.jorel.commandapi.arguments.LootTableArgument;
 import dev.jorel.commandapi.arguments.TextArgument;
 import java.util.Collection;
 import java.util.Random;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -92,8 +93,8 @@ public class GiveLootTable {
 			giveLoot(players, lootPath, itemEntity.getItemStack().getAmount(), random);
 		} else {
 			for (Player player : players) {
-				player.sendMessage(ChatColor.RED + "BUG! Server tried to give you loot based on an entity that wasn't an item from the table '" + lootPath + "'");
-				player.sendMessage(ChatColor.RED + "Please take a screenshot and report this bug");
+				player.sendMessage(Component.text("BUG! Server tried to give you loot based on an entity that wasn't an item from the table '" + lootPath + "'", NamedTextColor.RED));
+				player.sendMessage(Component.text("Please take a screenshot and report this bug", NamedTextColor.RED));
 			}
 		}
 	}
@@ -103,8 +104,8 @@ public class GiveLootTable {
 			giveLoot(players, lootTable, itemEntity.getItemStack().getAmount(), random);
 		} else {
 			for (Player player : players) {
-				player.sendMessage(ChatColor.RED + "BUG! Server tried to give you loot based on an entity that wasn't an item from the table '" + lootTable.getKey() + "'");
-				player.sendMessage(ChatColor.RED + "Please take a screenshot and report this bug");
+				player.sendMessage(Component.text("BUG! Server tried to give you loot based on an entity that wasn't an item from the table '" + lootTable.getKey() + "'", NamedTextColor.RED));
+				player.sendMessage(Component.text("Please take a screenshot and report this bug", NamedTextColor.RED));
 			}
 		}
 	}
@@ -115,9 +116,15 @@ public class GiveLootTable {
 			lootTable = InventoryUtils.getLootTable(lootPath);
 		} catch (Exception e) {
 			for (Player player : players) {
-				player.sendMessage(ChatColor.RED + "BUG! Server failed to give you loot from the table '" + lootPath + "'");
-				player.sendMessage(ChatColor.RED + "Please hover over the following message, take a screenshot, and report this to a moderator");
+				player.sendMessage(Component.text("BUG! Server failed to give you loot from the table '" + lootPath + "'", NamedTextColor.RED));
+				player.sendMessage(Component.text("Please hover over the following message, take a screenshot, and report this to a moderator", NamedTextColor.RED));
 				MessagingUtils.sendStackTrace(player, e);
+			}
+			return;
+		}
+		if (lootTable == null) {
+			for (Player player : players) {
+				player.sendMessage(Component.text("BUG! Failed to find loot table '" + lootPath + "'. Please report this.", NamedTextColor.RED));
 			}
 			return;
 		}
@@ -132,8 +139,8 @@ public class GiveLootTable {
 					alreadyDone = InventoryUtils.giveLootTableContents(player, lootTable, random, alreadyDone);
 				}
 			} catch (Exception e) {
-				player.sendMessage(ChatColor.RED + "BUG! Server failed to give you loot from the table '" + lootTable.getKey() + "'");
-				player.sendMessage(ChatColor.RED + "Please hover over the following message, take a screenshot, and report this to a moderator");
+				player.sendMessage(Component.text("BUG! Server failed to give you loot from the table '" + lootTable.getKey() + "'", NamedTextColor.RED));
+				player.sendMessage(Component.text("Please hover over the following message, take a screenshot, and report this to a moderator", NamedTextColor.RED));
 				MessagingUtils.sendStackTrace(player, e);
 			}
 		}

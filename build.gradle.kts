@@ -44,3 +44,11 @@ monumenta {
 	versionAdapter("adapter_v1_19_R3", "1.19.4")
 	versionAdapter("adapter_v1_20_R3", "1.20.4")
 }
+
+allprojects {
+	tasks.withType<Javadoc> {
+		options {
+			(this as StandardJavadocDocletOptions).addStringOption("Xdoclint:none", "-quiet")
+		}
+	}
+}
