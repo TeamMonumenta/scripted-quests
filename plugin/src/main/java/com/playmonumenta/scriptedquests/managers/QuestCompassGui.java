@@ -22,9 +22,8 @@ public class QuestCompassGui extends CustomInventory {
 	private final Player mPlayer;
 	private final QuestCompassManager mManager;
 	private final int mRows = mInventory.getSize() / 9;
-	private final int mGuidesSlot = 3;
+	private final int mGuidesSlot = 6;
 	private final int mInfoSlot = 4;
-	private final int mHiddenSlot = 5;
 	private final List<Integer> mDeathSlots = List.of(32 + 9 * (mRows - 4), 33 + 9 * (mRows - 4), 34 + 9 * (mRows - 4));
 	private final int mCustomSlot = 30 + 9 * (mRows - 4);
 	private final int mDeselectSlot = 28 + 9 * (mRows - 4);
@@ -63,13 +62,6 @@ public class QuestCompassGui extends CustomInventory {
 			Component.text("town.", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false)));
 		guides.setItemMeta(guidesMeta);
 		mInventory.setItem(mGuidesSlot, guides);
-
-		ItemStack hidden = new ItemStack(Material.CAULDRON);
-		ItemMeta hiddenMeta = guides.getItemMeta();
-		hiddenMeta.displayName(Component.text("Hidden Quests", NamedTextColor.DARK_PURPLE).decoration(TextDecoration.BOLD, true).decoration(TextDecoration.ITALIC, false));
-		hiddenMeta.lore(List.of(Component.text("Instructions", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false)));
-		hidden.setItemMeta(hiddenMeta);
-		mInventory.setItem(mHiddenSlot, hidden);
 
 		ItemStack death = new ItemStack(Material.SKULL_POTTERY_SHERD);
 		ItemMeta deathMeta = death.getItemMeta();
@@ -195,8 +187,7 @@ public class QuestCompassGui extends CustomInventory {
 		if (slot == mGuidesSlot) {
 			player.performCommand("sqgui show regionqg @s");
 			return;
-		} else if (slot == mInfoSlot || slot == mHiddenSlot) {
-			// Not implemented
+		} else if (slot == mInfoSlot) {
 			return;
 		} else if (slot == mDeselectSlot) {
 			mManager.mCurrentIndex.put(player, mManager.showCurrentQuest(player, -1));
