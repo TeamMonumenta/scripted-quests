@@ -51,9 +51,14 @@ public class QuestLogin {
 	}
 
 	/* Returns true if prerequisites match and actions were taken, false otherwise */
+	@SuppressWarnings("deprecation")
 	public boolean loginEvent(Plugin plugin, PlayerJoinEvent event) {
 		Player player = event.getPlayer();
-		long timeLoggedOut = System.currentTimeMillis() - player.getLastSeen();
+		// Player.getLastPlayed() is deprecated in favor of Player.getLastSeen() to make it more clear if it means
+		// the last save time, not the last login time.
+		// Player.getLastSeen() returns the current time for online players regardless of
+		// the last save time, and is not suitable for this purpose.
+		long timeLoggedOut = System.currentTimeMillis() - player.getLastPlayed();
 
 		if (timeLoggedOut < mMinLogoutTime) {
 			return false;
