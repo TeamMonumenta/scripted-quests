@@ -22,9 +22,10 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
 public class ClientChatProtocol implements PluginMessageListener, CommandExecutor {
-	private static ClientChatProtocol INSTANCE = null;
+	private static @MonotonicNonNull ClientChatProtocol INSTANCE = null;
 	private static final String VERSION = "1.0";
 	private static final Gson GSON = new Gson();
 	private final Set<UUID> mShouldSendMessage = new HashSet<>();

@@ -308,7 +308,6 @@ public class ZoneFragment extends ZoneBase {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public boolean equals(Object o) {
 		if (!(o instanceof ZoneFragment other)) {
 			return false;

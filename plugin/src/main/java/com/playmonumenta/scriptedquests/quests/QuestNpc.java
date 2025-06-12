@@ -7,10 +7,10 @@ import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponentList;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
+import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -158,7 +158,7 @@ public class QuestNpc {
 	}
 
 	public static String squashNpcName(String name) {
-		return ChatColor.stripColor(name).replaceAll("[^a-zA-Z0-9-]", "");
+		return MessagingUtils.plainFromLegacy(name).replaceAll("[^a-zA-Z0-9-]", "");
 	}
 
 	public boolean areFilePrerequisitesMet(QuestContext context) {

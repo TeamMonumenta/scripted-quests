@@ -4,7 +4,8 @@ import com.playmonumenta.scriptedquests.Constants;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.actions.dialog.DialogClickableTextEntry.PlayerClickableTextEntry;
 import java.util.HashMap;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -29,13 +30,13 @@ public class QuestTrigger implements CommandExecutor {
 		// The player must be the CommandSender when they either type in /questtrigger or
 		// click a dialog option in chat
 		if (!(sender instanceof Player)) {
-			sender.sendMessage(ChatColor.RED + "This command can only be run by players");
+			sender.sendMessage(Component.text("This command can only be run by players", NamedTextColor.RED));
 			return false;
 		}
 
 		// Only one argument is allowed, an integer indicating which of the available options was chosen
 		if (arg3.length != 1) {
-			sender.sendMessage(ChatColor.RED + "This command requires exactly one argument");
+			sender.sendMessage(Component.text("This command requires exactly one argument", NamedTextColor.RED));
 			return false;
 		}
 
@@ -50,7 +51,7 @@ public class QuestTrigger implements CommandExecutor {
 		try {
 			triggerIndex = Integer.parseInt(arg3[0]);
 		} catch (NumberFormatException e) {
-			sender.sendMessage(ChatColor.RED + "Argument parsing failed");
+			sender.sendMessage(Component.text("Argument parsing failed", NamedTextColor.RED));
 			return false;
 		}
 

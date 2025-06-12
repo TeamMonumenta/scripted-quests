@@ -34,6 +34,7 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.util.Vector;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.jetbrains.annotations.Nullable;
 
 /*
@@ -49,6 +50,7 @@ public class Race {
 				Math.sin(Math.toRadians(angle * 360.0 / NUM_RING_POINTS)), 0));
 		}
 	}
+
 	private static final String PLAYER_RACE_SPEED_TAG = "SQRacerSpeed";
 	/* Arguments */
 	private final Plugin mPlugin;
@@ -75,12 +77,12 @@ public class Race {
 	private final Location mStopLoc; // Location where player should tp back to on lose
 
 	/* Mutable variables for this race */
-	private Deque<RaceWaypoint> mRemainingWaypoints;
+	private @MonotonicNonNull Deque<RaceWaypoint> mRemainingWaypoints;
 	private RaceWaypoint mNextWaypoint;
 	private long mStartTime;
 	private long mMaxTime;
 	private int mFrame = 0;
-	private int speedWR = 0;
+	private int mSpeedWR = 0;
 	private @Nullable TimeBar mTimeBar = null;
 	private boolean mCountdownActive = false;
 	private int mWRTime = Integer.MAX_VALUE;
@@ -197,7 +199,7 @@ public class Race {
 
 				if (mTicks == 0) {
 					if (!mShowStats || !mRingless) {
-						mPlayer.sendMessage("" + ChatColor.BLUE + "Reminder:\nShift + Left-Click: Abandon\nShift + Right-Click: Retry");
+						mPlayer.sendMessage(Component.text("Reminder:\nShift + Left-Click: Abandon\nShift + Right-Click: Retry", NamedTextColor.BLUE));
 					}
 					// 3
 					mPlayer.sendTitle(ChatColor.RED + "" + ChatColor.BOLD + "3", "", 0, 20, 0);
@@ -254,7 +256,7 @@ public class Race {
 			timeElapsed = 0;
 		}
 		if (timeElapsed > mMaxTime) {
-			mPlayer.sendMessage("" + ChatColor.RED + ChatColor.BOLD + "You ran out of time!");
+			mPlayer.sendMessage(Component.text("You ran out of time!", NamedTextColor.RED).decorate(TextDecoration.BOLD));
 			lose();
 			return;
 		}
@@ -265,7 +267,7 @@ public class Race {
 		if (!mRingless) {
 			// Check if player went too far away
 			if (distance > mMaxDistance) {
-				mPlayer.sendMessage("" + ChatColor.RED + ChatColor.BOLD + "You went too far away from the race path!");
+				mPlayer.sendMessage(Component.text("You went too far away from the race path!", NamedTextColor.RED).decorate(TextDecoration.BOLD));
 				lose();
 				return;
 			} else if (distance < mNextWaypoint.getRadius()) {
@@ -380,7 +382,7 @@ public class Race {
 		if (mPlayer.getScoreboardTags().contains(PLAYER_RACE_SPEED_TAG)) {
 			speedScore = Objects.requireNonNull(mPlayer.getScoreboard().getObjective("Speed")).getScore(mPlayer.getName()).getScore();
 			if (endTime > mTimes.get(0).getTime()) {
-				mPlayer.sendMessage("" + ChatColor.RED + ChatColor.BOLD + "Since you didn't achieve master time, your time on the Lowest Speed % leaderboard was not updated!");
+				mPlayer.sendMessage(Component.text("Since you didn't achieve master time, your time on the Lowest Speed % leaderboard was not updated!", NamedTextColor.RED).decorate(TextDecoration.BOLD));
 				mPlayer.getScoreboardTags().remove(PLAYER_RACE_SPEED_TAG);
 			}
 		}
@@ -509,12 +511,12 @@ public class Race {
 				mPlayer.sendMessage(" ");
 				mPlayer.sendMessage(String.format("  %sWorld Record - %16s  | %s %s",
 					"" + ChatColor.AQUA + ChatColor.BOLD,
-					"" + speedWR,
+					"" + mSpeedWR,
 					"" + ("" + ChatColor.AQUA + ChatColor.BOLD + "⓵"),
-					"" + ((speedWR - speedScore != 0)
-						? ((speedScore <= speedWR)
-						? ("" + ChatColor.BLUE + ChatColor.BOLD + "( -" + (speedWR - speedScore) + ")")
-						: ("" + ChatColor.RED + ChatColor.BOLD + "( +" + (speedScore - speedWR) + ")"))
+					"" + ((mSpeedWR - speedScore != 0)
+						? ((speedScore <= mSpeedWR)
+						? ("" + ChatColor.BLUE + ChatColor.BOLD + "( -" + (mSpeedWR - speedScore) + ")")
+						: ("" + ChatColor.RED + ChatColor.BOLD + "( +" + (speedScore - mSpeedWR) + ")"))
 						: "")
 				));
 				mPlayer.sendMessage(String.format("  %s  Personal Best - %13s  | ⚡ %s",
@@ -549,7 +551,7 @@ public class Race {
 						RaceUtils.msToTimeString(endTime) +
 						"\",\"color\":\"blue\"}]";
 					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmdStr);
-					String wrStr = "auditlogplayer " + mPlayer.getName() + " \"" + mPlayer.getName()  + " has set a new record on " + mName + " with a time of "+ RaceUtils.msToTimeString(endTime) + "\"";
+					String wrStr = "auditlogplayer " + mPlayer.getName() + " \"" + mPlayer.getName() + " has set a new record on " + mName + " with a time of " + RaceUtils.msToTimeString(endTime) + "\"";
 					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), wrStr);
 				}
 			}
@@ -577,10 +579,10 @@ public class Race {
 					differenceMessage
 				));
 			} else {
-				mPlayer.sendMessage(ChatColor.RED + "You are not on the leaderboard.");
+				mPlayer.sendMessage(Component.text("You are not on the leaderboard.", NamedTextColor.RED));
 			}
 
-			if (speedWR > speedScore) {
+			if (mSpeedWR > speedScore) {
 				String cmdStr = "broadcastcommand tellraw @a [\"\",{\"text\":\"" +
 					mPlayer.getName() +
 					"\",\"color\":\"blue\"},{\"text\":\" has set a new world record for \",\"color\":\"dark_aqua\"},{\"text\":\"" +
@@ -589,20 +591,22 @@ public class Race {
 					speedScore +
 					"%\",\"color\":\"blue\"}]";
 				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmdStr);
-				String wrStr = "auditlogplayer " + mPlayer.getName() + " \"" + mPlayer.getName()  + " has set a new record on " + mName + " with a speed of "+ speedScore + "\"";
+				String wrStr = "auditlogplayer " + mPlayer.getName() + " \"" + mPlayer.getName() + " has set a new record on " + mName + " with a speed of " + speedScore + "\"";
 				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), wrStr);
 			}
 		}
 	}
 
 	private String ordinalSuffix(int position) {
-		if (position >= 11 && position <= 13) return "th";
-        return switch (position % 10) {
-            case 1 -> "st";
-            case 2 -> "nd";
-            case 3 -> "rd";
-            default -> "th";
-        };
+		if (position >= 11 && position <= 13) {
+			return "th";
+		}
+		return switch (position % 10) {
+			case 1 -> "st";
+			case 2 -> "nd";
+			case 3 -> "rd";
+			default -> "th";
+		};
 	}
 
 	public int getPlayerPosition(Player mPlayer, Objective lb) {
@@ -650,7 +654,7 @@ public class Race {
 					for (Map.Entry<String, Integer> entry : values.entrySet()) {
 						if (entry.getValue() > 0) {
 							if (isSpeedWR) {
-								speedWR = entry.getValue();
+								mSpeedWR = entry.getValue();
 							} else {
 								mWRTime = entry.getValue();
 							}
@@ -674,7 +678,7 @@ public class Race {
 				}
 			}
 			if (isSpeedWR) {
-				speedWR = top;
+				mSpeedWR = top;
 			} else {
 				mWRTime = top;
 			}

@@ -42,39 +42,40 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.jetbrains.annotations.Nullable;
 
 public class Plugin extends JavaPlugin {
 	private static @Nullable Plugin INSTANCE = null;
 
-	private FileConfiguration mConfig;
-	private File mConfigFile;
+	private @MonotonicNonNull FileConfiguration mConfig;
+	private @MonotonicNonNull File mConfigFile;
 	public @Nullable Boolean mShowTimerNames = null;
 	public boolean mShowZonesDynmap = false;
 	public boolean mFallbackZoneLookup = false;
 
-	public QuestCompassManager mQuestCompassManager;
-	public QuestNpcManager mNpcManager;
-	public ClickableManager mClickableManager;
-	public InteractableManager mInteractableManager;
-	public QuestLoginManager mLoginManager;
-	public QuestDeathManager mDeathManager;
-	public RaceManager mRaceManager;
-	public NpcTradeManager mTradeManager;
-	public CommandTimerManager mTimerManager;
-	private TranslationsManager mTranslationsManager;
-	public CodeManager mCodeManager;
-	public ZoneManager mZoneManager;
-	public ZonePropertyManager mZonePropertyManager;
-	public ZonePropertyGroupManager mZonePropertyGroupManager;
-	public WaypointManager mWaypointManager;
-	public GuiManager mGuiManager;
-	public ZoneEventListener mZoneEventListener;
+	public @MonotonicNonNull QuestCompassManager mQuestCompassManager;
+	public @MonotonicNonNull QuestNpcManager mNpcManager;
+	public @MonotonicNonNull ClickableManager mClickableManager;
+	public @MonotonicNonNull InteractableManager mInteractableManager;
+	public @MonotonicNonNull QuestLoginManager mLoginManager;
+	public @MonotonicNonNull QuestDeathManager mDeathManager;
+	public @MonotonicNonNull RaceManager mRaceManager;
+	public @MonotonicNonNull NpcTradeManager mTradeManager;
+	public @MonotonicNonNull CommandTimerManager mTimerManager;
+	private @MonotonicNonNull TranslationsManager mTranslationsManager;
+	public @MonotonicNonNull CodeManager mCodeManager;
+	public @MonotonicNonNull ZoneManager mZoneManager;
+	public @MonotonicNonNull ZonePropertyManager mZonePropertyManager;
+	public @MonotonicNonNull ZonePropertyGroupManager mZonePropertyGroupManager;
+	public @MonotonicNonNull WaypointManager mWaypointManager;
+	public @MonotonicNonNull GuiManager mGuiManager;
+	public @MonotonicNonNull ZoneEventListener mZoneEventListener;
 	public @Nullable ProtocolLibIntegration mProtocolLibIntegration;
 
 	public Random mRandom = new Random();
-	private ScheduleFunction mScheduledFunctionsManager;
-	private @Nullable CustomLogger mLogger = null;
+	private @MonotonicNonNull ScheduleFunction mScheduledFunctionsManager;
+	private @MonotonicNonNull CustomLogger mLogger = null;
 	private SoundCategory mDefaultMusicSoundCategory = SoundCategory.RECORDS;
 
 	@Override
@@ -187,7 +188,7 @@ public class Plugin extends JavaPlugin {
 			@Override
 			public void run() {
 				reloadConfig(null);
-				mZoneManager.reload(INSTANCE, Bukkit.getConsoleSender());
+				mZoneManager.reload(Plugin.this, Bukkit.getConsoleSender());
 			}
 		}.runTaskLater(this, 1);
 	}
@@ -205,7 +206,6 @@ public class Plugin extends JavaPlugin {
 		// Run all pending delayed commands
 		ClientChatProtocol.getInstance().deinitialize();
 		mScheduledFunctionsManager.cancel();
-		mScheduledFunctionsManager = null;
 
 		INSTANCE = null;
 	}
@@ -232,11 +232,11 @@ public class Plugin extends JavaPlugin {
 		TranslationsManager.reload(sender);
 	}
 
-	public void reloadZones(CommandSender sender) {
+	public void reloadZones(@Nullable CommandSender sender) {
 		mZoneManager.reload(this, sender);
 	}
 
-	private void reloadConfigYaml(CommandSender sender) {
+	private void reloadConfigYaml(@Nullable CommandSender sender) {
 		if (mConfigFile == null) {
 			mConfigFile = new File(getDataFolder(), "config.yml");
 		}

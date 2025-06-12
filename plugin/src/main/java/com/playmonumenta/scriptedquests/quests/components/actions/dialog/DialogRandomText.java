@@ -40,11 +40,13 @@ public class DialogRandomText implements DialogBase {
 	@Override
 	public JsonElement serializeForClientAPI(QuestContext context) {
 		int idx = mRandom.nextInt(mText.size());
-		return JsonObjectBuilder.get()
+		JsonObjectBuilder builder = JsonObjectBuilder.get()
 			.add("type", "random_text")
-			.add("commands", mText.get(idx))
-			.add("npc_name", mDisplayName)
-			.build();
+			.add("commands", mText.get(idx));
+		if (mDisplayName != null) {
+			builder.add("npc_name", mDisplayName);
+		}
+		return builder.build();
 
 	}
 }

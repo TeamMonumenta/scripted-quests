@@ -50,7 +50,7 @@ public class InteractableManager {
 	 * @return True if the PlayerInteractEvent that called this method should be cancelled.
 	 *         Some interactables do cancel the event, others do not.
 	 */
-	public boolean interactEvent(Plugin plugin, Player player, ItemStack item, Block block, Action action) {
+	public boolean interactEvent(Plugin plugin, Player player, ItemStack item, @Nullable Block block, Action action) {
 		if (item != null) {
 			List<InteractableEntry> entries = mInteractables.get(item.getType());
 			if (entries != null) {
