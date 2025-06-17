@@ -3,14 +3,17 @@ package com.playmonumenta.scriptedquests.quests.components;
 import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.Location;
+import org.bukkit.World;
 
 public class DeathLocation implements QuestLocation {
 	private final long mDeathTime;
 	private final List<Location> mWaypoints = new ArrayList<>(1);
+	private final String mWorld;
 
-	public DeathLocation(Location loc, long deathTime) {
+	public DeathLocation(Location loc, long deathTime, World world) {
 		mDeathTime = deathTime;
 		mWaypoints.add(loc);
+		mWorld = world.getName();
 	}
 
 	public String getTimeDifference(long compareTime) {
@@ -78,5 +81,10 @@ public class DeathLocation implements QuestLocation {
 	@Override
 	public String getMessage() {
 		return getTimeDifference(System.currentTimeMillis()) + " ago";
+	}
+
+	@Override
+	public String getWorldRegex() {
+		return mWorld;
 	}
 }

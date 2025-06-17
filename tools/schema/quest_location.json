@@ -5,7 +5,7 @@
         "waypoints",
         "message"
     ],
-    "additionalProperties": false,
+    "additionalProperties": true,
     "properties": {
         "prerequisites": {
             "required": true,
@@ -27,10 +27,18 @@
         },
         "message": {
             "required": true,
-            "propertyOrder": 4,
+            "propertyOrder": 3,
             "title": "message",
             "description": "Text to display in chat when checking a quest",
             "type": "string"
-        }
+        },
+		"world_name": {
+			"required": false,
+			"propertyOrder": 4,
+			"title": "world_name",
+			"description": "A regular expression (regex) that matches one or more world names completely. Inherits from the file containing it. If not set at all, it defaults to \".*\". See <a href=\"https://regex101.com\">regex101.com</a> for help.",
+			"type": "string",
+			"default": ".*"
+		}
     }
 }

@@ -5,16 +5,17 @@ import com.playmonumenta.scriptedquests.utils.InventoryUtils;
 import com.playmonumenta.scriptedquests.managers.QuestCompassManager.ValidCompassEntry;
 import java.util.ArrayList;
 import java.util.List;
+
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.apache.commons.lang3.StringUtils;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -157,7 +158,12 @@ public class QuestCompassGui extends CustomInventory {
 						splitIndex = 1 + qLore.indexOf(" ", splitIndex + 45);
 					}
 				}
-				lore.add(Component.text((int) q.mLocation.getLocation().getX() + ", " + (int) q.mLocation.getLocation().getY() + ", " + (int) q.mLocation.getLocation().getZ() + " (" + (int) mPlayer.getLocation().distance(q.mLocation.getLocation()) + "m away)", NamedTextColor.DARK_GRAY).decoration(TextDecoration.ITALIC, false));
+
+				boolean differentWorld = !com.playmonumenta.scriptedquests.Plugin.getInstance().mZoneManager.getWorldRegexMatcher().matches(mPlayer.getWorld().getName(), q.mLocation.getWorldRegex());
+				Location qLoc = q.mLocation.getLocation();
+				lore.add(Component.text((int) qLoc.getX() + ", " + (int) qLoc.getY() + ", " + (int) qLoc.getZ() + " ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.ITALIC, false)
+					.append(differentWorld ? Component.text("[Different World!]", NamedTextColor.DARK_RED) : Component.text(("("+ (int) mPlayer.getLocation().distance(new Location(mPlayer.getWorld(), qLoc.getX(), qLoc.getY(), qLoc.getZ())) + "m away)"))));
+
 				if (q.mType == QuestCompassManager.CompassEntryType.Waypoint) {
 					lore.add(Component.text("(Shift Click to remove this waypoint.)", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false));
 				}
@@ -208,6 +214,9 @@ public class QuestCompassGui extends CustomInventory {
 		int index = item.getItemMeta().getCustomModelData();
 		mManager.mCurrentIndex.put(player, mManager.showCurrentQuest(player, index));
 		player.playSound(player.getLocation(), Sound.UI_LOOM_TAKE_RESULT, SoundCategory.PLAYERS, 1f, 1f);
+		if (slot == mCustomSlot) {
+			player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.PLAYERS, 0.5f, 0.8f);
+		}
 		close();
 	}
 }

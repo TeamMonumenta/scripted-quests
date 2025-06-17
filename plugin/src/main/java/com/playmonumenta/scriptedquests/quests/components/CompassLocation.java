@@ -17,6 +17,7 @@ public class CompassLocation implements QuestLocation {
 	private final @Nullable QuestPrerequisites mPrerequisites;
 	private final String mMessage;
 	private final List<Location> mWaypoints = new ArrayList<Location>();
+	private final String mWorldRegex;
 
 	public CompassLocation(World world, JsonElement element) throws Exception {
 		JsonObject object = element.getAsJsonObject();
@@ -29,6 +30,9 @@ public class CompassLocation implements QuestLocation {
 		if (prereq == null) {
 			throw new Exception("Failed to parse location prerequisites!");
 		}
+
+		mWorldRegex = object.has("world_name") ? object.get("world_name").toString() : ".*";
+
 		mPrerequisites = new QuestPrerequisites(prereq);
 
 		if (object.has("waypoints")) {
@@ -105,6 +109,7 @@ public class CompassLocation implements QuestLocation {
 		mPrerequisites = questPrereq;
 		mMessage = message;
 		mWaypoints.addAll(waypoints);
+		mWorldRegex = ".*";
 	}
 
 	@Override
@@ -120,6 +125,11 @@ public class CompassLocation implements QuestLocation {
 	@Override
 	public String getMessage() {
 		return mMessage;
+	}
+
+	@Override
+	public String getWorldRegex() {
+		return mWorldRegex;
 	}
 
 	@Override
