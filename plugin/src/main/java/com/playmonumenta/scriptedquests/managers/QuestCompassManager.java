@@ -10,10 +10,14 @@ import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.WeakHashMap;
+
+import com.playmonumenta.scriptedquests.utils.WorldRegexMatcher;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
 import org.bukkit.ChatColor;
@@ -30,6 +34,7 @@ public class QuestCompassManager {
 	public final Map<UUID, CompassCacheEntry> mCompassCache = new HashMap<UUID, CompassCacheEntry>();
 	public final Map<Player, Integer> mCurrentIndex = new WeakHashMap<>();
 	public final Plugin mPlugin;
+	public static WorldRegexMatcher mWorldRegexMatcher = null;
 
 	/* One command-specified waypoint per player */
 	public final Map<UUID, ValidCompassEntry> mCommandWaypoints = new HashMap<UUID, ValidCompassEntry>();
@@ -102,6 +107,13 @@ public class QuestCompassManager {
 			mQuests.add(quest);
 			return quest.getQuestName() + ":" + Integer.toString(quest.getMarkers().size());
 		});
+		final Set<String> worldRegexes = new HashSet<>();
+		for (QuestCompass qc : mQuests) {
+			for (CompassLocation cl : qc.getMarkers()) {
+				worldRegexes.add(cl.getWorldRegex());
+			}
+		}
+		mWorldRegexMatcher = new WorldRegexMatcher(worldRegexes);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -225,5 +237,13 @@ public class QuestCompassManager {
 
 	public void invalidateCache(Player player) {
 		mCompassCache.remove(player.getUniqueId());
+	}
+
+	public WorldRegexMatcher getWorldRegexMatcher() {
+		WorldRegexMatcher matcher = mWorldRegexMatcher;
+		if (matcher == null) {
+			throw new RuntimeException("WorldRegexMatcher unavailable before ScriptedQuests finishes loading");
+		}
+		return matcher;
 	}
 }

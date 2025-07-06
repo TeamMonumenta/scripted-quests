@@ -1,4 +1,4 @@
-package com.playmonumenta.scriptedquests.zones;
+package com.playmonumenta.scriptedquests.utils;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,10 +10,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 
 public class WorldRegexMatcher {
-	private static final Map<String, Pattern> mPatterns = new HashMap<>();
-	private static final Map<World, Set<String>> mWorldPatternMatches = new HashMap<>();
+	private final Map<String, Pattern> mPatterns = new HashMap<>();
+	private final Map<World, Set<String>> mWorldPatternMatches = new HashMap<>();
 
-	protected WorldRegexMatcher(Set<String> worldRegexes) throws PatternSyntaxException {
+	public WorldRegexMatcher(Set<String> worldRegexes) throws PatternSyntaxException {
 		for (String worldRegexStr : worldRegexes) {
 			mPatterns.put(worldRegexStr, Pattern.compile(worldRegexStr));
 		}
@@ -23,7 +23,7 @@ public class WorldRegexMatcher {
 		}
 	}
 
-	protected void onLoadWorld(World world) {
+	public void onLoadWorld(World world) {
 		Set<String> matchingPatterns = new HashSet<>();
 		mWorldPatternMatches.put(world, matchingPatterns);
 
@@ -41,7 +41,7 @@ public class WorldRegexMatcher {
 		}
 	}
 
-	protected void onUnloadWorld(World world) {
+	public void onUnloadWorld(World world) {
 		mWorldPatternMatches.remove(world);
 	}
 

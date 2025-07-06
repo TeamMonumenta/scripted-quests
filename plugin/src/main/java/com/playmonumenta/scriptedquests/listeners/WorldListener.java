@@ -35,10 +35,12 @@ public class WorldListener implements Listener {
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void worldLoadEvent(WorldLoadEvent event) {
 		mPlugin.mZoneManager.onLoadWorld(event.getWorld());
+		mPlugin.mQuestCompassManager.getWorldRegexMatcher().onLoadWorld(event.getWorld());
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void worldUnloadEvent(WorldUnloadEvent event) {
 		mPlugin.mZoneManager.onUnloadWorld(event.getWorld());
+		mPlugin.mQuestCompassManager.getWorldRegexMatcher().onUnloadWorld(event.getWorld());
 	}
 }
