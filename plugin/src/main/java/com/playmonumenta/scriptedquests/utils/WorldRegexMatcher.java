@@ -55,7 +55,12 @@ public class WorldRegexMatcher {
 	}
 
 	public boolean matches(String worldName, String worldRegex) {
-		if (worldRegex == null || worldRegex.isEmpty() || worldRegex.equals(".*")) {
+		if (
+			worldRegex == null
+				|| worldRegex.isEmpty()
+				|| worldRegex.equals(".*")
+				|| worldRegex.equals(worldName)
+		) {
 			return true;
 		}
 
