@@ -8,11 +8,9 @@ import dev.jorel.commandapi.arguments.IntegerArgument;
 import dev.jorel.commandapi.arguments.LiteralArgument;
 import dev.jorel.commandapi.arguments.LocationArgument;
 import dev.jorel.commandapi.arguments.LocationType;
-import dev.jorel.commandapi.arguments.SafeSuggestions;
 import dev.jorel.commandapi.executors.CommandArguments;
 import java.util.function.Function;
 import org.bukkit.Location;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.util.Consumer;
 
