@@ -3,6 +3,7 @@ package com.playmonumenta.scriptedquests.commands;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.Argument;
+import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.IntegerArgument;
 import dev.jorel.commandapi.arguments.LiteralArgument;
 import dev.jorel.commandapi.arguments.LocationArgument;
@@ -59,7 +60,7 @@ public class Clock {
 		}
 	}
 
-	private static final Argument<Location> locationArg = new LocationArgument("location", LocationType.BLOCK_POSITION);
+	private static final Argument<Location> locationArg = new LocationArgument("location", LocationType.BLOCK_POSITION).replaceSuggestions(ArgumentSuggestions.strings("~ ~ ~"));
 	private static final Argument<Integer> periodArg = new IntegerArgument("period", 1);
 	private static final Argument<Integer> rangeArg = new IntegerArgument("range", 1);
 
