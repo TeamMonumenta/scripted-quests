@@ -1,46 +1,46 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8" />
-    <title>ScriptedQuests Quest Editor</title>
+	<meta charset="utf-8" />
+	<title>ScriptedQuests Quest Editor</title>
 
-    <!-- Foundation CSS framework (Bootstrap and jQueryUI also supported) -->
-    <link rel='stylesheet' href='//cdn.jsdelivr.net/bootstrap/3.2.0/css/bootstrap.css'>
-    <!-- Font Awesome icons (Bootstrap, Foundation, and jQueryUI also supported) -->
-    <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.6.1/css/all.css'>
+	<!-- Foundation CSS framework (Bootstrap and jQueryUI also supported) -->
+	<link rel='stylesheet' href='//cdn.jsdelivr.net/bootstrap/3.2.0/css/bootstrap.css'>
+	<!-- Font Awesome icons (Bootstrap, Foundation, and jQueryUI also supported) -->
+	<link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.6.1/css/all.css'>
 
-    <script src="https://cdn.jsdelivr.net/npm/@json-editor/json-editor@1.3.5/dist/jsoneditor.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@json-editor/json-editor@2.15.2/dist/jsoneditor.min.js"></script>
 </head>
 <body>
 <div class='container'>
-    <div class='row' style='padding-bottom: 15px;'>
-        <div class='col-md-12'>
-            <h1>ScriptedQuests Quest Editor</h1>
-            <p>Quest Compass data is stored as a separate file, as quests data is npc specific, and compass data is quest specific.</p>
-            <br>
-            <a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html">Entity Types</a>
-            <br>
-            <a href="https://minecraft.wiki/w/Formatting_codes">Minecraft Formatting Codes</a>
-        </div>
-    </div>
-    <div class='row' style='padding-bottom: 15px;'>
-        <div class='col-md-12'>
-            <button id='restore' class='btn btn-info'>Restore to Default</button>
-            <span id='valid_indicator' class='label label-success'></span>
-        </div>
-    </div>
-    <div class='row'>
-        <div class='col-md-12'>
-            <div id='editor_holder'></div>
-        </div>
-    </div>
+	<div class='row' style='padding-bottom: 15px;'>
+		<div class='col-md-12'>
+			<h1>ScriptedQuests Quest Editor</h1>
+			<p>Quest Compass data is stored as a separate file, as quests data is npc specific, and compass data is quest specific.</p>
+			<br>
+			<a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html">Entity Types</a>
+			<br>
+			<a href="https://minecraft.wiki/w/Formatting_codes">Minecraft Formatting Codes</a>
+		</div>
+	</div>
+	<div class='row' style='padding-bottom: 15px;'>
+		<div class='col-md-12'>
+			<button id='restore' class='btn btn-info'>Restore to Default</button>
+			<span id='valid_indicator' class='label label-success'></span>
+		</div>
+	</div>
+	<div class='row'>
+		<div class='col-md-12'>
+			<div id='editor_holder'></div>
+		</div>
+	</div>
 </div>
 
 <script>
-    // Initialize the editor
-    var editor = new JSONEditor(document.getElementById('editor_holder'),{
-        theme: 'bootstrap3',
-        iconlib: 'fontawesome5',
+	// Initialize the editor
+	var editor = new JSONEditor(document.getElementById('editor_holder'),{
+		theme: 'bootstrap4',
+		iconlib: 'fontawesome5',
 
 		// Enable fetching schemas via ajax
 		ajax: true,
@@ -51,30 +51,30 @@
         }
     });
 
-    // Hook up the Restore to Default button
-    document.getElementById('restore').addEventListener('click',function() {
-        editor.setValue(starting_value);
-    });
+	// Hook up the Restore to Default button
+	document.getElementById('restore').addEventListener('click',function() {
+		editor.setValue(starting_value);
+	});
 
-    // Hook up the validation indicator to update its
-    // status whenever the editor changes
-    editor.on('change',function() {
-        // Get an array of errors from the validator
-        var errors = editor.validate();
+	// Hook up the validation indicator to update its
+	// status whenever the editor changes
+	editor.on('change',function() {
+		// Get an array of errors from the validator
+		var errors = editor.validate();
 
-        var indicator = document.getElementById('valid_indicator');
+		var indicator = document.getElementById('valid_indicator');
 
-        // Not valid
-        if(errors.length) {
-            indicator.className = 'label label-danger'
-            indicator.textContent = "not valid";
-        }
-        // Valid
-        else {
-            indicator.className = 'label label-success'
-            indicator.textContent = "valid";
-        }
-    });
+		// Not valid
+		if(errors.length) {
+			indicator.className = 'label label-danger'
+			indicator.textContent = "not valid";
+		}
+		// Valid
+		else {
+			indicator.className = 'label label-success'
+			indicator.textContent = "valid";
+		}
+	});
 </script>
 </body>
 </html>

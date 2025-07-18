@@ -77,7 +77,7 @@
                     "title": "clickable_text",
                     "description": "Colored, formatted, and put in [] for you.",
                     "type": "array",
-                    "format": "tabs",
+                    "format": "tabs-top",
                     "minItems": 1,
                     "items": {
                         "headerTemplate": "{{self.player_text}}",
@@ -133,7 +133,7 @@
                 "all_in_one_text": {
                     "title": "all_in_one_text",
                     "type": "array",
-                    "format": "tabs",
+                    "format": "tabs-top",
                     "minItems": 1,
                     "items": {
                         "headerTemplate": "All In One Text",

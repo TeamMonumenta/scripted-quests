@@ -1,6 +1,7 @@
 {
     "title": "actions",
     "type": "array",
+	"format": "tabs-top",
     "minItems": 1,
     "items": {
         "defaultProperties": [

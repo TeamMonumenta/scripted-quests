@@ -25,7 +25,7 @@
             "title": "quest_components",
             "description": "A list of actions with associated prerequisites",
             "type": "array",
-            "format": "tabs",
+            "format": "tabs-top",
             "minItems": 1,
             "items": {
                 "title": "Quest component",

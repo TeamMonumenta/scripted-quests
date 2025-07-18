@@ -19,7 +19,7 @@
             "title": "locations",
             "description": "A list of locations, messages, and requirements to display them",
             "type": "array",
-            "format": "tabs",
+            "format": "tabs-top",
             "minItems": 1,
             "items": {
                 "headerTemplate": "{{self.message}}",

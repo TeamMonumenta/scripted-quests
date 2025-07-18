@@ -74,7 +74,7 @@
 			"title": "Missions",
 			"description": "The missions for this pass. (Do not swap between one week/multi week for a mission.)",
 			"type": "array",
-			"format": "tabs",
+			"format": "tabs-top",
 			"minItems": 1,
 			"items": {
 				"defaultProperties": [

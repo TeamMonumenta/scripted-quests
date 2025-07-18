@@ -123,7 +123,7 @@
             "title": "waypoints",
             "description": "A list of race waypoints",
             "type": "array",
-            "format": "tabs",
+            "format": "tabs-top",
             "minItems": 1,
             "items": {
                 "headerTemplate": "{{self.x}} {{self.y}} {{self.z}}",
@@ -175,7 +175,7 @@
             "title": "times",
             "description": "A list of goal times to beat. Copy/paste this into the 'times' element for a starting point:           [{\"label\":\"Master\",\"time\":1,\"color\":\"&a&l\"},{\"label\":\"Gold\",\"time\":1,\"color\":\"&6&l\"},{\"label\":\"Silver\",\"time\":1,\"color\":\"&f&l\"},{\"label\":\"Bronze\",\"time\":1,\"color\":\"&4&l\"},{\"label\":\"Complete\",\"time\":1,\"color\":\"&7&l\"}]",
             "type": "array",
-            "format": "tabs",
+            "format": "tabs-top",
             "minItems": 1,
             "items": {
                 "headerTemplate": "{{self.label}}",
