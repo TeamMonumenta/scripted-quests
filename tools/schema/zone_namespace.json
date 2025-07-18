@@ -57,7 +57,7 @@
             "title": "zones",
             "description": "A list of zones; if two zones overlap, the one higher up the list takes priority.",
             "type": "array",
-            "format": "tabs",
+            "format": "tabs-top",
             "minItems": 1,
             "items": {
                 "$comment": "TODO:\n\nI can not figure out how to show the header that is appropriate for each oneOf entry:\n- Removing the title messes up the drop down menu for which variant to use\n- Not including a heading at this level but including it in the oneOf entries shows no header\n- headerTemplate does not appear to support conditional formatting;\nor maybe it does, but is not documented anywhere I can find it",

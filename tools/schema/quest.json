@@ -1,5 +1,6 @@
 {
     "title": "Quest NPC",
+	"type": "object",
     "defaultProperties": [
         "npc",
         "quest_components"
@@ -38,9 +39,10 @@
             "title": "quest_components",
             "description": "A list of actions with associated prerequisites",
             "type": "array",
-            "format": "tabs",
+            "format": "tabs-top",
             "minItems": 1,
             "items": {
+				"type": "object",
                 "title": "Quest component",
                 "$ref": "quest_component.json"
             }
@@ -50,7 +52,7 @@
             "title": "right_click_components",
             "description": "A list of actions to run when right clicking an NPC, rather than punching it",
             "type": "array",
-            "format": "tabs",
+            "format": "tabs-top",
             "minItems": 1,
             "items": {
                 "title": "Quest component",

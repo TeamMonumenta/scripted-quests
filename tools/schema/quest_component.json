@@ -4,7 +4,7 @@
         "prerequisites",
         "actions"
     ],
-    "additionalProperties":false,
+    "additionalProperties": false,
     "properties": {
         "prerequisites": {
             "propertyOrder": 1,
