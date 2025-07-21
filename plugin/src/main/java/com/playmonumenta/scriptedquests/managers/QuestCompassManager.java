@@ -26,13 +26,13 @@ import org.jetbrains.annotations.Nullable;
 
 public class QuestCompassManager {
 
-	public final List<QuestCompass> mQuests = new ArrayList<QuestCompass>();
-	public final Map<UUID, CompassCacheEntry> mCompassCache = new HashMap<UUID, CompassCacheEntry>();
+	private final List<QuestCompass> mQuests = new ArrayList<QuestCompass>();
+	private final Map<UUID, CompassCacheEntry> mCompassCache = new HashMap<UUID, CompassCacheEntry>();
 	public final Map<Player, Integer> mCurrentIndex = new WeakHashMap<>();
-	public final Plugin mPlugin;
+	private final Plugin mPlugin;
 
 	/* One command-specified waypoint per player */
-	public final Map<UUID, ValidCompassEntry> mCommandWaypoints = new HashMap<UUID, ValidCompassEntry>();
+	private final Map<UUID, ValidCompassEntry> mCommandWaypoints = new HashMap<UUID, ValidCompassEntry>();
 
 	public static class ValidCompassEntry {
 		public final QuestLocation mLocation;
@@ -41,7 +41,7 @@ public class QuestCompassManager {
 		public final CompassEntryType mType;
 		public final int[] mMarkersIndex;
 
-		public ValidCompassEntry(QuestLocation loc, String title, boolean allowTranslations, CompassEntryType type) {
+		private ValidCompassEntry(QuestLocation loc, String title, boolean allowTranslations, CompassEntryType type) {
 			mLocation = loc;
 			mTitle = title;
 			mAllowTranslations = allowTranslations;
@@ -49,7 +49,7 @@ public class QuestCompassManager {
 			mMarkersIndex = new int[]{1, 1};
 		}
 
-		public ValidCompassEntry(QuestLocation loc, String title, boolean allowTranslations, CompassEntryType type, int[] markersIndex) {
+		private ValidCompassEntry(QuestLocation loc, String title, boolean allowTranslations, CompassEntryType type, int[] markersIndex) {
 			mLocation = loc;
 			mTitle = title;
 			mAllowTranslations = allowTranslations;
@@ -57,7 +57,7 @@ public class QuestCompassManager {
 			mMarkersIndex = markersIndex;
 		}
 
-		public void directPlayer(WaypointManager mgr, Player player, boolean isRemovable) {
+		private void directPlayer(WaypointManager mgr, Player player, boolean isRemovable) {
 			if (isRemovable) {
 				MessagingUtils.sendClickableMessage(player, mTitle + ": " + mLocation.getMessage(), mAllowTranslations, "/waypoint remove @s", HoverEvent.showText(Component.text("Click to remove this waypoint.")));
 			} else {
@@ -78,16 +78,16 @@ public class QuestCompassManager {
 		Waypoint()
 	}
 
-	public static class CompassCacheEntry {
+	private static class CompassCacheEntry {
 		public final int mLastRefresh;
 		public final List<ValidCompassEntry> mEntries;
 
-		public CompassCacheEntry(Player player, List<ValidCompassEntry> entries) {
+		private CompassCacheEntry(Player player, List<ValidCompassEntry> entries) {
 			mLastRefresh = player.getTicksLived();
 			mEntries = entries;
 		}
 
-		public boolean isStillValid(Player player) {
+		private boolean isStillValid(Player player) {
 			return Math.abs(player.getTicksLived() - mLastRefresh) < 200;
 		}
 	}
