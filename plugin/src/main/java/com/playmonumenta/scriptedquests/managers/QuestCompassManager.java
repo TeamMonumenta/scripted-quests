@@ -199,11 +199,14 @@ public class QuestCompassManager {
 			return;
 		}
 
-		ValidCompassEntry quest = mCompassCache.get(player.getUniqueId()).mEntries.get(index);
-		if (quest.mMarkersIndex[0] == quest.mMarkersIndex[1]) {
-			index += 1 - quest.mMarkersIndex[1];
-		} else {
-			index += 1;
+		QuestCompassManager.CompassCacheEntry cacheEntryMap = mCompassCache.get(player.getUniqueId());
+		if (cacheEntryMap != null) {
+			ValidCompassEntry quest = cacheEntryMap.mEntries.get(index);
+			if (quest.mMarkersIndex[0] == quest.mMarkersIndex[1]) {
+				index += 1 - quest.mMarkersIndex[1];
+			} else {
+				index += 1;
+			}
 		}
 
 		mCurrentIndex.put(player, showCurrentQuest(player, index));
