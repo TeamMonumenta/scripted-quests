@@ -201,6 +201,7 @@
 												"forum",
 												"blue",
 												"brown",
+												"indigo",
 												"skt",
 												"hexfallruten",
 												"hexfallhycenea",
@@ -221,7 +222,8 @@
 												"godspore",
 												"sirius",
 												"huntsspoiled",
-												"huntsunspoiled"
+												"huntsunspoiled",
+												"intruder"
 											]
 										},
 										{
@@ -284,7 +286,8 @@
 										"cyan",
 										"purple",
 										"blue",
-										"brown"
+										"brown",
+										"indigo"
 									]
 								]
 							},
@@ -324,7 +327,8 @@
 										"shiftingcity",
 										"forum",
 										"blue",
-										"brown"
+										"brown",
+										"indigo"
 									]
 								]
 							},
@@ -343,7 +347,8 @@
 										"godspore",
 										"sirius",
 										"huntsspoiled",
-										"huntsunspoiled"
+										"huntsunspoiled",
+										"intruder"
 									]
 								]
 							},
