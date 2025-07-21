@@ -8,13 +8,10 @@ import com.playmonumenta.scriptedquests.quests.components.DeathLocation;
 import com.playmonumenta.scriptedquests.quests.components.QuestLocation;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
-import com.playmonumenta.scriptedquests.utils.WorldRegexMatcher;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.WeakHashMap;
 import net.kyori.adventure.text.Component;
@@ -33,7 +30,6 @@ public class QuestCompassManager {
 	public final Map<UUID, CompassCacheEntry> mCompassCache = new HashMap<UUID, CompassCacheEntry>();
 	public final Map<Player, Integer> mCurrentIndex = new WeakHashMap<>();
 	public final Plugin mPlugin;
-	public static WorldRegexMatcher mWorldRegexMatcher = null;
 
 	/* One command-specified waypoint per player */
 	public final Map<UUID, ValidCompassEntry> mCommandWaypoints = new HashMap<UUID, ValidCompassEntry>();
@@ -67,6 +63,11 @@ public class QuestCompassManager {
 			} else {
 				MessagingUtils.sendRawMessage(player, mTitle + ": " + mLocation.getMessage(), mAllowTranslations);
 			}
+			if (!player.getWorld().getName().matches(mLocation.getWorldRegex())) {
+				MessagingUtils.sendRawMessage(player, "&7(This location is on a &cdifferent world!&7 Find a way to the correct world before following the compass.)", mAllowTranslations);
+
+			}
+
 			mgr.setWaypoint(player, mLocation);
 		}
 	}
@@ -106,13 +107,6 @@ public class QuestCompassManager {
 			mQuests.add(quest);
 			return quest.getQuestName() + ":" + Integer.toString(quest.getMarkers().size());
 		});
-		final Set<String> worldRegexes = new HashSet<>();
-		for (QuestCompass qc : mQuests) {
-			for (CompassLocation cl : qc.getMarkers()) {
-				worldRegexes.add(cl.getWorldRegex());
-			}
-		}
-		mWorldRegexMatcher = new WorldRegexMatcher(worldRegexes);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -217,11 +211,11 @@ public class QuestCompassManager {
 	}
 
 	/* One command-specified waypoint per player */
-	public void setCommandWaypoint(Player player, List<Location> steps, String title, String message) {
-		ValidCompassEntry entry = new ValidCompassEntry(new CompassLocation(null, message, steps), title, false, CompassEntryType.Waypoint);
+	public void setCommandWaypoint(Player player, List<Location> steps, String title, String message, String worldRegex) {
+		invalidateCache(player);
+		ValidCompassEntry entry = new ValidCompassEntry(new CompassLocation(null, message, steps, worldRegex), title, false, CompassEntryType.Waypoint);
 		mCommandWaypoints.put(player.getUniqueId(), entry);
 		mCurrentIndex.put(player, getCurrentMarkerTitles(player).indexOf(mCommandWaypoints.get(player.getUniqueId())));
-		invalidateCache(player);
 		entry.directPlayer(mPlugin.mWaypointManager, player, true);
 	}
 
@@ -236,13 +230,5 @@ public class QuestCompassManager {
 
 	public void invalidateCache(Player player) {
 		mCompassCache.remove(player.getUniqueId());
-	}
-
-	public WorldRegexMatcher getWorldRegexMatcher() {
-		WorldRegexMatcher matcher = mWorldRegexMatcher;
-		if (matcher == null) {
-			throw new RuntimeException("WorldRegexMatcher unavailable before ScriptedQuests finishes loading");
-		}
-		return matcher;
 	}
 }

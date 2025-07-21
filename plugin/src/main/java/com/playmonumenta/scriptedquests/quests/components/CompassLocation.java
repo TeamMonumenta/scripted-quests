@@ -8,6 +8,7 @@ import com.playmonumenta.scriptedquests.quests.QuestContext;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -31,7 +32,7 @@ public class CompassLocation implements QuestLocation {
 			throw new Exception("Failed to parse location prerequisites!");
 		}
 
-		mWorldRegex = object.has("world_name") ? object.get("world_name").toString() : ".*";
+		mWorldRegex = object.has("world_name") ? object.get("world_name").toString().replaceAll("\"", "") : Bukkit.getWorlds().get(0).getName();
 
 		mPrerequisites = new QuestPrerequisites(prereq);
 
@@ -105,11 +106,11 @@ public class CompassLocation implements QuestLocation {
 	}
 
 	//If QuestPrerequisites is null, prerequisites always met
-	public CompassLocation(@Nullable QuestPrerequisites questPrereq, String message, List<Location> waypoints) {
+	public CompassLocation(@Nullable QuestPrerequisites questPrereq, String message, List<Location> waypoints, String worldRegex) {
 		mPrerequisites = questPrereq;
 		mMessage = message;
 		mWaypoints.addAll(waypoints);
-		mWorldRegex = ".*";
+		mWorldRegex = worldRegex;
 	}
 
 	@Override

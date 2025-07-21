@@ -13,7 +13,7 @@ public class DeathLocation implements QuestLocation {
 	public DeathLocation(Location loc, long deathTime, World world) {
 		mDeathTime = deathTime;
 		mWaypoints.add(loc);
-		mWorld = world.getName();
+		mWorld = world.getName().replaceAll("\\d+", ".+");
 	}
 
 	public String getTimeDifference(long compareTime) {

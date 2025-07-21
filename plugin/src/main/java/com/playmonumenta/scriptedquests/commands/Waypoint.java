@@ -20,8 +20,9 @@ public class Waypoint {
 
 		EntitySelectorArgument.OnePlayer playerArg = new EntitySelectorArgument.OnePlayer("player");
 		TextArgument titleArg = new TextArgument("title");
-		TextArgument labelArg = new TextArgument("label");
+		TextArgument messageArg = new TextArgument("message");
 		LocationArgument locationArg = new LocationArgument("location", LocationType.PRECISE_POSITION);
+		TextArgument regexArg = new TextArgument("world name regex");
 
 		//Sets command waypoint
 		new CommandAPICommand("waypoint")
@@ -29,8 +30,9 @@ public class Waypoint {
 			.withSubcommand(new CommandAPICommand("set")
 				.withArguments(playerArg)
 				.withArguments(titleArg)
-				.withArguments(labelArg)
+				.withArguments(messageArg)
 				.withArguments(locationArg)
+				.withOptionalArguments(regexArg)
 				.executes((sender, args) -> {
 					Player targetPlayer = args.getByArgument(playerArg);
 					if (sender instanceof Player player
@@ -41,7 +43,7 @@ public class Waypoint {
 					if (plugin.mQuestCompassManager != null) {
 						List<Location> waypoint = new ArrayList<>();
 						waypoint.add(args.getByArgument(locationArg));
-						plugin.mQuestCompassManager.setCommandWaypoint(targetPlayer, waypoint, args.getByArgument(titleArg) + ChatColor.RESET, args.getByArgument(labelArg));
+						plugin.mQuestCompassManager.setCommandWaypoint(targetPlayer, waypoint, args.getByArgument(titleArg) + ChatColor.RESET, args.getByArgument(messageArg), args.getByArgumentOrDefault(regexArg, targetPlayer != null ? targetPlayer.getWorld().getName() : ".*"));
 					} else {
 						throw CommandAPI.failWithString("Quest Compass Manager does not exist!");
 					}

@@ -36,9 +36,8 @@
 			"required": false,
 			"propertyOrder": 4,
 			"title": "world_name",
-			"description": "A regular expression (regex) that matches one or more world names completely. Inherits from the file containing it. If not set at all, it defaults to \".*\". See <a href=\"https://regex101.com\">regex101.com</a> for help.",
-			"type": "string",
-			"default": ".*"
+			"description": "A regular expression (regex) that matches one or more world names. Using /worlds in game will tell you the name of your current world if you are unsure. If not set at all, this defaults to using Bukkit.getWorlds().get(0).getName(). See <a href=\"https://regex101.com\">regex101.com</a> for help.",
+			"type": "string"
 		}
     }
 }

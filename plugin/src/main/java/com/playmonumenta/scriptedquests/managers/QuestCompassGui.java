@@ -5,16 +5,20 @@ import com.playmonumenta.scriptedquests.utils.CustomInventory;
 import com.playmonumenta.scriptedquests.utils.InventoryUtils;
 import com.playmonumenta.scriptedquests.managers.QuestCompassManager.ValidCompassEntry;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
+import java.util.Objects;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
@@ -22,13 +26,16 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class QuestCompassGui extends CustomInventory {
 	private final Player mPlayer;
+	private final Plugin mPlugin = Plugin.getInstance();
 	private final QuestCompassManager mManager;
 	private final int mRows = mInventory.getSize() / 9;
-	private final int mGuidesSlot = 6;
-	private final int mInfoSlot = 4;
 	private final List<Integer> mDeathSlots = List.of(32 + 9 * (mRows - 4), 33 + 9 * (mRows - 4), 34 + 9 * (mRows - 4));
 	private final int mCustomSlot = 30 + 9 * (mRows - 4);
 	private final int mDeselectSlot = 28 + 9 * (mRows - 4);
+	private final int mNextSlot = 44;
+	private final int mPrevSlot = 36;
+	private int mPage;
+	private final Map<ItemStack, ConfigurationSection> mItemToActions = new HashMap<>();
 
 	public QuestCompassGui(Player player, QuestCompassManager manager) {
 		super(player, Math.min(36 + 9 * (manager.getCurrentMarkerTitles(player).stream().filter(
@@ -36,34 +43,62 @@ public class QuestCompassGui extends CustomInventory {
 			"Quest Compass");
 		mPlayer = player;
 		mManager = manager;
+		mPage = 0;
 	}
 
 	@Override
 	public void openInventory(Player player, org.bukkit.plugin.Plugin owner) {
 		super.openInventory(player, owner);
 		player.playSound(player.getLocation(), Sound.UI_LOOM_SELECT_PATTERN, SoundCategory.PLAYERS, 1f, 1f);
-		setupInventory();
+		setupInventory(mPage);
 	}
 
-	private void setupInventory() {
+	private void setupInventory(int page) {
 		mInventory.clear();
+		mPage = page;
 
-		ItemStack info = new ItemStack(Material.COMPASS);
-		ItemMeta infoMeta = info.getItemMeta();
-		infoMeta.displayName(Component.text("Quest Compass", NamedTextColor.RED).decoration(TextDecoration.BOLD, true).decoration(TextDecoration.ITALIC, false));
-		infoMeta.lore(List.of(Component.text("Left click on a quest to track it.", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false),
-			Component.text("More instructions later", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false)));
-		info.setItemMeta(infoMeta);
-		mInventory.setItem(mInfoSlot, info);
+		for (String key : mPlugin.mQuestCompassGUIItems.getKeys(false)) {
+			ConfigurationSection itemConfig = mPlugin.mQuestCompassGUIItems.getConfigurationSection(key);
+			if (itemConfig != null) {
+				String name = itemConfig.getString("name");
+				Material material = Material.getMaterial(Objects.requireNonNull(itemConfig.getString("material")));
+				TextColor nameColor = TextColor.fromHexString(Objects.requireNonNull(itemConfig.getString("name_color")));
+				TextColor loreColor = TextColor.fromHexString(Objects.requireNonNull(itemConfig.getString("lore_color")));
 
-		ItemStack guides = new ItemStack(Material.SCUTE);
-		ItemMeta guidesMeta = guides.getItemMeta();
-		guidesMeta.displayName(Component.text("Quest Guides", NamedTextColor.GOLD).decoration(TextDecoration.BOLD, true).decoration(TextDecoration.ITALIC, false));
-		guidesMeta.lore(List.of(Component.text("Click to see available quests", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false),
-			Component.text("across Monumenta by region and", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false),
-			Component.text("town.", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false)));
-		guides.setItemMeta(guidesMeta);
-		mInventory.setItem(mGuidesSlot, guides);
+				name = name != null ? name : "Name Unset";
+				material = material != null ? material : Material.BARRIER;
+				nameColor = nameColor != null ? nameColor : NamedTextColor.LIGHT_PURPLE;
+				loreColor = loreColor != null ? loreColor : NamedTextColor.DARK_PURPLE;
+
+				List<Component> lores = new ArrayList<>();
+				ConfigurationSection loresConfig = itemConfig.getConfigurationSection("lore");
+				if (loresConfig != null) {
+					for (String line : loresConfig.getKeys(false)) {
+						String text = loresConfig.getString(line);
+						if (text == null) {
+							text = "Lore unset";
+						}
+						lores.add(Component.text(text, loreColor).decoration(TextDecoration.ITALIC, false));
+					}
+				}
+
+				int slot = itemConfig.getInt("slot");
+				if (itemConfig.getBoolean("slot_scale_with_rows", false)) {
+					slot += 9 * (mRows - 4);
+				}
+
+				ItemStack item = new ItemStack(material);
+				ItemMeta itemMeta = item.getItemMeta();
+				itemMeta.displayName(Component.text(name, nameColor).decoration(TextDecoration.BOLD, true).decoration(TextDecoration.ITALIC, false));
+				itemMeta.lore(lores);
+				item.setItemMeta(itemMeta);
+				mInventory.setItem(slot, item);
+
+				if (itemConfig.isConfigurationSection("actions")) {
+					mItemToActions.put(item, itemConfig.getConfigurationSection("actions"));
+				}
+			}
+		}
 
 		ItemStack death = new ItemStack(Material.SKULL_POTTERY_SHERD);
 		ItemMeta deathMeta = death.getItemMeta();
@@ -78,25 +113,40 @@ public class QuestCompassGui extends CustomInventory {
 		ItemMeta customMeta = custom.getItemMeta();
 		customMeta.displayName(Component.text("Custom Waypoint", NamedTextColor.DARK_GREEN).decoration(TextDecoration.BOLD, true).decoration(TextDecoration.ITALIC, false));
 		customMeta.lore(List.of(Component.text("No custom waypoint set. Waypoints can be set by", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false),
-			Component.text("Quest Guides, /waypoint, or other special means.", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false)));
+			Component.text("the /waypoint command or other special means.", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false)));
 		custom.setItemMeta(customMeta);
 		mInventory.setItem(mCustomSlot, custom);
 
 		ItemStack deselect = new ItemStack(Material.TNT_MINECART);
 		ItemMeta deselectMeta = deselect.getItemMeta();
-		deselectMeta.displayName(Component.text("Deselect Active Quest", NamedTextColor.DARK_RED).decoration(TextDecoration.BOLD, true).decoration(TextDecoration.ITALIC, false));
-		deselectMeta.lore(List.of(Component.text("Click to deselect your currently tracked quest.", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false)));
+		deselectMeta.displayName(Component.text("Stop Tracking", NamedTextColor.DARK_RED).decoration(TextDecoration.BOLD, true).decoration(TextDecoration.ITALIC, false));
+		deselectMeta.lore(List.of(Component.text("Click to stop tracking the selected quest.", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false)));
 		deselect.setItemMeta(deselectMeta);
 		mInventory.setItem(mDeselectSlot, deselect);
 
 		List<ValidCompassEntry> quests = mManager.getCurrentMarkerTitles(mPlayer);
 
-		for (int i = 0; i < quests.size(); i++) {
-			if (i > 20) {
-				return;
-			}
+		if (quests.stream().filter(q -> q.mType == QuestCompassManager.CompassEntryType.Quest).toList().size() > 21 * (1 + mPage)) {
+			ItemStack next = new ItemStack(Material.ARROW);
+			ItemMeta nextMeta = next.getItemMeta();
+			nextMeta.displayName(Component.text("Next Page", NamedTextColor.WHITE).decoration(TextDecoration.BOLD, true).decoration(TextDecoration.ITALIC, false));
+			next.setItemMeta(nextMeta);
+			mInventory.setItem(mNextSlot, next);
+		}
+		if (mPage > 0) {
+			ItemStack prev = new ItemStack(Material.ARROW);
+			ItemMeta prevMeta = prev.getItemMeta();
+			prevMeta.displayName(Component.text("Previous Page", NamedTextColor.WHITE).decoration(TextDecoration.BOLD, true).decoration(TextDecoration.ITALIC, false));
+			prev.setItemMeta(prevMeta);
+			mInventory.setItem(mPrevSlot, prev);
+		}
 
+		for (int i = 21 * mPage; i < quests.size(); i++) {
 			ValidCompassEntry quest = quests.get(i);
+			if (i >= 21 * (1 + mPage) && quest.mType == QuestCompassManager.CompassEntryType.Quest) {
+				// Death and waypoint quests are sorted last - don't skip these, so they stay on every page
+				continue;
+			}
 
 			ItemStack displayItem;
 
@@ -114,7 +164,7 @@ public class QuestCompassGui extends CustomInventory {
 
 			Component itemName = Component.text(title, titleColor).decoration(TextDecoration.BOLD, true).decoration(TextDecoration.ITALIC, false);
 
-			int slot = i + 10;
+			int slot = i + 10 - 21 * mPage;
 			Material material;
 			if (mManager.mCurrentIndex.getOrDefault(mPlayer, 0) == i) {
 				switch (quest.mType) {
@@ -122,7 +172,7 @@ public class QuestCompassGui extends CustomInventory {
 					case Death -> material = Material.ARMOR_STAND;
 					case Waypoint -> material = Material.KNOWLEDGE_BOOK;
 				}
-				itemName = itemName.append(Component.text(" [Currently Tracking]", selectedColor).decoration(TextDecoration.BOLD, false).decoration(TextDecoration.ITALIC, false));
+				itemName = itemName.append(Component.text(" (Currently Tracking)", selectedColor).decoration(TextDecoration.BOLD, false).decoration(TextDecoration.ITALIC, false));
 			} else {
 				switch (quest.mType) {
 					default -> material = Material.BOOK;
@@ -131,7 +181,7 @@ public class QuestCompassGui extends CustomInventory {
 				}
 			}
 
-			slot += (int) (2 * Math.floor((double) (slot - 8) / 9));
+			slot += (int) (2 * Math.floor((double) (slot - 10) / 7));
 			if (quest.mType == QuestCompassManager.CompassEntryType.Death) {
 				slot = 31 + quest.mMarkersIndex[0] + 9 * (mRows - 4);
 			} else if (quest.mType == QuestCompassManager.CompassEntryType.Waypoint) {
@@ -142,7 +192,7 @@ public class QuestCompassGui extends CustomInventory {
 			ItemMeta meta = displayItem.getItemMeta();
 			meta.displayName(itemName);
 
-			// Use this as a quest index tag for inventoryClick to easily identify quest index
+			// Use this as a quest index tag for inventoryClick to easily identify quest index. The resource pack will not be using this so there is no overlap.
 			meta.setCustomModelData(i);
 
 			// Compile all steps and highlight the one that matches this quest index (j == i)
@@ -159,11 +209,10 @@ public class QuestCompassGui extends CustomInventory {
 						splitIndex = 1 + qLore.indexOf(" ", splitIndex + 45);
 					}
 				}
-
-				boolean differentWorld = !Plugin.getInstance().mQuestCompassManager.getWorldRegexMatcher().matches(mPlayer.getWorld().getName(), q.mLocation.getWorldRegex());
+				boolean differentWorld = !mPlayer.getWorld().getName().matches(q.mLocation.getWorldRegex());
 				Location qLoc = q.mLocation.getLocation();
 				lore.add(Component.text((int) qLoc.getX() + ", " + (int) qLoc.getY() + ", " + (int) qLoc.getZ() + " ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.ITALIC, false)
-					.append(differentWorld ? Component.text("[Different World!]", NamedTextColor.DARK_RED) : Component.text(("("+ (int) mPlayer.getLocation().distance(new Location(mPlayer.getWorld(), qLoc.getX(), qLoc.getY(), qLoc.getZ())) + "m away)"))));
+					.append(differentWorld ? Component.text("(Different World!)", NamedTextColor.RED) : Component.text(("("+ (int) mPlayer.getLocation().distance(new Location(mPlayer.getWorld(), qLoc.getX(), qLoc.getY(), qLoc.getZ())) + "m away)"))));
 				if (q.mType == QuestCompassManager.CompassEntryType.Waypoint) {
 					lore.add(Component.text("(Shift Click to remove this waypoint.)", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false));
 				}
@@ -184,16 +233,23 @@ public class QuestCompassGui extends CustomInventory {
 		event.setCancelled(true);
 		InventoryUtils.refreshOffhand(event);
 		int slot = event.getSlot();
+		if (slot < 0) {
+			return;
+		}
 		ItemStack item = event.getInventory().getItem(slot);
 		if (!(event.getWhoClicked() instanceof Player player)
 			|| event.getClickedInventory() != mInventory
 			|| item == null) {
 			return;
 		}
-		if (slot == mGuidesSlot) {
-			player.performCommand("sqgui show regionqg @s");
-			return;
-		} else if (slot == mInfoSlot) {
+		if (mItemToActions.containsKey(item)) {
+			String command = mItemToActions.get(item).getString("command");
+			if (command != null) {
+				player.performCommand(command);
+			}
+			if (mItemToActions.get(item).getBoolean("close_gui", false)) {
+				close();
+			}
 			return;
 		} else if (slot == mDeselectSlot) {
 			mManager.mCurrentIndex.put(player, mManager.showCurrentQuest(player, -1));
@@ -203,11 +259,18 @@ public class QuestCompassGui extends CustomInventory {
 		} else if (slot == mCustomSlot && event.isShiftClick() && item.getType() == Material.KNOWLEDGE_BOOK) {
 			mManager.removeCommandWaypoint(player);
 			player.playSound(player.getLocation(), "minecraft:entity.armadillo.scute_drop", SoundCategory.PLAYERS, 1f, 1f);
-			setupInventory();
+			setupInventory(mPage);
 			return;
-		} else if (mDeathSlots.contains(slot) && item.getType() == Material.SKULL_POTTERY_SHERD) {
+		} else if (slot == mNextSlot) {
+			setupInventory(mPage + 1);
+			player.playSound(player.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, SoundCategory.PLAYERS, 1f, 1.5f);
 			return;
-		} else if (slot == mCustomSlot && item.getType() == Material.HOPPER) {
+		} else if (slot == mPrevSlot) {
+			setupInventory(mPage - 1);
+			player.playSound(player.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, SoundCategory.PLAYERS, 1f, 1.5f);
+			return;
+		} else if (!item.getItemMeta().hasCustomModelData()) {
+			// Item has no function
 			return;
 		}
 
