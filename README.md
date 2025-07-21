@@ -98,19 +98,19 @@ Creating these by hand is a pain - use the web editor! The web editor not only
 helps you structure things correctly but is also the primary documentation for
 the various quest options
 
-- SQ GUI Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/gui_editor.html
-- Quest Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/quest_editor.html
-- Quest Compass Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/quest_compass_editor.html
-- Quest Death Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/quest_death_editor.html
-- Quest Login Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/quest_login_editor.html
-- Race Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/race_editor.html
-- Trader Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/trader_editor.html
-- Redeemable Codes Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/code_editor.html
-- Clickable Actions Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/clickable_editor.html
-- Interactable Items Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/interactable_editor.html
-- Zone Namespaces Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/zone_namespace_editor.html
-- Zone Properties Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/zone_property_editor.html
-- Zone Property Groups Editor - https://rawgit.com/TeamEpic/Scripted-Quests/master/tools/zone_property_group_editor.html
+- SQ GUI Editor - https://teammonumenta.github.io/scripted-quests/tools/gui_editor.html
+- Quest Editor - https://teammonumenta.github.io/scripted-quests/tools/quest_editor.html
+- Quest Compass Editor - https://teammonumenta.github.io/scripted-quests/tools/quest_compass_editor.html
+- Quest Death Editor - https://teammonumenta.github.io/scripted-quests/tools/quest_death_editor.html
+- Quest Login Editor - https://teammonumenta.github.io/scripted-quests/tools/quest_login_editor.html
+- Race Editor - https://teammonumenta.github.io/scripted-quests/tools/race_editor.html
+- Trader Editor - https://teammonumenta.github.io/scripted-quests/tools/trader_editor.html
+- Redeemable Codes Editor - https://teammonumenta.github.io/scripted-quests/tools/code_editor.html
+- Clickable Actions Editor - https://teammonumenta.github.io/scripted-quests/tools/clickable_editor.html
+- Interactable Items Editor - https://teammonumenta.github.io/scripted-quests/tools/interactable_editor.html
+- Zone Namespaces Editor - https://teammonumenta.github.io/scripted-quests/tools/zone_namespace_editor.html
+- Zone Properties Editor - https://teammonumenta.github.io/scripted-quests/tools/zone_property_editor.html
+- Zone Property Groups Editor - https://teammonumenta.github.io/scripted-quests/tools/zone_property_group_editor.html
 
 ## <a name="structure"></a>Structure of a Quests File:
 Each quest file has the following info:
