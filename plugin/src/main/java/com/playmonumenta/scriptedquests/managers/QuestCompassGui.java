@@ -169,8 +169,8 @@ public class QuestCompassGui extends CustomInventory {
 			if (mManager.mCurrentIndex.getOrDefault(mPlayer, 0) == i) {
 				switch (quest.mType) {
 					default -> material = Material.ENCHANTED_BOOK;
-					case Death -> material = Material.ARMOR_STAND;
-					case Waypoint -> material = Material.KNOWLEDGE_BOOK;
+					case Death -> material = Material.TOTEM_OF_UNDYING;
+					case Waypoint -> material = Material.BAMBOO_RAFT;
 				}
 				itemName = itemName.append(Component.text(" (Currently Tracking)", selectedColor).decoration(TextDecoration.BOLD, false).decoration(TextDecoration.ITALIC, false));
 			} else {
