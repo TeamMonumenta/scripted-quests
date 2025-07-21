@@ -4,6 +4,7 @@ import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.utils.CustomInventory;
 import com.playmonumenta.scriptedquests.utils.InventoryUtils;
 import com.playmonumenta.scriptedquests.managers.QuestCompassManager.ValidCompassEntry;
+import com.playmonumenta.scriptedquests.utils.NmsUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -245,7 +246,7 @@ public class QuestCompassGui extends CustomInventory {
 		if (mItemToActions.containsKey(item)) {
 			String command = mItemToActions.get(item).getString("command");
 			if (command != null) {
-				player.performCommand(command);
+				NmsUtils.getVersionAdapter().runConsoleCommandSilently(command.replace("@S", mPlayer.getName()));
 			}
 			if (mItemToActions.get(item).getBoolean("close_gui", false)) {
 				close();
@@ -256,7 +257,7 @@ public class QuestCompassGui extends CustomInventory {
 			player.playSound(player.getLocation(), Sound.BLOCK_WOODEN_TRAPDOOR_CLOSE, SoundCategory.PLAYERS, 1f, 0.8f);
 			close();
 			return;
-		} else if (slot == mCustomSlot && event.isShiftClick() && item.getType() == Material.KNOWLEDGE_BOOK) {
+		} else if (slot == mCustomSlot && event.isShiftClick() && item.getItemMeta().hasCustomModelData()) {
 			mManager.removeCommandWaypoint(player);
 			player.playSound(player.getLocation(), "minecraft:entity.armadillo.scute_drop", SoundCategory.PLAYERS, 1f, 1f);
 			setupInventory(mPage);
