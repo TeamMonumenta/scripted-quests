@@ -5,7 +5,7 @@
         "waypoints",
         "message"
     ],
-    "additionalProperties": true,
+    "additionalProperties": false,
     "properties": {
         "prerequisites": {
             "required": true,
