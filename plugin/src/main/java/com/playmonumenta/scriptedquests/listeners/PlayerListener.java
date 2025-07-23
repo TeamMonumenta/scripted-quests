@@ -173,7 +173,7 @@ public class PlayerListener implements Listener {
 		}
 
 		// Add this death location to the beginning of the list
-		deathEntries.add(0, new DeathLocation(event.getEntity().getLocation(), System.currentTimeMillis(), event.getEntity().getWorld()));
+		deathEntries.add(0, new DeathLocation(event.getEntity().getLocation(), System.currentTimeMillis()));
 		if (deathEntries.size() > 3) {
 			deathEntries.remove(3);
 		}

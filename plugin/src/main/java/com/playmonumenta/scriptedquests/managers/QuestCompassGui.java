@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
@@ -63,14 +62,17 @@ public class QuestCompassGui extends CustomInventory {
 			ConfigurationSection itemConfig = mPlugin.mQuestCompassGUIItems.getConfigurationSection(key);
 			if (itemConfig != null) {
 				String name = itemConfig.getString("name");
-				Material material = Material.getMaterial(Objects.requireNonNull(itemConfig.getString("material")));
-				TextColor nameColor = TextColor.fromHexString(Objects.requireNonNull(itemConfig.getString("name_color")));
-				TextColor loreColor = TextColor.fromHexString(Objects.requireNonNull(itemConfig.getString("lore_color")));
+				String materialName = itemConfig.getString("material");
+				String nameColorHex = itemConfig.getString("name_color");
+				String loreColorHex = itemConfig.getString("lore_color");
 
 				name = name != null ? name : "Name Unset";
-				material = material != null ? material : Material.BARRIER;
-				nameColor = nameColor != null ? nameColor : NamedTextColor.LIGHT_PURPLE;
-				loreColor = loreColor != null ? loreColor : NamedTextColor.DARK_PURPLE;
+				Material material = materialName != null ? Material.getMaterial(materialName) : Material.BARRIER;
+				if (material == null) {
+					material = Material.BARRIER;
+				}
+				TextColor nameColor = nameColorHex != null ? TextColor.fromHexString(nameColorHex) : NamedTextColor.LIGHT_PURPLE;
+				TextColor loreColor = loreColorHex != null ? TextColor.fromHexString(loreColorHex) : NamedTextColor.DARK_PURPLE;
 
 				List<Component> lores = new ArrayList<>();
 				ConfigurationSection loresConfig = itemConfig.getConfigurationSection("lore");
