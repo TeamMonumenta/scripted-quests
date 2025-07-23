@@ -1,13 +1,9 @@
 package com.playmonumenta.scriptedquests.managers;
 
-import com.google.gson.JsonElement;
 import com.playmonumenta.scriptedquests.Plugin;
-import com.playmonumenta.scriptedquests.quests.components.GuiItem;
-import com.playmonumenta.scriptedquests.quests.components.NbtTags;
 import com.playmonumenta.scriptedquests.utils.CustomInventory;
 import com.playmonumenta.scriptedquests.utils.InventoryUtils;
 import com.playmonumenta.scriptedquests.managers.QuestCompassManager.ValidCompassEntry;
-import com.playmonumenta.scriptedquests.utils.JsonUtils;
 import com.playmonumenta.scriptedquests.utils.NmsUtils;
 import de.tr7zw.nbtapi.NBTItem;
 import java.util.ArrayList;
