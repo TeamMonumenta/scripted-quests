@@ -1,10 +1,15 @@
 package com.playmonumenta.scriptedquests.managers;
 
+import com.google.gson.JsonElement;
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.quests.components.GuiItem;
+import com.playmonumenta.scriptedquests.quests.components.NbtTags;
 import com.playmonumenta.scriptedquests.utils.CustomInventory;
 import com.playmonumenta.scriptedquests.utils.InventoryUtils;
 import com.playmonumenta.scriptedquests.managers.QuestCompassManager.ValidCompassEntry;
+import com.playmonumenta.scriptedquests.utils.JsonUtils;
 import com.playmonumenta.scriptedquests.utils.NmsUtils;
+import de.tr7zw.nbtapi.NBTItem;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,8 +40,9 @@ public class QuestCompassGui extends CustomInventory {
 	private final int mDeselectSlot = 28 + 9 * (mRows - 4);
 	private final int mNextSlot = 44;
 	private final int mPrevSlot = 36;
-	private int mPage;
+	private int mPage = 0;
 	private final Map<ItemStack, ConfigurationSection> mItemToActions = new HashMap<>();
+	private final String mNBTTag = "quest_index";
 
 	public QuestCompassGui(Player player, QuestCompassManager manager) {
 		super(player, Math.min(36 + 9 * (manager.getCurrentMarkerTitles(player).stream().filter(
@@ -44,7 +50,6 @@ public class QuestCompassGui extends CustomInventory {
 			"Quest Compass");
 		mPlayer = player;
 		mManager = manager;
-		mPage = 0;
 	}
 
 	@Override
@@ -149,8 +154,6 @@ public class QuestCompassGui extends CustomInventory {
 				continue;
 			}
 
-			ItemStack displayItem;
-
 			NamedTextColor titleColor;
 			NamedTextColor selectedColor = NamedTextColor.DARK_AQUA;
 			if (quest.mType == QuestCompassManager.CompassEntryType.Death) {
@@ -189,12 +192,9 @@ public class QuestCompassGui extends CustomInventory {
 				slot = 30 + 9 * (mRows - 4);
 			}
 
-			displayItem = new ItemStack(material);
+			ItemStack displayItem = new ItemStack(material);
 			ItemMeta meta = displayItem.getItemMeta();
 			meta.displayName(itemName);
-
-			// Use this as a quest index tag for inventoryClick to easily identify quest index. The resource pack will not be using this so there is no overlap.
-			meta.setCustomModelData(i);
 
 			// Compile all steps and highlight the one that matches this quest index (j == i)
 			List<Component> lore = new ArrayList<>();
@@ -224,6 +224,10 @@ public class QuestCompassGui extends CustomInventory {
 
 			meta.lore(lore);
 			displayItem.setItemMeta(meta);
+			// Use NBT as a quest index tag for inventoryClick to easily identify quest index
+			NBTItem nbtItem = new NBTItem(displayItem);
+			nbtItem.setInteger(mNBTTag, i);
+			displayItem = nbtItem.getItem();
 
 			mInventory.setItem(slot, displayItem);
 		}
@@ -243,6 +247,7 @@ public class QuestCompassGui extends CustomInventory {
 			|| item == null) {
 			return;
 		}
+		NBTItem nbtItem = new NBTItem(item);
 		if (mItemToActions.containsKey(item)) {
 			String command = mItemToActions.get(item).getString("command");
 			if (command != null) {
@@ -257,7 +262,7 @@ public class QuestCompassGui extends CustomInventory {
 			player.playSound(player.getLocation(), Sound.BLOCK_WOODEN_TRAPDOOR_CLOSE, SoundCategory.PLAYERS, 1f, 0.8f);
 			close();
 			return;
-		} else if (slot == mCustomSlot && event.isShiftClick() && item.getItemMeta().hasCustomModelData()) {
+		} else if (slot == mCustomSlot && event.isShiftClick() && nbtItem.getInteger(mNBTTag) > 0) {
 			mManager.removeCommandWaypoint(player);
 			player.playSound(player.getLocation(), "minecraft:entity.armadillo.scute_drop", SoundCategory.PLAYERS, 1f, 1f);
 			setupInventory(mPage);
@@ -270,12 +275,12 @@ public class QuestCompassGui extends CustomInventory {
 			setupInventory(mPage - 1);
 			player.playSound(player.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, SoundCategory.PLAYERS, 1f, 1.5f);
 			return;
-		} else if (!item.getItemMeta().hasCustomModelData()) {
-			// Item has no function
+		} else if (!nbtItem.hasTag(mNBTTag)) {
+			// Item has no function and is not a quest
 			return;
 		}
 
-		int index = item.getItemMeta().getCustomModelData();
+		int index = nbtItem.getInteger(mNBTTag);
 		mManager.mCurrentIndex.put(player, mManager.showCurrentQuest(player, index));
 		player.playSound(player.getLocation(), Sound.UI_LOOM_TAKE_RESULT, SoundCategory.PLAYERS, 1f, 1f);
 		if (slot == mCustomSlot) {
