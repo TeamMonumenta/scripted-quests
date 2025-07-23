@@ -43,7 +43,7 @@ public class Waypoint {
 					if (plugin.mQuestCompassManager != null) {
 						List<Location> waypoint = new ArrayList<>();
 						waypoint.add(args.getByArgument(locationArg));
-						plugin.mQuestCompassManager.setCommandWaypoint(targetPlayer, waypoint, args.getByArgument(titleArg) + ChatColor.RESET, args.getByArgument(messageArg), args.getByArgumentOrDefault(regexArg, targetPlayer != null ? targetPlayer.getWorld().getName() : ".*"));
+						plugin.mQuestCompassManager.setCommandWaypoint(targetPlayer, waypoint, args.getByArgument(titleArg) + "§r", args.getByArgument(messageArg), args.getByArgumentOrDefault(regexArg, targetPlayer != null ? targetPlayer.getWorld().getName() : ".*"));
 					} else {
 						throw CommandAPI.failWithString("Quest Compass Manager does not exist!");
 					}

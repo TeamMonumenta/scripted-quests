@@ -16,7 +16,6 @@ import java.util.UUID;
 import java.util.WeakHashMap;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
@@ -130,8 +129,7 @@ public class QuestCompassManager {
 
 			// Add all the valid markers/titles to the list
 			for (int i = 0; i < questMarkers.size(); i++) {
-				String title = ChatColor.AQUA + "" + ChatColor.BOLD + quest.getQuestName()
-				               + ChatColor.RESET + "" + ChatColor.AQUA;
+				String title = "§b§l" + quest.getQuestName() + "§r§b";
 
 				if (questMarkers.size() > 1) {
 					title += " [" + (i + 1) + "/" + questMarkers.size() + "]";
@@ -146,8 +144,7 @@ public class QuestCompassManager {
 			List<DeathLocation> deathEntries =
 			    (List<DeathLocation>)player.getMetadata(Constants.PLAYER_DEATH_LOCATION_METAKEY).get(0).value();
 			for (int i = 0; i < deathEntries.size(); i++) {
-				String title = ChatColor.RED + "" + ChatColor.BOLD + "Death"
-				               + ChatColor.RESET + "" + ChatColor.AQUA;
+				String title = "§c§lDeath§r§b";
 
 				if (deathEntries.size() > 1) {
 					title += " [" + (i + 1) + "/" + deathEntries.size() + "]";
