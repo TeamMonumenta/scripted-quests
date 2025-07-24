@@ -5,6 +5,7 @@ plugins {
 }
 
 monumenta {
+	id("ScriptedQuests")
 	name("ScriptedQuests")
 	pluginProject(":scripted-quests")
 	paper(
