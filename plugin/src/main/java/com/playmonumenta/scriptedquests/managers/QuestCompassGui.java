@@ -249,7 +249,7 @@ public class QuestCompassGui extends CustomInventory {
 		if (mItemToActions.containsKey(item)) {
 			String command = mItemToActions.get(item).getString("command");
 			if (command != null) {
-				NmsUtils.getVersionAdapter().runConsoleCommandSilently(command.replace("@S", mPlayer.getName()));
+				NmsUtils.getVersionAdapter().runConsoleCommandSilently(command.replace("@s", mPlayer.getName()));
 			}
 			if (mItemToActions.get(item).getBoolean("close_gui", false)) {
 				close();
