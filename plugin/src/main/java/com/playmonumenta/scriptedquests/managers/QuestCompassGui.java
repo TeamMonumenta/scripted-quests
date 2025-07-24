@@ -249,7 +249,7 @@ public class QuestCompassGui extends CustomInventory {
 		if (mItemToActions.containsKey(item)) {
 			String command = mItemToActions.get(item).getString("command");
 			if (command != null) {
-				NmsUtils.getVersionAdapter().runConsoleCommandSilently(command.replace("@S", mPlayer.getName()));
+				NmsUtils.getVersionAdapter().runConsoleCommandSilently(command.replace("@s", mPlayer.getName()));
 			}
 			if (mItemToActions.get(item).getBoolean("close_gui", false)) {
 				close();
@@ -260,7 +260,7 @@ public class QuestCompassGui extends CustomInventory {
 			player.playSound(player.getLocation(), Sound.BLOCK_WOODEN_TRAPDOOR_CLOSE, SoundCategory.PLAYERS, 1f, 0.8f);
 			close();
 			return;
-		} else if (slot == mCustomSlot && event.isShiftClick() && nbtItem.getInteger(mNBTTag) > 0) {
+		} else if (slot == mCustomSlot && event.isShiftClick() && nbtItem.hasTag(mNBTTag)) {
 			mManager.removeCommandWaypoint(player);
 			player.playSound(player.getLocation(), "minecraft:entity.armadillo.scute_drop", SoundCategory.PLAYERS, 1f, 1f);
 			setupInventory(mPage);
