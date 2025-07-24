@@ -260,7 +260,7 @@ public class QuestCompassGui extends CustomInventory {
 			player.playSound(player.getLocation(), Sound.BLOCK_WOODEN_TRAPDOOR_CLOSE, SoundCategory.PLAYERS, 1f, 0.8f);
 			close();
 			return;
-		} else if (slot == mCustomSlot && event.isShiftClick() && nbtItem.getInteger(mNBTTag) > 0) {
+		} else if (slot == mCustomSlot && event.isShiftClick() && nbtItem.hasTag(mNBTTag)) {
 			mManager.removeCommandWaypoint(player);
 			player.playSound(player.getLocation(), "minecraft:entity.armadillo.scute_drop", SoundCategory.PLAYERS, 1f, 1f);
 			setupInventory(mPage);
