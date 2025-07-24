@@ -108,7 +108,7 @@ public abstract class CustomInventory {
 		mInventory = Bukkit.createInventory(owner, size, title);
 	}
 
-	public final void openInventory(Player player, Plugin owner) {
+	public void openInventory(Player player, Plugin owner) {
 		if (mOwner == null) {
 			player.openInventory(mInventory);
 			mOpenedInvsByPlayer.put(player, this);

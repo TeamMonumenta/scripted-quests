@@ -53,6 +53,7 @@ public class Plugin extends JavaPlugin {
 	public @Nullable Boolean mShowTimerNames = null;
 	public boolean mShowZonesDynmap = false;
 	public boolean mFallbackZoneLookup = false;
+	public ConfigurationSection mQuestCompassGUIItems;
 
 	public @MonotonicNonNull QuestCompassManager mQuestCompassManager;
 	public @MonotonicNonNull QuestNpcManager mNpcManager;
@@ -289,6 +290,8 @@ public class Plugin extends JavaPlugin {
 			sender.sendMessage("default_music_category: "
 				+ Constants.SOUND_CATEGORY_NAMES.get(mDefaultMusicSoundCategory));
 		}
+
+		mQuestCompassGUIItems = mConfig.getConfigurationSection("quest_compass_gui_items");
 	}
 
 	public static Plugin getInstance() {

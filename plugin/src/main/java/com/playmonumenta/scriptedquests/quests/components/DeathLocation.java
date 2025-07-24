@@ -7,10 +7,12 @@ import org.bukkit.Location;
 public class DeathLocation implements QuestLocation {
 	private final long mDeathTime;
 	private final List<Location> mWaypoints = new ArrayList<>(1);
+	private final String mWorld;
 
 	public DeathLocation(Location loc, long deathTime) {
 		mDeathTime = deathTime;
 		mWaypoints.add(loc);
+		mWorld = loc.getWorld().getName().replaceAll("\\d+", ".+");
 	}
 
 	public String getTimeDifference(long compareTime) {
@@ -78,5 +80,10 @@ public class DeathLocation implements QuestLocation {
 	@Override
 	public String getMessage() {
 		return getTimeDifference(System.currentTimeMillis()) + " ago";
+	}
+
+	@Override
+	public String getWorldRegex() {
+		return mWorld;
 	}
 }

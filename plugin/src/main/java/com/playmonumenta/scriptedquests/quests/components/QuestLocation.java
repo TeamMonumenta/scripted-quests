@@ -19,6 +19,8 @@ public interface QuestLocation {
 
 	String getMessage();
 
+	String getWorldRegex();
+
 	default boolean prerequisiteMet(Player player) {
 		return true;
 	}
