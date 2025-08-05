@@ -71,9 +71,9 @@ public class PlayerListener implements Listener {
 			if ((action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) && !player.isSneaking()) {
 				mPlugin.mQuestCompassManager.showCurrentQuest(player);
 			} else if ((action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) && !player.isSneaking()) {
-				new QuestCompassGui(player, mPlugin.mQuestCompassManager).openInventory(player, mPlugin);
-			} else if ((action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) && player.isSneaking()) {
 				mPlugin.mQuestCompassManager.cycleQuestTracker(player);
+			} else if ((action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) && player.isSneaking()) {
+				new QuestCompassGui(player, mPlugin.mQuestCompassManager).openInventory(player, mPlugin);
 			}
 		}
 
