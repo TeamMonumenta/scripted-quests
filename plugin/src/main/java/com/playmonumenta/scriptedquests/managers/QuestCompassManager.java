@@ -190,23 +190,25 @@ public class QuestCompassManager {
 	}
 
 	public void cycleQuestTracker(Player player) {
-		Integer index = mCurrentIndex.getOrDefault(player, 0);
-		if (index < 0) {
-			showCurrentQuest(player, index);
+		int oldIndex = mCurrentIndex.getOrDefault(player, 0);
+		if (oldIndex < 0) {
+			showCurrentQuest(player, oldIndex);
 			return;
 		}
+		int newIndex = oldIndex;
 
 		QuestCompassManager.CompassCacheEntry cacheEntryMap = mCompassCache.get(player.getUniqueId());
 		if (cacheEntryMap != null) {
-			ValidCompassEntry quest = cacheEntryMap.mEntries.get(index);
+			ValidCompassEntry quest = cacheEntryMap.mEntries.get(newIndex);
 			if (quest.mMarkersIndex[0] == quest.mMarkersIndex[1]) {
-				index += 1 - quest.mMarkersIndex[1];
+				newIndex += 1 - quest.mMarkersIndex[1];
 			} else {
-				index += 1;
+				newIndex += 1;
 			}
 		}
-
-		mCurrentIndex.put(player, showCurrentQuest(player, index));
+		if (oldIndex != newIndex) {
+			mCurrentIndex.put(player, showCurrentQuest(player, newIndex));
+		}
 		player.playSound(player.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, SoundCategory.PLAYERS, 1f, 1.5f);
 	}
 
