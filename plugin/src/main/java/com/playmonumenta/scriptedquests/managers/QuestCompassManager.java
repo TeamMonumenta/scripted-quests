@@ -211,7 +211,7 @@ public class QuestCompassManager {
 			mCurrentIndex.put(player, showCurrentQuest(player, newIndex));
 			player.playSound(player.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, SoundCategory.PLAYERS, 1f, 1.5f);
 		} else {
-			mCurrentIndex.put(player, showCurrentQuest(player, newIndex));
+			showCurrentQuest(player, newIndex);
 		}
 	}
 
