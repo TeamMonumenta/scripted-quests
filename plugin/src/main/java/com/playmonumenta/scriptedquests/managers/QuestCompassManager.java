@@ -207,8 +207,11 @@ public class QuestCompassManager {
 			}
 		}
 		if (oldIndex != newIndex) {
+			// Only play page turn sound if the entry switched
 			mCurrentIndex.put(player, showCurrentQuest(player, newIndex));
 			player.playSound(player.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, SoundCategory.PLAYERS, 1f, 1.5f);
+		} else {
+			mCurrentIndex.put(player, showCurrentQuest(player, newIndex));
 		}
 	}
 
