@@ -198,7 +198,7 @@ public class QuestCompassManager {
 		int newIndex = oldIndex;
 
 		QuestCompassManager.CompassCacheEntry cacheEntryMap = mCompassCache.get(player.getUniqueId());
-		if (cacheEntryMap != null) {
+		if (cacheEntryMap != null && !cacheEntryMap.mEntries.isEmpty()) {
 			ValidCompassEntry quest = cacheEntryMap.mEntries.get(newIndex);
 			if (quest.mMarkersIndex[0] == quest.mMarkersIndex[1]) {
 				newIndex += 1 - quest.mMarkersIndex[1];
@@ -207,9 +207,12 @@ public class QuestCompassManager {
 			}
 		}
 		if (oldIndex != newIndex) {
+			// Only play page turn sound if the entry switched
 			mCurrentIndex.put(player, showCurrentQuest(player, newIndex));
+			player.playSound(player.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, SoundCategory.PLAYERS, 1f, 1.5f);
+		} else {
+			showCurrentQuest(player, newIndex);
 		}
-		player.playSound(player.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, SoundCategory.PLAYERS, 1f, 1.5f);
 	}
 
 	/* One command-specified waypoint per player */
