@@ -22,7 +22,6 @@
 			"type": "array",
 			"format": "table",
 			"minItems": 25,
-			"maxItems": 25,
 			"items": {
 				"title": "reward",
 				"description": "A reward for a specific Tier of the pass, in the form of item ID.",
@@ -102,11 +101,6 @@
 						"type": "string",
 						"anyOf": [
 							{
-								"title": "Hex Color Picker",
-								"format": "color",
-								"default": "#000000"
-							},
-							{
 								"title": "Minecraft Color",
 								"enum": [
 									"aqua",
@@ -126,6 +120,10 @@
 									"white",
 									"yellow"
 								]
+							},
+							{
+								"title": "Hex Color Picker",
+								"format": "color"
 							}
 						],
 						"options": {
