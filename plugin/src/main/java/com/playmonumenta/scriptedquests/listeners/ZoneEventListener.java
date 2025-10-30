@@ -176,7 +176,7 @@ public class ZoneEventListener implements Listener {
 		String entityName = event.getEntity().getName();
 		execute(event.getEntity().getLocation(), ZoneEntityDeathEvent.class, (events, layer, propertyName) -> {
 			for (ZoneEntityDeathEvent e : events) {
-				if (e.appliesTo(entityName.replaceAll("§\\d", ""))) {
+				if (e.appliesTo(entityName.replaceAll("§.", ""))) {
 					e.execute(killer, event.getEntity());
 				}
 			}
