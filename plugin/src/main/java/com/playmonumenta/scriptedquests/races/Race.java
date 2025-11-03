@@ -58,6 +58,7 @@ public class Race {
 	private final Player mPlayer;
 	private final String mName;
 	private final @Nullable Objective mScoreboard;
+	private final @Nullable Objective mSpeedScoreboard;
 	private final boolean mShowStats;
 	private final boolean mAllowDialogClick;
 	private final boolean mAllowCode;
@@ -99,6 +100,12 @@ public class Race {
 		mPlayer = player;
 		mName = name;
 		mScoreboard = scoreboard;
+		if (mScoreboard != null) {
+			Scoreboard sb = Bukkit.getScoreboardManager().getMainScoreboard();
+			mSpeedScoreboard = sb.getObjective(mScoreboard.getName() + "-Speed");
+		} else {
+			mSpeedScoreboard = null;
+		}
 		mShowStats = showStats;
 		mAllowDialogClick = allowDialogClick;
 		mAllowCode = allowCode;
@@ -117,6 +124,9 @@ public class Race {
 
 		if (mScoreboard != null) {
 			updateWorldRecord(mScoreboard, false);
+		}
+		if (mSpeedScoreboard != null) {
+			updateWorldRecord(mSpeedScoreboard, true);
 		}
 		getPBRingTimes();
 
@@ -363,12 +373,9 @@ public class Race {
 	}
 
 	public void win(int endTime) {
-		@Nullable Objective mSpeedScoreboard = null;
 		int authorTime = 0;
-		if (mScoreboard != null) {
-			String newName = mScoreboard.getName() + "-Speed";
+		if (mSpeedScoreboard != null) {
 			Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
-			mSpeedScoreboard = scoreboard.getObjective(newName);
 			if (scoreboard.getObjective("AuthorMedal") != null) {
 				authorTime = Objects.requireNonNull(scoreboard.getObjective("AuthorMedal")).getScore(mPlayer.getName()).getScore();
 			}
@@ -481,7 +488,6 @@ public class Race {
 		} else {
 			if (mSpeedScoreboard != null) {
 				int personalBest = mSpeedScoreboard.getScore(mPlayer.getName()).getScore();
-				updateWorldRecord(mSpeedScoreboard, true);
 				if (!mTimes.isEmpty()) {
 					RaceTime masterTime = mTimes.get(0);
 					int medalTime = masterTime.getTime();
