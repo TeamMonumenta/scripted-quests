@@ -18,6 +18,9 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class RaceManager {
@@ -228,5 +231,10 @@ public class RaceManager {
 
 	public Stream<RaceFactory> getRaceFactoryStream() {
 		return mRaceFactories.values().stream();
+	}
+
+	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+	public void onPlayerJoin(PlayerJoinEvent event) {
+		event.getPlayer().removeScoreboardTag("SQRacerSpeed");
 	}
 }
