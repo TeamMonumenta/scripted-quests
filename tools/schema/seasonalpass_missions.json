@@ -248,7 +248,7 @@
 											]
 										},
 										{
-											"title": "Custom",
+											"title": "Defined Objectives",
 											"description": "Content objectives used for custom missions. NOTE: You must define this properly in mechs, and remove it after, OR use date/time commands!",
 											"enum": [
 												"weekly1",
