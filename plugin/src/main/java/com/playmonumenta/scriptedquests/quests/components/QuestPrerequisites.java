@@ -21,8 +21,7 @@ import com.playmonumenta.scriptedquests.quests.components.prerequisites.Prerequi
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteSneaking;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteTestForBlock;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteUsedItem;
-import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteXPLevels;
-import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteXPRaw;
+import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteXP;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteZoneProperties;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -195,11 +194,8 @@ public class QuestPrerequisites implements PrerequisiteBase {
 				case "facing":
 					mPrerequisites.add(new PrerequisiteFacing(value));
 					break;
-				case "xp_levels":
-					mPrerequisites.add(new PrerequisiteXPLevels(value));
-					break;
-				case "xp_orbs":
-					mPrerequisites.add(new PrerequisiteXPRaw(value));
+				case "min_xp":
+					mPrerequisites.add(new PrerequisiteXP(value));
 					break;
 				case "zone_properties":
 					mPrerequisites.add(new PrerequisiteZoneProperties(value));
