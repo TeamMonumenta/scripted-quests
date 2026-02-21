@@ -21,6 +21,8 @@ import com.playmonumenta.scriptedquests.quests.components.prerequisites.Prerequi
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteSneaking;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteTestForBlock;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteUsedItem;
+import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteXPLevels;
+import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteXPRaw;
 import com.playmonumenta.scriptedquests.quests.components.prerequisites.PrerequisiteZoneProperties;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -32,7 +34,7 @@ import java.util.Set;
 public class QuestPrerequisites implements PrerequisiteBase {
 
 	private enum Operator {
-		AND, OR, NOT_AND, NOT_OR, ONLY_ONE_OF;
+		AND, OR, NOT_AND, NOT_OR, ONLY_ONE_OF
 	}
 
 	private final ArrayList<PrerequisiteBase> mPrerequisites = new ArrayList<>();
@@ -59,145 +61,151 @@ public class QuestPrerequisites implements PrerequisiteBase {
 			JsonElement value = ent.getValue();
 
 			switch (key) {
-			case "and":
-			case "or":
-			case "not_and":
-			case "not_or":
-			case "only_one_of":
-				mPrerequisites.add(new QuestPrerequisites(value, Operator.valueOf(key.toUpperCase(Locale.ROOT)), false));
-				break;
-			case "use_npc_for_prereqs":
-				mPrerequisites.add(new QuestPrerequisites(value, Operator.AND, true));
-				break;
-			case "check_scores":
-				JsonObject scoreObject = value.getAsJsonObject();
-				if (scoreObject == null) {
-					throw new Exception("check_scores value is not an object!");
-				}
+				case "and":
+				case "or":
+				case "not_and":
+				case "not_or":
+				case "only_one_of":
+					mPrerequisites.add(new QuestPrerequisites(value, Operator.valueOf(key.toUpperCase(Locale.ROOT)), false));
+					break;
+				case "use_npc_for_prereqs":
+					mPrerequisites.add(new QuestPrerequisites(value, Operator.AND, true));
+					break;
+				case "check_scores":
+					JsonObject scoreObject = value.getAsJsonObject();
+					if (scoreObject == null) {
+						throw new Exception("check_scores value is not an object!");
+					}
 
-				Set<Entry<String, JsonElement>> scoreEntries = scoreObject.entrySet();
-				for (Entry<String, JsonElement> scoreEnt : scoreEntries) {
-					mPrerequisites.add(new PrerequisiteCheckScores(scoreEnt.getKey(), scoreEnt.getValue()));
-				}
-				break;
-			case "check_advancements": {
-				JsonArray array = value.getAsJsonArray();
-				if (array == null) {
-					throw new Exception("Prerequisites value for key '" + key + "' is not an array!");
-				}
+					Set<Entry<String, JsonElement>> scoreEntries = scoreObject.entrySet();
+					for (Entry<String, JsonElement> scoreEnt : scoreEntries) {
+						mPrerequisites.add(new PrerequisiteCheckScores(scoreEnt.getKey(), scoreEnt.getValue()));
+					}
+					break;
+				case "check_advancements": {
+					JsonArray array = value.getAsJsonArray();
+					if (array == null) {
+						throw new Exception("Prerequisites value for key '" + key + "' is not an array!");
+					}
 
-				// Add all array entries
-				Iterator<JsonElement> iter = array.iterator();
-				while (iter.hasNext()) {
-					mPrerequisites.add(new PrerequisiteCheckAdvancements(iter.next()));
+					// Add all array entries
+					Iterator<JsonElement> iter = array.iterator();
+					while (iter.hasNext()) {
+						mPrerequisites.add(new PrerequisiteCheckAdvancements(iter.next()));
+					}
+					break;
 				}
-				break;
-			}
-			case "check_tags": {
-				JsonArray array = value.getAsJsonArray();
-				if (array == null) {
-					throw new Exception("Prerequisites value for key '" + key + "' is not an array!");
-				}
+				case "check_tags": {
+					JsonArray array = value.getAsJsonArray();
+					if (array == null) {
+						throw new Exception("Prerequisites value for key '" + key + "' is not an array!");
+					}
 
-				// Add all array entries
-				Iterator<JsonElement> iter = array.iterator();
-				while (iter.hasNext()) {
-					mPrerequisites.add(new PrerequisiteCheckTags(iter.next()));
+					// Add all array entries
+					Iterator<JsonElement> iter = array.iterator();
+					while (iter.hasNext()) {
+						mPrerequisites.add(new PrerequisiteCheckTags(iter.next()));
+					}
+					break;
 				}
-				break;
-			}
-			case "check_permissions": {
-				JsonArray array = value.getAsJsonArray();
-				if (array == null) {
-					throw new Exception("Prerequisites value for key '" + key + "' is not an array!");
+				case "check_permissions": {
+					JsonArray array = value.getAsJsonArray();
+					if (array == null) {
+						throw new Exception("Prerequisites value for key '" + key + "' is not an array!");
+					}
+					for (JsonElement jsonElement : array) {
+						mPrerequisites.add(new PrerequisiteCheckPermissions(jsonElement));
+					}
+					break;
 				}
-				for (JsonElement jsonElement : array) {
-					mPrerequisites.add(new PrerequisiteCheckPermissions(jsonElement));
-				}
-				break;
-			}
-			case "items_in_inventory": {
-				JsonArray array = value.getAsJsonArray();
-				if (array == null) {
-					throw new Exception("Prerequisites value for key '" + key + "' is not an array!");
-				}
+				case "items_in_inventory": {
+					JsonArray array = value.getAsJsonArray();
+					if (array == null) {
+						throw new Exception("Prerequisites value for key '" + key + "' is not an array!");
+					}
 
-				Iterator<JsonElement> iter = array.iterator();
-				while (iter.hasNext()) {
-					mPrerequisites.add(new PrerequisiteItemsInInventory(iter.next()));
+					Iterator<JsonElement> iter = array.iterator();
+					while (iter.hasNext()) {
+						mPrerequisites.add(new PrerequisiteItemsInInventory(iter.next()));
+					}
+					break;
 				}
-				break;
-			}
-			case "item_in_hand": {
-				JsonArray array = value.getAsJsonArray();
-				if (array == null) {
-					throw new Exception("Prerequisites value for key '" + key + "' is not an array!");
-				}
+				case "item_in_hand": {
+					JsonArray array = value.getAsJsonArray();
+					if (array == null) {
+						throw new Exception("Prerequisites value for key '" + key + "' is not an array!");
+					}
 
-				for (JsonElement jsonElement : array) {
-					mPrerequisites.add(new PrerequisiteItemInHand(jsonElement));
+					for (JsonElement jsonElement : array) {
+						mPrerequisites.add(new PrerequisiteItemInHand(jsonElement));
+					}
+					break;
 				}
-				break;
-			}
-			case "item_in_off_hand": {
-				JsonArray array = value.getAsJsonArray();
-				if (array == null) {
-					throw new Exception("Prerequisites value for key '" + key + "' is not an array!");
-				}
+				case "item_in_off_hand": {
+					JsonArray array = value.getAsJsonArray();
+					if (array == null) {
+						throw new Exception("Prerequisites value for key '" + key + "' is not an array!");
+					}
 
-				for (JsonElement jsonElement : array) {
-					mPrerequisites.add(new PrerequisiteItemInOffHand(jsonElement));
+					for (JsonElement jsonElement : array) {
+						mPrerequisites.add(new PrerequisiteItemInOffHand(jsonElement));
+					}
+					break;
 				}
-				break;
-			}
-			case "item_in_either_hand": {
-				JsonArray array = value.getAsJsonArray();
-				if (array == null) {
-					throw new Exception("Prerequisites value for key '" + key + "' is not an array!");
-				}
+				case "item_in_either_hand": {
+					JsonArray array = value.getAsJsonArray();
+					if (array == null) {
+						throw new Exception("Prerequisites value for key '" + key + "' is not an array!");
+					}
 
-				for (JsonElement jsonElement : array) {
-					mPrerequisites.add(new PrerequisiteItemInEitherHand(jsonElement));
+					for (JsonElement jsonElement : array) {
+						mPrerequisites.add(new PrerequisiteItemInEitherHand(jsonElement));
+					}
+					break;
 				}
-				break;
-			}
-			case "used_item": {
-				JsonArray array = value.getAsJsonArray();
-				if (array == null) {
-					throw new Exception("Prerequisites value for key '" + key + "' is not an array!");
-				}
+				case "used_item": {
+					JsonArray array = value.getAsJsonArray();
+					if (array == null) {
+						throw new Exception("Prerequisites value for key '" + key + "' is not an array!");
+					}
 
-				for (JsonElement jsonElement : array) {
-					mPrerequisites.add(new PrerequisiteUsedItem(jsonElement));
+					for (JsonElement jsonElement : array) {
+						mPrerequisites.add(new PrerequisiteUsedItem(jsonElement));
+					}
+					break;
 				}
-				break;
-			}
-			case "min_empty_inventory_slots":
-				mPrerequisites.add(new PrerequisiteInventorySlotsEmpty(value));
-				break;
-			case "test_for_block":
-				mPrerequisites.add(new PrerequisiteTestForBlock(value));
-				break;
-			case "location":
-				mPrerequisites.add(new PrerequisiteLocation(value));
-				break;
-			case "is_fully_healed":
-				mPrerequisites.add(new PrerequisiteFullyHealed(value));
-				break;
-			case "is_sneaking":
-				mPrerequisites.add(new PrerequisiteSneaking(value));
-				break;
-			case "gamemode":
-				mPrerequisites.add(new PrerequisiteGamemode(value));
-				break;
-			case "facing":
-				mPrerequisites.add(new PrerequisiteFacing(value));
-				break;
-			case "zone_properties":
-				mPrerequisites.add(new PrerequisiteZoneProperties(value));
-				break;
-			default:
-				throw new Exception("Unknown prerequisites key: '" + key + "'");
+				case "min_empty_inventory_slots":
+					mPrerequisites.add(new PrerequisiteInventorySlotsEmpty(value));
+					break;
+				case "test_for_block":
+					mPrerequisites.add(new PrerequisiteTestForBlock(value));
+					break;
+				case "location":
+					mPrerequisites.add(new PrerequisiteLocation(value));
+					break;
+				case "is_fully_healed":
+					mPrerequisites.add(new PrerequisiteFullyHealed(value));
+					break;
+				case "is_sneaking":
+					mPrerequisites.add(new PrerequisiteSneaking(value));
+					break;
+				case "gamemode":
+					mPrerequisites.add(new PrerequisiteGamemode(value));
+					break;
+				case "facing":
+					mPrerequisites.add(new PrerequisiteFacing(value));
+					break;
+				case "xp_levels":
+					mPrerequisites.add(new PrerequisiteXPLevels(value));
+					break;
+				case "xp_orbs":
+					mPrerequisites.add(new PrerequisiteXPRaw(value));
+					break;
+				case "zone_properties":
+					mPrerequisites.add(new PrerequisiteZoneProperties(value));
+					break;
+				default:
+					throw new Exception("Unknown prerequisites key: '" + key + "'");
 			}
 		}
 	}

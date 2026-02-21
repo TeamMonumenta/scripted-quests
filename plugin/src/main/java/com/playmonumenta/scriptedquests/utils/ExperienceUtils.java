@@ -28,6 +28,10 @@ public class ExperienceUtils {
 		return Math.round(player.getExp() * player.getExpToLevel()) + getTotalExperience(player.getLevel());
 	}
 
+	public static int getLevel(Player player) {
+		return getLevel(getTotalExperience(player));
+	}
+
 	public static int getLevel(int totalXp) {
 		float a = 0;
 		float b = 0;
