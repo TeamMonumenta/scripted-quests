@@ -8,6 +8,7 @@ import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.managers.TranslationsManager;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Locale;
 import java.util.regex.Pattern;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
@@ -42,7 +43,7 @@ public class MessagingUtils {
 	}
 
 	public static String translatePlayerName(Player player, String message) {
-		return message.replaceAll("@S", player.getName()).replaceAll("@U", player.getUniqueId().toString().toLowerCase());
+		return message.replaceAll("@S", player.getName()).replaceAll("@U", player.getUniqueId().toString().toLowerCase(Locale.ROOT));
 	}
 
 	public static void sendActionBarMessage(Player player, String message) {

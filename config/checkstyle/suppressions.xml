@@ -8,4 +8,6 @@
 	<suppress files=".*[\\/]VersionAdapter_.*java"
 			  checks="TypeName"
 			  message=".*Type name.*must match pattern.*"/>
+	<suppress checks="RegexpSinglelineJava"
+			  message="Do not use World\.spawnParticle\(\)"/>
 </suppressions>

@@ -5,6 +5,7 @@ import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.LocationArgument;
 import dev.jorel.commandapi.arguments.StringArgument;
+import java.util.Locale;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -27,7 +28,7 @@ public class Line {
 	}
 
 	private static int run(CommandSender sender, Location start, Location end, String matStr) {
-		Material mat = Material.getMaterial(matStr.toUpperCase());
+		Material mat = Material.getMaterial(matStr.toUpperCase(Locale.ROOT));
 		if (mat == null || !mat.isBlock()) {
 			sender.sendMessage("Unknown block type " + matStr);
 		}

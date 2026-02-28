@@ -30,6 +30,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -270,7 +271,7 @@ public class TranslationsManager implements Listener {
 
 		// add a timestamp to the fake 'language' to see how fresh the line is
 		// helps remove old unused lines from the gsheet
-		translations.put("ts", LocalDate.now().toString());
+		translations.put("ts", LocalDate.now(ZoneId.of("UTC")).toString());
 
 		String lang = mPlayerLanguageMap.get(player.getUniqueId());
 		if (lang == null || lang.equals("en.US")) {
@@ -292,7 +293,7 @@ public class TranslationsManager implements Listener {
 
 		// add a timestamp to the fake 'language' to see how fresh the line is
 		// helps remove old unused lines from the gsheet
-		translations.put("ts", LocalDate.now().toString());
+		translations.put("ts", LocalDate.now(ZoneId.of("UTC")).toString());
 
 		// update the loaded translation map
 		mTranslationsMap.put(message, translations);

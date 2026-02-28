@@ -14,6 +14,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.stream.Stream;
 
 public class FileUtils {
@@ -89,7 +90,7 @@ public class FileUtils {
 
 		try (Stream<Path> stream = Files.walk(Paths.get(folderPath), 100, FileVisitOption.FOLLOW_LINKS)) {
 			stream.forEach(path -> {
-				if (path.toString().toLowerCase().endsWith(endsWith)) {
+				if (path.toString().toLowerCase(Locale.ROOT).endsWith(endsWith)) {
 					// Note - this will pass directories that end with .json back to the caller too
 					matchedFiles.add(path.toFile());
 				}

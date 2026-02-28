@@ -8,6 +8,7 @@ import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponentList;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.Set;
 import org.bukkit.entity.EntityType;
@@ -85,6 +86,6 @@ public class ClickableEntry {
 	}
 
 	public static String squashLabel(String label) {
-		return MessagingUtils.plainFromLegacy(label).toLowerCase().replaceAll("[^a-zA-Z0-9]", "");
+		return MessagingUtils.plainFromLegacy(label).toLowerCase(Locale.ROOT).replaceAll("[^a-zA-Z0-9]", "");
 	}
 }

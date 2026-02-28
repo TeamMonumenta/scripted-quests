@@ -190,7 +190,7 @@ public class WaypointManager {
 					}
 
 					/* Rolling average player location - 19 parts previous location, 1 part new location */
-					Location averageLoc = mPlayerAverageLocs.get(player);
+					Location averageLoc = mPlayerAverageLocs.get(player.getUniqueId());
 					if (averageLoc == null) {
 						averageLoc = playerLoc.clone();
 					}

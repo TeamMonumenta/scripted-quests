@@ -45,10 +45,9 @@ public interface NpcTradeOverride {
 			if (this == o) {
 				return true;
 			}
-			if (o == null || getClass() != o.getClass()) {
+			if (!(o instanceof ItemOverride that)) {
 				return false;
 			}
-			ItemOverride that = (ItemOverride) o;
 			return mItem.equals(that.mItem);
 		}
 
@@ -103,10 +102,9 @@ public interface NpcTradeOverride {
 			if (this == o) {
 				return true;
 			}
-			if (o == null || getClass() != o.getClass()) {
+			if (!(o instanceof LootTableOverride that)) {
 				return false;
 			}
-			LootTableOverride that = (LootTableOverride) o;
 			return mCount == that.mCount && mLootTable.equals(that.mLootTable);
 		}
 

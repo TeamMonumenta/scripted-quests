@@ -5,6 +5,7 @@ import com.mojang.brigadier.ParseResults;
 import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.utils.MMLog;
 import com.playmonumenta.scriptedquests.utils.NmsUtils;
+import java.util.Locale;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
@@ -44,7 +45,7 @@ public class ActionCommand implements ActionBase {
 		} else {
 			commandStr = commandStr.replaceAll("@N", context.getNpcEntity().getUniqueId().toString());
 		}
-		commandStr = commandStr.replaceAll("@S", context.getPlayer().getName()).replaceAll("@U", context.getPlayer().getUniqueId().toString().toLowerCase());
+		commandStr = commandStr.replaceAll("@S", context.getPlayer().getName()).replaceAll("@U", context.getPlayer().getUniqueId().toString().toLowerCase(Locale.ROOT));
 		QuestContext.pushCurrentContext(context);
 		try {
 			NmsUtils.getVersionAdapter().runConsoleCommandSilently(commandStr);

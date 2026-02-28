@@ -156,7 +156,7 @@ public class InteractableEntry {
 		if (mInteractTypes.contains(interactType)) {
 			ActionCancelEvent.mCancelEvent = ActionCancelEvent.CancelState.DEFAULT;
 			boolean anyPrereqsMet = mComponents.run(context);
-			cancelEvent = mCancelEvent && anyPrereqsMet && ActionCancelEvent.mCancelEvent != ActionCancelEvent.CancelState.UNCANCEL
+			cancelEvent = (mCancelEvent && anyPrereqsMet && ActionCancelEvent.mCancelEvent != ActionCancelEvent.CancelState.UNCANCEL)
 				              || ActionCancelEvent.mCancelEvent == ActionCancelEvent.CancelState.CANCEL;
 		}
 		return cancelEvent;
