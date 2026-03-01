@@ -54,7 +54,7 @@ public abstract class CustomInventory {
 						if (mPlugin == event.getPlugin()) {
 							mPlugin = null;
 							HandlerList.unregisterAll(mMainListener);
-							if (mOpenedInvsByPlugin.size() > 0) {
+							if (!mOpenedInvsByPlugin.isEmpty()) {
 								bindListener(mOpenedInvsByPlugin.keySet().iterator().next());
 							}
 						}

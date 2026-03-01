@@ -4,10 +4,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.utils.ExperienceUtils;
-import org.bukkit.entity.Player;
-
 import java.util.Map;
 import java.util.Set;
+import org.bukkit.entity.Player;
 
 public class PrerequisiteXP implements PrerequisiteBase {
 

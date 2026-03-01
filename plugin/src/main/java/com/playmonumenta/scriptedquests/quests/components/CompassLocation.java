@@ -100,7 +100,7 @@ public class CompassLocation implements QuestLocation {
 		}
 
 		// Make sure waypoints list contains at least one entry
-		if (mWaypoints.size() <= 0) {
+		if (mWaypoints.isEmpty()) {
 			throw new Exception("Compass entry must contain at least one waypoint");
 		}
 	}

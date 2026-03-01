@@ -192,7 +192,7 @@ public class CommandTimer implements Listener {
 			if (map.size() < smallest.size()) {
 				smallest = map;
 			}
-			if (map.size() == 0) {
+			if (map.isEmpty()) {
 				break;
 			}
 		}
@@ -209,7 +209,7 @@ public class CommandTimer implements Listener {
 	}
 
 	public void runTimers() {
-		if (mTimers.size() <= 0) {
+		if (mTimers.isEmpty()) {
 			return;
 		}
 

@@ -71,7 +71,7 @@ public class RaceManager {
 
 			@Override
 			public void run() {
-				if (mActiveRaces.size() > 0) {
+				if (!mActiveRaces.isEmpty()) {
 					mRaceTemp.clear();
 					mRaceTemp.addAll(mActiveRaces.values());
 					for (Race race : mRaceTemp) {
@@ -171,7 +171,7 @@ public class RaceManager {
 	}
 
 	public void restartRaceByClick(Player player) {
-		if (mActiveRaces.size() == 0) {
+		if (mActiveRaces.isEmpty()) {
 			return;
 		}
 		Race race = mActiveRaces.get(player.getUniqueId());
@@ -181,7 +181,7 @@ public class RaceManager {
 	}
 
 	public void cancelRaceByClick(Player player) {
-		if (mActiveRaces.size() == 0) {
+		if (mActiveRaces.isEmpty()) {
 			return;
 		}
 		Race race = mActiveRaces.get(player.getUniqueId());

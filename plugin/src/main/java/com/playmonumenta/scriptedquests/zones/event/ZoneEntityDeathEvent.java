@@ -37,7 +37,7 @@ public class ZoneEntityDeathEvent extends ZoneEvent {
 
 	public boolean appliesTo(String entityName) {
 		// Optional: if no names are specified, it applies to every entity that dies in the zone.
-		return mEntityNames.size() == 0 || mEntityNames.contains(entityName);
+		return mEntityNames.isEmpty() || mEntityNames.contains(entityName);
 	}
 
 }

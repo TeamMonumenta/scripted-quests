@@ -9,10 +9,10 @@ import dev.jorel.commandapi.arguments.LiteralArgument;
 import dev.jorel.commandapi.arguments.LocationArgument;
 import dev.jorel.commandapi.arguments.LocationType;
 import dev.jorel.commandapi.executors.CommandArguments;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.util.Consumer;
 
 public class Clock {
 	static class SummonTimerConsumer implements Consumer<ArmorStand> {
