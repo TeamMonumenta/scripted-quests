@@ -1,3 +1,5 @@
+import org.gradle.api.plugins.quality.Pmd
+
 repositories {
 	maven("https://repo.mikeprimm.com")
 }
@@ -21,6 +23,7 @@ dependencies {
 	testImplementation(libs.mockito)
 	testImplementation(libs.mockbukkit)
 	testRuntimeOnly(libs.jupiter.engine)
+	testRuntimeOnly(libs.junit.platform.launcher)
 	testRuntimeOnly(libs.commandapi)
 }
 
@@ -57,5 +60,9 @@ tasks {
 
 	named<Test>("test") {
 		useJUnitPlatform()
+	}
+
+	withType<Pmd> {
+		exclude("**/XoRoShiRo128PlusRandom.java")
 	}
 }

@@ -9,6 +9,7 @@ gson = "2.8.0"
 dynmap = "2.0"
 protocollib = "4.7.0"
 junit = "5.8.1"
+junit-platform = "1.8.1"
 mockito-junit = "5.8.0"
 mockbukkit = "3.9.0"
 redissync = "4.6.1"
@@ -25,6 +26,7 @@ dynmap = { module = "org.dynmap:DynmapCoreAPI", version.ref = "dynmap" }
 protocollib = { module = "com.comphenix.protocol:ProtocolLib", version.ref = "protocollib" }
 jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
 jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit-platform" }
 mockito = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockito-junit" }
 mockbukkit = { module = "com.github.seeseemelk:MockBukkit-v1.20", version.ref = "mockbukkit" }
 redissync = { module = "com.playmonumenta:redissync", version.ref = "redissync" }
