@@ -30,7 +30,15 @@ public class QuestActions implements ActionBase {
 
 	public static int mSkipLevels = 0;
 
-	public QuestActions(@Nullable String npcName, @Nullable String displayName, @Nullable EntityType entityType,
+	/*
+	 * This constructor variant is used only when no NPC context exists for the caller to provide.
+	 * Actions that require an NPC context to work (dialog, rerun-components, etc.) will fail.
+	 */
+	public QuestActions(int delayTicks, JsonElement element) throws Exception {
+		this(null, null, EntityType.VILLAGER, delayTicks, element);
+	}
+
+	public QuestActions(@Nullable String npcName, @Nullable String displayName, EntityType entityType,
 	                    int delayTicks, JsonElement element) throws Exception {
 		mDelayTicks = delayTicks;
 
@@ -107,14 +115,13 @@ public class QuestActions implements ActionBase {
 						}
 						break;
 					case "voice_over":
-						if (entityType == null) {
-							throw new Exception("Tried to create voiceover action but entityType is null");
-						} else {
-							actions.mActions.add(new ActionVoiceOver(entityType, npcName, value));
+						if (npcName == null) {
+							throw new Exception("voice_over requires NPC context");
 						}
+						actions.mActions.add(new ActionVoiceOver(entityType, npcName, value));
 						break;
 					case "rerun_components":
-						if (entityType != null && npcName != null) {
+						if (npcName != null) {
 							actions.mActions.add(new ActionRerunComponents(npcName, entityType));
 						}
 						break;

@@ -50,7 +50,7 @@ public class RaceTime implements Comparable<RaceTime> {
 		JsonElement actionsElement = object.get("actions");
 		if (actionsElement != null) {
 			// Actions should not use NPC dialog or rerun_components since they make no sense here
-			mActions = new QuestActions("REPORT_THIS_BUG", "REPORT_THIS_BUG", null, 0, actionsElement);
+			mActions = new QuestActions(0, actionsElement);
 		} else {
 			mActions = null;
 		}

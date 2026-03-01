@@ -15,7 +15,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Predicate;
 import org.bukkit.Location;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -78,7 +77,7 @@ public class QuestDeath {
 					mPrerequisites = new QuestPrerequisites(value);
 					break;
 				case "actions":
-					mActions = new QuestActions("", "", EntityType.VILLAGER, 0, value);
+					mActions = new QuestActions(0, value);
 					break;
 				default:
 					throw new Exception("Unknown death quest key: '" + key + "'");

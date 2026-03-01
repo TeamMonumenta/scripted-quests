@@ -7,7 +7,6 @@ import com.playmonumenta.scriptedquests.quests.components.QuestActions;
 import com.playmonumenta.scriptedquests.quests.components.QuestPrerequisites;
 import java.util.Map.Entry;
 import java.util.Set;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.jetbrains.annotations.Nullable;
@@ -37,7 +36,7 @@ public class QuestLogin {
 				mPrerequisites = new QuestPrerequisites(value);
 				break;
 			case "actions":
-				actions = new QuestActions("", "", EntityType.VILLAGER, 0, value);
+				actions = new QuestActions(0, value);
 				break;
 			default:
 				throw new Exception("Unknown login quest key: '" + key + "'");

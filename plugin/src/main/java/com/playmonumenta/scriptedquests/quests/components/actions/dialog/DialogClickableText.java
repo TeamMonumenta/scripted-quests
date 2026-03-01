@@ -8,12 +8,13 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.stream.Collectors;
 import org.bukkit.entity.EntityType;
+import org.jetbrains.annotations.Nullable;
 
 public class DialogClickableText implements DialogBase {
 	private ArrayList<DialogClickableTextEntry> mEntries = new ArrayList<>();
 
-	public DialogClickableText(String npcName, String displayName,
-	                    EntityType entityType, JsonElement element) throws Exception {
+	public DialogClickableText(@Nullable String npcName, @Nullable String displayName,
+	                           EntityType entityType, JsonElement element) throws Exception {
 		/*
 		 * Integer used to determine which of the available clickable entries was
 		 * clicked when a player clicks a chat message
@@ -54,4 +55,3 @@ public class DialogClickableText implements DialogBase {
 			.build();
 	}
 }
-

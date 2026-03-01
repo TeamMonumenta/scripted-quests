@@ -36,7 +36,7 @@ public final class GuiPage {
 		}
 		mCloseActionsJson = object.get("close_actions");
 		if (mCloseActionsJson != null) {
-			mCloseActions = new QuestActions(null, null, null, 1, mCloseActionsJson);
+			mCloseActions = new QuestActions(1, mCloseActionsJson);
 		} else {
 			mCloseActions = null;
 		}

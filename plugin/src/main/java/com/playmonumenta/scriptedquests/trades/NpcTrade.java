@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 import org.bukkit.Material;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -56,7 +55,7 @@ public class NpcTrade implements Comparable<NpcTrade> {
 		// actions (optional)
 		mActionsJson = object.get("actions");
 		if (mActionsJson != null) {
-			mActions = new QuestActions("", "", EntityType.VILLAGER, 0, mActionsJson);
+			mActions = new QuestActions(0, mActionsJson);
 		}
 
 		JsonElement countElement = object.get("count");

@@ -70,12 +70,12 @@ public class GuiItem {
 
 		mLeftClickActionsJson = object.get(LEFT_CLICK_ACTIONS_KEY);
 		if (mLeftClickActionsJson != null) {
-			mLeftClickActions = new QuestActions(null, null, null, 0, mLeftClickActionsJson);
+			mLeftClickActions = new QuestActions(0, mLeftClickActionsJson);
 		}
 
 		mRightClickActionsJson = object.get(RIGHT_CLICK_ACTIONS_KEY);
 		if (mRightClickActionsJson != null) {
-			mRightClickActions = new QuestActions(null, null, null, 0, mRightClickActionsJson);
+			mRightClickActions = new QuestActions(0, mRightClickActionsJson);
 		}
 
 	}
@@ -140,7 +140,7 @@ public class GuiItem {
 				if (mLeftClickActionsJson.isJsonNull()) {
 					mLeftClickActionsJson = null;
 				} else {
-					mLeftClickActions = new QuestActions(null, null, null, 0, mLeftClickActionsJson);
+					mLeftClickActions = new QuestActions(0, mLeftClickActionsJson);
 				}
 			}
 			String rightClickActions = sqguiCompound.getString(RIGHT_CLICK_ACTIONS_KEY);
@@ -149,7 +149,7 @@ public class GuiItem {
 				if (mRightClickActionsJson.isJsonNull()) {
 					mRightClickActionsJson = null;
 				} else {
-					mRightClickActions = new QuestActions(null, null, null, 0, mRightClickActionsJson);
+					mRightClickActions = new QuestActions(0, mRightClickActionsJson);
 				}
 			}
 			nbtItem.removeKey(SQGUI_KEY);

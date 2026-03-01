@@ -174,7 +174,7 @@ public class RaceFactory {
 		JsonElement startActionsElement = object.get("start_actions");
 		if (startActionsElement != null) {
 			// Actions should not use NPC dialog or rerun_components since they make no sense here
-			mStartActions = new QuestActions("REPORT_THIS_BUG", "REPORT_THIS_BUG", null, 0, startActionsElement);
+			mStartActions = new QuestActions(0, startActionsElement);
 		} else {
 			mStartActions = null;
 		}
@@ -183,7 +183,7 @@ public class RaceFactory {
 		JsonElement loseActionsElement = object.get("lose_actions");
 		if (loseActionsElement != null) {
 			// Actions should not use NPC dialog or rerun_components since they make no sense here
-			mLoseActions = new QuestActions("REPORT_THIS_BUG", "REPORT_THIS_BUG", null, 0, loseActionsElement);
+			mLoseActions = new QuestActions(0, loseActionsElement);
 		} else {
 			mLoseActions = null;
 		}

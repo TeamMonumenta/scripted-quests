@@ -53,7 +53,7 @@ public class DialogClickableTextEntry implements DialogBase {
 	private final int mIdx;
 	private @Nullable HoverEvent<Component> mHoverEvent = null;
 
-	public DialogClickableTextEntry(String npcName, String displayName, EntityType entityType,
+	public DialogClickableTextEntry(@Nullable String npcName, @Nullable String displayName, EntityType entityType,
 	                                JsonElement element, int elementIdx) throws Exception {
 		mIdx = elementIdx;
 

@@ -21,7 +21,7 @@ public class ActionDialog implements ActionBase {
 	private final ArrayList<DialogBase> mDialogs = new ArrayList<>();
 
 	public ActionDialog(@Nullable String npcName, @Nullable String displayName,
-	             @Nullable EntityType entityType, JsonElement element) throws Exception {
+	                    EntityType entityType, JsonElement element) throws Exception {
 		JsonObject object = element.getAsJsonObject();
 		if (object == null) {
 			throw new Exception("dialog value is not an object!");
@@ -35,7 +35,12 @@ public class ActionDialog implements ActionBase {
 				case "raw_text" -> mDialogs.add(new DialogRawText(ent.getValue()));
 				case "clickable_text" -> mDialogs.add(new DialogClickableText(npcName, displayName, entityType, ent.getValue()));
 				case "random_text" -> mDialogs.add(new DialogRandomText(displayName, ent.getValue()));
-				case "all_in_one_text" -> mDialogs.add(new DialogAllInOneText(npcName, ent.getValue()));
+				case "all_in_one_text" -> {
+				if (npcName == null) {
+					throw new Exception("all_in_one_text requires NPC context");
+				}
+				mDialogs.add(new DialogAllInOneText(npcName, ent.getValue()));
+			}
 				default -> throw new Exception("Unknown dialog key: '" + key + "'");
 			}
 		}
