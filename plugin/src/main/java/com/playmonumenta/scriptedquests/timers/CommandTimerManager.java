@@ -25,7 +25,7 @@ public class CommandTimerManager implements Listener {
 
 	public CommandTimerManager(Plugin plugin) {
 		mPlugin = plugin;
-		mCommandTimers = new LinkedHashMap<Integer, CommandTimer>();
+		mCommandTimers = new LinkedHashMap<>();
 
 		/* When starting up, look for timer armor stands in all current world entities */
 		for (Entity entity : Bukkit.getWorlds().get(0).getEntities()) {

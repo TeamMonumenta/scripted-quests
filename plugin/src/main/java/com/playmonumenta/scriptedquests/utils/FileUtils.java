@@ -14,6 +14,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.stream.Stream;
 
@@ -84,9 +85,8 @@ public class FileUtils {
 	 * Returns a list of all files in the directory that are both regular files
 	 * AND end with the specified string
 	 */
-	public static ArrayList<File> getFilesInDirectory(String folderPath,
-	                                                  String endsWith) throws IOException {
-		ArrayList<File> matchedFiles = new ArrayList<File>();
+	public static List<File> getFilesInDirectory(String folderPath, String endsWith) throws IOException {
+		ArrayList<File> matchedFiles = new ArrayList<>();
 
 		try (Stream<Path> stream = Files.walk(Paths.get(folderPath), 100, FileVisitOption.FOLLOW_LINKS)) {
 			stream.forEach(path -> {

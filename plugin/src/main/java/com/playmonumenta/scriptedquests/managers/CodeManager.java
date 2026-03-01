@@ -13,7 +13,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 public class CodeManager {
-	private final Map<String, CodeEntry> mCodes = new HashMap<String, CodeEntry>();
+	private final Map<String, CodeEntry> mCodes = new HashMap<>();
 
 	/*
 	 * If sender is non-null, it will be sent debugging information

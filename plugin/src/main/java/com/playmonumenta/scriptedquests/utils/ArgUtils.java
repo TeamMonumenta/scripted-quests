@@ -27,7 +27,7 @@ public class ArgUtils {
 	}
 
 	public static String[] quoteIfNeeded(Collection<String> args) {
-		Collection<String> possiblyQuotedArgs = new ArrayList<String>();
+		Collection<String> possiblyQuotedArgs = new ArrayList<>();
 		for (String arg : args) {
 			possiblyQuotedArgs.add(quoteIfNeeded(arg));
 		}

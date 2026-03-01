@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 public class DialogAllInOneText implements DialogBase {
-	private ArrayList<DialogAllInOneEntry> mEntries = new ArrayList<DialogAllInOneEntry>();
+	private ArrayList<DialogAllInOneEntry> mEntries = new ArrayList<>();
 
 	public DialogAllInOneText(String npcName, JsonElement element) throws Exception {
 		if (element.isJsonObject()) {

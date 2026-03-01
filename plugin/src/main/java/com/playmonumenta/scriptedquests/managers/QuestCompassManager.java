@@ -25,13 +25,13 @@ import org.jetbrains.annotations.Nullable;
 
 public class QuestCompassManager {
 
-	private final List<QuestCompass> mQuests = new ArrayList<QuestCompass>();
-	private final Map<UUID, CompassCacheEntry> mCompassCache = new HashMap<UUID, CompassCacheEntry>();
+	private final List<QuestCompass> mQuests = new ArrayList<>();
+	private final Map<UUID, CompassCacheEntry> mCompassCache = new HashMap<>();
 	public final Map<Player, Integer> mCurrentIndex = new WeakHashMap<>();
 	private final Plugin mPlugin;
 
 	/* One command-specified waypoint per player */
-	private final Map<UUID, ValidCompassEntry> mCommandWaypoints = new HashMap<UUID, ValidCompassEntry>();
+	private final Map<UUID, ValidCompassEntry> mCommandWaypoints = new HashMap<>();
 
 	public static class ValidCompassEntry {
 		public final QuestLocation mLocation;
@@ -122,7 +122,7 @@ public class QuestCompassManager {
 		/*
 		 * No cached entry - need to recompute everything
 		 */
-		List<ValidCompassEntry> entries = new ArrayList<ValidCompassEntry>();
+		List<ValidCompassEntry> entries = new ArrayList<>();
 		for (QuestCompass quest : mQuests) {
 			List<CompassLocation> questMarkers = quest.getMarkers(player);
 

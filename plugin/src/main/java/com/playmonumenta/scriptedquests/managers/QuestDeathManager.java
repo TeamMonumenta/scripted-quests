@@ -9,7 +9,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.jetbrains.annotations.Nullable;
 
 public class QuestDeathManager {
-	private final ArrayList<QuestDeath> mDeaths = new ArrayList<QuestDeath>();
+	private final ArrayList<QuestDeath> mDeaths = new ArrayList<>();
 
 	/* If sender is non-null, it will be sent debugging information */
 	public void reload(Plugin plugin, @Nullable CommandSender sender) {

@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 public class CompassLocation implements QuestLocation {
 	private final @Nullable QuestPrerequisites mPrerequisites;
 	private final String mMessage;
-	private final List<Location> mWaypoints = new ArrayList<Location>();
+	private final List<Location> mWaypoints = new ArrayList<>();
 	private final String mWorldRegex;
 
 	public CompassLocation(World world, JsonElement element) throws Exception {

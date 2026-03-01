@@ -9,7 +9,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.jetbrains.annotations.Nullable;
 
 public class QuestLoginManager {
-	private final ArrayList<QuestLogin> mLogins = new ArrayList<QuestLogin>();
+	private final ArrayList<QuestLogin> mLogins = new ArrayList<>();
 
 	/* If sender is non-null, it will be sent debugging information */
 	public void reload(Plugin plugin, @Nullable CommandSender sender) {

@@ -33,13 +33,13 @@ public class CommandTimer implements Listener {
 		mPlugin = plugin;
 		mPeriod = period;
 		//List of timers sorted in their scheduled tick
-		mTickTimers = new ArrayList<LinkedHashMap<UUID, CommandTimerInstance>>(mPeriod);
+		mTickTimers = new ArrayList<>(mPeriod);
 		//List of all timers with this period
-		mTimers = new LinkedHashMap<UUID, CommandTimerInstance>();
+		mTimers = new LinkedHashMap<>();
 
 		//Generate the timer buckets
 		for (int i = 0; i < mPeriod; i++) {
-			mTickTimers.add(new LinkedHashMap<UUID, CommandTimerInstance>());
+			mTickTimers.add(new LinkedHashMap<>());
 		}
 
 		if (mPeriod % 1200 == 0) {

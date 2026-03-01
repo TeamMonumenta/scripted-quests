@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 public class ClickableManager {
-	private final Map<String, ClickableEntry> mClickables = new HashMap<String, ClickableEntry>();
+	private final Map<String, ClickableEntry> mClickables = new HashMap<>();
 
 	/*
 	 * If sender is non-null, it will be sent debugging information

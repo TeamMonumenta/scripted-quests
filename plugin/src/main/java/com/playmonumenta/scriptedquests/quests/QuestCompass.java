@@ -13,7 +13,7 @@ import org.bukkit.entity.Player;
 
 public class QuestCompass {
 	private String mQuestName;
-	private ArrayList<CompassLocation> mMarkers = new ArrayList<CompassLocation>();
+	private ArrayList<CompassLocation> mMarkers = new ArrayList<>();
 
 	public QuestCompass(JsonObject object) throws Exception {
 		/* TODO: This seriously needs to change, will not work with multi-worlds
@@ -51,7 +51,7 @@ public class QuestCompass {
 	}
 
 	public List<CompassLocation> getMarkers(Player player) {
-		List<CompassLocation> availableMarkers = new ArrayList<CompassLocation>();
+		List<CompassLocation> availableMarkers = new ArrayList<>();
 
 		for (CompassLocation marker : mMarkers) {
 			if (marker.prerequisiteMet(player)) {
@@ -62,7 +62,7 @@ public class QuestCompass {
 		return availableMarkers;
 	}
 
-	public ArrayList<CompassLocation> getMarkers() {
+	public List<CompassLocation> getMarkers() {
 		return mMarkers;
 	}
 

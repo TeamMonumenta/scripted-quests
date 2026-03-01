@@ -11,7 +11,7 @@ public class ActionRerunComponents implements ActionBase {
 	private final EntityType mEntityType;
 
 	// Array list should be faster than hashmap for such small set
-	private final List<Player> mLocked = new ArrayList<Player>(10);
+	private final List<Player> mLocked = new ArrayList<>(10);
 
 	public ActionRerunComponents(String npcName, EntityType entityType) {
 		mNpcName = npcName;

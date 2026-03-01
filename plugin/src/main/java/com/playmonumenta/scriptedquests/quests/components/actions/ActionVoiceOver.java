@@ -35,7 +35,7 @@ public class ActionVoiceOver implements ActionBase {
 			playerLastSounds = (Map<String, String>) player.getMetadata(Constants.PLAYER_VOICE_OVER_METAKEY).get(0).value();
 		} else {
 			// LRU map via https://stackoverflow.com/a/11469731
-			playerLastSounds = new LinkedHashMap<String, String>(mMaxVOPerPlayer + 1, 1.0f, true) {
+			playerLastSounds = new LinkedHashMap<>(mMaxVOPerPlayer + 1, 1.0f, true) {
 				@Override
 				protected boolean removeEldestEntry(Map.Entry<String, String> eldest) {
 					if (size() > mMaxVOPerPlayer) {

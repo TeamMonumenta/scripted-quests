@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -48,7 +49,7 @@ public class QuestUtils {
 			audience = Bukkit.getConsoleSender();
 		}
 		String folderLocation = plugin.getDataFolder() + File.separator + folderName;
-		ArrayList<File> listOfFiles;
+		List<File> listOfFiles;
 		ArrayList<String> listOfLabels = new ArrayList<>();
 		int numFiles = 0;
 

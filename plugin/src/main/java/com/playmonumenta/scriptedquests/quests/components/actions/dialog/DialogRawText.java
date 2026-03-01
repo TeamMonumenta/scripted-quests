@@ -10,7 +10,7 @@ import java.util.Iterator;
 import java.util.stream.Collectors;
 
 public class DialogRawText implements DialogBase {
-	private ArrayList<String> mText = new ArrayList<String>();
+	private ArrayList<String> mText = new ArrayList<>();
 
 	public DialogRawText(JsonElement element) throws Exception {
 		if (element.isJsonPrimitive()) {

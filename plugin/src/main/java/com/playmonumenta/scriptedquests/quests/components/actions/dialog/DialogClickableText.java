@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import org.bukkit.entity.EntityType;
 
 public class DialogClickableText implements DialogBase {
-	private ArrayList<DialogClickableTextEntry> mEntries = new ArrayList<DialogClickableTextEntry>();
+	private ArrayList<DialogClickableTextEntry> mEntries = new ArrayList<>();
 
 	public DialogClickableText(String npcName, String displayName,
 	                    EntityType entityType, JsonElement element) throws Exception {

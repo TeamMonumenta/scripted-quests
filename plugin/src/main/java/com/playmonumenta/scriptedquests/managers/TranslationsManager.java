@@ -508,7 +508,7 @@ public class TranslationsManager implements Listener {
 	private List<List<Object>> convertDataToSheetList() {
 		List<List<Object>> rows = new ArrayList<>();
 
-		TreeMap<String, String> languages = getListOfAvailableLanguages();
+		Map<String, String> languages = getListOfAvailableLanguages();
 		Set<String> langSet = languages.keySet();
 		// it is expected that the languages map contains all languages that have at least 1 translation
 
@@ -542,11 +542,11 @@ public class TranslationsManager implements Listener {
 		return rows;
 	}
 
-	public TreeMap<String, String> getListOfAvailableLanguages() {
+	public Map<String, String> getListOfAvailableLanguages() {
 		return getListOfAvailableLanguages(false);
 	}
 
-	public TreeMap<String, String> getListOfAvailableLanguages(boolean includeDefault) {
+	public Map<String, String> getListOfAvailableLanguages(boolean includeDefault) {
 		// if null, a lot of things will break. it's good that null pointers will show up then.
 		TreeMap<String, String> out = new TreeMap<>();
 		if (includeDefault) {
@@ -582,7 +582,7 @@ public class TranslationsManager implements Listener {
 	}
 
 
-	private void readDataRow(List<Object> row, HashMap<Integer, String> indexToLanguageMap) {
+	private void readDataRow(List<Object> row, Map<Integer, String> indexToLanguageMap) {
 
 		String message = (String)row.get(0);
 		String status = (String)row.get(1);
@@ -608,7 +608,7 @@ public class TranslationsManager implements Listener {
 
 	}
 
-	private void readLanguageRow(List<Object> row, HashMap<Integer, String> indexToLanguageMap) {
+	private void readLanguageRow(List<Object> row, Map<Integer, String> indexToLanguageMap) {
 		// first cell is english. ignore
 		for (int i = 1; i < row.size(); i++) {
 			indexToLanguageMap.put(i, ((String)row.get(i)).split(" \\| ")[0]);
