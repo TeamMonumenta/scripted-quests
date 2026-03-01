@@ -5,10 +5,10 @@ import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.utils.ScoreboardUtils;
 import java.util.Map.Entry;
 import java.util.Set;
-import javax.annotation.Nullable;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.scoreboard.Objective;
+import org.jetbrains.annotations.Nullable;
 
 public class PrerequisiteCheckScores implements PrerequisiteBase {
 	private interface TestValue {

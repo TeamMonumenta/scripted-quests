@@ -1,9 +1,9 @@
 package com.playmonumenta.scriptedquests.zones;
 
-import javax.annotation.Nullable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.Nullable;
 
 public class ZoneChangeEvent extends Event {
 	private static final HandlerList handlers = new HandlerList();

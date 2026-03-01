@@ -4,9 +4,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.utils.InventoryUtils;
 import com.playmonumenta.scriptedquests.utils.JsonUtils;
-import javax.annotation.Nullable;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 public class PrerequisiteItem {
 	private final @Nullable Material mType;

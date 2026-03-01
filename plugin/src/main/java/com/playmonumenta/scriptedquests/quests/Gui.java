@@ -8,7 +8,7 @@ import com.playmonumenta.scriptedquests.utils.JsonUtils;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public class Gui {
 

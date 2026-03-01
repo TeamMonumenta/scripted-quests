@@ -3,10 +3,10 @@ package com.playmonumenta.scriptedquests.zones;
 import java.io.PrintStream;
 import java.util.HashSet;
 import java.util.Set;
-import javax.annotation.Nullable;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.dynmap.markers.MarkerSet;
+import org.jetbrains.annotations.Nullable;
 
 public class ZoneTreeEmpty extends ZoneTreeBase {
 	@Override

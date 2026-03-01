@@ -6,7 +6,6 @@ import io.papermc.paper.adventure.AdventureComponent;
 import io.papermc.paper.adventure.PaperAdventure;
 import java.util.Locale;
 import java.util.UUID;
-import javax.annotation.Nullable;
 import net.kyori.adventure.text.Component;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -26,6 +25,7 @@ import org.bukkit.craftbukkit.v1_20_R3.block.CraftCommandBlock;
 import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("unchecked")
 public class VersionAdapter_v1_20_R3 implements VersionAdapter {

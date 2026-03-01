@@ -10,10 +10,10 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.annotation.Nullable;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.Nullable;
 
 /*
  * A zone, to be split into fragments. This class holds the name and properties, and the fragments determine

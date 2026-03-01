@@ -8,9 +8,9 @@ import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTItem;
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.Nullable;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 public final class GuiPage {
 

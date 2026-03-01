@@ -3,7 +3,7 @@ package com.playmonumenta.scriptedquests;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public class CustomLogger extends Logger {
 	private static @Nullable CustomLogger INSTANCE = null;

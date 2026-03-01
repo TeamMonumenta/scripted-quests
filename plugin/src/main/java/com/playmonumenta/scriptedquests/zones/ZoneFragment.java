@@ -5,13 +5,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.Nullable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Axis;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.Nullable;
 
 /*
  * A fragment of a zone; this is used to find zones quickly, but not hold their properties.

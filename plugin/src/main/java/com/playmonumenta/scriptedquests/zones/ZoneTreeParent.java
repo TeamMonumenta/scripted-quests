@@ -6,11 +6,11 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import javax.annotation.Nullable;
 import org.bukkit.Axis;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.dynmap.markers.MarkerSet;
+import org.jetbrains.annotations.Nullable;
 
 public class ZoneTreeParent extends ZoneTreeBase {
 	private static class ParentData {
