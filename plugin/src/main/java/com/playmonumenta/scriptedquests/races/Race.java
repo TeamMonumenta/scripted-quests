@@ -21,7 +21,6 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -427,45 +426,54 @@ public class Race {
 		// display race end info
 		//header
 		if (mShowStats) {
-			mPlayer.sendMessage("" + ChatColor.DARK_AQUA + ChatColor.BOLD + "----====----       " + ChatColor.AQUA + ChatColor.BOLD + "Speedruns" + ChatColor.DARK_AQUA + ChatColor.BOLD + "       ----====----\n");
-			String recapMessage = String.format("%s - %s",
-				"" + ChatColor.AQUA + "Race Recap",
-				" " + ChatColor.YELLOW + mName
-			);
-
+			mPlayer.sendMessage(
+				Component.text("----====----       ", NamedTextColor.DARK_AQUA).decorate(TextDecoration.BOLD)
+					.append(Component.text("Speedruns", NamedTextColor.AQUA).decorate(TextDecoration.BOLD))
+					.append(Component.text("       ----====----\n", NamedTextColor.DARK_AQUA).decorate(TextDecoration.BOLD)));
+			Component recapMessage = Component.text(" ")
+				.append(Component.text("Race Recap", NamedTextColor.AQUA))
+				.append(Component.text(" - "))
+				.append(Component.text(" " + mName, NamedTextColor.YELLOW));
 			if (mPlayer.getScoreboardTags().contains(PLAYER_RACE_SPEED_TAG)) {
-				recapMessage += " " + ChatColor.GREEN + "(Lowest Speed %)";
+				recapMessage = recapMessage.append(Component.text(" (Lowest Speed %)", NamedTextColor.GREEN));
 			}
-			mPlayer.sendMessage(" " + recapMessage);
+			mPlayer.sendMessage(recapMessage);
 			mPlayer.sendMessage(" ");
 		}
 
 		//TODO: World record time first
 
 		if (!mPlayer.getScoreboardTags().contains(PLAYER_RACE_SPEED_TAG)) {
-			mPlayer.sendMessage(String.format("  %sWorld Record - %16s  | %s %s",
-				"" + ChatColor.AQUA + ChatColor.BOLD,
-				"" + RaceUtils.msToTimeString(mWRTime),
-				"" + ((endTime <= mWRTime) ? ("" + ChatColor.AQUA + ChatColor.BOLD + "\u272A") : ("" + ChatColor.GRAY + ChatColor.BOLD + "\u272A")),
-				"" + ((endTime <= mWRTime) ? ("" + ChatColor.BLUE + ChatColor.BOLD + "( -" + RaceUtils.msToTimeString(mWRTime - endTime) + ")") : ("" + ChatColor.RED + ChatColor.BOLD + "( +" + RaceUtils.msToTimeString(endTime - mWRTime) + ")"))));
+			mPlayer.sendMessage(
+				Component.text(String.format("  World Record - %16s  | ", RaceUtils.msToTimeString(mWRTime)), NamedTextColor.AQUA).decorate(TextDecoration.BOLD)
+					.append(endTime <= mWRTime
+						? Component.text("\u272A", NamedTextColor.AQUA).decorate(TextDecoration.BOLD)
+						: Component.text("\u272A", NamedTextColor.GRAY).decorate(TextDecoration.BOLD))
+					.append(Component.text(" "))
+					.append(endTime <= mWRTime
+						? Component.text("( -" + RaceUtils.msToTimeString(mWRTime - endTime) + ")", NamedTextColor.BLUE).decorate(TextDecoration.BOLD)
+						: Component.text("( +" + RaceUtils.msToTimeString(endTime - mWRTime) + ")", NamedTextColor.RED).decorate(TextDecoration.BOLD)));
 
 			int bestMedalTime = Integer.MAX_VALUE;
-			String bestMedalColor = null;
+			NamedTextColor bestMedalColor = NamedTextColor.WHITE;
 			for (RaceTime time : mTimes) {
 				int medalTime = time.getTime();
 				if (mShowStats) {
-					mPlayer.sendMessage(String.format("  %s   %s      - %16s  | %s %s",
-						"" + time.getColor(),
-						"" + time.getLabel(),
-						"" + RaceUtils.msToTimeString(medalTime),
-						"" + ((endTime <= medalTime) ? ("" + time.getColor() + "\u272A") : ("" + ChatColor.GRAY + ChatColor.BOLD + "\u272A")),
-						"" + ((endTime <= medalTime) ? ("" + ChatColor.BLUE + ChatColor.BOLD + "( -" + RaceUtils.msToTimeString(medalTime - endTime) + ")") : ("" + ChatColor.RED + ChatColor.BOLD + "( +" + RaceUtils.msToTimeString(endTime - medalTime) + ")"))));
+					mPlayer.sendMessage(
+						Component.text(String.format("     %s      - %16s  | ", time.getLabel(), RaceUtils.msToTimeString(medalTime)), time.getTextColor()).decorate(TextDecoration.BOLD)
+							.append(endTime <= medalTime
+								? Component.text("\u272A", time.getTextColor()).decorate(TextDecoration.BOLD)
+								: Component.text("\u272A", NamedTextColor.GRAY).decorate(TextDecoration.BOLD))
+							.append(Component.text(" "))
+							.append(endTime <= medalTime
+								? Component.text("( -" + RaceUtils.msToTimeString(medalTime - endTime) + ")", NamedTextColor.BLUE).decorate(TextDecoration.BOLD)
+								: Component.text("( +" + RaceUtils.msToTimeString(endTime - medalTime) + ")", NamedTextColor.RED).decorate(TextDecoration.BOLD)));
 				}
 
 				if (endTime <= medalTime) {
 					if (medalTime < bestMedalTime) {
 						bestMedalTime = medalTime;
-						bestMedalColor = time.getColor();
+						bestMedalColor = time.getTextColor();
 					}
 				}
 			}
@@ -476,16 +484,17 @@ public class Race {
 
 			if (mScoreboard != null && mShowStats) {
 				int personalBest = mScoreboard.getScore(mPlayer.getName()).getScore();
-				mPlayer.sendMessage(String.format("  %s Personal Best - %16s  | %s",
-					"" + ChatColor.BLUE + ChatColor.BOLD,
-					"" + RaceUtils.msToTimeString(personalBest),
-					"" + ((endTime <= personalBest) ? ("" + ChatColor.BLUE + ChatColor.BOLD + "( -" + RaceUtils.msToTimeString(personalBest - endTime) + ")") : ("" + ChatColor.RED + ChatColor.BOLD + "( +" + RaceUtils.msToTimeString(endTime - personalBest) + ")"))));
+				mPlayer.sendMessage(
+					Component.text(String.format("   Personal Best - %16s  | ", RaceUtils.msToTimeString(personalBest)), NamedTextColor.BLUE).decorate(TextDecoration.BOLD)
+						.append(endTime <= personalBest
+							? Component.text("( -" + RaceUtils.msToTimeString(personalBest - endTime) + ")", NamedTextColor.BLUE).decorate(TextDecoration.BOLD)
+							: Component.text("( +" + RaceUtils.msToTimeString(endTime - personalBest) + ")", NamedTextColor.RED).decorate(TextDecoration.BOLD)));
 			}
 
 			if (mShowStats) {
-				mPlayer.sendMessage(String.format("  %s  Your Time   - %16s",
-					"" + ChatColor.BLUE + ChatColor.BOLD,
-					"" + ChatColor.ITALIC + bestMedalColor + RaceUtils.msToTimeString(endTime)));
+				mPlayer.sendMessage(
+					Component.text("    Your Time   - ", NamedTextColor.BLUE).decorate(TextDecoration.BOLD)
+						.append(Component.text(String.format("%16s", RaceUtils.msToTimeString(endTime)), bestMedalColor).decorate(TextDecoration.BOLD, TextDecoration.ITALIC)));
 			}
 		} else {
 			if (mSpeedScoreboard != null) {
@@ -493,50 +502,45 @@ public class Race {
 				if (!mTimes.isEmpty()) {
 					RaceTime masterTime = mTimes.get(0);
 					int medalTime = masterTime.getTime();
-					mPlayer.sendMessage(String.format("  %s%s      - %22s  | %s %s",
-						"" + masterTime.getColor(),
-						"" + masterTime.getLabel(),
-						"" + RaceUtils.msToTimeString(medalTime),
-						"" + ("" + masterTime.getColor() + ChatColor.BOLD + "✔"),
-						"" + ((endTime <= medalTime) ? ("" + ChatColor.BLUE + ChatColor.BOLD + "( -" + RaceUtils.msToTimeString(medalTime - endTime) + ")") : ("" + ChatColor.RED + ChatColor.BOLD + "( +" + RaceUtils.msToTimeString(endTime - medalTime) + ")"))));
-
+					mPlayer.sendMessage(
+						Component.text(String.format("  %s      - %22s  | ", masterTime.getLabel(), RaceUtils.msToTimeString(medalTime)), masterTime.getTextColor()).decorate(TextDecoration.BOLD)
+							.append(Component.text("✔", masterTime.getTextColor()).decorate(TextDecoration.BOLD))
+							.append(Component.text(" "))
+							.append(endTime <= medalTime
+								? Component.text("( -" + RaceUtils.msToTimeString(medalTime - endTime) + ")", NamedTextColor.BLUE).decorate(TextDecoration.BOLD)
+								: Component.text("( +" + RaceUtils.msToTimeString(endTime - medalTime) + ")", NamedTextColor.RED).decorate(TextDecoration.BOLD)));
 				}
 				int timeDifference = speedScore - authorTime;
-				String differenceString = (timeDifference != 0)
-					? ((timeDifference > 0)
-					? "" + ChatColor.RED + ChatColor.BOLD + " ( +" + timeDifference + ")"
-					: "" + ChatColor.BLUE + ChatColor.BOLD + " ( -" + Math.abs(timeDifference) + ")")
-					: "";
-				mPlayer.sendMessage(String.format("  %s  Author Medal   - %17s  | %s %s",
-					"" + ChatColor.DARK_RED + ChatColor.BOLD,
-					"" + ChatColor.DARK_RED + ChatColor.BOLD + authorTime,
-					"" + ("" + ChatColor.DARK_RED + ChatColor.BOLD + "✪"),
-					differenceString
-				));
-				mPlayer.sendMessage(String.format("  %s  Your Speed   - %19s",
-					"" + ChatColor.BLUE + ChatColor.BOLD,
-					"" + ChatColor.BLUE + ChatColor.BOLD + speedScore));
+				Component differenceComponent = timeDifference > 0
+					? Component.text(" ( +" + timeDifference + ")", NamedTextColor.RED).decorate(TextDecoration.BOLD)
+					: timeDifference < 0
+					? Component.text(" ( -" + Math.abs(timeDifference) + ")", NamedTextColor.BLUE).decorate(TextDecoration.BOLD)
+					: Component.empty();
+				mPlayer.sendMessage(
+					Component.text(String.format("    Author Medal   - %17d  | ", authorTime), NamedTextColor.DARK_RED).decorate(TextDecoration.BOLD)
+						.append(Component.text("✪", NamedTextColor.DARK_RED).decorate(TextDecoration.BOLD))
+						.append(differenceComponent));
+				mPlayer.sendMessage(
+					Component.text(String.format("    Your Speed   - %19d", speedScore), NamedTextColor.BLUE).decorate(TextDecoration.BOLD));
 				mPlayer.sendMessage(" ");
-				mPlayer.sendMessage(String.format("  %sWorld Record - %16s  | %s %s",
-					"" + ChatColor.AQUA + ChatColor.BOLD,
-					"" + mSpeedWR,
-					"" + ("" + ChatColor.AQUA + ChatColor.BOLD + "⓵"),
-					"" + ((mSpeedWR - speedScore != 0)
-						? ((speedScore <= mSpeedWR)
-						? ("" + ChatColor.BLUE + ChatColor.BOLD + "( -" + (mSpeedWR - speedScore) + ")")
-						: ("" + ChatColor.RED + ChatColor.BOLD + "( +" + (speedScore - mSpeedWR) + ")"))
-						: "")
-				));
-				mPlayer.sendMessage(String.format("  %s  Personal Best - %13s  | ⚡ %s",
-					"" + ChatColor.BLUE + ChatColor.BOLD,
-					"" + personalBest,
-					"" + ((personalBest - speedScore != 0)
-						? ((speedScore <= personalBest)
-						? ("" + ChatColor.BLUE + ChatColor.BOLD + "( -" + (personalBest - speedScore) + ")")
-						: ("" + ChatColor.RED + ChatColor.BOLD + "( +" + (speedScore - personalBest) + ")"))
-						: "")
-				));
-
+				Component speedWRDelta = (mSpeedWR - speedScore != 0)
+					? (speedScore <= mSpeedWR
+					? Component.text("( -" + (mSpeedWR - speedScore) + ")", NamedTextColor.BLUE).decorate(TextDecoration.BOLD)
+					: Component.text("( +" + (speedScore - mSpeedWR) + ")", NamedTextColor.RED).decorate(TextDecoration.BOLD))
+					: Component.empty();
+				mPlayer.sendMessage(
+					Component.text(String.format("  World Record - %16d  | ", mSpeedWR), NamedTextColor.AQUA).decorate(TextDecoration.BOLD)
+						.append(Component.text("⓵", NamedTextColor.AQUA).decorate(TextDecoration.BOLD))
+						.append(Component.text(" "))
+						.append(speedWRDelta));
+				Component pbDelta = (personalBest - speedScore != 0)
+					? (speedScore <= personalBest
+					? Component.text("( -" + (personalBest - speedScore) + ")", NamedTextColor.BLUE).decorate(TextDecoration.BOLD)
+					: Component.text("( +" + (speedScore - personalBest) + ")", NamedTextColor.RED).decorate(TextDecoration.BOLD))
+					: Component.empty();
+				mPlayer.sendMessage(
+					Component.text(String.format("    Personal Best - %13d  | ⚡ ", personalBest), NamedTextColor.BLUE).decorate(TextDecoration.BOLD)
+						.append(pbDelta));
 			}
 		}
 		if (mScoreboard != null) {
@@ -579,13 +583,9 @@ public class Race {
 			if (playerPosition1 != 0 && playerPosition2 != 0) {
 				int positionDifference = playerPosition1 - playerPosition2;
 				String differenceMessage = positionDifference > 0 ? " | (-" + positionDifference + ")" : "";
-				mPlayer.sendMessage(String.format("  %s  Current Position - %12s%d%s%s",
-					ChatColor.GOLD + "" + ChatColor.BOLD,
-					ChatColor.WHITE + "" + ChatColor.BOLD,
-					playerPosition2,
-					ordinalSuffix(playerPosition2),
-					differenceMessage
-				));
+				mPlayer.sendMessage(
+					Component.text("    Current Position - ", NamedTextColor.GOLD).decorate(TextDecoration.BOLD)
+						.append(Component.text(String.format("%12d", playerPosition2) + ordinalSuffix(playerPosition2) + differenceMessage, NamedTextColor.WHITE).decorate(TextDecoration.BOLD)));
 			} else {
 				mPlayer.sendMessage(Component.text("You are not on the leaderboard.", NamedTextColor.RED));
 			}

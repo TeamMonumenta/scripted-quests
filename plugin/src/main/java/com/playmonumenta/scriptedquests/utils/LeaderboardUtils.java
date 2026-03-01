@@ -12,15 +12,16 @@ public class LeaderboardUtils {
 
 	public static class LeaderboardEntry implements Comparable<LeaderboardEntry> {
 		private String mName;
-		private String mColor;
+		private NamedTextColor mColor;
+		private boolean mBold = false;
 		protected int mValue;
 		private String mValueStr;
 
-		public LeaderboardEntry(String name, String color, int value) {
+		public LeaderboardEntry(String name, NamedTextColor color, int value) {
 			this(name, color, value, null);
 		}
 
-		public LeaderboardEntry(String name, String color, int value, @Nullable String valueStr) {
+		public LeaderboardEntry(String name, NamedTextColor color, int value, @Nullable String valueStr) {
 			mName = name;
 			mColor = color;
 			mValue = value;
@@ -35,7 +36,7 @@ public class LeaderboardUtils {
 			return mName;
 		}
 
-		public String getColor() {
+		public NamedTextColor getColor() {
 			return mColor;
 		}
 
@@ -47,8 +48,16 @@ public class LeaderboardUtils {
 			return mValueStr;
 		}
 
-		public void setColor(String color) {
+		public void setColor(NamedTextColor color) {
 			mColor = color;
+		}
+
+		public void setBold(boolean bold) {
+			mBold = bold;
+		}
+
+		public boolean isBold() {
+			return mBold;
 		}
 
 		@Override
@@ -79,8 +88,8 @@ public class LeaderboardUtils {
 		player.sendMessage(Component.text(" Rank  |        Name      |    Score", NamedTextColor.DARK_GRAY).decorate(TextDecoration.ITALIC));
 		for (int i = (page - 1) * 10; i < Math.min(page * 10, values.size()); i++) {
 			LeaderboardEntry entry = values.get(i);
-
-			player.sendMessage(String.format("%s%-3s - %-15s -    %s", entry.getColor(), i + 1, entry.getName(), entry.getValueStr()));
+			Component line = Component.text(String.format("%-3s - %-15s -    %s", i + 1, entry.getName(), entry.getValueStr()), entry.getColor());
+			player.sendMessage(entry.isBold() ? line.decorate(TextDecoration.BOLD) : line);
 		}
 		player.sendMessage(" ");
 

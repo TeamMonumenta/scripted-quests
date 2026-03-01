@@ -17,7 +17,6 @@ import java.util.Map;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -272,7 +271,7 @@ public class RaceFactory {
 				if (score.isScoreSet()) {
 					int value = score.getScore();
 					if (value != 0) {
-						entries.add(new LeaderboardEntry(name, "", value, RaceUtils.msToTimeString(value)));
+						entries.add(new LeaderboardEntry(name, NamedTextColor.WHITE, value, RaceUtils.msToTimeString(value)));
 					}
 				}
 			}
@@ -297,7 +296,7 @@ public class RaceFactory {
 					}
 					for (Map.Entry<String, Integer> entry : values.entrySet()) {
 						if (entry.getValue() != 0) {
-							entries.add(new LeaderboardEntry(entry.getKey(), "", entry.getValue(), RaceUtils.msToTimeString(entry.getValue())));
+							entries.add(new LeaderboardEntry(entry.getKey(), NamedTextColor.WHITE, entry.getValue(), RaceUtils.msToTimeString(entry.getValue())));
 						}
 					}
 					colorizeEntries(entries, player.getName());
@@ -338,13 +337,16 @@ public class RaceFactory {
 
 			if (time != null) {
 				// Since time is not null, player score must be better than it
-				entry.setColor(time.getColor());
+				entry.setColor(time.getTextColor());
+				entry.setBold(time.isBold());
 			} else {
-				entry.setColor("" + ChatColor.GRAY + ChatColor.BOLD);
+				entry.setColor(NamedTextColor.GRAY);
+				entry.setBold(true);
 			}
 
 			if (entry.getName().equals(playerName)) {
-				entry.setColor("" + ChatColor.BLUE + ChatColor.BOLD);
+				entry.setColor(NamedTextColor.BLUE);
+				entry.setBold(true);
 			}
 		}
 	}

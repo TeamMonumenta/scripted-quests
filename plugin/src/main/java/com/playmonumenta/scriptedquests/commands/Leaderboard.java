@@ -19,7 +19,6 @@ import java.util.Map;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scoreboard.Objective;
@@ -129,7 +128,7 @@ public class Leaderboard {
 					if (score.isScoreSet()) {
 						int value = score.getScore();
 						if (value != 0) {
-							entries.add(new LeaderboardEntry(name, "", value));
+							entries.add(new LeaderboardEntry(name, NamedTextColor.WHITE, value));
 						}
 					}
 				}
@@ -141,7 +140,7 @@ public class Leaderboard {
 					if (score.isScoreSet()) {
 						int value = score.getScore();
 						if (value != 0) {
-							entries.add(new LeaderboardEntry(name, "", value));
+							entries.add(new LeaderboardEntry(name, NamedTextColor.WHITE, value));
 						}
 					}
 				}
@@ -168,7 +167,7 @@ public class Leaderboard {
 					/* TODO: Someday it'd be nice to just look up the appropriate range, and the player's value, rather than everything */
 					Map<String, Integer> values = LeaderboardAPI.get(objective, 0, -1, !descending).get();
 					for (Map.Entry<String, Integer> entry : values.entrySet()) {
-						entries.add(new LeaderboardEntry(entry.getKey(), "", entry.getValue()));
+						entries.add(new LeaderboardEntry(entry.getKey(), NamedTextColor.WHITE, entry.getValue()));
 					}
 					colorizeEntries(entries, player.getName(), 0);
 
@@ -201,16 +200,17 @@ public class Leaderboard {
 
 	private static void colorizeEntries(List<LeaderboardEntry> entries, String playerName, int index) {
 		for (LeaderboardEntry entry : entries) {
-			String color = switch (index) {
-				case 0 -> "" + ChatColor.GOLD + ChatColor.BOLD;
-				case 1 -> "" + ChatColor.WHITE + ChatColor.BOLD;
-				case 2 -> "" + ChatColor.DARK_RED + ChatColor.BOLD;
-				default -> "" + ChatColor.GRAY + ChatColor.BOLD;
+			NamedTextColor color = switch (index) {
+				case 0 -> NamedTextColor.GOLD;
+				case 1 -> NamedTextColor.WHITE;
+				case 2 -> NamedTextColor.DARK_RED;
+				default -> NamedTextColor.GRAY;
 			};
 			if (entry.getName().equals(playerName)) {
-				color = "" + ChatColor.BLUE + ChatColor.BOLD;
+				color = NamedTextColor.BLUE;
 			}
 			entry.setColor(color);
+			entry.setBold(true);
 			index++;
 		}
 	}
