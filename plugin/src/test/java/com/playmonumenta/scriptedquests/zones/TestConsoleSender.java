@@ -14,7 +14,8 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@SuppressWarnings("deprecated")
+// Suppress warnings here - this is a test fixture, not a real class
+@SuppressWarnings({"deprecated", "NullAway"})
 public class TestConsoleSender implements ConsoleCommandSender {
 	@Override
 	public void sendMessage(@NotNull String message) {
