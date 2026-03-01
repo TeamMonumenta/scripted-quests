@@ -53,7 +53,7 @@ public class Plugin extends JavaPlugin {
 	public @Nullable Boolean mShowTimerNames = null;
 	public boolean mShowZonesDynmap = false;
 	public boolean mFallbackZoneLookup = false;
-	public ConfigurationSection mQuestCompassGUIItems;
+	public @Nullable ConfigurationSection mQuestCompassGUIItems;
 
 	public @MonotonicNonNull QuestCompassManager mQuestCompassManager;
 	public @MonotonicNonNull QuestNpcManager mNpcManager;

@@ -58,48 +58,51 @@ public class QuestCompassGui extends CustomInventory {
 		mInventory.clear();
 		mPage = page;
 
-		for (String key : mPlugin.mQuestCompassGUIItems.getKeys(false)) {
-			ConfigurationSection itemConfig = mPlugin.mQuestCompassGUIItems.getConfigurationSection(key);
-			if (itemConfig != null) {
-				String name = itemConfig.getString("name");
-				String materialName = itemConfig.getString("material");
-				String nameColorHex = itemConfig.getString("name_color");
-				String loreColorHex = itemConfig.getString("lore_color");
+		ConfigurationSection guiItems = mPlugin.mQuestCompassGUIItems;
+		if (guiItems != null) {
+			for (String key : guiItems.getKeys(false)) {
+				ConfigurationSection itemConfig = guiItems.getConfigurationSection(key);
+				if (itemConfig != null) {
+					String name = itemConfig.getString("name");
+					String materialName = itemConfig.getString("material");
+					String nameColorHex = itemConfig.getString("name_color");
+					String loreColorHex = itemConfig.getString("lore_color");
 
-				name = name != null ? name : "Name Unset";
-				Material material = materialName != null ? Material.getMaterial(materialName) : Material.BARRIER;
-				if (material == null) {
-					material = Material.BARRIER;
-				}
-				TextColor nameColor = nameColorHex != null ? TextColor.fromHexString(nameColorHex) : NamedTextColor.LIGHT_PURPLE;
-				TextColor loreColor = loreColorHex != null ? TextColor.fromHexString(loreColorHex) : NamedTextColor.DARK_PURPLE;
-
-				List<Component> lores = new ArrayList<>();
-				ConfigurationSection loresConfig = itemConfig.getConfigurationSection("lore");
-				if (loresConfig != null) {
-					for (String line : loresConfig.getKeys(false)) {
-						String text = loresConfig.getString(line);
-						if (text == null) {
-							text = "Lore unset";
-						}
-						lores.add(Component.text(text, loreColor).decoration(TextDecoration.ITALIC, false));
+					name = name != null ? name : "Name Unset";
+					Material material = materialName != null ? Material.getMaterial(materialName) : Material.BARRIER;
+					if (material == null) {
+						material = Material.BARRIER;
 					}
-				}
+					TextColor nameColor = nameColorHex != null ? TextColor.fromHexString(nameColorHex) : NamedTextColor.LIGHT_PURPLE;
+					TextColor loreColor = loreColorHex != null ? TextColor.fromHexString(loreColorHex) : NamedTextColor.DARK_PURPLE;
 
-				int slot = itemConfig.getInt("slot");
-				if (itemConfig.getBoolean("slot_scale_with_rows", false)) {
-					slot += 9 * (mRows - 4);
-				}
+					List<Component> lores = new ArrayList<>();
+					ConfigurationSection loresConfig = itemConfig.getConfigurationSection("lore");
+					if (loresConfig != null) {
+						for (String line : loresConfig.getKeys(false)) {
+							String text = loresConfig.getString(line);
+							if (text == null) {
+								text = "Lore unset";
+							}
+							lores.add(Component.text(text, loreColor).decoration(TextDecoration.ITALIC, false));
+						}
+					}
 
-				ItemStack item = new ItemStack(material);
-				ItemMeta itemMeta = item.getItemMeta();
-				itemMeta.displayName(Component.text(name, nameColor).decoration(TextDecoration.BOLD, true).decoration(TextDecoration.ITALIC, false));
-				itemMeta.lore(lores);
-				item.setItemMeta(itemMeta);
-				mInventory.setItem(slot, item);
+					int slot = itemConfig.getInt("slot");
+					if (itemConfig.getBoolean("slot_scale_with_rows", false)) {
+						slot += 9 * (mRows - 4);
+					}
 
-				if (itemConfig.isConfigurationSection("actions")) {
-					mItemToActions.put(item, itemConfig.getConfigurationSection("actions"));
+					ItemStack item = new ItemStack(material);
+					ItemMeta itemMeta = item.getItemMeta();
+					itemMeta.displayName(Component.text(name, nameColor).decoration(TextDecoration.BOLD, true).decoration(TextDecoration.ITALIC, false));
+					itemMeta.lore(lores);
+					item.setItemMeta(itemMeta);
+					mInventory.setItem(slot, item);
+
+					if (itemConfig.isConfigurationSection("actions")) {
+						mItemToActions.put(item, itemConfig.getConfigurationSection("actions"));
+					}
 				}
 			}
 		}
