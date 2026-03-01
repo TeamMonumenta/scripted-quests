@@ -1,6 +1,6 @@
 package com.playmonumenta.scriptedquests.commands;
 
-import com.playmonumenta.redissync.MonumentaRedisSyncAPI;
+import com.playmonumenta.redissync.LeaderboardAPI;
 import com.playmonumenta.scriptedquests.utils.LeaderboardUtils;
 import com.playmonumenta.scriptedquests.utils.LeaderboardUtils.LeaderboardEntry;
 import dev.jorel.commandapi.CommandAPI;
@@ -166,7 +166,7 @@ public class Leaderboard {
 			Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
 				try {
 					/* TODO: Someday it'd be nice to just look up the appropriate range, and the player's value, rather than everything */
-					Map<String, Integer> values = MonumentaRedisSyncAPI.getLeaderboard(objective, 0, -1, !descending).get();
+					Map<String, Integer> values = LeaderboardAPI.get(objective, 0, -1, !descending).get();
 					for (Map.Entry<String, Integer> entry : values.entrySet()) {
 						entries.add(new LeaderboardEntry(entry.getKey(), "", entry.getValue()));
 					}
@@ -193,7 +193,7 @@ public class Leaderboard {
 				Score score = obj.getScore(player.getName());
 				if (score.isScoreSet()) {
 					score.getScore();
-					MonumentaRedisSyncAPI.updateLeaderboardAsync(objective, player.getName(), score.getScore());
+					LeaderboardAPI.updateAsync(objective, player.getName(), score.getScore());
 				}
 			}
 		}

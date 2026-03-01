@@ -3,7 +3,7 @@ package com.playmonumenta.scriptedquests.races;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.playmonumenta.redissync.MonumentaRedisSyncAPI;
+import com.playmonumenta.redissync.LeaderboardAPI;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.managers.RaceManager;
 import com.playmonumenta.scriptedquests.quests.components.QuestActions;
@@ -291,7 +291,7 @@ public class RaceFactory {
 			Bukkit.getScheduler().runTaskAsynchronously(mPlugin, () -> {
 				try {
 					/* TODO: Someday it'd be nice to just look up the appropriate range, and the player's value, rather than everything */
-					Map<String, Integer> values = MonumentaRedisSyncAPI.getLeaderboard(mObjective.getName(), 0, -1, true).get();
+					Map<String, Integer> values = LeaderboardAPI.get(mObjective.getName(), 0, -1, true).get();
 					if (values == null) {
 						throw new Exception("Leaderboard retrieved values variable is null");
 					}
