@@ -2,9 +2,9 @@ package com.playmonumenta.scriptedquests.utils;
 
 import java.util.List;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -107,16 +107,21 @@ public class LeaderboardUtils {
 		}
 
 		int pageCount = ((values.size() - 1) / 10) + 1;
-		//TODO: Send messages directly?
-		if (pageCount == 1) {
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + player.getName() + " [\"\",{\"text\":\"--==-- \",\"color\":\"blue\",\"bold\":true},{\"text\":\"[ < ] \",\"color\":\"gray\",\"bold\":false},{\"text\":\"  Page:  \",\"color\":\"yellow\"},{\"text\":\"" + String.format("%4d/%-4d", page, pageCount) + "\",\"color\":\"yellow\",\"bold\":true},{\"text\":\"   [ > ]\",\"color\":\"gray\",\"bold\":false},{\"text\":\" --==--\",\"color\":\"blue\",\"bold\":true}]");
-		} else if (page == 1) {
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + player.getName() + " [\"\",{\"text\":\"--==-- \",\"color\":\"blue\",\"bold\":true},{\"text\":\"[ < ] \",\"color\":\"gray\",\"bold\":false},{\"text\":\"  Page:  \",\"color\":\"yellow\"},{\"text\":\"" + String.format("%4d/%-4d", page, pageCount) + "\",\"color\":\"yellow\",\"bold\":true},{\"text\":\"   [ > ]\",\"color\":\"light_purple\",\"bold\":true,\"clickEvent\":{\"action\":\"run_command\",\"value\":\"" + baseCommand + " " + (page + 1) + "\"}},{\"text\":\" --==--\",\"color\":\"blue\",\"bold\":true}]");
-		} else if (page == pageCount) {
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + player.getName() + " [\"\",{\"text\":\"--==-- \",\"color\":\"blue\",\"bold\":true},{\"text\":\"[ < ] \",\"color\":\"light_purple\",\"bold\":true,\"clickEvent\":{\"action\":\"run_command\",\"value\":\"" + baseCommand + " " + (page - 1) + "\"}},{\"text\":\"  Page:  \",\"color\":\"yellow\",\"bold\":false},{\"text\":\"" + String.format("%4d/%-4d", page, pageCount) + "\",\"color\":\"yellow\",\"bold\":true},{\"text\":\"   [ > ]\",\"color\":\"gray\",\"bold\":false},{\"text\":\" --==--\",\"color\":\"blue\",\"bold\":true}]");
-		} else {
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + player.getName() + " [\"\",{\"text\":\"--==-- \",\"color\":\"blue\",\"bold\":true},{\"text\":\"[ < ] \",\"color\":\"light_purple\",\"bold\":true,\"clickEvent\":{\"action\":\"run_command\",\"value\":\"" + baseCommand + " " + (page - 1) + "\"}},{\"text\":\"  Page:  \",\"color\":\"yellow\",\"bold\":false},{\"text\":\"" + String.format("%4d/%-4d", page, pageCount) + "\",\"color\":\"yellow\",\"bold\":true},{\"text\":\"   [ > ]\",\"color\":\"light_purple\",\"bold\":true,\"clickEvent\":{\"action\":\"run_command\",\"value\":\"" + baseCommand + " " + (page + 1) + "\"}},{\"text\":\" --==--\",\"color\":\"blue\",\"bold\":true}]");
-		}
+		Component prevButton = (page > 1)
+			? Component.text("[ < ] ", NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD)
+				.clickEvent(ClickEvent.runCommand(baseCommand + " " + (page - 1)))
+			: Component.text("[ < ] ", NamedTextColor.GRAY);
+		Component nextButton = (page < pageCount)
+			? Component.text("   [ > ]", NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD)
+				.clickEvent(ClickEvent.runCommand(baseCommand + " " + (page + 1)))
+			: Component.text("   [ > ]", NamedTextColor.GRAY);
+		player.sendMessage(
+			Component.text("--==-- ", NamedTextColor.BLUE).decorate(TextDecoration.BOLD)
+				.append(prevButton)
+				.append(Component.text("  Page:  ", NamedTextColor.YELLOW))
+				.append(Component.text(String.format("%4d/%-4d", page, pageCount), NamedTextColor.YELLOW).decorate(TextDecoration.BOLD))
+				.append(nextButton)
+				.append(Component.text(" --==--", NamedTextColor.BLUE).decorate(TextDecoration.BOLD)));
 		player.sendMessage(" ");
 	}
 }
