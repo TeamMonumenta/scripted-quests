@@ -87,9 +87,9 @@ public class CommandTimerInstance {
 		Component name = Component.empty();
 
 		if (mRepeat) {
-			name = name.append(Component.text("Repeater " + mPeriodStr + " ", NamedTextColor.LIGHT_PURPLE));
+			name = name.append(Component.text("Repeater ", NamedTextColor.LIGHT_PURPLE)).append(Component.text(mPeriodStr + " ", NamedTextColor.BLUE));
 		} else {
-			name = name.append(Component.text("Timer " + mPeriodStr + " ", NamedTextColor.GOLD));
+			name = name.append(Component.text("Timer ", NamedTextColor.GOLD)).append(Component.text(mPeriodStr + " ", NamedTextColor.BLUE));
 		}
 		if (mPlayerOnline) {
 			name = name.append(Component.text("player online", NamedTextColor.DARK_GREEN));

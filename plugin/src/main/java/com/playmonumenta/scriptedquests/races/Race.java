@@ -9,6 +9,7 @@ import com.playmonumenta.scriptedquests.managers.RaceManager;
 import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.quests.components.QuestActions;
 import com.playmonumenta.scriptedquests.utils.RaceUtils;
+import java.time.Duration;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -18,6 +19,7 @@ import java.util.Objects;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -212,30 +214,30 @@ public class Race {
 						mPlayer.sendMessage(Component.text("Reminder:\nShift + Left-Click: Abandon\nShift + Right-Click: Retry", NamedTextColor.BLUE));
 					}
 					// 3
-					mPlayer.sendTitle(ChatColor.RED + "" + ChatColor.BOLD + "3", "", 0, 20, 0);
+					mPlayer.showTitle(Title.title(Component.text("3", NamedTextColor.RED).decorate(TextDecoration.BOLD), Component.empty(), Title.Times.times(Duration.ZERO, Duration.ofSeconds(1), Duration.ZERO)));
 					mWorld.playSound(mPlayer.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 0.890899f);
 				} else if (mTicks == 20) {
 					// 2
-					mPlayer.sendTitle(ChatColor.GOLD + "" + ChatColor.BOLD + "2", "", 0, 20, 0);
+					mPlayer.showTitle(Title.title(Component.text("2", NamedTextColor.GOLD).decorate(TextDecoration.BOLD), Component.empty(), Title.Times.times(Duration.ZERO, Duration.ofSeconds(1), Duration.ZERO)));
 					mWorld.playSound(mPlayer.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 0.890899f);
 				} else if (mTicks == 40) {
 					// 1
-					mPlayer.sendTitle(ChatColor.GREEN + "" + ChatColor.BOLD + "1", "", 0, 20, 0);
+					mPlayer.showTitle(Title.title(Component.text("1", NamedTextColor.GREEN).decorate(TextDecoration.BOLD), Component.empty(), Title.Times.times(Duration.ZERO, Duration.ofSeconds(1), Duration.ZERO)));
 					mWorld.playSound(mPlayer.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 0.890899f);
 				} else if (mTicks == 60) {
 					// Go chime & title
 					mWorld.playSound(mPlayer.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 1.781797f);
-					mPlayer.sendTitle(ChatColor.WHITE + "" + ChatColor.BOLD + "GO", "", 0, 4, 0);
+					mPlayer.showTitle(Title.title(Component.text("GO", NamedTextColor.WHITE).decorate(TextDecoration.BOLD), Component.empty(), Title.Times.times(Duration.ZERO, Duration.ofMillis(200), Duration.ZERO)));
 
 					// Reset race start time and create time bar
 					mStartTime = System.currentTimeMillis();
 					mCountdownActive = false;
 				} else if (mTicks > 60 && mTicks < 120 && (mTicks % 6 == 0)) {
 					// Go (white)
-					mPlayer.sendTitle(ChatColor.WHITE + "" + ChatColor.BOLD + "GO", "", 0, 4, 0);
+					mPlayer.showTitle(Title.title(Component.text("GO", NamedTextColor.WHITE).decorate(TextDecoration.BOLD), Component.empty(), Title.Times.times(Duration.ZERO, Duration.ofMillis(200), Duration.ZERO)));
 				} else if (mTicks > 60 && mTicks < 120 && ((mTicks + 3) % 6 == 0)) {
 					// Go (aqua)
-					mPlayer.sendTitle(ChatColor.AQUA + "" + ChatColor.BOLD + "GO", "", 0, 4, 0);
+					mPlayer.showTitle(Title.title(Component.text("GO", NamedTextColor.AQUA).decorate(TextDecoration.BOLD), Component.empty(), Title.Times.times(Duration.ZERO, Duration.ofMillis(200), Duration.ZERO)));
 				} else if (mTicks == 120) {
 					// Clear title
 					mPlayer.sendTitle(" ", "", 0, 20, 0);

@@ -8,7 +8,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -43,11 +45,11 @@ public class CommandTimer implements Listener {
 		}
 
 		if (mPeriod % 1200 == 0) {
-			mPeriodStr = ChatColor.BLUE + Integer.toString(mPeriod / 1200) + "m";
+			mPeriodStr = Integer.toString(mPeriod / 1200) + "m";
 		} else if (mPeriod % 20 == 0) {
-			mPeriodStr = ChatColor.BLUE + Integer.toString(mPeriod / 20) + "s";
+			mPeriodStr = Integer.toString(mPeriod / 20) + "s";
 		} else {
-			mPeriodStr = ChatColor.BLUE + Integer.toString(mPeriod) + "t";
+			mPeriodStr = Integer.toString(mPeriod) + "t";
 		}
 	}
 
@@ -141,7 +143,7 @@ public class CommandTimer implements Listener {
 				timer = new CommandTimerInstance(loc, coords, mPeriodStr, playerRange, playerOnline, true);
 			} else {
 				entity.setCustomNameVisible(true);
-				entity.setCustomName(ChatColor.RED + "" + ChatColor.BOLD + "Timer: INVALID BLOCK");
+				entity.customName(Component.text("Timer: INVALID BLOCK", NamedTextColor.RED).decorate(TextDecoration.BOLD));
 				mPlugin.getLogger().warning("Timer is missing repeating command block at " + loc.toString());
 				return false;
 			}
@@ -150,7 +152,7 @@ public class CommandTimer implements Listener {
 				timer = new CommandTimerInstance(loc, coords, mPeriodStr, playerRange, playerOnline, false);
 			} else {
 				entity.setCustomNameVisible(true);
-				entity.setCustomName(ChatColor.RED + "" + ChatColor.BOLD + "Timer: INVALID BLOCK");
+				entity.customName(Component.text("Timer: INVALID BLOCK", NamedTextColor.RED).decorate(TextDecoration.BOLD));
 				mPlugin.getLogger().warning("Timer is missing impulse command block at " + loc.toString());
 				return false;
 			}
