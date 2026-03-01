@@ -2,6 +2,7 @@ package com.playmonumenta.scriptedquests.commands;
 
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.QuestContext;
+import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.EntitySelectorArgument;
@@ -81,11 +82,13 @@ public class InteractNpc {
 	private static void interact(Plugin plugin, CommandSender sender, Collection<Player> players, Entity npc) {
 		if (plugin.mNpcManager != null) {
 			QuestContext currentContext = QuestContext.getCurrentContext();
+			Component nameComp = npc.customName();
+			String npcCustomName = nameComp != null ? MessagingUtils.plainText(nameComp) : "";
 			for (Player player : players) {
 				QuestContext context = new QuestContext(plugin, player, npc, false, null, currentContext != null ? currentContext.getUsedItem() : null);
-				if (!plugin.mNpcManager.interactEvent(context, npc.getCustomName(), npc.getType(), false)) {
+				if (!plugin.mNpcManager.interactEvent(context, npcCustomName, npc.getType(), false)) {
 					sender.sendMessage(Component.text("No interaction available for player '" + player.getName() +
-						                   "' and NPC '" + npc.getCustomName() + "'", NamedTextColor.RED));
+						                   "' and NPC '" + npcCustomName + "'", NamedTextColor.RED));
 				}
 			}
 		}

@@ -239,7 +239,7 @@ public class Race {
 					mPlayer.showTitle(Title.title(Component.text("GO", NamedTextColor.AQUA).decorate(TextDecoration.BOLD), Component.empty(), Title.Times.times(Duration.ZERO, Duration.ofMillis(200), Duration.ZERO)));
 				} else if (mTicks == 120) {
 					// Clear title
-					mPlayer.sendTitle(" ", "", 0, 20, 0);
+					mPlayer.showTitle(Title.title(Component.text(" "), Component.empty(), Title.Times.times(Duration.ZERO, Duration.ofSeconds(1), Duration.ZERO)));
 					this.cancel();
 				}
 

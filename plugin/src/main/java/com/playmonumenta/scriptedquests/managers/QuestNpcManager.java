@@ -3,6 +3,7 @@ package com.playmonumenta.scriptedquests.managers;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.quests.QuestNpc;
+import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 import com.playmonumenta.scriptedquests.utils.MetadataUtils;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
+import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -38,7 +40,8 @@ public class QuestNpcManager {
 	}
 
 	public boolean isQuestNPC(Entity entity) {
-		return isQuestNPC(entity.getCustomName(), entity.getType());
+		Component nameComp = entity.customName();
+		return isQuestNPC(nameComp != null ? MessagingUtils.plainText(nameComp) : "", entity.getType());
 	}
 
 	public boolean isQuestNPC(String npcName, EntityType entityType) {
@@ -47,7 +50,8 @@ public class QuestNpcManager {
 	}
 
 	public @Nullable List<QuestNpc> getInteractNPC(Entity entity) {
-		return getInteractNPC(entity.getCustomName(), entity.getType());
+		Component nameComp = entity.customName();
+		return getInteractNPC(nameComp != null ? MessagingUtils.plainText(nameComp) : "", entity.getType());
 	}
 
 	public @Nullable List<QuestNpc> getInteractNPC(String npcName, EntityType entityType) {
