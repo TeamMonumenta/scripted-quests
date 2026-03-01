@@ -19,7 +19,6 @@ public class QuestCompass {
 		/* TODO: This seriously needs to change, will not work with multi-worlds
 		 * Requires changing all the compass stuff to be vectors, then applying to the player's active world when used
 		 */
-		@Deprecated
 		World world = Bukkit.getWorlds().get(0);
 
 		// Read the quest name

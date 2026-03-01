@@ -38,6 +38,7 @@ public abstract class CustomInventory {
 			if (mMainListener == null) {
 				mMainListener = new Listener() {
 
+					@SuppressWarnings("UnusedMethod")
 					@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = false)
 					public void pluginDisable(PluginDisableEvent event) {
 						HashSet<CustomInventory> invs = mOpenedInvsByPlugin.remove(event.getPlugin());
@@ -59,6 +60,7 @@ public abstract class CustomInventory {
 						}
 					}
 
+					@SuppressWarnings("UnusedMethod")
 					@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 					public void inventoryClick(InventoryClickEvent event) {
 						CustomInventory inv = mOpenedInvsByPlayer.get(event.getWhoClicked());
@@ -68,6 +70,7 @@ public abstract class CustomInventory {
 						}
 					}
 
+					@SuppressWarnings("UnusedMethod")
 					@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 					public void inventoryDrag(InventoryDragEvent event) {
 						CustomInventory inv = mOpenedInvsByPlayer.get(event.getWhoClicked());
@@ -76,6 +79,7 @@ public abstract class CustomInventory {
 						}
 					}
 
+					@SuppressWarnings("UnusedMethod")
 					@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 					public void inventoryClose(InventoryCloseEvent event) {
 						CustomInventory inv = mOpenedInvsByPlayer.remove(event.getPlayer());

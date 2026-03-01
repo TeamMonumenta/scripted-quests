@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 // Suppress warnings here - this is a test fixture, not a real class
-@SuppressWarnings({"deprecated", "NullAway"})
+@SuppressWarnings({"deprecation", "NullAway"})
 public class TestConsoleSender implements ConsoleCommandSender {
 	@Override
 	public void sendMessage(@NotNull String message) {
