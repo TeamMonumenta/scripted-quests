@@ -7,6 +7,8 @@ plugins {
 monumenta {
 	id("ScriptedQuests")
 	name("ScriptedQuests")
+	pmdWarningsAsErrors()
+	checkstyleWarningsAsErrors()
 	pluginProject(":scripted-quests")
 	paper(
 		"com.playmonumenta.scriptedquests.Plugin", BukkitPluginDescription.PluginLoadOrder.POSTWORLD, "1.18",
@@ -45,6 +47,10 @@ monumenta {
 }
 
 allprojects {
+	tasks.withType<JavaCompile> {
+		options.compilerArgs.add("-Werror")
+	}
+
 	tasks.withType<Javadoc> {
 		options {
 			(this as StandardJavadocDocletOptions).addStringOption("Xdoclint:none", "-quiet")
