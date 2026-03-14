@@ -199,6 +199,9 @@ public class QuestCompassManager {
 
 		QuestCompassManager.CompassCacheEntry cacheEntryMap = mCompassCache.get(player.getUniqueId());
 		if (cacheEntryMap != null && !cacheEntryMap.mEntries.isEmpty()) {
+			if (newIndex >= cacheEntryMap.mEntries.size()) {
+				newIndex = 0;
+			}
 			ValidCompassEntry quest = cacheEntryMap.mEntries.get(newIndex);
 			if (quest.mMarkersIndex[0] == quest.mMarkersIndex[1]) {
 				newIndex += 1 - quest.mMarkersIndex[1];
