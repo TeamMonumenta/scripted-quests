@@ -62,9 +62,6 @@ public class QuestCompassManager {
 			} else {
 				MessagingUtils.sendRawMessage(player, mTitle + ": " + mLocation.getMessage(), mAllowTranslations);
 			}
-			if (!player.getWorld().getName().matches(mLocation.getWorldRegex())) {
-				MessagingUtils.sendRawMessage(player, "&7(This location is on a &cdifferent world!&7 Find a way to the correct world before following the compass.)", mAllowTranslations);
-			}
 
 			mgr.setWaypoint(player, mLocation);
 		}

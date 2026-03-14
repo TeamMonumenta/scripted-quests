@@ -142,7 +142,7 @@ public class WaypointManager {
 					}
 
 					Location targetLoc = getNextPoint(player, waypoints);
-					boolean isLast = targetLoc.equals(waypoints.get(waypoints.size() - 1));
+					boolean isLast = targetLoc.equals(waypoints.getLast());
 					// Correct the world here as only now can we check the player's world
 					targetLoc.setWorld(player.getWorld());
 					player.setCompassTarget(targetLoc);
