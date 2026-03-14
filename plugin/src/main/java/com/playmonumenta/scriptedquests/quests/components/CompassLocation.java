@@ -8,7 +8,6 @@ import com.playmonumenta.scriptedquests.quests.QuestContext;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
