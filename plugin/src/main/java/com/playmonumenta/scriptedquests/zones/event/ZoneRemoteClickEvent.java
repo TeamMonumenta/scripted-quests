@@ -84,7 +84,12 @@ public class ZoneRemoteClickEvent extends ZoneEvent {
 		mLastClicks.put(player.getUniqueId(), currentTick);
 
 		// find the targeted block
-		BlockIterator iter = new BlockIterator(player.getWorld(), player.getEyeLocation().toVector(), player.getEyeLocation().getDirection(), 0, mMaxDistance);
+		BlockIterator iter;
+		try {
+			iter = new BlockIterator(player.getWorld(), player.getEyeLocation().toVector(), player.getEyeLocation().getDirection(), 0, mMaxDistance);
+		} catch (IllegalStateException e) {
+			return null;
+		}
 		while (iter.hasNext()) {
 			Block block = iter.next();
 			Material type = block.getType();
