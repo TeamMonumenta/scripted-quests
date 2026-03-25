@@ -8,6 +8,8 @@ import com.playmonumenta.scriptedquests.quests.QuestContext;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import com.playmonumenta.scriptedquests.utils.WorldRegexMatcher;
+import com.playmonumenta.scriptedquests.zones.ZoneManager;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -135,6 +137,6 @@ public class CompassLocation implements QuestLocation {
 	@Override
 	public boolean prerequisiteMet(Player player) {
 		return (mPrerequisites == null || mPrerequisites.prerequisiteMet(new QuestContext(Plugin.getInstance(), player, null)))
-			&& player.getWorld().getName().matches(mWorldRegex);
+			&& ZoneManager.getInstance().getWorldRegexMatcher().matches(player.getWorld(), mWorldRegex);
 	}
 }
