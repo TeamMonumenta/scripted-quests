@@ -9,6 +9,8 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 public class LeaderboardUtils {
+	private static final int RANK_COL_WIDTH = 36;
+	private static final int NAME_COL_WIDTH = 120;
 
 	public static class LeaderboardEntry implements Comparable<LeaderboardEntry> {
 		private String mName;
@@ -83,21 +85,32 @@ public class LeaderboardUtils {
 		player.sendMessage(Component.text(" Leaderboard - ", NamedTextColor.AQUA).append(title.colorIfAbsent(NamedTextColor.YELLOW)));
 		player.sendMessage(" ");
 
-		// print leaderboard itself
-		//TODO : The alignment here really sucks - improve with https://www.spigotmc.org/threads/free-code-sending-perfectly-centered-chat-message.95872/
-		player.sendMessage(Component.text(" Rank  |        Name      |    Score", NamedTextColor.DARK_GRAY).decorate(TextDecoration.ITALIC));
+		player.sendMessage(FontUtils.formatRow(
+			Component.text("Rank", NamedTextColor.DARK_GRAY).decorate(TextDecoration.ITALIC), RANK_COL_WIDTH,
+			Component.text("Name", NamedTextColor.DARK_GRAY).decorate(TextDecoration.ITALIC), NAME_COL_WIDTH,
+			Component.text("Score", NamedTextColor.DARK_GRAY).decorate(TextDecoration.ITALIC)));
 		for (int i = (page - 1) * 10; i < Math.min(page * 10, values.size()); i++) {
 			LeaderboardEntry entry = values.get(i);
-			Component line = Component.text(String.format("%-3s - %-15s -    %s", i + 1, entry.getName(), entry.getValueStr()), entry.getColor());
-			player.sendMessage(entry.isBold() ? line.decorate(TextDecoration.BOLD) : line);
+			Component rankComp = Component.text(String.valueOf(i + 1), entry.getColor());
+			Component nameComp = Component.text(entry.getName(), entry.getColor());
+			Component scoreComp = Component.text(entry.getValueStr(), entry.getColor());
+			if (entry.isBold()) {
+				rankComp = rankComp.decorate(TextDecoration.BOLD);
+				nameComp = nameComp.decorate(TextDecoration.BOLD);
+				scoreComp = scoreComp.decorate(TextDecoration.BOLD);
+			}
+			player.sendMessage(FontUtils.formatRow(rankComp, RANK_COL_WIDTH, nameComp, NAME_COL_WIDTH, scoreComp));
 		}
 		player.sendMessage(" ");
 
-		int i = 0;
+		int rank = 0;
 		for (LeaderboardEntry entry : values) {
-			i++;
+			rank++;
 			if (entry.getName().equals(player.getName())) {
-				player.sendMessage(Component.text(String.format("%-3s - %-15s -    %s", i, entry.getName(), entry.getValueStr()), NamedTextColor.BLUE).decorate(TextDecoration.BOLD));
+				player.sendMessage(FontUtils.formatRow(
+					Component.text(String.valueOf(rank), NamedTextColor.BLUE).decorate(TextDecoration.BOLD), RANK_COL_WIDTH,
+					Component.text(entry.getName(), NamedTextColor.BLUE).decorate(TextDecoration.BOLD), NAME_COL_WIDTH,
+					Component.text(entry.getValueStr(), NamedTextColor.BLUE).decorate(TextDecoration.BOLD)));
 				break;
 			}
 		}
@@ -119,7 +132,7 @@ public class LeaderboardUtils {
 			Component.text("--==-- ", NamedTextColor.BLUE).decorate(TextDecoration.BOLD)
 				.append(prevButton)
 				.append(Component.text("  Page:  ", NamedTextColor.YELLOW))
-				.append(Component.text(String.format("%4d/%-4d", page, pageCount), NamedTextColor.YELLOW).decorate(TextDecoration.BOLD))
+				.append(Component.text(page + "/" + pageCount, NamedTextColor.YELLOW).decorate(TextDecoration.BOLD))
 				.append(nextButton)
 				.append(Component.text(" --==--", NamedTextColor.BLUE).decorate(TextDecoration.BOLD)));
 		player.sendMessage(" ");

@@ -101,6 +101,7 @@ public class Plugin extends JavaPlugin {
 		}
 
 		ChangeLogLevel.register();
+		FontUtilsDebug.register();
 		InteractNpc.register(this);
 		Clickable.register(this);
 		GiveLootTable.register(mRandom);
