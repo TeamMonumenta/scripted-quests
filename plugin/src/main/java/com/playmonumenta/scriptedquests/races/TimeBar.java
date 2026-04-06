@@ -2,6 +2,9 @@ package com.playmonumenta.scriptedquests.races;
 
 import java.util.Arrays;
 import java.util.List;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
@@ -44,7 +47,11 @@ public class TimeBar {
 				mBar.setProgress(percent);
 			}
 
-			mBar.setTitle("Time Left: " + time.getColor() + time.getLabel());
+			Component titleComp = Component.text("Time Left: " + time.getLabel(), time.getTextColor());
+			if (time.isBold()) {
+				titleComp = titleComp.decorate(TextDecoration.BOLD);
+			}
+			mBar.setTitle(LegacyComponentSerializer.legacySection().serialize(titleComp));
 			mBar.setColor(BAR_COLORS.get(barColorIndex));
 			break;
 		}
