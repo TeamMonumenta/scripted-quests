@@ -50,4 +50,3 @@ public class DialogRandomText implements DialogBase {
 
 	}
 }
-

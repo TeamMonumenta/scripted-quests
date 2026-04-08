@@ -151,4 +151,3 @@ public class DialogClickableTextEntry implements DialogBase {
 		return tmp;
 	}
 }
-
