@@ -56,5 +56,3 @@ public class ClickableManager {
 		return true;
 	}
 }
-
-
