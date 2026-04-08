@@ -64,5 +64,3 @@ public class CodeManager {
 		player.sendMessage(Component.text(" /code " + code, NamedTextColor.GOLD).decorate(TextDecoration.BOLD));
 	}
 }
-
-

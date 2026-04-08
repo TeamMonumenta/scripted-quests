@@ -290,4 +290,3 @@ public class QuestCompassGui extends CustomInventory {
 		close();
 	}
 }
-
