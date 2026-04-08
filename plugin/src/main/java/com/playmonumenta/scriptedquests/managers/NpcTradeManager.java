@@ -55,6 +55,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.Nullable;
 
 public class NpcTradeManager implements Listener {
+	public static final String IGNORE_PREREQS_TAG = "ScriptedQuestsIgnoreTraderPrerequisites";
+
 	private final HashMap<String, List<NpcTrader>> mTraders = new HashMap<>();
 
 	private static class PlayerTradeContext {
@@ -159,6 +161,9 @@ public class NpcTradeManager implements Listener {
 		StringBuilder vanillaSlots = new StringBuilder();
 		boolean modified = false;
 
+		boolean playerBypassesTradePrerequisites = player.getScoreboardTags().contains(IGNORE_PREREQS_TAG);
+		boolean prereqsBypassed = false;
+
 		Map<Integer, NpcTrade> slotProperties = new HashMap<>();
 
 		if (villager != null) {
@@ -194,28 +199,31 @@ public class NpcTradeManager implements Listener {
 								lockedSlots.append(", ");
 							}
 							lockedSlots.append(i);
-							modified = true;
-							continue recipes;
-						} else {
-							List<ItemStack> overrideTradeItems = trade.getResolvedOverrideTradeItems(player);
-							if (overrideTradeItems != null) {
-								if (overrideTradeItems.stream().anyMatch(item -> item.getType() == Material.BARRIER)) {
-									continue;
-								}
-								MerchantRecipe newRecipe = new MerchantRecipe(overrideTradeItems.get(2),
-									recipe.getUses(), recipe.getMaxUses(), recipe.hasExperienceReward(),
-									recipe.getVillagerExperience(), recipe.getPriceMultiplier(), recipe.getDemand(),
-									recipe.getSpecialPrice(), recipe.shouldIgnoreDiscounts());
-								newRecipe.setIngredients(overrideTradeItems.subList(0, 2));
-								recipe = newRecipe;
+							if (!playerBypassesTradePrerequisites) {
+								modified = true;
+								continue recipes;
+							} else {
+								prereqsBypassed = true;
 							}
+						}
+						List<ItemStack> overrideTradeItems = trade.getResolvedOverrideTradeItems(player);
+						if (overrideTradeItems != null) {
+							if (overrideTradeItems.stream().anyMatch(item -> item.getType() == Material.BARRIER)) {
+								continue;
+							}
+							MerchantRecipe newRecipe = new MerchantRecipe(overrideTradeItems.get(2),
+								recipe.getUses(), recipe.getMaxUses(), recipe.hasExperienceReward(),
+								recipe.getVillagerExperience(), recipe.getPriceMultiplier(), recipe.getDemand(),
+								recipe.getSpecialPrice(), recipe.shouldIgnoreDiscounts());
+							newRecipe.setIngredients(overrideTradeItems.subList(0, 2));
+							recipe = newRecipe;
+						}
 
-							NpcTrade previousTrade = slotProperties.put(trades.size(), trade);
-							if (previousTrade != null
-								&& (trade.getActions() != null || overrideTradeItems != null || trade.getCount() > 0)
-								&& (previousTrade.getActions() != null || previousTrade.getOverrideTradeItems() != null || previousTrade.getCount() > 0)) {
-								MMLog.warning("Duplicate active non-prerequisite-only trade for villager '" + villager.getName() + "' at index " + trade.getIndex());
-							}
+						NpcTrade previousTrade = slotProperties.put(trades.size(), trade);
+						if (previousTrade != null
+							&& (trade.getActions() != null || overrideTradeItems != null || trade.getCount() > 0)
+							&& (previousTrade.getActions() != null || previousTrade.getOverrideTradeItems() != null || previousTrade.getCount() > 0)) {
+							MMLog.warning("Duplicate active non-prerequisite-only trade for villager '" + villager.getName() + "' at index " + trade.getIndex());
 						}
 					}
 				}
@@ -245,7 +253,7 @@ public class NpcTradeManager implements Listener {
 			}
 			List<ItemStack> overrideTradeItems = Objects.requireNonNull(trade.getResolvedOverrideTradeItems(player));
             // must have overrides to get here
-			if (overrideTradeItems.stream().anyMatch(item -> item != null && item.getType() == Material.BARRIER)) { //
+			if (overrideTradeItems.stream().anyMatch(item -> item != null && item.getType() == Material.BARRIER)) {
                 // safeguard against incomplete trades
 				continue;
 			}
@@ -295,7 +303,7 @@ public class NpcTradeManager implements Listener {
 
 		if (modified && player.getGameMode() == GameMode.CREATIVE && player.isOp()) {
 			player.sendMessage(Component.text("Some trader slots were not shown to you:", NamedTextColor.GOLD));
-			if (!lockedSlots.isEmpty()) {
+			if (!lockedSlots.isEmpty() && !playerBypassesTradePrerequisites) {
 				player.sendMessage(Component.text("These slots were locked by quest scores: " + lockedSlots,
 					NamedTextColor.GOLD));
 			}
@@ -304,6 +312,14 @@ public class NpcTradeManager implements Listener {
 					NamedTextColor.GOLD));
 			}
 			player.sendMessage(Component.text("This message only appears to operators in creative mode",
+				NamedTextColor.GOLD));
+		}
+
+		if (prereqsBypassed) {
+			// intentionally does not check for creative, in case a mod forgets they have it set
+			// and unintentionally performs actions they would not be able to as a normal player
+			player.sendMessage(Component.text("These slots would be locked by quest scores, " +
+					"but you are currently bypassing trade prerequisites: " + lockedSlots,
 				NamedTextColor.GOLD));
 		}
 

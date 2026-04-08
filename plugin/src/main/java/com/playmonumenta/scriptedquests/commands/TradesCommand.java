@@ -1,6 +1,7 @@
 package com.playmonumenta.scriptedquests.commands;
 
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.managers.NpcTradeManager;
 import com.playmonumenta.scriptedquests.trades.NpcTrader;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPICommand;
@@ -13,6 +14,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Optional;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.entity.Player;
 
@@ -61,6 +63,17 @@ public class TradesCommand {
 							throw CommandAPI.failWithString("No trader file with name '" + npc + "' found!");
 						}
 						Plugin.getInstance().mTradeManager.trade(Plugin.getInstance(), trades, null, title, player);
+					})
+			).withSubcommand(
+				new CommandAPICommand("ignore_prereqs")
+					.executesPlayer((player, args) -> {
+						boolean hadTag = player.removeScoreboardTag(NpcTradeManager.IGNORE_PREREQS_TAG);
+						if (hadTag) {
+							player.sendMessage(Component.text("You will no longer bypass trade prerequisites", NamedTextColor.GOLD));
+						} else {
+							player.addScoreboardTag(NpcTradeManager.IGNORE_PREREQS_TAG);
+							player.sendMessage(Component.text("You will now bypass trade prerequisites", NamedTextColor.GOLD));
+						}
 					})
 			).register();
 	}
