@@ -140,9 +140,7 @@ public class CompassLocation implements QuestLocation {
 			return false;
 		}
 		WorldRegexMatcher matcher = QuestCompassManager.getInstance().getWorldRegexMatcher();
-		if (matcher != null && matcher.isKnownRegex(mWorldRegex)) {
-			// O(1) cached lookup; quest entries are always pre-registered at reload.
-			// Falls back to String.matches() for command waypoints whose exact world names are not pre-registered.
+		if (matcher != null) {
 			return matcher.matches(player.getWorld(), mWorldRegex);
 		}
 		return player.getWorld().getName().matches(mWorldRegex);
