@@ -165,6 +165,7 @@ public class Plugin extends JavaPlugin {
 			manager.registerEvents(new RedisSyncListener(this), this);
 		}
 		manager.registerEvents(new WorldListener(this), this);
+		manager.registerEvents(mQuestCompassManager, this);
 		if (mTranslationsManager != null) {
 			manager.registerEvents(mTranslationsManager, this);
 		}

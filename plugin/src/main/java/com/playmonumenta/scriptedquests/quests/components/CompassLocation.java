@@ -4,8 +4,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.managers.QuestCompassManager;
 import com.playmonumenta.scriptedquests.quests.QuestContext;
-import com.playmonumenta.scriptedquests.zones.ZoneManager;
+import com.playmonumenta.scriptedquests.utils.WorldRegexMatcher;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -135,7 +136,15 @@ public class CompassLocation implements QuestLocation {
 
 	@Override
 	public boolean prerequisiteMet(Player player) {
-		return (mPrerequisites == null || mPrerequisites.prerequisiteMet(new QuestContext(Plugin.getInstance(), player, null)))
-			&& ZoneManager.getInstance().getWorldRegexMatcher().matches(player.getWorld(), mWorldRegex);
+		if (mPrerequisites != null && !mPrerequisites.prerequisiteMet(new QuestContext(Plugin.getInstance(), player, null))) {
+			return false;
+		}
+		WorldRegexMatcher matcher = QuestCompassManager.getInstance().getWorldRegexMatcher();
+		if (matcher != null && matcher.isKnownRegex(mWorldRegex)) {
+			// O(1) cached lookup; quest entries are always pre-registered at reload.
+			// Falls back to String.matches() for command waypoints whose exact world names are not pre-registered.
+			return matcher.matches(player.getWorld(), mWorldRegex);
+		}
+		return player.getWorld().getName().matches(mWorldRegex);
 	}
 }

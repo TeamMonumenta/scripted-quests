@@ -45,6 +45,10 @@ public class WorldRegexMatcher {
 		mWorldPatternMatches.remove(world);
 	}
 
+	public boolean isKnownRegex(String worldRegex) {
+		return mPatterns.containsKey(worldRegex);
+	}
+
 	// Only works for the patterns provided at matcher instantiation
 	public boolean matches(World world, String worldRegex) {
 		Set<String> matches = mWorldPatternMatches.get(world);
