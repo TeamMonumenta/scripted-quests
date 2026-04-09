@@ -136,15 +136,15 @@ public class WaypointManager {
 					if (player == null
 						    || player.isDead()
 						    || !player.isOnline()
-						    || !questLoc.getLocation().isWorldLoaded()
-						    || !questLoc.getLocation().getWorld().equals(player.getWorld())
 						    || (mPrereqCounter == 0 && !questLoc.prerequisiteMet(player))) {
 						iter.remove();
 						continue;
 					}
 
 					Location targetLoc = getNextPoint(player, waypoints);
-					boolean isLast = targetLoc.equals(waypoints.get(waypoints.size() - 1));
+					boolean isLast = targetLoc.equals(waypoints.getLast());
+					// Correct the world here as only now can we check the player's world
+					targetLoc.setWorld(player.getWorld());
 					player.setCompassTarget(targetLoc);
 
 					Location playerLoc = player.getLocation();
@@ -193,6 +193,10 @@ public class WaypointManager {
 					Location averageLoc = mPlayerAverageLocs.get(player.getUniqueId());
 					if (averageLoc == null) {
 						averageLoc = playerLoc.clone();
+					} else {
+						if (averageLoc.getWorld() != player.getWorld()) {
+							averageLoc.setWorld(player.getWorld());
+						}
 					}
 					averageLoc = averageLoc.add(playerLoc).multiply(0.5d);
 					mPlayerAverageLocs.put(player.getUniqueId(), averageLoc);

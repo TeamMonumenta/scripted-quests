@@ -8,10 +8,13 @@ import com.playmonumenta.scriptedquests.quests.components.DeathLocation;
 import com.playmonumenta.scriptedquests.quests.components.QuestLocation;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
+import com.playmonumenta.scriptedquests.utils.WorldRegexMatcher;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.WeakHashMap;
 import net.kyori.adventure.text.Component;
@@ -21,14 +24,22 @@ import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.world.WorldLoadEvent;
+import org.bukkit.event.world.WorldUnloadEvent;
 import org.jetbrains.annotations.Nullable;
 
-public class QuestCompassManager {
+public class QuestCompassManager implements Listener {
+
+	private static @Nullable QuestCompassManager INSTANCE = null;
 
 	private final List<QuestCompass> mQuests = new ArrayList<>();
 	private final Map<UUID, CompassCacheEntry> mCompassCache = new HashMap<>();
 	public final Map<Player, Integer> mCurrentIndex = new WeakHashMap<>();
 	private final Plugin mPlugin;
+	private @Nullable WorldRegexMatcher mWorldRegexMatcher = null;
 
 	/* One command-specified waypoint per player */
 	private final Map<UUID, ValidCompassEntry> mCommandWaypoints = new HashMap<>();
@@ -62,9 +73,6 @@ public class QuestCompassManager {
 			} else {
 				MessagingUtils.sendRawMessage(player, mTitle + ": " + mLocation.getMessage(), mAllowTranslations);
 			}
-			if (!player.getWorld().getName().matches(mLocation.getWorldRegex())) {
-				MessagingUtils.sendRawMessage(player, "&7(This location is on a &cdifferent world!&7 Find a way to the correct world before following the compass.)", mAllowTranslations);
-			}
 
 			mgr.setWaypoint(player, mLocation);
 		}
@@ -91,8 +99,16 @@ public class QuestCompassManager {
 	}
 
 	public QuestCompassManager(Plugin plugin) {
+		INSTANCE = this;
 		mPlugin = plugin;
 		reload(plugin, null);
+	}
+
+	public static QuestCompassManager getInstance() {
+		if (INSTANCE == null) {
+			throw new RuntimeException("Attempted to access QuestCompassManager before it loaded.");
+		}
+		return INSTANCE;
 	}
 
 	/*
@@ -105,6 +121,34 @@ public class QuestCompassManager {
 			mQuests.add(quest);
 			return quest.getQuestName() + ":" + Integer.toString(quest.getMarkers().size());
 		});
+
+		Set<String> worldRegexes = new HashSet<>();
+		for (QuestCompass quest : mQuests) {
+			for (CompassLocation loc : quest.getMarkers()) {
+				worldRegexes.add(loc.getWorldRegex());
+			}
+		}
+		mWorldRegexMatcher = new WorldRegexMatcher(worldRegexes);
+	}
+
+	public @Nullable WorldRegexMatcher getWorldRegexMatcher() {
+		return mWorldRegexMatcher;
+	}
+
+	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+	public void worldLoadEvent(WorldLoadEvent event) {
+		WorldRegexMatcher matcher = mWorldRegexMatcher;
+		if (matcher != null) {
+			matcher.onLoadWorld(event.getWorld());
+		}
+	}
+
+	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+	public void worldUnloadEvent(WorldUnloadEvent event) {
+		WorldRegexMatcher matcher = mWorldRegexMatcher;
+		if (matcher != null) {
+			matcher.onUnloadWorld(event.getWorld());
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -199,6 +243,9 @@ public class QuestCompassManager {
 
 		QuestCompassManager.CompassCacheEntry cacheEntryMap = mCompassCache.get(player.getUniqueId());
 		if (cacheEntryMap != null && !cacheEntryMap.mEntries.isEmpty()) {
+			if (newIndex >= cacheEntryMap.mEntries.size()) {
+				newIndex = 0;
+			}
 			ValidCompassEntry quest = cacheEntryMap.mEntries.get(newIndex);
 			if (quest.mMarkersIndex[0] == quest.mMarkersIndex[1]) {
 				newIndex += 1 - quest.mMarkersIndex[1];

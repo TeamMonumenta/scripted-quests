@@ -211,10 +211,9 @@ public class QuestCompassGui extends CustomInventory {
 						splitIndex = 1 + qLore.indexOf(" ", splitIndex + 45);
 					}
 				}
-				boolean differentWorld = !mPlayer.getWorld().getName().matches(q.mLocation.getWorldRegex());
 				Location qLoc = q.mLocation.getLocation();
 				lore.add(Component.text((int) qLoc.getX() + ", " + (int) qLoc.getY() + ", " + (int) qLoc.getZ() + " ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.ITALIC, false)
-					.append(differentWorld ? Component.text("(Different World!)", NamedTextColor.RED) : Component.text(("(" + (int) mPlayer.getLocation().distance(new Location(mPlayer.getWorld(), qLoc.getX(), qLoc.getY(), qLoc.getZ())) + "m away)"))));
+					.append(Component.text(("(" + (int) mPlayer.getLocation().distance(new Location(mPlayer.getWorld(), qLoc.getX(), qLoc.getY(), qLoc.getZ())) + "m away)"))));
 				if (q.mType == QuestCompassManager.CompassEntryType.Waypoint) {
 					lore.add(Component.text("(Shift Click to remove this waypoint.)", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false));
 				}
