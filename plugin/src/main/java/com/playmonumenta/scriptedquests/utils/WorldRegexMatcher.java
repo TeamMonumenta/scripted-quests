@@ -50,7 +50,12 @@ public class WorldRegexMatcher {
 		Set<String> matches = mWorldPatternMatches.get(world);
 		if (matches == null) {
 			MMLog.warning("Falling back to slow regex .matches() to test world: '" + world.getName() + "' against unregistered regex: '" + worldRegex + "'");
-			return world.getName().matches(worldRegex);
+			try {
+				return world.getName().matches(worldRegex);
+			} catch (PatternSyntaxException e) {
+				MMLog.warning("Invalid world regex '" + worldRegex + "'", e);
+				return false;
+			}
 		}
 		return matches.contains(worldRegex);
 	}

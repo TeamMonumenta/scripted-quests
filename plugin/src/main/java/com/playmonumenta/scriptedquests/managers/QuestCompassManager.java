@@ -6,6 +6,7 @@ import com.playmonumenta.scriptedquests.quests.QuestCompass;
 import com.playmonumenta.scriptedquests.quests.components.CompassLocation;
 import com.playmonumenta.scriptedquests.quests.components.DeathLocation;
 import com.playmonumenta.scriptedquests.quests.components.QuestLocation;
+import com.playmonumenta.scriptedquests.utils.MMLog;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
 import com.playmonumenta.scriptedquests.utils.WorldRegexMatcher;
@@ -128,7 +129,12 @@ public class QuestCompassManager implements Listener {
 				worldRegexes.add(loc.getWorldRegex());
 			}
 		}
-		mWorldRegexMatcher = new WorldRegexMatcher(worldRegexes);
+		try {
+			mWorldRegexMatcher = new WorldRegexMatcher(worldRegexes);
+		} catch (Exception e) {
+			MMLog.severe("Failed to build WorldRegexMatcher for compass", e);
+			mWorldRegexMatcher = null;
+		}
 	}
 
 	public @Nullable WorldRegexMatcher getWorldRegexMatcher() {
