@@ -10,6 +10,7 @@ import com.playmonumenta.scriptedquests.utils.WorldRegexMatcher;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.PatternSyntaxException;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -34,6 +35,11 @@ public class CompassLocation implements QuestLocation {
 		}
 
 		mWorldRegex = object.has("world_name") ? object.get("world_name").toString().replaceAll("\"", "") : ".*";
+		try {
+			java.util.regex.Pattern.compile(mWorldRegex);
+		} catch (PatternSyntaxException e) {
+			throw new Exception("Invalid world_name regex '" + mWorldRegex + "': " + e.getMessage());
+		}
 
 		mPrerequisites = new QuestPrerequisites(prereq);
 
@@ -143,6 +149,10 @@ public class CompassLocation implements QuestLocation {
 		if (matcher != null) {
 			return matcher.matches(player.getWorld(), mWorldRegex);
 		}
-		return player.getWorld().getName().matches(mWorldRegex);
+		try {
+			return player.getWorld().getName().matches(mWorldRegex);
+		} catch (PatternSyntaxException e) {
+			return false;
+		}
 	}
 }
