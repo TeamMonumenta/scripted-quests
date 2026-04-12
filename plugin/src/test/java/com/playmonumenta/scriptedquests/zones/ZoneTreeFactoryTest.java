@@ -1,6 +1,7 @@
 package com.playmonumenta.scriptedquests.zones;
 
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.utils.MMLog;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -54,6 +55,8 @@ public class ZoneTreeFactoryTest {
 		Mockito.when(Bukkit.getConsoleSender()).thenReturn(new TestConsoleSender());
 
 		mockedStaticZoneNamespace = Mockito.mockStatic(ZoneNamespace.class);
+
+		MMLog.init(Mockito.mock(com.playmonumenta.common.MMLog.class));
 
 		Field instance = Plugin.class.getDeclaredField("INSTANCE");
 		instance.setAccessible(true);

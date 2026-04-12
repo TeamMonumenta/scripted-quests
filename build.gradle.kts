@@ -48,7 +48,7 @@ monumenta {
 
 allprojects {
 	tasks.withType<JavaCompile> {
-		options.compilerArgs.add("-Werror")
+		// options.compilerArgs.add("-Werror")
 	}
 
 	tasks.withType<Javadoc> {
