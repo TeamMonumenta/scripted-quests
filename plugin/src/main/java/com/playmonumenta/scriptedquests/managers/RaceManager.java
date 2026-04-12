@@ -5,6 +5,7 @@ import com.playmonumenta.scriptedquests.Constants;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.races.Race;
 import com.playmonumenta.scriptedquests.races.RaceFactory;
+import com.playmonumenta.scriptedquests.utils.MMLog;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -92,12 +93,12 @@ public class RaceManager {
 					try {
 						ownerId = UUID.fromString(tag.substring(ARMOR_STAND_ID_PREFIX_TAG.length()));
 					} catch (Exception e) {
-						mPlugin.getLogger().warning("Invalid Race ID tag on ring: " + tag);
+						MMLog.warning("Invalid Race ID tag on ring: " + tag);
 					}
 				}
 			}
 			if (ownerId != null && !isRacing(ownerId)) {
-				mPlugin.getLogger().fine("Removing stale race ring armor stand.");
+				MMLog.debug("Removing stale race ring armor stand.");
 				entity.remove();
 			}
 		}
@@ -211,8 +212,8 @@ public class RaceManager {
 
 	public void startRace(Player player, String raceLabel) {
 		if (mActiveRaces.containsKey(player.getUniqueId())) {
-			mPlugin.getLogger().severe("Attempted to start second race '" + raceLabel +
-			                           "' for player '" + player.getName() + "'");
+			MMLog.severe("Attempted to start second race '" + raceLabel +
+			             "' for player '" + player.getName() + "'");
 			player.sendMessage(Component.text("You are already in a race!", NamedTextColor.RED));
 			return;
 		}
@@ -222,7 +223,7 @@ public class RaceManager {
 
 		RaceFactory raceFactory = mRaceFactories.get(raceLabel);
 		if (raceFactory == null) {
-			mPlugin.getLogger().severe("Attempted to start nonexistent race '" + raceLabel + "'");
+			MMLog.severe("Attempted to start nonexistent race '" + raceLabel + "'");
 			return;
 		}
 

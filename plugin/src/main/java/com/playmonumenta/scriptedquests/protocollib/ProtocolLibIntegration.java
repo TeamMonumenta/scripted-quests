@@ -3,13 +3,14 @@ package com.playmonumenta.scriptedquests.protocollib;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.utils.MMLog;
 
 public class ProtocolLibIntegration {
 
 	private final SelectiveNPCVisibilityHandler mSelectiveNPCVisibilityHandler;
 
 	public ProtocolLibIntegration(Plugin plugin) {
-		plugin.getLogger().info("Enabling ProtocolLib integration");
+		MMLog.info("Enabling ProtocolLib integration");
 
 		ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
 

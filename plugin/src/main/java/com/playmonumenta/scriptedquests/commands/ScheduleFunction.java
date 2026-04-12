@@ -206,7 +206,7 @@ public class ScheduleFunction {
 						}
 					}
 				}
-				mPlugin.getLogger().fine("Preparing to run " + entry);
+				MMLog.debug("Preparing to run " + entry);
 				it.remove();
 			}
 
@@ -229,8 +229,7 @@ public class ScheduleFunction {
 		try {
 			CommandAPI.unregister("schedule");
 		} catch (Exception e) {
-			// Nothing to do here - there is nothing to unregister in 1.13
-			plugin.getLogger().info("Failed to unregister /schedule - this is only an error in 1.14+");
+			MMLog.severe("Failed to unregister /schedule", e);
 		}
 
 		FunctionArgument functionArg = new FunctionArgument("function");

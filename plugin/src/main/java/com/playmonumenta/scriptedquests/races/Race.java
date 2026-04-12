@@ -8,6 +8,7 @@ import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.managers.RaceManager;
 import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.quests.components.QuestActions;
+import com.playmonumenta.scriptedquests.utils.MMLog;
 import com.playmonumenta.scriptedquests.utils.RaceUtils;
 import java.time.Duration;
 import java.util.ArrayDeque;
@@ -631,8 +632,7 @@ public class Race {
 					position++;
 				}
 			} catch (Exception ex) {
-				mPlugin.getLogger().severe("Failed to get player position on leaderboard " + lb.getName() + ": " + ex.getMessage());
-				ex.printStackTrace();
+				MMLog.severe("Failed to get player position on leaderboard " + lb.getName(), ex);
 			}
 		} else {
 			List<String> sortedEntries = new ArrayList<>(lb.getScoreboard().getEntries());
@@ -670,8 +670,7 @@ public class Race {
 						}
 					}
 				} catch (Exception ex) {
-					mPlugin.getLogger().severe("Failed to get world record time for leaderboard " + objective.getName() + ": " + ex.getMessage());
-					ex.printStackTrace();
+					MMLog.severe("Failed to get world record time for leaderboard " + objective.getName(), ex);
 				}
 			});
 		} else {

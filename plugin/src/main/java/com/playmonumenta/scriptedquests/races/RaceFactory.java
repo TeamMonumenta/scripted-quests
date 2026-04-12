@@ -9,6 +9,7 @@ import com.playmonumenta.scriptedquests.managers.RaceManager;
 import com.playmonumenta.scriptedquests.quests.components.QuestActions;
 import com.playmonumenta.scriptedquests.utils.LeaderboardUtils;
 import com.playmonumenta.scriptedquests.utils.LeaderboardUtils.LeaderboardEntry;
+import com.playmonumenta.scriptedquests.utils.MMLog;
 import com.playmonumenta.scriptedquests.utils.RaceUtils;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -305,8 +306,7 @@ public class RaceFactory {
 					Bukkit.getScheduler().runTask(mPlugin, () -> LeaderboardUtils.sendLeaderboard(player, Component.text(mName), entries, page,
 					                                 "/race leaderboard " + player.getName() + " " + mLabel));
 				} catch (Exception ex) {
-					mPlugin.getLogger().severe("Failed to generate leaderboard: " + ex.getMessage());
-					ex.printStackTrace();
+					MMLog.severe("Failed to generate leaderboard", ex);
 				}
 			});
 		}

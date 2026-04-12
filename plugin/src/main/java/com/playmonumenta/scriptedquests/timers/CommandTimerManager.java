@@ -67,7 +67,7 @@ public class CommandTimerManager implements Listener {
 
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void worldUnloadEvent(WorldUnloadEvent event) {
-		MMLog.fine("Unloading all command timers in unloading world '" + event.getWorld().getName() + '"');
+		MMLog.debug("Unloading all command timers in unloading world '" + event.getWorld().getName() + '"');
 		for (CommandTimer timer : mCommandTimers.values()) {
 			timer.unloadAllInWorld(event.getWorld());
 		}
@@ -86,7 +86,7 @@ public class CommandTimerManager implements Listener {
 				CommandTimer timer = mCommandTimers.get(period);
 				if (timer == null) {
 					/* Out of range */
-					mPlugin.getLogger().severe("Attempted to remove timer armor stand with non-tracked period " + period.toString());
+					MMLog.severe("Attempted to remove timer armor stand with non-tracked period " + period.toString());
 					return;
 				}
 				timer.unload(entity);
@@ -129,12 +129,12 @@ public class CommandTimerManager implements Listener {
 					try {
 						period = Integer.parseInt(tag.substring(7));
 					} catch (Exception e) {
-						mPlugin.getLogger().severe("Timer armor stand has invalid period '" + tag + "' at " + entity.getLocation().toString());
+						MMLog.severe("Timer armor stand has invalid period '" + tag + "' at " + entity.getLocation().toString());
 						return null;
 					}
 					if (period == null || period <= 0 || period > 72000) {
 						/* Out of range */
-						mPlugin.getLogger().severe("Timer armor stand has invalid period '" + tag + "' at " + entity.getLocation().toString());
+						MMLog.severe("Timer armor stand has invalid period '" + tag + "' at " + entity.getLocation().toString());
 						return null;
 					}
 					/* Good value - return it */

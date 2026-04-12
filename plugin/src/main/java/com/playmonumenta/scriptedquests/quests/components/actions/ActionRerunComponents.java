@@ -1,6 +1,7 @@
 package com.playmonumenta.scriptedquests.quests.components.actions;
 
 import com.playmonumenta.scriptedquests.quests.QuestContext;
+import com.playmonumenta.scriptedquests.utils.MMLog;
 import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.entity.EntityType;
@@ -32,7 +33,7 @@ public class ActionRerunComponents implements ActionBase {
 				mLocked.remove(context.getPlayer());
 			}
 		} else {
-			context.getPlugin().getLogger().severe("Stopped infinite loop for NPC '" + mNpcName + "'");
+			MMLog.severe("Stopped infinite loop for NPC '" + mNpcName + "'");
 		}
 	}
 }

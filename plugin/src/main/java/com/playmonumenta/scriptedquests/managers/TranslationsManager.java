@@ -14,6 +14,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.utils.FileUtils;
+import com.playmonumenta.scriptedquests.utils.MMLog;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
 import dev.jorel.commandapi.CommandAPICommand;
@@ -202,13 +203,13 @@ public class TranslationsManager implements Listener {
 
 		if (INSTANCE.mWriting || INSTANCE.mReading) {
 			/* Only allow one read/write task at a time. Better to lose translations than cause problems here */
-			INSTANCE.mPlugin.getLogger().info("Read was cancelled by existing read/write task");
+			MMLog.info("Read was cancelled by existing read/write task");
 			return;
 		}
 
 		if (INSTANCE.mWriteAndReloadRunnable != null && !INSTANCE.mWriteAndReloadRunnable.isCancelled()) {
 			/* This will overwrite the data that would be written - so cancel the pending write task */
-			INSTANCE.mPlugin.getLogger().info("Write was cancelled by new reload");
+			MMLog.info("Write was cancelled by new reload");
 			INSTANCE.mWriteAndReloadRunnable.cancel();
 			INSTANCE.mWriteAndReloadRunnable = null;
 		}
@@ -298,7 +299,7 @@ public class TranslationsManager implements Listener {
 		// update the loaded translation map
 		mTranslationsMap.put(message, translations);
 
-		mPlugin.getLogger().info("Added new entry for translations: " + message);
+		MMLog.info("Added new entry for translations: " + message);
 
 		writeTranslationFileAndReloadShards();
 	}
@@ -323,7 +324,7 @@ public class TranslationsManager implements Listener {
 
 				if (mReading) {
 					/* Whatever was going to be written is being overwritten by read anyway, so cancel the write */
-					mPlugin.getLogger().info("Write was cancelled by pending read");
+					MMLog.info("Write was cancelled by pending read");
 					this.cancel();
 					mWriteAndReloadRunnable = null;
 					return;
@@ -334,7 +335,7 @@ public class TranslationsManager implements Listener {
 					 * Only allow one write task at a time. Better to lose translations than cause problems here.
 					 * This will try again next time it ticks until writing is complete
 					 */
-					mPlugin.getLogger().info("Write was blocked by existing ongoing write, waiting a tick");
+					MMLog.info("Write was blocked by existing ongoing write, waiting a tick");
 					return;
 				}
 
@@ -353,8 +354,7 @@ public class TranslationsManager implements Listener {
 					try {
 						FileUtils.writeFile(filename, content);
 					} catch (IOException e) {
-						mPlugin.getLogger().severe("Caught error writing translations: " + e.getMessage());
-						e.printStackTrace();
+						MMLog.severe("Caught error writing translations", e);
 					}
 
 					// reload the translations on all shards
@@ -448,7 +448,7 @@ public class TranslationsManager implements Listener {
 				           StandardCopyOption.REPLACE_EXISTING);
 			} catch (Exception e) {
 				MessagingUtils.sendMessageSync(sender, "Failed to backup translations.json database: " + e.getMessage());
-				e.printStackTrace();
+				MMLog.severe("Failed to backup translations.json database", e);
 				return;
 			}
 
@@ -463,7 +463,7 @@ public class TranslationsManager implements Listener {
 				gSheet = new TranslationGSheet(mGSheetConfig);
 			} catch (Exception e) {
 				MessagingUtils.sendMessageSync(sender, "Failed initialize Google Sheets: " + e.getMessage());
-				e.printStackTrace();
+				MMLog.severe("Failed to initialize Google Sheets", e);
 				return;
 			}
 
@@ -474,7 +474,7 @@ public class TranslationsManager implements Listener {
 				MessagingUtils.sendMessageSync(sender, "Received " + rows.size() + " rows from the GSheet");
 			} catch (IOException e) {
 				MessagingUtils.sendMessageSync(sender, "Failed to read values from sheet. Abort. error: " + e.getMessage());
-				e.printStackTrace();
+				MMLog.severe("Failed to read values from Google Sheet", e);
 				return;
 			}
 
@@ -498,7 +498,7 @@ public class TranslationsManager implements Listener {
 						MessagingUtils.sendMessageSync(sender, "Done! written " + response.getUpdatedRows() + " rows");
 					} catch (IOException e) {
 						MessagingUtils.sendMessageSync(sender, "Failed to write values into sheet. error: " + e.getMessage());
-						e.printStackTrace();
+						MMLog.severe("Failed to write values to Google Sheet", e);
 					}
 				});
 			});
@@ -589,7 +589,7 @@ public class TranslationsManager implements Listener {
 
 		if (status.equals("DEL")) {
 			// line is notified as to be deleted from the system.
-			mPlugin.getLogger().info("removing entry :" + message);
+			MMLog.info("removing entry :" + message);
 			mTranslationsMap.remove(message);
 			return;
 		}

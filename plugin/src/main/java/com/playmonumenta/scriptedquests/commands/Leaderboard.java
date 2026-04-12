@@ -3,6 +3,7 @@ package com.playmonumenta.scriptedquests.commands;
 import com.playmonumenta.redissync.LeaderboardAPI;
 import com.playmonumenta.scriptedquests.utils.LeaderboardUtils;
 import com.playmonumenta.scriptedquests.utils.LeaderboardUtils.LeaderboardEntry;
+import com.playmonumenta.scriptedquests.utils.MMLog;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
@@ -175,8 +176,7 @@ public class Leaderboard {
 					Bukkit.getScheduler().runTask(plugin, () -> LeaderboardUtils.sendLeaderboard(player, displayName, entries, page,
 					                                 "/leaderboard " + player.getName() + " " + objective + (descending ? " true" : " false")));
 				} catch (Exception ex) {
-					plugin.getLogger().severe("Failed to generate leaderboard: " + ex.getMessage());
-					ex.printStackTrace();
+					MMLog.severe("Failed to generate leaderboard", ex);
 				}
 			});
 		}

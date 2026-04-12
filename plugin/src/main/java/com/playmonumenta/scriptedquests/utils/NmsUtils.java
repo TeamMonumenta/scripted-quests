@@ -2,6 +2,7 @@ package com.playmonumenta.scriptedquests.utils;
 
 import com.playmonumenta.scriptedquests.adapters.VersionAdapter;
 import com.playmonumenta.scriptedquests.adapters.VersionAdapter_unsupported;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class NmsUtils {
@@ -27,8 +28,7 @@ public class NmsUtils {
 				logger.severe("Somehow VersionAdapter is not assignable from " + clazz + ". NMS utilities will fail and throw NullPointerException's");
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
-			logger.severe("Server version " + version + " is not supported!");
+			logger.log(Level.SEVERE, "Server version " + version + " is not supported!", e);
 			logger.severe("Everything that relies on version-specific 'NMS' logic will behave incorrectly");
 			try {
 				Class<?> clazz = Class.forName("com.playmonumenta.scriptedquests.adapters.VersionAdapter_unsupported");
@@ -38,8 +38,7 @@ public class NmsUtils {
 				}
 				logger.severe("Loaded 'unsupported' version adapter, which should at least reduce the number of null pointer exceptions");
 			} catch (Exception ex) {
-				ex.printStackTrace();
-				logger.severe("Also failed to load generic unsupported adapter. There will be many null pointer exceptions.");
+				logger.log(Level.SEVERE, "Also failed to load generic unsupported adapter. There will be many null pointer exceptions.", ex);
 			}
 		}
 	}

@@ -33,42 +33,6 @@ public class MMLog {
 		return getLogOrThrow().isLevelEnabled(level);
 	}
 
-	/** @deprecated Use {@link #trace(Supplier)} instead. */
-	@Deprecated
-	public static void finest(Supplier<String> msg) {
-		getLogOrThrow().trace(msg);
-	}
-
-	/** @deprecated Use {@link #trace(String)} instead. */
-	@Deprecated
-	public static void finest(String msg) {
-		getLogOrThrow().trace(msg);
-	}
-
-	/** @deprecated Use {@link #trace(Supplier)} instead. */
-	@Deprecated
-	public static void finer(Supplier<String> msg) {
-		getLogOrThrow().trace(msg);
-	}
-
-	/** @deprecated Use {@link #trace(String)} instead. */
-	@Deprecated
-	public static void finer(String msg) {
-		getLogOrThrow().trace(msg);
-	}
-
-	/** @deprecated Use {@link #debug(Supplier)} instead. */
-	@Deprecated
-	public static void fine(Supplier<String> msg) {
-		getLogOrThrow().debug(msg);
-	}
-
-	/** @deprecated Use {@link #debug(String)} instead. */
-	@Deprecated
-	public static void fine(String msg) {
-		getLogOrThrow().debug(msg);
-	}
-
 	public static void trace(Supplier<String> msg) {
 		getLogOrThrow().trace(msg);
 	}
