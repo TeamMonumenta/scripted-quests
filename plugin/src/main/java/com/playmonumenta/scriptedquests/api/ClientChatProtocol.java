@@ -10,6 +10,7 @@ import com.playmonumenta.scriptedquests.Constants;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
+import com.playmonumenta.scriptedquests.utils.MMLog;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.HashSet;
@@ -59,7 +60,7 @@ public class ClientChatProtocol implements PluginMessageListener, CommandExecuto
 			out.write(GSON.toJson(object));
 			player.sendPluginMessage(Plugin.getInstance(), Constants.API_CHANNEL_ID, stream.toByteArray());
 		} catch (Exception e) {
-			e.printStackTrace();
+			MMLog.warning("Failed to send plugin message to player", e);
 		}
 	}
 
@@ -105,7 +106,7 @@ public class ClientChatProtocol implements PluginMessageListener, CommandExecuto
 					break; // Silently ignore other type requests
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			MMLog.warning("Failed to handle incoming plugin message from player", e);
 		}
 	}
 
@@ -119,7 +120,7 @@ public class ClientChatProtocol implements PluginMessageListener, CommandExecuto
 	@Override
 	public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
 		mOverride = !mOverride;
-		Plugin.getInstance().getLogger().info("Should always send custom data to player: " + mOverride);
+		MMLog.info("Should always send custom data to player: " + mOverride);
 		return true;
 	}
 }

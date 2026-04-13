@@ -32,7 +32,7 @@ public class CommandTimerInstance {
 	private boolean mRepeaterEnabled = true;
 
 	public CommandTimerInstance(Location loc, TimerCoords coords, String periodStr, int playerRange, boolean playerOnline, boolean repeat) {
-		MMLog.finer("Adding new timer with coords=" + coords + " period=" + periodStr + " range=" + playerRange + " playerOnline=" + playerOnline + " repeat=" + repeat);
+		MMLog.trace("Adding new timer with coords=" + coords + " period=" + periodStr + " range=" + playerRange + " playerOnline=" + playerOnline + " repeat=" + repeat);
 		mLoc = loc;
 		mCoords = coords;
 		mPeriodStr = periodStr;
@@ -60,21 +60,21 @@ public class CommandTimerInstance {
 
 	public void tick(Plugin plugin) {
 		if (canRun()) {
-			setAutoState(plugin, mLoc, false);
-			setAutoState(plugin, mLoc, true);
+			setAutoState(mLoc, false);
+			setAutoState(mLoc, true);
 			mRepeaterEnabled = true;
 		} else if (mRepeat && mRepeaterEnabled) {
 			/* Turn repeaters back off again when player is out of range */
-			setAutoState(plugin, mLoc, false);
+			setAutoState(mLoc, false);
 			mRepeaterEnabled = false;
 		}
 	}
 
 	public void unload(Plugin plugin) {
-		MMLog.finer("Unloading timer at " + mLoc);
+		MMLog.trace("Unloading timer at " + mLoc);
 		if (mRepeat && mRepeaterEnabled) {
 			/* Turn repeaters back off when unloading timer */
-			setAutoState(plugin, mLoc, false);
+			setAutoState(mLoc, false);
 			mRepeaterEnabled = false;
 		}
 	}
@@ -119,13 +119,13 @@ public class CommandTimerInstance {
 		return mCoords;
 	}
 
-	private static void setAutoState(Plugin plugin, Location loc, boolean auto) {
+	private static void setAutoState(Location loc, boolean auto) {
 		Block block = loc.getBlock();
 		BlockState state = block.getState();
 		if (state instanceof CommandBlock commandBlock) {
 			NmsUtils.getVersionAdapter().setAutoState(commandBlock, auto);
 		} else {
-			plugin.getLogger().severe("Command block is missing for timer at " + loc.toString());
+			MMLog.severe("Command block is missing for timer at " + loc.toString());
 		}
 	}
 

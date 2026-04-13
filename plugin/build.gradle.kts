@@ -1,12 +1,20 @@
 import org.gradle.api.plugins.quality.Pmd
 
 repositories {
+	mavenLocal()
 	maven("https://repo.mikeprimm.com")
 }
 
 dependencies {
 	implementation(libs.bundles.google.api)
 
+	compileOnly(libs.monumenta.common)
+	testRuntimeOnly(libs.monumenta.common)
+	// monumenta-common's MMLog class references Velocity API types. Those types are resolved
+	// lazily at runtime (registerVelocityCommand() is never called on Paper), but the test
+	// class loader loads them eagerly. Add the Velocity API to the test classpath so that
+	// class loading succeeds, even though scripted-quests itself has no Velocity interaction.
+	testRuntimeOnly(libs.velocity)
 	compileOnly(libs.commandapi)
 	compileOnly(libs.nbtapi)
 	compileOnly(libs.brigadier)

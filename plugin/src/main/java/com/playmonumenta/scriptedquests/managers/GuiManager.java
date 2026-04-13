@@ -198,7 +198,7 @@ public class GuiManager {
 				try {
 					GuiPage updated = page.createUpdated(getInventory());
 					mGui.setPage(mPageName, updated);
-					QuestUtils.save(Plugin.getInstance(), event.getPlayer(), mGui.toJson(), mGui.getFile());
+					QuestUtils.save(event.getPlayer(), mGui.toJson(), mGui.getFile());
 					event.getPlayer().sendMessage(Component.text("GUI updated.", NamedTextColor.GOLD));
 				} catch (Exception e) {
 					event.getPlayer().sendMessage(Component.text("Failed to update GUI.", NamedTextColor.RED));

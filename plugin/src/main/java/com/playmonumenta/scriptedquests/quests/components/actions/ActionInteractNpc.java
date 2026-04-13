@@ -3,6 +3,7 @@ package com.playmonumenta.scriptedquests.quests.components.actions;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.quests.QuestContext;
+import com.playmonumenta.scriptedquests.utils.MMLog;
 import java.util.Map.Entry;
 import java.util.Set;
 import org.bukkit.entity.EntityType;
@@ -48,8 +49,7 @@ public class ActionInteractNpc implements ActionBase {
 	@Override
 	public void doActions(QuestContext context) {
 		if (!context.getPlugin().mNpcManager.interactEvent(context.clearPrerequisites().withNpc(null), mName, mType, true)) {
-			context.getPlugin().getLogger().severe("No interaction available for player '" + context.getPlayer().getName() +
-				                                       "' and NPC '" + mName + "'");
+			MMLog.severe("No interaction available for player '" + context.getPlayer().getName() + "' and NPC '" + mName + "'");
 		}
 	}
 }

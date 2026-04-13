@@ -604,7 +604,7 @@ public class NpcTradeManager implements Listener {
 		@Override
 		protected void inventoryClose(InventoryCloseEvent event) {
 			try {
-				QuestUtils.save(Plugin.getInstance(), event.getPlayer(), mTrader.toJson(), mTrader.getFile());
+				QuestUtils.save(event.getPlayer(), mTrader.toJson(), mTrader.getFile());
 				event.getPlayer().sendMessage(Component.text("Trade file updated.", NamedTextColor.GOLD));
 			} catch (Exception e) {
 				event.getPlayer().sendMessage(Component.text("Failed to update trade file.", NamedTextColor.RED));

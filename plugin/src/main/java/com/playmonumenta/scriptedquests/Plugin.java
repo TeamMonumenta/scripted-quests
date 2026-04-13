@@ -24,6 +24,7 @@ import com.playmonumenta.scriptedquests.managers.WaypointManager;
 import com.playmonumenta.scriptedquests.managers.ZonePropertyManager;
 import com.playmonumenta.scriptedquests.protocollib.ProtocolLibIntegration;
 import com.playmonumenta.scriptedquests.timers.CommandTimerManager;
+import com.playmonumenta.scriptedquests.utils.MMLog;
 import com.playmonumenta.scriptedquests.utils.MetadataUtils;
 import com.playmonumenta.scriptedquests.utils.NmsUtils;
 import com.playmonumenta.scriptedquests.zones.ZoneManager;
@@ -31,8 +32,6 @@ import com.playmonumenta.scriptedquests.zones.ZonePropertyGroupManager;
 import java.io.File;
 import java.util.Objects;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.SoundCategory;
 import org.bukkit.command.CommandSender;
@@ -76,14 +75,11 @@ public class Plugin extends JavaPlugin {
 
 	public Random mRandom = new Random();
 	private @MonotonicNonNull ScheduleFunction mScheduledFunctionsManager;
-	private @MonotonicNonNull CustomLogger mLogger = null;
 	private SoundCategory mDefaultMusicSoundCategory = SoundCategory.RECORDS;
 
 	@Override
 	public void onLoad() {
-		if (mLogger == null) {
-			mLogger = new CustomLogger(super.getLogger(), Level.INFO);
-		}
+		MMLog.init();
 
 		NmsUtils.loadVersionAdapter(this.getServer().getClass(), getLogger());
 
@@ -100,7 +96,6 @@ public class Plugin extends JavaPlugin {
 			mTranslationsManager = new TranslationsManager(this, translationsConfig);
 		}
 
-		ChangeLogLevel.register();
 		FontUtilsDebug.register();
 		InteractNpc.register(this);
 		Clickable.register(this);
@@ -303,12 +298,11 @@ public class Plugin extends JavaPlugin {
 		return INSTANCE;
 	}
 
+	/** @deprecated Use {@link com.playmonumenta.scriptedquests.utils.MMLog} static methods instead. */
+	@Deprecated
 	@Override
-	public Logger getLogger() {
-		if (mLogger == null) {
-			mLogger = new CustomLogger(super.getLogger(), Level.INFO);
-		}
-		return mLogger;
+	public java.util.logging.Logger getLogger() {
+		return super.getLogger();
 	}
 
 	public SoundCategory getDefaultMusicSoundCategory() {

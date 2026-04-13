@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponentList;
+import com.playmonumenta.scriptedquests.utils.MMLog;
 import com.playmonumenta.scriptedquests.zones.event.ZoneBlockBreakEvent;
 import com.playmonumenta.scriptedquests.zones.event.ZoneBlockInteractEvent;
 import com.playmonumenta.scriptedquests.zones.event.ZoneEntityDeathEvent;
@@ -130,7 +131,7 @@ public class ZoneProperty {
 	public void addFromOther(Plugin plugin, ZoneProperty other) {
 		if (!mNamespaceName.equals(other.mNamespaceName)
 		    || !mName.equals(other.mName)) {
-			plugin.getLogger().severe("Attempted to add two ZoneProperty objects of different properties!");
+			MMLog.severe("Attempted to add two ZoneProperty objects of different properties!");
 			return;
 		}
 		for (QuestComponent component : other.getComponents()) {
