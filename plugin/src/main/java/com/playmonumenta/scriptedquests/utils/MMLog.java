@@ -10,12 +10,15 @@ public class MMLog {
 	public static void init() {
 		if (INSTANCE == null) {
 			INSTANCE = new com.playmonumenta.common.MMLog("ScriptedQuests");
-			INSTANCE.registerPaperCommand("scriptedQuests");
 		}
 	}
 
 	public static void init(com.playmonumenta.common.MMLog log) {
 		INSTANCE = log;
+	}
+
+	public static com.playmonumenta.common.MMLog getLog() {
+		return getLogOrThrow();
 	}
 
 	private static com.playmonumenta.common.MMLog getLogOrThrow() {
