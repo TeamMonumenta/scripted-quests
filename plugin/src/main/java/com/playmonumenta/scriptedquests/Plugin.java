@@ -79,7 +79,7 @@ public class Plugin extends JavaPlugin {
 
 	@Override
 	public void onLoad() {
-		MMLog.init(this);
+		MMLog.init();
 
 		NmsUtils.loadVersionAdapter(this.getServer().getClass(), getLogger());
 

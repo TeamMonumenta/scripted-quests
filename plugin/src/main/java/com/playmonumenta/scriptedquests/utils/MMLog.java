@@ -2,15 +2,15 @@ package com.playmonumenta.scriptedquests.utils;
 
 import java.util.function.Supplier;
 import org.apache.logging.log4j.Level;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
 public class MMLog {
 	private static @Nullable com.playmonumenta.common.MMLog INSTANCE = null;
 
-	public static void init(JavaPlugin plugin) {
+	public static void init() {
 		if (INSTANCE == null) {
-			INSTANCE = new com.playmonumenta.common.MMLog(plugin, "scriptedquests");
+			INSTANCE = new com.playmonumenta.common.MMLog("ScriptedQuests");
+			INSTANCE.registerPaperCommand("scriptedquests");
 		}
 	}
 
