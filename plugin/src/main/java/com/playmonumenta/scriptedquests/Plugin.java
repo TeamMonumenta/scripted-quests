@@ -79,8 +79,8 @@ public class Plugin extends JavaPlugin {
 
 	@Override
 	public void onLoad() {
-		MMLog.init();
-		com.playmonumenta.common.MMLogPaper.registerCommand(MMLog.getLog(), "scriptedQuests");
+		MMLog.init(getName());
+		com.playmonumenta.common.MMLogPaper.registerCommand(MMLog.getLog());
 
 		NmsUtils.loadVersionAdapter(this.getServer().getClass(), getLogger());
 

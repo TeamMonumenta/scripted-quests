@@ -7,9 +7,9 @@ import org.jetbrains.annotations.Nullable;
 public class MMLog {
 	private static @Nullable com.playmonumenta.common.MMLog INSTANCE = null;
 
-	public static void init() {
+	public static void init(String pluginName) {
 		if (INSTANCE == null) {
-			INSTANCE = new com.playmonumenta.common.MMLog("ScriptedQuests");
+			INSTANCE = new com.playmonumenta.common.MMLog(pluginName);
 		}
 	}
 
