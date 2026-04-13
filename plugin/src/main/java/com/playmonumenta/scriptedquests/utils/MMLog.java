@@ -10,7 +10,7 @@ public class MMLog {
 	public static void init() {
 		if (INSTANCE == null) {
 			INSTANCE = new com.playmonumenta.common.MMLog("ScriptedQuests");
-			INSTANCE.registerPaperCommand("scriptedquests");
+			INSTANCE.registerPaperCommand("scriptedQuests");
 		}
 	}
 
