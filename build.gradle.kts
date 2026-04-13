@@ -12,7 +12,7 @@ monumenta {
 	pluginProject(":scripted-quests")
 	paper(
 		"com.playmonumenta.scriptedquests.Plugin", BukkitPluginDescription.PluginLoadOrder.POSTWORLD, "1.18",
-		depends = listOf("CommandAPI", , "MonumentaCommon"),
+		depends = listOf("CommandAPI", "MonumentaCommon"),
 		softDepends = listOf("dynmap", "MonumentaRedisSync", "ProtocolLib"),
 		apiJarVersion = "1.20.4-R0.1-SNAPSHOT",
 		action = {
