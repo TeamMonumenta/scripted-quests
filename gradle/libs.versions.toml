@@ -12,6 +12,7 @@ junit = "5.8.1"
 junit-platform = "1.8.1"
 mockito-junit = "5.8.0"
 mockbukkit = "3.9.0"
+monumenta-common = "1.0.0"
 redissync = "6.0.0"
 
 [libraries]
@@ -29,6 +30,7 @@ jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.re
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit-platform" }
 mockito = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockito-junit" }
 mockbukkit = { module = "com.github.seeseemelk:MockBukkit-v1.20", version.ref = "mockbukkit" }
+monumenta-common = { module = "com.playmonumenta:monumenta-common", version.ref = "monumenta-common" }
 redissync = { module = "com.playmonumenta:redissync", version.ref = "redissync" }
 
 [bundles]

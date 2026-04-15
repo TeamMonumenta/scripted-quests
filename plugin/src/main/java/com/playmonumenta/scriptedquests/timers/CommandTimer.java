@@ -1,6 +1,7 @@
 package com.playmonumenta.scriptedquests.timers;
 
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.utils.MMLog;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -103,7 +104,7 @@ public class CommandTimer implements Listener {
 	public void addEntity(final ArmorStand entity, final Set<String> tags) {
 		/* This should never happen */
 		if (mTimers.get(entity.getUniqueId()) != null) {
-			mPlugin.getLogger().warning("processEntity: Attempted to add timer entity that was already tracked!");
+			MMLog.warning("processEntity: Attempted to add timer entity that was already tracked!");
 			return;
 		}
 
@@ -144,7 +145,7 @@ public class CommandTimer implements Listener {
 			} else {
 				entity.setCustomNameVisible(true);
 				entity.customName(Component.text("Timer: INVALID BLOCK", NamedTextColor.RED).decorate(TextDecoration.BOLD));
-				mPlugin.getLogger().warning("Timer is missing repeating command block at " + loc.toString());
+				MMLog.warning("Timer is missing repeating command block at " + loc.toString());
 				return false;
 			}
 		} else {
@@ -153,7 +154,7 @@ public class CommandTimer implements Listener {
 			} else {
 				entity.setCustomNameVisible(true);
 				entity.customName(Component.text("Timer: INVALID BLOCK", NamedTextColor.RED).decorate(TextDecoration.BOLD));
-				mPlugin.getLogger().warning("Timer is missing impulse command block at " + loc.toString());
+				MMLog.warning("Timer is missing impulse command block at " + loc.toString());
 				return false;
 			}
 		}

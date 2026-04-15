@@ -1,12 +1,15 @@
 import org.gradle.api.plugins.quality.Pmd
 
 repositories {
+	mavenLocal()
 	maven("https://repo.mikeprimm.com")
 }
 
 dependencies {
 	implementation(libs.bundles.google.api)
 
+	compileOnly(libs.monumenta.common)
+	testRuntimeOnly(libs.monumenta.common)
 	compileOnly(libs.commandapi)
 	compileOnly(libs.nbtapi)
 	compileOnly(libs.brigadier)

@@ -62,7 +62,7 @@ public class QuestUtils {
 
 			listOfFiles = FileUtils.getFilesInDirectory(folderLocation, ".json");
 		} catch (IOException e) {
-			plugin.getLogger().severe("Caught exception trying to reload " + folderName + ": " + e);
+			MMLog.severe("Caught exception trying to reload " + folderName, e);
 			audience.sendMessage(Component.text("Caught exception trying to reload " + folderName + ": " + e, NamedTextColor.RED));
 			return;
 		}
@@ -128,14 +128,13 @@ public class QuestUtils {
 		return action.load(object, file);
 	}
 
-	public static void save(Plugin plugin, @Nullable CommandSender sender, JsonObject object, File file) {
+	public static void save(@Nullable CommandSender sender, JsonObject object, File file) {
 		try {
 			Gson gson = new GsonBuilder().setPrettyPrinting().create();
 			String json = gson.toJson(object);
 			FileUtils.writeFile(file.getPath(), json);
 		} catch (Exception e) {
-			plugin.getLogger().severe("Caught exception: " + e);
-			e.printStackTrace();
+			MMLog.severe("Failed to save quest file '" + file.getPath() + "'", e);
 
 			if (sender != null) {
 				sender.sendMessage(Component.text("Failed to save quest file '" + file.getPath() + "'", NamedTextColor.RED));

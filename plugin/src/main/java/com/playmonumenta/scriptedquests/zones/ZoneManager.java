@@ -322,7 +322,7 @@ public class ZoneManager {
 	}
 
 	public void doReload(Plugin plugin, boolean firstRun) {
-		MMLog.fine("[Zone Reload] Begin");
+		MMLog.debug("[Zone Reload] Begin");
 		mQueuedReloadRequesters.add(Bukkit.getConsoleSender());
 		mReloadRequesters = Audience.audience(mQueuedReloadRequesters);
 		mQueuedReloadRequesters = new HashSet<>();
@@ -330,7 +330,7 @@ public class ZoneManager {
 		long cpuNanos = System.nanoTime();
 		mReloadingState = new ZoneState();
 		ZoneNamespace.clearDynmapLayers();
-		MMLog.fine("[Zone Reload] " + String.format("%13.9f", (System.nanoTime() - cpuNanos) / 1000000000.0) + "s Resetting old data");
+		MMLog.debug("[Zone Reload] " + String.format("%13.9f", (System.nanoTime() - cpuNanos) / 1000000000.0) + "s Resetting old data");
 
 		cpuNanos = System.nanoTime();
 		plugin.mZonePropertyGroupManager.reload(plugin, mReloadRequesters);
@@ -345,7 +345,7 @@ public class ZoneManager {
 		mReloadingState.mNamespaces.putAll(mPluginNamespaces);
 		mReloadingState.mNamespaces.putAll(
 			new ZonesReferenceResolver(plugin, mReloadRequesters, mReloadingState.mNamespaces.keySet()).resolve());
-		MMLog.fine("[Zone Reload] " + String.format("%13.9f", (System.nanoTime() - cpuNanos) / 1000000000.0) + "s Loading new data");
+		MMLog.debug("[Zone Reload] " + String.format("%13.9f", (System.nanoTime() - cpuNanos) / 1000000000.0) + "s Loading new data");
 
 		final Set<String> worldRegexes = new HashSet<>();
 		for (ZoneNamespace zoneNamespace : mReloadingState.mNamespaces.values()) {

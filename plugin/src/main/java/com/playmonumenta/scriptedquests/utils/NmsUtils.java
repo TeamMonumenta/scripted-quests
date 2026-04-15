@@ -2,7 +2,6 @@ package com.playmonumenta.scriptedquests.utils;
 
 import com.playmonumenta.scriptedquests.adapters.VersionAdapter;
 import com.playmonumenta.scriptedquests.adapters.VersionAdapter_unsupported;
-import java.util.logging.Logger;
 
 public class NmsUtils {
 	private static VersionAdapter mVersionAdapter = new VersionAdapter_unsupported();
@@ -11,7 +10,7 @@ public class NmsUtils {
 		return mVersionAdapter;
 	}
 
-	public static void loadVersionAdapter(Class<?> serverClass, Logger logger) {
+	public static void loadVersionAdapter(Class<?> serverClass) {
 		/* From https://github.com/mbax/AbstractionExamplePlugin */
 
 		String packageName = serverClass.getPackage().getName();
@@ -22,24 +21,22 @@ public class NmsUtils {
 			// Check if we have a valid adapter class at that location.
 			if (VersionAdapter.class.isAssignableFrom(clazz)) {
 				mVersionAdapter = (VersionAdapter) clazz.getConstructor().newInstance();
-				logger.info("Loaded NMS adapter for " + version);
+				MMLog.info("Loaded NMS adapter for " + version);
 			} else {
-				logger.severe("Somehow VersionAdapter is not assignable from " + clazz + ". NMS utilities will fail and throw NullPointerException's");
+				MMLog.severe("Somehow VersionAdapter is not assignable from " + clazz + ". NMS utilities will fail and throw NullPointerException's");
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
-			logger.severe("Server version " + version + " is not supported!");
-			logger.severe("Everything that relies on version-specific 'NMS' logic will behave incorrectly");
+			MMLog.severe("Server version " + version + " is not supported!", e);
+			MMLog.severe("Everything that relies on version-specific 'NMS' logic will behave incorrectly");
 			try {
 				Class<?> clazz = Class.forName("com.playmonumenta.scriptedquests.adapters.VersionAdapter_unsupported");
 				// Check if we have a valid adapter class at that location.
 				if (VersionAdapter.class.isAssignableFrom(clazz)) {
 					mVersionAdapter = (VersionAdapter) clazz.getConstructor().newInstance();
 				}
-				logger.severe("Loaded 'unsupported' version adapter, which should at least reduce the number of null pointer exceptions");
+				MMLog.severe("Loaded 'unsupported' version adapter, which should at least reduce the number of null pointer exceptions");
 			} catch (Exception ex) {
-				ex.printStackTrace();
-				logger.severe("Also failed to load generic unsupported adapter. There will be many null pointer exceptions.");
+				MMLog.severe("Also failed to load generic unsupported adapter. There will be many null pointer exceptions.", ex);
 			}
 		}
 	}

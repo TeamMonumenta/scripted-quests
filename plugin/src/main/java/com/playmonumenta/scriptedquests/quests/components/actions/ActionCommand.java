@@ -23,14 +23,14 @@ public class ActionCommand implements ActionBase {
 			mCommand = mCommand.substring(1);
 		}
 
-		MMLog.finer("Parsing ActionCommand '" + mCommand + "'");
+		MMLog.trace("Parsing ActionCommand '" + mCommand + "'");
 		String commandToTest = mCommand.replaceAll("@S", "dummy").replaceAll("@N", "00000000-0000-0000-0000-000000000000").replaceAll("@U", "00000000-0000-0000-0000-000000000000");
-		MMLog.finer("Testing ActionCommand with substitutions '" + commandToTest + "'");
+		MMLog.trace("Testing ActionCommand with substitutions '" + commandToTest + "'");
 		ParseResults<?> pr = NmsUtils.getVersionAdapter().parseCommand(commandToTest);
 		if (pr != null && pr.getReader().canRead()) {
 			throw new Exception("Invalid command: '" + mCommand + "'");
 		}
-		MMLog.fine("Successfully parsed ActionCommand '" + mCommand + "'");
+		MMLog.debug("Successfully parsed ActionCommand '" + mCommand + "'");
 	}
 
 	@Override
