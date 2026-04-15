@@ -82,7 +82,7 @@ public class Plugin extends JavaPlugin {
 		MMLog.init(getName());
 		com.playmonumenta.common.MMLogPaper.registerCommand(MMLog.getLog());
 
-		NmsUtils.loadVersionAdapter(this.getServer().getClass(), getLogger());
+		NmsUtils.loadVersionAdapter(this.getServer().getClass());
 
 		/*
 		 * CommandAPI commands which register directly and are usable in functions

@@ -62,7 +62,7 @@ public class QuestUtils {
 
 			listOfFiles = FileUtils.getFilesInDirectory(folderLocation, ".json");
 		} catch (IOException e) {
-			plugin.getLogger().severe("Caught exception trying to reload " + folderName + ": " + e);
+			MMLog.severe("Caught exception trying to reload " + folderName, e);
 			audience.sendMessage(Component.text("Caught exception trying to reload " + folderName + ": " + e, NamedTextColor.RED));
 			return;
 		}
