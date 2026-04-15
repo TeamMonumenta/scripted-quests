@@ -12,7 +12,7 @@ junit = "5.8.1"
 junit-platform = "1.8.1"
 mockito-junit = "5.8.0"
 mockbukkit = "3.9.0"
-monumenta-common = "a1f5bb3-SNAPSHOT"
+monumenta-common = "1.0.0"
 redissync = "6.0.0"
 
 [libraries]
