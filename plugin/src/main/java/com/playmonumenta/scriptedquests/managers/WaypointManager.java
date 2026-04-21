@@ -194,9 +194,7 @@ public class WaypointManager {
 					if (averageLoc == null) {
 						averageLoc = playerLoc.clone();
 					} else {
-						if (averageLoc.getWorld() != player.getWorld()) {
-							averageLoc.setWorld(player.getWorld());
-						}
+						averageLoc.setWorld(player.getWorld());
 					}
 					averageLoc = averageLoc.add(playerLoc).multiply(0.5d);
 					mPlayerAverageLocs.put(player.getUniqueId(), averageLoc);
