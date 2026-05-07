@@ -49,7 +49,7 @@ public class WorldRegexMatcher {
 	public boolean matches(World world, String worldRegex) {
 		Set<String> matches = mWorldPatternMatches.get(world.getName());
 		if (matches == null) {
-			MMLog.warning(
+			MMLog.severe(
 				"Falling back to slow regex .matches() to test unloaded world: '" + world.getName() + "' against regex: '" + worldRegex + "'",
 				new IllegalStateException("WorldRegexMatcher testing against an unloaded world")
 			);
