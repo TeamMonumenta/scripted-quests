@@ -11,7 +11,7 @@ import org.bukkit.World;
 
 public class WorldRegexMatcher {
 	private final Map<String, Pattern> mPatterns = new HashMap<>();
-	private final Map<World, Set<String>> mWorldPatternMatches = new HashMap<>();
+	private final Map<String, Set<String>> mWorldPatternMatches = new HashMap<>();
 
 	public WorldRegexMatcher(Set<String> worldRegexes) throws PatternSyntaxException {
 		for (String worldRegexStr : worldRegexes) {
@@ -25,7 +25,7 @@ public class WorldRegexMatcher {
 
 	public void onLoadWorld(World world) {
 		Set<String> matchingPatterns = new HashSet<>();
-		mWorldPatternMatches.put(world, matchingPatterns);
+		mWorldPatternMatches.put(world.getName(), matchingPatterns);
 
 		String worldName = world.getName();
 		for (Map.Entry<String, Pattern> entry : mPatterns.entrySet()) {
@@ -42,14 +42,17 @@ public class WorldRegexMatcher {
 	}
 
 	public void onUnloadWorld(World world) {
-		mWorldPatternMatches.remove(world);
+		mWorldPatternMatches.remove(world.getName());
 	}
 
 	// Only works for the patterns provided at matcher instantiation
 	public boolean matches(World world, String worldRegex) {
-		Set<String> matches = mWorldPatternMatches.get(world);
+		Set<String> matches = mWorldPatternMatches.get(world.getName());
 		if (matches == null) {
-			MMLog.warning("Falling back to slow regex .matches() to test world: '" + world.getName() + "' against unregistered regex: '" + worldRegex + "'");
+			MMLog.severe(
+				"Falling back to slow regex .matches() to test unloaded world: '" + world.getName() + "' against regex: '" + worldRegex + "'",
+				new IllegalStateException("WorldRegexMatcher testing against an unloaded world")
+			);
 			try {
 				return world.getName().matches(worldRegex);
 			} catch (PatternSyntaxException e) {
