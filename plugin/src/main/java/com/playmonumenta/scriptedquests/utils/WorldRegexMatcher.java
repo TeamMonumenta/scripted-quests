@@ -49,6 +49,10 @@ public class WorldRegexMatcher {
 	public boolean matches(World world, String worldRegex) {
 		Set<String> matches = mWorldPatternMatches.get(world.getName());
 		if (matches == null) {
+			if (Bukkit.getWorld(world.getName()) == null) {
+				// World is unloaded; no zone can contain an entity in an unloaded world
+				return false;
+			}
 			MMLog.severe(
 				"Falling back to slow regex .matches() to test unloaded world: '" + world.getName() + "' against regex: '" + worldRegex + "'",
 				new IllegalStateException("WorldRegexMatcher testing against an unloaded world")
