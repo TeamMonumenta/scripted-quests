@@ -109,6 +109,8 @@
 							"poi_biome",
 							"spawners",
 							"spawners_poi",
+							"bosses",
+							"dungeons",
 							"strikes",
 							"depths_rooms",
 							"zenith_rooms",
@@ -223,7 +225,8 @@
 												"sirius",
 												"huntsspoiled",
 												"huntsunspoiled",
-												"intruder"
+												"intruder",
+												"aurora"
 											]
 										},
 										{
