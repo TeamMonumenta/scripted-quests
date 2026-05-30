@@ -26,7 +26,9 @@ import org.bukkit.entity.Player;
 public class Music {
 	private static final MultiLiteralArgument whenArg = new MultiLiteralArgument("when", "now", "next");
 	private static final EntitySelectorArgument.ManyPlayers playersArg = new EntitySelectorArgument.ManyPlayers("players");
-	private static final SoundArgument.NamespacedKey pathArg = new SoundArgument.NamespacedKey("music path");
+	private static final SoundArgument.NamespacedKey pathArgPlay = new SoundArgument.NamespacedKey("music path");
+	private static final SoundArgument.NamespacedKey pathArgCancel = new SoundArgument.NamespacedKey("music path");
+	private static final SoundArgument.NamespacedKey pathArgIsPlaying = new SoundArgument.NamespacedKey("music path");
 	private static final DoubleArgument durationArg = new DoubleArgument("duration in seconds", 0.001);
 	private static final BooleanArgument loopArg = new BooleanArgument("is loop");
 	private static final MultiLiteralArgument categoryArg = new MultiLiteralArgument("category", Constants.SOUND_CATEGORY_BY_NAME.keySet().toArray(String[]::new));
@@ -43,7 +45,7 @@ public class Music {
 			.withArguments(new LiteralArgument("play"))
 			.withArguments(whenArg)
 			.withArguments(playersArg)
-			.withArguments(pathArg)
+			.withArguments(pathArgPlay)
 			.withArguments(durationArg)
 			.withOptionalArguments(loopArg)
 			.withOptionalArguments(categoryArg)
@@ -60,7 +62,7 @@ public class Music {
 			.withArguments(whenArg)
 			.withArguments(playersArg)
 			.withOptionalArguments(conditionArg)
-			.withOptionalArguments(pathArg)
+			.withOptionalArguments(pathArgCancel)
 			.executes(Music::runStop)
 			.register();
 
@@ -70,7 +72,7 @@ public class Music {
 			.withArguments(new LiteralArgument("isplaying"))
 			.withArguments(whenArg)
 			.withArguments(onePlayerArg)
-			.withArguments(pathArg)
+			.withArguments(pathArgIsPlaying)
 			.executes(Music::runIsPlaying)
 			.register();
 	}
@@ -87,7 +89,7 @@ public class Music {
 			}
 		}
 
-		NamespacedKey musicPath = args.getByArgument(pathArg);
+		NamespacedKey musicPath = args.getByArgument(pathArgPlay);
 		double duration = args.getByArgument(durationArg);
 		boolean isLoop = args.getByArgumentOrDefault(loopArg, false);
 
@@ -119,7 +121,7 @@ public class Music {
 		}
 
 		String conditionType = args.getByArgument(conditionArg);
-		NamespacedKey musicPathKey = args.getByArgument(pathArg);
+		NamespacedKey musicPathKey = args.getByArgument(pathArgCancel);
 		if (conditionType != null && musicPathKey != null) {
 			boolean conditionIsUnless = "unless".equals(conditionType);
 			String musicPath = musicPathKey.asString();
@@ -164,7 +166,7 @@ public class Music {
 			}
 		}
 
-		String musicPath = args.getByArgument(pathArg).asString();
+		String musicPath = args.getByArgument(pathArgIsPlaying).asString();
 
 		Song song;
 		if (isPlayingNow) {
