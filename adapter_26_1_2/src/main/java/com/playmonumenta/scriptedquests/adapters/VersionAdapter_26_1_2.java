@@ -4,6 +4,9 @@ import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.papermc.paper.adventure.AdventureComponent;
 import io.papermc.paper.adventure.PaperAdventure;
+import java.lang.reflect.Field;
+import java.util.Locale;
+import java.util.UUID;
 import net.kyori.adventure.text.Component;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -27,9 +30,6 @@ import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Locale;
-import java.util.UUID;
 
 @SuppressWarnings("unchecked")
 public class VersionAdapter_26_1_2 implements VersionAdapter {
@@ -65,9 +65,9 @@ public class VersionAdapter_26_1_2 implements VersionAdapter {
 	public Component resolveComponents(Component component, Player player) {
 		try {
 			ResolutionContext context = ResolutionContext.create(((CraftPlayer) player)
-				.getHandle().createCommandSourceStack()
-				.withSource(MinecraftServer.getServer())
-				.withPermission(PermissionSet.ALL_PERMISSIONS));
+					.getHandle().createCommandSourceStack()
+					.withSource(MinecraftServer.getServer())
+					.withPermission(PermissionSet.ALL_PERMISSIONS));
 			return PaperAdventure.asAdventure(ComponentUtils.resolve(context, new AdventureComponent(component).deepConverted()));
 		} catch (CommandSyntaxException e) {
 			e.printStackTrace();
@@ -76,11 +76,11 @@ public class VersionAdapter_26_1_2 implements VersionAdapter {
 	}
 
 	// https://linkie.shedaniel.dev/mappings?namespace=mojang_raw&version=1.20.4&search=CURRENT_EXECUTION_CONTEXT&translateMode=none
-	private static ThreadLocal<ExecutionContext<CommandSourceStack>> CURRENT_EXECUTION_CONTEXT;
+	private static final ThreadLocal<ExecutionContext<CommandSourceStack>> CURRENT_EXECUTION_CONTEXT;
 
 	static {
 		try {
-			final var field = Commands.class.getDeclaredField("f");
+			final Field field = Commands.class.getDeclaredField("CURRENT_EXECUTION_CONTEXT");
 			field.setAccessible(true);
 			CURRENT_EXECUTION_CONTEXT = (ThreadLocal<ExecutionContext<CommandSourceStack>>) field.get(null);
 		} catch (NoSuchFieldException | IllegalAccessException e) {
@@ -90,7 +90,7 @@ public class VersionAdapter_26_1_2 implements VersionAdapter {
 
 	private void dispatchCommandInNewContext(Runnable exec) {
 		// We can't actually use Commands.performCommand directly here, since that would break if
-		// runConsoleCommandSilently is ran *while* handling another command. This is because minecraft will enqueue
+		// runConsoleCommandSilently is run *while* handling another command. This is because minecraft will enqueue
 		// the command we want to run into the current active ExecutionContext, rather than immediately performing the
 		// command. Thus, the command we intend to run will be executed after the current command has completed, rather
 		// than while the current command is running. We therefore need to modify the behavior here.
@@ -106,8 +106,8 @@ public class VersionAdapter_26_1_2 implements VersionAdapter {
 	@Override
 	public void executeCommandAsBlock(Block block, String command) {
 		CommandBlockEntity tileEntity = new CommandBlockEntity(
-			((CraftBlock) block).getPosition(),
-			((CraftBlockState) block.getState()).getHandle()
+				((CraftBlock) block).getPosition(),
+				((CraftBlockState) block.getState()).getHandle()
 		);
 
 		final ServerLevel level = tileEntity.getCommandBlock().getLevel();

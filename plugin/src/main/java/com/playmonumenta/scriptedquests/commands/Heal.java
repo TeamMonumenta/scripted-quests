@@ -27,7 +27,7 @@ public class Heal {
 				for (Entity entity : entities) {
 					if (entity instanceof Damageable damageable) {
 						if (damageable instanceof Attributable attributable) {
-							AttributeInstance attribute = attributable.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+							AttributeInstance attribute = attributable.getAttribute(Attribute.MAX_HEALTH);
 							if (attribute != null && (damageable.getHealth() + amount) > attribute.getValue()) {
 								damageable.setHealth(attribute.getValue());
 							} else {
