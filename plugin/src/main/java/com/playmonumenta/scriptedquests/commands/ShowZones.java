@@ -32,6 +32,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ShowZones {
@@ -105,7 +106,7 @@ public class ShowZones {
 				mShownInfo.remove(mPlayerUuid);
 				return;
 			}
-			Location loc = player.getLocation();
+			@NotNull Location loc = player.getLocation();
 			World world = loc.getWorld();
 			Vector vec = loc.toVector();
 

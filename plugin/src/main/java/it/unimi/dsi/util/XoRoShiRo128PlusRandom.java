@@ -158,6 +158,18 @@ public class XoRoShiRo128PlusRandom extends Random {
 		}
 	}
 
+	/** The jump function for this generator. It is equivalent to 2<sup>64</sup>
+	 * calls to {@link #nextLong()}; it can be used to generate 2<sup>64</sup>
+	 * non-overlapping subsequences for parallel computations.
+	 *
+	 * @return this generator.
+	 * @see #copy()
+	 */
+
+	public XoRoShiRo128PlusRandom jump() {
+		return jump(JUMP);
+	}
+
 	protected XoRoShiRo128PlusRandom jump(final long[] jump) {
 		long s0 = 0;
 		long s1 = 0;
@@ -178,18 +190,6 @@ public class XoRoShiRo128PlusRandom extends Random {
 
 
 	private static final long[] JUMP = { 0xdf900294d8f554a5L, 0x170865df4b3201fcL };
-
-	/** The jump function for this generator. It is equivalent to 2<sup>64</sup>
-	 * calls to {@link #nextLong()}; it can be used to generate 2<sup>64</sup>
-	 * non-overlapping subsequences for parallel computations.
-	 *
-	 * @return this generator.
-	 * @see #copy()
-	 */
-
-	public XoRoShiRo128PlusRandom jump() {
-		return jump(JUMP);
-	}
 
 	private static final long[] LONG_JUMP = { 0xd2a98b26625eee7bL, 0xdddf9b1090aa7ac1L };
 
