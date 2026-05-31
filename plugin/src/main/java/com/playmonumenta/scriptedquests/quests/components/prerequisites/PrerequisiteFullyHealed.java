@@ -15,7 +15,7 @@ public class PrerequisiteFullyHealed implements PrerequisiteBase {
 	@Override
 	public boolean prerequisiteMet(QuestContext context) {
 		if (context.getEntityUsedForPrerequisites() instanceof LivingEntity le) {
-			return mValue == (le.getHealth() > le.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() - 0.5);
+			return mValue == (le.getHealth() > le.getAttribute(Attribute.MAX_HEALTH).getValue() - 0.5);
 		}
 		return mValue;
 	}

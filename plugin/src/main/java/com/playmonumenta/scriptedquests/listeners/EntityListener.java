@@ -101,7 +101,7 @@ public class EntityListener implements Listener {
 		if (
 			potionEffect != null
 				&& event.getAction().equals(EntityPotionEffectEvent.Action.ADDED)
-				&& !potionEffect.getType().equals(PotionEffectType.HEAL)
+				&& !potionEffect.getType().equals(PotionEffectType.INSTANT_HEALTH)
 		) {
 			cancelIfNpc(event.getEntity(), event);
 		}
