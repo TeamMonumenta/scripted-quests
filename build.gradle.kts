@@ -15,7 +15,7 @@ monumenta {
 		"26.1.2",
 		depends = listOf("CommandAPI", "MonumentaCommon"),
 		softDepends = listOf("dynmap", "MonumentaRedisSync", "ProtocolLib"),
-		apiJarVersion = "26.1.2-R0.1-SNAPSHOT",
+		apiJarVersion = "26.1.2.build.66-stable",
 		action = {
 			commands {
 				register("questtrigger") {
