@@ -141,17 +141,10 @@ public class ShowZones {
 					}
 					String zoneName = zone.getName();
 					Color color = ZoneUtils.getBukkitColor(mNamespaceName, zoneName);
-					double r = (1.0 + color.getRed()) / 256.0;
-					double g = (1.0 + color.getGreen()) / 256.0;
-					double b = (1.0 + color.getBlue()) / 256.0;
-					player.spawnParticle(Particle.SPELL_MOB,
-						                 x,
-						                 y,
-						                 z,
-						                 0,
-						                 r,
-						                 g,
-						                 b);
+					player.spawnParticle(Particle.EFFECT,
+						                new Location(player.getWorld(), x, y, z),
+										 0,
+						                 new Particle.Spell(color, 0));
 				}
 
 				/*
@@ -285,7 +278,7 @@ public class ShowZones {
 								continue;
 							}
 
-							player.spawnParticle(Particle.REDSTONE, x, y, z, 1, 0.0, 0.0, 0.0, dustOptions);
+							player.spawnParticle(Particle.DUST, x, y, z, 1, 0.0, 0.0, 0.0, dustOptions);
 						}
 					}
 
@@ -396,7 +389,7 @@ public class ShowZones {
 							showParticle = true;
 						}
 						if (showParticle) {
-							player.spawnParticle(Particle.REDSTONE, x, y, z, 1, 0.0, 0.0, 0.0, dustOptions);
+							player.spawnParticle(Particle.DUST, x, y, z, 1, 0.0, 0.0, 0.0, dustOptions);
 						}
 					}
 				}

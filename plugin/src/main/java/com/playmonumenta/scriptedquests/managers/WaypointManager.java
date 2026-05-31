@@ -170,7 +170,7 @@ public class WaypointManager {
 								Vector offset = new Vector(WAYPOINT_DEST_ANIM_RADIUS * Math.cos(mTheta),
 														   mY,
 														   WAYPOINT_DEST_ANIM_RADIUS * Math.sin(mTheta));
-								player.spawnParticle(Particle.SPELL_INSTANT, targetLoc.clone().add(offset), 1, 0.01, 0.01, 0.01, 0);
+								player.spawnParticle(Particle.INSTANT_EFFECT, targetLoc.clone().add(offset), 1, 0.01, 0.01, 0.01, 0);
 
 								mY += 0.1;
 								mTheta += Math.PI / 10;
@@ -212,7 +212,7 @@ public class WaypointManager {
 									Location particleLoc = player.getLocation().add(0, 0.2, 0);
 									Vector dir = getDirectionTo(targetLoc.clone().add(0, 0.2, 0), particleLoc);
 									particleLoc.add(dir.multiply(8));
-									player.spawnParticle(Particle.VILLAGER_HAPPY, particleLoc, 1, 0.1, 0.1, 0.1, 1);
+									player.spawnParticle(Particle.HAPPY_VILLAGER, particleLoc, 1, 0.1, 0.1, 0.1, 1);
 									if (mTicks >= WAYPOINT_DELAY / 3) {
 										this.cancel();
 									}
@@ -241,7 +241,7 @@ public class WaypointManager {
 									mTicks += WAYPOINT_SLOW_BEAM_TICK_PERIOD;
 									particleLoc.add(dir);
 									if (RAND.nextFloat() > 0.5) {
-										player.spawnParticle(Particle.VILLAGER_HAPPY, particleLoc, 1, 0.1, 0.1, 0.1, 1);
+										player.spawnParticle(Particle.HAPPY_VILLAGER, particleLoc, 1, 0.1, 0.1, 0.1, 1);
 									}
 								}
 							}.runTaskTimer(mPlugin, 0, WAYPOINT_SLOW_BEAM_TICK_PERIOD);
