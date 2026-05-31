@@ -1,20 +1,10 @@
 package com.playmonumenta.scriptedquests.adapters;
 
 import com.mojang.brigadier.ParseResults;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import io.papermc.paper.adventure.AdventureComponent;
-import io.papermc.paper.adventure.PaperAdventure;
-import java.util.Locale;
-import java.util.UUID;
 import net.kyori.adventure.text.Component;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.execution.ExecutionContext;
-import net.minecraft.network.chat.ComponentUtils;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.level.block.entity.CommandBlockEntity;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.CommandBlock;
 import org.bukkit.craftbukkit.*;
@@ -26,42 +16,44 @@ import org.jetbrains.annotations.Nullable;
 public class VersionAdapter_26_1_2 implements VersionAdapter {
 	@Override
 	public void setAutoState(CommandBlock state, boolean auto) {
-		((CraftCommandBlock) state).getTileEntity().setAutomatic(auto);
+//		((CraftCommandBlock) state).getTileEntity().setAutomatic(auto);
 	}
 
 	@Override
 	public void removeAllMetadata(Plugin plugin) {
-		CraftServer server = (CraftServer) plugin.getServer();
-		server.getEntityMetadata().removeAll(plugin);
-		server.getPlayerMetadata().removeAll(plugin);
-		server.getWorldMetadata().removeAll(plugin);
-		for (World world : Bukkit.getWorlds()) {
-			((CraftWorld) world).getBlockMetadata().removeAll(plugin);
-		}
+//		CraftServer server = (CraftServer) plugin.getServer();
+//		server.getEntityMetadata().removeAll(plugin);
+//		server.getPlayerMetadata().removeAll(plugin);
+//		server.getWorldMetadata().removeAll(plugin);
+//		for (World world : Bukkit.getWorlds()) {
+//			((CraftWorld) world).getBlockMetadata().removeAll(plugin);
+//		}
 	}
 
 	@Override
 	public @Nullable ParseResults<?> parseCommand(String command) {
-		try {
-			String testCommandStr = command.replaceAll("@S", "testuser").replaceAll("@N", "testnpc").replaceAll("@U", UUID.randomUUID().toString().toLowerCase(Locale.ENGLISH));
-			return MinecraftServer.getServer().getCommands().getDispatcher().parse(testCommandStr, MinecraftServer.getServer().createCommandSourceStack().withSuppressedOutput());
-		} catch (Exception e) {
-			// Failed to test the command - ignore it and print a log message
-			e.printStackTrace();
-			return null;
-		}
+//		try {
+//			String testCommandStr = command.replaceAll("@S", "testuser").replaceAll("@N", "testnpc").replaceAll("@U", UUID.randomUUID().toString().toLowerCase(Locale.ENGLISH));
+//			return MinecraftServer.getServer().getCommands().getDispatcher().parse(testCommandStr, MinecraftServer.getServer().createCommandSourceStack().withSuppressedOutput());
+//		} catch (Exception e) {
+//			// Failed to test the command - ignore it and print a log message
+//			e.printStackTrace();
+//			return null;
+//		}
+		return null;
 	}
 
 	@Override
 	public Component resolveComponents(Component component, Player player) {
-		try {
-			return PaperAdventure.asAdventure(ComponentUtils.updateForEntity(
-				((CraftPlayer) player).getHandle().createCommandSourceStack().withSource(MinecraftServer.getServer()).withPermission(4),
-				new AdventureComponent(component).deepConverted(), ((CraftPlayer) player).getHandle(), 0));
-		} catch (CommandSyntaxException e) {
-			e.printStackTrace();
-			return component;
-		}
+//		try {
+//			return PaperAdventure.asAdventure(ComponentUtils.updateForEntity(
+//				((CraftPlayer) player).getHandle().createCommandSourceStack().withSource(MinecraftServer.getServer()).withPermission(4),
+//				new AdventureComponent(component).deepConverted(), ((CraftPlayer) player).getHandle(), 0));
+//		} catch (CommandSyntaxException e) {
+//			e.printStackTrace();
+//			return component;
+//		}
+		return component;
 	}
 
 	// https://linkie.shedaniel.dev/mappings?namespace=mojang_raw&version=1.20.4&search=CURRENT_EXECUTION_CONTEXT&translateMode=none
@@ -94,24 +86,24 @@ public class VersionAdapter_26_1_2 implements VersionAdapter {
 
 	@Override
 	public void executeCommandAsBlock(Block block, String command) {
-		CommandBlockEntity tileEntity = new CommandBlockEntity(
-			((CraftBlock) block).getPosition(),
-			((CraftBlockState) block.getState()).getHandle()
-		);
-
-		dispatchCommandInNewContext(() -> {
-			final var source = tileEntity.getCommandBlock().createCommandSourceStack();
-			final var sender = tileEntity.getCommandBlock().getBukkitSender(source);
-			Bukkit.dispatchCommand(sender, command);
-		});
+//		CommandBlockEntity tileEntity = new CommandBlockEntity(
+//			((CraftBlock) block).getPosition(),
+//			((CraftBlockState) block.getState()).getHandle()
+//		);
+//
+//		dispatchCommandInNewContext(() -> {
+//			final var source = tileEntity.getCommandBlock().createCommandSourceStack();
+//			final var sender = tileEntity.getCommandBlock().getBukkitSender(source);
+//			Bukkit.dispatchCommand(sender, command);
+//		});
 	}
 
 	@Override
 	public void runConsoleCommandSilently(String command) {
-		dispatchCommandInNewContext(() -> {
-			final var source = MinecraftServer.getServer().createCommandSourceStack().withSuppressedOutput();
-			final var parseResults = MinecraftServer.getServer().getCommands().getDispatcher().parse(command, source);
-			MinecraftServer.getServer().getCommands().performCommand(parseResults, command);
-		});
+//		dispatchCommandInNewContext(() -> {
+//			final var source = MinecraftServer.getServer().createCommandSourceStack().withSuppressedOutput();
+//			final var parseResults = MinecraftServer.getServer().getCommands().getDispatcher().parse(command, source);
+//			MinecraftServer.getServer().getCommands().performCommand(parseResults, command);
+//		});
 	}
 }

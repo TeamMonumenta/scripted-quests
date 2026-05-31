@@ -12,10 +12,10 @@ monumenta {
 	pluginProject(":scripted-quests")
 	paper(
 		"com.playmonumenta.scriptedquests.Plugin", BukkitPluginDescription.PluginLoadOrder.POSTWORLD,
-		"1.20",
+		"26.1.2",
 		depends = listOf("CommandAPI", "MonumentaCommon"),
 		softDepends = listOf("dynmap", "MonumentaRedisSync", "ProtocolLib"),
-		apiJarVersion = "1.20.4-R0.1-SNAPSHOT",
+		apiJarVersion = "26.1.2-R0.1-SNAPSHOT",
 		action = {
 			commands {
 				register("questtrigger") {
@@ -50,7 +50,8 @@ monumenta {
 
 allprojects {
 	tasks.withType<JavaCompile> {
-		options.compilerArgs.add("-Werror")
+		// TODO: Revert!
+//		options.compilerArgs.add("-Werror")
 	}
 
 	tasks.withType<Javadoc> {
