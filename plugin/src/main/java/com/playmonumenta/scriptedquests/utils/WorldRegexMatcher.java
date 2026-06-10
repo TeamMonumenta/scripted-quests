@@ -12,6 +12,7 @@ import org.bukkit.World;
 public class WorldRegexMatcher {
 	private final Map<String, Pattern> mPatterns = new HashMap<>();
 	private final Map<String, Set<String>> mWorldPatternMatches = new HashMap<>();
+	private final Map<String, Set<String>> mPatternWorldMatches = new HashMap<>();
 
 	public WorldRegexMatcher(Set<String> worldRegexes) throws PatternSyntaxException {
 		for (String worldRegexStr : worldRegexes) {
@@ -38,11 +39,20 @@ public class WorldRegexMatcher {
 
 			String patternId = entry.getKey();
 			matchingPatterns.add(patternId);
+
+			Set<String> set = mPatternWorldMatches.getOrDefault(patternId, new HashSet<>());
+			set.add(world.getName());
+			mPatternWorldMatches.put(patternId, set);
 		}
 	}
 
 	public void onUnloadWorld(World world) {
 		mWorldPatternMatches.remove(world.getName());
+		mPatternWorldMatches.values().forEach(set -> set.remove(world.getName()));
+	}
+
+	public Set<String> getAllWorldMatches(String worldRegex) {
+		return mPatternWorldMatches.getOrDefault(worldRegex, new HashSet<>());
 	}
 
 	// Only works for the patterns provided at matcher instantiation
@@ -65,9 +75,9 @@ public class WorldRegexMatcher {
 
 	public boolean matches(String worldName, String worldRegex) {
 		if (worldRegex == null
-				|| worldRegex.isEmpty()
-				|| worldRegex.equals(".*")
-				|| worldRegex.equals(worldName)
+			|| worldRegex.isEmpty()
+			|| worldRegex.equals(".*")
+			|| worldRegex.equals(worldName)
 		) {
 			return true;
 		}
