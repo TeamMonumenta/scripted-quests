@@ -1,0 +1,18 @@
+############################################
+#
+# Code owners, used to identify good reviewers for files,
+# not required reviewers. For the purposes of pre-update
+# reviews.
+#
+############################################
+
+plugin/src/main/java/com/playmonumenta/scriptedquests/commands/DebugZones.java @NickNackGus
+plugin/src/main/java/com/playmonumenta/scriptedquests/commands/ShowZones.java @NickNackGus
+plugin/src/main/java/com/playmonumenta/scriptedquests/listeners/ZoneEventListener.java @NickNackGus
+plugin/src/main/java/com/playmonumenta/scriptedquests/managers/ZonePropertyManager.java @NickNackGus
+plugin/src/main/java/com/playmonumenta/scriptedquests/quests/ZoneProperty.java @NickNackGus
+plugin/src/main/java/com/playmonumenta/scriptedquests/zones/* @NickNackGus
+plugin/src/main/java/com/playmonumenta/scriptedquests/utils/WorldRegexMatcher.java @NickNackGus
+plugin/src/main/java/com/playmonumenta/scriptedquests/utils/ZoneUtils.java @NickNackGus
+plugin/src/test/java/com/playmonumenta/scriptedquests/zones*/ @NickNackGus
+plugin/src/test/resources/zone_namespaces/* @NickNackGus
