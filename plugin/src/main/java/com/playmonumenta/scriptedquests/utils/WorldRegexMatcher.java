@@ -3,6 +3,7 @@ package com.playmonumenta.scriptedquests.utils;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -48,7 +49,7 @@ public class WorldRegexMatcher {
 
 	public void onUnloadWorld(World world) {
 		mWorldPatternMatches.remove(world.getName())
-			.forEach(p -> mPatternWorldMatches.get(p).remove(world.getName()));
+			.forEach(p -> Objects.requireNonNull(mPatternWorldMatches.get(p)).remove(world.getName()));
 	}
 
 	// Only works for the patterns provided at matcher instantiation
