@@ -9,7 +9,6 @@ public class RaceStartEvent extends PlayerEvent {
 	private static final HandlerList HANDLERS = new HandlerList();
 
 	private final Race race;
-	private boolean mCancelled = false;
 
 	public RaceStartEvent(Player player, Race race) {
 		super(player);
