@@ -7,17 +7,23 @@ import org.bukkit.event.player.PlayerEvent;
 public class RaceStartEvent extends PlayerEvent {
 	private static final HandlerList HANDLERS = new HandlerList();
 
-	private final Race race;
+	private final Race mRace;
 
 	public RaceStartEvent(Player player, Race race) {
 		super(player);
-		this.race = race;
+		mRace = race;
 	}
 
-	public Race getRace() { return race; }
+	public Race getRace() {
+		return mRace;
+	}
 
 	@Override
-	public HandlerList getHandlers() { return HANDLERS;	}
+	public HandlerList getHandlers() {
+		return HANDLERS;
+	}
 
-	public static HandlerList getHandlerList() { return HANDLERS; }
+	public static HandlerList getHandlerList() {
+		return HANDLERS;
+	}
 }
