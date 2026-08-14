@@ -47,6 +47,7 @@ import org.jetbrains.annotations.Nullable;
 public class Plugin extends JavaPlugin {
 	private static @Nullable Plugin INSTANCE = null;
 
+	private boolean mInitialized = false;
 	private @MonotonicNonNull FileConfiguration mConfig;
 	private @MonotonicNonNull File mConfigFile;
 	public @Nullable Boolean mShowTimerNames = null;
@@ -177,7 +178,6 @@ public class Plugin extends JavaPlugin {
 		Objects.requireNonNull(getCommand("questTrigger")).setExecutor(new QuestTrigger(this));
 
 		ClientChatProtocol.initialize(this);
-		mZoneFileManager.doReload();
 
 		/* Load the config 1 tick later to let other plugins load */
 		new BukkitRunnable() {
@@ -185,6 +185,7 @@ public class Plugin extends JavaPlugin {
 			public void run() {
 				reloadConfig(null);
 				mZoneFileManager.reload(Plugin.this, Bukkit.getConsoleSender());
+				mInitialized = true;
 			}
 		}.runTaskLater(this, 1);
 	}
@@ -202,6 +203,7 @@ public class Plugin extends JavaPlugin {
 		// Run all pending delayed commands
 		ClientChatProtocol.getInstance().deinitialize();
 		mScheduledFunctionsManager.cancel();
+		mInitialized = false;
 
 		INSTANCE = null;
 	}
@@ -294,6 +296,10 @@ public class Plugin extends JavaPlugin {
 			throw new RuntimeException("Attempted to access ScriptedQuests plugin before it loaded.");
 		}
 		return INSTANCE;
+	}
+
+	public static boolean isInitialized() {
+		return getInstance().mInitialized;
 	}
 
 	/** @deprecated Use {@link com.playmonumenta.scriptedquests.utils.MMLog} static methods instead. */

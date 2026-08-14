@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -26,6 +28,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerAnimationType;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -225,6 +228,13 @@ public class PlayerListener implements Listener {
 					player.removeMetadata(Constants.PLAYER_RESPAWN_ACTIONS_METAKEY, mPlugin);
 				}
 			}.runTaskLater(mPlugin, 1);
+		}
+	}
+
+	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+	public void playerPreLoginEvent(AsyncPlayerPreLoginEvent event) {
+		if (!Plugin.isInitialized()) {
+			event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, Component.text("That shard is still loading, try again soon!", NamedTextColor.YELLOW));
 		}
 	}
 

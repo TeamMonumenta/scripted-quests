@@ -89,7 +89,7 @@ public class ZoneFileManager {
 		} while (!mQueuedReloadRequesters.isEmpty());
 	}
 
-	public void doReload() {
+	private void doReload() {
 		MMLog.debug("[Zone Reload] Begin");
 		Plugin plugin = Plugin.getInstance();
 		mQueuedReloadRequesters.add(Bukkit.getConsoleSender());
