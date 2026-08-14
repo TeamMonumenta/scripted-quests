@@ -175,6 +175,9 @@ public class Race {
 		}
 
 		mPlayer.addScoreboardTag(RaceManager.PLAYER_RACE_TAG);
+		Bukkit.getPluginManager().callEvent(
+			new RaceStartEvent(mPlayer, this)
+		);
 
 		mStartTime = System.currentTimeMillis();
 		mMaxTime = mTimes.get(mTimes.size() - 1).getTime();
