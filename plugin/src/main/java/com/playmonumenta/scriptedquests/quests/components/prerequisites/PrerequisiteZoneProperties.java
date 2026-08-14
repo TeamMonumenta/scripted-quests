@@ -3,10 +3,10 @@ package com.playmonumenta.scriptedquests.quests.components.prerequisites;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.playmonumenta.common.zones.Zone;
+import com.playmonumenta.common.zones.ZoneFragment;
+import com.playmonumenta.common.zones.ZoneManager;
 import com.playmonumenta.scriptedquests.quests.QuestContext;
-import com.playmonumenta.scriptedquests.zones.Zone;
-import com.playmonumenta.scriptedquests.zones.ZoneFragment;
-import com.playmonumenta.scriptedquests.zones.ZoneManager;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,7 +33,7 @@ public class PrerequisiteZoneProperties implements PrerequisiteBase {
 			Set<String> namespaceProps = new HashSet<>();
 			Set<String> namespaceNotProps = new HashSet<>();
 
-			if (jsonNamespaceProps.size() == 0) {
+			if (jsonNamespaceProps.isEmpty()) {
 				requiredNamespaces.add(namespaceName);
 				continue;
 			}

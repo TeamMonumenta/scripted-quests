@@ -1,9 +1,9 @@
 package com.playmonumenta.scriptedquests.managers;
 
+import com.playmonumenta.common.event.ZonePropertyChangeEvent;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.ZoneProperty;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
-import com.playmonumenta.scriptedquests.zones.ZonePropertyChangeEvent;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;

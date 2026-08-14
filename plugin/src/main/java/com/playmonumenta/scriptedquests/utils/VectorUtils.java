@@ -6,25 +6,19 @@ import org.bukkit.util.Vector;
 
 public class VectorUtils {
 	public static double vectorAxis(Vector vector, Axis axis) {
-		switch (axis) {
-		case X:
-			return vector.getX();
-		case Z:
-			return vector.getZ();
-		default:
-			return vector.getY();
-		}
+		return switch (axis) {
+			case X -> vector.getX();
+			case Z -> vector.getZ();
+			default -> vector.getY();
+		};
 	}
 
 	public static double vectorAxis(Location loc, Axis axis) {
-		switch (axis) {
-		case X:
-			return loc.getX();
-		case Z:
-			return loc.getZ();
-		default:
-			return loc.getY();
-		}
+		return switch (axis) {
+			case X -> loc.getX();
+			case Z -> loc.getZ();
+			default -> loc.getY();
+		};
 	}
 
 	public static void vectorAxis(Vector vector, Axis axis, double value) {

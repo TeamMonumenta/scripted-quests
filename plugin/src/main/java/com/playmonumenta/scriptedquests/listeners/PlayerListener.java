@@ -9,7 +9,6 @@ import com.playmonumenta.scriptedquests.quests.QuestDeath.DeathActions;
 import com.playmonumenta.scriptedquests.quests.components.DeathLocation;
 import com.playmonumenta.scriptedquests.trades.NpcTrader;
 import com.playmonumenta.scriptedquests.utils.MetadataUtils;
-import com.playmonumenta.scriptedquests.zones.ZoneManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -248,9 +247,6 @@ public class PlayerListener implements Listener {
 
 		// Stop racing (if applicable)
 		mPlugin.mRaceManager.cancelRace(player);
-
-		// Remove all zone properties from the player
-		ZoneManager.getInstance().unregisterPlayer(player);
 
 		// Stop any scheduled music for this player
 		SongManager.onLogout(player);

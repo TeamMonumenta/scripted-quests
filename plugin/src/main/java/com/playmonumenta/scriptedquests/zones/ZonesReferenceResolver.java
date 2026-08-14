@@ -4,6 +4,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import com.playmonumenta.common.zones.Zone;
+import com.playmonumenta.common.zones.ZoneNamespace;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
@@ -17,6 +19,7 @@ import java.util.TreeSet;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
 public class ZonesReferenceResolver {
@@ -186,12 +189,16 @@ public class ZonesReferenceResolver {
 
 			referenceCheck(audience);
 
-			List<JsonObject> zoneObjects = new ArrayList<>();
+			boolean hidden = mMainFiles.getFirst().mHidden;
+			ZoneNamespace zoneNamespace = new ZoneNamespace(mName, hidden);
+
 			for (ZoneNamespaceFile zoneNamespaceFile : mMainFiles) {
-				zoneObjects.addAll(zoneNamespaceFile.resolve(mRefs, null));
+				for (JsonObject zoneObject : zoneNamespaceFile.resolve(mRefs, null)) {
+					zoneNamespace.addZone(constructZoneFromJson(zoneNamespace, zoneObject));
+				}
 			}
 
-			return new ZoneNamespace(mName, mMainFiles.get(0).mHidden, zoneObjects);
+			return zoneNamespace;
 		}
 
 		private void referenceCheck(Audience audience) throws Exception {
@@ -230,13 +237,93 @@ public class ZonesReferenceResolver {
 		}
 	}
 
+	private static Zone constructZoneFromJson(ZoneNamespace namespace, JsonObject object) throws Exception {
+		if (namespace == null) {
+			throw new Exception("namespace may not be null.");
+		}
+		if (object == null) {
+			throw new Exception("object may not be null.");
+		}
+
+		Double[] corners = new Double[6];
+		@Nullable String name;
+
+		// Load the zone name
+		@Nullable JsonElement nameElement = object.get("name");
+		if (nameElement == null) {
+			throw new Exception("Failed to parse 'name'");
+		}
+		name = nameElement.getAsString();
+		if (name == null || name.isEmpty()) {
+			throw new Exception("Failed to parse 'name'");
+		}
+
+		// This gets inserted from the ZoneNamespace file if missing from the zone JSON
+		@Nullable JsonElement worldElement = object.get("world_name");
+		if (worldElement == null) {
+			throw new Exception("Failed to find inserted 'world_name'");
+		}
+		@Nullable String worldRegexStr = worldElement.getAsString();
+		if (worldRegexStr == null || worldRegexStr.isEmpty()) {
+			throw new Exception("Failed to parse 'world_name'");
+		}
+
+		// Load the zone location
+		if (!(object.get("location") instanceof JsonObject locationJson)) {
+			throw new Exception("Failed to parse 'location'");
+		}
+		for (Map.Entry<String, JsonElement> ent : locationJson.entrySet()) {
+			String key = ent.getKey();
+			JsonElement value = ent.getValue();
+			switch (key) {
+				case "x1" -> corners[0] = value.getAsDouble();
+				case "y1" -> corners[1] = value.getAsDouble();
+				case "z1" -> corners[2] = value.getAsDouble();
+				case "x2" -> corners[3] = value.getAsDouble();
+				case "y2" -> corners[4] = value.getAsDouble();
+				case "z2" -> corners[5] = value.getAsDouble();
+				default -> throw new Exception("Unknown location key: '" + key + "'");
+			}
+		}
+		for (Double cornerAxis : corners) {
+			if (cornerAxis == null) {
+				throw new Exception("Location prereq must have x1 x2 y1 y2 z1 and z2");
+			}
+		}
+		Vector pos1 = new Vector(corners[0], corners[1], corners[2]);
+		Vector pos2 = new Vector(corners[3], corners[4], corners[5]);
+
+		// Load the zone properties
+		@Nullable JsonElement propertiesElement = object.get("properties");
+		List<String> rawProperties = getRawZoneProperties(propertiesElement);
+		Set<String> properties = Plugin.getInstance().mZonePropertyGroupManager.resolveProperties(namespace.getName(), rawProperties);
+
+		return new Zone(namespace, worldRegexStr, pos1, pos2, name, properties);
+	}
+
+	public static List<String> getRawZoneProperties(@Nullable JsonElement propertiesElement) throws Exception {
+		if (!(propertiesElement instanceof JsonArray propertiesArray)) {
+			throw new Exception("Failed to parse 'properties'");
+		}
+		List<String> rawProperties = new ArrayList<>();
+		for (JsonElement element : propertiesArray) {
+			String propertyName = element.getAsString();
+			if (propertyName == null || propertyName.isBlank()) {
+				throw new Exception("Property may not be empty");
+			}
+			rawProperties.add(propertyName);
+		}
+
+		return rawProperties;
+	}
+
 	private final Audience mAudience;
 	private final Set<String> mPluginNamespaces;
 	private final Map<String, NamespaceResolver> mNamespaceResolvers = new HashMap<>();
 
-	protected ZonesReferenceResolver(Plugin plugin, Audience audience, Set<String> pluginNamespaces) {
+	protected ZonesReferenceResolver(Plugin plugin, Audience audience, Set<String> otherPluginNamespaces) {
 		mAudience = audience;
-		mPluginNamespaces = pluginNamespaces;
+		mPluginNamespaces = otherPluginNamespaces;
 
 		QuestUtils.loadScriptedQuests(plugin, "zone_namespaces", mAudience, (object) -> {
 			// Load this file into a ZoneNamespaceFile object for further processing

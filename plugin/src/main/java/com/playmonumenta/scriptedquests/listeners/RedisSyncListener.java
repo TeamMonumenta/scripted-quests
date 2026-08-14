@@ -1,13 +1,11 @@
 package com.playmonumenta.scriptedquests.listeners;
 
 import com.google.gson.JsonObject;
+import com.playmonumenta.common.event.PlayerServerTransferEvent;
 import com.playmonumenta.redissync.MonumentaRedisSyncAPI;
 import com.playmonumenta.redissync.event.PlayerSaveEvent;
-import com.playmonumenta.redissync.event.PlayerServerTransferEvent;
-import com.playmonumenta.redissync.event.PlayerTransferFailEvent;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.managers.RaceManager;
-import com.playmonumenta.scriptedquests.zones.ZoneManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -27,13 +25,6 @@ public class RedisSyncListener implements Listener {
 	public void playerServerTransferEvent(PlayerServerTransferEvent event) {
 		Player player = event.getPlayer();
 		mPlugin.mRaceManager.cancelRace(player);
-		ZoneManager.getInstance().setTransferring(player, true);
-	}
-
-	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
-	public void playerTransferFailEvent(PlayerTransferFailEvent event) {
-		Player player = event.getPlayer();
-		ZoneManager.getInstance().setTransferring(player, false);
 	}
 
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)

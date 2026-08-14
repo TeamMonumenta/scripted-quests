@@ -1,9 +1,9 @@
 package com.playmonumenta.scriptedquests.listeners;
 
+import com.playmonumenta.common.zones.ZoneManager;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.ZoneProperty;
 import com.playmonumenta.scriptedquests.utils.MetadataUtils;
-import com.playmonumenta.scriptedquests.zones.ZoneManager;
 import com.playmonumenta.scriptedquests.zones.event.ZoneBlockBreakEvent;
 import com.playmonumenta.scriptedquests.zones.event.ZoneBlockInteractEvent;
 import com.playmonumenta.scriptedquests.zones.event.ZoneEntityDeathEvent;
@@ -90,7 +90,7 @@ public class ZoneEventListener implements Listener {
 		}
 	}
 
-	// Cancelled PlayerInteractEvents are jank. Checking for denied interactions is similarly jank.
+	// Canceled PlayerInteractEvents are jank. Checking for denied interactions is similarly jank.
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
 	public void playerInteractEvent(PlayerInteractEvent event) {
 		if (event.getPlayer().getGameMode() == GameMode.SPECTATOR) {

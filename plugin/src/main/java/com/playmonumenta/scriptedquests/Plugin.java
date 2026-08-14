@@ -27,7 +27,7 @@ import com.playmonumenta.scriptedquests.timers.CommandTimerManager;
 import com.playmonumenta.scriptedquests.utils.MMLog;
 import com.playmonumenta.scriptedquests.utils.MetadataUtils;
 import com.playmonumenta.scriptedquests.utils.NmsUtils;
-import com.playmonumenta.scriptedquests.zones.ZoneManager;
+import com.playmonumenta.scriptedquests.zones.ZoneFileManager;
 import com.playmonumenta.scriptedquests.zones.ZonePropertyGroupManager;
 import java.io.File;
 import java.util.Objects;
@@ -65,7 +65,7 @@ public class Plugin extends JavaPlugin {
 	public @MonotonicNonNull CommandTimerManager mTimerManager;
 	private @MonotonicNonNull TranslationsManager mTranslationsManager;
 	public @MonotonicNonNull CodeManager mCodeManager;
-	public @MonotonicNonNull ZoneManager mZoneManager;
+	public @MonotonicNonNull ZoneFileManager mZoneFileManager;
 	public @MonotonicNonNull ZonePropertyManager mZonePropertyManager;
 	public @MonotonicNonNull ZonePropertyGroupManager mZonePropertyGroupManager;
 	public @MonotonicNonNull WaypointManager mWaypointManager;
@@ -112,8 +112,6 @@ public class Plugin extends JavaPlugin {
 		GetDate.register();
 		Code.register(this);
 		SetVelocity.register();
-		DebugZones.register();
-		TestZone.register();
 		Heal.register();
 		Damage.register();
 		Cooldown.register();
@@ -122,7 +120,6 @@ public class Plugin extends JavaPlugin {
 		ReloadZones.register(this);
 		GuiCommand.register(this);
 		TradesCommand.register();
-		ShowZones.register(this);
 		Music.register();
 		InvalidateCompassCacheCommand.register(this);
 
@@ -148,7 +145,7 @@ public class Plugin extends JavaPlugin {
 		mRaceManager = new RaceManager(this);
 		mCodeManager = new CodeManager();
 		mZoneEventListener = new ZoneEventListener(this);
-		mZoneManager = ZoneManager.createInstance(this);
+		mZoneFileManager = ZoneFileManager.createInstance();
 		mZonePropertyManager = new ZonePropertyManager(this);
 		mZonePropertyGroupManager = new ZonePropertyGroupManager();
 		mTimerManager = new CommandTimerManager(this);
@@ -180,14 +177,14 @@ public class Plugin extends JavaPlugin {
 		Objects.requireNonNull(getCommand("questTrigger")).setExecutor(new QuestTrigger(this));
 
 		ClientChatProtocol.initialize(this);
-		mZoneManager.doReload(this, true);
+		mZoneFileManager.doReload();
 
 		/* Load the config 1 tick later to let other plugins load */
 		new BukkitRunnable() {
 			@Override
 			public void run() {
 				reloadConfig(null);
-				mZoneManager.reload(Plugin.this, Bukkit.getConsoleSender());
+				mZoneFileManager.reload(Plugin.this, Bukkit.getConsoleSender());
 			}
 		}.runTaskLater(this, 1);
 	}
@@ -232,7 +229,7 @@ public class Plugin extends JavaPlugin {
 	}
 
 	public void reloadZones(@Nullable CommandSender sender) {
-		mZoneManager.reload(this, sender);
+		mZoneFileManager.reload(this, sender);
 	}
 
 	private void reloadConfigYaml(@Nullable CommandSender sender) {
