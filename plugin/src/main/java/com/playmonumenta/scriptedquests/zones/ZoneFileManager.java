@@ -92,6 +92,7 @@ public class ZoneFileManager {
 	private void doReload() {
 		MMLog.debug("[Zone Reload] Begin");
 		Plugin plugin = Plugin.getInstance();
+		ZoneManager zoneManager = ZoneManager.getInstance();
 		mQueuedReloadRequesters.add(Bukkit.getConsoleSender());
 		mReloadRequesters = Audience.audience(mQueuedReloadRequesters);
 		mQueuedReloadRequesters = new HashSet<>();
@@ -99,14 +100,13 @@ public class ZoneFileManager {
 		long cpuNanos = System.nanoTime();
 		@Nullable ZoneState reloadingState = new ZoneState();
 		Set<String> ownOldNamespaces = mActiveState.mOwnNamespaces.keySet();
-		Set<String> otherNamespaces = com.playmonumenta.common.zones.ZoneManager.getInstance().getNamespaceNames();
+		Set<String> otherNamespaces = zoneManager.getNamespaceNames();
 		otherNamespaces.removeAll(ownOldNamespaces);
 
 		plugin.mZonePropertyGroupManager.reload(plugin, mReloadRequesters);
 		Map<String, ZoneNamespace> ownNamespaces = new ZonesReferenceResolver(plugin, mReloadRequesters, otherNamespaces).resolve();
 
 		MMLog.debug("[Zone Reload] " + String.format("%13.9f", (System.nanoTime() - cpuNanos) / 1000000000.0) + "s Loading new data");
-		ZoneManager zoneManager = ZoneManager.getInstance();
 
 		Set<ZoneNamespace> newNamespaces = new HashSet<>();
 		Set<ZoneNamespace> replacedNamespaces = new HashSet<>();
