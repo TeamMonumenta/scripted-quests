@@ -26,7 +26,8 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 */
 
-public class ZoneTreeFactoryTest {/*
+public class ZoneTreeFactoryTest {
+/*
 	static @Nullable File dataFolder = null;
 	static @Nullable MockedStatic<Bukkit> mockedStaticBukkit = null;
 	static @Nullable MockedStatic<ZoneNamespace> mockedStaticZoneNamespace = null;
@@ -156,4 +157,5 @@ public class ZoneTreeFactoryTest {/*
 		}
 
 	}
-*/}
+*/
+}
