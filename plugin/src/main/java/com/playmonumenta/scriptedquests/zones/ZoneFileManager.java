@@ -105,6 +105,7 @@ public class ZoneFileManager {
 
 		plugin.mZonePropertyGroupManager.reload(plugin, mReloadRequesters);
 		Map<String, ZoneNamespace> ownNamespaces = new ZonesReferenceResolver(plugin, mReloadRequesters, otherNamespaces).resolve();
+		reloadingState.mOwnNamespaces.putAll(ownNamespaces);
 
 		MMLog.debug("[Zone Reload] " + String.format("%13.9f", (System.nanoTime() - cpuNanos) / 1000000000.0) + "s Loading new data");
 
