@@ -567,8 +567,6 @@ public class Race {
 						RaceUtils.msToTimeString(endTime) +
 						"\",\"color\":\"blue\"}]";
 					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmdStr);
-					String wrStr = "auditlogplayer " + mPlayer.getName() + " \"" + mPlayer.getName() + " has set a new record on " + mName + " with a time of " + RaceUtils.msToTimeString(endTime) + "\"";
-					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), wrStr);
 					Bukkit.getPluginManager().callEvent(new RaceWorldRecordEvent(mPlayer, this, false, endTime));
 				}
 			}
@@ -604,8 +602,6 @@ public class Race {
 					speedScore +
 					"%\",\"color\":\"blue\"}]";
 				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmdStr);
-				String wrStr = "auditlogplayer " + mPlayer.getName() + " \"" + mPlayer.getName() + " has set a new record on " + mName + " with a speed of " + speedScore + "\"";
-				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), wrStr);
 				Bukkit.getPluginManager().callEvent(new RaceWorldRecordEvent(mPlayer, this, true, speedScore));
 			}
 		}
