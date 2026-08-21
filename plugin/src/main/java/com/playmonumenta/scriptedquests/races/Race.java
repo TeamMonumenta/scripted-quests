@@ -85,7 +85,7 @@ public class Race {
 	private long mStartTime;
 	private long mMaxTime;
 	private int mFrame = 0;
-	private int mSpeedWR = 0;
+	private int mSpeedWR = Integer.MAX_VALUE;
 	private @Nullable TimeBar mTimeBar = null;
 	private boolean mCountdownActive = false;
 	private int mWRTime = Integer.MAX_VALUE;
@@ -569,6 +569,7 @@ public class Race {
 					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmdStr);
 					String wrStr = "auditlogplayer " + mPlayer.getName() + " \"" + mPlayer.getName() + " has set a new record on " + mName + " with a time of " + RaceUtils.msToTimeString(endTime) + "\"";
 					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), wrStr);
+					Bukkit.getPluginManager().callEvent(new RaceWorldRecordEvent(mPlayer, this, false, endTime));
 				}
 			}
 		}
@@ -605,6 +606,7 @@ public class Race {
 				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmdStr);
 				String wrStr = "auditlogplayer " + mPlayer.getName() + " \"" + mPlayer.getName() + " has set a new record on " + mName + " with a speed of " + speedScore + "\"";
 				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), wrStr);
+				Bukkit.getPluginManager().callEvent(new RaceWorldRecordEvent(mPlayer, this, true, speedScore));
 			}
 		}
 	}
@@ -741,5 +743,9 @@ public class Race {
 
 	public boolean isStatless() {
 		return !mShowStats;
+	}
+
+	public String getName() {
+		return mName;
 	}
 }
