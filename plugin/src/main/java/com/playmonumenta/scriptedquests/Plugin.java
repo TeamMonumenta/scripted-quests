@@ -110,7 +110,6 @@ public class Plugin extends JavaPlugin {
 		HasPermission.register();
 		TimerDebug.register(this);
 		GenerateCode.register(this);
-		GetDate.register();
 		Code.register(this);
 		SetVelocity.register();
 		Heal.register();
