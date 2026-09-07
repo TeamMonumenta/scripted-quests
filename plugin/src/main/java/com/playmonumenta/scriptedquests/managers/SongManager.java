@@ -1,6 +1,7 @@
 package com.playmonumenta.scriptedquests.managers;
 
 import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.scriptedquests.utils.MMLog;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -14,6 +15,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import org.bukkit.Bukkit;
@@ -71,12 +73,30 @@ public class SongManager {
 		private @Nullable Song mNow = null;
 		private @Nullable Song mNext = null;
 		private LocalDateTime mNextTime = LocalDateTime.MAX;
+		private LocalDateTime mLoginFixExpiry;
 
 		public PlayerState(UUID playerId) {
 			mPlayerId = playerId;
+			showDebugStr(() -> "song state created at " + LocalDateTime.now(TIMEZONE));
+			mLoginFixExpiry = LocalDateTime.now(TIMEZONE).plus(Plugin.getInstance().getMusicLoginFixMillis(), ChronoUnit.MILLIS);
+			showDebugStr(() -> "login fix scheduled for " + mLoginFixExpiry);
+		}
+
+		protected void updateLoginFixExpiry() {
+			showDebugStr(() -> "logged in at " + LocalDateTime.now(TIMEZONE));
+			mLoginFixExpiry = LocalDateTime.now(TIMEZONE).plus(Plugin.getInstance().getMusicLoginFixMillis(), ChronoUnit.MILLIS);
+			showDebugStr(() -> "login fix rescheduled for " + mLoginFixExpiry);
 		}
 
 		public void playNow() {
+			LocalDateTime now = LocalDateTime.now(TIMEZONE);
+			showDebugStr(() -> "attempting to play a song at " + now);
+			if (now.isBefore(mLoginFixExpiry)) {
+				showDebugStr(() -> "too early, will retry at " + mLoginFixExpiry);
+				mRealTimePool.schedule(this, millisToRefresh(), TimeUnit.of(ChronoUnit.MILLIS));
+				return;
+			}
+
 			Player player = Bukkit.getPlayer(mPlayerId);
 			if (player == null) {
 				cancelNext();
@@ -98,6 +118,7 @@ public class SongManager {
 				}
 			}
 
+			showDebugStr(() -> "is being played music at " + LocalDateTime.now(TIMEZONE));
 			mNextTime = LocalDateTime.now(TIMEZONE).plus(mNow.mSongDuration, ChronoUnit.MILLIS);
 			Key key = Key.key(mNow.songPath());
 			Sound sound = Sound.sound(key, mNow.mCategory.soundSource(), mNow.mVolume, mNow.mPitch);
@@ -146,8 +167,14 @@ public class SongManager {
 		}
 
 		public long millisToRefresh() {
+			LocalDateTime now = LocalDateTime.now(TIMEZONE);
+
+			if (now.isBefore(mLoginFixExpiry)) {
+				return now.until(mLoginFixExpiry, ChronoUnit.MILLIS);
+			}
+
 			try {
-				return LocalDateTime.now(TIMEZONE).until(mNextTime, ChronoUnit.MILLIS);
+				return now.until(mNextTime, ChronoUnit.MILLIS);
 			} catch (ArithmeticException ignored) {
 				return Long.MAX_VALUE;
 			}
@@ -155,14 +182,25 @@ public class SongManager {
 
 		@Override
 		public void run() {
-			if (millisToRefresh() <= 0) {
+			long millis = millisToRefresh();
+			if (millis <= 0) {
 				new BukkitRunnable() {
 					@Override
 					public void run() {
 						playNow();
 					}
 				}.runTask(Plugin.getInstance());
+			} else if (millis < Long.MAX_VALUE) {
+				mRealTimePool.schedule(this, millisToRefresh(), TimeUnit.of(ChronoUnit.MILLIS));
 			}
+		}
+
+		private void showDebugStr(Supplier<String> msg) {
+			MMLog.debug(() -> {
+				Player player = Bukkit.getPlayer(mPlayerId);
+				String debugStr = player == null ? mPlayerId.toString() : (mPlayerId + ": " + player.getName());
+				return "[SongManager] " + debugStr + " " + msg.get();
+			});
 		}
 	}
 
@@ -262,6 +300,11 @@ public class SongManager {
 
 	public static void playBossSong(Player player, Song song, boolean playNow, LivingEntity boss, boolean cancelNow, int cancelDelay, int checkInterval) {
 		playBossSong(List.of(player), song, playNow, boss, cancelNow, cancelDelay, checkInterval);
+	}
+
+	public static void onLogin(Player player) {
+		PlayerState state = mPlayerStates.computeIfAbsent(player.getUniqueId(), PlayerState::new);
+		state.updateLoginFixExpiry();
 	}
 
 	public static void onLogout(Player player) {
