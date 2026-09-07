@@ -25,7 +25,6 @@ public class ReloadQuests implements CommandExecutor {
 		sender.sendMessage(Component.text("Reloading config...", NamedTextColor.GOLD));
 
 		mPlugin.reloadConfig(sender);
-		DateUtils.refreshTime();
 
 		return true;
 	}
