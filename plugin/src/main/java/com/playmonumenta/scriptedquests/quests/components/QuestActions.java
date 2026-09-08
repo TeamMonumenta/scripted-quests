@@ -12,6 +12,7 @@ import com.playmonumenta.scriptedquests.quests.components.actions.ActionDialog;
 import com.playmonumenta.scriptedquests.quests.components.actions.ActionFunction;
 import com.playmonumenta.scriptedquests.quests.components.actions.ActionGiveLoot;
 import com.playmonumenta.scriptedquests.quests.components.actions.ActionInteractNpc;
+import com.playmonumenta.scriptedquests.quests.components.actions.ActionQuestGuide;
 import com.playmonumenta.scriptedquests.quests.components.actions.ActionRemoveItem;
 import com.playmonumenta.scriptedquests.quests.components.actions.ActionRerunComponents;
 import com.playmonumenta.scriptedquests.quests.components.actions.ActionSetScore;
@@ -90,6 +91,9 @@ public class QuestActions implements ActionBase {
 						break;
 					case "give_loot":
 						actions.mActions.add(new ActionGiveLoot(value));
+						break;
+					case "quest_guide":
+						actions.mActions.add(new ActionQuestGuide(value));
 						break;
 					case "remove_items":
 						if (value.isJsonArray()) {

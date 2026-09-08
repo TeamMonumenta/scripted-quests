@@ -17,6 +17,8 @@ import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
@@ -31,6 +33,7 @@ public class MessagingUtils {
 	public static final LegacyComponentSerializer AMPERSAND_SERIALIZER = LegacyComponentSerializer.legacyAmpersand();
 	public static final GsonComponentSerializer GSON_COMPONENT_SERIALIZER = GsonComponentSerializer.gson();
 	public static final PlainTextComponentSerializer PLAIN_SERIALIZER = PlainTextComponentSerializer.plainText();
+	public static final MiniMessage MINIMESSAGE_ALL = MiniMessage.builder().tags(TagResolver.standard()).build();
 
 	public static String plainText(Component formattedText) {
 		// This is only legacy text because we have a bunch of section symbols lying around that need to be updated.
@@ -40,6 +43,10 @@ public class MessagingUtils {
 
 	public static String plainFromLegacy(String legacyText) {
 		return PLAIN_SERIALIZER.serialize(LEGACY_SERIALIZER.deserialize(legacyText));
+	}
+
+	public static Component fromMiniMessage(String miniMessageText) {
+		return MINIMESSAGE_ALL.deserialize(miniMessageText);
 	}
 
 	public static String translatePlayerName(Player player, String message) {
