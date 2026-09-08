@@ -77,6 +77,7 @@ public class Plugin extends JavaPlugin {
 	public Random mRandom = new Random();
 	private @MonotonicNonNull ScheduleFunction mScheduledFunctionsManager;
 	private SoundCategory mDefaultMusicSoundCategory = SoundCategory.RECORDS;
+	private long mMusicLoginFixMillis = 150L;
 
 	@Override
 	public void onLoad() {
@@ -287,6 +288,16 @@ public class Plugin extends JavaPlugin {
 				+ Constants.SOUND_CATEGORY_NAMES.get(mDefaultMusicSoundCategory));
 		}
 
+		long musicLoginFixMillis = mConfig.getLong("music_login_fix_millis");
+		if (musicLoginFixMillis != 0) {
+			mMusicLoginFixMillis = musicLoginFixMillis;
+		} else {
+			mMusicLoginFixMillis = 150L;
+		}
+		if (sender != null) {
+			sender.sendMessage("music_login_fix_millis: " + mMusicLoginFixMillis);
+		}
+
 		mQuestCompassGUIItems = mConfig.getConfigurationSection("quest_compass_gui_items");
 	}
 
@@ -310,5 +321,9 @@ public class Plugin extends JavaPlugin {
 
 	public SoundCategory getDefaultMusicSoundCategory() {
 		return mDefaultMusicSoundCategory;
+	}
+
+	public long getMusicLoginFixMillis() {
+		return mMusicLoginFixMillis;
 	}
 }

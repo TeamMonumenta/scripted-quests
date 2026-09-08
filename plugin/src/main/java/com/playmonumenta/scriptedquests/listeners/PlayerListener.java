@@ -241,6 +241,7 @@ public class PlayerListener implements Listener {
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
 	public void playerJoinEvent(PlayerJoinEvent event) {
 		// Handle login quest events
+		SongManager.onLogin(event.getPlayer());
 		// TODO: This works around an annoying interaction with Monumenta player data transfer. It should be removed later.
 		new BukkitRunnable() {
 			@Override
