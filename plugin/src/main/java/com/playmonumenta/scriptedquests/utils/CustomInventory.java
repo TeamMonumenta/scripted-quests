@@ -113,6 +113,9 @@ public abstract class CustomInventory {
 	}
 
 	public void openInventory(Player player, Plugin owner) {
+		if (!player.isConnected()) { // unlikely but possible if the gui is opened on a delay, or when a future completes
+			return;
+		}
 		if (mOwner == null) {
 			player.openInventory(mInventory);
 			mOpenedInvsByPlayer.put(player, this);
