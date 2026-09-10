@@ -1,6 +1,5 @@
 package com.playmonumenta.scriptedquests.commands;
 
-import com.playmonumenta.common.utils.DateUtils;
 import com.playmonumenta.scriptedquests.Plugin;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -25,7 +24,6 @@ public class ReloadQuests implements CommandExecutor {
 		sender.sendMessage(Component.text("Reloading config...", NamedTextColor.GOLD));
 
 		mPlugin.reloadConfig(sender);
-		DateUtils.refreshTime();
 
 		return true;
 	}
