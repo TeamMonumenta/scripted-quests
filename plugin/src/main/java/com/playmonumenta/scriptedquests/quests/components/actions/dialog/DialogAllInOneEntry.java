@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class DialogAllInOneEntry implements DialogBase {
 
-	private String mText;
+	private String mText = ""; // this will always be initialized unless an exception is thrown
 	private @Nullable ClickEvent mClick = null;
 	private @Nullable HoverEvent<Component> mHover = null;
 	private final String mNPCName;
