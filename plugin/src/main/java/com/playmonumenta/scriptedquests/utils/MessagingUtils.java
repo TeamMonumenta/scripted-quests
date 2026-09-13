@@ -9,6 +9,8 @@ import com.playmonumenta.scriptedquests.managers.TranslationsManager;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Locale;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
@@ -87,6 +89,10 @@ public class MessagingUtils {
 	}
 
 	public static void sendNPCMessage(Player player, String displayName, String message, boolean minimessage) {
+		sendNPCMessage(player, displayName, message, minimessage, component -> component);
+	}
+
+	public static void sendNPCMessage(Player player, String displayName, String message, boolean minimessage, Function<Component, Component> afterTranslation) {
 		message = TranslationsManager.translate(player, message);
 		message = translatePlayerName(player, message);
 		Component formattedMessage = deserialize("[" + displayName + "] ", minimessage);
@@ -95,9 +101,16 @@ public class MessagingUtils {
 		tempText = Component.empty().color(NamedTextColor.WHITE).append(tempText);
 		formattedMessage = formattedMessage.append(tempText);
 
+		formattedMessage = afterTranslation.apply(formattedMessage);
 		player.sendMessage(formattedMessage);
 	}
 
+	/*
+		This method is deprecated due to causing unexpected interactions with the translation manager,
+		including translating strings without then replacing @S with the player's name. This required
+		the caller to do such replacement itself, which should never be done before translations.
+	 */
+	@Deprecated
 	public static void sendNPCMessage(Player player, String displayName, Component message, boolean minimessage) {
 		displayName = TranslationsManager.translate(player, displayName);
 		if (message instanceof TextComponent) {

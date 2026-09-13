@@ -13,9 +13,10 @@ import net.kyori.adventure.text.event.HoverEvent;
 
 public class DialogAllInOneEntry implements DialogBase {
 
-	// It needs an initialized value
-	private Component mComponent;
-	private String mNPCName;
+	private final String mText;
+	private ClickEvent mClick = null;
+	private HoverEvent<Component> mHover = null;
+	private final String mNPCName;
 	private final boolean mMiniMessage;
 
 	public DialogAllInOneEntry(String npcName, JsonElement element, boolean miniMessage) throws Exception {
@@ -28,7 +29,7 @@ public class DialogAllInOneEntry implements DialogBase {
 
 		mNPCName = npcName;
 
-		mComponent = MessagingUtils.deserialize(object.get("actual_text").getAsString(), miniMessage);
+		mText = object.get("actual_text").getAsString();
 
 		Set<Entry<String, JsonElement>> entries = object.entrySet();
 		for (Entry<String, JsonElement> ent : entries) {
@@ -45,36 +46,35 @@ public class DialogAllInOneEntry implements DialogBase {
 
 
 			if (key.equals("click_action")) {
-				if (mComponent.clickEvent() != null) {
-					throw new Exception("There can only be one on click event!");
-				}
 				JsonObject clickObject = ent.getValue().getAsJsonObject();
 				for (Entry<String, JsonElement> clickEnt : clickObject.entrySet()) {
+					if (mClick != null) {
+						throw new Exception("There can only be one on click event!");
+					}
+
 					if (!clickEnt.getKey().equals("click_command") && !clickEnt.getKey().equals("click_url")) {
 						throw new Exception("The click action is not a command or a url!");
 					}
 
 					if (clickEnt.getKey().equals("click_command")) {
-						ClickEvent event = ClickEvent.runCommand(value.getAsString());
-						mComponent = mComponent.clickEvent(event);
+						mClick = ClickEvent.runCommand(value.getAsString());
 					}
 
 					if (clickEnt.getKey().equals("click_url")) {
-						ClickEvent event = ClickEvent.openUrl(value.getAsString());
-						mComponent = mComponent.clickEvent(event);
+						mClick = ClickEvent.openUrl(value.getAsString());
 					}
 				}
 			}
 
 			if (key.equals("hover_text")) {
-				HoverEvent<Component> event = HoverEvent.showText(MessagingUtils.deserialize(value.getAsString(), miniMessage));
-				mComponent = mComponent.hoverEvent(event);
+				mHover = HoverEvent.showText(MessagingUtils.deserialize(value.getAsString(), miniMessage));
 			}
 		}
 	}
 
 	@Override
 	public void sendDialog(QuestContext context) {
-		MessagingUtils.sendNPCMessage(context.getPlayer(), mNPCName, mComponent.replaceText(TextReplacementConfig.builder().match("@S").replacement(context.getPlayer().getName()).build()), mMiniMessage);
+		MessagingUtils.sendNPCMessage(context.getPlayer(), mNPCName, mText, mMiniMessage,
+			component -> component.clickEvent(mClick).hoverEvent(mHover));
 	}
 }
