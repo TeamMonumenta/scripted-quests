@@ -9,7 +9,6 @@ import com.playmonumenta.scriptedquests.managers.TranslationsManager;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Locale;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import net.kyori.adventure.audience.Audience;
