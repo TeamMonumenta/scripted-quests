@@ -16,8 +16,10 @@ public class DialogAllInOneEntry implements DialogBase {
 	// It needs an initialized value
 	private Component mComponent;
 	private String mNPCName;
+	private final boolean mMiniMessage;
 
-	public DialogAllInOneEntry(String npcName, JsonElement element) throws Exception {
+	public DialogAllInOneEntry(String npcName, JsonElement element, boolean miniMessage) throws Exception {
+		mMiniMessage = miniMessage;
 
 		JsonObject object = element.getAsJsonObject();
 		if (object == null) {
@@ -26,7 +28,7 @@ public class DialogAllInOneEntry implements DialogBase {
 
 		mNPCName = npcName;
 
-		mComponent = MessagingUtils.AMPERSAND_SERIALIZER.deserialize(object.get("actual_text").getAsString().replace("§", "&"));
+		mComponent = MessagingUtils.deserialize(object.get("actual_text").getAsString(), miniMessage);
 
 		Set<Entry<String, JsonElement>> entries = object.entrySet();
 		for (Entry<String, JsonElement> ent : entries) {
@@ -65,7 +67,7 @@ public class DialogAllInOneEntry implements DialogBase {
 			}
 
 			if (key.equals("hover_text")) {
-				HoverEvent<Component> event = HoverEvent.showText(MessagingUtils.AMPERSAND_SERIALIZER.deserialize(value.getAsString().replace("§", "&")));
+				HoverEvent<Component> event = HoverEvent.showText(MessagingUtils.deserialize(value.getAsString(), miniMessage));
 				mComponent = mComponent.hoverEvent(event);
 			}
 		}
@@ -73,6 +75,6 @@ public class DialogAllInOneEntry implements DialogBase {
 
 	@Override
 	public void sendDialog(QuestContext context) {
-		MessagingUtils.sendNPCMessage(context.getPlayer(), mNPCName, mComponent.replaceText(TextReplacementConfig.builder().match("@S").replacement(context.getPlayer().getName()).build()));
+		MessagingUtils.sendNPCMessage(context.getPlayer(), mNPCName, mComponent.replaceText(TextReplacementConfig.builder().match("@S").replacement(context.getPlayer().getName()).build()), mMiniMessage);
 	}
 }

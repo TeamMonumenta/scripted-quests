@@ -12,9 +12,11 @@ public class DialogRandomText implements DialogBase {
 	private final @Nullable String mDisplayName;
 	private final ArrayList<String> mText = new ArrayList<>();
 	private final Random mRandom = new Random();
+	private final boolean mMiniMessage;
 
-	public DialogRandomText(@Nullable String displayName, JsonElement element) throws Exception {
+	public DialogRandomText(@Nullable String displayName, JsonElement element, boolean miniMessage) throws Exception {
 		mDisplayName = displayName;
+		mMiniMessage = miniMessage;
 
 		if (element.isJsonPrimitive()) {
 			mText.add(element.getAsString());
@@ -31,9 +33,9 @@ public class DialogRandomText implements DialogBase {
 	public void sendDialog(QuestContext context) {
 		int idx = mRandom.nextInt(mText.size());
 		if (mDisplayName != null && !mDisplayName.isEmpty()) {
-			MessagingUtils.sendNPCMessage(context.getPlayer(), mDisplayName, mText.get(idx));
+			MessagingUtils.sendNPCMessage(context.getPlayer(), mDisplayName, mText.get(idx), mMiniMessage);
 		} else {
-			MessagingUtils.sendRawMessage(context.getPlayer(), mText.get(idx));
+			MessagingUtils.sendRawMessage(context.getPlayer(), mText.get(idx), mMiniMessage);
 		}
 	}
 

@@ -12,9 +12,11 @@ import org.jetbrains.annotations.Nullable;
 public class DialogText implements DialogBase {
 	private final @Nullable String mDisplayName;
 	private final ArrayList<String> mText = new ArrayList<>();
+	private final boolean mMiniMessage;
 
-	public DialogText(@Nullable String displayName, JsonElement element) throws Exception {
+	public DialogText(@Nullable String displayName, JsonElement element, boolean miniMessage) throws Exception {
 		mDisplayName = displayName;
+		mMiniMessage = miniMessage;
 
 		if (element.isJsonPrimitive()) {
 			mText.add(element.getAsString());
@@ -31,9 +33,9 @@ public class DialogText implements DialogBase {
 	public void sendDialog(QuestContext context) {
 		for (String text : mText) {
 			if (mDisplayName != null && !mDisplayName.isEmpty()) {
-				MessagingUtils.sendNPCMessage(context.getPlayer(), mDisplayName, text);
+				MessagingUtils.sendNPCMessage(context.getPlayer(), mDisplayName, text, mMiniMessage);
 			} else {
-				MessagingUtils.sendRawMessage(context.getPlayer(), text);
+				MessagingUtils.sendRawMessage(context.getPlayer(), text, mMiniMessage);
 			}
 		}
 	}
