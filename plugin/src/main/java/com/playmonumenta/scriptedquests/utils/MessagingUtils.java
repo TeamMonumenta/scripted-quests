@@ -53,9 +53,9 @@ public class MessagingUtils {
 		return message.replaceAll("@S", player.getName()).replaceAll("@U", player.getUniqueId().toString().toLowerCase(Locale.ROOT));
 	}
 
-	public static TextComponent deserialize(String string, boolean minimessage) {
+	public static Component deserialize(String string, boolean minimessage) {
 		if (minimessage) {
-			return (TextComponent) fromMiniMessage(string);
+			return fromMiniMessage(string);
 		} else {
 			return AMPERSAND_SERIALIZER.deserialize(string.replace("§", "&"));
 		}
@@ -89,9 +89,9 @@ public class MessagingUtils {
 	public static void sendNPCMessage(Player player, String displayName, String message, boolean minimessage) {
 		message = TranslationsManager.translate(player, message);
 		message = translatePlayerName(player, message);
-		TextComponent formattedMessage = deserialize("[" + displayName + "] ", minimessage);
+		Component formattedMessage = deserialize("[" + displayName + "] ", minimessage);
 		formattedMessage = Component.empty().color(NamedTextColor.GOLD).append(formattedMessage);
-		TextComponent tempText = deserialize(message, minimessage);
+		Component tempText = deserialize(message, minimessage);
 		tempText = Component.empty().color(NamedTextColor.WHITE).append(tempText);
 		formattedMessage = formattedMessage.append(tempText);
 
@@ -106,7 +106,7 @@ public class MessagingUtils {
 			contentStr = TranslationsManager.translate(player, contentStr);
 			message = ((TextComponent) message).content(contentStr);
 		}
-		TextComponent formattedMessage = deserialize("[" + displayName + "] ", minimessage);
+		Component formattedMessage = deserialize("[" + displayName + "] ", minimessage);
 		formattedMessage = Component.empty().color(NamedTextColor.GOLD).append(formattedMessage);
 		message = Component.empty().color(NamedTextColor.WHITE).append(message);
 		formattedMessage = formattedMessage.append(message);
@@ -123,7 +123,7 @@ public class MessagingUtils {
 			message = TranslationsManager.translate(player, message);
 		}
 		message = translatePlayerName(player, message);
-		TextComponent formattedMessage = deserialize(message, minimessage);
+		Component formattedMessage = deserialize(message, minimessage);
 		player.sendMessage(formattedMessage);
 	}
 
