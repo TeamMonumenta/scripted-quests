@@ -9,6 +9,7 @@ import com.playmonumenta.scriptedquests.managers.TranslationsManager;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Locale;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
@@ -17,6 +18,8 @@ import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
@@ -31,6 +34,7 @@ public class MessagingUtils {
 	public static final LegacyComponentSerializer AMPERSAND_SERIALIZER = LegacyComponentSerializer.legacyAmpersand();
 	public static final GsonComponentSerializer GSON_COMPONENT_SERIALIZER = GsonComponentSerializer.gson();
 	public static final PlainTextComponentSerializer PLAIN_SERIALIZER = PlainTextComponentSerializer.plainText();
+	public static final MiniMessage MINIMESSAGE_ALL = MiniMessage.builder().tags(TagResolver.standard()).build();
 
 	public static String plainText(Component formattedText) {
 		// This is only legacy text because we have a bunch of section symbols lying around that need to be updated.
@@ -42,8 +46,20 @@ public class MessagingUtils {
 		return PLAIN_SERIALIZER.serialize(LEGACY_SERIALIZER.deserialize(legacyText));
 	}
 
+	public static Component fromMiniMessage(String miniMessageText) {
+		return MINIMESSAGE_ALL.deserialize(miniMessageText);
+	}
+
 	public static String translatePlayerName(Player player, String message) {
 		return message.replaceAll("@S", player.getName()).replaceAll("@U", player.getUniqueId().toString().toLowerCase(Locale.ROOT));
+	}
+
+	public static Component deserialize(String string, boolean minimessage) {
+		if (minimessage) {
+			return fromMiniMessage(string);
+		} else {
+			return AMPERSAND_SERIALIZER.deserialize(string.replace("§", "&"));
+		}
 	}
 
 	public static void sendActionBarMessage(Player player, String message) {
@@ -71,19 +87,30 @@ public class MessagingUtils {
 		player.sendMessage(formattedMessage);
 	}
 
-	public static void sendNPCMessage(Player player, String displayName, String message) {
+	public static void sendNPCMessage(Player player, String displayName, String message, boolean minimessage) {
+		sendNPCMessage(player, displayName, message, minimessage, component -> component);
+	}
+
+	public static void sendNPCMessage(Player player, String displayName, String message, boolean minimessage, Function<Component, Component> afterTranslation) {
 		message = TranslationsManager.translate(player, message);
 		message = translatePlayerName(player, message);
-		TextComponent formattedMessage = LEGACY_SERIALIZER.deserialize("[" + displayName + "] ");
+		Component formattedMessage = deserialize("[" + displayName + "] ", minimessage);
 		formattedMessage = Component.empty().color(NamedTextColor.GOLD).append(formattedMessage);
-		TextComponent tempText = AMPERSAND_SERIALIZER.deserialize(message.replace("§", "&"));
+		Component tempText = deserialize(message, minimessage);
 		tempText = Component.empty().color(NamedTextColor.WHITE).append(tempText);
 		formattedMessage = formattedMessage.append(tempText);
 
+		formattedMessage = afterTranslation.apply(formattedMessage);
 		player.sendMessage(formattedMessage);
 	}
 
-	public static void sendNPCMessage(Player player, String displayName, Component message) {
+	/*
+		This method is deprecated due to causing unexpected interactions with the translation manager,
+		including translating strings without then replacing @S with the player's name. This required
+		the caller to do such replacement itself, which should never be done before translations.
+	 */
+	@Deprecated
+	public static void sendNPCMessage(Player player, String displayName, Component message, boolean minimessage) {
 		displayName = TranslationsManager.translate(player, displayName);
 		if (message instanceof TextComponent) {
 			/* TODO: This should probably loop over all the text in the component - hover, etc. */
@@ -91,7 +118,7 @@ public class MessagingUtils {
 			contentStr = TranslationsManager.translate(player, contentStr);
 			message = ((TextComponent) message).content(contentStr);
 		}
-		TextComponent formattedMessage = LEGACY_SERIALIZER.deserialize("[" + displayName + "] ");
+		Component formattedMessage = deserialize("[" + displayName + "] ", minimessage);
 		formattedMessage = Component.empty().color(NamedTextColor.GOLD).append(formattedMessage);
 		message = Component.empty().color(NamedTextColor.WHITE).append(message);
 		formattedMessage = formattedMessage.append(message);
@@ -99,17 +126,16 @@ public class MessagingUtils {
 		player.sendMessage(formattedMessage);
 	}
 
-	public static void sendRawMessage(Player player, String message) {
-		sendRawMessage(player, message, true);
+	public static void sendRawMessage(Player player, String message, boolean minimessage) {
+		sendRawMessage(player, message, minimessage, true);
 	}
 
-	public static void sendRawMessage(Player player, String message, boolean allowTranslations) {
+	public static void sendRawMessage(Player player, String message, boolean minimessage, boolean allowTranslations) {
 		if (allowTranslations) {
 			message = TranslationsManager.translate(player, message);
 		}
 		message = translatePlayerName(player, message);
-		message = message.replace('§', '&');
-		TextComponent formattedMessage = AMPERSAND_SERIALIZER.deserialize(message);
+		Component formattedMessage = deserialize(message, minimessage);
 		player.sendMessage(formattedMessage);
 	}
 
@@ -131,11 +157,11 @@ public class MessagingUtils {
 		player.sendMessage(formattedMessage.hoverEvent(hoverEvent).clickEvent(ClickEvent.runCommand(commandStr)));
 	}
 
-	public static void sendClickableNPCMessage(Player player, String message,
+	public static void sendClickableNPCMessage(Player player, String message, boolean minimessage,
 	                                           String commandStr, @Nullable HoverEvent<?> hoverEvent) {
 		message = TranslationsManager.translate(player, message);
 		message = translatePlayerName(player, message);
-		Component formattedMessage = LEGACY_SERIALIZER.deserialize("[" + message + "]");
+		Component formattedMessage = deserialize("[" + message + "]", minimessage);
 		formattedMessage = Component.empty().color(NamedTextColor.LIGHT_PURPLE).append(formattedMessage)
 			.clickEvent(ClickEvent.runCommand(commandStr));
 
