@@ -27,25 +27,20 @@ public class ActionDialog implements ActionBase {
 			throw new Exception("dialog value is not an object!");
 		}
 
-		JsonElement minimessageElement = object.get("minimessage");
-		boolean minimessage = minimessageElement != null && minimessageElement.getAsBoolean();
 		Set<Entry<String, JsonElement>> entries = object.entrySet();
 		for (Entry<String, JsonElement> ent : entries) {
 			String key = ent.getKey();
 			switch (key) {
-				case "text" -> mDialogs.add(new DialogText(displayName, ent.getValue(), minimessage));
-				case "raw_text" -> mDialogs.add(new DialogRawText(ent.getValue(), minimessage));
-				case "clickable_text" -> mDialogs.add(new DialogClickableText(npcName, displayName, entityType, ent.getValue(), minimessage));
-				case "random_text" -> mDialogs.add(new DialogRandomText(displayName, ent.getValue(), minimessage));
+				case "text" -> mDialogs.add(new DialogText(displayName, ent.getValue()));
+				case "raw_text" -> mDialogs.add(new DialogRawText(ent.getValue()));
+				case "clickable_text" -> mDialogs.add(new DialogClickableText(npcName, displayName, entityType, ent.getValue()));
+				case "random_text" -> mDialogs.add(new DialogRandomText(displayName, ent.getValue()));
 				case "all_in_one_text" -> {
-					if (npcName == null) {
-						throw new Exception("all_in_one_text requires NPC context");
-					}
-					mDialogs.add(new DialogAllInOneText(npcName, ent.getValue(), minimessage));
+				if (npcName == null) {
+					throw new Exception("all_in_one_text requires NPC context");
 				}
-				case "minimessage" -> {
-					// this is checked for above, this is just here to not throw an exception
-				}
+				mDialogs.add(new DialogAllInOneText(npcName, ent.getValue()));
+			}
 				default -> throw new Exception("Unknown dialog key: '" + key + "'");
 			}
 		}

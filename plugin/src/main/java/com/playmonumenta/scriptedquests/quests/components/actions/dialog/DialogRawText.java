@@ -11,10 +11,8 @@ import java.util.stream.Collectors;
 
 public class DialogRawText implements DialogBase {
 	private ArrayList<String> mText = new ArrayList<>();
-	private final boolean mMiniMessage;
 
-	public DialogRawText(JsonElement element, boolean miniMessage) throws Exception {
-		mMiniMessage = miniMessage;
+	public DialogRawText(JsonElement element) throws Exception {
 		if (element.isJsonPrimitive()) {
 			mText.add(element.getAsString());
 		} else if (element.isJsonArray()) {
@@ -30,7 +28,7 @@ public class DialogRawText implements DialogBase {
 	@Override
 	public void sendDialog(QuestContext context) {
 		for (String text : mText) {
-			MessagingUtils.sendRawMessage(context.getPlayer(), text, mMiniMessage);
+			MessagingUtils.sendRawMessage(context.getPlayer(), text);
 		}
 	}
 
