@@ -7,26 +7,29 @@ import com.playmonumenta.scriptedquests.utils.MessagingUtils;
 import java.util.Map.Entry;
 import java.util.Set;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
+import org.jetbrains.annotations.Nullable;
 
 public class DialogAllInOneEntry implements DialogBase {
 
-	// It needs an initialized value
-	private Component mComponent;
-	private String mNPCName;
+	private String mText = ""; // this will always be initialized unless an exception is thrown
+	private @Nullable ClickEvent mClick = null;
+	private @Nullable HoverEvent<Component> mHover = null;
+	private final String mNPCName;
+	private final boolean mMiniMessage;
 
-	public DialogAllInOneEntry(String npcName, JsonElement element) throws Exception {
-
+	public DialogAllInOneEntry(String npcName, JsonElement element, boolean miniMessage) throws Exception {
 		JsonObject object = element.getAsJsonObject();
 		if (object == null) {
 			throw new Exception("dialog value is not an object!");
 		}
+		if (!object.has("actual_text")) {
+			throw new Exception("all_in_one_text requires actual_text value");
+		}
 
 		mNPCName = npcName;
-
-		mComponent = MessagingUtils.AMPERSAND_SERIALIZER.deserialize(object.get("actual_text").getAsString().replace("§", "&"));
+		mMiniMessage = miniMessage;
 
 		Set<Entry<String, JsonElement>> entries = object.entrySet();
 		for (Entry<String, JsonElement> ent : entries) {
@@ -37,42 +40,31 @@ public class DialogAllInOneEntry implements DialogBase {
 				throw new Exception("clickable_text value for key '" + key + "' is not parseable!");
 			}
 
-			if (!key.equals("hover_text") && !key.equals("click_action") && !key.equals("player_text") && !key.equals("actual_text")) {
-				throw new Exception("Unknown clickable_text key: " + key);
-			}
+			switch (key) {
+				case "click_action" -> {
+					JsonObject clickObject = ent.getValue().getAsJsonObject();
+					for (Entry<String, JsonElement> clickEnt : clickObject.entrySet()) {
+						if (mClick != null) {
+							throw new Exception("There can only be one click_action event!");
+						}
 
-
-			if (key.equals("click_action")) {
-				if (mComponent.clickEvent() != null) {
-					throw new Exception("There can only be one on click event!");
-				}
-				JsonObject clickObject = ent.getValue().getAsJsonObject();
-				for (Entry<String, JsonElement> clickEnt : clickObject.entrySet()) {
-					if (!clickEnt.getKey().equals("click_command") && !clickEnt.getKey().equals("click_url")) {
-						throw new Exception("The click action is not a command or a url!");
-					}
-
-					if (clickEnt.getKey().equals("click_command")) {
-						ClickEvent event = ClickEvent.runCommand(value.getAsString());
-						mComponent = mComponent.clickEvent(event);
-					}
-
-					if (clickEnt.getKey().equals("click_url")) {
-						ClickEvent event = ClickEvent.openUrl(value.getAsString());
-						mComponent = mComponent.clickEvent(event);
+						switch (clickEnt.getKey()) {
+							case "click_command" -> mClick = ClickEvent.runCommand(value.getAsString());
+							case "click_url" -> mClick = ClickEvent.openUrl(value.getAsString());
+							default -> throw new Exception("The click action is not a command or a url!");
+						}
 					}
 				}
-			}
-
-			if (key.equals("hover_text")) {
-				HoverEvent<Component> event = HoverEvent.showText(MessagingUtils.AMPERSAND_SERIALIZER.deserialize(value.getAsString().replace("§", "&")));
-				mComponent = mComponent.hoverEvent(event);
+				case "hover_text" -> mHover = HoverEvent.showText(MessagingUtils.deserialize(value.getAsString(), miniMessage));
+				case "actual_text" -> mText = object.get("actual_text").getAsString();
+				default -> throw new Exception("Unknown all_in_one_text key: " + key);
 			}
 		}
 	}
 
 	@Override
 	public void sendDialog(QuestContext context) {
-		MessagingUtils.sendNPCMessage(context.getPlayer(), mNPCName, mComponent.replaceText(TextReplacementConfig.builder().match("@S").replacement(context.getPlayer().getName()).build()));
+		MessagingUtils.sendNPCMessage(context.getPlayer(), mNPCName, mText, mMiniMessage,
+			component -> component.clickEvent(mClick).hoverEvent(mHover));
 	}
 }
