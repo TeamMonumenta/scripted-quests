@@ -14,8 +14,7 @@ public class DialogClickableText implements DialogBase {
 	private ArrayList<DialogClickableTextEntry> mEntries = new ArrayList<>();
 
 	public DialogClickableText(@Nullable String npcName, @Nullable String displayName,
-	                           EntityType entityType, JsonElement element, boolean miniMessage) throws Exception {
-
+	                           EntityType entityType, JsonElement element) throws Exception {
 		/*
 		 * Integer used to determine which of the available clickable entries was
 		 * clicked when a player clicks a chat message
@@ -27,11 +26,11 @@ public class DialogClickableText implements DialogBase {
 		int entryIdx = new Random().nextInt();
 
 		if (element.isJsonObject()) {
-			mEntries.add(new DialogClickableTextEntry(npcName, displayName, entityType, element, miniMessage, entryIdx));
+			mEntries.add(new DialogClickableTextEntry(npcName, displayName, entityType, element, entryIdx));
 		} else if (element.isJsonArray()) {
 			Iterator<JsonElement> iter = element.getAsJsonArray().iterator();
 			while (iter.hasNext()) {
-				mEntries.add(new DialogClickableTextEntry(npcName, displayName, entityType, iter.next(), miniMessage, entryIdx));
+				mEntries.add(new DialogClickableTextEntry(npcName, displayName, entityType, iter.next(), entryIdx));
 
 				entryIdx++;
 			}

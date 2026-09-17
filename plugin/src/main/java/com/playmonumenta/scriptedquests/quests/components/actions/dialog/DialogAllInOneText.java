@@ -8,13 +8,13 @@ import java.util.Iterator;
 public class DialogAllInOneText implements DialogBase {
 	private ArrayList<DialogAllInOneEntry> mEntries = new ArrayList<>();
 
-	public DialogAllInOneText(String npcName, JsonElement element, boolean miniMessage) throws Exception {
+	public DialogAllInOneText(String npcName, JsonElement element) throws Exception {
 		if (element.isJsonObject()) {
-			mEntries.add(new DialogAllInOneEntry(npcName, element, miniMessage));
+			mEntries.add(new DialogAllInOneEntry(npcName, element));
 		} else if (element.isJsonArray()) {
 			Iterator<JsonElement> iter = element.getAsJsonArray().iterator();
 			while (iter.hasNext()) {
-				mEntries.add(new DialogAllInOneEntry(npcName, iter.next(), miniMessage));
+				mEntries.add(new DialogAllInOneEntry(npcName, iter.next()));
 			}
 		} else {
 			throw new Exception("all_text value is neither an object nor an array!");

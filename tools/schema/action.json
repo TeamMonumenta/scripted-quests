@@ -23,17 +23,12 @@
         "dialog": {
             "propertyOrder": 3,
             "title": "dialog",
-            "description": "@S becomes the player's name, and @U becomes the player's uuid (lowercase). If \"minimessage\" property is true, formatting is available using MiniMessage; otherwise, formatting is available using &amp; and §.",
+            "description": "Formatting supported with &amp; and §, and @S becomes the player's name, and @U becomes the player's uuid (lowercase)",
             "type": "object",
             "defaultProperties": [
                 "text"
             ],
             "properties": {
-				"minimessage": {
-					"title": "minimessage",
-					"description": "Whether formatting with MiniMessage is used (if false, uses legacy &amp; and § formatting)",
-					"type": "boolean"
-				},
                 "text": {
                     "title": "text",
                     "description": "Text spoken by NPC. '[Name] ' part is handled by the plugin",
@@ -332,7 +327,7 @@
         "cancel_event": {
             "propertyOrder": 14,
             "title": "cancel_event",
-            "description": "Cancels the current event if true, or reverts cancelling it if false (useful if the default is to cancel it). This action only works in interactables.",
+            "description": "Cancels the current event if true, or reverts cancelling it if false (useful if the default is to cancel it). This action only works in interactibles.",
             "type": "boolean"
         }
     }
