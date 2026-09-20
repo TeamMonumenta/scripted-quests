@@ -74,7 +74,6 @@ public class SongManager {
 		private @Nullable Song mNext = null;
 		private LocalDateTime mNextTime = LocalDateTime.MAX;
 		private LocalDateTime mLoginFixExpiry;
-		private boolean mMusicFixScheduled = true;
 
 		public PlayerState(UUID playerId) {
 			mPlayerId = playerId;
