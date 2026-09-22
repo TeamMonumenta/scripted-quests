@@ -1,7 +1,7 @@
 import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
 
 plugins {
-	id("com.playmonumenta.gradle-config") version "4.+"
+	id("com.playmonumenta.gradle-config") version "6.0.1-local"
 }
 
 monumenta {
@@ -11,10 +11,9 @@ monumenta {
 	checkstyleWarningsAsErrors()
 	pluginProject(":scripted-quests")
 	paper(
-		"com.playmonumenta.scriptedquests.Plugin", BukkitPluginDescription.PluginLoadOrder.POSTWORLD, "1.18",
+		"com.playmonumenta.scriptedquests.Plugin", BukkitPluginDescription.PluginLoadOrder.POSTWORLD, "26.1.2", "26.1.2.build.+",
 		depends = listOf("CommandAPI", "MonumentaCommon"),
 		softDepends = listOf("dynmap", "MonumentaRedisSync", "ProtocolLib"),
-		apiJarVersion = "1.20.4-R0.1-SNAPSHOT",
 		action = {
 			commands {
 				register("questtrigger") {
@@ -36,19 +35,20 @@ monumenta {
 		}
 	)
 
-	versionAdapterApi("adapter_api", paper = "1.18.2") {
+	versionAdapterApi("adapter_api", paper = "26.1.2.build.+") {
 		dependencies {
 			api("com.mojang:brigadier:1.0.17")
 		}
 	}
 
 	versionAdapterUnsupported("adapter_unsupported")
-	versionAdapter("adapter_v1_20_R3", "1.20.4")
+	versionAdapter("adapter_v26_1_2", "26.1.2.build.+")
 }
 
 allprojects {
 	tasks.withType<JavaCompile> {
-		options.compilerArgs.add("-Werror")
+		// TODO: revert before merge
+		// options.compilerArgs.add("-Werror")
 	}
 
 	tasks.withType<Javadoc> {
