@@ -79,6 +79,7 @@ public class SongManager {
 			mPlayerId = playerId;
 			showDebugStr(() -> "song state created at " + LocalDateTime.now(TIMEZONE));
 			mLoginFixExpiry = LocalDateTime.now(TIMEZONE).plus(Plugin.getInstance().getMusicLoginFixMillis(), ChronoUnit.MILLIS);
+			mRealTimePool.schedule(this, millisToRefresh(), TimeUnit.of(ChronoUnit.MILLIS));
 			showDebugStr(() -> "login fix scheduled for " + mLoginFixExpiry);
 		}
 
@@ -88,12 +89,11 @@ public class SongManager {
 			showDebugStr(() -> "login fix rescheduled for " + mLoginFixExpiry);
 		}
 
-		public void playNow() {
+		private void playNow() {
 			LocalDateTime now = LocalDateTime.now(TIMEZONE);
 			showDebugStr(() -> "attempting to play a song at " + now);
 			if (now.isBefore(mLoginFixExpiry)) {
 				showDebugStr(() -> "too early, will retry at " + mLoginFixExpiry);
-				mRealTimePool.schedule(this, millisToRefresh(), TimeUnit.of(ChronoUnit.MILLIS));
 				return;
 			}
 
