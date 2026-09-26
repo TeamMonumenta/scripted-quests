@@ -1,6 +1,7 @@
 package com.playmonumenta.scriptedquests.commands;
 
 import com.playmonumenta.redissync.LeaderboardAPI;
+import com.playmonumenta.scriptedquests.leaderboards.LeaderboardConfig;
 import com.playmonumenta.scriptedquests.utils.LeaderboardUtils;
 import com.playmonumenta.scriptedquests.utils.LeaderboardUtils.LeaderboardEntry;
 import com.playmonumenta.scriptedquests.utils.MMLog;
@@ -108,11 +109,15 @@ public class LeaderboardCommand {
 		final Objective obj = scoreboard.getObjective(objective);
 
 		/* If the scoreboard objective exists, use its display name */
+		final LeaderboardConfig cfg = com.playmonumenta.scriptedquests.Plugin.getInstance().mLeaderboardManager.get(objective);
 		final Component displayName;
-		if (obj != null) {
-			 displayName = obj.displayName();
+
+		if (cfg != null) {
+			displayName = Component.text(cfg.getDisplayName());
+		} else if (obj != null) {
+			displayName = obj.displayName();
 		} else {
-			 displayName = Component.text(objective);
+			displayName = Component.text(objective);
 		}
 
 		if (filterPlayers != null || !Bukkit.getServer().getPluginManager().isPluginEnabled("MonumentaRedisSync")) {
