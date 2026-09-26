@@ -13,11 +13,9 @@ import dev.jorel.commandapi.arguments.EntitySelectorArgument;
 import dev.jorel.commandapi.arguments.IntegerArgument;
 import dev.jorel.commandapi.arguments.LiteralArgument;
 import dev.jorel.commandapi.arguments.StringArgument;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
+
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -102,23 +100,11 @@ public class LeaderboardCommand {
 	}
 
 	public static void leaderboard(Plugin plugin, Player player, String objective, boolean descending, int page, @Nullable Collection<Player> filterPlayers) {
-		List<LeaderboardEntry> entries = new ArrayList<>();
-
 		/* Get the scoreboard objective (might be null) */
 		final Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
 		final Objective obj = scoreboard.getObjective(objective);
 
-		/* If the scoreboard objective exists, use its display name */
-		final LeaderboardConfig cfg = com.playmonumenta.scriptedquests.Plugin.getInstance().mLeaderboardManager.get(objective);
-		final Component displayName;
-
-		if (cfg != null) {
-			displayName = Component.text(cfg.getDisplayName());
-		} else if (obj != null) {
-			displayName = obj.displayName();
-		} else {
-			displayName = Component.text(objective);
-		}
+		final Component displayName = resolveDisplayName(objective, obj);
 
 		if (filterPlayers != null || !Bukkit.getServer().getPluginManager().isPluginEnabled("MonumentaRedisSync")) {
 			/* Redis sync plugin not found - need to loop over scoreboards to compute leaderboard */
@@ -127,43 +113,17 @@ public class LeaderboardCommand {
 				player.sendMessage(Component.text("The scoreboard objective '" + objective + "' does not exist", NamedTextColor.RED));
 				return;
 			}
-			if (filterPlayers == null) {
-				/* Not filtering by players, get everyone on the scoreboard */
-				for (String name : scoreboard.getEntries()) {
-					Score score = obj.getScore(name);
-					if (score.isScoreSet()) {
-						int value = score.getScore();
-						if (value != 0) {
-							entries.add(new LeaderboardEntry(name, NamedTextColor.WHITE, value));
-						}
-					}
-				}
-			} else {
-				/* Filtering to specific players, only get their scores */
-				for (Player filterPlayer : filterPlayers) {
-					String name = filterPlayer.getName();
-					Score score = obj.getScore(name);
-					if (score.isScoreSet()) {
-						int value = score.getScore();
-						if (value != 0) {
-							entries.add(new LeaderboardEntry(name, NamedTextColor.WHITE, value));
-						}
-					}
-				}
-
-			}
-
-			if (descending) {
-				entries.sort(Collections.reverseOrder());
-			} else {
-				Collections.sort(entries);
-			}
+			/* Get and sort entries, */
+			List<LeaderboardEntry> entries = collectScoreboardEntries(scoreboard, obj, filterPlayers);
+			entries.sort(descending
+				? Collections.reverseOrder()
+				: Comparator.naturalOrder());
 
 			colorizeEntries(entries, player.getName(), 0);
 
 			LeaderboardUtils.sendLeaderboard(player, displayName, entries, page,
-			                                 "/leaderboard " + player.getName() + " " + objective + (descending ? " true" : " false"),
-											 filterPlayers == null /* Don't show pages for this variant */);
+				paginationCommand(player.getName(), objective, descending),
+				filterPlayers == null /* Don't show pages for this variant */);
 		} else {
 			/* Redis sync plugin is available - use it instead */
 
@@ -171,6 +131,8 @@ public class LeaderboardCommand {
 			Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
 				try {
 					/* TODO: Someday it'd be nice to just look up the appropriate range, and the player's value, rather than everything */
+					List<LeaderboardEntry> entries = new ArrayList<>();
+
 					Map<String, Integer> values = LeaderboardAPI.get(objective, 0, -1, !descending).get();
 					for (Map.Entry<String, Integer> entry : values.entrySet()) {
 						entries.add(new LeaderboardEntry(entry.getKey(), NamedTextColor.WHITE, entry.getValue()));
@@ -179,7 +141,7 @@ public class LeaderboardCommand {
 
 					/* Send the leaderboard to the player back on the main thread */
 					Bukkit.getScheduler().runTask(plugin, () -> LeaderboardUtils.sendLeaderboard(player, displayName, entries, page,
-					                                 "/leaderboard " + player.getName() + " " + objective + (descending ? " true" : " false")));
+						paginationCommand(player.getName(), objective, descending)));
 				} catch (Exception ex) {
 					MMLog.severe("Failed to generate leaderboard", ex);
 				}
@@ -196,11 +158,52 @@ public class LeaderboardCommand {
 			if (obj != null) {
 				Score score = obj.getScore(player.getName());
 				if (score.isScoreSet()) {
-					score.getScore();
 					LeaderboardAPI.updateAsync(objective, player.getName(), score.getScore());
 				}
 			}
 		}
+	}
+
+	private static Component resolveDisplayName(String objectiveName, Objective obj) {
+		/* Try getting a leaderboard config associated, if it exists, use its display name.
+		 * If it doesn't exist, try to use objective's display name. If neither exist, fall back to objective name.
+		 */
+		final LeaderboardConfig cfg = com.playmonumenta.scriptedquests.Plugin.getInstance().mLeaderboardManager.get(objectiveName);
+		final Component displayName;
+
+		if (cfg != null) {
+			displayName = Component.text(cfg.getDisplayName());
+		} else if (obj != null) {
+			displayName = obj.displayName();
+		} else {
+			displayName = Component.text(objectiveName);
+		}
+
+		return displayName;
+	}
+
+	private static List<LeaderboardEntry> collectScoreboardEntries(
+		Scoreboard scoreboard,
+		Objective obj,
+		@Nullable Collection<Player> players) {
+		List<LeaderboardEntry> entries = new ArrayList<>();
+		Collection<String> names = (players == null)
+			? scoreboard.getEntries()
+			: players.stream().map(Player::getName).toList();
+
+		for (String name : names) {
+			Score score = obj.getScore(name);
+
+			if (score.isScoreSet() && score.getScore() != 0) {
+				entries.add(new LeaderboardEntry(name, NamedTextColor.WHITE, score.getScore()));
+			}
+		}
+
+		return entries;
+	}
+
+	private static String paginationCommand(String playerName, String objective, boolean descending) {
+		return "/leaderboard " + playerName + " " + objective + (descending ? " true" : " false");
 	}
 
 	private static void colorizeEntries(List<LeaderboardEntry> entries, String playerName, int index) {
