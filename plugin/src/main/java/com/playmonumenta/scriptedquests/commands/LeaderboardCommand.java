@@ -27,7 +27,7 @@ import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 import org.jetbrains.annotations.Nullable;
 
-public class Leaderboard {
+public class LeaderboardCommand {
 	@SuppressWarnings("unchecked")
 	public static void register(Plugin plugin) {
 		EntitySelectorArgument.ManyPlayers playersArg = new EntitySelectorArgument.ManyPlayers("players");

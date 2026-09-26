@@ -104,7 +104,7 @@ public class Plugin extends JavaPlugin {
 		Clickable.register(this);
 		GiveLootTable.register(mRandom);
 		RaceCommand.register(this);
-		Leaderboard.register(this);
+		LeaderboardCommand.register(this);
 		Line.register();
 		RandomNumber.register();
 		RandomSample.register();
