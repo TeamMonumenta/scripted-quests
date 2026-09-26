@@ -3,10 +3,9 @@ package com.playmonumenta.scriptedquests.managers;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.leaderboards.LeaderboardConfig;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
+import java.util.HashMap;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.HashMap;
 
 public class LeaderboardManager {
 	private final HashMap<String, LeaderboardConfig> mLeaderboards = new HashMap<>();
