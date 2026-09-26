@@ -18,17 +18,17 @@ public class LeaderboardManager {
 			"leaderboards",
 			sender,
 			(object) -> {
-			LeaderboardConfig cfg  = new LeaderboardConfig(object);
-			String objective = cfg.getObjective();
+				LeaderboardConfig cfg = new LeaderboardConfig(object);
+				String objective = cfg.getObjective();
 
-			if (mLeaderboards.containsKey(objective)) {
-				throw new Exception(objective + " already exists");
-			}
+				if (mLeaderboards.containsKey(objective)) {
+					throw new Exception(objective + " already exists");
+				}
 
-			mLeaderboards.put(objective, cfg);
+				mLeaderboards.put(objective, cfg);
 
-			return objective;
-		});
+				return objective;
+			});
 	}
 
 	public @Nullable LeaderboardConfig get(String objective) {
