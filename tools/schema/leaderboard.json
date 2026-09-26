@@ -1,0 +1,55 @@
+{
+	"title": "Leaderboard",
+	"defaultProperties": [
+		"objective",
+		"display_name",
+		"category",
+		"release"
+	],
+	"additionalProperties": false,
+	"properties": {
+		"objective": {
+			"required": true,
+			"propertyOrder": 1,
+			"title": "objective",
+			"description": "Objective associated with a leaderboard (scoreboard objective this leaderboard is keyed by)",
+			"type": "string"
+		},
+		"display_name": {
+			"required": true,
+			"propertyOrder": 2,
+			"title": "display_name",
+			"description": "Leaderboard's display name",
+			"type": "string"
+		},
+		"category": {
+			"required": false,
+			"propertyOrder": 3,
+			"title": "category",
+			"description": "Leaderboard category",
+			"type": "string",
+			"enum": [
+				"WoolDungeon",
+				"BonusDungeon",
+				"Strike",
+				"Boss",
+				"Carnival",
+				"Bounty",
+				"Race",
+				"Fishing",
+				"Casino",
+				"Hunts",
+				"Event",
+				"Misc"
+			]
+		},
+		"release": {
+			"required": false,
+			"propertyOrder": 3,
+			"title": "release",
+			"description": "Release state",
+			"type": "string",
+			"enum": ["Released", "Unreleased"]
+		}
+	}
+}
