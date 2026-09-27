@@ -170,7 +170,7 @@ public class LeaderboardCommand {
 		final Component displayName;
 
 		if (cfg != null) {
-			displayName = Component.text(cfg.getDisplayName());
+			displayName = cfg.getDisplayName();
 		} else if (obj != null) {
 			displayName = obj.displayName();
 		} else {
