@@ -235,10 +235,18 @@ public class NpcTradeManager implements Listener {
 
 		// check added trades
 		TreeMap<Integer, NpcTrade> addedTrades = new TreeMap<>();
+		int firstUnusedTradeSlot = villager == null ? 0 : villager.getRecipeCount();
 		for (NpcTrader trader : traderFiles) {
 			for (NpcTrade trade : trader.getTrades()) {
-				if ((villager == null || trade.getIndex() >= villager.getRecipeCount()) && trade.getOverrideTradeItems() != null) {
-					NpcTrade previousTrade = addedTrades.put(trade.getIndex(), trade);
+				if (trade.getOverrideTradeItems() == null) {
+					continue;
+				}
+				int index = trade.getIndex();
+				if (index >= firstUnusedTradeSlot || index == -1) {
+					if (index == -1) { // index -1 -> always add to last slot
+						index = firstUnusedTradeSlot++;
+					}
+					NpcTrade previousTrade = addedTrades.put(index, trade);
 					if (previousTrade != null) {
 						MMLog.warning("Duplicate added trade for villager '" + (villager == null ? "<unknown>" :
 							villager.getName()) + "' at index " + trade.getIndex());
