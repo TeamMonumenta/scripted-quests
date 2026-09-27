@@ -3,11 +3,10 @@ package com.playmonumenta.scriptedquests.leaderboards;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.utils.MessagingUtils;
+import java.util.function.Function;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.function.Function;
 
 public class LeaderboardConfig {
 	private final String mObjective;
