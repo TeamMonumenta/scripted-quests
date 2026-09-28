@@ -4,7 +4,7 @@
 		"objective",
 		"display_name",
 		"category",
-		"release"
+		"hidden"
 	],
 	"additionalProperties": false,
 	"required": [
@@ -139,12 +139,11 @@
 				"Misc"
 			]
 		},
-		"release": {
+		"hidden": {
 			"propertyOrder": 5,
-			"title": "release",
-			"description": "Release state",
-			"type": "string",
-			"enum": ["Released", "Unreleased"]
+			"title": "hidden",
+			"description": "Whether this leaderboard is visible or hidden.",
+			"type": "boolean"
 		}
 	}
 }
