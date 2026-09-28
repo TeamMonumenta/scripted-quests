@@ -2,6 +2,7 @@ package com.playmonumenta.scriptedquests.utils;
 
 import com.playmonumenta.scriptedquests.adapters.VersionAdapter;
 import com.playmonumenta.scriptedquests.adapters.VersionAdapter_unsupported;
+import org.bukkit.Bukkit;
 
 public class NmsUtils {
 	private static VersionAdapter mVersionAdapter = new VersionAdapter_unsupported();
@@ -13,8 +14,7 @@ public class NmsUtils {
 	public static void loadVersionAdapter(Class<?> serverClass) {
 		/* From https://github.com/mbax/AbstractionExamplePlugin */
 
-		String packageName = serverClass.getPackage().getName();
-		String version = packageName.substring(packageName.lastIndexOf('.') + 1);
+		String version = 'v' + Bukkit.getServer().getMinecraftVersion().replace('.', '_');
 
 		try {
 			Class<?> clazz = Class.forName("com.playmonumenta.scriptedquests.adapters.VersionAdapter_" + version);

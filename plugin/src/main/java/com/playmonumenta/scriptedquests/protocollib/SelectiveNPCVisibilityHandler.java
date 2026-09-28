@@ -12,8 +12,6 @@ import com.playmonumenta.scriptedquests.managers.RaceManager;
 import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.quests.QuestNpc;
 import com.playmonumenta.scriptedquests.races.RaceFactory;
-import com.playmonumenta.scriptedquests.utils.MMLog;
-import java.lang.reflect.InvocationTargetException;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -255,11 +253,7 @@ public class SelectiveNPCVisibilityHandler extends PacketAdapter implements List
 		} else { // 1.18
 			packet.getIntLists().write(0, List.of(entity.getEntityId()));
 		}
-		try {
-			mProtocolManager.sendServerPacket(player, packet, false);
-		} catch (InvocationTargetException e) {
-			MMLog.warning("Failed to send packet to player", e);
-		}
+		mProtocolManager.sendServerPacket(player, packet, false);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

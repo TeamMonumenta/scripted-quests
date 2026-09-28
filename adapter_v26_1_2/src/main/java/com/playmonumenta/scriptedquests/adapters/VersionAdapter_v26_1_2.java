@@ -32,7 +32,7 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("unchecked")
-public class VersionAdapter_v1_20_R3 implements VersionAdapter {
+public class VersionAdapter_v26_1_2 implements VersionAdapter {
 	@Override
 	public void setAutoState(CommandBlock state, boolean auto) {
 		((CraftCommandBlock) state).getBlockEntity().setAutomatic(auto);
@@ -78,7 +78,7 @@ public class VersionAdapter_v1_20_R3 implements VersionAdapter {
 
 	static {
 		try {
-			final var field = Commands.class.getDeclaredField("f");
+			final var field = Commands.class.getDeclaredField("CURRENT_EXECUTION_CONTEXT");
 			field.setAccessible(true);
 			CURRENT_EXECUTION_CONTEXT = (ThreadLocal<ExecutionContext<CommandSourceStack>>) field.get(null);
 		} catch (NoSuchFieldException | IllegalAccessException e) {
