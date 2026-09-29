@@ -1,0 +1,149 @@
+{
+	"title": "Leaderboard",
+	"defaultProperties": [
+		"objective",
+		"display_name",
+		"category",
+		"hidden"
+	],
+	"additionalProperties": false,
+	"required": [
+		"objective",
+		"plain_display_name",
+		"display_name"
+	],
+	"properties": {
+		"objective": {
+			"propertyOrder": 1,
+			"title": "objective",
+			"description": "Objective associated with a leaderboard (scoreboard objective this leaderboard is keyed by)",
+			"type": "string",
+			"minLength": 1
+		},
+		"plain_display_name": {
+			"propertyOrder": 2,
+			"title": "plain_display_name",
+			"description": "Plain-text form of display_name, with styling stripped. Derived automatically from display_name.",
+			"type": "string",
+			"readOnly": true
+		},
+		"display_name": {
+			"propertyOrder": 3,
+			"title": "display_name",
+			"description": "Leaderboard's display name. Either a plain string or a component object for styled names.",
+			"oneOf": [
+				{
+					"title": "Plain Text",
+					"type": "string",
+					"minLength": 1
+				},
+				{
+					"title": "Styled",
+					"type": "object",
+					"additionalProperties": true,
+					"options": {
+						"disable_properties": true,
+						"disable_edit_json": true
+					},
+					"properties": {
+						"text": {
+							"propertyOrder": 1,
+							"title": "text",
+							"type": "string"
+						},
+						"color": {
+							"propertyOrder": 2,
+							"title": "color",
+							"description": "A named color or a hex color like #RRGGBB",
+							"type": "string",
+							"enum": [
+								"black",
+								"dark_blue",
+								"dark_green",
+								"dark_aqua",
+								"dark_red",
+								"dark_purple",
+								"gold",
+								"gray",
+								"dark_gray",
+								"blue",
+								"green",
+								"aqua",
+								"red",
+								"light_purple",
+								"yellow",
+								"white"
+							]
+						},
+						"bold": {
+							"propertyOrder": 3,
+							"title": "bold",
+							"type": "boolean",
+							"format": "checkbox"
+						},
+						"italic": {
+							"propertyOrder": 4,
+							"title": "italic",
+							"type": "boolean",
+							"format": "checkbox"
+						},
+						"underlined": {
+							"propertyOrder": 5,
+							"title": "underlined",
+							"type": "boolean",
+							"format": "checkbox"
+						},
+						"strikethrough": {
+							"propertyOrder": 6,
+							"title": "strikethrough",
+							"type": "boolean",
+							"format": "checkbox"
+						},
+						"obfuscated": {
+							"propertyOrder": 7,
+							"title": "obfuscated",
+							"type": "boolean",
+							"format": "checkbox"
+						},
+						"extra": {
+							"propertyOrder": 8,
+							"title": "extra",
+							"description": "Additional segments appended after this one",
+							"type": "array",
+							"format": "tabs-top",
+							"items": {
+								"$ref": "component.json"
+							}
+						}
+					}
+				}
+			]
+		},
+		"category": {
+			"propertyOrder": 4,
+			"title": "category",
+			"description": "Leaderboard category",
+			"type": "string",
+			"enum": [
+				"WoolDungeon",
+				"BonusDungeon",
+				"Strike",
+				"Boss",
+				"Carnival",
+				"Bounty",
+				"Race",
+				"Fishing",
+				"Casino",
+				"Hunts",
+				"Event",
+				"Misc"
+			]
+		},
+		"hidden": {
+			"propertyOrder": 5,
+			"title": "hidden",
+			"description": "Whether this leaderboard is visible or hidden.",
+			"type": "boolean"
+		}
+	}
+}

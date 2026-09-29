@@ -111,6 +111,7 @@ the various quest options
 - Zone Namespaces Editor - https://teammonumenta.github.io/scripted-quests/tools/zone_namespace_editor.html
 - Zone Properties Editor - https://teammonumenta.github.io/scripted-quests/tools/zone_property_editor.html
 - Zone Property Groups Editor - https://teammonumenta.github.io/scripted-quests/tools/zone_property_group_editor.html
+- Leaderboard Editor - https://teammonumenta.github.io/scripted-quests/tools/leaderboard_editor.html
 
 ## <a name="structure"></a>Structure of a Quests File:
 Each quest file has the following info:

@@ -1,0 +1,71 @@
+{
+	"title": "Component",
+	"description": "A single text segment. Colors (named or #RRGGBB) and styles apply to this segment.",
+	"type": "object",
+	"additionalProperties": true,
+	"options": {
+		"disable_properties": true,
+		"disable_edit_json": true
+	},
+	"properties": {
+		"text": {
+			"propertyOrder": 1,
+			"title": "text",
+			"type": "string"
+		},
+		"color": {
+			"propertyOrder": 2,
+			"title": "color",
+			"description": "A named color or a hex color like #RRGGBB",
+			"type": "string",
+			"enum": [
+				"black",
+				"dark_blue",
+				"dark_green",
+				"dark_aqua",
+				"dark_red",
+				"dark_purple",
+				"gold",
+				"gray",
+				"dark_gray",
+				"blue",
+				"green",
+				"aqua",
+				"red",
+				"light_purple",
+				"yellow",
+				"white"
+			]
+		},
+		"bold": {
+			"propertyOrder": 3,
+			"title": "bold",
+			"type": "boolean",
+			"format": "checkbox"
+		},
+		"italic": {
+			"propertyOrder": 4,
+			"title": "italic",
+			"type": "boolean",
+			"format": "checkbox"
+		},
+		"underlined": {
+			"propertyOrder": 5,
+			"title": "underlined",
+			"type": "boolean",
+			"format": "checkbox"
+		},
+		"strikethrough": {
+			"propertyOrder": 6,
+			"title": "strikethrough",
+			"type": "boolean",
+			"format": "checkbox"
+		},
+		"obfuscated": {
+			"propertyOrder": 7,
+			"title": "obfuscated",
+			"type": "boolean",
+			"format": "checkbox"
+		}
+	}
+}

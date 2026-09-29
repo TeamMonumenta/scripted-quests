@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>ScriptedQuests Leaderboard Editor</title>
+
+    <!-- Foundation CSS framework (Bootstrap and jQueryUI also supported) -->
+    <link rel='stylesheet' href='//cdn.jsdelivr.net/bootstrap/3.2.0/css/bootstrap.css'>
+    <!-- Font Awesome icons (Bootstrap, Foundation, and jQueryUI also supported) -->
+    <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.6.1/css/all.css'>
+
+    <script src="https://cdn.jsdelivr.net/npm/@json-editor/json-editor@2.15.2/dist/jsoneditor.min.js"></script>
+</head>
+<body>
+<div class='container'>
+    <div class='row' style='padding-bottom: 15px;'>
+        <div class='col-md-12'>
+            <h1>ScriptedQuests Leaderboard Editor</h1>
+            <p>Leaderboard metadata shown by /leaderboard.</p>
+        </div>
+    </div>
+    <div class='row' style='padding-bottom: 15px;'>
+        <div class='col-md-12'>
+            <button id='restore' class='btn btn-info'>Restore to Default</button>
+            <span id='valid_indicator' class='label label-success'></span>
+        </div>
+    </div>
+    <div class='row'>
+        <div class='col-md-12'>
+            <div id='editor_holder'></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Default value used by the Restore button
+    var starting_value = {
+        objective: "",
+        plain_display_name: "",
+        display_name: "",
+        category: "Misc",
+        hidden: false
+    };
+
+    // Collect the plain text of a component, ignoring styling.
+    // A component is either a string or an object with "text" and "extra" children.
+    function plainText(component) {
+        if (component === null || component === undefined) {
+            return "";
+        }
+        if (typeof component === "string") {
+            return component;
+        }
+        var text = component.text || "";
+        if (Array.isArray(component.extra)) {
+            for (var i = 0; i < component.extra.length; i++) {
+                text += plainText(component.extra[i]);
+            }
+        }
+        return text;
+    }
+
+    // Initialize the editor
+    var editor = new JSONEditor(document.getElementById('editor_holder'),{
+        theme: 'bootstrap3',
+        iconlib: 'fontawesome5',
+
+		// Enable fetching schemas via ajax
+		ajax: true,
+
+        // The schema for the editor
+        schema: {
+            required: true,
+            $ref: "schema/leaderboard.json",
+            propertyOrder: 1
+        }
+    });
+
+    // Keep plain_display_name in sync with display_name (derived field)
+    var syncingPlainName = false;
+    function syncPlainDisplayName(value) {
+        if (syncingPlainName) {
+            return;
+        }
+        var plain = plainText(value.display_name);
+        if (value.plain_display_name === plain) {
+            return;
+        }
+        syncingPlainName = true;
+        value.plain_display_name = plain;
+        editor.setValue(value);
+        syncingPlainName = false;
+    }
+
+    // Hook up the Restore to Default button
+    document.getElementById('restore').addEventListener('click',function() {
+        editor.setValue(starting_value);
+        syncPlainDisplayName(editor.getValue());
+    });
+
+    // Hook up the validation indicator to update its
+    // status whenever the editor changes
+    editor.on('change',function() {
+        syncPlainDisplayName(editor.getValue());
+
+        // Get an array of errors from the validator
+        var errors = editor.validate();
+
+        var indicator = document.getElementById('valid_indicator');
+
+        // Not valid
+        if(errors.length) {
+            indicator.className = 'label label-danger'
+            indicator.textContent = "not valid";
+        }
+        // Valid
+        else {
+            indicator.className = 'label label-success'
+            indicator.textContent = "valid";
+        }
+    });
+</script>
+</body>
+</html>

@@ -13,6 +13,7 @@ import com.playmonumenta.scriptedquests.managers.ClickableManager;
 import com.playmonumenta.scriptedquests.managers.CodeManager;
 import com.playmonumenta.scriptedquests.managers.GuiManager;
 import com.playmonumenta.scriptedquests.managers.InteractableManager;
+import com.playmonumenta.scriptedquests.managers.LeaderboardManager;
 import com.playmonumenta.scriptedquests.managers.NpcTradeManager;
 import com.playmonumenta.scriptedquests.managers.QuestCompassManager;
 import com.playmonumenta.scriptedquests.managers.QuestDeathManager;
@@ -61,6 +62,7 @@ public class Plugin extends JavaPlugin {
 	public @MonotonicNonNull InteractableManager mInteractableManager;
 	public @MonotonicNonNull QuestLoginManager mLoginManager;
 	public @MonotonicNonNull QuestDeathManager mDeathManager;
+	public @MonotonicNonNull LeaderboardManager mLeaderboardManager;
 	public @MonotonicNonNull RaceManager mRaceManager;
 	public @MonotonicNonNull NpcTradeManager mTradeManager;
 	public @MonotonicNonNull CommandTimerManager mTimerManager;
@@ -104,7 +106,7 @@ public class Plugin extends JavaPlugin {
 		Clickable.register(this);
 		GiveLootTable.register(mRandom);
 		RaceCommand.register(this);
-		Leaderboard.register(this);
+		LeaderboardCommand.register(this);
 		Line.register();
 		RandomNumber.register();
 		RandomSample.register();
@@ -144,6 +146,7 @@ public class Plugin extends JavaPlugin {
 		mLoginManager = new QuestLoginManager();
 		mDeathManager = new QuestDeathManager();
 		mRaceManager = new RaceManager(this);
+		mLeaderboardManager = new LeaderboardManager();
 		mCodeManager = new CodeManager();
 		mZoneEventListener = new ZoneEventListener(this);
 		mZoneFileManager = ZoneFileManager.createInstance();
@@ -218,6 +221,7 @@ public class Plugin extends JavaPlugin {
 		mQuestCompassManager.reload(this, sender);
 		mLoginManager.reload(this, sender);
 		mDeathManager.reload(this, sender);
+		mLeaderboardManager.reload(this, sender);
 		mRaceManager.reload(this, sender);
 		mCodeManager.reload(this, sender);
 		mZonePropertyManager.reload(this, sender);
