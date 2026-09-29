@@ -87,6 +87,10 @@ public class MessagingUtils {
 		player.sendMessage(formattedMessage);
 	}
 
+	public static void sendNPCMessage(Player player, String displayName, String message) {
+		sendNPCMessage(player, displayName, message, false);
+	}
+
 	public static void sendNPCMessage(Player player, String displayName, String message, boolean minimessage) {
 		sendNPCMessage(player, displayName, message, minimessage, component -> component);
 	}
@@ -110,6 +114,11 @@ public class MessagingUtils {
 		the caller to do such replacement itself, which should never be done before translations.
 	 */
 	@Deprecated
+	public static void sendNPCMessage(Player player, String displayName, Component message) {
+		sendNPCMessage(player, displayName, message, false);
+	}
+
+	@Deprecated
 	public static void sendNPCMessage(Player player, String displayName, Component message, boolean minimessage) {
 		displayName = TranslationsManager.translate(player, displayName);
 		if (message instanceof TextComponent) {
@@ -126,8 +135,12 @@ public class MessagingUtils {
 		player.sendMessage(formattedMessage);
 	}
 
-	public static void sendRawMessage(Player player, String message, boolean minimessage) {
-		sendRawMessage(player, message, minimessage, true);
+	public static void sendRawMessage(Player player, String message) {
+		sendRawMessage(player, message, false, true);
+	}
+
+	public static void sendRawMessage(Player player, String message, boolean allowTranslations) {
+		sendRawMessage(player, message, false, allowTranslations);
 	}
 
 	public static void sendRawMessage(Player player, String message, boolean minimessage, boolean allowTranslations) {
@@ -155,6 +168,11 @@ public class MessagingUtils {
 		message = message.replace('§', '&');
 		TextComponent formattedMessage = AMPERSAND_SERIALIZER.deserialize(message);
 		player.sendMessage(formattedMessage.hoverEvent(hoverEvent).clickEvent(ClickEvent.runCommand(commandStr)));
+	}
+
+	public static void sendClickableNPCMessage(Player player, String message,
+											   String commandStr, @Nullable HoverEvent<?> hoverEvent) {
+		sendClickableNPCMessage(player, message, false, commandStr, hoverEvent);
 	}
 
 	public static void sendClickableNPCMessage(Player player, String message, boolean minimessage,

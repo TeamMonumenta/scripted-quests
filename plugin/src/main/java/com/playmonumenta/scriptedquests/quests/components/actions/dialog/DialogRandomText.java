@@ -35,7 +35,7 @@ public class DialogRandomText implements DialogBase {
 		if (mDisplayName != null && !mDisplayName.isEmpty()) {
 			MessagingUtils.sendNPCMessage(context.getPlayer(), mDisplayName, mText.get(idx), mMiniMessage);
 		} else {
-			MessagingUtils.sendRawMessage(context.getPlayer(), mText.get(idx), mMiniMessage);
+			MessagingUtils.sendRawMessage(context.getPlayer(), mText.get(idx), mMiniMessage, true);
 		}
 	}
 

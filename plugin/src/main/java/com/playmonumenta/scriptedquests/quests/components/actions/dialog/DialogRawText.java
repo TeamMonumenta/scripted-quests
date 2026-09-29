@@ -30,7 +30,7 @@ public class DialogRawText implements DialogBase {
 	@Override
 	public void sendDialog(QuestContext context) {
 		for (String text : mText) {
-			MessagingUtils.sendRawMessage(context.getPlayer(), text, mMiniMessage);
+			MessagingUtils.sendRawMessage(context.getPlayer(), text, mMiniMessage, true);
 		}
 	}
 

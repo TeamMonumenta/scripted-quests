@@ -35,7 +35,7 @@ public class DialogText implements DialogBase {
 			if (mDisplayName != null && !mDisplayName.isEmpty()) {
 				MessagingUtils.sendNPCMessage(context.getPlayer(), mDisplayName, text, mMiniMessage);
 			} else {
-				MessagingUtils.sendRawMessage(context.getPlayer(), text, mMiniMessage);
+				MessagingUtils.sendRawMessage(context.getPlayer(), text, mMiniMessage, true);
 			}
 		}
 	}
