@@ -14,7 +14,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public class Waypoint {
-	public static void register(Plugin plugin) {
+	public static void register() {
 		CommandPermission perm = CommandPermission.fromString("scriptedquests.waypoint");
 
 		EntitySelectorArgument.OnePlayer playerArg = new EntitySelectorArgument.OnePlayer("player");
@@ -39,10 +39,10 @@ public class Waypoint {
 						    && !player.hasPermission("scriptedquests.waypoint.others")) {
 						throw CommandAPI.failWithString("You do not have permission to run this as another player.");
 					}
-					if (plugin.mQuestCompassManager != null) {
+					if (Plugin.getInstance().mQuestCompassManager != null) {
 						List<Location> waypoint = new ArrayList<>();
 						waypoint.add(args.getByArgument(locationArg));
-						plugin.mQuestCompassManager.setCommandWaypoint(targetPlayer, waypoint, args.getByArgument(titleArg) + "§r", args.getByArgument(messageArg), args.getByArgumentOrDefault(regexArg, targetPlayer != null ? targetPlayer.getWorld().getName() : ".*"));
+						Plugin.getInstance().mQuestCompassManager.setCommandWaypoint(targetPlayer, waypoint, args.getByArgument(titleArg) + "§r", args.getByArgument(messageArg), args.getByArgumentOrDefault(regexArg, targetPlayer != null ? targetPlayer.getWorld().getName() : ".*"));
 					} else {
 						throw CommandAPI.failWithString("Quest Compass Manager does not exist!");
 					}
@@ -56,8 +56,8 @@ public class Waypoint {
 						    && !player.hasPermission("scriptedquests.waypoint.others")) {
 						throw CommandAPI.failWithString("You do not have permission to run this as another player.");
 					}
-					if (plugin.mQuestCompassManager != null) {
-						plugin.mQuestCompassManager.removeCommandWaypoint(targetPlayer);
+					if (Plugin.getInstance().mQuestCompassManager != null) {
+						Plugin.getInstance().mQuestCompassManager.removeCommandWaypoint(targetPlayer);
 					} else {
 						throw CommandAPI.failWithString("Quest Compass Manager does not exist!");
 					}

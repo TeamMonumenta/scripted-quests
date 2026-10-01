@@ -1,30 +1,29 @@
 package com.playmonumenta.scriptedquests.commands;
 
 import com.playmonumenta.scriptedquests.Plugin;
+import io.papermc.paper.command.brigadier.BasicCommand;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
+import org.jspecify.annotations.Nullable;
 
-public class ReloadQuests implements CommandExecutor {
-	Plugin mPlugin;
-
-	public ReloadQuests(Plugin plugin) {
-		mPlugin = plugin;
-	}
-
+public class ReloadQuests implements BasicCommand {
 	@Override
-	public boolean onCommand(CommandSender sender, Command command, String arg2, String[] arg3) {
-		if (arg3.length > 0) {
+	public void execute(CommandSourceStack commandSourceStack, String[] args) {
+		Entity sender = commandSourceStack.getExecutor();
+		if (args.length > 0) {
 			sender.sendMessage(Component.text("No parameters are needed for this function!", NamedTextColor.RED));
-			return false;
+			return;
 		}
 
 		sender.sendMessage(Component.text("Reloading config...", NamedTextColor.GOLD));
 
-		mPlugin.reloadConfig(sender);
+		Plugin.getInstance().reloadConfig(sender);
+	}
 
-		return true;
+	@Override
+	public @Nullable String permission() {
+		return "scriptedquests.reloadquests";
 	}
 }

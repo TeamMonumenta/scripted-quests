@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 
 public class GenerateCode {
 	@SuppressWarnings("unchecked")
-	public static void register(Plugin plugin) {
+	public static void register() {
 		EntitySelectorArgument.ManyPlayers playersArg = new EntitySelectorArgument.ManyPlayers("players");
 		Argument<String> seedArg = new TextArgument("seed");
 
@@ -20,7 +20,7 @@ public class GenerateCode {
 			.withArguments(playersArg)
 			.withArguments(seedArg)
 			.executes((sender, args) -> {
-				generateCode(plugin, args.getByArgument(playersArg), args.getByArgument(seedArg));
+				generateCode(Plugin.getInstance(), args.getByArgument(playersArg), args.getByArgument(seedArg));
 			})
 			.register();
 	}

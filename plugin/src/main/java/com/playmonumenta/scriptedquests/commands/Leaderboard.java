@@ -1,6 +1,7 @@
 package com.playmonumenta.scriptedquests.commands;
 
 import com.playmonumenta.redissync.LeaderboardAPI;
+import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.utils.LeaderboardUtils;
 import com.playmonumenta.scriptedquests.utils.LeaderboardUtils.LeaderboardEntry;
 import com.playmonumenta.scriptedquests.utils.MMLog;
@@ -21,7 +22,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class Leaderboard {
 	@SuppressWarnings("unchecked")
-	public static void register(Plugin plugin) {
+	public static void register() {
 		EntitySelectorArgument.ManyPlayers playersArg = new EntitySelectorArgument.ManyPlayers("players");
 		StringArgument objectiveArg = new StringArgument("objective");
 		BooleanArgument descendingArg = new BooleanArgument("descending");
@@ -54,7 +54,7 @@ public class Leaderboard {
 				boolean descending = args.getByArgument(descendingArg);
 				int pageNumber = args.getByArgument(pageArg);
 				for (Player player : targets) {
-					leaderboard(plugin, player, objective, descending, pageNumber, null);
+					leaderboard(Plugin.getInstance(), player, objective, descending, pageNumber, null);
 				}
 			})
 			.register();
@@ -76,7 +76,7 @@ public class Leaderboard {
 				boolean descending = args.getByArgument(descendingArg);
 				Collection<Player> filterPlayers = args.getByArgument(filterPlayersArg);
 				for (Player player : targets) {
-					leaderboard(plugin, player, objective, descending, 1, filterPlayers);
+					leaderboard(Plugin.getInstance(), player, objective, descending, 1, filterPlayers);
 				}
 			})
 			.register();

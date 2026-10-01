@@ -23,7 +23,7 @@ public class InteractNpc {
 	static final Pattern uuidRegex = Pattern.compile("\\p{XDigit}{8}-\\p{XDigit}{4}-\\p{XDigit}{4}-\\p{XDigit}{4}-\\p{XDigit}{12}");
 
 	@SuppressWarnings("unchecked")
-	public static void register(Plugin plugin) {
+	public static void register() {
 		EntitySelectorArgument.ManyPlayers playersArg = new EntitySelectorArgument.ManyPlayers("players");
 		TextArgument nameArg = new TextArgument("npcName");
 		EntityTypeArgument typeArg = new EntityTypeArgument("npcType");
@@ -38,7 +38,7 @@ public class InteractNpc {
 				Collection<Player> targets = args.getByArgument(playersArg);
 				String npcName = args.getByArgument(nameArg);
 				EntityType npcType = args.getByArgumentOrDefault(typeArg, EntityType.VILLAGER);
-				interact(plugin, sender, targets, npcName, npcType);
+				interact(Plugin.getInstance(), sender, targets, npcName, npcType);
 			})
 			.register();
 
@@ -49,7 +49,7 @@ public class InteractNpc {
 			.executes((sender, args) -> {
 				Collection<Player> targets = args.getByArgument(playersArg);
 				Entity npc = args.getByArgument(npcArg);
-				interact(plugin, sender, targets, npc);
+				interact(Plugin.getInstance(), sender, targets, npc);
 			})
 			.register();
 	}

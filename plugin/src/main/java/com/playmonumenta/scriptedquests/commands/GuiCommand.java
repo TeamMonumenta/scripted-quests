@@ -14,15 +14,14 @@ import org.bukkit.entity.Player;
 public class GuiCommand {
 
 	@SuppressWarnings("unchecked")
-	public static void register(Plugin plugin) {
-
+	public static void register() {
 		Argument<String> guiNameArgument = new StringArgument("name")
-			.replaceSuggestions(ArgumentSuggestions.strings(info -> plugin.mGuiManager.getGuiNames()));
+			.replaceSuggestions(ArgumentSuggestions.strings(info -> Plugin.getInstance().mGuiManager.getGuiNames()));
 
 		Argument<String> guiPageArgument = new StringArgument("page")
 			.replaceSuggestions(ArgumentSuggestions.strings(info -> {
 				String label = info.previousArgs().getByArgument(guiNameArgument);
-				Gui gui = plugin.mGuiManager.getGui(label);
+				Gui gui = Plugin.getInstance().mGuiManager.getGui(label);
 				if (gui == null) {
 					return new String[0];
 				}
@@ -40,7 +39,7 @@ public class GuiCommand {
 					.withOptionalArguments(guiPageArgument)
 					.executes((sender, args) -> {
 						for (Player player : (Collection<Player>) args.getByArgument(playerArgument)) {
-							plugin.mGuiManager.showGui(args.getByArgument(guiNameArgument), player, args.getByArgumentOrDefault(guiPageArgument, GuiManager.MAIN_PAGE));
+							Plugin.getInstance().mGuiManager.showGui(args.getByArgument(guiNameArgument), player, args.getByArgumentOrDefault(guiPageArgument, GuiManager.MAIN_PAGE));
 						}
 					})
 			)
@@ -50,7 +49,7 @@ public class GuiCommand {
 					.withArguments(guiNameArgument)
 					.withOptionalArguments(guiPageArgument)
 					.executesPlayer((sender, args) -> {
-						plugin.mGuiManager.editGui(args.getByArgument(guiNameArgument), sender, args.getByArgumentOrDefault(guiPageArgument, GuiManager.MAIN_PAGE));
+						Plugin.getInstance().mGuiManager.editGui(args.getByArgument(guiNameArgument), sender, args.getByArgumentOrDefault(guiPageArgument, GuiManager.MAIN_PAGE));
 					})
 			).register();
 

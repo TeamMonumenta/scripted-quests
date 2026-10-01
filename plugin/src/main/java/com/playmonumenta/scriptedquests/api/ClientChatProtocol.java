@@ -11,6 +11,8 @@ import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.QuestContext;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
 import com.playmonumenta.scriptedquests.utils.MMLog;
+import io.papermc.paper.command.brigadier.BasicCommand;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.HashSet;
@@ -18,14 +20,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import org.jspecify.annotations.Nullable;
 
-public class ClientChatProtocol implements PluginMessageListener, CommandExecutor {
+public class ClientChatProtocol implements PluginMessageListener, BasicCommand {
 	private static @MonotonicNonNull ClientChatProtocol INSTANCE = null;
 	private static final String VERSION = "1.0";
 	private static final Gson GSON = new Gson();
@@ -33,8 +33,7 @@ public class ClientChatProtocol implements PluginMessageListener, CommandExecuto
 	private boolean mOverride = false;
 
 	private ClientChatProtocol(Plugin plugin) {
-		plugin.getCommand("toggleclientchatapi").setExecutor(this);
-
+		plugin.registerCommand("toggleclientchatapi", this);
 		plugin.getServer().getMessenger().registerOutgoingPluginChannel(plugin, Constants.API_CHANNEL_ID);
 		plugin.getServer().getMessenger().registerIncomingPluginChannel(plugin, Constants.API_CHANNEL_ID, this);
 	}
@@ -118,9 +117,13 @@ public class ClientChatProtocol implements PluginMessageListener, CommandExecuto
 	}
 
 	@Override
-	public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
+	public void execute(CommandSourceStack commandSourceStack, String[] args) {
 		mOverride = !mOverride;
 		MMLog.info("Should always send custom data to player: " + mOverride);
-		return true;
+	}
+
+	@Override
+	public @Nullable String permission() {
+		return "scriptedquests.toggleclientchatapi";
 	}
 }

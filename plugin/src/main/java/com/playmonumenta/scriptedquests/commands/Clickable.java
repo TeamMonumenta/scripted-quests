@@ -10,13 +10,13 @@ import org.bukkit.command.ProxiedCommandSender;
 import org.bukkit.entity.Player;
 
 public class Clickable {
-	public static void register(Plugin plugin) {
+	public static void register() {
 		Argument<String> labelArg = new StringArgument("label");
 		new CommandAPICommand("clickable")
 			.withPermission(CommandPermission.fromString("scriptedquests.clickable"))
 			.withArguments(labelArg)
 			.executes((sender, args) -> {
-				return click(plugin, sender, args.getByArgument(labelArg));
+				return click(Plugin.getInstance(), sender, args.getByArgument(labelArg));
 			})
 			.register();
 	}

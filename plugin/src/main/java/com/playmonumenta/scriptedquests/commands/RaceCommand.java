@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 
 public class RaceCommand {
 	@SuppressWarnings("unchecked")
-	public static void register(Plugin plugin) {
+	public static void register() {
 		EntitySelectorArgument.ManyPlayers playersArg = new EntitySelectorArgument.ManyPlayers("players");
 		StringArgument labelArg = new StringArgument("raceLabel");
 		IntegerArgument pageArg = new IntegerArgument("page", 1);
@@ -23,19 +23,19 @@ public class RaceCommand {
 				.withArguments(playersArg)
 				.withArguments(labelArg)
 				.executes((sender, args) -> {
-					raceStart(plugin, args.getByArgument(playersArg), args.getByArgument(labelArg));
+					raceStart(Plugin.getInstance(), args.getByArgument(playersArg), args.getByArgument(labelArg));
 				}))
 			.withSubcommand(new CommandAPICommand("stop")
 				.withPermission(CommandPermission.fromString("scriptedquests.race.stop"))
 				.withArguments(playersArg)
 				.executes((sender, args) -> {
-					raceStop(plugin, args.getByArgument(playersArg));
+					raceStop(Plugin.getInstance(), args.getByArgument(playersArg));
 				}))
 			.withSubcommand(new CommandAPICommand("win")
 				.withPermission(CommandPermission.fromString("scriptedquests.race.win"))
 				.withArguments(playersArg)
 				.executes((sender, args) -> {
-					raceWin(plugin, args.getByArgument(playersArg));
+					raceWin(Plugin.getInstance(), args.getByArgument(playersArg));
 				}))
 			.withSubcommand(new CommandAPICommand("leaderboard")
 				.withPermission(CommandPermission.fromString("scriptedquests.race.leaderboard"))
@@ -51,7 +51,7 @@ public class RaceCommand {
 					}
 					String raceLabel = args.getByArgument(labelArg);
 					int pageNumber = args.getByArgument(pageArg);
-					raceLeaderboard(plugin, targets, raceLabel, pageNumber);
+					raceLeaderboard(Plugin.getInstance(), targets, raceLabel, pageNumber);
 				}))
 			.register();
 	}

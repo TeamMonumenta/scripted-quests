@@ -7,7 +7,7 @@ import java.util.Collection;
 import org.bukkit.entity.Player;
 
 public class InvalidateCompassCacheCommand {
-	public static void register(Plugin plugin) {
+	public static void register() {
 		EntitySelectorArgument.ManyPlayers playersArg = new EntitySelectorArgument.ManyPlayers("players");
 		new CommandAPICommand("invalidatecompasscache")
 			.withPermission("scriptedquests.invalidatecompasscache")
@@ -16,7 +16,7 @@ public class InvalidateCompassCacheCommand {
 				@SuppressWarnings("unchecked")
 				Collection<Player> players = args.getByArgument(playersArg);
 				for (Player player : players) {
-					plugin.mQuestCompassManager.invalidateCache(player);
+					Plugin.getInstance().mQuestCompassManager.invalidateCache(player);
 				}
 			}).register();
 	}

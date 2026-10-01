@@ -7,12 +7,12 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
 public class ReloadZones {
-	public static void register(Plugin plugin) {
+	public static void register() {
 		new CommandAPICommand("reloadzones")
 			.withPermission(CommandPermission.fromString("scriptedquests.reloadzones"))
 			.executes((sender, args) -> {
 				sender.sendMessage(Component.text("Reloading config...", NamedTextColor.GOLD));
-				plugin.reloadZones(sender);
+				Plugin.getInstance().reloadZones(sender);
 				return 1;
 			})
 			.register();

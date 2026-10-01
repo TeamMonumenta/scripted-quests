@@ -176,7 +176,6 @@ public class ScheduleFunction {
 
 	private final PriorityQueue<DelayedAction> mActions = new PriorityQueue<>();
 	private final Map<CommandSender, SenderDelayedTasks> mSenderDelayedTasks = new HashMap<>();
-	private final Plugin mPlugin;
 	private @Nullable Integer mTaskId = null;
 	private final Runnable mRunnable = new Runnable() {
 		// Re-use the same temporary list each iteration
@@ -222,9 +221,7 @@ public class ScheduleFunction {
 		}
 	};
 
-	public ScheduleFunction(Plugin plugin) {
-		mPlugin = plugin;
-
+	public ScheduleFunction() {
 		/* Unregister the default /schedule command */
 		try {
 			CommandAPI.unregister("schedule");
@@ -293,7 +290,7 @@ public class ScheduleFunction {
 		mActions.add(action);
 
 		if (mTaskId == null) {
-			mTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(mPlugin, mRunnable, 0, 1);
+			mTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(Plugin.getInstance(), mRunnable, 0, 1);
 		}
 	}
 

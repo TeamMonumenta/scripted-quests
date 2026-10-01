@@ -1,7 +1,7 @@
 package com.playmonumenta.scriptedquests;
 
 import com.playmonumenta.scriptedquests.api.ClientChatProtocol;
-import com.playmonumenta.scriptedquests.commands.*;
+import com.playmonumenta.scriptedquests.commands.ScheduleFunction;
 import com.playmonumenta.scriptedquests.growables.GrowableAPI;
 import com.playmonumenta.scriptedquests.listeners.EntityListener;
 import com.playmonumenta.scriptedquests.listeners.InteractablesListener;
@@ -30,8 +30,6 @@ import com.playmonumenta.scriptedquests.utils.NmsUtils;
 import com.playmonumenta.scriptedquests.zones.ZoneFileManager;
 import com.playmonumenta.scriptedquests.zones.ZonePropertyGroupManager;
 import java.io.File;
-import java.util.Objects;
-import java.util.Random;
 import org.bukkit.Bukkit;
 import org.bukkit.SoundCategory;
 import org.bukkit.command.CommandSender;
@@ -74,10 +72,13 @@ public class Plugin extends JavaPlugin {
 	public @MonotonicNonNull ZoneEventListener mZoneEventListener;
 	public @Nullable ProtocolLibIntegration mProtocolLibIntegration;
 
-	public Random mRandom = new Random();
-	private @MonotonicNonNull ScheduleFunction mScheduledFunctionsManager;
+	private final @MonotonicNonNull ScheduleFunction mScheduledFunctionsManager;
 	private SoundCategory mDefaultMusicSoundCategory = SoundCategory.RECORDS;
 	private long mMusicLoginFixMillis = 150L;
+
+	public Plugin(@MonotonicNonNull ScheduleFunction scheduledFunctionsManager) {
+		mScheduledFunctionsManager = scheduledFunctionsManager;
+	}
 
 	@Override
 	public void onLoad() {
@@ -98,36 +99,6 @@ public class Plugin extends JavaPlugin {
 		if (translationsConfig != null) {
 			mTranslationsManager = new TranslationsManager(this, translationsConfig);
 		}
-
-		FontUtilsDebug.register();
-		InteractNpc.register(this);
-		Clickable.register(this);
-		GiveLootTable.register(mRandom);
-		RaceCommand.register(this);
-		Leaderboard.register(this);
-		Line.register();
-		RandomNumber.register();
-		RandomSample.register();
-		HasPermission.register();
-		TimerDebug.register(this);
-		GenerateCode.register(this);
-		Code.register(this);
-		SetVelocity.register();
-		Heal.register();
-		Damage.register();
-		Cooldown.register();
-		Clock.register();
-		ImprovedClear.register();
-		ReloadZones.register(this);
-		GuiCommand.register(this);
-		TradesCommand.register();
-		Music.register();
-		InvalidateCompassCacheCommand.register(this);
-
-		mScheduledFunctionsManager = new ScheduleFunction(this);
-
-		GrowableAPI.registerCommands();
-		Waypoint.register(this);
 	}
 
 	@Override
@@ -173,9 +144,6 @@ public class Plugin extends JavaPlugin {
 		if (Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) {
 			mProtocolLibIntegration = new ProtocolLibIntegration(this);
 		}
-
-		Objects.requireNonNull(getCommand("reloadQuests")).setExecutor(new ReloadQuests(this));
-		Objects.requireNonNull(getCommand("questTrigger")).setExecutor(new QuestTrigger(this));
 
 		ClientChatProtocol.initialize(this);
 

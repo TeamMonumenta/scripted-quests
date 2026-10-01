@@ -10,14 +10,14 @@ import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import org.bukkit.entity.Player;
 
 public class Code {
-	public static void register(Plugin plugin) {
+	public static void register() {
 		new CommandAPICommand("code")
 			.withPermission(CommandPermission.fromString("scriptedquests.code"))
 			.withArguments(new TextArgument("word1").replaceSuggestions(CodeEntry.SUGGESTIONS_WORDS))
 			.withArguments(new TextArgument("word2").replaceSuggestions(CodeEntry.SUGGESTIONS_WORDS))
 			.withArguments(new TextArgument("word3").replaceSuggestions(CodeEntry.SUGGESTIONS_WORDS))
 			.executesPlayer((player, args) -> {
-				submitCode(plugin, player, args.getUnchecked("word1"), args.getUnchecked("word2"), args.getUnchecked("word3"));
+				submitCode(Plugin.getInstance(), player, args.getUnchecked("word1"), args.getUnchecked("word2"), args.getUnchecked("word3"));
 			})
 			.register();
 	}
