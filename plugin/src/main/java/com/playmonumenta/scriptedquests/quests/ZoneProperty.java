@@ -128,9 +128,14 @@ public class ZoneProperty {
 			MMLog.severe("Attempted to add two ZoneProperty objects of different properties!");
 			return;
 		}
-		for (QuestComponent component : other.getComponents()) {
+		for (QuestComponent component : other.getEnterComponents()) {
 			mEnterComponents.add(component);
 		}
+		for (QuestComponent component : other.getExitComponents()) {
+			mExitComponents.add(component);
+		}
+		mDeaths.addAll(other.mDeaths);
+		mLogins.addAll(other.mLogins);
 	}
 
 	public String getNamespaceName() {
@@ -140,17 +145,22 @@ public class ZoneProperty {
 	public String getName() {
 		return mName;
 	}
+	
+	public List<QuestDeath> getDeaths() {
+		return mDeaths;
+	}
 
-	// TODO: refactor this getter to be called getEnterComponents.
-	// Needs to go over every call across all repos and rename accordingly.
-	public List<QuestComponent> getComponents() {
+	public List<QuestLogin> getLogins() {
+		return mLogins;
+	}
+
+	public List<QuestComponent> getEnterComponents() {
 		return mEnterComponents.getComponents();
 	}
 
 	public List<QuestComponent> getExitComponents() {
 		return mExitComponents.getComponents();
 	}
-	// TODO: END
 	
 	// TODO: refactor these 2 to be the same method, accepting an enum EventType (ENTER, EXIT).
 	// Needs to go over every call across all repos and rename accordingly.
