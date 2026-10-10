@@ -55,8 +55,10 @@ public class ZoneProperty {
 
 	public ZoneProperty(JsonObject object) throws Exception {
 		mNamespaceName = JsonUtils.getString(object, "namespace");
-		if ()
 		mName = JsonUtils.getString(object, "name");
+		if (mNamespaceName.isEmpty() || mName.isEmpty()) {
+			throw new Exception("Failed to parse zone property namespace/name as string");
+		}
 		mDisplayName = JsonUtils.getString(object, "display_name", "");
 		// TODO: Refactor so that components only require a linkage to the top-level item, not a name/entity type
 		for (JsonElement entry : JsonUtils.getJsonArray(object, "on_enter", EMPTY_ARRAY)) {
@@ -157,6 +159,10 @@ public class ZoneProperty {
 	}
 
 	public void exitEvent(Plugin plugin, Player player) {
+<<<<<<< HEAD
+=======
+		mExitComponents.run(new QuestContext(plugin, player, null));
+>>>>>>> 4185bf0 (refactor: start refactoring ZoneProperty to accommodate for misc keys and cleanup code)
 	}
 	// TODO: END
 
