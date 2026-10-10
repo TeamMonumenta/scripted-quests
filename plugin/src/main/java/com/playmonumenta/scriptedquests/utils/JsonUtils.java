@@ -115,6 +115,18 @@ public abstract class JsonUtils {
 		return element.getAsBoolean();
 	}
 
+	public static @Nullable JsonArray getJsonArray(JsonObject object, String property, @Nullable JsonArray defaultValue) throws Exception {
+		JsonElement element = object.get(property);
+		if (element == null) {
+			return defaultValue;
+		}
+		if (!element.isJsonArray()) {
+			throw new Exception("'" + property + "' entry must be an array");
+		}
+
+		return element.getAsJsonArray();
+	}
+
 	public static <T> JsonObject toJsonObject(Map<String, T> map, Function<T, JsonElement> toJsonFunc) {
 		JsonObjectBuilder builder = new JsonObjectBuilder();
 		for (Map.Entry<String, T> entry : map.entrySet()) {
