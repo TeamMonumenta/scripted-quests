@@ -159,10 +159,7 @@ public class ZoneProperty {
 	}
 
 	public void exitEvent(Plugin plugin, Player player) {
-<<<<<<< HEAD
-=======
 		mExitComponents.run(new QuestContext(plugin, player, null));
->>>>>>> 4185bf0 (refactor: start refactoring ZoneProperty to accommodate for misc keys and cleanup code)
 	}
 	// TODO: END
 
