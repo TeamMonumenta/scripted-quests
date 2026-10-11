@@ -16,8 +16,6 @@ import com.playmonumenta.scriptedquests.managers.InteractableManager;
 import com.playmonumenta.scriptedquests.managers.LeaderboardManager;
 import com.playmonumenta.scriptedquests.managers.NpcTradeManager;
 import com.playmonumenta.scriptedquests.managers.QuestCompassManager;
-import com.playmonumenta.scriptedquests.managers.QuestDeathManager;
-import com.playmonumenta.scriptedquests.managers.QuestLoginManager;
 import com.playmonumenta.scriptedquests.managers.QuestNpcManager;
 import com.playmonumenta.scriptedquests.managers.RaceManager;
 import com.playmonumenta.scriptedquests.managers.TranslationsManager;
@@ -60,8 +58,6 @@ public class Plugin extends JavaPlugin {
 	public @MonotonicNonNull QuestNpcManager mNpcManager;
 	public @MonotonicNonNull ClickableManager mClickableManager;
 	public @MonotonicNonNull InteractableManager mInteractableManager;
-	public @MonotonicNonNull QuestLoginManager mLoginManager;
-	public @MonotonicNonNull QuestDeathManager mDeathManager;
 	public @MonotonicNonNull LeaderboardManager mLeaderboardManager;
 	public @MonotonicNonNull RaceManager mRaceManager;
 	public @MonotonicNonNull NpcTradeManager mTradeManager;
@@ -143,8 +139,6 @@ public class Plugin extends JavaPlugin {
 		mClickableManager = new ClickableManager();
 		mInteractableManager = new InteractableManager();
 		mTradeManager = new NpcTradeManager();
-		mLoginManager = new QuestLoginManager();
-		mDeathManager = new QuestDeathManager();
 		mRaceManager = new RaceManager(this);
 		mLeaderboardManager = new LeaderboardManager();
 		mCodeManager = new CodeManager();
@@ -219,8 +213,6 @@ public class Plugin extends JavaPlugin {
 		mInteractableManager.reload(this, sender);
 		mTradeManager.reload(this, sender);
 		mQuestCompassManager.reload(this, sender);
-		mLoginManager.reload(this, sender);
-		mDeathManager.reload(this, sender);
 		mLeaderboardManager.reload(this, sender);
 		mRaceManager.reload(this, sender);
 		mCodeManager.reload(this, sender);

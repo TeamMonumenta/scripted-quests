@@ -59,18 +59,21 @@ public class ZoneProperty {
 		if (mNamespaceName.isEmpty() || mName.isEmpty()) {
 			throw new Exception("Failed to parse zone property namespace/name as string");
 		}
-		mDisplayName = JsonUtils.getString(object, "display_name", "");
+
+		String displayName = JsonUtils.getString(object, "display_name", "");
+		mDisplayName = displayName == null ? "" : displayName;
+		
 		// TODO: Refactor so that components only require a linkage to the top-level item, not a name/entity type
-		for (JsonElement entry : JsonUtils.getJsonArray(object, "on_enter", EMPTY_ARRAY)) {
+		for (JsonElement entry : getJsonArrayOrEmpty(object, "on_enter")) {
 			mEnterComponents.add(new QuestComponent(mName, mDisplayName, EntityType.PLAYER, entry));
 		}
-		for (JsonElement entry : JsonUtils.getJsonArray(object, "on_exit", EMPTY_ARRAY)) {
+		for (JsonElement entry : getJsonArrayOrEmpty(object, "on_exit")) {
 			mExitComponents.add(new QuestComponent(mName, mDisplayName, EntityType.PLAYER, entry));
 		}
-		for (JsonElement entry : JsonUtils.getJsonArray(object, "deaths", EMPTY_ARRAY)) {
+		for (JsonElement entry : getJsonArrayOrEmpty(object, "deaths")) {
 			mDeaths.add(new QuestDeath(entry.getAsJsonObject()));
 		}
-		for (JsonElement entry : JsonUtils.getJsonArray(object, "logins", EMPTY_ARRAY)) {
+		for (JsonElement entry : getJsonArrayOrEmpty(object, "logins")) {
 			mLogins.add(new QuestLogin(entry.getAsJsonObject()));
 		}
 
@@ -162,8 +165,6 @@ public class ZoneProperty {
 		return mExitComponents.getComponents();
 	}
 	
-	// TODO: refactor these 2 to be the same method, accepting an enum EventType (ENTER, EXIT).
-	// Needs to go over every call across all repos and rename accordingly.
 	public void changeEnterEvent(Plugin plugin, Player player) {
 		mEnterComponents.run(new QuestContext(plugin, player, null));
 	}
@@ -171,10 +172,14 @@ public class ZoneProperty {
 	public void changeExitEvent(Plugin plugin, Player player) {
 		mExitComponents.run(new QuestContext(plugin, player, null));
 	}
-	// TODO: END
 
 	@SuppressWarnings("unchecked")
 	public <T> Collection<? extends T> getEvents(Class<T> eventClass) {
 		return (Collection<? extends T>) mEvents.stream().filter(eventClass::isInstance).collect(Collectors.toList());
+	}
+
+	private JsonArray getJsonArrayOrEmpty(JsonObject object, String property) throws Exception {
+		JsonArray res = JsonUtils.getJsonArray(object, property, EMPTY_ARRAY);
+		return res == null ? EMPTY_ARRAY : res;
 	}
 }
