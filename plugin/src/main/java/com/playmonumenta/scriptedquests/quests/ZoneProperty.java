@@ -164,11 +164,11 @@ public class ZoneProperty {
 	
 	// TODO: refactor these 2 to be the same method, accepting an enum EventType (ENTER, EXIT).
 	// Needs to go over every call across all repos and rename accordingly.
-	public void changeEvent(Plugin plugin, Player player) {
+	public void changeEnterEvent(Plugin plugin, Player player) {
 		mEnterComponents.run(new QuestContext(plugin, player, null));
 	}
 
-	public void exitEvent(Plugin plugin, Player player) {
+	public void changeExitEvent(Plugin plugin, Player player) {
 		mExitComponents.run(new QuestContext(plugin, player, null));
 	}
 	// TODO: END
