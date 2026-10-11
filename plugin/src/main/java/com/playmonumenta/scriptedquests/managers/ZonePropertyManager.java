@@ -31,9 +31,9 @@ public class ZonePropertyManager implements Listener {
 	public void zonePropertyChangeEvent(ZonePropertyChangeEvent event) {
 		Player player = event.getPlayer();
 		String property = event.getProperty();
-		// TEMP: strip ! for now; should remove this eventually. 
+		// TEMP: strip ! for now; should remove this eventually.
 		// requires change in monumenta-common
-		boolean isExiting = property.startsWith("!"); 
+		boolean isExiting = property.startsWith("!");
 		String name = isExiting ? property.substring(1) : property;
 
 		ZoneProperty prop = lookup(event.getNamespaceName(), name);
@@ -82,7 +82,7 @@ public class ZonePropertyManager implements Listener {
 			)) {
 					continue;
 				}
-				
+
 				for (QuestLogin login : prop.getValue().getLogins()) {
 					if (login.loginEvent(plugin, event)) {
 						isSuccess = true;

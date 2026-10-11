@@ -62,7 +62,7 @@ public class ZoneProperty {
 
 		String displayName = JsonUtils.getString(object, "display_name", "");
 		mDisplayName = displayName == null ? "" : displayName;
-		
+
 		// TODO: Refactor so that components only require a linkage to the top-level item, not a name/entity type
 		for (JsonElement entry : getJsonArrayOrEmpty(object, "on_enter")) {
 			mEnterComponents.add(new QuestComponent(mName, mDisplayName, EntityType.PLAYER, entry));
@@ -148,7 +148,7 @@ public class ZoneProperty {
 	public String getName() {
 		return mName;
 	}
-	
+
 	public List<QuestDeath> getDeaths() {
 		return mDeaths;
 	}
@@ -164,7 +164,7 @@ public class ZoneProperty {
 	public List<QuestComponent> getExitComponents() {
 		return mExitComponents.getComponents();
 	}
-	
+
 	public void changeEnterEvent(Plugin plugin, Player player) {
 		mEnterComponents.run(new QuestContext(plugin, player, null));
 	}

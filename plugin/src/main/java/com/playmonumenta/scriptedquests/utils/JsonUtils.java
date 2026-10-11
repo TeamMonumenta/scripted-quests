@@ -39,6 +39,18 @@ public abstract class JsonUtils {
 		return element.getAsJsonArray();
 	}
 
+	public static @Nullable JsonArray getJsonArray(JsonObject object, String property, @Nullable JsonArray defaultValue) throws Exception {
+		JsonElement element = object.get(property);
+		if (element == null) {
+			return defaultValue;
+		}
+		if (!element.isJsonArray()) {
+			throw new Exception("'" + property + "' entry must be an array");
+		}
+
+		return element.getAsJsonArray();
+	}
+
 	public static String getString(JsonObject object, String property) throws Exception {
 		JsonElement element = getElement(object, property);
 		if (!element.isJsonPrimitive() || !element.getAsJsonPrimitive().isString()) {
@@ -113,18 +125,6 @@ public abstract class JsonUtils {
 			throw new Exception("'" + property + "' entry must be a boolean");
 		}
 		return element.getAsBoolean();
-	}
-
-	public static @Nullable JsonArray getJsonArray(JsonObject object, String property, @Nullable JsonArray defaultValue) throws Exception {
-		JsonElement element = object.get(property);
-		if (element == null) {
-			return defaultValue;
-		}
-		if (!element.isJsonArray()) {
-			throw new Exception("'" + property + "' entry must be an array");
-		}
-
-		return element.getAsJsonArray();
 	}
 
 	public static <T> JsonObject toJsonObject(Map<String, T> map, Function<T, JsonElement> toJsonFunc) {
