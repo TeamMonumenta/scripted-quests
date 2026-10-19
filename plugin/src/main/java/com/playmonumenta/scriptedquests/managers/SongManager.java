@@ -12,8 +12,10 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 import net.kyori.adventure.key.Key;
@@ -70,6 +72,8 @@ public class SongManager {
 		private static final ZoneId TIMEZONE = ZoneOffset.UTC;
 
 		private final UUID mPlayerId;
+		private final AtomicBoolean mIsRunning = new AtomicBoolean(false);
+		private @Nullable ScheduledFuture<?> mCurrentlyScheduled = null;
 		private @Nullable Song mNow = null;
 		private @Nullable Song mNext = null;
 		private LocalDateTime mNextTime = LocalDateTime.MAX;
@@ -79,7 +83,7 @@ public class SongManager {
 			mPlayerId = playerId;
 			showDebugStr(() -> "song state created at " + LocalDateTime.now(TIMEZONE));
 			mLoginFixExpiry = LocalDateTime.now(TIMEZONE).plus(Plugin.getInstance().getMusicLoginFixMillis(), ChronoUnit.MILLIS);
-			mRealTimePool.schedule(this, millisToRefresh(), TimeUnit.of(ChronoUnit.MILLIS));
+			reschedule();
 			showDebugStr(() -> "login fix scheduled for " + mLoginFixExpiry);
 		}
 
@@ -123,7 +127,7 @@ public class SongManager {
 			Key key = Key.key(mNow.songPath());
 			Sound sound = Sound.sound(key, mNow.mCategory.soundSource(), mNow.mVolume, mNow.mPitch);
 			player.playSound(sound, player);
-			mRealTimePool.schedule(this, millisToRefresh(), TimeUnit.of(ChronoUnit.MILLIS));
+			reschedule();
 		}
 
 		public void playNow(Song song) {
@@ -139,6 +143,7 @@ public class SongManager {
 				return;
 			}
 
+			cancelSchedule();
 			Player player = Bukkit.getPlayer(mPlayerId);
 			if (player != null) {
 				player.stopSound(mNow.mSongPath, mNow.mCategory);
@@ -173,6 +178,10 @@ public class SongManager {
 				return now.until(mLoginFixExpiry, ChronoUnit.MILLIS);
 			}
 
+			if (now.isAfter(mNextTime)) {
+				return 0L;
+			}
+
 			try {
 				return now.until(mNextTime, ChronoUnit.MILLIS);
 			} catch (ArithmeticException ignored) {
@@ -182,6 +191,10 @@ public class SongManager {
 
 		@Override
 		public void run() {
+			if (mIsRunning.getAndSet(true)) {
+				// Was already running - let the other instance have control
+				return;
+			}
 			long millis = millisToRefresh();
 			if (millis <= 0) {
 				new BukkitRunnable() {
@@ -190,8 +203,34 @@ public class SongManager {
 						playNow();
 					}
 				}.runTask(Plugin.getInstance());
-			} else if (millis < Long.MAX_VALUE) {
-				mRealTimePool.schedule(this, millisToRefresh(), TimeUnit.of(ChronoUnit.MILLIS));
+			}
+			mIsRunning.set(false);
+			reschedule();
+		}
+
+		private void reschedule() {
+			if (mIsRunning.get()) {
+				return;
+			}
+			if (mCurrentlyScheduled != null) {
+				mCurrentlyScheduled.cancel(false);
+			}
+			long millis = millisToRefresh();
+			if (millis > -100 && millis < 0) {
+				// Failsafe for recently missed events
+				millis = 0;
+			}
+			if (millis >= 0 && millis < Long.MAX_VALUE) {
+				mCurrentlyScheduled = mRealTimePool.schedule(this, millisToRefresh(), TimeUnit.of(ChronoUnit.MILLIS));
+			} else {
+				mCurrentlyScheduled = null;
+			}
+		}
+
+		private void cancelSchedule() {
+			if (mCurrentlyScheduled != null) {
+				mCurrentlyScheduled.cancel(false);
+				mCurrentlyScheduled = null;
 			}
 		}
 
@@ -206,6 +245,10 @@ public class SongManager {
 
 	private static final ScheduledThreadPoolExecutor mRealTimePool = new ScheduledThreadPoolExecutor(1);
 	private static final ConcurrentMap<UUID, PlayerState> mPlayerStates = new ConcurrentHashMap<>();
+
+	static {
+		mRealTimePool.setRemoveOnCancelPolicy(true);
+	}
 
 	public static int playSong(Collection<Player> players, Song song, boolean playNow) {
 		for (Player player : players) {
