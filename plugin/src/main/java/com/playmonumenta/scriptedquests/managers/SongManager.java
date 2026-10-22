@@ -83,8 +83,6 @@ public class SongManager {
 			mPlayerId = playerId;
 			showDebugStr(() -> "song state created at " + LocalDateTime.now(TIMEZONE));
 			mLoginFixExpiry = LocalDateTime.now(TIMEZONE).plus(Plugin.getInstance().getMusicLoginFixMillis(), ChronoUnit.MILLIS);
-			reschedule();
-			showDebugStr(() -> "login fix scheduled for " + mLoginFixExpiry);
 		}
 
 		protected void updateLoginFixExpiry() {
@@ -98,13 +96,16 @@ public class SongManager {
 			showDebugStr(() -> "attempting to play a song at " + now);
 			if (now.isBefore(mLoginFixExpiry)) {
 				showDebugStr(() -> "too early, will retry at " + mLoginFixExpiry);
+				mIsRunning.set(false);
 				return;
 			}
 
 			Player player = Bukkit.getPlayer(mPlayerId);
 			if (player == null) {
+				showDebugStr(() -> "player not logged in, cancelling");
 				cancelNext();
 				cancelNow();
+				mIsRunning.set(false);
 				return;
 			}
 
@@ -114,6 +115,8 @@ public class SongManager {
 
 			if (mNow == null) {
 				if (mNext == null) {
+					showDebugStr(() -> "no song to play at " + now);
+					mIsRunning.set(false);
 					return;
 				}
 				mNow = mNext;
@@ -122,15 +125,19 @@ public class SongManager {
 				}
 			}
 
-			showDebugStr(() -> "is being played music at " + LocalDateTime.now(TIMEZONE));
 			mNextTime = LocalDateTime.now(TIMEZONE).plus(mNow.mSongDuration, ChronoUnit.MILLIS);
 			Key key = Key.key(mNow.songPath());
+			showDebugStr(() -> "is being played music at " + LocalDateTime.now(TIMEZONE) + " (" + key + ")");
 			Sound sound = Sound.sound(key, mNow.mCategory.soundSource(), mNow.mVolume, mNow.mPitch);
+			// If the same song is already playing, stop it - though this should have already happened
+			player.stopSound(sound);
 			player.playSound(sound, player);
+			mIsRunning.set(false);
 			reschedule();
 		}
 
 		public void playNow(Song song) {
+			showDebugStr(() -> "playNow(" + song.songPath() + ")");
 			cancelNext();
 			if (mNow != null && !mNow.equalsSong(song)) {
 				cancelNow();
@@ -139,6 +146,7 @@ public class SongManager {
 		}
 
 		public void cancelNow() {
+			showDebugStr(() -> "cancelNow()");
 			if (mNow == null) {
 				return;
 			}
@@ -153,6 +161,7 @@ public class SongManager {
 		}
 
 		public void playNext(Song song) {
+			showDebugStr(() -> "playNext(" + song.songPath() + ")");
 			mNext = song;
 			if (mNow == null || millisToRefresh() <= 0) {
 				playNow();
@@ -160,6 +169,7 @@ public class SongManager {
 		}
 
 		public void cancelNext() {
+			showDebugStr(() -> "cancelNext()");
 			mNext = null;
 		}
 
@@ -172,62 +182,82 @@ public class SongManager {
 		}
 
 		public long millisToRefresh() {
+			showDebugStr(() -> "millisToRefresh()");
 			LocalDateTime now = LocalDateTime.now(TIMEZONE);
 
 			if (now.isBefore(mLoginFixExpiry)) {
-				return now.until(mLoginFixExpiry, ChronoUnit.MILLIS);
+				long result = now.until(mLoginFixExpiry, ChronoUnit.MILLIS);
+				showDebugStr(() -> "millisToRefresh(): " + result + " (login fix expiry)");
+				return result;
 			}
 
 			if (now.isAfter(mNextTime)) {
+				showDebugStr(() -> "millisToRefresh(): 0 (now is after mNextTime)");
 				return 0L;
 			}
 
 			try {
-				return now.until(mNextTime, ChronoUnit.MILLIS);
+				long result = now.until(mNextTime, ChronoUnit.MILLIS);
+				showDebugStr(() -> "millisToRefresh(): " + result + " (now until mNextTime)");
+				return result;
 			} catch (ArithmeticException ignored) {
+				showDebugStr(() -> "millisToRefresh(): Long.MAX_VALUE (now until mNextTime, but very far in the future)");
 				return Long.MAX_VALUE;
 			}
 		}
 
 		@Override
 		public void run() {
+			showDebugStr(() -> "run()");
 			if (mIsRunning.getAndSet(true)) {
 				// Was already running - let the other instance have control
+				showDebugStr(() -> "run(): Already running");
 				return;
 			}
 			long millis = millisToRefresh();
 			if (millis <= 0) {
+				showDebugStr(() -> "run(): Scheduling playNow()");
 				new BukkitRunnable() {
 					@Override
 					public void run() {
 						playNow();
 					}
 				}.runTask(Plugin.getInstance());
+			} else {
+				showDebugStr(() -> "run(): Too early, rescheduling");
+				mIsRunning.set(false);
+				reschedule();
 			}
-			mIsRunning.set(false);
-			reschedule();
 		}
 
 		private void reschedule() {
 			if (mIsRunning.get()) {
+				showDebugStr(() -> "reschedule(): Already running, do not reschedule");
 				return;
 			}
 			if (mCurrentlyScheduled != null) {
+				showDebugStr(() -> "reschedule(): Already scheduled, cancelling existing schedule");
 				mCurrentlyScheduled.cancel(false);
 			}
 			long millis = millisToRefresh();
 			if (millis > -100 && millis < 0) {
 				// Failsafe for recently missed events
+				long finalMillis = millis;
+				showDebugStr(() -> "reschedule(): Deadline missed by " + finalMillis + " millis, treating as 0");
 				millis = 0;
 			}
 			if (millis >= 0 && millis < Long.MAX_VALUE) {
-				mCurrentlyScheduled = mRealTimePool.schedule(this, millisToRefresh(), TimeUnit.of(ChronoUnit.MILLIS));
+				long finalMillis = millis;
+				showDebugStr(() -> "reschedule(): Rescheduled to " + finalMillis + " millis in the future");
+				mCurrentlyScheduled = mRealTimePool.schedule(this, finalMillis, TimeUnit.of(ChronoUnit.MILLIS));
 			} else {
+				showDebugStr(() -> "reschedule(): Time is either < 0 or Long.MAX_VALUE, not rescheduling");
 				mCurrentlyScheduled = null;
 			}
 		}
 
 		private void cancelSchedule() {
+			showDebugStr(() -> "cancelSchedule()");
 			if (mCurrentlyScheduled != null) {
 				mCurrentlyScheduled.cancel(false);
 				mCurrentlyScheduled = null;
