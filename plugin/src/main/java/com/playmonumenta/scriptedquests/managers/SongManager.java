@@ -98,6 +98,7 @@ public class SongManager {
 			showDebugStr(() -> "attempting to play a song at " + now);
 			if (now.isBefore(mLoginFixExpiry)) {
 				showDebugStr(() -> "too early, will retry at " + mLoginFixExpiry);
+				mIsRunning.set(false);
 				return;
 			}
 
@@ -105,6 +106,7 @@ public class SongManager {
 			if (player == null) {
 				cancelNext();
 				cancelNow();
+				mIsRunning.set(false);
 				return;
 			}
 
@@ -114,6 +116,7 @@ public class SongManager {
 
 			if (mNow == null) {
 				if (mNext == null) {
+					mIsRunning.set(false);
 					return;
 				}
 				mNow = mNext;
@@ -126,7 +129,10 @@ public class SongManager {
 			mNextTime = LocalDateTime.now(TIMEZONE).plus(mNow.mSongDuration, ChronoUnit.MILLIS);
 			Key key = Key.key(mNow.songPath());
 			Sound sound = Sound.sound(key, mNow.mCategory.soundSource(), mNow.mVolume, mNow.mPitch);
+			// If the same song is already playing, stop it - though this should have already happened
+			player.stopSound(sound);
 			player.playSound(sound, player);
+			mIsRunning.set(false);
 			reschedule();
 		}
 
@@ -203,9 +209,10 @@ public class SongManager {
 						playNow();
 					}
 				}.runTask(Plugin.getInstance());
+			} else {
+				mIsRunning.set(false);
+				reschedule();
 			}
-			mIsRunning.set(false);
-			reschedule();
 		}
 
 		private void reschedule() {
