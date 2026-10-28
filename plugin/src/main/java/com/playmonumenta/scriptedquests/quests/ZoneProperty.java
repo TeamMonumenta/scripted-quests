@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponent;
 import com.playmonumenta.scriptedquests.quests.components.QuestComponentList;
+import com.playmonumenta.scriptedquests.utils.JsonUtils;
 import com.playmonumenta.scriptedquests.utils.MMLog;
 import com.playmonumenta.scriptedquests.zones.event.ZoneBlockBreakEvent;
 import com.playmonumenta.scriptedquests.zones.event.ZoneBlockInteractEvent;
@@ -36,55 +37,44 @@ import org.bukkit.entity.Player;
  * code of your own into this system for additional features.
  */
 public class ZoneProperty {
+	public enum EventTypes {
+		ENTER_EVENT,
+		EXIT_EVENT,
+	}
+
 	private final String mNamespaceName;
 	private final String mName;
 	private final String mDisplayName;
-	private final QuestComponentList mComponents = new QuestComponentList();
+	private final QuestComponentList mEnterComponents = new QuestComponentList();
+	private final QuestComponentList mExitComponents = new QuestComponentList();
+	private final List<QuestDeath> mDeaths = new ArrayList<>();
+	private final List<QuestLogin> mLogins = new ArrayList<>();
 	private final List<ZoneEvent> mEvents = new ArrayList<>();
 
+	private static final JsonArray EMPTY_ARRAY = new JsonArray();
+
 	public ZoneProperty(JsonObject object) throws Exception {
-		//////////////////////////////////////// namespace (Required) ////////////////////////////////////////
-		JsonElement namespaceElement = object.get("namespace");
-		if (namespaceElement == null) {
-			throw new Exception("'namespace' entry is required");
-		}
-		mNamespaceName = namespaceElement.getAsString();
-		if (mNamespaceName == null || mNamespaceName.isEmpty()) {
-			throw new Exception("Failed to parse 'namespace' as string");
+		mNamespaceName = JsonUtils.getString(object, "namespace");
+		mName = JsonUtils.getString(object, "name");
+		if (mNamespaceName.isEmpty() || mName.isEmpty()) {
+			throw new Exception("Failed to parse zone property namespace/name as string");
 		}
 
-		//////////////////////////////////////// name (Required) ////////////////////////////////////////
-		JsonElement name = object.get("name");
-		if (name == null) {
-			throw new Exception("'name' entry is required");
-		}
-		if (name.getAsString() == null || name.getAsString().isEmpty()) {
-			throw new Exception("Failed to parse 'name' as string");
-		}
-		mName = name.getAsString();
+		String displayName = JsonUtils.getString(object, "display_name", "");
+		mDisplayName = displayName == null ? "" : displayName;
 
-		//////////////////////////////////////// display_name (Optional) ////////////////////////////////////////
-		// Read the optional display name - default to empty string
-		JsonElement displayName = object.get("display_name");
-		if (displayName == null || displayName.getAsString() == null) {
-			mDisplayName = "";
-		} else {
-			mDisplayName = displayName.getAsString();
+		// TODO: Refactor so that components only require a linkage to the top-level item, not a name/entity type
+		for (JsonElement entry : getJsonArrayOrEmpty(object, "on_enter")) {
+			mEnterComponents.add(new QuestComponent(mName, mDisplayName, EntityType.PLAYER, entry));
 		}
-
-		//////////////////////////////////////// quest_components (Required) ////////////////////////////////////////
-		JsonElement questComponents = object.get("quest_components");
-		if (questComponents == null) {
-			throw new Exception("'quest_components' entry is required");
+		for (JsonElement entry : getJsonArrayOrEmpty(object, "on_exit")) {
+			mExitComponents.add(new QuestComponent(mName, mDisplayName, EntityType.PLAYER, entry));
 		}
-		JsonArray array = questComponents.getAsJsonArray();
-		if (array == null) {
-			throw new Exception("Failed to parse 'quest_components' as JSON array");
+		for (JsonElement entry : getJsonArrayOrEmpty(object, "deaths")) {
+			mDeaths.add(new QuestDeath(entry.getAsJsonObject()));
 		}
-
-		for (JsonElement entry : array) {
-			// TODO: Refactor so that components only require a linkage to the top-level item, not a name/entity type
-			mComponents.add(new QuestComponent(mName, mDisplayName, EntityType.PLAYER, entry));
+		for (JsonElement entry : getJsonArrayOrEmpty(object, "logins")) {
+			mLogins.add(new QuestLogin(entry.getAsJsonObject()));
 		}
 
 		//////////////////////////////////////// events (optional) ////////////////////////////////////////
@@ -120,10 +110,17 @@ public class ZoneProperty {
 		Set<Entry<String, JsonElement>> entries = object.entrySet();
 		for (Entry<String, JsonElement> ent : entries) {
 			String key = ent.getKey();
+			boolean isKnownKey = key.equals("namespace")
+			|| key.equals("name")
+			|| key.equals("display_name")
+			|| key.equals("on_enter")
+			|| key.equals("on_exit")
+			|| key.equals("deaths")
+			|| key.equals("logins")
+			|| key.equals("events");
 
-			if (!key.equals("namespace") && !key.equals("name") && !key.equals("display_name")
-				    && !key.equals("quest_components") && !key.equals("events")) {
-				throw new Exception("Unknown quest key: " + key);
+			if (!isKnownKey) {
+				throw new Exception("Unknown zone property key: " + key);
 			}
 		}
 	}
@@ -134,9 +131,14 @@ public class ZoneProperty {
 			MMLog.severe("Attempted to add two ZoneProperty objects of different properties!");
 			return;
 		}
-		for (QuestComponent component : other.getComponents()) {
-			mComponents.add(component);
+		for (QuestComponent component : other.getEnterComponents()) {
+			mEnterComponents.add(component);
 		}
+		for (QuestComponent component : other.getExitComponents()) {
+			mExitComponents.add(component);
+		}
+		mDeaths.addAll(other.mDeaths);
+		mLogins.addAll(other.mLogins);
 	}
 
 	public String getNamespaceName() {
@@ -147,16 +149,37 @@ public class ZoneProperty {
 		return mName;
 	}
 
-	public List<QuestComponent> getComponents() {
-		return mComponents.getComponents();
+	public List<QuestDeath> getDeaths() {
+		return mDeaths;
 	}
 
-	public void changeEvent(Plugin plugin, Player player) {
-		mComponents.run(new QuestContext(plugin, player, null));
+	public List<QuestLogin> getLogins() {
+		return mLogins;
+	}
+
+	public List<QuestComponent> getEnterComponents() {
+		return mEnterComponents.getComponents();
+	}
+
+	public List<QuestComponent> getExitComponents() {
+		return mExitComponents.getComponents();
+	}
+
+	public void changeEnterEvent(Plugin plugin, Player player) {
+		mEnterComponents.run(new QuestContext(plugin, player, null));
+	}
+
+	public void changeExitEvent(Plugin plugin, Player player) {
+		mExitComponents.run(new QuestContext(plugin, player, null));
 	}
 
 	@SuppressWarnings("unchecked")
 	public <T> Collection<? extends T> getEvents(Class<T> eventClass) {
 		return (Collection<? extends T>) mEvents.stream().filter(eventClass::isInstance).collect(Collectors.toList());
+	}
+
+	private JsonArray getJsonArrayOrEmpty(JsonObject object, String property) throws Exception {
+		JsonArray res = JsonUtils.getJsonArray(object, property, EMPTY_ARRAY);
+		return res == null ? EMPTY_ARRAY : res;
 	}
 }
