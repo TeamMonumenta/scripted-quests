@@ -52,10 +52,12 @@ public class DialogClickableTextEntry implements DialogBase {
 	private final QuestActions mActions;
 	private final int mIdx;
 	private @Nullable HoverEvent<Component> mHoverEvent = null;
+	private final boolean mMiniMessage;
 
 	public DialogClickableTextEntry(@Nullable String npcName, @Nullable String displayName, EntityType entityType,
-	                                JsonElement element, int elementIdx) throws Exception {
+	                                JsonElement element, boolean minimessage, int elementIdx) throws Exception {
 		mIdx = elementIdx;
+		mMiniMessage = minimessage;
 
 		JsonObject object = element.getAsJsonObject();
 		if (object == null) {
@@ -97,7 +99,7 @@ public class DialogClickableTextEntry implements DialogBase {
 			} else if (key.equals("actions")) {
 				actions = new QuestActions(npcName, displayName, entityType, delayTicks, value);
 			} else if (key.equals("hover_text")) {
-				mHoverEvent = HoverEvent.showText(MessagingUtils.AMPERSAND_SERIALIZER.deserialize(value.getAsString().replace("§", "&")));
+				mHoverEvent = HoverEvent.showText(MessagingUtils.deserialize(value.getAsString(), minimessage));
 			}
 		}
 
@@ -137,7 +139,7 @@ public class DialogClickableTextEntry implements DialogBase {
 
 	@Override
 	public void sendDialog(QuestContext context) {
-		MessagingUtils.sendClickableNPCMessage(context.getPlayer(), mText, "/questtrigger " + mIdx, mHoverEvent);
+		MessagingUtils.sendClickableNPCMessage(context.getPlayer(), mText, mMiniMessage, "/questtrigger " + mIdx, mHoverEvent);
 		setupTriggersEntries(context);
 	}
 

@@ -72,7 +72,7 @@ public class QuestCompassManager implements Listener {
 			if (isRemovable) {
 				MessagingUtils.sendClickableMessage(player, mTitle + ": " + mLocation.getMessage(), mAllowTranslations, "/waypoint remove @s", HoverEvent.showText(Component.text("Click to remove this waypoint.")));
 			} else {
-				MessagingUtils.sendRawMessage(player, mTitle + ": " + mLocation.getMessage(), mAllowTranslations);
+				MessagingUtils.sendRawMessage(player, mTitle + ": " + mLocation.getMessage(), false, mAllowTranslations);
 			}
 
 			mgr.setWaypoint(player, mLocation);
