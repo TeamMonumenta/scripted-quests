@@ -120,7 +120,7 @@ public class QuestCompassManager implements Listener {
 		QuestUtils.loadScriptedQuests(plugin, "compass", sender, (object) -> {
 			QuestCompass quest = new QuestCompass(object);
 			mQuests.add(quest);
-			return quest.getQuestName() + ":" + Integer.toString(quest.getMarkers().size());
+			return quest.getQuestName() + ":" + quest.getMarkers().size();
 		});
 
 		Set<String> worldRegexes = new HashSet<>();
