@@ -85,19 +85,15 @@ public class QuestCompassManager implements Listener {
 		Waypoint()
 	}
 
-	private static class CompassCacheEntry {
-		public final int mLastRefresh;
-		public final List<ValidCompassEntry> mEntries;
+	private record CompassCacheEntry(int mLastRefresh, List<ValidCompassEntry> mEntries) {
+			private CompassCacheEntry(Player player, List<ValidCompassEntry> entries) {
+				this(player.getTicksLived(), entries);
+			}
 
-		private CompassCacheEntry(Player player, List<ValidCompassEntry> entries) {
-			mLastRefresh = player.getTicksLived();
-			mEntries = entries;
+			private boolean isStillValid(Player player) {
+				return Math.abs(player.getTicksLived() - mLastRefresh) < 200;
+			}
 		}
-
-		private boolean isStillValid(Player player) {
-			return Math.abs(player.getTicksLived() - mLastRefresh) < 200;
-		}
-	}
 
 	public QuestCompassManager(Plugin plugin) {
 		INSTANCE = this;
