@@ -5,21 +5,20 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.scriptedquests.quests.components.CompassLocation;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 public class QuestCompass {
-	private String mQuestName;
-	private ArrayList<CompassLocation> mMarkers = new ArrayList<>();
+	private final String mQuestName;
+	private final ArrayList<CompassLocation> mMarkers = new ArrayList<>();
 
 	public QuestCompass(JsonObject object) throws Exception {
 		/* TODO: This seriously needs to change, will not work with multi-worlds
 		 * Requires changing all the compass stuff to be vectors, then applying to the player's active world when used
 		 */
-		World world = Bukkit.getWorlds().get(0);
+		World world = Bukkit.getWorlds().getFirst();
 
 		// Read the quest name
 		JsonElement questName = object.get("quest_name");
@@ -42,10 +41,7 @@ public class QuestCompass {
 		}
 
 		// Loop over the locations and add them
-		Iterator<JsonElement> iter = array.iterator();
-		while (iter.hasNext()) {
-			JsonElement entry = iter.next();
-
+		for (JsonElement entry : array) {
 			mMarkers.add(new CompassLocation(world, entry));
 		}
 	}
