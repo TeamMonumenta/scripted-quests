@@ -47,21 +47,24 @@ public class QuestCompassManager implements Listener {
 
 	public static class ValidCompassEntry {
 		public final QuestLocation mLocation;
+		public final String mQuestName;
 		public final String mTitle;
 		public final boolean mAllowTranslations;
 		public final CompassEntryType mType;
 		public final int[] mMarkersIndex;
 
-		private ValidCompassEntry(QuestLocation loc, String title, boolean allowTranslations, CompassEntryType type) {
+		private ValidCompassEntry(QuestLocation loc, String questName, String title, boolean allowTranslations, CompassEntryType type) {
 			mLocation = loc;
+			mQuestName = questName;
 			mTitle = title;
 			mAllowTranslations = allowTranslations;
 			mType = type;
 			mMarkersIndex = new int[]{1, 1};
 		}
 
-		private ValidCompassEntry(QuestLocation loc, String title, boolean allowTranslations, CompassEntryType type, int[] markersIndex) {
+		private ValidCompassEntry(QuestLocation loc, String questName, String title, boolean allowTranslations, CompassEntryType type, int[] markersIndex) {
 			mLocation = loc;
+			mQuestName = questName;
 			mTitle = title;
 			mAllowTranslations = allowTranslations;
 			mType = type;
@@ -180,7 +183,7 @@ public class QuestCompassManager implements Listener {
 					title += " [" + (i + 1) + "/" + questMarkers.size() + "]";
 				}
 
-				entries.add(new ValidCompassEntry(questMarkers.get(i), title, true, CompassEntryType.Quest, new int[]{i + 1, questMarkers.size()}));
+				entries.add(new ValidCompassEntry(questMarkers.get(i), quest.getQuestName(), title, true, CompassEntryType.Quest, new int[]{i + 1, questMarkers.size()}));
 			}
 		}
 
@@ -197,7 +200,7 @@ public class QuestCompassManager implements Listener {
 						title += " [" + (i + 1) + "/" + deathEntries.size() + "]";
 					}
 
-					entries.add(new ValidCompassEntry(deathEntry, title, false, CompassEntryType.Death, new int[]{
+					entries.add(new ValidCompassEntry(deathEntry, "", title, false, CompassEntryType.Death, new int[]{
 						i + 1,
 						deathEntries.size()
 					}));
@@ -274,7 +277,7 @@ public class QuestCompassManager implements Listener {
 	/* One command-specified waypoint per player */
 	public void setCommandWaypoint(Player player, List<Location> steps, String title, String message, String worldRegex) {
 		invalidateCache(player);
-		ValidCompassEntry entry = new ValidCompassEntry(new CompassLocation(null, message, steps, worldRegex), title, false, CompassEntryType.Waypoint);
+		ValidCompassEntry entry = new ValidCompassEntry(new CompassLocation(null, message, steps, worldRegex), "", title, false, CompassEntryType.Waypoint);
 		mCommandWaypoints.put(player.getUniqueId(), entry);
 		mCurrentIndex.put(player.getUniqueId(), getCurrentMarkerTitles(player).indexOf(mCommandWaypoints.get(player.getUniqueId())));
 		entry.directPlayer(mPlugin.mWaypointManager, player, true);
