@@ -171,7 +171,7 @@ public class QuestCompassGui extends CustomInventory {
 
 			int slot = i + 10 - 21 * mPage;
 			Material material;
-			if (mManager.mCurrentIndex.getOrDefault(mPlayer, 0) == i) {
+			if (mManager.mCurrentIndex.getOrDefault(mPlayer.getUniqueId(), 0) == i) {
 				switch (quest.mType) {
 					case Death -> material = Material.TOTEM_OF_UNDYING;
 					case Waypoint -> material = Material.BAMBOO_RAFT;
@@ -258,7 +258,7 @@ public class QuestCompassGui extends CustomInventory {
 			}
 			return;
 		} else if (slot == mDeselectSlot) {
-			mManager.mCurrentIndex.put(player, mManager.showCurrentQuest(player, -1));
+			mManager.mCurrentIndex.put(player.getUniqueId(), mManager.showCurrentQuest(player, -1));
 			player.playSound(player.getLocation(), Sound.BLOCK_WOODEN_TRAPDOOR_CLOSE, SoundCategory.PLAYERS, 1f, 0.8f);
 			close();
 			return;
@@ -281,7 +281,7 @@ public class QuestCompassGui extends CustomInventory {
 		}
 
 		int index = nbtItem.getInteger(mNBTTag);
-		mManager.mCurrentIndex.put(player, mManager.showCurrentQuest(player, index));
+		mManager.mCurrentIndex.put(player.getUniqueId(), mManager.showCurrentQuest(player, index));
 		player.playSound(player.getLocation(), Sound.UI_LOOM_TAKE_RESULT, SoundCategory.PLAYERS, 1f, 1f);
 		if (slot == mCustomSlot) {
 			player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.PLAYERS, 0.5f, 0.8f);

@@ -38,7 +38,7 @@ public class QuestCompassManager implements Listener {
 
 	private final List<QuestCompass> mQuests = new ArrayList<>();
 	private final Map<UUID, CompassCacheEntry> mCompassCache = new HashMap<>();
-	public final Map<Player, Integer> mCurrentIndex = new WeakHashMap<>();
+	public final Map<UUID, Integer> mCurrentIndex = new WeakHashMap<>();
 	private final Plugin mPlugin;
 	private @Nullable WorldRegexMatcher mWorldRegexMatcher = null;
 
@@ -220,7 +220,7 @@ public class QuestCompassManager implements Listener {
 
 		if (index >= entries.size()) {
 			index = 0;
-			mCurrentIndex.put(player, index);
+			mCurrentIndex.put(player.getUniqueId(), index);
 		}
 
 		if (entries.isEmpty() || index == -1) {
@@ -234,13 +234,13 @@ public class QuestCompassManager implements Listener {
 	}
 
 	public void showCurrentQuest(Player player) {
-		Integer index = mCurrentIndex.getOrDefault(player, 0);
+		Integer index = mCurrentIndex.getOrDefault(player.getUniqueId(), 0);
 
 		showCurrentQuest(player, index);
 	}
 
 	public void cycleQuestTracker(Player player) {
-		int oldIndex = mCurrentIndex.getOrDefault(player, 0);
+		int oldIndex = mCurrentIndex.getOrDefault(player.getUniqueId(), 0);
 		if (oldIndex < 0) {
 			showCurrentQuest(player, oldIndex);
 			return;
@@ -261,7 +261,7 @@ public class QuestCompassManager implements Listener {
 		}
 		if (oldIndex != newIndex) {
 			// Only play page turn sound if the entry switched
-			mCurrentIndex.put(player, showCurrentQuest(player, newIndex));
+			mCurrentIndex.put(player.getUniqueId(), showCurrentQuest(player, newIndex));
 			player.playSound(player.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, SoundCategory.PLAYERS, 1f, 1.5f);
 		} else {
 			showCurrentQuest(player, newIndex);
@@ -273,7 +273,7 @@ public class QuestCompassManager implements Listener {
 		invalidateCache(player);
 		ValidCompassEntry entry = new ValidCompassEntry(new CompassLocation(null, message, steps, worldRegex), title, false, CompassEntryType.Waypoint);
 		mCommandWaypoints.put(player.getUniqueId(), entry);
-		mCurrentIndex.put(player, getCurrentMarkerTitles(player).indexOf(mCommandWaypoints.get(player.getUniqueId())));
+		mCurrentIndex.put(player.getUniqueId(), getCurrentMarkerTitles(player).indexOf(mCommandWaypoints.get(player.getUniqueId())));
 		entry.directPlayer(mPlugin.mWaypointManager, player, true);
 	}
 
