@@ -21,7 +21,6 @@ import java.util.WeakHashMap;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
 import org.bukkit.Location;
-import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.command.CommandSender;
@@ -31,14 +30,12 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Nullable;
 
 public class QuestCompassManager implements Listener {
 
 	private static @Nullable QuestCompassManager INSTANCE = null;
-	private static final NamespacedKey CYCLE_ALL_QUESTS_PDC_KEY = new NamespacedKey("monumenta", "sq/cycle_all_quests");
+	private static final String CYCLE_ALL_QUESTS_TAG = "SQ_cycle_all_quests";
 
 	private final List<QuestCompass> mQuests = new ArrayList<>();
 	private final Map<UUID, CompassCacheEntry> mCompassCache = new HashMap<>();
@@ -250,16 +247,14 @@ public class QuestCompassManager implements Listener {
 	}
 
 	public boolean checkPlayerCyclesAllQuests(Player player) {
-		PersistentDataContainer pdc = player.getPersistentDataContainer();
-		return pdc.getOrDefault(CYCLE_ALL_QUESTS_PDC_KEY, PersistentDataType.BOOLEAN, false);
+		return player.getScoreboardTags().contains(CYCLE_ALL_QUESTS_TAG);
 	}
 
 	public void setPlayerCyclesAllQuests(Player player, boolean value) {
-		PersistentDataContainer pdc = player.getPersistentDataContainer();
 		if (value) {
-			pdc.set(CYCLE_ALL_QUESTS_PDC_KEY, PersistentDataType.BOOLEAN, true);
+			player.addScoreboardTag(CYCLE_ALL_QUESTS_TAG);
 		} else {
-			pdc.remove(CYCLE_ALL_QUESTS_PDC_KEY);
+			player.removeScoreboardTag(CYCLE_ALL_QUESTS_TAG);
 		}
 	}
 
