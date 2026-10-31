@@ -191,15 +191,22 @@ public class QuestCompassManager implements Listener {
 		// Add player death locations
 		if (player.hasMetadata(Constants.PLAYER_DEATH_LOCATION_METAKEY)) {
 			List<DeathLocation> deathEntries =
-			    (List<DeathLocation>)player.getMetadata(Constants.PLAYER_DEATH_LOCATION_METAKEY).get(0).value();
-			for (int i = 0; i < deathEntries.size(); i++) {
-				String title = "§c§lDeath§r§b";
+			    (List<DeathLocation>) player.getMetadata(Constants.PLAYER_DEATH_LOCATION_METAKEY).getFirst().value();
+			if (deathEntries != null) {
+				int i = 0;
+				for (DeathLocation deathEntry : deathEntries) {
+					String title = "§c§lDeath§r§b";
 
-				if (deathEntries.size() > 1) {
-					title += " [" + (i + 1) + "/" + deathEntries.size() + "]";
+					if (deathEntries.size() > 1) {
+						title += " [" + (i + 1) + "/" + deathEntries.size() + "]";
+					}
+
+					entries.add(new ValidCompassEntry(deathEntry, title, false, CompassEntryType.Death, new int[]{
+						i + 1,
+						deathEntries.size()
+					}));
+					i++;
 				}
-
-				entries.add(new ValidCompassEntry(deathEntries.get(i), title, false, CompassEntryType.Death, new int[]{i + 1, deathEntries.size()}));
 			}
 		}
 
