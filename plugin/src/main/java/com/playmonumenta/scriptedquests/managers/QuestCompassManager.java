@@ -35,10 +35,11 @@ import org.jetbrains.annotations.Nullable;
 public class QuestCompassManager implements Listener {
 
 	private static @Nullable QuestCompassManager INSTANCE = null;
+	private static final String CYCLE_ALL_QUESTS_TAG = "SQ_cycle_all_quests";
 
 	private final List<QuestCompass> mQuests = new ArrayList<>();
 	private final Map<UUID, CompassCacheEntry> mCompassCache = new HashMap<>();
-	public final Map<Player, Integer> mCurrentIndex = new WeakHashMap<>();
+	public final Map<UUID, Integer> mCurrentIndex = new WeakHashMap<>();
 	private final Plugin mPlugin;
 	private @Nullable WorldRegexMatcher mWorldRegexMatcher = null;
 
@@ -47,21 +48,24 @@ public class QuestCompassManager implements Listener {
 
 	public static class ValidCompassEntry {
 		public final QuestLocation mLocation;
+		public final String mQuestName;
 		public final String mTitle;
 		public final boolean mAllowTranslations;
 		public final CompassEntryType mType;
 		public final int[] mMarkersIndex;
 
-		private ValidCompassEntry(QuestLocation loc, String title, boolean allowTranslations, CompassEntryType type) {
+		private ValidCompassEntry(QuestLocation loc, String questName, String title, boolean allowTranslations, CompassEntryType type) {
 			mLocation = loc;
+			mQuestName = questName;
 			mTitle = title;
 			mAllowTranslations = allowTranslations;
 			mType = type;
 			mMarkersIndex = new int[]{1, 1};
 		}
 
-		private ValidCompassEntry(QuestLocation loc, String title, boolean allowTranslations, CompassEntryType type, int[] markersIndex) {
+		private ValidCompassEntry(QuestLocation loc, String questName, String title, boolean allowTranslations, CompassEntryType type, int[] markersIndex) {
 			mLocation = loc;
+			mQuestName = questName;
 			mTitle = title;
 			mAllowTranslations = allowTranslations;
 			mType = type;
@@ -85,19 +89,15 @@ public class QuestCompassManager implements Listener {
 		Waypoint()
 	}
 
-	private static class CompassCacheEntry {
-		public final int mLastRefresh;
-		public final List<ValidCompassEntry> mEntries;
+	private record CompassCacheEntry(int mLastRefresh, List<ValidCompassEntry> mEntries) {
+			private CompassCacheEntry(Player player, List<ValidCompassEntry> entries) {
+				this(player.getTicksLived(), entries);
+			}
 
-		private CompassCacheEntry(Player player, List<ValidCompassEntry> entries) {
-			mLastRefresh = player.getTicksLived();
-			mEntries = entries;
+			private boolean isStillValid(Player player) {
+				return Math.abs(player.getTicksLived() - mLastRefresh) < 200;
+			}
 		}
-
-		private boolean isStillValid(Player player) {
-			return Math.abs(player.getTicksLived() - mLastRefresh) < 200;
-		}
-	}
 
 	public QuestCompassManager(Plugin plugin) {
 		INSTANCE = this;
@@ -120,7 +120,7 @@ public class QuestCompassManager implements Listener {
 		QuestUtils.loadScriptedQuests(plugin, "compass", sender, (object) -> {
 			QuestCompass quest = new QuestCompass(object);
 			mQuests.add(quest);
-			return quest.getQuestName() + ":" + Integer.toString(quest.getMarkers().size());
+			return quest.getQuestName() + ":" + quest.getMarkers().size();
 		});
 
 		Set<String> worldRegexes = new HashSet<>();
@@ -184,22 +184,29 @@ public class QuestCompassManager implements Listener {
 					title += " [" + (i + 1) + "/" + questMarkers.size() + "]";
 				}
 
-				entries.add(new ValidCompassEntry(questMarkers.get(i), title, true, CompassEntryType.Quest, new int[]{i + 1, questMarkers.size()}));
+				entries.add(new ValidCompassEntry(questMarkers.get(i), quest.getQuestName(), title, true, CompassEntryType.Quest, new int[]{i + 1, questMarkers.size()}));
 			}
 		}
 
 		// Add player death locations
 		if (player.hasMetadata(Constants.PLAYER_DEATH_LOCATION_METAKEY)) {
 			List<DeathLocation> deathEntries =
-			    (List<DeathLocation>)player.getMetadata(Constants.PLAYER_DEATH_LOCATION_METAKEY).get(0).value();
-			for (int i = 0; i < deathEntries.size(); i++) {
-				String title = "§c§lDeath§r§b";
+			    (List<DeathLocation>) player.getMetadata(Constants.PLAYER_DEATH_LOCATION_METAKEY).getFirst().value();
+			if (deathEntries != null) {
+				int i = 0;
+				for (DeathLocation deathEntry : deathEntries) {
+					String title = "§c§lDeath§r§b";
 
-				if (deathEntries.size() > 1) {
-					title += " [" + (i + 1) + "/" + deathEntries.size() + "]";
+					if (deathEntries.size() > 1) {
+						title += " [" + (i + 1) + "/" + deathEntries.size() + "]";
+					}
+
+					entries.add(new ValidCompassEntry(deathEntry, "", title, false, CompassEntryType.Death, new int[]{
+						i + 1,
+						deathEntries.size()
+					}));
+					i++;
 				}
-
-				entries.add(new ValidCompassEntry(deathEntries.get(i), title, false, CompassEntryType.Death, new int[]{i + 1, deathEntries.size()}));
 			}
 		}
 
@@ -220,7 +227,7 @@ public class QuestCompassManager implements Listener {
 
 		if (index >= entries.size()) {
 			index = 0;
-			mCurrentIndex.put(player, index);
+			mCurrentIndex.put(player.getUniqueId(), index);
 		}
 
 		if (entries.isEmpty() || index == -1) {
@@ -234,34 +241,49 @@ public class QuestCompassManager implements Listener {
 	}
 
 	public void showCurrentQuest(Player player) {
-		Integer index = mCurrentIndex.getOrDefault(player, 0);
+		Integer index = mCurrentIndex.getOrDefault(player.getUniqueId(), 0);
 
 		showCurrentQuest(player, index);
 	}
 
+	public boolean checkPlayerCyclesAllQuests(Player player) {
+		return player.getScoreboardTags().contains(CYCLE_ALL_QUESTS_TAG);
+	}
+
+	public void setPlayerCyclesAllQuests(Player player, boolean value) {
+		if (value) {
+			player.addScoreboardTag(CYCLE_ALL_QUESTS_TAG);
+		} else {
+			player.removeScoreboardTag(CYCLE_ALL_QUESTS_TAG);
+		}
+	}
+
 	public void cycleQuestTracker(Player player) {
-		int oldIndex = mCurrentIndex.getOrDefault(player, 0);
+		int oldIndex = mCurrentIndex.getOrDefault(player.getUniqueId(), 0);
 		if (oldIndex < 0) {
 			showCurrentQuest(player, oldIndex);
 			return;
 		}
 		int newIndex = oldIndex;
-
 		QuestCompassManager.CompassCacheEntry cacheEntryMap = mCompassCache.get(player.getUniqueId());
 		if (cacheEntryMap != null && !cacheEntryMap.mEntries.isEmpty()) {
-			if (newIndex >= cacheEntryMap.mEntries.size()) {
-				newIndex = 0;
-			}
-			ValidCompassEntry quest = cacheEntryMap.mEntries.get(newIndex);
-			if (quest.mMarkersIndex[0] == quest.mMarkersIndex[1]) {
-				newIndex += 1 - quest.mMarkersIndex[1];
+			if (checkPlayerCyclesAllQuests(player)) {
+				newIndex = (newIndex + 1) % cacheEntryMap.mEntries.size();
 			} else {
-				newIndex += 1;
+				if (newIndex >= cacheEntryMap.mEntries.size()) {
+					newIndex = 0;
+				}
+				ValidCompassEntry quest = cacheEntryMap.mEntries.get(newIndex);
+				if (quest.mMarkersIndex[0] == quest.mMarkersIndex[1]) {
+					newIndex += 1 - quest.mMarkersIndex[1];
+				} else {
+					newIndex += 1;
+				}
 			}
 		}
 		if (oldIndex != newIndex) {
 			// Only play page turn sound if the entry switched
-			mCurrentIndex.put(player, showCurrentQuest(player, newIndex));
+			mCurrentIndex.put(player.getUniqueId(), showCurrentQuest(player, newIndex));
 			player.playSound(player.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, SoundCategory.PLAYERS, 1f, 1.5f);
 		} else {
 			showCurrentQuest(player, newIndex);
@@ -271,9 +293,9 @@ public class QuestCompassManager implements Listener {
 	/* One command-specified waypoint per player */
 	public void setCommandWaypoint(Player player, List<Location> steps, String title, String message, String worldRegex) {
 		invalidateCache(player);
-		ValidCompassEntry entry = new ValidCompassEntry(new CompassLocation(null, message, steps, worldRegex), title, false, CompassEntryType.Waypoint);
+		ValidCompassEntry entry = new ValidCompassEntry(new CompassLocation(null, message, steps, worldRegex), "", title, false, CompassEntryType.Waypoint);
 		mCommandWaypoints.put(player.getUniqueId(), entry);
-		mCurrentIndex.put(player, getCurrentMarkerTitles(player).indexOf(mCommandWaypoints.get(player.getUniqueId())));
+		mCurrentIndex.put(player.getUniqueId(), getCurrentMarkerTitles(player).indexOf(mCommandWaypoints.get(player.getUniqueId())));
 		entry.directPlayer(mPlugin.mWaypointManager, player, true);
 	}
 

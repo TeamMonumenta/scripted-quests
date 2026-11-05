@@ -76,15 +76,15 @@ public class QuestCompassGui extends CustomInventory {
 					TextColor nameColor = nameColorHex != null ? TextColor.fromHexString(nameColorHex) : NamedTextColor.LIGHT_PURPLE;
 					TextColor loreColor = loreColorHex != null ? TextColor.fromHexString(loreColorHex) : NamedTextColor.DARK_PURPLE;
 
-					List<Component> lores = new ArrayList<>();
-					ConfigurationSection loresConfig = itemConfig.getConfigurationSection("lore");
-					if (loresConfig != null) {
-						for (String line : loresConfig.getKeys(false)) {
-							String text = loresConfig.getString(line);
+					List<Component> lore = new ArrayList<>();
+					ConfigurationSection loreConfig = itemConfig.getConfigurationSection("lore");
+					if (loreConfig != null) {
+						for (String line : loreConfig.getKeys(false)) {
+							String text = loreConfig.getString(line);
 							if (text == null) {
 								text = "Lore unset";
 							}
-							lores.add(Component.text(text, loreColor).decoration(TextDecoration.ITALIC, false));
+							lore.add(Component.text(text, loreColor).decoration(TextDecoration.ITALIC, false));
 						}
 					}
 
@@ -96,7 +96,7 @@ public class QuestCompassGui extends CustomInventory {
 					ItemStack item = new ItemStack(material);
 					ItemMeta itemMeta = item.getItemMeta();
 					itemMeta.displayName(Component.text(name, nameColor).decoration(TextDecoration.BOLD, true).decoration(TextDecoration.ITALIC, false));
-					itemMeta.lore(lores);
+					itemMeta.lore(lore);
 					item.setItemMeta(itemMeta);
 					mInventory.setItem(slot, item);
 
@@ -171,18 +171,18 @@ public class QuestCompassGui extends CustomInventory {
 
 			int slot = i + 10 - 21 * mPage;
 			Material material;
-			if (mManager.mCurrentIndex.getOrDefault(mPlayer, 0) == i) {
+			if (mManager.mCurrentIndex.getOrDefault(mPlayer.getUniqueId(), 0) == i) {
 				switch (quest.mType) {
-					default -> material = Material.ENCHANTED_BOOK;
 					case Death -> material = Material.TOTEM_OF_UNDYING;
 					case Waypoint -> material = Material.BAMBOO_RAFT;
+					default -> material = Material.ENCHANTED_BOOK;
 				}
 				itemName = itemName.append(Component.text(" (Currently Tracking)", selectedColor).decoration(TextDecoration.BOLD, false).decoration(TextDecoration.ITALIC, false));
 			} else {
 				switch (quest.mType) {
-					default -> material = Material.BOOK;
 					case Death -> material = Material.ARMOR_STAND;
 					case Waypoint -> material = Material.KNOWLEDGE_BOOK;
+					default -> material = Material.BOOK;
 				}
 			}
 
@@ -258,7 +258,7 @@ public class QuestCompassGui extends CustomInventory {
 			}
 			return;
 		} else if (slot == mDeselectSlot) {
-			mManager.mCurrentIndex.put(player, mManager.showCurrentQuest(player, -1));
+			mManager.mCurrentIndex.put(player.getUniqueId(), mManager.showCurrentQuest(player, -1));
 			player.playSound(player.getLocation(), Sound.BLOCK_WOODEN_TRAPDOOR_CLOSE, SoundCategory.PLAYERS, 1f, 0.8f);
 			close();
 			return;
@@ -281,7 +281,7 @@ public class QuestCompassGui extends CustomInventory {
 		}
 
 		int index = nbtItem.getInteger(mNBTTag);
-		mManager.mCurrentIndex.put(player, mManager.showCurrentQuest(player, index));
+		mManager.mCurrentIndex.put(player.getUniqueId(), mManager.showCurrentQuest(player, index));
 		player.playSound(player.getLocation(), Sound.UI_LOOM_TAKE_RESULT, SoundCategory.PLAYERS, 1f, 1f);
 		if (slot == mCustomSlot) {
 			player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.PLAYERS, 0.5f, 0.8f);
