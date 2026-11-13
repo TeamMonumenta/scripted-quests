@@ -1,5 +1,6 @@
 package com.playmonumenta.scriptedquests.timers;
 
+import com.playmonumenta.common.LocUtil;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.utils.MMLog;
 import com.playmonumenta.scriptedquests.utils.NmsUtils;
@@ -51,7 +52,7 @@ public class CommandTimerInstance {
 		}
 
 		for (Player player : mLoc.getWorld().getPlayers()) {
-			if (mLoc.distance(player.getLocation()) <= mPlayerRange && player.getGameMode() != GameMode.SPECTATOR) {
+			if (LocUtil.withinRange(mLoc, player.getLocation(), mPlayerRange) && player.getGameMode() != GameMode.SPECTATOR) {
 				return true;
 			}
 		}
