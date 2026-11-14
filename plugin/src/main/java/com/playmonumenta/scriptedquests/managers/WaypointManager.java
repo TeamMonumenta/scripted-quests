@@ -1,5 +1,6 @@
 package com.playmonumenta.scriptedquests.managers;
 
+import com.playmonumenta.common.LocUtil;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.components.QuestLocation;
 import java.util.Iterator;
@@ -148,7 +149,7 @@ public class WaypointManager {
 					player.setCompassTarget(targetLoc);
 
 					Location playerLoc = player.getLocation();
-					double targetDist = playerLoc.distance(targetLoc);
+					double targetDist = playerLoc.toVector().distance(targetLoc.toVector());
 
 					if (isLast && targetDist < WAYPOINT_FINAL_ANIM_MIN_DIST) {
 						iter.remove();
@@ -180,7 +181,7 @@ public class WaypointManager {
 									return;
 								}
 
-								double targetDist = player.getLocation().distance(targetLoc);
+								double targetDist = player.getLocation().toVector().distance(targetLoc.toVector());
 								if (mY >= 4.0 || targetDist < WAYPOINT_FINAL_ANIM_MIN_DIST || targetDist > WAYPOINT_DEST_ANIM_MAX_DIST) {
 									this.cancel();
 								}
@@ -201,7 +202,7 @@ public class WaypointManager {
 
 					/* Create particles that lead to the destination */
 					if (targetDist > WAYPOINT_BEAM_ANIM_MIN_DIST) {
-						if (playerLoc.distance(averageLoc) > WAYPOINT_PLAYER_MOVE_THRESH) {
+						if (LocUtil.notWithinRangeAnyWorld(playerLoc, averageLoc, WAYPOINT_PLAYER_MOVE_THRESH)) {
 							/* Player is actively moving - need to use fast particles to keep up with them */
 							new BukkitRunnable() {
 								int mTicks = 0;
@@ -232,8 +233,8 @@ public class WaypointManager {
 									// Stop this animated beam when it has lingered too long, reaches the target, or the player moves
 									if (mTicks >= WAYPOINT_SLOW_BEAM_MAX_TICKS
 										|| !player.getWorld().equals(mPlayerStartLoc.getWorld())
-										|| particleLoc.distance(targetLoc) < 1.5
-										|| player.getLocation().distance(mPlayerStartLoc) > WAYPOINT_PLAYER_MOVE_THRESH) {
+										|| LocUtil.withinRange(particleLoc, targetLoc, 1.5)
+										|| LocUtil.notWithinRangeAnyWorld(player.getLocation(), mPlayerStartLoc, WAYPOINT_PLAYER_MOVE_THRESH)) {
 										this.cancel();
 										return;
 									}

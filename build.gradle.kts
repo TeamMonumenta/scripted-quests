@@ -1,7 +1,7 @@
 import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
 
 plugins {
-	id("com.playmonumenta.gradle-config") version "4.+"
+	id("com.playmonumenta.gradle-config") version "5.8.0"
 }
 
 monumenta {

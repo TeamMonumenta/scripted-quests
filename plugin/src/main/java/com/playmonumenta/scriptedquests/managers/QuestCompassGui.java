@@ -213,7 +213,7 @@ public class QuestCompassGui extends CustomInventory {
 				}
 				Location qLoc = q.mLocation.getLocation();
 				lore.add(Component.text((int) qLoc.getX() + ", " + (int) qLoc.getY() + ", " + (int) qLoc.getZ() + " ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.ITALIC, false)
-					.append(Component.text(("(" + (int) mPlayer.getLocation().distance(new Location(mPlayer.getWorld(), qLoc.getX(), qLoc.getY(), qLoc.getZ())) + "m away)"))));
+					.append(Component.text(("(" + (int) mPlayer.getLocation().toVector().distance(qLoc.toVector()) + "m away)"))));
 				if (q.mType == QuestCompassManager.CompassEntryType.Waypoint) {
 					lore.add(Component.text("(Shift Click to remove this waypoint.)", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false));
 				}
