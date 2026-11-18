@@ -175,6 +175,7 @@ public class ZoneProperty {
 		}
 		mDeaths.addAll(other.mDeaths);
 		mLogins.addAll(other.mLogins);
+		mEvents.addAll(other.mEvents);
 	}
 
 	public String getNamespaceName() {
