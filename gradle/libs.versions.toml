@@ -13,7 +13,7 @@ junit-platform = "1.8.1"
 mockito-junit = "5.8.0"
 mockbukkit = "3.9.0"
 monumenta-common = "1.3.0"
-redissync = "6.5.0"
+redissync = "6.9.0-dev.11+cd0e1842"
 
 [libraries]
 google-api-client = { module = "com.google.api-client:google-api-client", version.ref = "google-api-client" }

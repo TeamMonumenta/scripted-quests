@@ -1,32 +1,17 @@
 package com.playmonumenta.scriptedquests.listeners;
 
 import com.google.gson.JsonObject;
-import com.playmonumenta.common.event.PlayerServerTransferEvent;
 import com.playmonumenta.redissync.MonumentaRedisSyncAPI;
 import com.playmonumenta.redissync.event.PlayerSaveEvent;
-import com.playmonumenta.scriptedquests.Plugin;
+import com.playmonumenta.redissync.event.PlayerSessionEndEvent;
 import com.playmonumenta.scriptedquests.managers.RaceManager;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 
 public class RedisSyncListener implements Listener {
-	private final Plugin mPlugin;
-
-	public RedisSyncListener(Plugin plugin) {
-		mPlugin = plugin;
-	}
-
-	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
-	public void playerServerTransferEvent(PlayerServerTransferEvent event) {
-		Player player = event.getPlayer();
-		mPlugin.mRaceManager.cancelRace(player);
-	}
-
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
 	public void playerSaveEvent(PlayerSaveEvent event) {
 		Player player = event.getPlayer();
@@ -45,14 +30,10 @@ public class RedisSyncListener implements Listener {
 		}
 	}
 
+	/* After the final save, which saves the times */
 	@EventHandler(ignoreCancelled = true)
-	public void onQuit(PlayerQuitEvent event) {
-		Player p = event.getPlayer();
-		Bukkit.getScheduler().runTaskLater(Plugin.getInstance(), () -> {
-			if (!p.isOnline()) {
-				RaceManager.PLAYER_RACE_RING_PB_TIMES.remove(p.getUniqueId());
-			}
-		}, 100);
+	public void playerSessionEndEvent(PlayerSessionEndEvent event) {
+		RaceManager.PLAYER_RACE_RING_PB_TIMES.remove(event.getPlayer().getUniqueId());
 	}
 
 }

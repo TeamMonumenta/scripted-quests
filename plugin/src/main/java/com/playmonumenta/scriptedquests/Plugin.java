@@ -160,7 +160,7 @@ public class Plugin extends JavaPlugin {
 		manager.registerEvents(new InteractablesListener(this), this);
 		manager.registerEvents(new PlayerListener(this), this);
 		if (manager.isPluginEnabled("MonumentaRedisSync")) {
-			manager.registerEvents(new RedisSyncListener(this), this);
+			manager.registerEvents(new RedisSyncListener(), this);
 		}
 		manager.registerEvents(new WorldListener(this), this);
 		manager.registerEvents(mQuestCompassManager, this);
