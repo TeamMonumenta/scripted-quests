@@ -16,13 +16,11 @@ import com.playmonumenta.scriptedquests.managers.InteractableManager;
 import com.playmonumenta.scriptedquests.managers.LeaderboardManager;
 import com.playmonumenta.scriptedquests.managers.NpcTradeManager;
 import com.playmonumenta.scriptedquests.managers.QuestCompassManager;
-import com.playmonumenta.scriptedquests.managers.QuestDeathManager;
-import com.playmonumenta.scriptedquests.managers.QuestLoginManager;
 import com.playmonumenta.scriptedquests.managers.QuestNpcManager;
 import com.playmonumenta.scriptedquests.managers.RaceManager;
 import com.playmonumenta.scriptedquests.managers.TranslationsManager;
 import com.playmonumenta.scriptedquests.managers.WaypointManager;
-import com.playmonumenta.scriptedquests.managers.ZonePropertyManager;
+import com.playmonumenta.scriptedquests.managers.ZoneBehaviorCoordinator;
 import com.playmonumenta.scriptedquests.protocollib.ProtocolLibIntegration;
 import com.playmonumenta.scriptedquests.timers.CommandTimerManager;
 import com.playmonumenta.scriptedquests.utils.MMLog;
@@ -60,8 +58,6 @@ public class Plugin extends JavaPlugin {
 	public @MonotonicNonNull QuestNpcManager mNpcManager;
 	public @MonotonicNonNull ClickableManager mClickableManager;
 	public @MonotonicNonNull InteractableManager mInteractableManager;
-	public @MonotonicNonNull QuestLoginManager mLoginManager;
-	public @MonotonicNonNull QuestDeathManager mDeathManager;
 	public @MonotonicNonNull LeaderboardManager mLeaderboardManager;
 	public @MonotonicNonNull RaceManager mRaceManager;
 	public @MonotonicNonNull NpcTradeManager mTradeManager;
@@ -69,7 +65,7 @@ public class Plugin extends JavaPlugin {
 	private @MonotonicNonNull TranslationsManager mTranslationsManager;
 	public @MonotonicNonNull CodeManager mCodeManager;
 	public @MonotonicNonNull ZoneFileManager mZoneFileManager;
-	public @MonotonicNonNull ZonePropertyManager mZonePropertyManager;
+	public @MonotonicNonNull ZoneBehaviorCoordinator mZoneBehaviorCoordinator;
 	public @MonotonicNonNull ZonePropertyGroupManager mZonePropertyGroupManager;
 	public @MonotonicNonNull WaypointManager mWaypointManager;
 	public @MonotonicNonNull GuiManager mGuiManager;
@@ -143,14 +139,12 @@ public class Plugin extends JavaPlugin {
 		mClickableManager = new ClickableManager();
 		mInteractableManager = new InteractableManager();
 		mTradeManager = new NpcTradeManager();
-		mLoginManager = new QuestLoginManager();
-		mDeathManager = new QuestDeathManager();
 		mRaceManager = new RaceManager(this);
 		mLeaderboardManager = new LeaderboardManager();
 		mCodeManager = new CodeManager();
 		mZoneEventListener = new ZoneEventListener(this);
 		mZoneFileManager = ZoneFileManager.createInstance();
-		mZonePropertyManager = new ZonePropertyManager(this);
+		mZoneBehaviorCoordinator = new ZoneBehaviorCoordinator(this);
 		mZonePropertyGroupManager = new ZonePropertyGroupManager();
 		mTimerManager = new CommandTimerManager(this);
 		mWaypointManager = new WaypointManager(this);
@@ -168,7 +162,7 @@ public class Plugin extends JavaPlugin {
 			manager.registerEvents(mTranslationsManager, this);
 		}
 		manager.registerEvents(mTimerManager, this);
-		manager.registerEvents(mZonePropertyManager, this);
+		manager.registerEvents(mZoneBehaviorCoordinator, this);
 		manager.registerEvents(mTradeManager, this);
 		manager.registerEvents(mZoneEventListener, this);
 
@@ -219,12 +213,10 @@ public class Plugin extends JavaPlugin {
 		mInteractableManager.reload(this, sender);
 		mTradeManager.reload(this, sender);
 		mQuestCompassManager.reload(this, sender);
-		mLoginManager.reload(this, sender);
-		mDeathManager.reload(this, sender);
 		mLeaderboardManager.reload(this, sender);
 		mRaceManager.reload(this, sender);
 		mCodeManager.reload(this, sender);
-		mZonePropertyManager.reload(this, sender);
+		mZoneBehaviorCoordinator.reload(this, sender);
 		mZoneEventListener.update();
 		GrowableAPI.reload(sender);
 		mGuiManager.reload(this, sender);

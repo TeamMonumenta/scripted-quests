@@ -47,10 +47,6 @@ public class QuestDeath {
 	private @Nullable QuestActions mActions = null;
 	private final int mPriority;
 
-	public QuestDeath(JsonObject object) throws Exception {
-		this(object, Integer.MAX_VALUE);
-	}
-
 	public QuestDeath(JsonObject object, int priority) throws Exception {
 		mPriority = priority;
 

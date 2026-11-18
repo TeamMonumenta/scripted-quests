@@ -21,10 +21,6 @@ public class QuestLogin {
 	private final QuestActions mActions;
 	private final int mPriority;
 
-	public QuestLogin(JsonObject object) throws Exception {
-		this(object, Integer.MAX_VALUE);
-	}
-
 	public QuestLogin(JsonObject object, int priority) throws Exception {
 		mPriority = priority;
 		QuestActions actions = null;
