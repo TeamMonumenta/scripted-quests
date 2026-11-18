@@ -19,8 +19,14 @@ public class QuestLogin {
 	private @Nullable QuestPrerequisites mPrerequisites = null;
 	private long mMinLogoutTime = 0;
 	private final QuestActions mActions;
+	private final int mPriority;
 
 	public QuestLogin(JsonObject object) throws Exception {
+		this(object, Integer.MAX_VALUE);
+	}
+
+	public QuestLogin(JsonObject object, int priority) throws Exception {
+		mPriority = priority;
 		QuestActions actions = null;
 
 		Set<Entry<String, JsonElement>> entries = object.entrySet();
@@ -38,6 +44,8 @@ public class QuestLogin {
 			case "actions":
 				actions = new QuestActions(0, value);
 				break;
+			case "priority":
+				break;
 			default:
 				throw new Exception("Unknown login quest key: '" + key + "'");
 			}
@@ -47,6 +55,10 @@ public class QuestLogin {
 			throw new Exception("Login quest file has no actions");
 		}
 		mActions = actions;
+	}
+
+	public int getPriority() {
+		return mPriority;
 	}
 
 	/* Returns true if prerequisites match and actions were taken, false otherwise */

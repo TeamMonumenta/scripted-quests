@@ -22,24 +22,22 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 /*
- * A ZoneProperty is a container for an interaction that occurs when crossing between
- * zones with different properties. Properties can have any name, though # and ! have
- * special meaning when used as the first character - # is used for groups of
- * properties, and ! is used to specify the removal of a property.
+ * Everything one zone property does, in one file: on_enter, on_exit, on_death, on_login
+ * and events. Every section is optional, so a file that only carries on_death rules is
+ * valid and does nothing when the property is entered or left.
  *
- * Let's say you want an area that is in adventure mode, with the property name
- * "adventure mode". Entering ("adventure mode") would run `gamemode @S adventure`,
- * and leaving ("!adventure mode") would run `gamemode @S survival`.
- *
- * Note that you may specify just the "property added" quest components, just the
- * "property removed" quest components, both, or neither. You may also hook plugin
- * code of your own into this system for additional features.
+ * Properties are grouped into namespaces by the zone geometry, which is loaded from
+ * zone_namespaces. A property name may start with # in that geometry to refer to a group
+ * of properties; the behavior file itself is always addressed by its plain name.
  */
 public class ZoneProperty {
 	private final String mNamespaceName;
 	private final String mName;
 	private final String mDisplayName;
-	private final QuestComponentList mComponents = new QuestComponentList();
+	private final QuestComponentList mEnterComponents = new QuestComponentList();
+	private final QuestComponentList mExitComponents = new QuestComponentList();
+	private final List<QuestDeath> mDeaths = new ArrayList<>();
+	private final List<QuestLogin> mLogins = new ArrayList<>();
 	private final List<ZoneEvent> mEvents = new ArrayList<>();
 
 	public ZoneProperty(JsonObject object) throws Exception {
@@ -72,48 +70,29 @@ public class ZoneProperty {
 			mDisplayName = displayName.getAsString();
 		}
 
-		//////////////////////////////////////// quest_components (Required) ////////////////////////////////////////
-		JsonElement questComponents = object.get("quest_components");
-		if (questComponents == null) {
-			throw new Exception("'quest_components' entry is required");
+		//////////////////////////////////////// on_enter / on_exit (Optional) ////////////////////////////////////////
+		for (JsonElement entry : getJsonArrayOrEmpty(object, "on_enter")) {
+			// TODO: Refactor so that components only require a linkage to the top-level item, not a name/entity type
+			mEnterComponents.add(new QuestComponent(mName, mDisplayName, EntityType.PLAYER, entry));
 		}
-		JsonArray array = questComponents.getAsJsonArray();
-		if (array == null) {
-			throw new Exception("Failed to parse 'quest_components' as JSON array");
+		for (JsonElement entry : getJsonArrayOrEmpty(object, "on_exit")) {
+			mExitComponents.add(new QuestComponent(mName, mDisplayName, EntityType.PLAYER, entry));
 		}
 
-		for (JsonElement entry : array) {
-			// TODO: Refactor so that components only require a linkage to the top-level item, not a name/entity type
-			mComponents.add(new QuestComponent(mName, mDisplayName, EntityType.PLAYER, entry));
+		//////////////////////////////////////// on_death / on_login (Optional) ////////////////////////////////////////
+		for (JsonElement entry : getJsonArrayOrEmpty(object, "on_death")) {
+			JsonObject entryObject = entry.getAsJsonObject();
+			mDeaths.add(new QuestDeath(entryObject, priorityOf(entryObject, "on_death")));
+		}
+		for (JsonElement entry : getJsonArrayOrEmpty(object, "on_login")) {
+			JsonObject entryObject = entry.getAsJsonObject();
+			mLogins.add(new QuestLogin(entryObject, priorityOf(entryObject, "on_login")));
 		}
 
 		//////////////////////////////////////// events (optional) ////////////////////////////////////////
 		JsonObject eventsObject = object.getAsJsonObject("events");
 		if (eventsObject != null) {
-			JsonArray blockBreakEvents = eventsObject.getAsJsonArray("block_break");
-			if (blockBreakEvents != null) {
-				for (JsonElement blockBreakEvent : blockBreakEvents) {
-					mEvents.add(ZoneBlockBreakEvent.fromJson(blockBreakEvent));
-				}
-			}
-			JsonArray blockInteractEvents = eventsObject.getAsJsonArray("block_interact");
-			if (blockInteractEvents != null) {
-				for (JsonElement blockInteractEvent : blockInteractEvents) {
-					mEvents.add(ZoneBlockInteractEvent.fromJson(blockInteractEvent));
-				}
-			}
-			JsonArray remoteClickEvents = eventsObject.getAsJsonArray("remote_click");
-			if (remoteClickEvents != null) {
-				for (JsonElement remoteClickEvent : remoteClickEvents) {
-					mEvents.add(ZoneRemoteClickEvent.fromJson(remoteClickEvent));
-				}
-			}
-			JsonArray entityDeathEvents = eventsObject.getAsJsonArray("entity_death");
-			if (entityDeathEvents != null) {
-				for (JsonElement entityDeathEvent : entityDeathEvents) {
-					mEvents.add(ZoneEntityDeathEvent.fromJson(entityDeathEvent));
-				}
-			}
+			addEvents(eventsObject);
 		}
 
 		//////////////////////////////////////// Fail if other keys exist ////////////////////////////////////////
@@ -122,10 +101,64 @@ public class ZoneProperty {
 			String key = ent.getKey();
 
 			if (!key.equals("namespace") && !key.equals("name") && !key.equals("display_name")
-				    && !key.equals("quest_components") && !key.equals("events")) {
+				    && !key.equals("on_enter") && !key.equals("on_exit")
+				    && !key.equals("on_death") && !key.equals("on_login") && !key.equals("events")) {
 				throw new Exception("Unknown quest key: " + key);
 			}
 		}
+	}
+
+	private void addEvents(JsonObject eventsObject) throws Exception {
+		JsonArray blockBreakEvents = eventsObject.getAsJsonArray("block_break");
+		if (blockBreakEvents != null) {
+			for (JsonElement blockBreakEvent : blockBreakEvents) {
+				mEvents.add(ZoneBlockBreakEvent.fromJson(blockBreakEvent));
+			}
+		}
+		JsonArray blockInteractEvents = eventsObject.getAsJsonArray("block_interact");
+		if (blockInteractEvents != null) {
+			for (JsonElement blockInteractEvent : blockInteractEvents) {
+				mEvents.add(ZoneBlockInteractEvent.fromJson(blockInteractEvent));
+			}
+		}
+		JsonArray remoteClickEvents = eventsObject.getAsJsonArray("remote_click");
+		if (remoteClickEvents != null) {
+			for (JsonElement remoteClickEvent : remoteClickEvents) {
+				mEvents.add(ZoneRemoteClickEvent.fromJson(remoteClickEvent));
+			}
+		}
+		JsonArray entityDeathEvents = eventsObject.getAsJsonArray("entity_death");
+		if (entityDeathEvents != null) {
+			for (JsonElement entityDeathEvent : entityDeathEvents) {
+				mEvents.add(ZoneEntityDeathEvent.fromJson(entityDeathEvent));
+			}
+		}
+	}
+
+	private JsonArray getJsonArrayOrEmpty(JsonObject object, String key) throws Exception {
+		JsonElement element = object.get(key);
+		if (element == null) {
+			return new JsonArray();
+		}
+		JsonArray array = element.getAsJsonArray();
+		if (array == null) {
+			throw new Exception("Failed to parse '" + key + "' as JSON array");
+		}
+		return array;
+	}
+
+	/*
+	 * Rules without an explicit priority are evaluated last, so that a new rule cannot
+	 * silently preempt one that already declares its precedence.
+	 */
+	private int priorityOf(JsonObject entry, String section) {
+		JsonElement priority = entry.get("priority");
+		if (priority == null) {
+			MMLog.warning("Zone property '" + mNamespaceName + ":" + mName + "' has an " + section
+				+ " entry without a priority, it will be evaluated last");
+			return Integer.MAX_VALUE;
+		}
+		return priority.getAsInt();
 	}
 
 	public void addFromOther(Plugin plugin, ZoneProperty other) {
@@ -134,9 +167,14 @@ public class ZoneProperty {
 			MMLog.severe("Attempted to add two ZoneProperty objects of different properties!");
 			return;
 		}
-		for (QuestComponent component : other.getComponents()) {
-			mComponents.add(component);
+		for (QuestComponent component : other.getEnterComponents()) {
+			mEnterComponents.add(component);
 		}
+		for (QuestComponent component : other.getExitComponents()) {
+			mExitComponents.add(component);
+		}
+		mDeaths.addAll(other.mDeaths);
+		mLogins.addAll(other.mLogins);
 	}
 
 	public String getNamespaceName() {
@@ -147,12 +185,32 @@ public class ZoneProperty {
 		return mName;
 	}
 
-	public List<QuestComponent> getComponents() {
-		return mComponents.getComponents();
+	public List<QuestDeath> getDeaths() {
+		return mDeaths;
 	}
 
-	public void changeEvent(Plugin plugin, Player player) {
-		mComponents.run(new QuestContext(plugin, player, null));
+	public List<QuestLogin> getLogins() {
+		return mLogins;
+	}
+
+	private List<QuestComponent> getEnterComponents() {
+		return mEnterComponents.getComponents();
+	}
+
+	private List<QuestComponent> getExitComponents() {
+		return mExitComponents.getComponents();
+	}
+
+	public int getComponentCount() {
+		return mEnterComponents.getComponents().size() + mExitComponents.getComponents().size();
+	}
+
+	public void changeEnterEvent(Plugin plugin, Player player) {
+		mEnterComponents.run(new QuestContext(plugin, player, null));
+	}
+
+	public void changeExitEvent(Plugin plugin, Player player) {
+		mExitComponents.run(new QuestContext(plugin, player, null));
 	}
 
 	@SuppressWarnings("unchecked")

@@ -56,7 +56,7 @@ public class ZonePropertyManager implements Listener {
 				namespace.put(name, property);
 			}
 
-			return name + ":" + property.getComponents().size();
+			return name + ":" + property.getComponentCount();
 		});
 	}
 
@@ -79,7 +79,7 @@ public class ZonePropertyManager implements Listener {
 			return;
 		}
 
-		entry.changeEvent(mPlugin, player);
+		entry.changeEnterEvent(mPlugin, player);
 	}
 
 	public Map<String, Map<String, ZoneProperty>> getZoneProperties() {
