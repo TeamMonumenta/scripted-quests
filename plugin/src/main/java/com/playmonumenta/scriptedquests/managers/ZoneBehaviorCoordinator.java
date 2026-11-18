@@ -1,12 +1,16 @@
 package com.playmonumenta.scriptedquests.managers;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.playmonumenta.common.event.ZonePropertyChangeEvent;
 import com.playmonumenta.common.event.ZonePropertyChangeEvent.Change;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.QuestDeath;
 import com.playmonumenta.scriptedquests.quests.QuestLogin;
 import com.playmonumenta.scriptedquests.quests.ZoneProperty;
+import com.playmonumenta.scriptedquests.utils.MMLog;
 import com.playmonumenta.scriptedquests.utils.QuestUtils;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -97,16 +101,44 @@ public class ZoneBehaviorCoordinator implements Listener {
 			return name + ":" + property.getComponentCount();
 		});
 
-		rebuildCandidates();
+		rebuildCandidates(plugin, sender);
+	}
+
+	/*
+	 * Rules that are not tied to a property live in global/deaths and global/logins. They are
+	 * candidates just like property rules: they fire on their own prerequisites alone.
+	 */
+	private void loadGlobalRules(Plugin plugin, @Nullable CommandSender sender) {
+		QuestUtils.loadScriptedQuests(plugin, "global/deaths", sender, (object, file) -> {
+			mDeaths.add(new QuestDeath(object, priorityOf(object, file)));
+			return null;
+		});
+
+		QuestUtils.loadScriptedQuests(plugin, "global/logins", sender, (object, file) -> {
+			mLogins.add(new QuestLogin(object, priorityOf(object, file)));
+			return null;
+		});
+	}
+
+	private static int priorityOf(JsonObject object, File file) {
+		JsonElement priority = object.get("priority");
+		if (priority == null) {
+			MMLog.warning("Global rule '" + file.getPath() + "' has no priority, it will be evaluated last");
+			return Integer.MAX_VALUE;
+		}
+
+		return priority.getAsInt();
 	}
 
 	/*
 	 * Candidates are ordered by priority, then by container key and array index, so the result
 	 * never depends on map iteration order.
 	 */
-	private void rebuildCandidates() {
+	private void rebuildCandidates(Plugin plugin, @Nullable CommandSender sender) {
 		mDeaths.clear();
 		mLogins.clear();
+
+		loadGlobalRules(plugin, sender);
 
 		List<Map.Entry<String, Map<String, ZoneProperty>>> namespaces = new ArrayList<>(mZoneProperties.entrySet());
 		namespaces.sort(Map.Entry.comparingByKey());
