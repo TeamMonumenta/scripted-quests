@@ -24,13 +24,16 @@ def main():
 
     print(f'Upgrading from version {args.old_version}')
     updaters = {}
+    started = False
     for old_version, updater in all_updaters.items():
-        if len(updaters) != 0 or args.old_version in updaters:
+        if old_version == args.old_version:
+            started = True
+        if started:
             updaters[old_version] = updater
 
     for root in args.scripted_quests_path:
         print(f'- {root}')
-        for updater in all_updaters.values():
+        for updater in updaters.values():
             updater(root)
 
 
