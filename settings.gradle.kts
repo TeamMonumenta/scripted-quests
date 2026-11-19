@@ -7,6 +7,7 @@ project(":scripted-quests").projectDir = file("plugin")
 
 pluginManagement {
 	repositories {
+		mavenLocal()
 		gradlePluginPortal()
 		maven("https://maven.playmonumenta.com/releases")
 	}
