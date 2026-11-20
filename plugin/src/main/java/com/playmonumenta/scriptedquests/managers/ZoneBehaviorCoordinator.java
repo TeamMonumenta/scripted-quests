@@ -4,6 +4,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.playmonumenta.common.event.ZonePropertyChangeEvent;
 import com.playmonumenta.common.event.ZonePropertyChangeEvent.Change;
+import com.playmonumenta.common.zones.Zone;
+import com.playmonumenta.common.zones.ZoneFragment;
+import com.playmonumenta.common.zones.ZoneManager;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.quests.QuestDeath;
 import com.playmonumenta.scriptedquests.quests.QuestLogin;
@@ -17,7 +20,10 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.function.Function;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -29,15 +35,16 @@ import org.jetbrains.annotations.Nullable;
  * The single owner of zone behavior dispatch.
  *
  * Enter and exit are routed by (namespace, name) from the zone property change event.
- * Death and login rules are flattened out of every loaded file and evaluated by their own
- * prerequisites alone - never by the file they came from. Death stops at the first match,
- * login runs every match.
+ * Death and login rules are evaluated in two groups: the unscoped rules in death and login,
+ * which apply everywhere, and the rules of the properties that are active at the player's
+ * location. Both groups are ordered by priority, then by namespace, property name and array
+ * index. Death stops at the first match, login runs every match.
  */
 public class ZoneBehaviorCoordinator implements Listener {
 	private final Plugin mPlugin;
 	private final Map<String, Map<String, ZoneProperty>> mZoneProperties = new HashMap<>();
-	private final List<QuestDeath> mDeaths = new ArrayList<>();
-	private final List<QuestLogin> mLogins = new ArrayList<>();
+	private final List<QuestDeath> mUnscopedDeaths = new ArrayList<>();
+	private final List<QuestLogin> mUnscopedLogins = new ArrayList<>();
 
 	public ZoneBehaviorCoordinator(Plugin plugin) {
 		mPlugin = plugin;
@@ -45,7 +52,7 @@ public class ZoneBehaviorCoordinator implements Listener {
 
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
 	public void zonePropertyChangeEvent(ZonePropertyChangeEvent event) {
-		ZoneProperty property = lookup(event.getNamespaceName(), event.getProperty());
+		ZoneProperty property = lookup(event.getNamespaceName(), event.getPropertyName());
 		if (property == null) {
 			return;
 		}
@@ -59,7 +66,10 @@ public class ZoneBehaviorCoordinator implements Listener {
 
 	/* Returns true if a rule matched, false otherwise */
 	public boolean deathEvent(PlayerDeathEvent event) {
-		for (QuestDeath death : mDeaths) {
+		List<QuestDeath> candidates = withActiveRules(event.getEntity(), mUnscopedDeaths, ZoneProperty::getDeaths);
+		candidates.sort(Comparator.comparingInt(QuestDeath::getPriority));
+
+		for (QuestDeath death : candidates) {
 			if (death.deathEvent(mPlugin, event)) {
 				return true;
 			}
@@ -71,8 +81,10 @@ public class ZoneBehaviorCoordinator implements Listener {
 	/* Returns true if any rule matched, false otherwise */
 	public boolean loginEvent(PlayerJoinEvent event) {
 		boolean isSuccess = false;
+		List<QuestLogin> candidates = withActiveRules(event.getPlayer(), mUnscopedLogins, ZoneProperty::getLogins);
+		candidates.sort(Comparator.comparingInt(QuestLogin::getPriority));
 
-		for (QuestLogin login : mLogins) {
+		for (QuestLogin login : candidates) {
 			if (login.loginEvent(mPlugin, event)) {
 				isSuccess = true;
 			}
@@ -101,21 +113,21 @@ public class ZoneBehaviorCoordinator implements Listener {
 			return name + ":" + property.getComponentCount();
 		});
 
-		rebuildCandidates(plugin, sender);
+		rebuildUnscoped(plugin, sender);
 	}
 
 	/*
-	 * Rules that are not tied to a property live in global/deaths and global/logins. They are
+	 * Rules that are not tied to a property stay in the death and login folders. They are
 	 * candidates just like property rules: they fire on their own prerequisites alone.
 	 */
-	private void loadGlobalRules(Plugin plugin, @Nullable CommandSender sender) {
-		QuestUtils.loadScriptedQuests(plugin, "global/deaths", sender, (object, file) -> {
-			mDeaths.add(new QuestDeath(object, priorityOf(object, file)));
+	private void loadUnscopedRules(Plugin plugin, @Nullable CommandSender sender) {
+		QuestUtils.loadScriptedQuests(plugin, "death", sender, (object, file) -> {
+			mUnscopedDeaths.add(new QuestDeath(object, priorityOf(object, file)));
 			return null;
 		});
 
-		QuestUtils.loadScriptedQuests(plugin, "global/logins", sender, (object, file) -> {
-			mLogins.add(new QuestLogin(object, priorityOf(object, file)));
+		QuestUtils.loadScriptedQuests(plugin, "login", sender, (object, file) -> {
+			mUnscopedLogins.add(new QuestLogin(object, priorityOf(object, file)));
 			return null;
 		});
 	}
@@ -123,36 +135,47 @@ public class ZoneBehaviorCoordinator implements Listener {
 	private static int priorityOf(JsonObject object, File file) {
 		JsonElement priority = object.get("priority");
 		if (priority == null) {
-			MMLog.warning("Global rule '" + file.getPath() + "' has no priority, it will be evaluated last");
+			MMLog.warning("Unscoped rule '" + file.getPath() + "' has no priority, it will be evaluated last");
 			return Integer.MAX_VALUE;
 		}
 
 		return priority.getAsInt();
 	}
 
+	private void rebuildUnscoped(Plugin plugin, @Nullable CommandSender sender) {
+		mUnscopedDeaths.clear();
+		mUnscopedLogins.clear();
+
+		loadUnscopedRules(plugin, sender);
+	}
+
 	/*
-	 * Candidates are ordered by priority, then by container key and array index, so the result
-	 * never depends on map iteration order.
+	 * Returns the unscoped rules followed by the rules of every property that is active at
+	 * the player's location. The zone tree resolves the location once and returns the
+	 * winning zone of each namespace, so an eclipsed zone never contributes.
 	 */
-	private void rebuildCandidates(Plugin plugin, @Nullable CommandSender sender) {
-		mDeaths.clear();
-		mLogins.clear();
+	private <T> List<T> withActiveRules(Player player, List<T> unscoped, Function<ZoneProperty, List<T>> rules) {
+		List<T> candidates = new ArrayList<>(unscoped);
 
-		loadGlobalRules(plugin, sender);
+		ZoneFragment fragment = ZoneManager.getInstance().getZoneFragment(player.getLocation());
+		if (fragment == null) {
+			return candidates;
+		}
 
-		List<Map.Entry<String, Map<String, ZoneProperty>>> namespaces = new ArrayList<>(mZoneProperties.entrySet());
-		namespaces.sort(Map.Entry.comparingByKey());
-		for (Map.Entry<String, Map<String, ZoneProperty>> namespace : namespaces) {
-			List<Map.Entry<String, ZoneProperty>> properties = new ArrayList<>(namespace.getValue().entrySet());
-			properties.sort(Map.Entry.comparingByKey());
-			for (Map.Entry<String, ZoneProperty> property : properties) {
-				mDeaths.addAll(property.getValue().getDeaths());
-				mLogins.addAll(property.getValue().getLogins());
+		Map<String, Zone> zones = new TreeMap<>(fragment.getParents(player.getWorld()));
+		for (Map.Entry<String, Zone> zone : zones.entrySet()) {
+			List<String> names = new ArrayList<>(zone.getValue().getProperties());
+			names.sort(Comparator.naturalOrder());
+
+			for (String name : names) {
+				ZoneProperty property = lookup(zone.getKey(), name);
+				if (property != null) {
+					candidates.addAll(rules.apply(property));
+				}
 			}
 		}
 
-		mDeaths.sort(Comparator.comparingInt(QuestDeath::getPriority));
-		mLogins.sort(Comparator.comparingInt(QuestLogin::getPriority));
+		return candidates;
 	}
 
 	public Map<String, Map<String, ZoneProperty>> getZoneProperties() {
