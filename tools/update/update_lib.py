@@ -300,7 +300,6 @@ class Rule:
     """One death or login rule read from the old per-shard folders."""
 
     path: Path
-    relative_path: Path
     data: dict
     section: str
     priority: int
@@ -317,8 +316,8 @@ class UpdaterEightDotX(Updater):
 
     Consolidates everything one zone property does into a single file: the exit behavior
     that used to live in a "!"-named file becomes on_exit, and the death/login rules that
-    targeted the property become on_death/on_login. Rules that are not tied to a property
-    move to global/deaths and global/logins.
+    targeted the property become on_death/on_login. Rules that cannot move into a property
+    file stay in the death or login folder, with a priority added.
     """
 
     def __init__(self, root):
@@ -334,8 +333,8 @@ class UpdaterEightDotX(Updater):
         self.walk(root, 'zone_properties', self.index_property)
         self.fold_exit_files()
         self.rename_enter_sections()
-        self.migrate_rules('death', 'global/deaths', 'on_death')
-        self.migrate_rules('login', 'global/logins', 'on_login')
+        self.migrate_rules('death', 'on_death')
+        self.migrate_rules('login', 'on_login')
         self.write_properties()
         self.report()
 
@@ -377,15 +376,9 @@ class UpdaterEightDotX(Updater):
         return parts[0] if len(parts) > 1 else 'common'
 
     def property_shard(self, path):
-        """Returns the shard folder a zone property file belongs to.
-
-        Runtime stubs live in zone_properties/runtime/<shard>/, so the shard is one level
-        deeper than for an authored file.
-        """
+        """Returns the shard folder a zone property file belongs to."""
 
         parts = path.relative_to(self.root / 'zone_properties').parts
-        if parts[0] == 'runtime' and len(parts) > 2:
-            return parts[1]
         return parts[0] if len(parts) > 1 else 'common'
 
     ######################################## zone properties ########################################
@@ -466,8 +459,8 @@ class UpdaterEightDotX(Updater):
 
     ######################################## death and login rules ########################################
 
-    def migrate_rules(self, folder, destination, section):
-        """Routes every death or login rule to the property it targets, or to the global folder."""
+    def migrate_rules(self, folder, section):
+        """Moves every rule that targets a property file, and leaves the rest in place."""
 
         source = self.root / folder
         if not source.is_dir():
@@ -475,14 +468,18 @@ class UpdaterEightDotX(Updater):
             return
 
         rules = self.collect_rules(source, section)
+        moved = 0
         for rule in rules:
-            self.route(rule, destination)
-            rule.path.unlink()
+            if self.route(rule):
+                rule.path.unlink()
+                moved += 1
+            else:
+                self.write_json(rule.path, rule.entry())
 
-        print(f'      - Migrated {len(rules)} {folder} rules')
+        print(f'      - Moved {moved} of {len(rules)} {folder} rules, left {len(rules) - moved} in place')
 
         for leftover in sorted(source.rglob('*')):
-            if leftover.is_file():
+            if leftover.is_file() and leftover.suffix != '.json':
                 self.warn(f'{self.shorten_path(leftover)}: not a .json file, left in place')
 
     def collect_rules(self, source, section):
@@ -500,7 +497,6 @@ class UpdaterEightDotX(Updater):
             shard = self.shard_of(path, source)
             rules.append(Rule(
                 path=path,
-                relative_path=path.relative_to(source),
                 data=data,
                 section=section,
                 priority=ranks.get(path, unranked),
@@ -564,38 +560,25 @@ class UpdaterEightDotX(Updater):
 
         return target
 
-    def route(self, rule, destination):
-        """Writes a rule to the property it targets, or to the global folder when it targets none."""
+    def route(self, rule):
+        """Appends the rule to the file of the property it targets. Returns False when it cannot move.
+
+        A rule only moves into a property file of its own shard: a rule from a shard folder
+        must not become common, or it would load on every shard.
+        """
 
         if rule.target is None:
-            self.write_global(rule, destination)
-            return
+            return False
 
-        property_file = self.property_file(rule.target)
+        property_file = self.properties.get(rule.target)
+        if property_file is None:
+            return False
+
         if property_file.add_rule(rule.section, rule.entry()):
-            return
+            return True
 
         self.warn(f'{self.shorten_path(property_file.path)}: {rule.section} rule already present, skipped')
-
-    def property_file(self, key):
-        """Returns the file for a property, creating a runtime stub when the zone tree alone knows it."""
-
-        property_file = self.properties.get(key)
-        if property_file is not None:
-            return property_file
-
-        path = self.root / 'zone_properties' / 'runtime' / key.shard / f'{key.name}.json'
-        data = {'namespace': key.namespace, 'name': key.name}
-        property_file = PropertyFile(key, path, data, dirty=True)
-        self.properties[key] = property_file
-        return property_file
-
-    def write_global(self, rule, destination):
-        """Writes a rule that is not tied to any property."""
-
-        path = self.root / destination / rule.relative_path
-        path.parent.mkdir(parents=True, exist_ok=True)
-        self.write_json(path, rule.entry())
+        return True
 
     ######################################## output ########################################
 
