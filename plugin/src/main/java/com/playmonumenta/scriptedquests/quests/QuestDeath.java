@@ -45,8 +45,11 @@ public class QuestDeath {
 	private boolean mKeepOriginalRespawnLocationInSameArea = false;
 	private @Nullable QuestPrerequisites mPrerequisites = null;
 	private @Nullable QuestActions mActions = null;
+	private final int mPriority;
 
-	public QuestDeath(JsonObject object) throws Exception {
+	public QuestDeath(JsonObject object, int priority) throws Exception {
+		mPriority = priority;
+
 		Set<Entry<String, JsonElement>> entries = object.entrySet();
 		for (Entry<String, JsonElement> ent : entries) {
 			String key = ent.getKey();
@@ -79,6 +82,8 @@ public class QuestDeath {
 				case "actions":
 					mActions = new QuestActions(0, value);
 					break;
+				case "priority":
+					break;
 				default:
 					throw new Exception("Unknown death quest key: '" + key + "'");
 			}
@@ -87,6 +92,10 @@ public class QuestDeath {
 		if (mRespawnPt == null && mKeepInv == false && mActions == null && mKeepXp == null) {
 			throw new Exception("Death quest detected with no observable effects!");
 		}
+	}
+
+	public int getPriority() {
+		return mPriority;
 	}
 
 	/* Returns true if prerequisites match and actions were taken, false otherwise */

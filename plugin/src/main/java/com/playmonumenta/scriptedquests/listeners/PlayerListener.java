@@ -152,7 +152,7 @@ public class PlayerListener implements Listener {
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
 	public void playerDeathEvent(PlayerDeathEvent event) {
 		Player player = event.getEntity();
-		mPlugin.mDeathManager.deathEvent(mPlugin, event);
+		mPlugin.mZoneBehaviorCoordinator.deathEvent(event);
 		SongManager.onDeath(player);
 
 		List<DeathLocation> deathEntries;
@@ -247,7 +247,7 @@ public class PlayerListener implements Listener {
 			@Override
 			public void run() {
 				mPlugin.mRaceManager.onLogin(event.getPlayer());
-				mPlugin.mLoginManager.loginEvent(mPlugin, event);
+				mPlugin.mZoneBehaviorCoordinator.loginEvent(event);
 			}
 		}.runTaskLater(mPlugin, 3);
 	}
