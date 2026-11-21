@@ -42,21 +42,16 @@ public class WaypointManager {
 	private final Map<UUID, Location> mPlayerAverageLocs = new LinkedHashMap<>();
 	private @Nullable BukkitRunnable mRunnable = null;
 
-	private static double distance2D(Location loc1, Location loc2) {
-		return Math.sqrt(Math.pow(loc1.getX() - loc2.getX(), 2) + Math.pow(loc1.getZ() - loc2.getZ(), 2));
-	}
-
 	private static Vector getDirectionTo(Location to, Location from) {
 		Vector vFrom = from.toVector();
 		Vector vTo = to.toVector();
 		return vTo.subtract(vFrom).normalize();
 	}
 
-	private static Location getNextPoint(Player player, List<Location> waypoints) {
-		Location playerLoc = player.getLocation();
-		Location prevLoc = null;
-		Location closestLoc = null;
-		double closestDist = Double.MAX_VALUE;
+	private static int getNextPointIndex(Location playerLoc, List<Location> waypoints) {
+		if (waypoints.isEmpty()) {
+			throw new IllegalArgumentException("No waypoints provided");
+		}
 
 		/*
 		 * Iterate the list to determine the closest-next waypoint
@@ -65,36 +60,18 @@ public class WaypointManager {
 		 * the player visited. So if the distance to the "next" waypoint is less than the distance between
 		 * two waypoints, use the next one instead even though it's further away.
 		 */
-		for (Location loc : waypoints) {
-			double dist = distance2D(loc, playerLoc);
-
-			if (closestLoc == null) {
-				/* First entry - it's the closest so far */
-				closestLoc = loc;
-				closestDist = dist;
-				prevLoc = loc;
-				continue;
-			}
-
-			if (dist < closestDist || (prevLoc != null && dist < distance2D(prevLoc, loc) + WAYPOINT_SWITCH_OFFSET)) {
+		int closestIdx = 0;
+		double closestDist = LocUtil.horizontalDistanceIgnoringWorld(waypoints.get(0), playerLoc);
+		for (int i = 1; i < waypoints.size(); i++) {
+			Location loc = waypoints.get(i);
+			double dist = LocUtil.horizontalDistanceIgnoringWorld(loc, playerLoc);
+			if (dist < closestDist || dist < LocUtil.horizontalDistanceIgnoringWorld(waypoints.get(i - 1), loc) + WAYPOINT_SWITCH_OFFSET) {
 				/* This is either the closest location OR it's closer than the distance between this and the last waypoint */
-				closestLoc = loc;
+				closestIdx = i;
 				closestDist = dist;
 			}
-
-			prevLoc = loc;
 		}
-
-		if (closestLoc == null) {
-			throw new IllegalArgumentException("No waypoints provided");
-		}
-
-		if (closestLoc.getY() < 0) {
-			// For backwards compatibility, some waypoints don't have a real y coordinate - so they use the player's y coordinate
-			closestLoc = closestLoc.clone();
-			closestLoc.setY(playerLoc.getY());
-		}
-		return closestLoc.clone();
+		return closestIdx;
 	}
 
 	public WaypointManager(Plugin plugin) {
@@ -142,14 +119,19 @@ public class WaypointManager {
 						continue;
 					}
 
-					Location targetLoc = getNextPoint(player, waypoints);
-					boolean isLast = targetLoc.equals(waypoints.getLast());
+					int targetIdx = getNextPointIndex(player.getLocation(), waypoints);
+					boolean isLast = targetIdx == waypoints.size() - 1;
+					Location targetLoc = waypoints.get(targetIdx).clone();
+					if (targetLoc.getY() < 0) {
+						// For backwards compatibility, some waypoints don't have a real y coordinate - so they use the player's y coordinate
+						targetLoc.setY(player.getLocation().getY());
+					}
 					// Correct the world here as only now can we check the player's world
 					targetLoc.setWorld(player.getWorld());
 					player.setCompassTarget(targetLoc);
 
 					Location playerLoc = player.getLocation();
-					double targetDist = playerLoc.toVector().distance(targetLoc.toVector());
+					double targetDist = LocUtil.distanceIgnoringWorld(playerLoc, targetLoc);
 
 					if (isLast && targetDist < WAYPOINT_FINAL_ANIM_MIN_DIST) {
 						iter.remove();
@@ -176,12 +158,12 @@ public class WaypointManager {
 								mY += 0.1;
 								mTheta += Math.PI / 10;
 
-								if (!player.getWorld().equals(targetLoc.getWorld())) {
+								if (!LocUtil.sameWorld(player, targetLoc)) {
 									this.cancel();
 									return;
 								}
 
-								double targetDist = player.getLocation().toVector().distance(targetLoc.toVector());
+								double targetDist = LocUtil.distanceIgnoringWorld(player.getLocation(), targetLoc);
 								if (mY >= 4.0 || targetDist < WAYPOINT_FINAL_ANIM_MIN_DIST || targetDist > WAYPOINT_DEST_ANIM_MAX_DIST) {
 									this.cancel();
 								}
@@ -232,7 +214,7 @@ public class WaypointManager {
 								public void run() {
 									// Stop this animated beam when it has lingered too long, reaches the target, or the player moves
 									if (mTicks >= WAYPOINT_SLOW_BEAM_MAX_TICKS
-										|| !player.getWorld().equals(mPlayerStartLoc.getWorld())
+										|| !LocUtil.sameWorld(player, mPlayerStartLoc)
 										|| LocUtil.withinRange(particleLoc, targetLoc, 1.5)
 										|| LocUtil.notWithinRangeAnyWorld(player.getLocation(), mPlayerStartLoc, WAYPOINT_PLAYER_MOVE_THRESH)) {
 										this.cancel();
