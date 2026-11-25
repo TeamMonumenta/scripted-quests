@@ -1,5 +1,6 @@
 package com.playmonumenta.scriptedquests.managers;
 
+import com.playmonumenta.common.LocUtil;
 import com.playmonumenta.scriptedquests.Plugin;
 import com.playmonumenta.scriptedquests.managers.QuestCompassManager.ValidCompassEntry;
 import com.playmonumenta.scriptedquests.utils.CustomInventory;
@@ -213,7 +214,7 @@ public class QuestCompassGui extends CustomInventory {
 				}
 				Location qLoc = q.mLocation.getLocation();
 				lore.add(Component.text((int) qLoc.getX() + ", " + (int) qLoc.getY() + ", " + (int) qLoc.getZ() + " ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.ITALIC, false)
-					.append(Component.text(("(" + (int) mPlayer.getLocation().toVector().distance(qLoc.toVector()) + "m away)"))));
+					.append(Component.text(("(" + (int) LocUtil.distanceIgnoringWorld(mPlayer.getLocation(), qLoc) + "m away)"))));
 				if (q.mType == QuestCompassManager.CompassEntryType.Waypoint) {
 					lore.add(Component.text("(Shift Click to remove this waypoint.)", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false));
 				}
